@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "allowJs": true,
+    "strict": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/ui/map-page"],
+  "extends": "@dcl/sdk/types/tsconfig.ecs7.json"
+}
