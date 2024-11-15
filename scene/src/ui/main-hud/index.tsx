@@ -1,15 +1,16 @@
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
 import Canvas from '../canvas/canvas'
-import { UIController } from '../../controllers/ui.controller'
+import { type UIController } from '../../controllers/ui.controller'
 import IconButton from '../../components/iconButton'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { openExternalUrl } from '~system/RestrictedActions'
+import { BevyApi } from '../../bevy-api'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 export class MainHud {
-  private isSideBarVisible: boolean = true
+  private readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
   private bellIcon: string = 'assets/images/navbar/Notifications off.png'
   private backpackIcon: string = 'assets/images/navbar/Backpack off.png'
@@ -334,7 +335,9 @@ export class MainHud {
                   this.helpLeave()
                 }}
                 onMouseDown={() => {
-                  openExternalUrl({ url: 'https://decentraland.org/help/' })
+                  BevyApi.openSceneLogger().catch(console.error)
+                  // openExternalUrl({ url: 'https://decentraland.org/help/' }).catch(console.error)
+                  
                 }}
                 backgroundColor={this.helpBackground}
                 iconSrc={this.helpIcon}
