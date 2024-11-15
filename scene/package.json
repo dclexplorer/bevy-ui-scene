@@ -1,12 +1,12 @@
 {
-  "name": "ui-scene",
+  "name": "bevy-ui-scene",
   "version": "1.0.0",
-  "description": "UI Scene shows a functional UI in any DAO Client",
+  "description": "UI Scene shows a functional UI for the Bevy Explorer",
   "scripts": {
     "start": "sdk-commands start",
     "deploy": "sdk-commands deploy",
     "build": "sdk-commands build",
-    "export-static": "sdk-commands export-static --destination static/ --realmName UI-Scene --baseUrl https://sdilauro.github.io/ui-scene/ --commsAdapter ws-room:ws-room-service.decentraland.org/rooms/ui-scene",
+    "export-static": "sdk-commands export-static --destination static/ --realmName BevyUiScene --baseUrl https://dclexplorer.github.io/bevy-ui-scene/ --commsAdapter ws-room:ws-room-service.decentraland.org/rooms/bevy-ui-scene",
     "lint": "eslint ./**/*.{ts,tsx}",
     "lint:fix": "eslint --fix ./**/*.{ts,tsx}",
     "format": "prettier --config .prettierrc -c ./**/*.{ts,tsx}",
