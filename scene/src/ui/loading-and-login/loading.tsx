@@ -2,7 +2,7 @@ import * as utils from '@dcl-sdk/utils'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-import { openExternalUrl } from '~system/RestrictedActions'
+// import { openExternalUrl } from '~system/RestrictedActions'
 import ArrowToast from '../../components/arrowToast'
 import TextButton from '../../components/textButton'
 import TextIconButton from '../../components/textIconButton'
@@ -183,7 +183,7 @@ export class LoadingUI {
   }
 
   async openLink(url: string): Promise<void> {
-    await openExternalUrl({ url })
+    // await openExternalUrl({ url })
   }
 
   onMouseEnterFirstButton(): void {

@@ -225,7 +225,7 @@ export class MainMenu {
                 position: { right: 45 }
               }}
               backgroundColor={this.closeButtonColor}
-              iconSrc={'assets/images/icons/CloseIcon.png'}
+              icon={{atlasName:'icons', spriteName:'CloseIcon'}}
             />
           </UiEntity>
           <UiEntity

@@ -1,12 +1,12 @@
-import { InputAction, type Coords } from '@dcl/sdk/ecs';
+import { type Coords } from '@dcl/sdk/ecs';
 import * as fs from 'fs';
-import { type AtlasData, type Sprite } from './definitions';
+import { Icon, type AtlasData, type Sprite } from './definitions';
 import { UiBackgroundProps } from '@dcl/react-ecs';
 
-export function getUvs(atlasName:string, spriteName:string): number[] {
-  const jsonData = fs.readFileSync(`scene/assets/images/atlas/${atlasName}.json`, 'utf-8')
+export function getUvs(icon:Icon): number[] {
+  const jsonData = fs.readFileSync(`scene/assets/images/atlas/${icon.atlasName}.json`, 'utf-8')
   const parsedJson:AtlasData = JSON.parse(jsonData)
-  const spriteKey = spriteName + '.png'
+  const spriteKey = icon.spriteName + '.png'
   if (parsedJson.frames.hasOwnProperty(spriteKey)) {
     const sprite: Sprite = parsedJson.frames.spriteKey
     const A: Coords = {
@@ -32,10 +32,10 @@ export function getUvs(atlasName:string, spriteName:string): number[] {
   return []
 }
 
-export function getBackgroundFromAtlas(atlasName:string, spriteName:string): UiBackgroundProps { 
+export function getBackgroundFromAtlas(icon:Icon): UiBackgroundProps { 
   const textureMode = 'stretch'
-  const uvs = getUvs(atlasName, spriteName)
-  const texture = {src:`scene/assets/images/atlas/${atlasName}.png`}
+  const uvs = getUvs(icon)
+  const texture = {src:`scene/assets/images/atlas/${icon.atlasName}.png`}
 
   return {
     textureMode,
@@ -51,28 +51,3 @@ export function getBackgroundFromAtlas(atlasName:string, spriteName:string): UiB
 
 
 
-export type SlotsInputs =
-  | InputAction.IA_PRIMARY
-  | InputAction.IA_SECONDARY
-  | InputAction.IA_ACTION_3
-  | InputAction.IA_ACTION_4
-  | InputAction.IA_ACTION_5
-  | InputAction.IA_ACTION_6
-
-export const InputKeys: Record<SlotsInputs, string> = {
-  [InputAction.IA_PRIMARY]: 'E',
-  [InputAction.IA_SECONDARY]: 'F',
-  [InputAction.IA_ACTION_3]: '1',
-  [InputAction.IA_ACTION_4]: '2',
-  [InputAction.IA_ACTION_5]: '3',
-  [InputAction.IA_ACTION_6]: '4'
-}
-
-export const INPUT_KEYS_ARRAY: SlotsInputs[] = [
-  InputAction.IA_ACTION_3,
-  InputAction.IA_PRIMARY,
-  InputAction.IA_SECONDARY,
-  InputAction.IA_ACTION_4,
-  InputAction.IA_ACTION_5,
-  InputAction.IA_ACTION_6
-]

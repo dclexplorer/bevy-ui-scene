@@ -6,6 +6,8 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import ArrowToast from './arrowToast'
+import { Icon } from '../utils/definitions'
+import { getBackgroundFromAtlas } from '../utils/ui-utils'
 
 function IconButton(props: {
   // Events
@@ -15,7 +17,7 @@ function IconButton(props: {
   // Shape
   uiTransform: UiTransformProps
   backgroundColor: Color4
-  iconSrc: string
+  icon: Icon
   hintText?: string
   showHint?: boolean
 }): ReactEcs.JSX.Element | null {
@@ -57,10 +59,7 @@ function IconButton(props: {
           flexDirection: 'row',
           alignItems: 'center'
         }}
-        uiBackground={{
-          textureMode: 'stretch',
-          texture: { src: props.iconSrc }
-        }}
+        uiBackground={getBackgroundFromAtlas(props.icon)}
       />
       {props.showHint && props.hintText && (
         <ArrowToast

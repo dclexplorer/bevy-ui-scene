@@ -4,7 +4,7 @@ import Canvas from '../canvas/canvas'
 import { type UIController } from '../../controllers/ui.controller'
 import IconButton from '../../components/iconButton'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import { openExternalUrl } from '~system/RestrictedActions'
+// import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
@@ -12,16 +12,16 @@ const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 export class MainHud {
   private readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
-  private bellIcon: string = 'assets/images/navbar/Notifications off.png'
-  private backpackIcon: string = 'assets/images/navbar/Backpack off.png'
-  private walletIcon: string = 'assets/images/navbar/Wallet.png'
-  private mapIcon: string = 'assets/images/navbar/Map off.png'
-  private settingsIcon: string = 'assets/images/navbar/Settings off.png'
-  private helpIcon: string = 'assets/images/navbar/HelpIcon Off.png'
-  // private friendsIcon: string = 'assets/images/navbar/Friends off.png'
-  // private cameraIcon: string = 'assets/images/navbar/Camera Off.png'
-  // private experiencesIcon: string = 'assets/images/navbar/ExperienceIconOff.png'
-  private emotesIcon: string = 'assets/images/navbar/Emote off.png'
+  private bellIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Notifications off.png'}
+  private backpackIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Backpack off.png'}
+  private walletIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Wallet.png'}
+  private mapIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Map off.png'}
+  private settingsIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Settings off.png'}
+  private helpIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'HelpIcon Off.png'}
+  // private friendsIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Friends off.png'}
+  // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off.png'}
+  // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff.png'}
+  private emotesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Emote off.png'}
 
   private bellHint: boolean = false
   private backpackHint: boolean = false
@@ -50,144 +50,100 @@ export class MainHud {
   }
 
   walletEnter(): void {
-    this.walletIcon = 'assets/images/navbar/Wallet on.png'
+    this.walletIcon.spriteName = 'Wallet on.png'
     this.walletBackground = SELECTED_BUTTON_COLOR
-    this.walletHint = true
-    console.log('on mouse enter wallet')
+    this.walletHint = true    
   }
 
   walletLeave(): void {
-    this.walletIcon = 'assets/images/navbar/Wallet.png'
-    this.walletBackground = Color4.create(0, 0, 0, 0)
-    this.walletHint = false
-    console.log('on mouse leave wallet')
+    this.updateButtons()    
   }
 
   notificationsEnter(): void {
-    this.bellIcon = 'assets/images/navbar/Notifications on.png'
+    this.bellIcon.spriteName ='Notifications on.png'
     this.bellBackground = SELECTED_BUTTON_COLOR
-    this.bellHint = true
-    console.log('on mouse enter notifications')
+    this.bellHint = true    
   }
 
   notificationsLeave(): void {
-    this.bellIcon = 'assets/images/navbar/Notifications off.png'
-    this.bellBackground = Color4.create(0, 0, 0, 0)
-    this.bellHint = false
-    console.log('on mouse leave notifications')
+    this.updateButtons()    
   }
 
   mapEnter(): void {
-    this.mapIcon = 'assets/images/navbar/Map on.png'
+    this.mapIcon.spriteName ='Map on.png'
     this.mapBackground = SELECTED_BUTTON_COLOR
-    this.mapHint = true
-    console.log('on mouse enter map')
+    this.mapHint = true    
   }
 
   mapLeave(): void {
-    this.mapIcon = 'assets/images/navbar/Map off.png'
-    this.mapBackground = Color4.create(0, 0, 0, 0)
-    this.mapHint = false
-    console.log('on mouse leave map')
+    this.updateButtons()    
   }
 
   backpackEnter(): void {
-    this.backpackIcon = 'assets/images/navbar/Backpack on.png'
+    this.backpackIcon.spriteName ='Backpack on.png'
     this.backpackBackground = SELECTED_BUTTON_COLOR
-    this.backpackHint = true
-    console.log('on mouse enter backpack')
+    this.backpackHint = true    
   }
 
   backpackLeave(): void {
-    this.backpackIcon = 'assets/images/navbar/Backpack off.png'
-    this.backpackBackground = Color4.create(0, 0, 0, 0)
-    this.backpackHint = false
-    console.log('on mouse leave backpack')
+    this.updateButtons()    
   }
 
   settingsEnter(): void {
-    this.settingsIcon = 'assets/images/navbar/Settings on.png'
+    this.settingsIcon.spriteName ='Settings on.png'
     this.settingsBackground = SELECTED_BUTTON_COLOR
-    this.settingsHint = true
-    console.log('on mouse enter settings')
+    this.settingsHint = true    
   }
 
   settingsLeave(): void {
-    this.settingsIcon = 'assets/images/navbar/Settings off.png'
-    this.settingsBackground = Color4.create(0, 0, 0, 0)
-    this.settingsHint = false
-    console.log('on mouse leave settings')
+    this.updateButtons()    
   }
 
   helpEnter(): void {
-    this.helpIcon = 'assets/images/navbar/HelpIcon On.png'
+    this.helpIcon.spriteName ='HelpIcon On.png'
     this.helpBackground = SELECTED_BUTTON_COLOR
-    this.helpHint = true
-    console.log('on mouse enter help')
+    this.helpHint = true    
   }
 
   helpLeave(): void {
-    this.helpIcon = 'assets/images/navbar/HelpIcon Off.png'
-    this.helpBackground = Color4.create(0, 0, 0, 0)
-    this.helpHint = false
-    console.log('on mouse leave help')
+    this.updateButtons()    
   }
 
-  // cameraEnter():void{
-  //   this.cameraIcon = 'assets/images/navbar/Camera On.png'
-  //   this.cameraBackground = SELECTED_BUTTON_COLOR
-  //   this.cameraHint = true
-  //   console.log('on mouse enter camera')
-  // }
-
-  // cameraLeave():void{
-  //   this.cameraIcon = 'assets/images/navbar/Camera Off.png'
-  //   this.cameraBackground = Color4.create(0,0,0,0)
-  //   this.cameraHint = false
-  //   console.log('on mouse leave camera')
-  // }
-
-  // experiencesEnter():void{
-  //   this.experiencesIcon = 'assets/images/navbar/ExperienceIconOn.png'
-  //   this.experiencesBackground = SELECTED_BUTTON_COLOR
-  //   this.experiencesHint = true
-  //   console.log('on mouse enter experiences')
-  // }
-
-  // experiencesLeave():void{
-  //   this.experiencesIcon = 'assets/images/navbar/ExperienceIconOff.png'
-  //   this.experiencesBackground = Color4.create(0,0,0,0)
-  //   this.experiencesHint = false
-  //   console.log('on mouse leave experiences')
-  // }
-
-  // friendsEnter():void{
-  //   this.friendsIcon = 'assets/images/navbar/Friends on.png'
-  //   this.friendsBackground = SELECTED_BUTTON_COLOR
-  //   this.friendsHint = true
-  //   console.log('on mouse enter friends')
-  // }
-
-  // friendsLeave():void{
-  //     this.friendsIcon = 'assets/images/navbar/Friends off.png'
-  //     this.friendsBackground = Color4.create(0,0,0,0)
-  //     this.friendsHint = false
-  //     console.log('on mouse leave friends')
-  // }
-
   emotesEnter(): void {
-    this.emotesIcon = 'assets/images/navbar/Emote on.png'
+    this.emotesIcon.spriteName = 'Emote on.png'
     this.emotesBackground = SELECTED_BUTTON_COLOR
-    this.emotesHint = true
-    console.log('on mouse enter emotes')
+    this.emotesHint = true    
   }
 
   emotesLeave(): void {
-    this.emotesIcon = 'assets/images/navbar/Emote off.png'
+    this.updateButtons()    
+  }
+
+  updateButtons(): void {
+    this.walletIcon.spriteName ='Wallet.png'
+    this.walletBackground = Color4.create(0, 0, 0, 0)
+    this.walletHint = false
+    this.bellIcon.spriteName ='Notifications off.png'
+    this.bellBackground = Color4.create(0, 0, 0, 0)
+    this.bellHint = false
+    this.mapIcon.spriteName ='Map off.png'
+    this.mapBackground = Color4.create(0, 0, 0, 0)
+    this.mapHint = false
+    this.backpackIcon.spriteName ='Backpack off.png'
+    this.backpackBackground = Color4.create(0, 0, 0, 0)
+    this.backpackHint = false
+    this.settingsIcon.spriteName ='Settings off.png'
+    this.settingsBackground = Color4.create(0, 0, 0, 0)
+    this.settingsHint = false
+    this.helpIcon.spriteName ='HelpIcon Off.png'
+    this.helpBackground = Color4.create(0, 0, 0, 0)
+    this.helpHint = false
+    this.emotesIcon.spriteName = 'Emote off.png'
     this.emotesBackground = Color4.create(0, 0, 0, 0)
     this.emotesHint = false
-    console.log('on mouse leave emotes')
   }
+
+
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
@@ -243,7 +199,7 @@ export class MainHud {
                   console.log('Wallet clicked')
                 }}
                 backgroundColor={this.walletBackground}
-                iconSrc={this.walletIcon}
+                icon={this.walletIcon}
                 hintText={'Wallet'}
                 showHint={this.walletHint}
               />
@@ -260,7 +216,7 @@ export class MainHud {
                   console.log('clicked')
                 }}
                 backgroundColor={this.bellBackground}
-                iconSrc={this.bellIcon}
+                icon={this.bellIcon}
                 hintText={'Notifications'}
                 showHint={this.bellHint}
               />
@@ -282,7 +238,7 @@ export class MainHud {
                   this.uiController.menu?.show('map')
                 }}
                 backgroundColor={this.mapBackground}
-                iconSrc={this.mapIcon}
+                icon={this.mapIcon}
                 hintText={'Map'}
                 showHint={this.mapHint}
               />
@@ -299,7 +255,7 @@ export class MainHud {
                   this.uiController.menu?.show('backpack')
                 }}
                 backgroundColor={this.backpackBackground}
-                iconSrc={this.backpackIcon}
+                icon={this.backpackIcon}
                 hintText={'Backpack'}
                 showHint={this.backpackHint}
               />
@@ -316,7 +272,7 @@ export class MainHud {
                   this.uiController.menu?.show('settings')
                 }}
                 backgroundColor={this.settingsBackground}
-                iconSrc={this.settingsIcon}
+                icon={this.settingsIcon}
                 hintText={'Settings'}
                 showHint={this.settingsHint}
               />
@@ -340,7 +296,7 @@ export class MainHud {
                   
                 }}
                 backgroundColor={this.helpBackground}
-                iconSrc={this.helpIcon}
+                icon={this.helpIcon}
                 hintText={'Help'}
                 showHint={this.helpHint}
               />
@@ -361,7 +317,7 @@ export class MainHud {
                 onMouseLeave={()=>{this.cameraLeave()}}
                 onMouseDown={()=>{console.log('Camera clicked')}}
                 backgroundColor={this.cameraBackground}
-                iconSrc={this.cameraIcon}
+                icon={this.cameraIcon}
                 hintText={'Camera'}
                 showHint={this.cameraHint} />
 
@@ -370,7 +326,7 @@ export class MainHud {
                 onMouseLeave={()=>{this.experiencesLeave()}}
                 onMouseDown={()=>{console.log('clicked')}}
                 backgroundColor={this.experiencesBackground}
-                iconSrc={this.experiencesIcon}
+                icon={this.experiencesIcon}
                 hintText={'Experiences'}
                 showHint={this.experiencesHint} />
 
@@ -379,7 +335,7 @@ export class MainHud {
                 onMouseLeave={()=>{this.friendsLeave()}}
                 onMouseDown={()=>{console.log('Wallet clicked')}}
                 backgroundColor={this.friendsBackground}
-                iconSrc={this.friendsIcon}
+                icon={this.friendsIcon}
                 hintText={'Friends'}
                 showHint={this.friendsHint} /> */}
 
@@ -395,7 +351,7 @@ export class MainHud {
                   console.log('clicked')
                 }}
                 backgroundColor={this.emotesBackground}
-                iconSrc={this.emotesIcon}
+                icon={this.emotesIcon}
                 hintText={'Emotes'}
                 showHint={this.emotesHint}
               />
