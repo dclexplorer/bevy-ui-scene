@@ -1,28 +1,28 @@
-import { InputAction } from "@dcl/sdk/ecs"
+import { InputAction } from '@dcl/sdk/ecs'
 
 export type SpriteFromAtlas = {
-    sprite:string,
-    atlasTexture:string,
-    atlasData:string
+  sprite: string
+  atlasTexture: string
+  atlasData: string
 }
 
 export type AtlasData = {
-    frames: { [key: string]: Sprite }
-    meta: {
-      size: {w:number, h:number}
-      [key: string]: any
-    }
+  frames: { [key: string]: Sprite }
+  meta: {
+    size: { w: number; h: number }
+    [key: string]: any
   }
-  
-export type Sprite = {
-    frame: {x:number,y:number,w:number,h:number},
-    rotated: false,
-    trimmed: false,
-    spriteSourceSize: {x:number,y:number,w:number,h:number},
-    sourceSize: {w:number,h:number}
 }
 
-export type Icon = {atlasName:string, spriteName:string}
+export type Sprite = {
+  frame: { x: number; y: number; w: number; h: number }
+  rotated: false
+  trimmed: false
+  spriteSourceSize: { x: number; y: number; w: number; h: number }
+  sourceSize: { w: number; h: number }
+}
+
+export type Icon = { atlasName: string; spriteName: string }
 
 export type SlotsInputs =
   | InputAction.IA_PRIMARY

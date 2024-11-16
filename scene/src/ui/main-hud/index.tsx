@@ -6,22 +6,44 @@ import IconButton from '../../components/iconButton'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 // import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
+import { getBackgroundFromAtlas, getUvs } from '../../utils/ui-utils'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 export class MainHud {
   private readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
-  private bellIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Notifications off.png'}
-  private backpackIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Backpack off.png'}
-  private walletIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Wallet.png'}
-  private mapIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Map off.png'}
-  private settingsIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Settings off.png'}
-  private helpIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'HelpIcon Off.png'}
-  // private friendsIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Friends off.png'}
-  // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off.png'}
-  // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff.png'}
-  private emotesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Emote off.png'}
+  private bellIcon: { atlasName: string; spriteName: string } = {
+    atlasName: 'navbar',
+    spriteName: 'Notifications off'
+  }
+  private backpackIcon: { atlasName: string; spriteName: string } = {
+    atlasName: 'navbar',
+    spriteName: 'Backpack off'
+  }
+  private walletIcon: { atlasName: string; spriteName: string } = {
+    atlasName: 'navbar',
+    spriteName: 'Wallet'
+  }
+  private mapIcon: { atlasName: string; spriteName: string } = {
+    atlasName: 'navbar',
+    spriteName: 'Map off'
+  }
+  private settingsIcon: { atlasName: string; spriteName: string } = {
+    atlasName: 'navbar',
+    spriteName: 'Settings off'
+  }
+  private helpIcon: { atlasName: string; spriteName: string } = {
+    atlasName: 'navbar',
+    spriteName: 'HelpIcon Off'
+  }
+  // private friendsIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Friends off'}
+  // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off'}
+  // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff'}
+  private emotesIcon: { atlasName: string; spriteName: string } = {
+    atlasName: 'navbar',
+    spriteName: 'Emote off'
+  }
 
   private bellHint: boolean = false
   private backpackHint: boolean = false
@@ -50,100 +72,98 @@ export class MainHud {
   }
 
   walletEnter(): void {
-    this.walletIcon.spriteName = 'Wallet on.png'
+    this.walletIcon.spriteName = 'Wallet on'
     this.walletBackground = SELECTED_BUTTON_COLOR
-    this.walletHint = true    
+    this.walletHint = true
   }
 
   walletLeave(): void {
-    this.updateButtons()    
+    this.updateButtons()
   }
 
   notificationsEnter(): void {
-    this.bellIcon.spriteName ='Notifications on.png'
+    this.bellIcon.spriteName = 'Notifications on'
     this.bellBackground = SELECTED_BUTTON_COLOR
-    this.bellHint = true    
+    this.bellHint = true
   }
 
   notificationsLeave(): void {
-    this.updateButtons()    
+    this.updateButtons()
   }
 
   mapEnter(): void {
-    this.mapIcon.spriteName ='Map on.png'
+    this.mapIcon.spriteName = 'Map on'
     this.mapBackground = SELECTED_BUTTON_COLOR
-    this.mapHint = true    
+    this.mapHint = true
   }
 
   mapLeave(): void {
-    this.updateButtons()    
+    this.updateButtons()
   }
 
   backpackEnter(): void {
-    this.backpackIcon.spriteName ='Backpack on.png'
+    this.backpackIcon.spriteName = 'Backpack on'
     this.backpackBackground = SELECTED_BUTTON_COLOR
-    this.backpackHint = true    
+    this.backpackHint = true
   }
 
   backpackLeave(): void {
-    this.updateButtons()    
+    this.updateButtons()
   }
 
   settingsEnter(): void {
-    this.settingsIcon.spriteName ='Settings on.png'
+    this.settingsIcon.spriteName = 'Settings on'
     this.settingsBackground = SELECTED_BUTTON_COLOR
-    this.settingsHint = true    
+    this.settingsHint = true
   }
 
   settingsLeave(): void {
-    this.updateButtons()    
+    this.updateButtons()
   }
 
   helpEnter(): void {
-    this.helpIcon.spriteName ='HelpIcon On.png'
+    this.helpIcon.spriteName = 'HelpIcon On'
     this.helpBackground = SELECTED_BUTTON_COLOR
-    this.helpHint = true    
+    this.helpHint = true
   }
 
   helpLeave(): void {
-    this.updateButtons()    
+    this.updateButtons()
   }
 
   emotesEnter(): void {
-    this.emotesIcon.spriteName = 'Emote on.png'
+    this.emotesIcon.spriteName = 'Emote on'
     this.emotesBackground = SELECTED_BUTTON_COLOR
-    this.emotesHint = true    
+    this.emotesHint = true
   }
 
   emotesLeave(): void {
-    this.updateButtons()    
+    this.updateButtons()
   }
 
   updateButtons(): void {
-    this.walletIcon.spriteName ='Wallet.png'
+    this.walletIcon.spriteName = 'Wallet'
     this.walletBackground = Color4.create(0, 0, 0, 0)
     this.walletHint = false
-    this.bellIcon.spriteName ='Notifications off.png'
+    this.bellIcon.spriteName = 'Notifications off'
     this.bellBackground = Color4.create(0, 0, 0, 0)
     this.bellHint = false
-    this.mapIcon.spriteName ='Map off.png'
+    this.mapIcon.spriteName = 'Map off'
     this.mapBackground = Color4.create(0, 0, 0, 0)
     this.mapHint = false
-    this.backpackIcon.spriteName ='Backpack off.png'
+    this.backpackIcon.spriteName = 'Backpack off'
     this.backpackBackground = Color4.create(0, 0, 0, 0)
     this.backpackHint = false
-    this.settingsIcon.spriteName ='Settings off.png'
+    this.settingsIcon.spriteName = 'Settings off'
     this.settingsBackground = Color4.create(0, 0, 0, 0)
     this.settingsHint = false
-    this.helpIcon.spriteName ='HelpIcon Off.png'
+    this.helpIcon.spriteName = 'HelpIcon Off'
     this.helpBackground = Color4.create(0, 0, 0, 0)
     this.helpHint = false
-    this.emotesIcon.spriteName = 'Emote off.png'
+    this.emotesIcon.spriteName = 'Emote off'
     this.emotesBackground = Color4.create(0, 0, 0, 0)
     this.emotesHint = false
   }
-
-
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
@@ -152,6 +172,22 @@ export class MainHud {
     const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
     const buttonSize: number = sideBarHeight * 0.9
 
+    // return (
+    //   <Canvas>
+    //     <UiEntity
+    //       uiTransform={{
+    //         width: '20%',
+    //         height: '20%',
+    //         position: { left: '10%', top: '50%' },
+    //         positionType: 'absolute'
+    //       }}
+    //       uiBackground={
+    //         getBackgroundFromAtlas({atlasName:'backpack',spriteName:'EarringsIcon'})
+    //       }
+    //     />
+        
+    //   </Canvas>
+    // )
     return (
       <Canvas>
         <UiEntity
@@ -293,7 +329,6 @@ export class MainHud {
                 onMouseDown={() => {
                   BevyApi.openSceneLogger().catch(console.error)
                   // openExternalUrl({ url: 'https://decentraland.org/help/' }).catch(console.error)
-                  
                 }}
                 backgroundColor={this.helpBackground}
                 icon={this.helpIcon}
@@ -312,7 +347,7 @@ export class MainHud {
                 flexDirection: 'column'
               }}
             >
-              {/* <IconButton uiTransform={{height:buttonSize, width:buttonSize}} 
+              {/* <IconButton uiTransform={{height:buttonSize, width:buttonSize}}
                 onMouseEnter={()=>{this.cameraEnter()}}
                 onMouseLeave={()=>{this.cameraLeave()}}
                 onMouseDown={()=>{console.log('Camera clicked')}}
@@ -321,7 +356,7 @@ export class MainHud {
                 hintText={'Camera'}
                 showHint={this.cameraHint} />
 
-                <IconButton uiTransform={{height:buttonSize, width:buttonSize}} 
+                <IconButton uiTransform={{height:buttonSize, width:buttonSize}}
                 onMouseEnter={()=>{this.experiencesEnter()}}
                 onMouseLeave={()=>{this.experiencesLeave()}}
                 onMouseDown={()=>{console.log('clicked')}}
@@ -330,7 +365,7 @@ export class MainHud {
                 hintText={'Experiences'}
                 showHint={this.experiencesHint} />
 
-                <IconButton uiTransform={{height:buttonSize, width:buttonSize}} 
+                <IconButton uiTransform={{height:buttonSize, width:buttonSize}}
                 onMouseEnter={()=>{this.friendsEnter()}}
                 onMouseLeave={()=>{this.friendsLeave()}}
                 onMouseDown={()=>{console.log('Wallet clicked')}}

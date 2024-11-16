@@ -14,11 +14,14 @@ export class SettingsPage {
   private audioBackgroundColor: Color4 = ALMOST_WHITE
   private controlsBackgroundColor: Color4 = ALMOST_WHITE
   private pathText: string = ''
-  private buttonClicked: 'general'|'audio'|'graphics'|'controls' = 'general'
+  private buttonClicked: 'general' | 'audio' | 'graphics' | 'controls' =
+    'general'
 
-  setButtonClicked(button: 'general'|'audio'|'graphics'|'controls'):void{
+  setButtonClicked(
+    button: 'general' | 'audio' | 'graphics' | 'controls'
+  ): void {
     this.buttonClicked = button
-    this.pathText = 'Settings/'+button
+    this.pathText = 'Settings/' + button
   }
 
   updateButtons() {
@@ -50,8 +53,6 @@ export class SettingsPage {
         break
     }
   }
-
-
 
   mainUi(): ReactEcs.JSX.Element | null {
     this.updateButtons()
@@ -98,7 +99,7 @@ export class SettingsPage {
           <TextIconButton
             uiTransform={{
               margin: { left: 10, right: 10 },
-              padding:{left:10, right:10},
+              padding: { left: 10, right: 10 },
               width: 'auto'
             }}
             iconColor={this.generalTextColor}
@@ -108,14 +109,16 @@ export class SettingsPage {
             fontColor={this.generalTextColor}
             onMouseEnter={() => {}}
             onMouseLeave={() => {}}
-            onMouseDown={() => {this.setButtonClicked('general')}}
+            onMouseDown={() => {
+              this.setButtonClicked('general')
+            }}
             backgroundColor={this.generalBackgroundColor}
           />
 
           <TextIconButton
             uiTransform={{
               margin: { left: 10, right: 10 },
-              padding:{left:10, right:10},
+              padding: { left: 10, right: 10 },
               width: 'auto'
             }}
             iconColor={this.graphicsTextColor}
@@ -125,13 +128,15 @@ export class SettingsPage {
             fontColor={this.graphicsTextColor}
             onMouseEnter={() => {}}
             onMouseLeave={() => {}}
-            onMouseDown={() => {this.setButtonClicked('graphics')}}
+            onMouseDown={() => {
+              this.setButtonClicked('graphics')
+            }}
             backgroundColor={this.graphicsBackgroundColor}
           />
           <TextIconButton
             uiTransform={{
               margin: { left: 10, right: 10 },
-              padding:{left:10, right:10},
+              padding: { left: 10, right: 10 },
               width: 'auto'
             }}
             iconColor={this.audioTextColor}
@@ -141,14 +146,16 @@ export class SettingsPage {
             fontColor={this.audioTextColor}
             onMouseEnter={() => {}}
             onMouseLeave={() => {}}
-            onMouseDown={() => {this.setButtonClicked('audio')}}
+            onMouseDown={() => {
+              this.setButtonClicked('audio')
+            }}
             backgroundColor={this.audioBackgroundColor}
           />
 
           <TextIconButton
             uiTransform={{
               margin: { left: 10, right: 10 },
-              padding:{left:10, right:10},
+              padding: { left: 10, right: 10 },
               width: 'auto'
             }}
             iconColor={this.controlsTextColor}
@@ -158,7 +165,9 @@ export class SettingsPage {
             fontColor={this.controlsTextColor}
             onMouseEnter={() => {}}
             onMouseLeave={() => {}}
-            onMouseDown={() => {this.setButtonClicked('controls')}}
+            onMouseDown={() => {
+              this.setButtonClicked('controls')
+            }}
             backgroundColor={this.controlsBackgroundColor}
           />
         </UiEntity>

@@ -71,8 +71,7 @@ export class MainMenu {
     this.updateButtons()
   }
 
-
-  updateButtons():void {
+  updateButtons(): void {
     this.settingsIcon = 'assets/images/navbar/Settings off.png'
     this.settingsBackground = Color4.create(0, 0, 0, 0)
     this.backpackIcon = 'assets/images/navbar/Backpack off.png'
@@ -163,8 +162,8 @@ export class MainMenu {
 
               <TextIconButton
                 uiTransform={{
-                    height: '90%',
-                    width: 4 * buttonSize,
+                  height: '90%',
+                  width: 4 * buttonSize,
                   margin: { left: 5, right: 5 }
                 }}
                 onMouseEnter={() => {
@@ -186,8 +185,8 @@ export class MainMenu {
 
               <TextIconButton
                 uiTransform={{
-                    height: '90%',
-                    width: 4 * buttonSize,
+                  height: '90%',
+                  width: 4 * buttonSize,
                   margin: { left: 5, right: 5 }
                 }}
                 onMouseEnter={() => {
@@ -225,7 +224,7 @@ export class MainMenu {
                 position: { right: 45 }
               }}
               backgroundColor={this.closeButtonColor}
-              icon={{atlasName:'icons', spriteName:'CloseIcon'}}
+              icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
             />
           </UiEntity>
           <UiEntity
