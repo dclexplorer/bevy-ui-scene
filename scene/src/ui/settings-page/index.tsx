@@ -103,7 +103,8 @@ export class SettingsPage {
               width: 'auto'
             }}
             iconColor={this.generalTextColor}
-            iconSrc={'assets/images/navbar/Settings off.png'}
+            
+            icon={{atlasName:'navbar', spriteName:'Settings off'}}
             value={'General'}
             fontSize={16}
             fontColor={this.generalTextColor}
@@ -122,7 +123,7 @@ export class SettingsPage {
               width: 'auto'
             }}
             iconColor={this.graphicsTextColor}
-            iconSrc={'assets/images/icons/Graphics.png'}
+            icon={{atlasName:'icons', spriteName:'Graphics'}}
             value={'Graphics'}
             fontSize={16}
             fontColor={this.graphicsTextColor}
@@ -140,7 +141,7 @@ export class SettingsPage {
               width: 'auto'
             }}
             iconColor={this.audioTextColor}
-            iconSrc={'assets/images/context/SpeakerOn.png'}
+            icon={{atlasName:'context', spriteName:'SpeakerOn'}}
             value={'Audio'}
             fontSize={16}
             fontColor={this.audioTextColor}
@@ -159,7 +160,7 @@ export class SettingsPage {
               width: 'auto'
             }}
             iconColor={this.controlsTextColor}
-            iconSrc={'assets/images/builder/ControlsIcn.png'}
+            icon={{atlasName:'icons', spriteName:'ControlsIcn'}}
             value={'Controls'}
             fontSize={16}
             fontColor={this.controlsTextColor}

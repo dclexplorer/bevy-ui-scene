@@ -36,7 +36,7 @@ export class UIController {
       <UiEntity>
         {/* Bottom Buttons */}
         {this.mainHud?.mainUi()}
-        {/* {this.isMainMenuVisible && this.menu?.mainUi()} */}
+        {this.isMainMenuVisible && this.menu?.mainUi()}
 
         {/* Loading & Login */}
         {/* {this.loadingAndLogin?.mainUi()} */}

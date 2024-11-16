@@ -5,6 +5,8 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
+import { Icon } from '../utils/definitions'
+import { getBackgroundFromAtlas } from '../utils/ui-utils'
 
 function TextIconButton(props: {
   // Events
@@ -17,7 +19,7 @@ function TextIconButton(props: {
   // Text
   value: string
   fontSize: number
-  iconSrc: string
+  icon: Icon
   iconSize?: number
   fontColor?: Color4
   iconColor?: Color4
@@ -59,11 +61,7 @@ function TextIconButton(props: {
           width: props.iconSize ?? 2 * props.fontSize,
           height: props.iconSize ?? 2 * props.fontSize
         }}
-        uiBackground={{
-          textureMode: 'stretch',
-          color: props.iconColor,
-          texture: { src: props.iconSrc }
-        }}
+        uiBackground={{...getBackgroundFromAtlas(props.icon), color:props.iconColor}}
       />
       {/* TEXT */}
       <UiEntity

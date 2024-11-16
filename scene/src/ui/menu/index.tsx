@@ -9,6 +9,7 @@ import Canvas from '../canvas/canvas'
 import { MapPage } from '../map-page'
 import { SettingsPage } from '../settings-page'
 import TextIconButton from '../../components/textIconButton'
+import { Icon } from '../../utils/definitions'
 
 export type MenuPage = 'map' | 'backpack' | 'settings'
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
@@ -16,9 +17,9 @@ const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 export class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
   private readonly uiController: UIController
-  private backpackIcon: string = 'assets/images/navbar/Backpack off.png'
-  private mapIcon: string = 'assets/images/navbar/Map off.png'
-  private settingsIcon: string = 'assets/images/navbar/Settings off.png'
+  private backpackIcon: Icon = {atlasName: 'navbar', spriteName:'Backpack off'}
+  private mapIcon: Icon = {atlasName: 'navbar', spriteName:'Map off'}
+  private settingsIcon: Icon = {atlasName: 'navbar', spriteName:'Settings off'}
 
   private closeButtonColor: Color4 = Color4.Black()
 
@@ -31,7 +32,7 @@ export class MainMenu {
   }
 
   mapEnter(): void {
-    this.mapIcon = 'assets/images/navbar/Map on.png'
+    this.mapIcon.spriteName = 'Map on'
     this.mapBackground = SELECTED_BUTTON_COLOR
     console.log('on mouse enter map')
   }
@@ -42,7 +43,7 @@ export class MainMenu {
   }
 
   backpackEnter(): void {
-    this.backpackIcon = 'assets/images/navbar/Backpack on.png'
+    this.backpackIcon.spriteName = 'Backpack on'
     this.backpackBackground = SELECTED_BUTTON_COLOR
   }
 
@@ -51,7 +52,7 @@ export class MainMenu {
   }
 
   settingsEnter(): void {
-    this.settingsIcon = 'assets/images/navbar/Settings on.png'
+    this.settingsIcon.spriteName = 'Settings on'
     this.settingsBackground = SELECTED_BUTTON_COLOR
     console.log('on mouse enter settings')
   }
@@ -72,23 +73,23 @@ export class MainMenu {
   }
 
   updateButtons(): void {
-    this.settingsIcon = 'assets/images/navbar/Settings off.png'
+    this.settingsIcon.spriteName = 'Settings off'
     this.settingsBackground = Color4.create(0, 0, 0, 0)
-    this.backpackIcon = 'assets/images/navbar/Backpack off.png'
+    this.backpackIcon.spriteName = 'Backpack off'
     this.backpackBackground = Color4.create(0, 0, 0, 0)
-    this.mapIcon = 'assets/images/navbar/Map off.png'
+    this.mapIcon.spriteName = 'Map off'
     this.mapBackground = Color4.create(0, 0, 0, 0)
     switch (this.activePage) {
       case 'settings':
-        this.settingsIcon = 'assets/images/navbar/Settings on.png'
+        this.settingsIcon.spriteName = 'Settings on'
         this.settingsBackground = SELECTED_BUTTON_COLOR
         break
       case 'map':
-        this.mapIcon = 'assets/images/navbar/Map on.png'
+        this.mapIcon.spriteName = 'Map on'
         this.mapBackground = SELECTED_BUTTON_COLOR
         break
       case 'backpack':
-        this.backpackIcon = 'assets/images/navbar/Backpack on.png'
+        this.backpackIcon.spriteName = 'Backpack on'
         this.backpackBackground = SELECTED_BUTTON_COLOR
     }
   }
@@ -153,7 +154,7 @@ export class MainMenu {
                   this.show('map')
                 }}
                 backgroundColor={this.mapBackground}
-                iconSrc={this.mapIcon}
+                icon={this.mapIcon}
                 value={'MAP [M]'}
                 fontSize={10}
                 iconSize={50}
@@ -176,7 +177,7 @@ export class MainMenu {
                   this.show('backpack')
                 }}
                 backgroundColor={this.backpackBackground}
-                iconSrc={this.backpackIcon}
+                icon={this.backpackIcon}
                 value={'BACKPACK [B]'}
                 fontSize={10}
                 iconSize={50}
@@ -199,7 +200,7 @@ export class MainMenu {
                   this.show('settings')
                 }}
                 backgroundColor={this.settingsBackground}
-                iconSrc={this.settingsIcon}
+                icon={this.settingsIcon}
                 value={'SETTINGS [P]'}
                 fontSize={10}
                 iconSize={50}
@@ -233,6 +234,7 @@ export class MainMenu {
               height: 'auto',
               flexGrow: 1
             }}
+            uiBackground={{color:Color4.Blue()}}
           >
             {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
             {this.activePage === 'backpack' &&
