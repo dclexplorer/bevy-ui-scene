@@ -1,13 +1,13 @@
 import { type Coords } from '@dcl/sdk/ecs'
-import { Icon, type AtlasData, type Sprite } from './definitions'
-import { UiBackgroundProps } from '@dcl/react-ecs'
+import { type Icon, type AtlasData, type Sprite } from './definitions'
+import { type UiBackgroundProps } from '@dcl/react-ecs'
 import { backpackJson } from '../json/backpack-data'
 import { navbarJson } from '../json/navbar-data'
 import { iconsJson } from '../json/icons-data'
 import { contextJson } from '../json/context-data'
 
 export function getUvs(icon: Icon): number[] {
-  let parsedJson: AtlasData | undefined = undefined
+  let parsedJson: AtlasData | undefined
   switch (icon.atlasName) {
     case 'backpack':
       parsedJson = backpackJson
@@ -18,10 +18,10 @@ export function getUvs(icon: Icon): number[] {
     case 'icons':
       parsedJson = iconsJson
       break
-      case 'context':
-        parsedJson = contextJson
-        break
-    }
+    case 'context':
+      parsedJson = contextJson
+      break
+  }
   if (parsedJson !== undefined) {
     const spriteKey = icon.spriteName + '.png'
     if (parsedJson.frames.hasOwnProperty(spriteKey)) {

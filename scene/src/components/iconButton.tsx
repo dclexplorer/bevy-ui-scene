@@ -1,12 +1,12 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import { Color4 } from '@dcl/sdk/math'
+import { type Color4 } from '@dcl/sdk/math'
 import ReactEcs, {
   type Callback,
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import ArrowToast from './arrowToast'
-import { Icon } from '../utils/definitions'
+import { type Icon } from '../utils/definitions'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 
 function IconButton(props: {
@@ -61,7 +61,7 @@ function IconButton(props: {
         }}
         uiBackground={getBackgroundFromAtlas(props.icon)}
       />
-      {props.showHint && props.hintText && (
+      {props.showHint != null && props.hintText != null && (
         <ArrowToast
           uiTransform={{
             width: 'auto',

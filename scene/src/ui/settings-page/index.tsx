@@ -24,7 +24,7 @@ export class SettingsPage {
     this.pathText = 'Settings/' + button
   }
 
-  updateButtons() {
+  updateButtons():void {
     this.generalBackgroundColor = ALMOST_WHITE
     this.graphicsBackgroundColor = ALMOST_WHITE
     this.audioBackgroundColor = ALMOST_WHITE
@@ -103,8 +103,7 @@ export class SettingsPage {
               width: 'auto'
             }}
             iconColor={this.generalTextColor}
-            
-            icon={{atlasName:'navbar', spriteName:'Settings off'}}
+            icon={{ atlasName: 'navbar', spriteName: 'Settings off' }}
             value={'General'}
             fontSize={16}
             fontColor={this.generalTextColor}
@@ -123,7 +122,7 @@ export class SettingsPage {
               width: 'auto'
             }}
             iconColor={this.graphicsTextColor}
-            icon={{atlasName:'icons', spriteName:'Graphics'}}
+            icon={{ atlasName: 'icons', spriteName: 'Graphics' }}
             value={'Graphics'}
             fontSize={16}
             fontColor={this.graphicsTextColor}
@@ -141,7 +140,7 @@ export class SettingsPage {
               width: 'auto'
             }}
             iconColor={this.audioTextColor}
-            icon={{atlasName:'context', spriteName:'SpeakerOn'}}
+            icon={{ atlasName: 'context', spriteName: 'SpeakerOn' }}
             value={'Audio'}
             fontSize={16}
             fontColor={this.audioTextColor}
@@ -160,7 +159,7 @@ export class SettingsPage {
               width: 'auto'
             }}
             iconColor={this.controlsTextColor}
-            icon={{atlasName:'icons', spriteName:'ControlsIcn'}}
+            icon={{ atlasName: 'icons', spriteName: 'ControlsIcn' }}
             value={'Controls'}
             fontSize={16}
             fontColor={this.controlsTextColor}

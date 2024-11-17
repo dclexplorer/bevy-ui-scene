@@ -37,7 +37,7 @@ function ArrowToast(props: {
     >
       {/* ARROW */}
 
-      {props.arrowSide != 'none' && (
+      {props.arrowSide !== 'none' && (
         <UiEntity
           uiTransform={{
             width: props.fontSize * 2,

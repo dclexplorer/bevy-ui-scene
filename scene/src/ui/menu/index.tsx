@@ -17,9 +17,15 @@ const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 export class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
   private readonly uiController: UIController
-  private backpackIcon: Icon = {atlasName: 'navbar', spriteName:'Backpack off'}
-  private mapIcon: Icon = {atlasName: 'navbar', spriteName:'Map off'}
-  private settingsIcon: Icon = {atlasName: 'navbar', spriteName:'Settings off'}
+  private backpackIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Backpack off'
+  }
+  private mapIcon: Icon = { atlasName: 'navbar', spriteName: 'Map off' }
+  private settingsIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Settings off'
+  }
 
   private closeButtonColor: Color4 = Color4.Black()
 
@@ -234,7 +240,7 @@ export class MainMenu {
               height: 'auto',
               flexGrow: 1
             }}
-            uiBackground={{color:Color4.Blue()}}
+            uiBackground={{ color: Color4.Blue() }}
           >
             {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
             {this.activePage === 'backpack' &&

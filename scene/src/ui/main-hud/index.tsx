@@ -185,7 +185,7 @@ export class MainHud {
     //         getBackgroundFromAtlas({atlasName:'backpack',spriteName:'EarringsIcon'})
     //       }
     //     />
-        
+
     //   </Canvas>
     // )
     return (

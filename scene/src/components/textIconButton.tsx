@@ -1,11 +1,10 @@
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, {
   type Callback,
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { Icon } from '../utils/definitions'
+import { type Icon } from '../utils/definitions'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 
 function TextIconButton(props: {
@@ -61,7 +60,10 @@ function TextIconButton(props: {
           width: props.iconSize ?? 2 * props.fontSize,
           height: props.iconSize ?? 2 * props.fontSize
         }}
-        uiBackground={{...getBackgroundFromAtlas(props.icon), color:props.iconColor}}
+        uiBackground={{
+          ...getBackgroundFromAtlas(props.icon),
+          color: props.iconColor
+        }}
       />
       {/* TEXT */}
       <UiEntity

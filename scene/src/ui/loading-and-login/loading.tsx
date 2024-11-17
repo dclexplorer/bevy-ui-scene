@@ -368,7 +368,7 @@ export class LoadingUI {
                         width: BUTTON_WIDTH / 3
                       }}
                       iconColor={RUBY}
-                      icon={{atlasName:'icons', spriteName:'LeftArrow'}}
+                      icon={{ atlasName: 'icons', spriteName: 'LeftArrow' }}
                       onMouseDown={() => {
                         console.log('click back')
                         utils.timers.setTimeout(() => {
