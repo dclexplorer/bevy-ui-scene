@@ -1,46 +1,51 @@
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-import Canvas from '../canvas/canvas'
-import { type UIController } from '../../controllers/ui.controller'
 import IconButton from '../../components/iconButton'
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { type UIController } from '../../controllers/ui.controller'
+import Canvas from '../canvas/canvas'
 // import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
-import { getBackgroundFromAtlas, getUvs } from '../../utils/ui-utils'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 export class MainHud {
   private readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
-  private bellIcon: { atlasName: string; spriteName: string } = {
+  readonly bellIcon: { atlasName: string; spriteName: string } = {
     atlasName: 'navbar',
     spriteName: 'Notifications off'
   }
-  private backpackIcon: { atlasName: string; spriteName: string } = {
+
+  readonly backpackIcon: { atlasName: string; spriteName: string } = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'
   }
-  private walletIcon: { atlasName: string; spriteName: string } = {
+
+  readonly walletIcon: { atlasName: string; spriteName: string } = {
     atlasName: 'navbar',
     spriteName: 'Wallet'
   }
-  private mapIcon: { atlasName: string; spriteName: string } = {
+
+  readonly mapIcon: { atlasName: string; spriteName: string } = {
     atlasName: 'navbar',
     spriteName: 'Map off'
   }
-  private settingsIcon: { atlasName: string; spriteName: string } = {
+
+  readonly settingsIcon: { atlasName: string; spriteName: string } = {
     atlasName: 'navbar',
     spriteName: 'Settings off'
   }
-  private helpIcon: { atlasName: string; spriteName: string } = {
+
+  private readonly helpIcon: { atlasName: string; spriteName: string } = {
     atlasName: 'navbar',
     spriteName: 'HelpIcon Off'
   }
+
   // private friendsIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Friends off'}
   // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off'}
   // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff'}
-  private emotesIcon: { atlasName: string; spriteName: string } = {
+  private readonly emotesIcon: { atlasName: string; spriteName: string } = {
     atlasName: 'navbar',
     spriteName: 'Emote off'
   }

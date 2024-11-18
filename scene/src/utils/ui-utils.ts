@@ -24,7 +24,7 @@ export function getUvs(icon: Icon): number[] {
   }
   if (parsedJson !== undefined) {
     const spriteKey = icon.spriteName + '.png'
-    if (parsedJson.frames.hasOwnProperty(spriteKey)) {
+    if (Object.prototype.hasOwnProperty.call(parsedJson.frames, spriteKey)) {
       const sprite: Sprite = parsedJson.frames[spriteKey]
       const A: Coords = {
         x: sprite.frame.x / parsedJson.meta.size.w,

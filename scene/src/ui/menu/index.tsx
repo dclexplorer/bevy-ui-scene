@@ -2,14 +2,11 @@ import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
 import IconButton from '../../components/iconButton'
-import { UIController } from '../../controllers/ui.controller'
-import { ALMOST_BLACK } from '../../utils/constants'
-import { BackpackPage } from '../backpack-page'
-import Canvas from '../canvas/canvas'
-import { MapPage } from '../map-page'
-import { SettingsPage } from '../settings-page'
 import TextIconButton from '../../components/textIconButton'
-import { Icon } from '../../utils/definitions'
+import { type UIController } from '../../controllers/ui.controller'
+import { ALMOST_BLACK } from '../../utils/constants'
+import { type Icon } from '../../utils/definitions'
+import Canvas from '../canvas/canvas'
 
 export type MenuPage = 'map' | 'backpack' | 'settings'
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
@@ -17,12 +14,13 @@ const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 export class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
   private readonly uiController: UIController
-  private backpackIcon: Icon = {
+  readonly backpackIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'
   }
-  private mapIcon: Icon = { atlasName: 'navbar', spriteName: 'Map off' }
-  private settingsIcon: Icon = {
+
+  readonly mapIcon: Icon = { atlasName: 'navbar', spriteName: 'Map off' }
+  readonly settingsIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Settings off'
   }
@@ -105,7 +103,7 @@ export class MainMenu {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
+    // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
     const buttonSize: number = Math.max(canvasInfo.height * 0.024, 46)
 
     return (

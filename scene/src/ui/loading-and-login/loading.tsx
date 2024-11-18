@@ -34,8 +34,8 @@ export class LoadingUI {
   private firstButtonBackground: Color4 = RUBY
   private secondButtonBackground: Color4 = ALMOST_BLACK
 
-  private firstButtonLoading: boolean = false
-  private secondButtonLoading: boolean = false
+  readonly firstButtonLoading: boolean = false
+  readonly secondButtonLoading: boolean = false
 
   private titleText: string = ''
   private subtitleText: string = ''
@@ -82,7 +82,7 @@ export class LoadingUI {
     }, 500)
   }
 
-  updateLayout() {
+  updateLayout(): void {
     this.firstButtonBackground = RUBY
     this.secondButtonBackground = ALMOST_BLACK
 
@@ -304,7 +304,7 @@ export class LoadingUI {
                     this.fetchData()
                   }}
                 />
-                {/* AVATAR PANEL*/}
+                {/* AVATAR PANEL */}
                 {this.status === 'ready-to-start' && (
                   <UiEntity
                     uiTransform={{

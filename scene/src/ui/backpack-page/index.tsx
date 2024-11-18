@@ -1,4 +1,3 @@
-import { Color4 } from '@dcl/ecs-math'
 import ReactEcs, { UiEntity } from '@dcl/react-ecs'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 

@@ -1,4 +1,4 @@
-import { AtlasData } from '../utils/definitions'
+import { type AtlasData } from '../utils/definitions'
 
 export const navbarJson: AtlasData = {
   frames: {

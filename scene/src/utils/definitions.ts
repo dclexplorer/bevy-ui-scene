@@ -7,7 +7,7 @@ export type SpriteFromAtlas = {
 }
 
 export type AtlasData = {
-  frames: { [key: string]: Sprite }
+  frames: Record<string, Sprite>
   meta: {
     size: { w: number; h: number }
     [key: string]: any

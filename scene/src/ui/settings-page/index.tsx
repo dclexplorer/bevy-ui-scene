@@ -24,7 +24,7 @@ export class SettingsPage {
     this.pathText = 'Settings/' + button
   }
 
-  updateButtons():void {
+  updateButtons(): void {
     this.generalBackgroundColor = ALMOST_WHITE
     this.graphicsBackgroundColor = ALMOST_WHITE
     this.audioBackgroundColor = ALMOST_WHITE
