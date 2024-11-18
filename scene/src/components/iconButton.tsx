@@ -61,7 +61,7 @@ function IconButton(props: {
         }}
         uiBackground={getBackgroundFromAtlas(props.icon)}
       />
-      {props.showHint != null && props.hintText != null && (
+      {props.showHint !== false && props.hintText !== undefined && (
         <ArrowToast
           uiTransform={{
             width: 'auto',
