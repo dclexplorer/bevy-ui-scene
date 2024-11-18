@@ -2,8 +2,13 @@
   "compilerOptions": {
     "jsx": "react",
     "allowJs": true,
-    "strict": true
+    "strict": true,
+    "moduleResolution": "node",
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/ui/map-page"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/ui/map-page", "assets/images/atlas/*.json"],
   "extends": "@dcl/sdk/types/tsconfig.ecs7.json"
 }

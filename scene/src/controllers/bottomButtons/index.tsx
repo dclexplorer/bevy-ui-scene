@@ -1,5 +1,5 @@
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-import { openExternalUrl } from '~system/RestrictedActions'
+// import { openExternalUrl } from '~system/RestrictedActions'
 import BottomButtons from '../../ui/main-hud/bottomButtons'
 
 export class BottomButtonsController {
@@ -27,6 +27,6 @@ export class BottomButtonsController {
   }
 
   openLink(url: string): void {
-    openExternalUrl({ url }).catch(console.error)
+    // openExternalUrl({ url }).catch(console.error)
   }
 }

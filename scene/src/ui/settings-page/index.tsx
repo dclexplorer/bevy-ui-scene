@@ -14,14 +14,17 @@ export class SettingsPage {
   private audioBackgroundColor: Color4 = ALMOST_WHITE
   private controlsBackgroundColor: Color4 = ALMOST_WHITE
   private pathText: string = ''
-  private buttonClicked: 'general'|'audio'|'graphics'|'controls' = 'general'
+  private buttonClicked: 'general' | 'audio' | 'graphics' | 'controls' =
+    'general'
 
-  setButtonClicked(button: 'general'|'audio'|'graphics'|'controls'):void{
+  setButtonClicked(
+    button: 'general' | 'audio' | 'graphics' | 'controls'
+  ): void {
     this.buttonClicked = button
-    this.pathText = 'Settings/'+button
+    this.pathText = 'Settings/' + button
   }
 
-  updateButtons() {
+  updateButtons(): void {
     this.generalBackgroundColor = ALMOST_WHITE
     this.graphicsBackgroundColor = ALMOST_WHITE
     this.audioBackgroundColor = ALMOST_WHITE
@@ -50,8 +53,6 @@ export class SettingsPage {
         break
     }
   }
-
-
 
   mainUi(): ReactEcs.JSX.Element | null {
     this.updateButtons()
@@ -98,67 +99,75 @@ export class SettingsPage {
           <TextIconButton
             uiTransform={{
               margin: { left: 10, right: 10 },
-              padding:{left:10, right:10},
+              padding: { left: 10, right: 10 },
               width: 'auto'
             }}
             iconColor={this.generalTextColor}
-            iconSrc={'assets/images/navbar/Settings off.png'}
+            icon={{ atlasName: 'navbar', spriteName: 'Settings off' }}
             value={'General'}
             fontSize={16}
             fontColor={this.generalTextColor}
             onMouseEnter={() => {}}
             onMouseLeave={() => {}}
-            onMouseDown={() => {this.setButtonClicked('general')}}
+            onMouseDown={() => {
+              this.setButtonClicked('general')
+            }}
             backgroundColor={this.generalBackgroundColor}
           />
 
           <TextIconButton
             uiTransform={{
               margin: { left: 10, right: 10 },
-              padding:{left:10, right:10},
+              padding: { left: 10, right: 10 },
               width: 'auto'
             }}
             iconColor={this.graphicsTextColor}
-            iconSrc={'assets/images/icons/Graphics.png'}
+            icon={{ atlasName: 'icons', spriteName: 'Graphics' }}
             value={'Graphics'}
             fontSize={16}
             fontColor={this.graphicsTextColor}
             onMouseEnter={() => {}}
             onMouseLeave={() => {}}
-            onMouseDown={() => {this.setButtonClicked('graphics')}}
+            onMouseDown={() => {
+              this.setButtonClicked('graphics')
+            }}
             backgroundColor={this.graphicsBackgroundColor}
           />
           <TextIconButton
             uiTransform={{
               margin: { left: 10, right: 10 },
-              padding:{left:10, right:10},
+              padding: { left: 10, right: 10 },
               width: 'auto'
             }}
             iconColor={this.audioTextColor}
-            iconSrc={'assets/images/context/SpeakerOn.png'}
+            icon={{ atlasName: 'context', spriteName: 'SpeakerOn' }}
             value={'Audio'}
             fontSize={16}
             fontColor={this.audioTextColor}
             onMouseEnter={() => {}}
             onMouseLeave={() => {}}
-            onMouseDown={() => {this.setButtonClicked('audio')}}
+            onMouseDown={() => {
+              this.setButtonClicked('audio')
+            }}
             backgroundColor={this.audioBackgroundColor}
           />
 
           <TextIconButton
             uiTransform={{
               margin: { left: 10, right: 10 },
-              padding:{left:10, right:10},
+              padding: { left: 10, right: 10 },
               width: 'auto'
             }}
             iconColor={this.controlsTextColor}
-            iconSrc={'assets/images/builder/ControlsIcn.png'}
+            icon={{ atlasName: 'icons', spriteName: 'ControlsIcn' }}
             value={'Controls'}
             fontSize={16}
             fontColor={this.controlsTextColor}
             onMouseEnter={() => {}}
             onMouseLeave={() => {}}
-            onMouseDown={() => {this.setButtonClicked('controls')}}
+            onMouseDown={() => {
+              this.setButtonClicked('controls')
+            }}
             backgroundColor={this.controlsBackgroundColor}
           />
         </UiEntity>

@@ -1,4 +1,3 @@
-
 export type BevyApiInterface = {
-    openSceneLogger: () => Promise<void>
+  openSceneLogger: () => Promise<void>
 }

@@ -2,7 +2,7 @@ import * as utils from '@dcl-sdk/utils'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-import { openExternalUrl } from '~system/RestrictedActions'
+// import { openExternalUrl } from '~system/RestrictedActions'
 import ArrowToast from '../../components/arrowToast'
 import TextButton from '../../components/textButton'
 import TextIconButton from '../../components/textIconButton'
@@ -34,8 +34,8 @@ export class LoadingUI {
   private firstButtonBackground: Color4 = RUBY
   private secondButtonBackground: Color4 = ALMOST_BLACK
 
-  private firstButtonLoading: boolean = false
-  private secondButtonLoading: boolean = false
+  readonly firstButtonLoading: boolean = false
+  readonly secondButtonLoading: boolean = false
 
   private titleText: string = ''
   private subtitleText: string = ''
@@ -82,7 +82,7 @@ export class LoadingUI {
     }, 500)
   }
 
-  updateLayout() {
+  updateLayout(): void {
     this.firstButtonBackground = RUBY
     this.secondButtonBackground = ALMOST_BLACK
 
@@ -183,7 +183,7 @@ export class LoadingUI {
   }
 
   async openLink(url: string): Promise<void> {
-    await openExternalUrl({ url })
+    // await openExternalUrl({ url })
   }
 
   onMouseEnterFirstButton(): void {
@@ -304,7 +304,7 @@ export class LoadingUI {
                     this.fetchData()
                   }}
                 />
-                {/* AVATAR PANEL*/}
+                {/* AVATAR PANEL */}
                 {this.status === 'ready-to-start' && (
                   <UiEntity
                     uiTransform={{
@@ -367,9 +367,8 @@ export class LoadingUI {
                         display: this.isBackButtonVisible ? 'flex' : 'none',
                         width: BUTTON_WIDTH / 3
                       }}
-
                       iconColor={RUBY}
-                      iconSrc={'assets/images/icons/LeftArrow.png'}
+                      icon={{ atlasName: 'icons', spriteName: 'LeftArrow' }}
                       onMouseDown={() => {
                         console.log('click back')
                         utils.timers.setTimeout(() => {
@@ -377,14 +376,18 @@ export class LoadingUI {
                           this.updateLayout()
                           this.toastOpen = false
                         }, 100)
-                      } }
+                      }}
                       value={'BACK'}
                       fontSize={BUTTON_FONT_SIZE * 0.7}
-                      fontColor={ALMOST_BLACK} onMouseEnter={function (): void {
+                      fontColor={ALMOST_BLACK}
+                      onMouseEnter={function (): void {
                         throw new Error('Function not implemented.')
-                      } } onMouseLeave={function (): void {
+                      }}
+                      onMouseLeave={function (): void {
                         throw new Error('Function not implemented.')
-                      } } backgroundColor={ALMOST_WHITE}                    />
+                      }}
+                      backgroundColor={ALMOST_WHITE}
+                    />
                     {/* LOGO DECENTRALAND */}
                     <UiEntity
                       uiTransform={{
