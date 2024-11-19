@@ -25,22 +25,22 @@ export class SettingsPage {
     this.updateButtons()
   }
 
-  generalEnter():void{
+  generalEnter(): void {
     this.generalBackgroundColor = ORANGE
     this.generalTextColor = ALMOST_WHITE
   }
 
-  audioEnter():void{
+  audioEnter(): void {
     this.audioBackgroundColor = ORANGE
-        this.audioTextColor = ALMOST_WHITE
+    this.audioTextColor = ALMOST_WHITE
   }
 
-  graphicsEnter():void{
+  graphicsEnter(): void {
     this.graphicsBackgroundColor = ORANGE
     this.graphicsTextColor = ALMOST_WHITE
   }
 
-  controlsEnter():void{
+  controlsEnter(): void {
     this.controlsBackgroundColor = ORANGE
     this.controlsTextColor = ALMOST_WHITE
   }
@@ -123,8 +123,12 @@ export class SettingsPage {
             value={'General'}
             fontSize={16}
             fontColor={this.generalTextColor}
-            onMouseEnter={() => {this.generalEnter()}}
-            onMouseLeave={() => {this.updateButtons()}}
+            onMouseEnter={() => {
+              this.generalEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
             onMouseDown={() => {
               this.setButtonClicked('general')
             }}
@@ -142,8 +146,12 @@ export class SettingsPage {
             value={'Graphics'}
             fontSize={16}
             fontColor={this.graphicsTextColor}
-            onMouseEnter={() => {this.graphicsEnter()}}
-            onMouseLeave={() => {this.updateButtons()}}
+            onMouseEnter={() => {
+              this.graphicsEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
             onMouseDown={() => {
               this.setButtonClicked('graphics')
             }}
@@ -160,8 +168,12 @@ export class SettingsPage {
             value={'Audio'}
             fontSize={16}
             fontColor={this.audioTextColor}
-            onMouseEnter={() => {this.audioEnter()}}
-            onMouseLeave={() => {this.updateButtons()}}
+            onMouseEnter={() => {
+              this.audioEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
             onMouseDown={() => {
               this.setButtonClicked('audio')
             }}
@@ -179,8 +191,12 @@ export class SettingsPage {
             value={'Controls'}
             fontSize={16}
             fontColor={this.controlsTextColor}
-            onMouseEnter={() => {this.controlsEnter()}}
-            onMouseLeave={() => {this.updateButtons()}}
+            onMouseEnter={() => {
+              this.controlsEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
             onMouseDown={() => {
               this.setButtonClicked('controls')
             }}

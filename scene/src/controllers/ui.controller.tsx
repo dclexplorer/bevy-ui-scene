@@ -8,7 +8,7 @@ import { MapPage } from '../ui/map-page'
 import { SettingsPage } from '../ui/settings-page'
 
 export class UIController {
-  public isMainMenuVisible: boolean = true
+  public isMainMenuVisible: boolean = false
   public settingsPage: SettingsPage
   public backpackPage: BackpackPage
   public mapPage: MapPage
@@ -34,12 +34,11 @@ export class UIController {
   ui(): ReactEcs.JSX.Element {
     return (
       <UiEntity>
-        {/* Bottom Buttons */}
         {this.mainHud?.mainUi()}
         {this.isMainMenuVisible && this.menu?.mainUi()}
 
         {/* Loading & Login */}
-        {/* {this.loadingAndLogin?.mainUi()} */}
+        {this.loadingAndLogin?.mainUi()}
       </UiEntity>
     )
   }

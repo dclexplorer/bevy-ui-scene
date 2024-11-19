@@ -148,7 +148,7 @@ export class MainHud {
 
     const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
     const buttonSize: number = sideBarHeight * 0.9
-    const buttonMargin: Partial<Position> = {top:5, bottom:5}
+    const buttonMargin: Partial<Position> = { top: 5, bottom: 5 }
 
     return (
       <Canvas>
@@ -186,7 +186,11 @@ export class MainHud {
               }}
             >
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
                 onMouseEnter={() => {
                   this.walletEnter()
                 }}
@@ -203,7 +207,11 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
                 onMouseEnter={() => {
                   this.notificationsEnter()
                 }}
@@ -225,7 +233,11 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
                 onMouseEnter={() => {
                   this.mapEnter()
                 }}
@@ -242,7 +254,11 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
                 onMouseEnter={() => {
                   this.backpackEnter()
                 }}
@@ -259,7 +275,11 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
                 onMouseEnter={() => {
                   this.settingsEnter()
                 }}
@@ -281,7 +301,11 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
                 onMouseEnter={() => {
                   this.helpEnter()
                 }}
@@ -337,7 +361,11 @@ export class MainHud {
                 showHint={this.friendsHint} /> */}
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
                 onMouseEnter={() => {
                   this.emotesEnter()
                 }}
