@@ -1,6 +1,6 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
-import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, { Position, UiEntity } from '@dcl/sdk/react-ecs'
 import IconButton from '../../components/iconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../canvas/canvas'
@@ -82,18 +82,10 @@ export class MainHud {
     this.walletHint = true
   }
 
-  walletLeave(): void {
-    this.updateButtons()
-  }
-
   notificationsEnter(): void {
     this.bellIcon.spriteName = 'Notifications on'
     this.bellBackground = SELECTED_BUTTON_COLOR
     this.bellHint = true
-  }
-
-  notificationsLeave(): void {
-    this.updateButtons()
   }
 
   mapEnter(): void {
@@ -102,18 +94,10 @@ export class MainHud {
     this.mapHint = true
   }
 
-  mapLeave(): void {
-    this.updateButtons()
-  }
-
   backpackEnter(): void {
     this.backpackIcon.spriteName = 'Backpack on'
     this.backpackBackground = SELECTED_BUTTON_COLOR
     this.backpackHint = true
-  }
-
-  backpackLeave(): void {
-    this.updateButtons()
   }
 
   settingsEnter(): void {
@@ -122,28 +106,16 @@ export class MainHud {
     this.settingsHint = true
   }
 
-  settingsLeave(): void {
-    this.updateButtons()
-  }
-
   helpEnter(): void {
     this.helpIcon.spriteName = 'HelpIcon On'
     this.helpBackground = SELECTED_BUTTON_COLOR
     this.helpHint = true
   }
 
-  helpLeave(): void {
-    this.updateButtons()
-  }
-
   emotesEnter(): void {
     this.emotesIcon.spriteName = 'Emote on'
     this.emotesBackground = SELECTED_BUTTON_COLOR
     this.emotesHint = true
-  }
-
-  emotesLeave(): void {
-    this.updateButtons()
   }
 
   updateButtons(): void {
@@ -176,23 +148,8 @@ export class MainHud {
 
     const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
     const buttonSize: number = sideBarHeight * 0.9
+    const buttonMargin: Partial<Position> = {top:5, bottom:5}
 
-    // return (
-    //   <Canvas>
-    //     <UiEntity
-    //       uiTransform={{
-    //         width: '20%',
-    //         height: '20%',
-    //         position: { left: '10%', top: '50%' },
-    //         positionType: 'absolute'
-    //       }}
-    //       uiBackground={
-    //         getBackgroundFromAtlas({atlasName:'backpack',spriteName:'EarringsIcon'})
-    //       }
-    //     />
-
-    //   </Canvas>
-    // )
     return (
       <Canvas>
         <UiEntity
@@ -229,12 +186,12 @@ export class MainHud {
               }}
             >
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize }}
+                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
                 onMouseEnter={() => {
                   this.walletEnter()
                 }}
                 onMouseLeave={() => {
-                  this.walletLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   console.log('Wallet clicked')
@@ -246,12 +203,12 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize }}
+                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
                 onMouseEnter={() => {
                   this.notificationsEnter()
                 }}
                 onMouseLeave={() => {
-                  this.notificationsLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   console.log('clicked')
@@ -268,12 +225,12 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize }}
+                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
                 onMouseEnter={() => {
                   this.mapEnter()
                 }}
                 onMouseLeave={() => {
-                  this.mapLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   this.uiController.menu?.show('map')
@@ -285,12 +242,12 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize }}
+                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
                 onMouseEnter={() => {
                   this.backpackEnter()
                 }}
                 onMouseLeave={() => {
-                  this.backpackLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   this.uiController.menu?.show('backpack')
@@ -302,12 +259,12 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize }}
+                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
                 onMouseEnter={() => {
                   this.settingsEnter()
                 }}
                 onMouseLeave={() => {
-                  this.settingsLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   this.uiController.menu?.show('settings')
@@ -324,12 +281,12 @@ export class MainHud {
               />
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize }}
+                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
                 onMouseEnter={() => {
                   this.helpEnter()
                 }}
                 onMouseLeave={() => {
-                  this.helpLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   BevyApi.openSceneLogger().catch(console.error)
@@ -363,7 +320,7 @@ export class MainHud {
 
                 <IconButton uiTransform={{height:buttonSize, width:buttonSize}}
                 onMouseEnter={()=>{this.experiencesEnter()}}
-                onMouseLeave={()=>{this.experiencesLeave()}}
+                onMouseLeave={()=>{this.updateButtons()}}
                 onMouseDown={()=>{console.log('clicked')}}
                 backgroundColor={this.experiencesBackground}
                 icon={this.experiencesIcon}
@@ -372,7 +329,7 @@ export class MainHud {
 
                 <IconButton uiTransform={{height:buttonSize, width:buttonSize}}
                 onMouseEnter={()=>{this.friendsEnter()}}
-                onMouseLeave={()=>{this.friendsLeave()}}
+                onMouseLeave={()=>{this.updateButtons()}}
                 onMouseDown={()=>{console.log('Wallet clicked')}}
                 backgroundColor={this.friendsBackground}
                 icon={this.friendsIcon}
@@ -380,12 +337,12 @@ export class MainHud {
                 showHint={this.friendsHint} /> */}
 
               <IconButton
-                uiTransform={{ height: buttonSize, width: buttonSize }}
+                uiTransform={{ height: buttonSize, width: buttonSize, margin: buttonMargin }}
                 onMouseEnter={() => {
                   this.emotesEnter()
                 }}
                 onMouseLeave={() => {
-                  this.emotesLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   console.log('clicked')

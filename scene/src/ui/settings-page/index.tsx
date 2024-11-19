@@ -5,15 +5,15 @@ import TextIconButton from '../../components/textIconButton'
 import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../utils/constants'
 
 export class SettingsPage {
-  private generalTextColor: Color4 = ALMOST_BLACK
+  private generalTextColor: Color4 = ALMOST_WHITE
   private graphicsTextColor: Color4 = ALMOST_BLACK
   private audioTextColor: Color4 = ALMOST_BLACK
   private controlsTextColor: Color4 = ALMOST_BLACK
-  private generalBackgroundColor: Color4 = ALMOST_WHITE
+  private generalBackgroundColor: Color4 = ORANGE
   private graphicsBackgroundColor: Color4 = ALMOST_WHITE
   private audioBackgroundColor: Color4 = ALMOST_WHITE
   private controlsBackgroundColor: Color4 = ALMOST_WHITE
-  private pathText: string = ''
+  private pathText: string = 'Settings/general'
   private buttonClicked: 'general' | 'audio' | 'graphics' | 'controls' =
     'general'
 
@@ -22,6 +22,27 @@ export class SettingsPage {
   ): void {
     this.buttonClicked = button
     this.pathText = 'Settings/' + button
+    this.updateButtons()
+  }
+
+  generalEnter():void{
+    this.generalBackgroundColor = ORANGE
+    this.generalTextColor = ALMOST_WHITE
+  }
+
+  audioEnter():void{
+    this.audioBackgroundColor = ORANGE
+        this.audioTextColor = ALMOST_WHITE
+  }
+
+  graphicsEnter():void{
+    this.graphicsBackgroundColor = ORANGE
+    this.graphicsTextColor = ALMOST_WHITE
+  }
+
+  controlsEnter():void{
+    this.controlsBackgroundColor = ORANGE
+    this.controlsTextColor = ALMOST_WHITE
   }
 
   updateButtons(): void {
@@ -36,26 +57,21 @@ export class SettingsPage {
 
     switch (this.buttonClicked) {
       case 'general':
-        this.generalBackgroundColor = ORANGE
-        this.generalTextColor = ALMOST_WHITE
+        this.generalEnter()
         break
       case 'audio':
-        this.audioBackgroundColor = ORANGE
-        this.audioTextColor = ALMOST_WHITE
+        this.audioEnter()
         break
       case 'graphics':
-        this.graphicsBackgroundColor = ORANGE
-        this.graphicsTextColor = ALMOST_WHITE
+        this.graphicsEnter()
         break
       case 'controls':
-        this.controlsBackgroundColor = ORANGE
-        this.controlsTextColor = ALMOST_WHITE
+        this.controlsEnter()
         break
     }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
-    this.updateButtons()
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
@@ -107,8 +123,8 @@ export class SettingsPage {
             value={'General'}
             fontSize={16}
             fontColor={this.generalTextColor}
-            onMouseEnter={() => {}}
-            onMouseLeave={() => {}}
+            onMouseEnter={() => {this.generalEnter()}}
+            onMouseLeave={() => {this.updateButtons()}}
             onMouseDown={() => {
               this.setButtonClicked('general')
             }}
@@ -126,8 +142,8 @@ export class SettingsPage {
             value={'Graphics'}
             fontSize={16}
             fontColor={this.graphicsTextColor}
-            onMouseEnter={() => {}}
-            onMouseLeave={() => {}}
+            onMouseEnter={() => {this.graphicsEnter()}}
+            onMouseLeave={() => {this.updateButtons()}}
             onMouseDown={() => {
               this.setButtonClicked('graphics')
             }}
@@ -144,8 +160,8 @@ export class SettingsPage {
             value={'Audio'}
             fontSize={16}
             fontColor={this.audioTextColor}
-            onMouseEnter={() => {}}
-            onMouseLeave={() => {}}
+            onMouseEnter={() => {this.audioEnter()}}
+            onMouseLeave={() => {this.updateButtons()}}
             onMouseDown={() => {
               this.setButtonClicked('audio')
             }}
@@ -163,8 +179,8 @@ export class SettingsPage {
             value={'Controls'}
             fontSize={16}
             fontColor={this.controlsTextColor}
-            onMouseEnter={() => {}}
-            onMouseLeave={() => {}}
+            onMouseEnter={() => {this.controlsEnter()}}
+            onMouseLeave={() => {this.updateButtons()}}
             onMouseDown={() => {
               this.setButtonClicked('controls')
             }}
