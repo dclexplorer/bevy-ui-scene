@@ -9,10 +9,12 @@ export class SettingsPage {
   private graphicsTextColor: Color4 = ALMOST_BLACK
   private audioTextColor: Color4 = ALMOST_BLACK
   private controlsTextColor: Color4 = ALMOST_BLACK
+  private restoreTextColor: Color4 = Color4.Red()
   private generalBackgroundColor: Color4 = ORANGE
   private graphicsBackgroundColor: Color4 = ALMOST_WHITE
   private audioBackgroundColor: Color4 = ALMOST_WHITE
   private controlsBackgroundColor: Color4 = ALMOST_WHITE
+  private restoreBackgroundColor: Color4 = ALMOST_WHITE
   private pathText: string = 'Settings/general'
   private buttonClicked: 'general' | 'audio' | 'graphics' | 'controls' =
     'general'
@@ -45,6 +47,11 @@ export class SettingsPage {
     this.controlsTextColor = ALMOST_WHITE
   }
 
+  restoreEnter(): void {
+    this.restoreBackgroundColor = Color4.Red()
+    this.restoreTextColor = ALMOST_WHITE
+  }
+
   updateButtons(): void {
     this.generalBackgroundColor = ALMOST_WHITE
     this.graphicsBackgroundColor = ALMOST_WHITE
@@ -54,6 +61,8 @@ export class SettingsPage {
     this.graphicsTextColor = ALMOST_BLACK
     this.audioTextColor = ALMOST_BLACK
     this.controlsTextColor = ALMOST_BLACK
+    this.restoreTextColor = Color4.Red()
+    this.restoreBackgroundColor = ALMOST_WHITE
 
     switch (this.buttonClicked) {
       case 'general':
@@ -94,7 +103,7 @@ export class SettingsPage {
             width: '100%',
             height: '8%',
             flexDirection: 'row',
-            justifyContent: 'flex-start',
+            justifyContent: 'space-between',
             alignItems: 'center',
             padding: { left: '10%' }
           }}
@@ -103,105 +112,144 @@ export class SettingsPage {
           <UiEntity
             uiTransform={{
               width: 'auto',
+              height: 'auto',
+              flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            }}
+          >
+            <UiEntity
+              uiTransform={{
+                width: 'auto',
+                height: 16
+              }}
+              uiText={{
+                value: 'Settings',
+                textAlign: 'middle-left',
+                fontSize: 30
+              }}
+            />
+
+            <TextIconButton
+              uiTransform={{
+                margin: { left: 10, right: 10 },
+                padding: { left: 10, right: 10 },
+                width: 'auto'
+              }}
+              iconColor={this.generalTextColor}
+              icon={{ atlasName: 'navbar', spriteName: 'Settings off' }}
+              value={'General'}
+              fontSize={16}
+              fontColor={this.generalTextColor}
+              onMouseEnter={() => {
+                this.generalEnter()
+              }}
+              onMouseLeave={() => {
+                this.updateButtons()
+              }}
+              onMouseDown={() => {
+                this.setButtonClicked('general')
+              }}
+              backgroundColor={this.generalBackgroundColor}
+            />
+
+            <TextIconButton
+              uiTransform={{
+                margin: { left: 10, right: 10 },
+                padding: { left: 10, right: 10 },
+                width: 'auto'
+              }}
+              iconColor={this.graphicsTextColor}
+              icon={{ atlasName: 'icons', spriteName: 'Graphics' }}
+              value={'Graphics'}
+              fontSize={16}
+              fontColor={this.graphicsTextColor}
+              onMouseEnter={() => {
+                this.graphicsEnter()
+              }}
+              onMouseLeave={() => {
+                this.updateButtons()
+              }}
+              onMouseDown={() => {
+                this.setButtonClicked('graphics')
+              }}
+              backgroundColor={this.graphicsBackgroundColor}
+            />
+            <TextIconButton
+              uiTransform={{
+                margin: { left: 10, right: 10 },
+                padding: { left: 10, right: 10 },
+                width: 'auto'
+              }}
+              iconColor={this.audioTextColor}
+              icon={{ atlasName: 'context', spriteName: 'SpeakerOn' }}
+              value={'Audio'}
+              fontSize={16}
+              fontColor={this.audioTextColor}
+              onMouseEnter={() => {
+                this.audioEnter()
+              }}
+              onMouseLeave={() => {
+                this.updateButtons()
+              }}
+              onMouseDown={() => {
+                this.setButtonClicked('audio')
+              }}
+              backgroundColor={this.audioBackgroundColor}
+            />
+
+            <TextIconButton
+              uiTransform={{
+                margin: { left: 10, right: 10 },
+                padding: { left: 10, right: 10 },
+                width: 'auto'
+              }}
+              iconColor={this.controlsTextColor}
+              icon={{ atlasName: 'icons', spriteName: 'ControlsIcn' }}
+              value={'Controls'}
+              fontSize={16}
+              fontColor={this.controlsTextColor}
+              onMouseEnter={() => {
+                this.controlsEnter()
+              }}
+              onMouseLeave={() => {
+                this.updateButtons()
+              }}
+              onMouseDown={() => {
+                this.setButtonClicked('controls')
+              }}
+              backgroundColor={this.controlsBackgroundColor}
+            />
+          </UiEntity>
+          <UiEntity
+            uiTransform={{
+              width: 'auto',
               height: 'auto'
             }}
-            uiText={{
-              value: 'Settings',
-              textAlign: 'middle-left',
-              fontSize: 30
-            }}
-          />
-
-          <TextIconButton
-            uiTransform={{
-              margin: { left: 10, right: 10 },
-              padding: { left: 10, right: 10 },
-              width: 'auto'
-            }}
-            iconColor={this.generalTextColor}
-            icon={{ atlasName: 'navbar', spriteName: 'Settings off' }}
-            value={'General'}
-            fontSize={16}
-            fontColor={this.generalTextColor}
-            onMouseEnter={() => {
-              this.generalEnter()
-            }}
-            onMouseLeave={() => {
-              this.updateButtons()
-            }}
-            onMouseDown={() => {
-              this.setButtonClicked('general')
-            }}
-            backgroundColor={this.generalBackgroundColor}
-          />
-
-          <TextIconButton
-            uiTransform={{
-              margin: { left: 10, right: 10 },
-              padding: { left: 10, right: 10 },
-              width: 'auto'
-            }}
-            iconColor={this.graphicsTextColor}
-            icon={{ atlasName: 'icons', spriteName: 'Graphics' }}
-            value={'Graphics'}
-            fontSize={16}
-            fontColor={this.graphicsTextColor}
-            onMouseEnter={() => {
-              this.graphicsEnter()
-            }}
-            onMouseLeave={() => {
-              this.updateButtons()
-            }}
-            onMouseDown={() => {
-              this.setButtonClicked('graphics')
-            }}
-            backgroundColor={this.graphicsBackgroundColor}
-          />
-          <TextIconButton
-            uiTransform={{
-              margin: { left: 10, right: 10 },
-              padding: { left: 10, right: 10 },
-              width: 'auto'
-            }}
-            iconColor={this.audioTextColor}
-            icon={{ atlasName: 'context', spriteName: 'SpeakerOn' }}
-            value={'Audio'}
-            fontSize={16}
-            fontColor={this.audioTextColor}
-            onMouseEnter={() => {
-              this.audioEnter()
-            }}
-            onMouseLeave={() => {
-              this.updateButtons()
-            }}
-            onMouseDown={() => {
-              this.setButtonClicked('audio')
-            }}
-            backgroundColor={this.audioBackgroundColor}
-          />
-
-          <TextIconButton
-            uiTransform={{
-              margin: { left: 10, right: 10 },
-              padding: { left: 10, right: 10 },
-              width: 'auto'
-            }}
-            iconColor={this.controlsTextColor}
-            icon={{ atlasName: 'icons', spriteName: 'ControlsIcn' }}
-            value={'Controls'}
-            fontSize={16}
-            fontColor={this.controlsTextColor}
-            onMouseEnter={() => {
-              this.controlsEnter()
-            }}
-            onMouseLeave={() => {
-              this.updateButtons()
-            }}
-            onMouseDown={() => {
-              this.setButtonClicked('controls')
-            }}
-            backgroundColor={this.controlsBackgroundColor}
-          />
+          >
+            <TextIconButton
+              uiTransform={{
+                margin: { left: 10, right: 10 },
+                padding: { left: 10, right: 10 },
+                width: 'auto'
+              }}
+              iconColor={this.restoreTextColor}
+              icon={{ atlasName: 'icons', spriteName: 'RotateIcn' }}
+              value={'RESET TO DEFAULT'}
+              fontSize={16}
+              fontColor={this.restoreTextColor}
+              onMouseEnter={() => {
+                this.restoreEnter()
+              }}
+              onMouseLeave={() => {
+                this.updateButtons()
+              }}
+              onMouseDown={() => {
+                console.log('Restored default values')
+              }}
+              backgroundColor={this.restoreBackgroundColor}
+            />
+          </UiEntity>
         </UiEntity>
       </UiEntity>
     )

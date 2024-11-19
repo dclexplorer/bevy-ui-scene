@@ -38,7 +38,7 @@ export class UIController {
         {this.isMainMenuVisible && this.menu?.mainUi()}
 
         {/* Loading & Login */}
-        {this.loadingAndLogin?.mainUi()}
+        {/* {this.loadingAndLogin?.mainUi()} */}
       </UiEntity>
     )
   }
