@@ -101,10 +101,7 @@ export class MainMenu {
             justifyContent: 'flex-start',
             alignItems: 'center'
           }}
-          uiBackground={{
-            textureMode: 'stretch',
-            texture: { src: 'assets/images/menu/Background.png' }
-          }}
+          uiBackground={{ color: Color4.Red() }}
         >
           <UiEntity
             uiTransform={{
@@ -223,7 +220,7 @@ export class MainMenu {
               height: 'auto',
               flexGrow: 1
             }}
-            uiBackground={{ color: Color4.Blue() }}
+            uiBackground={{ color: { ...Color4.Green(), a: 0.1 } }}
           >
             {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
             {this.activePage === 'backpack' &&

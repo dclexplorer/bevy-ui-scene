@@ -1,10 +1,14 @@
 import { Color4 } from '@dcl/ecs-math'
-import ReactEcs, { UiEntity } from '@dcl/react-ecs'
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import ReactEcs, { Label, UiEntity } from '@dcl/react-ecs'
+import {
+  UiCanvasInformation,
+  engine
+} from '@dcl/sdk/ecs'
 import TextIconButton from '../../components/textIconButton'
 import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../utils/constants'
 
 export class SettingsPage {
+  private backgroundIcon: string = 'assets/images/menu/GeneralImg.png'
   private generalTextColor: Color4 = ALMOST_WHITE
   private graphicsTextColor: Color4 = ALMOST_BLACK
   private audioTextColor: Color4 = ALMOST_BLACK
@@ -15,15 +19,13 @@ export class SettingsPage {
   private audioBackgroundColor: Color4 = ALMOST_WHITE
   private controlsBackgroundColor: Color4 = ALMOST_WHITE
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
-  private pathText: string = 'Settings/general'
   private buttonClicked: 'general' | 'audio' | 'graphics' | 'controls' =
     'general'
-
+ 
   setButtonClicked(
     button: 'general' | 'audio' | 'graphics' | 'controls'
   ): void {
     this.buttonClicked = button
-    this.pathText = 'Settings/' + button
     this.updateButtons()
   }
 
@@ -67,15 +69,19 @@ export class SettingsPage {
     switch (this.buttonClicked) {
       case 'general':
         this.generalEnter()
+        this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
         break
       case 'audio':
         this.audioEnter()
+        this.backgroundIcon = 'assets/images/menu/SoundImg.png'
         break
       case 'graphics':
         this.graphicsEnter()
+        this.backgroundIcon = 'assets/images/menu/GraphicsImg.png'
         break
       case 'controls':
         this.controlsEnter()
+        this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
         break
     }
   }
@@ -89,19 +95,37 @@ export class SettingsPage {
         uiTransform={{
           width: '100%',
           height: '100%',
+          // positionType: 'absolute', 
+          // position:{top: 0, left: 0, right: 0, bottom: 0},
           flexDirection: 'column',
-          justifyContent: 'flex-start'
+          justifyContent: 'flex-start',
+          alignItems: 'center'
         }}
-        uiText={{
-          value: this.pathText,
-          textAlign: 'middle-center',
-          fontSize: 50
+        uiBackground={{
+          textureMode: 'stretch',
+          texture: { src: 'assets/images/menu/Background.png' }
         }}
       >
+        {/* Icon Background */}
+        <UiEntity
+          uiTransform={{
+            width: canvasInfo.height * 0.65,
+            height: canvasInfo.height * 0.65,
+            positionType: 'absolute',
+            position: { left: '0', bottom: '0' }
+          }}
+          uiBackground={{
+            color: { ...Color4.White(), a: 0.3 },
+            textureMode: 'stretch',
+            texture: { src: this.backgroundIcon }
+          }}
+        />
+
+        {/* NavBar */}
         <UiEntity
           uiTransform={{
             width: '100%',
-            height: '8%',
+            height: '10%',
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -114,8 +138,8 @@ export class SettingsPage {
               width: 'auto',
               height: 'auto',
               flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
+              justifyContent: 'flex-start',
+              alignItems: 'center'
             }}
           >
             <UiEntity
@@ -249,6 +273,46 @@ export class SettingsPage {
               }}
               backgroundColor={this.restoreBackgroundColor}
             />
+          </UiEntity>
+        </UiEntity>
+
+        {/* Content */}
+        <UiEntity
+          uiTransform={{
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent:'center',
+            width:'80%',
+            margin:60,
+            // height:'80%',
+            flexGrow:1,
+          }}
+          uiBackground={{
+            color: { ...Color4.Black(), a: 0.7 }
+          }}
+        >
+          <UiEntity
+            uiTransform={{
+              width: '80%',
+              height: '80%',
+              flexDirection:'column',
+              // overflow: 'scroll', // enable scrolling
+              // scrollPosition: this.target, // if you want to set the scroll position programatically (maybe an action from the user)
+              // elementId: this.scrollContainerId // id to identify the scroll result if you need to
+            }}
+            uiBackground={{
+              color: { ...Color4.Red(), a: 1 }
+            }}
+          >
+            <Label value="ASD" uiTransform={{ width: 'auto' }} />
+            <Label value="ASD" uiTransform={{ width: 'auto' }} />
+            <Label value="ASD" uiTransform={{ width: 'auto' }} />
+            <Label value="ASD" uiTransform={{ width: 'auto' }} />
+            <Label value="ASD" uiTransform={{ width: 'auto' }} />
+            <Label value="ASD" uiTransform={{ width: 'auto' }} />
+            <Label value="ASD" uiTransform={{ width: 'auto' }} />
+      
+            
           </UiEntity>
         </UiEntity>
       </UiEntity>
