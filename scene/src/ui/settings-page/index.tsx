@@ -40,24 +40,23 @@ export class SettingsPage {
   private readonly slider2Id: string = 'scene-unload-distance'
   private slider2Value: number = 50
   private slider2Pos: number = 0
-  private slider2SavedPos: number = 0.1
+  // private slider2SavedPos: number = 0.1
   private readonly slider3Id: string = 'scene-threads'
   private slider3Value: number = 50
   private slider3Pos: number = 0
-  private slider3SavedPos: number = 0.1
+  // private slider3SavedPos: number = 0.1
   private readonly slider4Id: string = 'max-av-downloads'
   private slider4Value: number = 50
   private slider4Pos: number = 0
-  private slider4SavedPos: number = 0.1
+  // private slider4SavedPos: number = 0.1
   private readonly slider5Id: string = 'max-avatars'
   private slider5Value: number = 50
   private slider5Pos: number = 0
-  private slider5SavedPos: number = 0.1
+  // private slider5SavedPos: number = 0.1
   private readonly slider6Id: string = 'max-downloads'
   private slider6Pos: number = 0
   private slider6Value: number = 50
-  private slider6SavedPos: number = 0.1
-
+  // private slider6SavedPos: number = 0.1
 
   private readonly toggleIcon: Icon = {
     atlasName: 'toggles',
@@ -420,9 +419,11 @@ export class SettingsPage {
               overflow: 'scroll',
               scrollVisible: 'vertical'
             }}
-            uiBackground={{
-              // color: { ...Color4.Blue(), a: 0.1 }
-            }}
+            uiBackground={
+              {
+                // color: { ...Color4.Blue(), a: 0.1 }
+              }
+            }
           >
             <Slider
               title={SCENE_LOAD_DISTANCE_TITLE}
@@ -569,13 +570,15 @@ export class SettingsPage {
               height: canvasInfo.height * 0.7,
               flexDirection: 'column',
               alignItems: 'flex-start',
-              margin:{left:'5%'}
+              margin: { left: '5%' }
               // overflow: 'scroll',
               // scrollVisible: 'hidden',
             }}
-            uiBackground={{
-              // color: { ...Color4.Red(), a: 0.1 }
-            }}
+            uiBackground={
+              {
+                // color: { ...Color4.Red(), a: 0.1 }
+              }
+            }
           >
             <UiEntity
               uiTransform={{
