@@ -156,7 +156,7 @@ export class MainHud {
           uiTransform={{
             width: '2.4%',
             height: '100%',
-            position: { left: 270, top: 0 },
+            position: { left: 500, top: 0 },
             positionType: 'absolute'
           }}
           // onMouseEnter={() => (this.isSideBarVisible = true)}
@@ -382,6 +382,72 @@ export class MainHud {
               />
             </UiEntity>
           </UiEntity>
+          <UiEntity
+            uiTransform={{
+              width: 20,
+              height: 100,
+              positionType: 'absolute',
+              position: { top: '60%', right: -30 }
+            }}
+            uiBackground={{
+              color: Color4.Blue(),
+
+              textureMode: 'nine-slices',
+              texture: {
+                src: 'assets/images/buttonBackground100.png'
+              },
+              textureSlices: {
+                top: 0.25,
+                bottom: 0.25,
+                left: 0.25,
+                right: 0.25
+              }
+            }}
+          />
+
+          <UiEntity
+            uiTransform={{
+              width: 100,
+              height: 12,
+              positionType: 'absolute',
+              position: { top: '55%', right: 30 }
+            }}
+            uiBackground={{
+              textureMode: 'nine-slices',
+              texture: {
+                src: 'assets/images/buttonBackground100.png'
+              },
+              textureSlices: {
+                top: 0.25,
+                bottom: 0.25,
+                left: 0.25,
+                right: 0.25
+              }
+            }}
+          />
+
+          <UiEntity
+            uiTransform={{
+              width: 60,
+              height: 60,
+              positionType: 'absolute',
+              position: { top: '60%', right: 30 }
+            }}
+            uiBackground={{
+              color: Color4.Black(),
+
+              textureMode: 'nine-slices',
+              texture: {
+                src: 'assets/images/buttonBackground100.png'
+              },
+              textureSlices: {
+                top: 0.25,
+                bottom: 0.25,
+                left: 0.25,
+                right: 0.25
+              }
+            }}
+          />
         </UiEntity>
       </Canvas>
     )

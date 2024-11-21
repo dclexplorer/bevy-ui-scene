@@ -1,18 +1,28 @@
 import { Color4 } from '@dcl/ecs-math'
 import ReactEcs, { UiEntity } from '@dcl/react-ecs'
-import { UiCanvasInformation, UiScrollResult, UiTransform, engine } from '@dcl/sdk/ecs'
+import {
+  UiCanvasInformation,
+  UiScrollResult,
+  UiTransform,
+  engine
+} from '@dcl/sdk/ecs'
 import TextIconButton from '../../components/textIconButton'
 import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../utils/constants'
 import Slider from '../../components/slider'
+import IconButton from '../../components/iconButton'
+import { type Icon } from '../../utils/definitions'
 
 export class SettingsPage {
-  private readonly slider1Id:string = 'rendering-scale'
-  private slider1Value:number = 50
-  private slider1Pos:number = 0
-  private readonly slider2Id:string = 'anti-aliasing'
-  private slider2Value:number = 50
-  private slider2Pos:number = 0
+  private readonly slider1Id: string = 'rendering-scale'
+  private slider1Value: number = 50
+  private slider1Pos: number = 0
+  private slider1SavedPos: number = 0.1
+  private readonly slider2Id: string = 'anti-aliasing'
+  // private slider2Value:number = 50
+  // private slider2Pos:number = 0
 
+  private readonly toggleIcon: Icon = {atlasName:'toggles', spriteName:'SwitchOn'}
+  private toggleStatus:boolean = false
 
   private backgroundIcon: string = 'assets/images/menu/GeneralImg.png'
   private generalTextColor: Color4 = ALMOST_WHITE
@@ -28,9 +38,9 @@ export class SettingsPage {
   private buttonClicked: 'general' | 'audio' | 'graphics' | 'controls' =
     'general'
 
-    constructor() {
-      engine.addSystem(this.controllerSystem.bind(this))
-    }
+  constructor() {
+    engine.addSystem(this.controllerSystem.bind(this))
+  }
 
   setButtonClicked(
     button: 'general' | 'audio' | 'graphics' | 'controls'
@@ -65,7 +75,6 @@ export class SettingsPage {
   }
 
   updateButtons(): void {
-    
     this.generalBackgroundColor = ALMOST_WHITE
     this.graphicsBackgroundColor = ALMOST_WHITE
     this.audioBackgroundColor = ALMOST_WHITE
@@ -95,30 +104,34 @@ export class SettingsPage {
         this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
         break
     }
+    
+    
+    this.toggleIcon.spriteName = this.toggleStatus ? 'SwitchOn' : 'SwitchOff'
+    
   }
 
   controllerSystem(): void {
-  	for (const [, pos, uiTransform] of engine.getEntitiesWith(
-  		UiScrollResult,
-  		UiTransform
-  	)) {
-  		if (uiTransform.elementId !== this.slider1Id) {
-  			continue
-  		}
-
-  		if (pos.value === undefined) {
-  			break
-  		}
-
-      this.slider1Value = 100 -  Math.floor(100 *pos.value.x)
+    for (const [, pos, uiTransform] of engine.getEntitiesWith(
+      UiScrollResult,
+      UiTransform
+    )) {
+      if (pos === undefined) break
+      if (uiTransform.elementId === this.slider1Id && pos.value !== undefined) {
+        this.slider1Value = 100 - Math.round(100 * pos.value.x)
+        this.slider1Pos = pos.value.x
+      }
     }
+  }
+
+  saveValues(): void {
+    this.slider1SavedPos = this.slider1Pos
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    const sliderWidth:number = 200
+    const sliderWidth: number = 200
 
     return (
       <UiEntity
@@ -227,7 +240,6 @@ export class SettingsPage {
               onMouseDown={() => {
                 this.setButtonClicked('graphics')
                 this.slider1Pos = 0.5
-
               }}
               backgroundColor={this.graphicsBackgroundColor}
             />
@@ -329,12 +341,30 @@ export class SettingsPage {
               height: '80%',
               flexDirection: 'column'
             }}
-            uiBackground={{
-              // color: { ...Color4.Red(), a: 1 }
-            }}
+            uiBackground={
+              {
+                // color: { ...Color4.Red(), a: 1 }
+              }
+            }
           >
-            <Slider title={'Rendering Scale'} fontSize={16} value={this.slider1Value.toString()+'%'} uiTransform={{width:sliderWidth, height:100}} sliderSize={sliderWidth*2} id={this.slider1Id} position={this.slider1Pos} />
-            <Slider title={'Rendering Scale'} fontSize={16} value={this.slider1Value.toString()+'%'} uiTransform={{width:sliderWidth, height:100}} sliderSize={sliderWidth*2} id={this.slider2Id} position={this.slider1Pos} />
+            <Slider
+              title={'Rendering Scale'}
+              fontSize={16}
+              value={this.slider1Value.toString() + '%'}
+              uiTransform={{ width: sliderWidth, height: 100 }}
+              sliderSize={sliderWidth * 2}
+              id={this.slider1Id}
+              position={1 - this.slider1SavedPos}
+            />
+            <IconButton
+              onMouseEnter={() => {}}
+              onMouseLeave={() => {}}
+              onMouseDown={() => {this.toggleStatus = !this.toggleStatus
+                this.updateButtons()
+              }}
+              uiTransform={{ width: '10%', height: '10%' }}
+              icon={this.toggleIcon}
+            />
           </UiEntity>
         </UiEntity>
       </UiEntity>

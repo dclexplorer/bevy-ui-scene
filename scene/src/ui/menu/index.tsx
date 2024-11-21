@@ -59,6 +59,7 @@ export class MainMenu {
   }
 
   show(page: MenuPage): void {
+    this.uiController.settingsPage.updateButtons()
     this.activePage = page
     this.uiController.isMainMenuVisible = true
     this.updateButtons()
@@ -184,6 +185,7 @@ export class MainMenu {
                 }}
                 onMouseDown={() => {
                   this.show('settings')
+                  
                 }}
                 backgroundColor={this.settingsBackground}
                 icon={this.settingsIcon}
