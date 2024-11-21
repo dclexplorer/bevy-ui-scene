@@ -37,7 +37,7 @@ export const DCL_DAO_EXPLORERS_DS: string =
 
 export const SCENE_LOAD_DISTANCE_TITLE = 'Scene Load Distance'
 export const SCENE_LOAD_DISTANCE_DESCRIPTION =
-  'The distance at which neighbouring scenes will be spawned. A scene is 16 meters, so for example a value of 65 will load 4 scenes in all directions.'
+  'The distance at which neighbouring scenes will be spawned. A scene is 16 meters, so for example a value of 64 will load 4 scenes in all directions.'
 export const SCENE_UNLOAD_DISTANCE_TITLE = 'Scene Unload Distance'
 export const SCENE_UNLOAD_DISTANCE_DESCRIPTION =
   'The additional distance (above the load distance) at which neighbouring scenes will be despawned. Using too low a setting will cause churn as scenes load and unload frequently.'
