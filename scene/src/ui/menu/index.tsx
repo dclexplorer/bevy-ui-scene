@@ -185,7 +185,6 @@ export class MainMenu {
                 }}
                 onMouseDown={() => {
                   this.show('settings')
-                  
                 }}
                 backgroundColor={this.settingsBackground}
                 icon={this.settingsIcon}

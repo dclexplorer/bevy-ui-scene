@@ -1,5 +1,6 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import ReactEcs, {
+  type Callback,
   Label,
   UiEntity,
   type UiTransformProps
@@ -15,9 +16,14 @@ function Slider(props: {
   value: string
   id: string
   position: number
+  onMouseEnter?: Callback
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
+  const grabberSize: Vector2 = Vector2.create(
+    2 * props.fontSize * 0.63,
+    2 * props.fontSize
+  )
 
   return (
     <UiEntity
@@ -26,11 +32,13 @@ function Slider(props: {
         alignItems: 'center',
         justifyContent: 'center',
         width: props.sliderSize / 2,
-        height: '100%'
+        height: props.uiTransform.height,
+        margin: { top: props.fontSize, bottom: props.fontSize }
         // new properties
         // scrollPosition: this.target, // if you want to set the scroll position programatically (maybe an action from the user)
         // elementId: this.scrollContainerId // id to identify the scroll result if you need to
       }}
+      onMouseEnter={props.onMouseEnter}
       uiBackground={
         {
           // color: { ...Color4.White(), a: 0.1 }
@@ -54,7 +62,7 @@ function Slider(props: {
           alignItems: 'center',
           justifyContent: 'center',
           width: props.uiTransform.width,
-          height: props.uiTransform.height,
+          height: props.fontSize * 2,
           // new properties
           overflow: 'scroll',
           scrollVisible: 'hidden',
@@ -65,7 +73,7 @@ function Slider(props: {
         <UiEntity
           uiTransform={{
             width: props.sliderSize,
-            height: 50,
+            height: grabberSize.y,
             flexDirection: 'row',
             justifyContent: 'flex-start',
             alignItems: 'center',
@@ -75,25 +83,23 @@ function Slider(props: {
           <UiEntity
             uiTransform={{
               width: props.sliderSize,
-              height: '80%',
-              pointerFilter: 'none'
+              height: '80%'
             }}
             uiBackground={{ color: RUBY }}
           />
           <UiEntity
             uiTransform={{
               width: props.sliderSize,
-              height: '80%',
-              pointerFilter: 'none'
+              height: '80%'
             }}
             uiBackground={{ color: { ...ALMOST_WHITE, a: 0.5 } }}
           />
           <UiEntity
             uiTransform={{
               positionType: 'absolute',
-              position: { left: props.sliderSize / 2 - 15 },
-              width: 30,
-              height: '100%'
+              position: { left: props.sliderSize / 2 - grabberSize.x / 2 },
+              width: grabberSize.x,
+              height: grabberSize.y
             }}
             key="first"
             uiBackground={{

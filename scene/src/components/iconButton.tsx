@@ -34,7 +34,7 @@ function IconButton(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor ?? {...Color4.White(), a:0},
+        color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
         textureMode: 'nine-slices',
         texture: {
           src: 'assets/images/buttonBackground100.png'

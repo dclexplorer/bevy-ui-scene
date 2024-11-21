@@ -8,7 +8,7 @@ import { MapPage } from '../ui/map-page'
 import { SettingsPage } from '../ui/settings-page'
 
 export class UIController {
-  public isMainMenuVisible: boolean = false
+  public isMainMenuVisible: boolean = true
   public settingsPage: SettingsPage
   public backpackPage: BackpackPage
   public mapPage: MapPage

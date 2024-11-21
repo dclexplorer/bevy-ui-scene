@@ -1,5 +1,5 @@
 import { Color4 } from '@dcl/ecs-math'
-import ReactEcs, { UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { Dropdown, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import {
   UiCanvasInformation,
   UiScrollResult,
@@ -7,22 +7,64 @@ import {
   engine
 } from '@dcl/sdk/ecs'
 import TextIconButton from '../../components/textIconButton'
-import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../utils/constants'
+import {
+  ALMOST_BLACK,
+  ALMOST_WHITE,
+  DESPAWN_WORKAROUND_DESCRIPTION,
+  DESPAWN_WORKAROUND_TITLE,
+  MAX_AVATARS_DESCRIPTION,
+  MAX_AVATARS_TITLE,
+  MAX_DOWNLOADS_DESCRIPTION,
+  MAX_DOWNLOADS_TITLE,
+  MAX_VIDEOS_DESCRIPTION,
+  MAX_VIDEOS_TITLE,
+  ORANGE,
+  SCENE_LOAD_DISTANCE_DESCRIPTION,
+  SCENE_LOAD_DISTANCE_TITLE,
+  SCENE_THREADS_DESCRIPTION,
+  SCENE_THREADS_TITLE,
+  SCENE_UNLOAD_DISTANCE_DESCRIPTION,
+  SCENE_UNLOAD_DISTANCE_TITLE,
+  TARGET_FRAME_RATE_DESCRIPTION,
+  TARGET_FRAME_RATE_TITLE
+} from '../../utils/constants'
 import Slider from '../../components/slider'
 import IconButton from '../../components/iconButton'
 import { type Icon } from '../../utils/definitions'
 
 export class SettingsPage {
-  private readonly slider1Id: string = 'rendering-scale'
+  private readonly slider1Id: string = 'scene-load-distance'
   private slider1Value: number = 50
   private slider1Pos: number = 0
   private slider1SavedPos: number = 0.1
-  private readonly slider2Id: string = 'anti-aliasing'
-  // private slider2Value:number = 50
-  // private slider2Pos:number = 0
+  private readonly slider2Id: string = 'scene-unload-distance'
+  private slider2Value: number = 50
+  private slider2Pos: number = 0
+  private slider2SavedPos: number = 0.1
+  private readonly slider3Id: string = 'scene-threads'
+  private slider3Value: number = 50
+  private slider3Pos: number = 0
+  private slider3SavedPos: number = 0.1
+  private readonly slider4Id: string = 'max-av-downloads'
+  private slider4Value: number = 50
+  private slider4Pos: number = 0
+  private slider4SavedPos: number = 0.1
+  private readonly slider5Id: string = 'max-avatars'
+  private slider5Value: number = 50
+  private slider5Pos: number = 0
+  private slider5SavedPos: number = 0.1
+  private readonly slider6Id: string = 'max-downloads'
+  private slider6Pos: number = 0
+  private slider6Value: number = 50
+  private slider6SavedPos: number = 0.1
 
-  private readonly toggleIcon: Icon = {atlasName:'toggles', spriteName:'SwitchOn'}
-  private toggleStatus:boolean = false
+
+  private readonly toggleIcon: Icon = {
+    atlasName: 'toggles',
+    spriteName: 'SwitchOn'
+  }
+
+  private toggleStatus: boolean = false
 
   private backgroundIcon: string = 'assets/images/menu/GeneralImg.png'
   private generalTextColor: Color4 = ALMOST_WHITE
@@ -37,6 +79,9 @@ export class SettingsPage {
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
   private buttonClicked: 'general' | 'audio' | 'graphics' | 'controls' =
     'general'
+
+  private settingsInfoTitle: string = ''
+  private settingsInfoDescription: string = ''
 
   constructor() {
     engine.addSystem(this.controllerSystem.bind(this))
@@ -104,10 +149,8 @@ export class SettingsPage {
         this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
         break
     }
-    
-    
+
     this.toggleIcon.spriteName = this.toggleStatus ? 'SwitchOn' : 'SwitchOff'
-    
   }
 
   controllerSystem(): void {
@@ -120,6 +163,26 @@ export class SettingsPage {
         this.slider1Value = 100 - Math.round(100 * pos.value.x)
         this.slider1Pos = pos.value.x
       }
+      if (uiTransform.elementId === this.slider2Id && pos.value !== undefined) {
+        this.slider2Value = 100 - Math.round(100 * pos.value.x)
+        this.slider2Pos = pos.value.x
+      }
+      if (uiTransform.elementId === this.slider3Id && pos.value !== undefined) {
+        this.slider3Value = 100 - Math.round(100 * pos.value.x)
+        this.slider3Pos = pos.value.x
+      }
+      if (uiTransform.elementId === this.slider4Id && pos.value !== undefined) {
+        this.slider4Value = 100 - Math.round(100 * pos.value.x)
+        this.slider4Pos = pos.value.x
+      }
+      if (uiTransform.elementId === this.slider5Id && pos.value !== undefined) {
+        this.slider5Value = 100 - Math.round(100 * pos.value.x)
+        this.slider5Pos = pos.value.x
+      }
+      if (uiTransform.elementId === this.slider6Id && pos.value !== undefined) {
+        this.slider6Value = 100 - Math.round(100 * pos.value.x)
+        this.slider6Pos = pos.value.x
+      }
     }
   }
 
@@ -131,7 +194,9 @@ export class SettingsPage {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    const sliderWidth: number = 200
+    const sliderWidth: number = canvasInfo.width * 0.3
+    const sliderHeight: number = canvasInfo.height * 0.1
+    const fontSize: number = canvasInfo.height * 0.02
 
     return (
       <UiEntity
@@ -174,7 +239,9 @@ export class SettingsPage {
             alignItems: 'center',
             padding: { left: '10%' }
           }}
-          uiBackground={{ color: { ...Color4.Black(), a: 0.7 } }}
+          uiBackground={{
+            color: { ...Color4.Black(), a: 0.7 }
+          }}
         >
           <UiEntity
             uiTransform={{
@@ -206,7 +273,7 @@ export class SettingsPage {
               iconColor={this.generalTextColor}
               icon={{ atlasName: 'navbar', spriteName: 'Settings off' }}
               value={'General'}
-              fontSize={16}
+              fontSize={fontSize}
               fontColor={this.generalTextColor}
               onMouseEnter={() => {
                 this.generalEnter()
@@ -229,7 +296,7 @@ export class SettingsPage {
               iconColor={this.graphicsTextColor}
               icon={{ atlasName: 'icons', spriteName: 'Graphics' }}
               value={'Graphics'}
-              fontSize={16}
+              fontSize={fontSize}
               fontColor={this.graphicsTextColor}
               onMouseEnter={() => {
                 this.graphicsEnter()
@@ -252,7 +319,7 @@ export class SettingsPage {
               iconColor={this.audioTextColor}
               icon={{ atlasName: 'context', spriteName: 'SpeakerOn' }}
               value={'Audio'}
-              fontSize={16}
+              fontSize={fontSize}
               fontColor={this.audioTextColor}
               onMouseEnter={() => {
                 this.audioEnter()
@@ -275,7 +342,7 @@ export class SettingsPage {
               iconColor={this.controlsTextColor}
               icon={{ atlasName: 'icons', spriteName: 'ControlsIcn' }}
               value={'Controls'}
-              fontSize={16}
+              fontSize={fontSize}
               fontColor={this.controlsTextColor}
               onMouseEnter={() => {
                 this.controlsEnter()
@@ -304,7 +371,7 @@ export class SettingsPage {
               iconColor={this.restoreTextColor}
               icon={{ atlasName: 'icons', spriteName: 'RotateIcn' }}
               value={'RESET TO DEFAULT'}
-              fontSize={16}
+              fontSize={fontSize}
               fontColor={this.restoreTextColor}
               onMouseEnter={() => {
                 this.restoreEnter()
@@ -323,48 +390,231 @@ export class SettingsPage {
         {/* Content */}
         <UiEntity
           uiTransform={{
-            flexDirection: 'column',
+            flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
             width: '80%',
-            margin: 60,
-            // height:'80%',
+            margin: canvasInfo.height * 0.05,
             flexGrow: 1
           }}
           uiBackground={{
+            textureMode: 'nine-slices',
+            texture: {
+              src: 'assets/images/buttonBackground100.png'
+            },
+            textureSlices: {
+              top: 0.25,
+              bottom: 0.25,
+              left: 0.25,
+              right: 0.25
+            },
             color: { ...Color4.Black(), a: 0.7 }
           }}
         >
           <UiEntity
             uiTransform={{
-              width: '80%',
-              height: '80%',
-              flexDirection: 'column'
+              width: '45%',
+              height: canvasInfo.height * 0.7,
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              overflow: 'scroll',
+              scrollVisible: 'vertical'
             }}
-            uiBackground={
-              {
-                // color: { ...Color4.Red(), a: 1 }
-              }
-            }
+            uiBackground={{
+              // color: { ...Color4.Blue(), a: 0.1 }
+            }}
           >
             <Slider
-              title={'Rendering Scale'}
-              fontSize={16}
+              title={SCENE_LOAD_DISTANCE_TITLE}
+              fontSize={fontSize}
               value={this.slider1Value.toString() + '%'}
-              uiTransform={{ width: sliderWidth, height: 100 }}
+              uiTransform={{ width: sliderWidth, height: sliderHeight }}
               sliderSize={sliderWidth * 2}
               id={this.slider1Id}
               position={1 - this.slider1SavedPos}
-            />
-            <IconButton
-              onMouseEnter={() => {}}
-              onMouseLeave={() => {}}
-              onMouseDown={() => {this.toggleStatus = !this.toggleStatus
-                this.updateButtons()
+              onMouseEnter={() => {
+                this.settingsInfoTitle = SCENE_LOAD_DISTANCE_TITLE
+                this.settingsInfoDescription = SCENE_LOAD_DISTANCE_DESCRIPTION
               }}
-              uiTransform={{ width: '10%', height: '10%' }}
-              icon={this.toggleIcon}
             />
+            <Slider
+              title={SCENE_UNLOAD_DISTANCE_TITLE}
+              fontSize={fontSize}
+              value={this.slider2Value.toString() + '%'}
+              uiTransform={{ width: sliderWidth, height: sliderHeight }}
+              sliderSize={sliderWidth * 2}
+              id={this.slider2Id}
+              position={1 - this.slider2SavedPos}
+              onMouseEnter={() => {
+                this.settingsInfoTitle = SCENE_UNLOAD_DISTANCE_TITLE
+                this.settingsInfoDescription = SCENE_UNLOAD_DISTANCE_DESCRIPTION
+              }}
+            />
+            <UiEntity
+              uiTransform={{
+                width: sliderWidth,
+                height: sliderHeight,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}
+              onMouseEnter={() => {
+                this.settingsInfoTitle = TARGET_FRAME_RATE_TITLE
+                this.settingsInfoDescription = TARGET_FRAME_RATE_DESCRIPTION
+              }}
+            >
+              <Label value={TARGET_FRAME_RATE_TITLE} fontSize={fontSize} />
+              <Dropdown
+                uiTransform={{ width: '40%' }}
+                options={[
+                  '10',
+                  '15',
+                  '20',
+                  '30',
+                  '60',
+                  '120',
+                  '144',
+                  'Uncapped'
+                ]}
+                color={ALMOST_WHITE}
+                font="sans-serif"
+                fontSize={fontSize}
+                // selectedIndex={value}
+                // onChange={(index) => value = index}
+              />
+            </UiEntity>
+
+            <Slider
+              title={SCENE_THREADS_TITLE}
+              fontSize={fontSize}
+              value={this.slider3Value.toString() + '%'}
+              uiTransform={{ width: sliderWidth, height: sliderHeight }}
+              sliderSize={sliderWidth * 2}
+              id={this.slider3Id}
+              position={1 - this.slider3SavedPos}
+              onMouseEnter={() => {
+                this.settingsInfoTitle = SCENE_THREADS_TITLE
+                this.settingsInfoDescription = SCENE_THREADS_DESCRIPTION
+              }}
+            />
+            <Slider
+              title={MAX_VIDEOS_TITLE}
+              fontSize={fontSize}
+              value={this.slider4Value.toString() + '%'}
+              uiTransform={{ width: sliderWidth, height: sliderHeight }}
+              sliderSize={sliderWidth * 2}
+              id={this.slider4Id}
+              position={1 - this.slider4SavedPos}
+              onMouseEnter={() => {
+                this.settingsInfoTitle = MAX_VIDEOS_TITLE
+                this.settingsInfoDescription = MAX_VIDEOS_DESCRIPTION
+              }}
+            />
+            <Slider
+              title={MAX_AVATARS_TITLE}
+              fontSize={fontSize}
+              value={this.slider5Value.toString() + '%'}
+              uiTransform={{ width: sliderWidth, height: sliderHeight }}
+              sliderSize={sliderWidth * 2}
+              id={this.slider5Id}
+              position={1 - this.slider5SavedPos}
+              onMouseEnter={() => {
+                this.settingsInfoTitle = MAX_AVATARS_TITLE
+                this.settingsInfoDescription = MAX_AVATARS_DESCRIPTION
+              }}
+            />
+            <Slider
+              title={MAX_DOWNLOADS_TITLE}
+              fontSize={fontSize}
+              value={this.slider6Value.toString() + '%'}
+              uiTransform={{ width: sliderWidth, height: sliderHeight }}
+              sliderSize={sliderWidth * 2}
+              id={this.slider6Id}
+              position={1 - this.slider6SavedPos}
+              onMouseEnter={() => {
+                this.settingsInfoTitle = MAX_DOWNLOADS_TITLE
+                this.settingsInfoDescription = MAX_DOWNLOADS_DESCRIPTION
+              }}
+            />
+            <UiEntity
+              uiTransform={{
+                width: sliderWidth,
+                height: sliderHeight,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}
+              onMouseEnter={() => {
+                this.settingsInfoTitle = DESPAWN_WORKAROUND_TITLE
+                this.settingsInfoDescription = DESPAWN_WORKAROUND_DESCRIPTION
+              }}
+            >
+              <Label value={DESPAWN_WORKAROUND_TITLE} fontSize={fontSize} />
+              <IconButton
+                onMouseDown={() => {
+                  this.toggleStatus = !this.toggleStatus
+                  this.updateButtons()
+                }}
+                uiTransform={{
+                  width: sliderHeight / 3 / 0.55,
+                  height: sliderHeight / 3
+                }}
+                icon={this.toggleIcon}
+              />
+            </UiEntity>
+          </UiEntity>
+          <UiEntity
+            uiTransform={{
+              width: '40%',
+              height: canvasInfo.height * 0.7,
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              margin:{left:'5%'}
+              // overflow: 'scroll',
+              // scrollVisible: 'hidden',
+            }}
+            uiBackground={{
+              // color: { ...Color4.Red(), a: 0.1 }
+            }}
+          >
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: '100%',
+                flexDirection: 'column',
+                alignItems: 'flex-start'
+              }}
+              // uiBackground={{ color: Color4.Black() }}
+            >
+              <Label value={'Settings Info:'} fontSize={fontSize * 1.5} />
+              <UiEntity
+                uiTransform={{
+                  width: '100%',
+                  height: 1,
+                  flexDirection: 'column',
+                  alignItems: 'flex-start'
+                }}
+                uiBackground={{ color: ALMOST_WHITE }}
+              />
+              <Label value={this.settingsInfoTitle} fontSize={fontSize} />
+              <UiEntity
+                uiTransform={{
+                  width: '100%',
+                  height: '50%',
+                  // height: 300,
+                  flexDirection: 'column',
+                  alignItems: 'flex-start'
+                }}
+              >
+                <Label
+                  uiTransform={{ width: '100%', height: '100%' }}
+                  value={this.settingsInfoDescription}
+                  fontSize={fontSize}
+                  textWrap="wrap"
+                  textAlign="top-left"
+                />
+              </UiEntity>
+            </UiEntity>
           </UiEntity>
         </UiEntity>
       </UiEntity>
