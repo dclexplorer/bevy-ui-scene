@@ -14,6 +14,7 @@ import {
   RUBY
 } from '../../utils/constants'
 import Canvas from '../canvas/canvas'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 type StatusType =
   | 'loading'
@@ -60,7 +61,7 @@ export class LoadingUI {
   }
 
   startLoading(): void {
-    this.status = 'menu'
+    this.status = 'loading'
     this.updateLayout()
     this.isVisible = true
   }
@@ -223,54 +224,28 @@ export class LoadingUI {
               alignItems: 'center'
             }}
             uiBackground={{
-              // color: {...Color4.Blue(), a:1},
               textureMode: 'stretch',
               texture: {
-                src:
-                  this.status === 'loading'
-                    ? 'assets/images/login/gradiant-background.png'
-                    : 'assets/images/login/background.png'
+                src: 'assets/images/login/gradiant-background.png'
               }
             }}
           >
-            {this.status === 'loading' && (
+            {this.status !== 'loading' && (
               <UiEntity
                 uiTransform={{
                   width: '100%',
                   height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flexDirection: 'column'
+                  positionType: 'absolute'
                 }}
-              >
-                <UiEntity
-                  uiTransform={{
-                    width: LOGO_SIZE,
-                    height: LOGO_SIZE,
-                    display: 'flex'
-                  }}
-                  uiBackground={{
-                    textureMode: 'stretch',
-                    texture: { src: 'assets/images/Logo.png' }
-                  }}
-                />
-
-                <UiEntity
-                  uiTransform={{
-                    width: '150',
-                    height: '30',
-                    positionType: 'absolute',
-                    position: { top: '5%', right: '5%' }
-                  }}
-                  uiBackground={{ color: Color4.create(0, 0, 0, 0.1) }}
-                  uiText={{ value: 'skip loading screen' }}
-                  onMouseDown={() => {
-                    this.status = 'menu'
-                    this.updateLayout()
-                  }}
-                />
-              </UiEntity>
+                uiBackground={{
+                  textureMode: 'stretch',
+                  texture: {
+                    src: 'assets/images/login/background.png'
+                  }
+                }}
+              />
             )}
+
             {this.status !== 'loading' && (
               <UiEntity
                 uiTransform={{
@@ -501,10 +476,10 @@ export class LoadingUI {
                               alignItems: 'center',
                               flexDirection: 'row'
                             }}
-                            uiBackground={{
-                              textureMode: 'stretch',
-                              texture: { src: 'assets/images/InfoButton.png' }
-                            }}
+                            uiBackground={getBackgroundFromAtlas({
+                              atlasName: 'icons',
+                              spriteName: 'InfoButton'
+                            })}
                             onMouseDown={() => {
                               this.toastOpen = !this.toastOpen
                             }}
@@ -623,6 +598,45 @@ export class LoadingUI {
                     {/* END BUTTONS & SPINNER */}
                   </UiEntity>
                 </UiEntity>
+              </UiEntity>
+            )}
+
+            {this.status === 'loading' && (
+              <UiEntity
+                uiTransform={{
+                  width: '100%',
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'column'
+                }}
+              >
+                <UiEntity
+                  uiTransform={{
+                    width: LOGO_SIZE,
+                    height: LOGO_SIZE,
+                    display: 'flex'
+                  }}
+                  uiBackground={{
+                    textureMode: 'stretch',
+                    texture: { src: 'assets/images/Logo.png' }
+                  }}
+                />
+
+                <UiEntity
+                  uiTransform={{
+                    width: '150',
+                    height: '30',
+                    positionType: 'absolute',
+                    position: { top: '5%', right: '5%' }
+                  }}
+                  uiBackground={{ color: Color4.create(0, 0, 0, 0.1) }}
+                  uiText={{ value: 'skip loading screen' }}
+                  onMouseDown={() => {
+                    this.status = 'menu'
+                    this.updateLayout()
+                  }}
+                />
               </UiEntity>
             )}
           </UiEntity>

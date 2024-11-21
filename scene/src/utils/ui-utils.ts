@@ -5,6 +5,7 @@ import { backpackJson } from '../json/backpack-data'
 import { navbarJson } from '../json/navbar-data'
 import { iconsJson } from '../json/icons-data'
 import { contextJson } from '../json/context-data'
+import { toggleJson } from '../json/toggle-data'
 
 export function getUvs(icon: Icon): number[] {
   let parsedJson: AtlasData | undefined
@@ -20,6 +21,9 @@ export function getUvs(icon: Icon): number[] {
       break
     case 'context':
       parsedJson = contextJson
+      break
+    case 'toggles':
+      parsedJson = toggleJson
       break
   }
   if (parsedJson !== undefined) {

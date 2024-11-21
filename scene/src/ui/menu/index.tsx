@@ -41,18 +41,10 @@ export class MainMenu {
     console.log('on mouse enter map')
   }
 
-  mapLeave(): void {
-    this.updateButtons()
-    console.log('on mouse leave map')
-  }
-
   backpackEnter(): void {
     this.backpackIcon.spriteName = 'Backpack on'
     this.backpackBackground = SELECTED_BUTTON_COLOR
-  }
-
-  backpackLeave(): void {
-    this.updateButtons()
+    console.log('on mouse enter backpack')
   }
 
   settingsEnter(): void {
@@ -61,16 +53,13 @@ export class MainMenu {
     console.log('on mouse enter settings')
   }
 
-  settingsLeave(): void {
-    this.updateButtons()
-  }
-
   hide(): void {
     this.uiController.isMainMenuVisible = false
     this.closeButtonColor = ALMOST_BLACK
   }
 
   show(page: MenuPage): void {
+    this.uiController.settingsPage.updateButtons()
     this.activePage = page
     this.uiController.isMainMenuVisible = true
     this.updateButtons()
@@ -85,21 +74,18 @@ export class MainMenu {
     this.mapBackground = Color4.create(0, 0, 0, 0)
     switch (this.activePage) {
       case 'settings':
-        this.settingsIcon.spriteName = 'Settings on'
-        this.settingsBackground = SELECTED_BUTTON_COLOR
+        this.settingsEnter()
         break
       case 'map':
-        this.mapIcon.spriteName = 'Map on'
-        this.mapBackground = SELECTED_BUTTON_COLOR
+        this.mapEnter()
         break
       case 'backpack':
-        this.backpackIcon.spriteName = 'Backpack on'
-        this.backpackBackground = SELECTED_BUTTON_COLOR
+        this.backpackEnter()
+        break
     }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
-    this.updateButtons()
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
@@ -116,10 +102,7 @@ export class MainMenu {
             justifyContent: 'flex-start',
             alignItems: 'center'
           }}
-          uiBackground={{
-            textureMode: 'stretch',
-            texture: { src: 'assets/images/menu/Background.png' }
-          }}
+          uiBackground={{ color: Color4.Red() }}
         >
           <UiEntity
             uiTransform={{
@@ -146,13 +129,13 @@ export class MainMenu {
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
-                  margin: { left: 5, right: 5 }
+                  margin: { left: 15, right: 15 }
                 }}
                 onMouseEnter={() => {
                   this.mapEnter()
                 }}
                 onMouseLeave={() => {
-                  this.mapLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   this.show('map')
@@ -169,13 +152,13 @@ export class MainMenu {
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
-                  margin: { left: 5, right: 5 }
+                  margin: { left: 15, right: 15 }
                 }}
                 onMouseEnter={() => {
                   this.backpackEnter()
                 }}
                 onMouseLeave={() => {
-                  this.backpackLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   this.show('backpack')
@@ -192,13 +175,13 @@ export class MainMenu {
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
-                  margin: { left: 5, right: 5 }
+                  margin: { left: 15, right: 15 }
                 }}
                 onMouseEnter={() => {
                   this.settingsEnter()
                 }}
                 onMouseLeave={() => {
-                  this.settingsLeave()
+                  this.updateButtons()
                 }}
                 onMouseDown={() => {
                   this.show('settings')
@@ -238,7 +221,7 @@ export class MainMenu {
               height: 'auto',
               flexGrow: 1
             }}
-            uiBackground={{ color: Color4.Blue() }}
+            uiBackground={{ color: { ...Color4.Green(), a: 0.1 } }}
           >
             {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
             {this.activePage === 'backpack' &&

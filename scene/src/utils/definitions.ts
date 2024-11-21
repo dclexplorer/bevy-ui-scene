@@ -24,6 +24,11 @@ export type Sprite = {
 
 export type Icon = { atlasName: string; spriteName: string }
 
+export type ToggleType =
+  | ['HeartOn', 'HeartOff']
+  | ['SwitchOn', 'SwitchOff']
+  | ['BellOn', 'BellOff']
+
 export type SlotsInputs =
   | InputAction.IA_PRIMARY
   | InputAction.IA_SECONDARY

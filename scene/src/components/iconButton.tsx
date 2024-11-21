@@ -1,5 +1,5 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import { type Color4 } from '@dcl/sdk/math'
+import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, {
   type Callback,
   UiEntity,
@@ -11,12 +11,12 @@ import { getBackgroundFromAtlas } from '../utils/ui-utils'
 
 function IconButton(props: {
   // Events
-  onMouseEnter: Callback
-  onMouseLeave: Callback
+  onMouseEnter?: Callback
+  onMouseLeave?: Callback
   onMouseDown: Callback
   // Shape
   uiTransform: UiTransformProps
-  backgroundColor: Color4
+  backgroundColor?: Color4
   icon: Icon
   hintText?: string
   showHint?: boolean
@@ -34,7 +34,7 @@ function IconButton(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor,
+        color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
         textureMode: 'nine-slices',
         texture: {
           src: 'assets/images/buttonBackground100.png'

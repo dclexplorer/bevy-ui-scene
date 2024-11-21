@@ -34,7 +34,6 @@ export class UIController {
   ui(): ReactEcs.JSX.Element {
     return (
       <UiEntity>
-        {/* Bottom Buttons */}
         {this.mainHud?.mainUi()}
         {this.isMainMenuVisible && this.menu?.mainUi()}
 
