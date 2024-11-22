@@ -194,26 +194,6 @@ export class MainMenu {
                 direction={'column'}
               />
             </UiEntity>
-
-            <IconButton
-              onMouseEnter={() => {
-                this.closeButtonColor = ALMOST_BLACK
-              }}
-              onMouseLeave={() => {
-                this.closeButtonColor = Color4.Black()
-              }}
-              onMouseDown={() => {
-                this.hide()
-              }}
-              uiTransform={{
-                width: buttonSize,
-                height: buttonSize,
-                positionType: 'absolute',
-                position: { right: 45 }
-              }}
-              backgroundColor={this.closeButtonColor}
-              icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
-            />
           </UiEntity>
           <UiEntity
             uiTransform={{
@@ -228,6 +208,34 @@ export class MainMenu {
               this.uiController.backpackPage.mainUi()}
             {this.activePage === 'settings' &&
               this.uiController.settingsPage.mainUi()}
+          </UiEntity>
+          <UiEntity
+            uiTransform={{
+              width: 'auto',
+              height: '8%',
+              positionType: 'absolute',
+              alignItems: 'center',
+              position: { right: buttonSize, top: 0 }
+            }}
+          >
+            {this.uiController.profileButton.mainUi()}
+            <IconButton
+              onMouseEnter={() => {
+                this.closeButtonColor = ALMOST_BLACK
+              }}
+              onMouseLeave={() => {
+                this.closeButtonColor = Color4.Black()
+              }}
+              onMouseDown={() => {
+                this.hide()
+              }}
+              uiTransform={{
+                width: buttonSize,
+                height: buttonSize
+              }}
+              backgroundColor={this.closeButtonColor}
+              icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+            />
           </UiEntity>
         </UiEntity>
       </Canvas>

@@ -9,12 +9,12 @@ import { getBackgroundFromAtlas } from '../utils/ui-utils'
 
 function TextIconButton(props: {
   // Events
-  onMouseEnter: Callback
-  onMouseLeave: Callback
+  onMouseEnter?: Callback
+  onMouseLeave?: Callback
   onMouseDown: Callback
   // Shape
   uiTransform: UiTransformProps
-  backgroundColor: Color4
+  backgroundColor?: Color4
   // Text
   value: string
   fontSize: number
@@ -36,11 +36,10 @@ function TextIconButton(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor,
-
+        color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
         textureMode: 'nine-slices',
         texture: {
-          src: 'assets/images/buttonBackground100.png'
+          src: 'assets/images/backgrounds/rounded.png'
         },
         textureSlices: {
           top: 0.25,

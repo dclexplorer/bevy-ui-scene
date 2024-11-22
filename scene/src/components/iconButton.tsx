@@ -37,7 +37,7 @@ function IconButton(props: {
         color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
         textureMode: 'nine-slices',
         texture: {
-          src: 'assets/images/buttonBackground100.png'
+          src: 'assets/images/backgrounds/rounded.png'
         },
         textureSlices: {
           top: 0.25,

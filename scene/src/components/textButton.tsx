@@ -7,18 +7,18 @@ import ReactEcs, {
 
 function TextButton(props: {
   // Events
-  onMouseEnter: Callback
-  onMouseLeave: Callback
+  onMouseEnter?: Callback
+  onMouseLeave?: Callback
   onMouseDown: Callback
   // Shape
   uiTransform: UiTransformProps
-  backgroundColor: Color4
+  backgroundColor?: Color4
   // Text
   value: string
   fontSize: number
   fontColor?: Color4
   // Status
-  isLoading: boolean
+  isLoading?: boolean
 }): ReactEcs.JSX.Element | null {
   //   const ICON_MARGIN = Math.max(canvasInfo.height * 0.01, 2)
   return (
@@ -32,11 +32,11 @@ function TextButton(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor,
+        color: props.backgroundColor ?? Color4.create(0, 0, 0, 0),
 
         textureMode: 'nine-slices',
         texture: {
-          src: 'assets/images/buttonBackground100.png'
+          src: 'assets/images/backgrounds/rounded.png'
         },
         textureSlices: {
           top: 0.25,
@@ -62,7 +62,7 @@ function TextButton(props: {
         }}
       >
         {/* ICON */}
-        {props.isLoading && (
+        {props.isLoading === true && (
           <UiEntity
             uiTransform={{
               width: props.fontSize,

@@ -6,10 +6,14 @@ import { navbarJson } from '../json/navbar-data'
 import { iconsJson } from '../json/icons-data'
 import { contextJson } from '../json/context-data'
 import { toggleJson } from '../json/toggle-data'
+import { backgroundsJson } from '../json/backgrounds-data'
 
 export function getUvs(icon: Icon): number[] {
   let parsedJson: AtlasData | undefined
   switch (icon.atlasName) {
+    case 'backgrounds':
+      parsedJson = backgroundsJson
+      break
     case 'backpack':
       parsedJson = backpackJson
       break
