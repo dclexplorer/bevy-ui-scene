@@ -25,11 +25,11 @@ export class MainMenu {
     spriteName: 'Settings off'
   }
 
-  private closeButtonColor: Color4 = Color4.Black()
+  private closeButtonColor: Color4 | undefined
 
-  private backpackBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private mapBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private settingsBackground: Color4 = Color4.create(0, 0, 0, 0)
+  private backpackBackground: Color4 | undefined
+  private mapBackground: Color4 | undefined
+  private settingsBackground: Color4 | undefined
 
   constructor(uiController: UIController) {
     this.uiController = uiController
@@ -67,11 +67,11 @@ export class MainMenu {
 
   updateButtons(): void {
     this.settingsIcon.spriteName = 'Settings off'
-    this.settingsBackground = Color4.create(0, 0, 0, 0)
+    this.settingsBackground = undefined
     this.backpackIcon.spriteName = 'Backpack off'
-    this.backpackBackground = Color4.create(0, 0, 0, 0)
+    this.backpackBackground = undefined
     this.mapIcon.spriteName = 'Map off'
-    this.mapBackground = Color4.create(0, 0, 0, 0)
+    this.mapBackground = undefined
     switch (this.activePage) {
       case 'settings':
         this.settingsEnter()

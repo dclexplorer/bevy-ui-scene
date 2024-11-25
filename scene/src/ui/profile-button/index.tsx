@@ -15,7 +15,7 @@ export class ProfileButton {
     this.uiController = uiController
   }
 
-  showProfileCard():void{
+  showProfileCard(): void {
     this.uiController.isProfileVisible = true
     this.uiController.profile.showCard()
   }
@@ -41,7 +41,9 @@ export class ProfileButton {
             alignItems: 'center',
             padding: { right: 10 }
           }}
-          onMouseDown={() => {this.showProfileCard()}}
+          onMouseDown={() => {
+            this.showProfileCard()
+          }}
           uiBackground={{
             color: { ...ALMOST_WHITE, a: 0.5 },
             textureMode: 'nine-slices',

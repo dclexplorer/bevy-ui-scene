@@ -11,7 +11,7 @@ import { Profile } from '../ui/profile'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
-  public isProfileVisible: boolean = false
+  public isProfileVisible: boolean = true
   public settingsPage: SettingsPage
   public backpackPage: BackpackPage
   public mapPage: MapPage

@@ -187,9 +187,9 @@ export class MainHud {
             >
               <IconButton
                 uiTransform={{
-                  margin:{top:300, bottom: 5},
+                  margin: { top: 300, bottom: 5 },
                   height: buttonSize,
-                  width: buttonSize,
+                  width: buttonSize
                 }}
                 onMouseEnter={() => {
                   this.walletEnter()
@@ -197,7 +197,7 @@ export class MainHud {
                 onMouseLeave={() => {
                   this.updateButtons()
                 }}
-                onMouseDown={() => { 
+                onMouseDown={() => {
                   this.uiController.profile.showCard()
                 }}
                 backgroundColor={this.walletBackground}

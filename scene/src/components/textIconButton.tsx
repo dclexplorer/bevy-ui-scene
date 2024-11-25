@@ -13,7 +13,7 @@ function TextIconButton(props: {
   onMouseLeave?: Callback
   onMouseDown: Callback
   // Shape
-  uiTransform: UiTransformProps
+  uiTransform?: UiTransformProps
   backgroundColor?: Color4
   // Text
   value: string
@@ -42,10 +42,10 @@ function TextIconButton(props: {
           src: 'assets/images/backgrounds/rounded.png'
         },
         textureSlices: {
-          top: 0.25,
-          bottom: 0.25,
-          left: 0.25,
-          right: 0.25
+          top: 0.5,
+          bottom: 0.5,
+          left: 0.5,
+          right: 0.5
         }
       }}
       onMouseDown={props.onMouseDown}
