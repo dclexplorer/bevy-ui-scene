@@ -5,11 +5,26 @@ import IconButton from '../../components/iconButton'
 import TextButton from '../../components/textButton'
 import TextIconButton from '../../components/textIconButton'
 import { type UIController } from '../../controllers/ui.controller'
-import { ALMOST_BLACK, ALMOST_WHITE, ORANGE, RUBY } from '../../utils/constants'
+import {
+  ALMOST_BLACK,
+  ALMOST_WHITE,
+  ALPHA_BLACK_NORMAL,
+  COUNTRIES,
+  EMPLOYMENT_STATUS,
+  GENDERS,
+  LANGUAGES,
+  LINK_CHIP_HOVERED,
+  ORANGE,
+  PRONOUNS,
+  RELATIONSHIP_STATUS,
+  RUBY,
+  SEXUAL_ORIENTATIONS
+} from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import Canvas from '../canvas/canvas'
 import { Label } from '@dcl/react-ecs/dist/components/Label'
 import ChipButton from '../../components/chipButton'
+import DropdownField from '../../components/dropdownField'
 
 export class Profile {
   private readonly isMyProfile: boolean = true
@@ -32,12 +47,53 @@ export class Profile {
   private activePage: 'overview' | 'badges' = 'overview'
   private editInfoButtonColor: Color4 = { ...Color4.Black(), a: 0.35 }
   private editLinksButtonColor: Color4 = { ...Color4.Black(), a: 0.35 }
-  private readonly links: Array<{ name: string; url: string }> = [
-    { name: 'DCL Explorers', url: 'https://dclexplorer.com' }, { name: 'Hello World', url: 'https://dclexplorer.com' }, { name: 'Hello World', url: 'https://dclexplorer.com' }, { name: 'Hello World', url: 'https://dclexplorer.com' }, { name: 'Hello World', url: 'https://dclexplorer.com' }
+  private saveLinksButtonColor: Color4 = RUBY
+  private cancelLinksButtonColor: Color4 = { ...Color4.Black(), a: 0.35 }
+  private savedLinks: Array<{ name: string; url: string }> = [
+    { name: 'DCL Explorers', url: 'https://dclexplorer.com' },
+    { name: 'Hello World', url: 'https://dclexplorer.com' },
+    { name: 'Hello World', url: 'https://dclexplorer.com' }
+  ]
+
+  private linksToShow: Array<{ name: string; url: string }> = [
+    ...this.savedLinks
+  ]
+
+  private readonly linkChipsBackgrounds: Color4[] = [
+    ALPHA_BLACK_NORMAL,
+    ALPHA_BLACK_NORMAL,
+    ALPHA_BLACK_NORMAL,
+    ALPHA_BLACK_NORMAL,
+    ALPHA_BLACK_NORMAL
   ]
 
   private isLinkEditing: boolean = false
-  private addLinkBackground: Color4 ={ ...Color4.Black(), a: 0.35 }
+  private isInfoEditing: boolean = false
+
+  private isGenderOpen: boolean = false
+  private isCountryOpen: boolean = false
+  private isLanguageOpen: boolean = false
+  private isPronounsOpen: boolean = false
+  private isRelationshipStatusOpen: boolean = false
+  private isSexualOrientationOpen: boolean = false
+  private isEmploymentStatusOpen: boolean = false
+
+  private selectedCountry: number = 0
+  private selectedLanguage: number = 0
+  private selectedPronouns: number = 0
+  private selectedGender: number = 0
+  private selectedRelationshipStatus: number = 0
+  private selectedSexualOrientation: number = 0
+  private selectedEmploymentStatus: number = 0
+  private savedCountry: number = 0
+  private savedLanguage: number = 0
+  private savedPronouns: number = 0
+  private savedGender: number = 0
+  private savedRelationshipStatus: number = 0
+  private savedSexualOrientation: number = 0
+  private savedEmploymentStatus: number = 0
+
+  private addLinkBackground: Color4 = { ...Color4.Black(), a: 0.35 }
 
   constructor(uiController: UIController) {
     this.uiController = uiController
@@ -75,6 +131,44 @@ export class Profile {
   showCard(): void {
     this.isCardOpen = true
     this.uiController.isProfileVisible = true
+  }
+
+  infoSave(): void {
+    this.isInfoEditing = false
+    this.savedCountry = this.selectedCountry
+    this.savedLanguage = this.selectedLanguage
+    this.savedPronouns = this.selectedPronouns
+    this.savedGender = this.selectedGender
+    this.savedRelationshipStatus = this.selectedRelationshipStatus
+    this.savedSexualOrientation = this.selectedSexualOrientation
+    this.savedEmploymentStatus = this.selectedEmploymentStatus
+    this.isGenderOpen = false
+    this.isCountryOpen = false
+    this.isLanguageOpen = false
+    this.isPronounsOpen = false
+    this.isGenderOpen = false
+    this.isRelationshipStatusOpen = false
+    this.isSexualOrientationOpen = false
+    this.isEmploymentStatusOpen = false
+  }
+
+  infoCancel(): void {
+    this.isInfoEditing = false
+    this.isGenderOpen = false
+    this.isCountryOpen = false
+    this.isLanguageOpen = false
+    this.isPronounsOpen = false
+    this.isGenderOpen = false
+    this.isRelationshipStatusOpen = false
+    this.isSexualOrientationOpen = false
+    this.isEmploymentStatusOpen = false
+    this.selectedCountry = this.savedCountry
+    this.selectedLanguage = this.savedLanguage
+    this.selectedPronouns = this.savedPronouns
+    this.selectedGender = this.savedGender
+    this.selectedRelationshipStatus = this.savedRelationshipStatus
+    this.selectedSexualOrientation = this.savedSexualOrientation
+    this.selectedEmploymentStatus = this.savedEmploymentStatus
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -389,8 +483,8 @@ export class Profile {
                 >
                   <UiEntity
                     uiTransform={{
-                      width: this.fontSize * 0.5,
-                      height: this.fontSize * 0.5
+                      width: this.fontSize * 0.75,
+                      height: this.fontSize * 0.75
                     }}
                     uiBackground={{
                       texture: { src: this.statusIconSprite },
@@ -404,7 +498,7 @@ export class Profile {
                     }}
                     uiText={{
                       value: this.name,
-                      fontSize: this.fontSize,
+                      fontSize: this.fontSize * 1.5,
                       color: { ...Color4.create(0, 124 / 255, 176 / 255, 1) },
                       textAlign: 'middle-right'
                     }}
@@ -417,7 +511,7 @@ export class Profile {
                       }}
                       uiText={{
                         value: this.tag,
-                        fontSize: this.fontSize,
+                        fontSize: this.fontSize * 1.5,
                         color: { ...ALMOST_WHITE, a: 0.5 },
                         textAlign: 'middle-left'
                       }}
@@ -428,8 +522,8 @@ export class Profile {
                   {this.verified && (
                     <UiEntity
                       uiTransform={{
-                        width: this.fontSize,
-                        height: this.fontSize
+                        width: this.fontSize * 1.5,
+                        height: this.fontSize * 1.5
                       }}
                       uiBackground={getBackgroundFromAtlas({
                         atlasName: 'icons',
@@ -441,8 +535,8 @@ export class Profile {
 
                   <UiEntity
                     uiTransform={{
-                      width: this.fontSize,
-                      height: this.fontSize
+                      width: this.fontSize * 1.5,
+                      height: this.fontSize * 1.5
                     }}
                     uiBackground={{
                       ...getBackgroundFromAtlas({
@@ -470,7 +564,7 @@ export class Profile {
                     }}
                     uiText={{
                       value: this.wallet,
-                      fontSize: this.fontSize * 0.75,
+                      fontSize: this.fontSize * 1.5,
                       color: { ...ALMOST_WHITE, a: 0.2 },
                       textAlign: 'middle-left'
                     }}
@@ -479,8 +573,8 @@ export class Profile {
 
                   <UiEntity
                     uiTransform={{
-                      width: this.fontSize * 0.75,
-                      height: this.fontSize * 0.75
+                      width: this.fontSize * 1.5,
+                      height: this.fontSize * 1.5
                     }}
                     uiBackground={{
                       ...getBackgroundFromAtlas({
@@ -597,7 +691,7 @@ export class Profile {
                           },
                           width: '96%',
                           padding: this.fontSize,
-                          height: canvasInfo.height * 0.9 * 0.85 * 0.5,
+                          height: canvasInfo.height * 0.9 * 0.85 * 0.3,
                           pointerFilter: 'block'
                         }}
                         uiBackground={{
@@ -637,8 +731,9 @@ export class Profile {
                             right: this.fontSize
                           },
                           width: '96%',
+                          height: 'auto',
                           padding: this.fontSize,
-                          height: canvasInfo.height * 0.9 * 0.85 * 0.5,
+                          minHeight: canvasInfo.height * 0.9 * 0.85 * 0.1,
                           pointerFilter: 'block'
                         }}
                         uiBackground={{
@@ -666,26 +761,322 @@ export class Profile {
                           }}
                         >
                           <Label value={'INFO'} fontSize={this.fontSize} />
-                          <IconButton
+                          {!this.isInfoEditing && (
+                            <IconButton
+                              onMouseEnter={() => {
+                                this.editInfoButtonColor = {
+                                  ...Color4.Black(),
+                                  a: 0.7
+                                }
+                              }}
+                              onMouseLeave={() => {
+                                this.editInfoButtonColor = {
+                                  ...Color4.Black(),
+                                  a: 0.35
+                                }
+                              }}
+                              onMouseDown={() => {
+                                this.isInfoEditing = true
+                              }}
+                              uiTransform={{
+                                width: 2 * this.fontSize,
+                                height: 2 * this.fontSize
+                              }}
+                              backgroundColor={this.editInfoButtonColor}
+                              icon={{ atlasName: 'icons', spriteName: 'Edit' }}
+                            />
+                          )}
+                        </UiEntity>
+                        <Label
+                          value={'No intro.'}
+                          fontSize={this.fontSize}
+                          uiTransform={{
+                            display:
+                              this.savedCountry +
+                                this.savedEmploymentStatus +
+                                this.savedGender +
+                                this.savedLanguage +
+                                this.savedPronouns +
+                                this.savedRelationshipStatus +
+                                this.savedSexualOrientation ===
+                              0 && !this.isInfoEditing
+                                ? 'flex'
+                                : 'none'
+                          }}
+                        />
+                        <Label
+                          value={'You can extend your profile information using this fields. Those which are not completed will not be displayed.'}
+                          fontSize={this.fontSize}
+                          textAlign='middle-left'
+                          uiTransform={{
+                            width:'100%',
+                            flexWrap:'wrap',
+                            display:
+                              this.isInfoEditing
+                                ? 'flex'
+                                : 'none'
+                          }}
+                        />
+                        <UiEntity
+                          uiTransform={{
+                            width: '100%',
+                            height: 'auto',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-start',
+                            margin: { top: this.fontSize },
+                            flexWrap: 'wrap'
+                          }}
+                          // uiBackground={{ color: Color4.Green() }}
+                        >
+                          <DropdownField
+                            uiTransform={{
+                              minWidth: '22%',
+                              margin: {
+                                right: this.fontSize,
+                                bottom: this.fontSize
+                              }
+                            }}
+                            isOpen={this.isCountryOpen}
+                            title="COUNTRY"
+                            icon={{
+                              atlasName: 'profile',
+                              spriteName: 'CountryIcn'
+                            }}
+                            onMouseDown={() => {
+                              this.isCountryOpen = !this.isCountryOpen
+                            }}
+                            onOptionMouseDown={(index) => {
+                              this.selectedCountry = index
+                              this.isCountryOpen = false
+                            }}
+                            fontSize={this.fontSize}
+                            savedOption={this.savedCountry}
+                            selectedOption={this.selectedCountry}
+                            options={COUNTRIES}
+                            isEditing={this.isInfoEditing}
+                          />
+                          <DropdownField
+                            uiTransform={{
+                              minWidth: '22%',
+                              margin: {
+                                right: this.fontSize,
+                                bottom: this.fontSize
+                              }
+                            }}
+                            isOpen={this.isLanguageOpen}
+                            title="LANGUAGE"
+                            icon={{
+                              atlasName: 'profile',
+                              spriteName: 'LanguageIcn'
+                            }}
+                            onMouseDown={() => {
+                              this.isLanguageOpen = !this.isLanguageOpen
+                            }}
+                            onOptionMouseDown={(index) => {
+                              this.selectedLanguage = index
+                              this.isLanguageOpen = false
+                            }}
+                            fontSize={this.fontSize}
+                            savedOption={this.savedLanguage}
+                            selectedOption={this.selectedLanguage}
+                            options={LANGUAGES}
+                            isEditing={this.isInfoEditing}
+                          />
+                          <DropdownField
+                            uiTransform={{
+                              minWidth: '22%',
+                              margin: {
+                                right: this.fontSize,
+                                bottom: this.fontSize
+                              }
+                            }}
+                            isOpen={this.isPronounsOpen}
+                            title="PRONOUNS"
+                            icon={{
+                              atlasName: 'profile',
+                              spriteName: 'PronounsIcn'
+                            }}
+                            onMouseDown={() => {
+                              this.isPronounsOpen = !this.isPronounsOpen
+                            }}
+                            onOptionMouseDown={(index) => {
+                              this.selectedPronouns = index
+                              this.isPronounsOpen = false
+                            }}
+                            fontSize={this.fontSize}
+                            savedOption={this.savedPronouns}
+                            selectedOption={this.selectedPronouns}
+                            options={PRONOUNS}
+                            isEditing={this.isInfoEditing}
+                          />
+                          <DropdownField
+                            uiTransform={{
+                              minWidth: '22%',
+                              margin: {
+                                right: this.fontSize,
+                                bottom: this.fontSize
+                              }
+                            }}
+                            isOpen={this.isGenderOpen}
+                            title="GENDER"
+                            icon={{
+                              atlasName: 'profile',
+                              spriteName: 'GenderIcn'
+                            }}
+                            onMouseDown={() => {
+                              this.isGenderOpen = !this.isGenderOpen
+                            }}
+                            onOptionMouseDown={(index) => {
+                              this.selectedGender = index
+                              this.isGenderOpen = false
+                            }}
+                            fontSize={this.fontSize}
+                            savedOption={this.savedGender}
+                            selectedOption={this.selectedGender}
+                            options={GENDERS}
+                            isEditing={this.isInfoEditing}
+                          />
+                          <DropdownField
+                            uiTransform={{
+                              minWidth: '22%',
+                              margin: {
+                                right: this.fontSize,
+                                bottom: this.fontSize
+                              }
+                            }}
+                            isOpen={this.isRelationshipStatusOpen}
+                            title="RELATIONSHIP STATUS"
+                            icon={{
+                              atlasName: 'profile',
+                              spriteName: 'RelationshipIcn'
+                            }}
+                            onMouseDown={() => {
+                              this.isRelationshipStatusOpen =
+                                !this.isRelationshipStatusOpen
+                            }}
+                            onOptionMouseDown={(index) => {
+                              this.selectedRelationshipStatus = index
+                              this.isRelationshipStatusOpen = false
+                            }}
+                            fontSize={this.fontSize}
+                            savedOption={this.savedRelationshipStatus}
+                            selectedOption={this.selectedRelationshipStatus}
+                            options={RELATIONSHIP_STATUS}
+                            isEditing={this.isInfoEditing}
+                          />
+                          <DropdownField
+                            uiTransform={{
+                              minWidth: '22%',
+                              margin: {
+                                right: this.fontSize,
+                                bottom: this.fontSize
+                              }
+                            }}
+                            isOpen={this.isSexualOrientationOpen}
+                            title="SEXUAL ORIENTATION"
+                            icon={{
+                              atlasName: 'profile',
+                              spriteName: 'SexOrientationIcn'
+                            }}
+                            onMouseDown={() => {
+                              this.isSexualOrientationOpen =
+                                !this.isSexualOrientationOpen
+                            }}
+                            onOptionMouseDown={(index) => {
+                              this.selectedSexualOrientation = index
+                              this.isSexualOrientationOpen = false
+                            }}
+                            fontSize={this.fontSize}
+                            savedOption={this.savedSexualOrientation}
+                            selectedOption={this.selectedSexualOrientation}
+                            options={SEXUAL_ORIENTATIONS}
+                            isEditing={this.isInfoEditing}
+                          />
+                          <DropdownField
+                            uiTransform={{
+                              minWidth: '22%',
+                              margin: {
+                                right: this.fontSize,
+                                bottom: this.fontSize
+                              }
+                            }}
+                            isOpen={this.isEmploymentStatusOpen}
+                            title="EMPLOYMENT STATUS"
+                            icon={{
+                              atlasName: 'profile',
+                              spriteName: 'EmploymentStatus'
+                            }}
+                            onMouseDown={() => {
+                              this.isEmploymentStatusOpen =
+                                !this.isEmploymentStatusOpen
+                            }}
+                            onOptionMouseDown={(index) => {
+                              this.selectedEmploymentStatus = index
+                              this.isEmploymentStatusOpen = false
+                            }}
+                            fontSize={this.fontSize}
+                            savedOption={this.savedEmploymentStatus}
+                            selectedOption={this.selectedEmploymentStatus}
+                            options={EMPLOYMENT_STATUS}
+                            isEditing={this.isInfoEditing}
+                          />
+                        </UiEntity>
+
+                        <UiEntity
+                          uiTransform={{
+                            display: this.isInfoEditing ? 'flex' : 'none',
+                            width: '100%',
+                            height: 'auto',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                            margin: { top: this.fontSize }
+                          }}
+                        >
+                          <TextButton
                             onMouseEnter={() => {
-                              this.editInfoButtonColor = {
+                              this.cancelLinksButtonColor = {
                                 ...Color4.Black(),
                                 a: 0.7
                               }
                             }}
                             onMouseLeave={() => {
-                              this.editInfoButtonColor = {
+                              this.cancelLinksButtonColor = {
                                 ...Color4.Black(),
                                 a: 0.35
                               }
                             }}
-                            onMouseDown={() => {}}
+                            onMouseDown={() => {
+                              this.infoCancel()
+                            }}
                             uiTransform={{
-                              width: 2 * this.fontSize,
+                              width: 5 * this.fontSize,
                               height: 2 * this.fontSize
                             }}
-                            backgroundColor={this.editInfoButtonColor}
-                            icon={{ atlasName: 'icons', spriteName: 'Edit' }}
+                            backgroundColor={this.cancelLinksButtonColor}
+                            value={'CANCEL'}
+                            fontSize={this.fontSize}
+                          />
+                          <TextButton
+                            onMouseEnter={() => {
+                              this.saveLinksButtonColor = {
+                                ...RUBY,
+                                g: 0.5,
+                                b: 0.5
+                              }
+                            }}
+                            onMouseLeave={() => {
+                              this.saveLinksButtonColor = RUBY
+                            }}
+                            onMouseDown={() => {
+                              this.infoSave()
+                            }}
+                            uiTransform={{
+                              width: 5 * this.fontSize,
+                              height: 2 * this.fontSize
+                            }}
+                            backgroundColor={this.saveLinksButtonColor}
+                            value={'SAVE'}
+                            fontSize={this.fontSize}
                           />
                         </UiEntity>
 
@@ -700,68 +1091,85 @@ export class Profile {
                           }}
                         >
                           <Label value={'LINKS'} fontSize={this.fontSize} />
-                          <IconButton
-                            onMouseEnter={() => {
-                              this.editLinksButtonColor = {
-                                ...Color4.Black(),
-                                a: 0.7
-                              }
-                            }}
-                            onMouseLeave={() => {
-                              this.editLinksButtonColor = {
-                                ...Color4.Black(),
-                                a: 0.35
-                              }
-                            }}
-                            onMouseDown={() => {
-                              this.isLinkEditing = true
-                            }}
-                            uiTransform={{
-                              width: 2 * this.fontSize,
-                              height: 2 * this.fontSize
-                            }}
-                            backgroundColor={this.editLinksButtonColor}
-                            icon={{ atlasName: 'icons', spriteName: 'Edit' }}
-                          />
+                          {!this.isLinkEditing && (
+                            <IconButton
+                              onMouseEnter={() => {
+                                this.editLinksButtonColor = {
+                                  ...Color4.Black(),
+                                  a: 0.7
+                                }
+                              }}
+                              onMouseLeave={() => {
+                                this.editLinksButtonColor = {
+                                  ...Color4.Black(),
+                                  a: 0.35
+                                }
+                              }}
+                              onMouseDown={() => {
+                                this.isLinkEditing = true
+                                this.linksToShow = [...this.savedLinks]
+                              }}
+                              uiTransform={{
+                                width: 2 * this.fontSize,
+                                height: 2 * this.fontSize
+                              }}
+                              backgroundColor={this.editLinksButtonColor}
+                              icon={{ atlasName: 'icons', spriteName: 'Edit' }}
+                            />
+                          )}
                         </UiEntity>
-                        <UiEntity>
-                        {this.links.length === 0 && (
-                          <Label
-                            value={'No links'}
-                            fontSize={this.fontSize}
-                            textAlign="middle-left"
-                          />
-                        )}
-                        {this.isLinkEditing && (
-                          <Label
-                            value={'Add a maximum of 5 links to promote your personal website or social networks'}
-                            fontSize={this.fontSize * .8}
-                            textAlign="middle-left"
-                          />
-                        )}
+                        {/* LINKS CONTENT */}
+                        <UiEntity
+                          uiTransform={{ height: 'auto', width: '100%' }}
+                        >
+                          {this.savedLinks.length === 0 &&
+                            !this.isLinkEditing && (
+                              <Label
+                                value={'No links'}
+                                fontSize={this.fontSize}
+                                textAlign="middle-left"
+                              />
+                            )}
+                          {this.isLinkEditing && (
+                            <Label
+                              value={
+                                'Add a maximum of 5 links to promote your personal website or social networks'
+                              }
+                              fontSize={this.fontSize * 0.8}
+                              textAlign="middle-left"
+                            />
+                          )}
                         </UiEntity>
-                        <UiEntity>
-                        {this.links.length === 0 && (
-                          <Label
-                            value={'No links'}
-                            fontSize={this.fontSize}
-                            textAlign="middle-left"
-                          />
-                        )}
-                        
-                        {this.links.length > 0 && (
-                          <UiEntity
-                            uiTransform={{
-                              width: '100%',
-                              height: 'auto',
-                              flexDirection: 'row',
-                              justifyContent: 'space-between', 
-                              flexWrap:'wrap'
-                            }}
-                          >
-                            {this.links.map((link, index) => (
+                        <UiEntity
+                          uiTransform={{
+                            width: '100%',
+                            height: 80,
+                            flexDirection: 'row',
+                            justifyContent: 'flex-start',
+                            flexWrap: 'wrap'
+                          }}
+                        >
+                          {this.linksToShow.length > 0 && (
+                            <UiEntity
+                              uiTransform={{
+                                width: '100%',
+                                height: 'auto',
+                                flexDirection: 'row',
+                                justifyContent: 'flex-start',
+                                flexWrap: 'wrap'
+                              }}
+                            >
+                              {this.linksToShow.map((link, index) => (
                                 <ChipButton
                                   onMouseDown={() => {}}
+                                  onMouseEnter={() => {
+                                    this.linkChipsBackgrounds[index] =
+                                      LINK_CHIP_HOVERED
+                                  }}
+                                  onMouseLeave={() => {
+                                    this.linkChipsBackgrounds[index] =
+                                      ALPHA_BLACK_NORMAL
+                                  }}
                                   value={link.name}
                                   fontColor={{
                                     ...Color4.create(0, 124 / 255, 176 / 255, 1)
@@ -769,10 +1177,12 @@ export class Profile {
                                   iconColor={{
                                     ...Color4.create(0, 124 / 255, 176 / 255, 1)
                                   }}
-                                  backgroundColor={{...Color4.Black(), a:0.2}}
+                                  backgroundColor={
+                                    this.linkChipsBackgrounds[index]
+                                  }
                                   fontSize={this.fontSize}
                                   uiTransform={{
-                                    height: this.fontSize * 2,
+                                    height: this.fontSize * 1.5,
                                     padding: { left: this.fontSize / 2 }
                                   }}
                                   icon={{
@@ -781,27 +1191,104 @@ export class Profile {
                                   }}
                                   deleteChip={() => {
                                     if (index > -1) {
-                                      this.links.splice(index, 1)
+                                      this.linksToShow.splice(index, 1)
+                                      console.log(
+                                        this.savedLinks,
+                                        this.linksToShow
+                                      )
                                     }
                                   }}
                                   isRemovable={this.isLinkEditing}
                                 />
-                            ))}
-                            
-                          </UiEntity>
-                        )}
-                        {this.isLinkEditing && this.links.length < 5 && (
+                              ))}
+                              {this.isLinkEditing &&
+                                this.linksToShow.length < 5 && (
+                                  <TextButton
+                                    uiTransform={{
+                                      height: this.fontSize * 1.5,
+                                      width: 5 * this.fontSize
+                                    }}
+                                    backgroundColor={this.addLinkBackground}
+                                    value={'+ ADD'}
+                                    fontSize={this.fontSize}
+                                    onMouseDown={() => {}}
+                                    // onMouseDown={()=>{this.openAddLink()}}
+                                    onMouseEnter={() => {
+                                      this.addLinkBackground = {
+                                        ...Color4.Black(),
+                                        a: 0.7
+                                      }
+                                    }}
+                                    onMouseLeave={() => {
+                                      this.addLinkBackground = {
+                                        ...Color4.Black(),
+                                        a: 0.35
+                                      }
+                                    }}
+                                  />
+                                )}
+                            </UiEntity>
+                          )}
+                        </UiEntity>
+
+                        <UiEntity
+                          uiTransform={{
+                            display: this.isLinkEditing ? 'flex' : 'none',
+                            width: '100%',
+                            height: 'auto',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                            margin: { top: this.fontSize }
+                          }}
+                        >
                           <TextButton
-                          uiTransform={{height: this.fontSize * 2, width: 8 * this.fontSize}}
-                          backgroundColor={this.addLinkBackground}
-                          value={'+ ADD'}
-                          fontSize={this.fontSize} 
-                          onMouseDown={()=>{}} 
-                          // onMouseDown={()=>{this.openAddLink()}} 
-                          onMouseEnter={()=>{this.addLinkBackground = {...Color4.Black(), a:0.7}}} 
-                          onMouseLeave={()=>{this.addLinkBackground = {...Color4.Black(), a:0.35}}}
+                            onMouseEnter={() => {
+                              this.cancelLinksButtonColor = {
+                                ...Color4.Black(),
+                                a: 0.7
+                              }
+                            }}
+                            onMouseLeave={() => {
+                              this.cancelLinksButtonColor = {
+                                ...Color4.Black(),
+                                a: 0.35
+                              }
+                            }}
+                            onMouseDown={() => {
+                              this.linksToShow = [...this.savedLinks]
+                              this.isLinkEditing = false
+                            }}
+                            uiTransform={{
+                              width: 5 * this.fontSize,
+                              height: 2 * this.fontSize
+                            }}
+                            backgroundColor={this.cancelLinksButtonColor}
+                            value={'CANCEL'}
+                            fontSize={this.fontSize}
                           />
-                        )}
+                          <TextButton
+                            onMouseEnter={() => {
+                              this.saveLinksButtonColor = {
+                                ...RUBY,
+                                g: 0.5,
+                                b: 0.5
+                              }
+                            }}
+                            onMouseLeave={() => {
+                              this.saveLinksButtonColor = RUBY
+                            }}
+                            onMouseDown={() => {
+                              this.savedLinks = [...this.linksToShow]
+                              this.isLinkEditing = false
+                            }}
+                            uiTransform={{
+                              width: 5 * this.fontSize,
+                              height: 2 * this.fontSize
+                            }}
+                            backgroundColor={this.saveLinksButtonColor}
+                            value={'SAVE'}
+                            fontSize={this.fontSize}
+                          />
                         </UiEntity>
                       </UiEntity>
 

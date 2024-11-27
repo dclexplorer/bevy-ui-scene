@@ -87,7 +87,7 @@ function chipButton(props: {
           uiTransform={{
             width: props.fontSize,
             height: props.fontSize,
-            margin:{right:props.fontSize/3}
+            margin: { right: props.fontSize / 3 }
           }}
           backgroundColor={{ ...Color4.Black(), a: 0.7 }}
           icon={{
