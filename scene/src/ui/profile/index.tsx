@@ -25,6 +25,7 @@ import Canvas from '../canvas/canvas'
 import { Label } from '@dcl/react-ecs/dist/components/Label'
 import ChipButton from '../../components/chipButton'
 import DropdownField from '../../components/dropdownField'
+import { AddLink } from '../add-link'
 
 export class Profile {
   private readonly isMyProfile: boolean = true
@@ -36,7 +37,7 @@ export class Profile {
   private readonly verified: boolean = true
   private readonly wallet: string = '0x10e...a7a92'
   private isCardOpen: boolean = false
-  private isProfileOpen: boolean = true
+  private isProfileOpen: boolean = false
   public fontSize: number = 16
   private readonly uiController: UIController
   private closeButtonColor: Color4 = { ...Color4.Black(), a: 0.35 }
@@ -95,8 +96,13 @@ export class Profile {
 
   private addLinkBackground: Color4 = { ...Color4.Black(), a: 0.35 }
 
+  private readonly addLink: AddLink
+  addLinkOpen: boolean = false
+
+
   constructor(uiController: UIController) {
     this.uiController = uiController
+    this.addLink = new AddLink(uiController)
   }
 
   updatePage(activePage: 'overview' | 'badges'): void {
@@ -120,6 +126,9 @@ export class Profile {
     this.uiController.isProfileVisible = false
     this.isCardOpen = false
     this.isProfileOpen = false
+    this.isInfoEditing = false
+    this.isLinkEditing = false
+    this.addLinkOpen = false
   }
 
   showProfile(): void {
@@ -205,10 +214,9 @@ export class Profile {
           }}
         >
           {/* CARD */}
-
-          {this.isCardOpen && (
             <UiEntity
               uiTransform={{
+                display: this.isCardOpen?'flex':'none',
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
@@ -444,12 +452,12 @@ export class Profile {
                 />
               </UiEntity>
             </UiEntity>
-          )}
 
           {/* PROFILE */}
-          {this.isProfileOpen && (
+          
             <UiEntity
               uiTransform={{
+                display:this.isProfileOpen ? 'flex':'none',
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
@@ -635,7 +643,7 @@ export class Profile {
                       fontColor={this.overviewText}
                       backgroundColor={this.overviewBackground}
                     />
-                    <TextButton
+                    {/* <TextButton
                       onMouseDown={() => {
                         this.updatePage('badges')
                       }}
@@ -643,7 +651,7 @@ export class Profile {
                       fontSize={this.fontSize}
                       fontColor={this.badgesText}
                       backgroundColor={this.badgesBackground}
-                    />
+                    /> */}
                   </UiEntity>
                   <IconButton
                     onMouseEnter={() => {
@@ -688,47 +696,7 @@ export class Profile {
                       }}
                       // uiBackground={{ color: Color4.Gray() }}
                     >
-                      {/* BADGES */}
-                      <UiEntity
-                        uiTransform={{
-                          flexDirection: 'column',
-                          justifyContent: 'flex-start',
-                          alignItems: 'flex-start',
-                          margin: {
-                            bottom: this.fontSize,
-                            right: this.fontSize
-                          },
-                          width: '96%',
-                          padding: this.fontSize,
-                          height: canvasInfo.height * 0.9 * 0.85 * 0.3,
-                          pointerFilter: 'block'
-                        }}
-                        uiBackground={{
-                          color: { ...Color4.Black(), a: 0.35 },
-                          textureMode: 'nine-slices',
-                          texture: {
-                            src: 'assets/images/backgrounds/rounded.png'
-                          },
-                          textureSlices: {
-                            top: 0.5,
-                            bottom: 0.5,
-                            left: 0.5,
-                            right: 0.5
-                          }
-                        }}
-                      >
-                        <UiEntity
-                          uiTransform={{
-                            width: '100%',
-                            height: 'auto',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                          }}
-                        >
-                          <Label value={'BADGES'} fontSize={this.fontSize} />
-                        </UiEntity>
-                      </UiEntity>
-
+                      
                       {/* INFO */}
                       <UiEntity
                         uiTransform={{
@@ -1034,10 +1002,11 @@ export class Profile {
                           uiTransform={{
                             display: this.isInfoEditing ? 'flex' : 'none',
                             width: '100%',
-                            height: 2 * this.fontSize,
+                            height: 4 * this.fontSize,
                             flexDirection: 'row',
                             justifyContent: 'flex-end',
-                            margin: { top: this.fontSize }
+                            alignItems:'center',
+                            margin: { top: this.fontSize },
                           }}
                         >
                           <UiEntity
@@ -1251,7 +1220,7 @@ export class Profile {
                                     value={'+ ADD'}
                                     fontSize={this.fontSize}
                                     onMouseDown={() => {
-                                      this.uiController.addLink.show()
+                                      this.addLinkOpen = true
                                     }}
                                     onMouseEnter={() => {
                                       this.addLinkBackground = {
@@ -1275,13 +1244,12 @@ export class Profile {
                           uiTransform={{
                             display: this.isLinkEditing ? 'flex' : 'none',
                             width: '100%',
-                            height: 'auto',
+                            height: 4 * this.fontSize,
                             flexDirection: 'row',
-                            alignItems: 'center',
                             justifyContent: 'flex-end',
-                            margin: { top: this.fontSize }
+                            alignItems:'center',
+                            margin: { top: this.fontSize },
                           }}
-                          // uiBackground={{color:RUBY}}
                         >
                           <UiEntity
                             uiTransform={{
@@ -1352,45 +1320,25 @@ export class Profile {
                           />
                         </UiEntity>
                       </UiEntity>
-                    </UiEntity>
-                  )}
 
-                  {/* BADGES */}
-                  {this.activePage === 'badges' && (
-                    <UiEntity
-                      uiTransform={{
-                        width: '90%',
-                        height: '85%',
-                        flexDirection: 'column',
-                        overflow: 'scroll'
-                      }}
-                      uiBackground={{
-                        color: { ...Color4.Black(), a: 0.35 },
-                        textureMode: 'nine-slices',
-                        texture: {
-                          src: 'assets/images/backgrounds/rounded.png'
-                        },
-                        textureSlices: {
-                          top: 0.5,
-                          bottom: 0.5,
-                          left: 0.5,
-                          right: 0.5
-                        }
-                      }}
-                    >
-                      {/*  */}
+                      {/* EQUIPPED ITEMS */}
                       <UiEntity
                         uiTransform={{
-                          flexDirection: 'row',
+                          flexDirection: 'column',
                           justifyContent: 'flex-start',
-                          alignItems: 'center',
-                          margin: { bottom: this.fontSize },
-                          width: '100%',
+                          alignItems: 'flex-start',
+                          margin: {
+                            bottom: this.fontSize,
+                            right: this.fontSize
+                          },
+                          width: '96%',
                           height: 'auto',
+                          padding: this.fontSize,
+                          minHeight: canvasInfo.height * 0.9 * 0.85 * 0.1,
                           pointerFilter: 'block'
                         }}
                         uiBackground={{
-                          color: { ...Color4.Black(), a: 1 },
+                          color: { ...Color4.Black(), a: 0.35 },
                           textureMode: 'nine-slices',
                           texture: {
                             src: 'assets/images/backgrounds/rounded.png'
@@ -1402,13 +1350,24 @@ export class Profile {
                             right: 0.5
                           }
                         }}
-                      ></UiEntity>
+                      >
+                       
+                          <Label value={'EQUIPPED ITEMS'} fontSize={this.fontSize} />
+                          
+                        </UiEntity>
+                        
                     </UiEntity>
                   )}
+
+                 
                 </UiEntity>
               </UiEntity>
             </UiEntity>
-          )}
+          
+
+          {/* ADD LINK */}
+          {this.addLink.mainUi()}
+
         </UiEntity>
       </Canvas>
     )

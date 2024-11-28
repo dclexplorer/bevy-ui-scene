@@ -7,6 +7,7 @@ import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_BLACK } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
 import Canvas from '../canvas/canvas'
+import { ProfileButton } from '../profile-button'
 
 export type MenuPage = 'map' | 'backpack' | 'settings'
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
@@ -14,6 +15,7 @@ const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 export class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
   private readonly uiController: UIController
+  private readonly profileButton: ProfileButton 
   readonly backpackIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'
@@ -33,6 +35,7 @@ export class MainMenu {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
+    this.profileButton = new ProfileButton(uiController)
   }
 
   mapEnter(): void {
@@ -218,7 +221,7 @@ export class MainMenu {
               position: { right: buttonSize, top: 0 }
             }}
           >
-            {this.uiController.profileButton.mainUi()}
+            {this.profileButton.mainUi()}
             <IconButton
               onMouseEnter={() => {
                 this.closeButtonColor = ALMOST_BLACK

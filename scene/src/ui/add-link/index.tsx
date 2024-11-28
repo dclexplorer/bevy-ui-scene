@@ -4,6 +4,7 @@ import ReactEcs, { Input, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import TextButton from '../../components/textButton'
 import { type UIController } from '../../controllers/ui.controller'
 import { RUBY } from '../../utils/constants'
+import { isValidURL } from '../../utils/ui-utils'
 
 export class AddLink {
   public fontSize: number = 16
@@ -18,10 +19,7 @@ export class AddLink {
   }
 
   updateSaveButton(): void {
-    if (
-      this.name.length >= 1 &&
-      (this.url.startsWith('https://') || this.url.startsWith('http://'))
-    ) {
+    if (this.name.length >= 1 && isValidURL(this.url)) {
       this.saveButtonColor = RUBY
     } else {
       this.saveButtonColor = Color4.Gray()
@@ -29,23 +27,20 @@ export class AddLink {
   }
 
   show(): void {
-    this.uiController.isAddLinkVisible = true
+    this.uiController.profile.addLinkOpen = true
     this.url = ''
     this.name = ''
     this.updateSaveButton()
   }
 
   hide(): void {
-    this.uiController.isAddLinkVisible = false
+    this.uiController.profile.addLinkOpen = false
     this.url = ''
     this.name = ''
   }
 
   onSaveEnter(): void {
-    if (
-      this.name.length >= 1 &&
-      (this.url.startsWith('https://') || this.url.startsWith('http://'))
-    ) {
+    if (this.name.length >= 1 && isValidURL(this.url)) {
       this.saveButtonColor = {
         ...RUBY,
         g: 0.5,
@@ -57,25 +52,21 @@ export class AddLink {
   save(): void {
     console.log(this.url)
     console.log(this.name.length)
-    if (
-      this.name.length >= 1 &&
-      (this.url.startsWith('https://') || this.url.startsWith('http://'))
-    ) {
+    if (this.name.length >= 1 && isValidURL(this.url)) {
       this.uiController.profile.linksToShow.push({
         name: this.name,
         url: this.url
       })
-      this.uiController.isAddLinkVisible = false
-    }
+      this.hide()    }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    if (!this.uiController.isProfileVisible) return null
     return (
       <UiEntity
         uiTransform={{
+        display:this.uiController.profile.addLinkOpen ? 'flex': 'none',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
