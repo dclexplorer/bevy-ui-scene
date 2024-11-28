@@ -1171,67 +1171,76 @@ export class Profile {
                         >
                           {this.linksToShow.length > 0 && (
                             <UiEntity
-                            uiTransform={{
-                              width: '100%',
-                              // minHeight: 5 * this.fontSize,
-                              flexDirection: 'row',
-                              justifyContent: 'flex-start',
-                              flexWrap: 'wrap'
-                            }}
-                          >
-                            <UiEntity
                               uiTransform={{
-                                width: 'auto',
+                                width: '100%',
+                                // minHeight: 5 * this.fontSize,
                                 flexDirection: 'row',
                                 justifyContent: 'flex-start',
                                 flexWrap: 'wrap'
                               }}
                             >
-                              {this.linksToShow.map((link, index) => (
-                                <ChipButton
-                                  onMouseDown={() => {}}
-                                  onMouseEnter={() => {
-                                    this.linkChipsBackgrounds[index] =
-                                      LINK_CHIP_HOVERED
-                                  }}
-                                  onMouseLeave={() => {
-                                    this.linkChipsBackgrounds[index] =
-                                      ALPHA_BLACK_NORMAL
-                                  }}
-                                  value={link.name}
-                                  fontColor={{
-                                    ...Color4.create(0, 124 / 255, 176 / 255, 1)
-                                  }}
-                                  iconColor={{
-                                    ...Color4.create(0, 124 / 255, 176 / 255, 1)
-                                  }}
-                                  backgroundColor={
-                                    this.linkChipsBackgrounds[index]
-                                  }
-                                  fontSize={this.fontSize}
-                                  uiTransform={{
-                                    height: this.fontSize * 1.5,
-                                    padding: { left: this.fontSize / 2 }
-                                  }}
-                                  icon={{
-                                    atlasName: 'icons',
-                                    spriteName: 'Link'
-                                  }}
-                                  deleteChip={() => {
-                                    if (index > -1) {
-                                      this.linksToShow.splice(index, 1)
-                                      console.log(
-                                        this.savedLinks,
-                                        this.linksToShow
+                              <UiEntity
+                                uiTransform={{
+                                  width: 'auto',
+                                  flexDirection: 'row',
+                                  justifyContent: 'flex-start',
+                                  flexWrap: 'wrap'
+                                }}
+                              >
+                                {this.linksToShow.map((link, index) => (
+                                  <ChipButton
+                                    onMouseDown={() => {}}
+                                    onMouseEnter={() => {
+                                      this.linkChipsBackgrounds[index] =
+                                        LINK_CHIP_HOVERED
+                                    }}
+                                    onMouseLeave={() => {
+                                      this.linkChipsBackgrounds[index] =
+                                        ALPHA_BLACK_NORMAL
+                                    }}
+                                    value={link.name}
+                                    fontColor={{
+                                      ...Color4.create(
+                                        0,
+                                        124 / 255,
+                                        176 / 255,
+                                        1
                                       )
+                                    }}
+                                    iconColor={{
+                                      ...Color4.create(
+                                        0,
+                                        124 / 255,
+                                        176 / 255,
+                                        1
+                                      )
+                                    }}
+                                    backgroundColor={
+                                      this.linkChipsBackgrounds[index]
                                     }
-                                  }}
-                                  isRemovable={this.isLinkEditing}
-                                />
-                              ))}
-                              
-                            </UiEntity>
-                            {this.isLinkEditing &&
+                                    fontSize={this.fontSize}
+                                    uiTransform={{
+                                      height: this.fontSize * 1.5,
+                                      padding: { left: this.fontSize / 2 }
+                                    }}
+                                    icon={{
+                                      atlasName: 'icons',
+                                      spriteName: 'Link'
+                                    }}
+                                    deleteChip={() => {
+                                      if (index > -1) {
+                                        this.linksToShow.splice(index, 1)
+                                        console.log(
+                                          this.savedLinks,
+                                          this.linksToShow
+                                        )
+                                      }
+                                    }}
+                                    isRemovable={this.isLinkEditing}
+                                  />
+                                ))}
+                              </UiEntity>
+                              {this.isLinkEditing &&
                                 this.linksToShow.length < 5 && (
                                   <TextButton
                                     uiTransform={{

@@ -17,19 +17,15 @@ export class AddLink {
     this.uiController = uiController
   }
 
-  updateSaveButton():void{
+  updateSaveButton(): void {
     if (
-        this.name.length >= 1 &&
-      (this.url.startsWith('https://') ||
-      this.url.startsWith('http://'))
-      ) {
-          this.saveButtonColor = 
-              RUBY
-             
-      } else {
-        this.saveButtonColor = 
-        Color4.Gray()
-      }
+      this.name.length >= 1 &&
+      (this.url.startsWith('https://') || this.url.startsWith('http://'))
+    ) {
+      this.saveButtonColor = RUBY
+    } else {
+      this.saveButtonColor = Color4.Gray()
+    }
   }
 
   show(): void {
@@ -45,29 +41,25 @@ export class AddLink {
     this.name = ''
   }
 
-
-  onSaveEnter():void{
-        if (
-            this.name.length >= 1 &&
-            (this.url.startsWith('https://') ||
-            this.url.startsWith('http://'))
-        ) {
-            this.saveButtonColor = {
-                ...RUBY,
-                g: 0.5,
-                b: 0.5
-              }
-        }
+  onSaveEnter(): void {
+    if (
+      this.name.length >= 1 &&
+      (this.url.startsWith('https://') || this.url.startsWith('http://'))
+    ) {
+      this.saveButtonColor = {
+        ...RUBY,
+        g: 0.5,
+        b: 0.5
       }
-  
+    }
+  }
 
   save(): void {
     console.log(this.url)
     console.log(this.name.length)
     if (
       this.name.length >= 1 &&
-      (this.url.startsWith('https://') ||
-      this.url.startsWith('http://'))
+      (this.url.startsWith('https://') || this.url.startsWith('http://'))
     ) {
       this.uiController.profile.linksToShow.push({
         name: this.name,
@@ -123,24 +115,27 @@ export class AddLink {
             }
           }}
         >
-            <Label value='Add Link' uiTransform={{
+          <Label
+            value="Add Link"
+            uiTransform={{
               width: '80%',
               height: this.fontSize * 1.5
             }}
-            textAlign='middle-left' fontSize={this.fontSize * 1.2}/>
+            textAlign="middle-left"
+            fontSize={this.fontSize * 1.2}
+          />
           <Input
             uiTransform={{
-            padding:this.fontSize * 0.5,
+              padding: this.fontSize * 0.5,
               width: '80%',
               height: this.fontSize * 2,
               alignContent: 'center'
             }}
             fontSize={this.fontSize}
-            onChange={($) => {this.name = $ 
-                this.updateSaveButton()
-
+            onChange={($) => {
+              this.name = $
+              this.updateSaveButton()
             }}
-
             uiBackground={{
               texture: { src: 'assets/images/backgrounds/rounded.png' },
               textureMode: 'nine-slices',
@@ -155,16 +150,16 @@ export class AddLink {
           />
           <Input
             uiTransform={{
-                padding:this.fontSize * 0.5,
-                width: '80%',
-                height: this.fontSize * 2,
+              padding: this.fontSize * 0.5,
+              width: '80%',
+              height: this.fontSize * 2,
               alignContent: 'center'
             }}
             fontSize={this.fontSize}
-            onChange={($) => {this.url = $ 
-                this.updateSaveButton()
+            onChange={($) => {
+              this.url = $
+              this.updateSaveButton()
             }}
-
             uiBackground={{
               texture: { src: 'assets/images/backgrounds/rounded.png' },
               textureMode: 'nine-slices',
