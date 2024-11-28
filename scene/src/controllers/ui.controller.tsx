@@ -8,10 +8,12 @@ import { MapPage } from '../ui/map-page'
 import { SettingsPage } from '../ui/settings-page'
 import { ProfileButton } from '../ui/profile-button'
 import { Profile } from '../ui/profile'
+import { AddLink } from '../ui/add-link'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
   public isProfileVisible: boolean = true
+  public isAddLinkVisible: boolean = false
   public settingsPage: SettingsPage
   public backpackPage: BackpackPage
   public mapPage: MapPage
@@ -22,6 +24,7 @@ export class UIController {
   gameController: GameController
   mainHud: MainHud
   menu: MainMenu
+  addLink: AddLink
 
   constructor(gameController: GameController) {
     this.gameController = gameController
@@ -33,6 +36,7 @@ export class UIController {
     this.mapPage = new MapPage()
     this.profileButton = new ProfileButton(this)
     this.profile = new Profile(this)
+    this.addLink = new AddLink(this)
 
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
@@ -43,6 +47,7 @@ export class UIController {
         {this.mainHud.mainUi()}
         {this.isMainMenuVisible && this.menu.mainUi()}
         {this.isProfileVisible && this.profile.mainUi()}
+        {this.isAddLinkVisible && this.addLink.mainUi()}
         {/* Loading & Login */}
         {/* {this.loadingAndLogin?.mainUi()} */}
       </UiEntity>

@@ -46,16 +46,16 @@ export class Profile {
   private badgesText: Color4 = ALMOST_BLACK
   private activePage: 'overview' | 'badges' = 'overview'
   private editInfoButtonColor: Color4 = { ...Color4.Black(), a: 0.35 }
+  private saveInfoButtonColor: Color4 = RUBY
+  private cancelInfoButtonColor: Color4 = { ...Color4.Black(), a: 0.35 }
   private editLinksButtonColor: Color4 = { ...Color4.Black(), a: 0.35 }
   private saveLinksButtonColor: Color4 = RUBY
   private cancelLinksButtonColor: Color4 = { ...Color4.Black(), a: 0.35 }
-  private savedLinks: Array<{ name: string; url: string }> = [
-    { name: 'DCL Explorers', url: 'https://dclexplorer.com' },
-    { name: 'Hello World', url: 'https://dclexplorer.com' },
-    { name: 'Hello World', url: 'https://dclexplorer.com' }
+  public savedLinks: Array<{ name: string; url: string }> = [
+    { name: 'DCL Explorers', url: 'https://dclexplorer.com' }
   ]
 
-  private linksToShow: Array<{ name: string; url: string }> = [
+  public linksToShow: Array<{ name: string; url: string }> = [
     ...this.savedLinks
   ]
 
@@ -123,6 +123,7 @@ export class Profile {
   }
 
   showProfile(): void {
+    this.infoCancel()
     this.isProfileOpen = true
     this.isCardOpen = false
     this.updatePage(this.activePage)
@@ -150,6 +151,10 @@ export class Profile {
     this.isRelationshipStatusOpen = false
     this.isSexualOrientationOpen = false
     this.isEmploymentStatusOpen = false
+    this.editInfoButtonColor = {
+      ...Color4.Black(),
+      a: 0.35
+    }
   }
 
   infoCancel(): void {
@@ -169,6 +174,10 @@ export class Profile {
     this.selectedRelationshipStatus = this.savedRelationshipStatus
     this.selectedSexualOrientation = this.savedSexualOrientation
     this.selectedEmploymentStatus = this.savedEmploymentStatus
+    this.editInfoButtonColor = {
+      ...Color4.Black(),
+      a: 0.35
+    }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -799,22 +808,21 @@ export class Profile {
                                 this.savedPronouns +
                                 this.savedRelationshipStatus +
                                 this.savedSexualOrientation ===
-                              0 && !this.isInfoEditing
+                                0 && !this.isInfoEditing
                                 ? 'flex'
                                 : 'none'
                           }}
                         />
                         <Label
-                          value={'You can extend your profile information using this fields. Those which are not completed will not be displayed.'}
+                          value={
+                            'You can extend your profile information using this fields. Those which are not completed will not be displayed.'
+                          }
                           fontSize={this.fontSize}
-                          textAlign='middle-left'
+                          textAlign="middle-left"
                           uiTransform={{
-                            width:'100%',
-                            flexWrap:'wrap',
-                            display:
-                              this.isInfoEditing
-                                ? 'flex'
-                                : 'none'
+                            width: '100%',
+                            flexWrap: 'wrap',
+                            display: this.isInfoEditing ? 'flex' : 'none'
                           }}
                         />
                         <UiEntity
@@ -1026,21 +1034,32 @@ export class Profile {
                           uiTransform={{
                             display: this.isInfoEditing ? 'flex' : 'none',
                             width: '100%',
-                            height: 'auto',
+                            height: 2 * this.fontSize,
                             flexDirection: 'row',
                             justifyContent: 'flex-end',
                             margin: { top: this.fontSize }
                           }}
                         >
+                          <UiEntity
+                            uiTransform={{
+                              positionType: 'absolute',
+                              position: { left: 0, top: 0 },
+                              width: '100%',
+                              height: 1
+                            }}
+                            uiBackground={{
+                              color: { ...ALMOST_WHITE, a: 0.2 }
+                            }}
+                          />
                           <TextButton
                             onMouseEnter={() => {
-                              this.cancelLinksButtonColor = {
+                              this.cancelInfoButtonColor = {
                                 ...Color4.Black(),
                                 a: 0.7
                               }
                             }}
                             onMouseLeave={() => {
-                              this.cancelLinksButtonColor = {
+                              this.cancelInfoButtonColor = {
                                 ...Color4.Black(),
                                 a: 0.35
                               }
@@ -1052,20 +1071,20 @@ export class Profile {
                               width: 5 * this.fontSize,
                               height: 2 * this.fontSize
                             }}
-                            backgroundColor={this.cancelLinksButtonColor}
+                            backgroundColor={this.cancelInfoButtonColor}
                             value={'CANCEL'}
                             fontSize={this.fontSize}
                           />
                           <TextButton
                             onMouseEnter={() => {
-                              this.saveLinksButtonColor = {
+                              this.saveInfoButtonColor = {
                                 ...RUBY,
                                 g: 0.5,
                                 b: 0.5
                               }
                             }}
                             onMouseLeave={() => {
-                              this.saveLinksButtonColor = RUBY
+                              this.saveInfoButtonColor = RUBY
                             }}
                             onMouseDown={() => {
                               this.infoSave()
@@ -1074,7 +1093,7 @@ export class Profile {
                               width: 5 * this.fontSize,
                               height: 2 * this.fontSize
                             }}
-                            backgroundColor={this.saveLinksButtonColor}
+                            backgroundColor={this.saveInfoButtonColor}
                             value={'SAVE'}
                             fontSize={this.fontSize}
                           />
@@ -1143,7 +1162,8 @@ export class Profile {
                         <UiEntity
                           uiTransform={{
                             width: '100%',
-                            height: 80,
+                            height: 'auto',
+                            // height: 250,
                             flexDirection: 'row',
                             justifyContent: 'flex-start',
                             flexWrap: 'wrap'
@@ -1151,9 +1171,17 @@ export class Profile {
                         >
                           {this.linksToShow.length > 0 && (
                             <UiEntity
+                            uiTransform={{
+                              width: '100%',
+                              // minHeight: 5 * this.fontSize,
+                              flexDirection: 'row',
+                              justifyContent: 'flex-start',
+                              flexWrap: 'wrap'
+                            }}
+                          >
+                            <UiEntity
                               uiTransform={{
-                                width: '100%',
-                                height: 'auto',
+                                width: 'auto',
                                 flexDirection: 'row',
                                 justifyContent: 'flex-start',
                                 flexWrap: 'wrap'
@@ -1201,7 +1229,9 @@ export class Profile {
                                   isRemovable={this.isLinkEditing}
                                 />
                               ))}
-                              {this.isLinkEditing &&
+                              
+                            </UiEntity>
+                            {this.isLinkEditing &&
                                 this.linksToShow.length < 5 && (
                                   <TextButton
                                     uiTransform={{
@@ -1211,8 +1241,9 @@ export class Profile {
                                     backgroundColor={this.addLinkBackground}
                                     value={'+ ADD'}
                                     fontSize={this.fontSize}
-                                    onMouseDown={() => {}}
-                                    // onMouseDown={()=>{this.openAddLink()}}
+                                    onMouseDown={() => {
+                                      this.uiController.addLink.show()
+                                    }}
                                     onMouseEnter={() => {
                                       this.addLinkBackground = {
                                         ...Color4.Black(),
@@ -1237,10 +1268,23 @@ export class Profile {
                             width: '100%',
                             height: 'auto',
                             flexDirection: 'row',
+                            alignItems: 'center',
                             justifyContent: 'flex-end',
                             margin: { top: this.fontSize }
                           }}
+                          // uiBackground={{color:RUBY}}
                         >
+                          <UiEntity
+                            uiTransform={{
+                              positionType: 'absolute',
+                              position: { left: 0, top: 0 },
+                              width: '100%',
+                              height: 1
+                            }}
+                            uiBackground={{
+                              color: { ...ALMOST_WHITE, a: 0.2 }
+                            }}
+                          />
                           <TextButton
                             onMouseEnter={() => {
                               this.cancelLinksButtonColor = {
@@ -1257,6 +1301,10 @@ export class Profile {
                             onMouseDown={() => {
                               this.linksToShow = [...this.savedLinks]
                               this.isLinkEditing = false
+                              this.editLinksButtonColor = {
+                                ...Color4.Black(),
+                                a: 0.35
+                              }
                             }}
                             uiTransform={{
                               width: 5 * this.fontSize,
@@ -1280,6 +1328,10 @@ export class Profile {
                             onMouseDown={() => {
                               this.savedLinks = [...this.linksToShow]
                               this.isLinkEditing = false
+                              this.editLinksButtonColor = {
+                                ...Color4.Black(),
+                                a: 0.35
+                              }
                             }}
                             uiTransform={{
                               width: 5 * this.fontSize,
@@ -1291,32 +1343,6 @@ export class Profile {
                           />
                         </UiEntity>
                       </UiEntity>
-
-                      {/* EQUIPPED ITEMS */}
-                      <UiEntity
-                        uiTransform={{
-                          flexDirection: 'row',
-                          justifyContent: 'flex-start',
-                          alignItems: 'center',
-
-                          width: '100%',
-                          height: '20%',
-                          pointerFilter: 'block'
-                        }}
-                        uiBackground={{
-                          color: { ...Color4.Black(), a: 0.35 },
-                          textureMode: 'nine-slices',
-                          texture: {
-                            src: 'assets/images/backgrounds/rounded.png'
-                          },
-                          textureSlices: {
-                            top: 0.5,
-                            bottom: 0.5,
-                            left: 0.5,
-                            right: 0.5
-                          }
-                        }}
-                      ></UiEntity>
                     </UiEntity>
                   )}
 
@@ -1324,12 +1350,24 @@ export class Profile {
                   {this.activePage === 'badges' && (
                     <UiEntity
                       uiTransform={{
-                        width: '100%',
+                        width: '90%',
                         height: '85%',
                         flexDirection: 'column',
                         overflow: 'scroll'
                       }}
-                      uiBackground={{ color: Color4.Gray() }}
+                      uiBackground={{
+                        color: { ...Color4.Black(), a: 0.35 },
+                        textureMode: 'nine-slices',
+                        texture: {
+                          src: 'assets/images/backgrounds/rounded.png'
+                        },
+                        textureSlices: {
+                          top: 0.5,
+                          bottom: 0.5,
+                          left: 0.5,
+                          right: 0.5
+                        }
+                      }}
                     >
                       {/*  */}
                       <UiEntity
