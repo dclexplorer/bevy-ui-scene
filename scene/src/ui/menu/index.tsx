@@ -15,7 +15,7 @@ const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 export class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
   private readonly uiController: UIController
-  private readonly profileButton: ProfileButton 
+  private readonly profileButton: ProfileButton
   readonly backpackIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'

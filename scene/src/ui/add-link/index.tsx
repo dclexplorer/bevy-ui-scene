@@ -57,7 +57,8 @@ export class AddLink {
         name: this.name,
         url: this.url
       })
-      this.hide()    }
+      this.hide()
+    }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -66,7 +67,7 @@ export class AddLink {
     return (
       <UiEntity
         uiTransform={{
-        display:this.uiController.profile.addLinkOpen ? 'flex': 'none',
+          display: this.uiController.profile.addLinkOpen ? 'flex' : 'none',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
@@ -123,10 +124,6 @@ export class AddLink {
               alignContent: 'center'
             }}
             fontSize={this.fontSize}
-            onChange={($) => {
-              this.name = $
-              this.updateSaveButton()
-            }}
             uiBackground={{
               texture: { src: 'assets/images/backgrounds/rounded.png' },
               textureMode: 'nine-slices',
@@ -136,6 +133,10 @@ export class AddLink {
                 left: 0.5,
                 right: 0.5
               }
+            }}
+            onChange={($) => {
+              this.name = $
+              this.updateSaveButton()
             }}
             placeholder="Enter Link Title"
           />
