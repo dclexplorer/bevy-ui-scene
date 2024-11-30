@@ -39,6 +39,7 @@ function inputField(props: {
       {/* TITLE AND ICON */}
       <UiEntity
         uiTransform={{
+          display: props.title.length === 0 ?'none': 'flex',
           width:'100%',
           height:'auto',
           flexDirection: 'row',
@@ -79,12 +80,14 @@ function inputField(props: {
         uiTransform={{
           display: !props.isEditing ? 'flex' : 'none',
           width: 'auto',
+          
           height: props.fontSize * 1.25
         }}
         uiText={{
           value: props.savedValue,
           fontSize: props.fontSize,
-          color: props.fontColor ?? ALMOST_WHITE
+          color: props.fontColor ?? ALMOST_WHITE,
+          textWrap: 'wrap'
         }}
       />
 

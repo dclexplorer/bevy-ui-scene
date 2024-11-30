@@ -111,6 +111,7 @@ export const COUNTRIES = [
   'Cuba',
   'Cyprus',
   'Czechia',
+  'Decentraland',
   'Denmark',
   'Djibouti',
   'Dominica',

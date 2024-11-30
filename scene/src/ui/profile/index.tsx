@@ -29,10 +29,16 @@ import { AddLink } from '../add-link'
 import InputField from '../../components/inputField'
 
 export class Profile {
+  private savedIntro: string = ''
   private savedHobbie: string = ''
   private savedBirth: string = ''
+  private typedIntro: string = ''
   private typedHobbie: string = ''
   private typedBirth: string = ''
+  private savedProfession: string = ''
+  private savedRealName: string = ''
+  private typedProfession: string = ''
+  private typedRealName: string = ''
   private readonly isMyProfile: boolean = true
   private readonly statusIconSprite: string =
     'assets/images/passport/Online.png'
@@ -162,8 +168,11 @@ export class Profile {
       a: 0.35
     }
     if (this.typedBirth === '' || isValidDate(this.typedBirth)){
+      this.savedIntro = this.typedIntro
       this.savedHobbie = this.typedHobbie
       this.savedBirth = this.typedBirth
+      this.savedRealName = this.typedRealName
+      this.savedProfession = this.typedProfession
       this.savedCountry = this.selectedCountry
       this.savedLanguage = this.selectedLanguage
       this.savedPronouns = this.selectedPronouns
@@ -193,6 +202,10 @@ export class Profile {
     this.selectedEmploymentStatus = this.savedEmploymentStatus
     this.typedHobbie = this.savedHobbie
     this.typedBirth = this.savedBirth 
+    this.typedRealName = this.savedRealName 
+    this.typedProfession = this.savedProfession 
+     this.typedIntro = this.savedIntro
+
     this.editInfoButtonColor = {
       ...Color4.Black(),
       a: 0.35
@@ -774,21 +787,39 @@ export class Profile {
                         )}
                       </UiEntity>
                       <Label
-                        value={'No intro.'}
+                        value={
+                          'Use this space to describe yourself in a few words.'
+                        }
                         fontSize={this.fontSize}
+                        textAlign="middle-left"
                         uiTransform={{
-                          display:
-                            this.savedCountry +
-                              this.savedEmploymentStatus +
-                              this.savedGender +
-                              this.savedLanguage +
-                              this.savedPronouns +
-                              this.savedRelationshipStatus +
-                              this.savedSexualOrientation ===
-                              0 && !this.isInfoEditing
-                              ? 'flex'
-                              : 'none'
+                          width: '100%',
+                          flexWrap: 'wrap',
+                          display: this.isInfoEditing ? 'flex' : 'none'
                         }}
+                      />
+                      <InputField
+                      uiTransform={{
+                        minWidth: '90%',
+                        maxWidth:'90%',
+                        margin: {
+                          right: this.fontSize,
+                          bottom: this.fontSize
+                        }
+                      }}
+                      onValueUpdate={(arg) => {
+                        this.typedIntro = arg
+                      }}
+                      title={''}
+                      placeholder={'Write about you'}
+                      icon={{
+                        atlasName: '',
+                        spriteName: ''
+                      }}
+                      fontSize={this.fontSize}
+                      value={this.typedIntro}
+                      savedValue={this.savedIntro}
+                      isEditing={this.isInfoEditing}
                       />
                       <Label
                         value={
@@ -815,134 +846,7 @@ export class Profile {
                       >
                         <DropdownField
                           uiTransform={{
-                            minWidth: '22%',
-                            margin: {
-                              right: this.fontSize,
-                              bottom: this.fontSize
-                            }
-                          }}
-                          isOpen={this.isCountryOpen}
-                          title="COUNTRY"
-                          icon={{
-                            atlasName: 'profile',
-                            spriteName: 'CountryIcn'
-                          }}
-                          onMouseDown={() => {
-                            this.isCountryOpen = !this.isCountryOpen
-                          }}
-                          onOptionMouseDown={(index) => {
-                            this.selectedCountry = index
-                            this.isCountryOpen = false
-                          }}
-                          fontSize={this.fontSize}
-                          savedOption={this.savedCountry}
-                          selectedOption={this.selectedCountry}
-                          options={COUNTRIES}
-                          isEditing={this.isInfoEditing}
-                        />
-                        <InputField
-                          uiTransform={{
-                            minWidth: '22%',
-                            maxWidth:'100%',
-                            margin: {
-                              right: this.fontSize,
-                              bottom: this.fontSize
-                            }
-                          }}
-                          onValueUpdate={(arg) => {
-                            this.typedBirth = arg
-                          }}
-                          title={'BIRTH DATE'}
-                          placeholder={'DD/MM/AAAA.'}
-                          icon={{
-                            atlasName: 'profile',
-                            spriteName: 'BirthdayIcn'
-                          }}
-                          fontSize={this.fontSize}
-                          value={this.typedBirth}
-                          savedValue={this.savedBirth}
-                          isEditing={this.isInfoEditing}
-                        />
-                        <InputField
-                          uiTransform={{
-                            minWidth: '22%',
-                            maxWidth:'100%',
-                            margin: {
-                              right: this.fontSize,
-                              bottom: this.fontSize
-                            }
-                          }}
-                          onValueUpdate={(arg) => {
-                            this.typedHobbie = arg
-                          }}
-                          title={'HOBBIES'}
-                          placeholder={'Write here.'}
-                          icon={{
-                            atlasName: 'profile',
-                            spriteName: 'HobbiesIcn'
-                          }}
-                          fontSize={this.fontSize}
-                          value={this.typedHobbie}
-                          savedValue={this.savedHobbie}
-                          isEditing={this.isInfoEditing}
-                        />
-                        <DropdownField
-                          uiTransform={{
-                            minWidth: '22%',
-                            margin: {
-                              right: this.fontSize,
-                              bottom: this.fontSize
-                            }
-                          }}
-                          isOpen={this.isLanguageOpen}
-                          title="LANGUAGE"
-                          icon={{
-                            atlasName: 'profile',
-                            spriteName: 'LanguageIcn'
-                          }}
-                          onMouseDown={() => {
-                            this.isLanguageOpen = !this.isLanguageOpen
-                          }}
-                          onOptionMouseDown={(index) => {
-                            this.selectedLanguage = index
-                            this.isLanguageOpen = false
-                          }}
-                          fontSize={this.fontSize}
-                          savedOption={this.savedLanguage}
-                          selectedOption={this.selectedLanguage}
-                          options={LANGUAGES}
-                          isEditing={this.isInfoEditing}
-                        />
-                        <DropdownField
-                          uiTransform={{
-                            minWidth: '22%',
-                            margin: {
-                              right: this.fontSize,
-                              bottom: this.fontSize
-                            }
-                          }}
-                          isOpen={this.isPronounsOpen}
-                          title="PRONOUNS"
-                          icon={{
-                            atlasName: 'profile',
-                            spriteName: 'PronounsIcn'
-                          }}
-                          onMouseDown={() => {
-                            this.isPronounsOpen = !this.isPronounsOpen
-                          }}
-                          onOptionMouseDown={(index) => {
-                            this.selectedPronouns = index
-                            this.isPronounsOpen = false
-                          }}
-                          fontSize={this.fontSize}
-                          savedOption={this.savedPronouns}
-                          selectedOption={this.selectedPronouns}
-                          options={PRONOUNS}
-                          isEditing={this.isInfoEditing}
-                        />
-                        <DropdownField
-                          uiTransform={{
-                            minWidth: '22%',
+                            minWidth: '18%',
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -969,7 +873,85 @@ export class Profile {
                         />
                         <DropdownField
                           uiTransform={{
-                            minWidth: '22%',
+                            minWidth: '18%',
+                            margin: {
+                              right: this.fontSize,
+                              bottom: this.fontSize
+                            }
+                          }}
+                          isOpen={this.isCountryOpen}
+                          title="COUNTRY"
+                          icon={{
+                            atlasName: 'profile',
+                            spriteName: 'CountryIcn'
+                          }}
+                          onMouseDown={() => {
+                            this.isCountryOpen = !this.isCountryOpen
+                          }}
+                          onOptionMouseDown={(index) => {
+                            this.selectedCountry = index
+                            this.isCountryOpen = false
+                          }}
+                          fontSize={this.fontSize}
+                          savedOption={this.savedCountry}
+                          selectedOption={this.selectedCountry}
+                          options={COUNTRIES}
+                          isEditing={this.isInfoEditing}
+                        />
+                        <InputField
+                          uiTransform={{
+                            minWidth: '18%',
+                            maxWidth:'100%',
+                            margin: {
+                              right: this.fontSize,
+                              bottom: this.fontSize
+                            }
+                          }}
+                          onValueUpdate={(arg) => {
+                            this.typedBirth = arg
+                          }}
+                          title={'BIRTH DATE'}
+                          placeholder={'DD/MM/AAAA.'}
+                          icon={{
+                            atlasName: 'profile',
+                            spriteName: 'BirthdayIcn'
+                          }}
+                          fontSize={this.fontSize}
+                          value={this.typedBirth}
+                          savedValue={this.savedBirth}
+                          isEditing={this.isInfoEditing}
+                        />
+                        
+                        <DropdownField
+                          uiTransform={{
+                            minWidth: '18%',
+                            margin: {
+                              right: this.fontSize,
+                              bottom: this.fontSize
+                            }
+                          }}
+                          isOpen={this.isPronounsOpen}
+                          title="PRONOUNS"
+                          icon={{
+                            atlasName: 'profile',
+                            spriteName: 'PronounsIcn'
+                          }}
+                          onMouseDown={() => {
+                            this.isPronounsOpen = !this.isPronounsOpen
+                          }}
+                          onOptionMouseDown={(index) => {
+                            this.selectedPronouns = index
+                            this.isPronounsOpen = false
+                          }}
+                          fontSize={this.fontSize}
+                          savedOption={this.savedPronouns}
+                          selectedOption={this.selectedPronouns}
+                          options={PRONOUNS}
+                          isEditing={this.isInfoEditing}
+                        />
+                        <DropdownField
+                          uiTransform={{
+                            minWidth: '18%',
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -997,7 +979,7 @@ export class Profile {
                         />
                         <DropdownField
                           uiTransform={{
-                            minWidth: '22%',
+                            minWidth: '18%',
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1025,7 +1007,58 @@ export class Profile {
                         />
                         <DropdownField
                           uiTransform={{
-                            minWidth: '22%',
+                            minWidth: '18%',
+                            margin: {
+                              right: this.fontSize,
+                              bottom: this.fontSize
+                            }
+                          }}
+                          isOpen={this.isLanguageOpen}
+                          title="LANGUAGE"
+                          icon={{
+                            atlasName: 'profile',
+                            spriteName: 'LanguageIcn'
+                          }}
+                          onMouseDown={() => {
+                            this.isLanguageOpen = !this.isLanguageOpen
+                          }}
+                          onOptionMouseDown={(index) => {
+                            this.selectedLanguage = index
+                            this.isLanguageOpen = false
+                          }}
+                          fontSize={this.fontSize}
+                          savedOption={this.savedLanguage}
+                          selectedOption={this.selectedLanguage}
+                          options={LANGUAGES}
+                          isEditing={this.isInfoEditing}
+                        />
+                        
+                        <InputField
+                          uiTransform={{
+                            minWidth: '18%',
+                            maxWidth:'100%',
+                            margin: {
+                              right: this.fontSize,
+                              bottom: this.fontSize
+                            }
+                          }}
+                          onValueUpdate={(arg) => {
+                            this.typedProfession = arg
+                          }}
+                          title={'PROFESSION'}
+                          placeholder={'Write here'}
+                          icon={{
+                            atlasName: 'profile',
+                            spriteName: 'ProfessionIcn'
+                          }}
+                          fontSize={this.fontSize}
+                          value={this.typedProfession}
+                          savedValue={this.savedProfession}
+                          isEditing={this.isInfoEditing}
+                        />
+                        <DropdownField
+                          uiTransform={{
+                            minWidth: '18%',
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1049,6 +1082,52 @@ export class Profile {
                           savedOption={this.savedEmploymentStatus}
                           selectedOption={this.selectedEmploymentStatus}
                           options={EMPLOYMENT_STATUS}
+                          isEditing={this.isInfoEditing}
+                        />
+                        <InputField
+                          uiTransform={{
+                            minWidth: '18%',
+                            maxWidth:'100%',
+                            margin: {
+                              right: this.fontSize,
+                              bottom: this.fontSize
+                            }
+                          }}
+                          onValueUpdate={(arg) => {
+                            this.typedHobbie = arg
+                          }}
+                          title={'HOBBIES'}
+                          placeholder={'Write here'}
+                          icon={{
+                            atlasName: 'profile',
+                            spriteName: 'HobbiesIcn'
+                          }}
+                          fontSize={this.fontSize}
+                          value={this.typedHobbie}
+                          savedValue={this.savedHobbie}
+                          isEditing={this.isInfoEditing}
+                        />
+                        <InputField
+                          uiTransform={{
+                            minWidth: '18%',
+                            maxWidth:'100%',
+                            margin: {
+                              right: this.fontSize,
+                              bottom: this.fontSize
+                            }
+                          }}
+                          onValueUpdate={(arg) => {
+                            this.typedRealName = arg
+                          }}
+                          title={'REAL NAME'}
+                          placeholder={'Write here'}
+                          icon={{
+                            atlasName: 'profile',
+                            spriteName: 'RealNameIcn'
+                          }}
+                          fontSize={this.fontSize}
+                          value={this.typedRealName}
+                          savedValue={this.savedRealName}
                           isEditing={this.isInfoEditing}
                         />
                       </UiEntity>
