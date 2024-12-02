@@ -72,14 +72,15 @@ export class MainHud {
 
   private bellBackground: Color4 | undefined = undefined
   private backpackBackground: Color4 | undefined = undefined
-  private walletBackground: Color4 | undefined = undefined
+  private emotesBackground: Color4 | undefined = undefined
+  private exploreBackground: Color4 | undefined = undefined
+  private helpBackground: Color4 | undefined = undefined
   private mapBackground: Color4 | undefined = undefined
   private settingsBackground: Color4 | undefined = undefined
-  private helpBackground: Color4 | undefined = undefined
+  private walletBackground: Color4 | undefined = undefined
   // private friendsBackground: Color4 | undefined = undefined
   // private cameraBackground: Color4 | undefined = undefined
   // private experiencesBackground: Color4 | undefined = undefined
-  private emotesBackground: Color4 | undefined = undefined
 
   public readonly sceneName: string = 'Scene Name'
   public readonly sceneCoords: { x: number; y: number } = { x: -5, y: 0 }
@@ -97,6 +98,12 @@ export class MainHud {
     this.walletIcon.spriteName = 'Wallet on'
     this.walletBackground = SELECTED_BUTTON_COLOR
     this.walletHint = true
+  }
+
+  exploreEnter(): void {
+    this.exploreIcon.spriteName = 'Explore on'
+    this.exploreBackground = SELECTED_BUTTON_COLOR
+    this.exploreHint = true
   }
 
   notificationsEnter(): void {
@@ -157,6 +164,9 @@ export class MainHud {
     this.emotesIcon.spriteName = 'Emote off'
     this.emotesBackground = undefined
     this.emotesHint = false
+    this.exploreIcon.spriteName = 'Explore off'
+    this.exploreBackground = undefined
+    this.exploreHint = false
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -268,6 +278,26 @@ export class MainHud {
                 icon={this.mapIcon}
                 hintText={'Map'}
                 showHint={this.mapHint}
+              />
+              <IconButton
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
+                onMouseEnter={() => {
+                  this.exploreEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  this.uiController.menu?.show('explore')
+                }}
+                backgroundColor={this.exploreBackground}
+                icon={this.exploreIcon}
+                hintText={'Explore'}
+                showHint={this.exploreHint}
               />
 
               <IconButton

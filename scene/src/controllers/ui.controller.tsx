@@ -8,6 +8,7 @@ import { MapPage } from '../ui/map-page'
 import { SettingsPage } from '../ui/settings-page'
 import { ProfileButton } from '../ui/profile-button'
 import { Profile } from '../ui/profile'
+import { ExplorePage } from '../ui/explore-page'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
@@ -15,6 +16,7 @@ export class UIController {
   public settingsPage: SettingsPage
   public backpackPage: BackpackPage
   public mapPage: MapPage
+  public explorePage: ExplorePage
 
   profileButton: ProfileButton
   profile: Profile
@@ -31,6 +33,7 @@ export class UIController {
     this.settingsPage = new SettingsPage()
     this.backpackPage = new BackpackPage()
     this.mapPage = new MapPage()
+    this.explorePage = new ExplorePage()
     this.profileButton = new ProfileButton(this)
     this.profile = new Profile(this)
 
