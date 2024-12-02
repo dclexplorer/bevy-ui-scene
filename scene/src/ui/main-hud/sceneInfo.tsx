@@ -44,6 +44,11 @@ export class SceneInfo {
   public totalTextureMemoryValue: number = 0
   public totalEntitiesValue: number = 0
 
+  private isSceneLoading: boolean = false
+  private readonly loadingIcon: Icon = {atlasName: 'icons', spriteName: 'Graphics'}
+
+  private timer: number = 0
+
   constructor(uiController: UIController) {
     this.uiController = uiController
   }
@@ -82,6 +87,31 @@ export class SceneInfo {
 
   setTotalEntities(arg:number):void {
     this.totalEntitiesValue = arg
+  }
+
+
+  setLoading(loading:boolean): void {
+    this.isSceneLoading = loading
+    if (loading) {
+      engine.addSystem(this.loadingSystem.bind(this))
+    }else{
+      engine.removeSystem(this.loadingSystem.bind(this))
+    }
+  }
+
+
+  loadingSystem(): void {
+    if (this.timer > 500){
+      this.timer = 0
+      if (this.loadingIcon.spriteName === 'Graphics'){
+        this.loadingIcon.spriteName = 'Download'
+      } else {
+        this.loadingIcon.spriteName = 'Graphics'
+      }
+    }
+    else {
+      this.timer = this.timer + 5
+    } 
   }
 
   updateIcons(): void {
@@ -147,7 +177,8 @@ export class SceneInfo {
               left: this.uiController.mainHud.isSideBarVisible
                 ? canvasInfo.width * 0.034
                 : canvasInfo.width * 0.01,
-              top: canvasInfo.width * 0.01 * 20
+              // top: canvasInfo.width * 0.01 * 20
+              top: 250
             },
             positionType: 'absolute'
           }}
@@ -177,6 +208,7 @@ export class SceneInfo {
             <IconButton
               onMouseDown={() => {
                 this.setExpanded(!this.isExpanded)
+                this.setLoading(!this.isExpanded)
               }}
               onMouseEnter={() => {
                 this.expandBackgroundColor = { ...ALMOST_BLACK, a: 0.2 }
@@ -273,6 +305,17 @@ export class SceneInfo {
                       spriteName: 'Tag'
                     })
                   }}
+                />
+                <UiEntity
+                  uiTransform={{
+                    display: this.isSceneLoading ? 'flex' : 'none',
+                    width: this.fontSize * 0.875,
+                    height: this.fontSize * 0.875,
+                    margin:{left:this.fontSize}
+                  }}
+                  uiBackground={
+                    getBackgroundFromAtlas(this.loadingIcon)
+                  }
                 />
               </UiEntity>
             </UiEntity>
@@ -575,7 +618,7 @@ export class SceneInfo {
               }}
             >
               <Label
-                value="Scene UI"
+                value="Hide Scene UI"
                 fontSize={this.fontSize}
                 color={this.sceneUiBackgroundColor}
               />
@@ -626,7 +669,7 @@ export class SceneInfo {
                 }}
               />
               <Label
-                value="Set as Home"
+                value={this.isHome?'Unset as Home':'Set as Home'}
                 fontSize={this.fontSize}
                 color={this.setHomeBackgroundColor}
               />
@@ -665,7 +708,7 @@ export class SceneInfo {
                 }}
               />
               <Label
-                value="Mark as Favourite"
+                value={this.isFav? 'Unmark as Favourite':'Mark as Favourite'}
                 fontSize={this.fontSize}
                 color={this.setFavBackgroundColor}
               />
