@@ -173,15 +173,15 @@ export class MainHud {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
-    const buttonSize: number = sideBarHeight * 0.9
+    const buttonSize: number = 38
     const buttonMargin: Partial<Position> = { top: 5, bottom: 5 }
 
     return (
       <Canvas>
         <UiEntity
           uiTransform={{
-            width: '2.4%',
+            width: (canvasInfo.width * 2.5) / 100,
+            minWidth: 45,
             height: '100%',
             position: { left: 0, top: 0 },
             positionType: 'absolute'
@@ -215,8 +215,11 @@ export class MainHud {
               <IconButton
                 uiTransform={{
                   margin: { top: 300, bottom: 5 },
-                  height: buttonSize,
-                  width: buttonSize
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize
                 }}
                 onMouseEnter={() => {
                   this.walletEnter()
@@ -235,8 +238,11 @@ export class MainHud {
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -261,8 +267,11 @@ export class MainHud {
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -281,8 +290,11 @@ export class MainHud {
               />
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -302,8 +314,11 @@ export class MainHud {
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -323,8 +338,11 @@ export class MainHud {
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -349,8 +367,11 @@ export class MainHud {
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -409,8 +430,11 @@ export class MainHud {
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {

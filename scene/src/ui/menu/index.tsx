@@ -22,7 +22,10 @@ export class MainMenu {
   }
 
   readonly mapIcon: Icon = { atlasName: 'navbar', spriteName: 'Map off' }
-  readonly exploreIcon: Icon = { atlasName: 'navbar', spriteName: 'Explore off' }
+  readonly exploreIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Explore off'
+  }
   readonly settingsIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Settings off'
@@ -160,7 +163,7 @@ export class MainMenu {
                 direction={'column'}
               />
 
-<TextIconButton
+              <TextIconButton
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
@@ -239,7 +242,8 @@ export class MainMenu {
             uiBackground={{ color: { ...Color4.Green(), a: 0.1 } }}
           >
             {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
-            {this.activePage === 'explore' && this.uiController.explorePage.mainUi()}
+            {this.activePage === 'explore' &&
+              this.uiController.explorePage.mainUi()}
             {this.activePage === 'backpack' &&
               this.uiController.backpackPage.mainUi()}
             {this.activePage === 'settings' &&

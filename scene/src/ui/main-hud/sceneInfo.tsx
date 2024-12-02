@@ -45,7 +45,10 @@ export class SceneInfo {
   public totalEntitiesValue: number = 0
 
   private isSceneLoading: boolean = false
-  private readonly loadingIcon: Icon = {atlasName: 'icons', spriteName: 'Graphics'}
+  private readonly loadingIcon: Icon = {
+    atlasName: 'icons',
+    spriteName: 'Graphics'
+  }
 
   private timer: number = 0
 
@@ -53,65 +56,62 @@ export class SceneInfo {
     this.uiController = uiController
   }
 
-  setFps(arg:number):void {
+  setFps(arg: number): void {
     this.fpsValue = arg
   }
 
-  setUniqueGltfMeshes(arg:number):void {
+  setUniqueGltfMeshes(arg: number): void {
     this.uniqueGltfMeshesValue = arg
   }
 
-  setVisibleMeshCount(arg:number):void {
+  setVisibleMeshCount(arg: number): void {
     this.visibleMeshCountValue = arg
   }
 
-  setVisibleTriangleCount(arg:number):void {
+  setVisibleTriangleCount(arg: number): void {
     this.visibleTriangleCountValue = arg
   }
 
-  setUniqueGltfMaterials(arg:number):void {
+  setUniqueGltfMaterials(arg: number): void {
     this.uniqueGltfMaterialsValue = arg
   }
 
-  setVisibleMaterialCount(arg:number):void {
+  setVisibleMaterialCount(arg: number): void {
     this.visibleMaterialCountValue = arg
   }
 
-  setTotalTextureCount(arg:number):void {
+  setTotalTextureCount(arg: number): void {
     this.totalTextureCountValue = arg
   }
 
-  setTotalTextureMemory(arg:number):void {
+  setTotalTextureMemory(arg: number): void {
     this.totalTextureMemoryValue = arg
   }
 
-  setTotalEntities(arg:number):void {
+  setTotalEntities(arg: number): void {
     this.totalEntitiesValue = arg
   }
 
-
-  setLoading(loading:boolean): void {
+  setLoading(loading: boolean): void {
     this.isSceneLoading = loading
     if (loading) {
       engine.addSystem(this.loadingSystem.bind(this))
-    }else{
+    } else {
       engine.removeSystem(this.loadingSystem.bind(this))
     }
   }
 
-
   loadingSystem(): void {
-    if (this.timer > 500){
+    if (this.timer > 500) {
       this.timer = 0
-      if (this.loadingIcon.spriteName === 'Graphics'){
+      if (this.loadingIcon.spriteName === 'Graphics') {
         this.loadingIcon.spriteName = 'Download'
       } else {
         this.loadingIcon.spriteName = 'Graphics'
       }
-    }
-    else {
+    } else {
       this.timer = this.timer + 5
-    } 
+    }
   }
 
   updateIcons(): void {
@@ -275,8 +275,7 @@ export class SceneInfo {
                   }
                   fontSize={this.fontSize}
                   uiTransform={{
-                      margin:{right:this.fontSize}
-
+                    margin: { right: this.fontSize }
                   }}
                 />
                 <UiEntity
@@ -311,16 +310,13 @@ export class SceneInfo {
                     display: this.isSceneLoading ? 'flex' : 'none',
                     width: this.fontSize * 0.875,
                     height: this.fontSize * 0.875,
-                    margin:{left:this.fontSize}
+                    margin: { left: this.fontSize }
                   }}
-                  uiBackground={
-                    getBackgroundFromAtlas(this.loadingIcon)
-                  }
+                  uiBackground={getBackgroundFromAtlas(this.loadingIcon)}
                 />
               </UiEntity>
             </UiEntity>
 
-            
             <IconButton
               onMouseDown={() => {
                 this.setMenuOpen(!this.isMenuOpen)
@@ -345,8 +341,7 @@ export class SceneInfo {
               display: this.isExpanded ? 'flex' : 'none',
               width: '95%',
               height: 'auto',
-              flexDirection:'column',
-              
+              flexDirection: 'column'
             }}
           >
             {/* FPS */}
@@ -359,10 +354,7 @@ export class SceneInfo {
                 flexDirection: 'row'
               }}
             >
-              <Label
-                value="FPS"
-                fontSize={this.fontSize * 0.7}
-              />
+              <Label value="FPS" fontSize={this.fontSize * 0.7} />
               <Label
                 value={this.fpsValue.toString()}
                 fontSize={this.fontSize * 0.7}
@@ -374,8 +366,8 @@ export class SceneInfo {
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
 
-             {/* UNIQUE GLTF MESHES */}
-             <UiEntity
+            {/* UNIQUE GLTF MESHES */}
+            <UiEntity
               uiTransform={{
                 width: '100%',
                 height: 'auto',
@@ -389,7 +381,7 @@ export class SceneInfo {
                 fontSize={this.fontSize * 0.7}
               />
               <Label
-                value= {this.uniqueGltfMeshesValue.toString()}
+                value={this.uniqueGltfMeshesValue.toString()}
                 fontSize={this.fontSize * 0.7}
               />
             </UiEntity>
@@ -398,9 +390,9 @@ export class SceneInfo {
               uiTransform={{ width: '100%', height: 1 }}
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
-            
-             {/* VISIBLE MESH COUNT */}
-             <UiEntity
+
+            {/* VISIBLE MESH COUNT */}
+            <UiEntity
               uiTransform={{
                 width: '100%',
                 height: 'auto',
@@ -414,7 +406,7 @@ export class SceneInfo {
                 fontSize={this.fontSize * 0.7}
               />
               <Label
-                value= {this.visibleMeshCountValue.toString()}
+                value={this.visibleMeshCountValue.toString()}
                 fontSize={this.fontSize * 0.7}
               />
             </UiEntity>
@@ -424,8 +416,8 @@ export class SceneInfo {
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
 
-             {/* VISIBLE TRIANGLE COUNT */}
-             <UiEntity
+            {/* VISIBLE TRIANGLE COUNT */}
+            <UiEntity
               uiTransform={{
                 width: '100%',
                 height: 'auto',
@@ -439,7 +431,7 @@ export class SceneInfo {
                 fontSize={this.fontSize * 0.7}
               />
               <Label
-                value= {this.visibleTriangleCountValue.toString()}
+                value={this.visibleTriangleCountValue.toString()}
                 fontSize={this.fontSize * 0.7}
               />
             </UiEntity>
@@ -448,7 +440,7 @@ export class SceneInfo {
               uiTransform={{ width: '100%', height: 1 }}
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
-            
+
             {/* UNIQUE GLTF MATERIALS */}
             <UiEntity
               uiTransform={{
@@ -464,7 +456,7 @@ export class SceneInfo {
                 fontSize={this.fontSize * 0.7}
               />
               <Label
-                value= {this.uniqueGltfMaterialsValue.toString()}
+                value={this.uniqueGltfMaterialsValue.toString()}
                 fontSize={this.fontSize * 0.7}
               />
             </UiEntity>
@@ -489,7 +481,7 @@ export class SceneInfo {
                 fontSize={this.fontSize * 0.7}
               />
               <Label
-                value= {this.visibleMaterialCountValue.toString()}
+                value={this.visibleMaterialCountValue.toString()}
                 fontSize={this.fontSize * 0.7}
               />
             </UiEntity>
@@ -499,8 +491,8 @@ export class SceneInfo {
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
 
-             {/* TOTAL TEXTURE COUNT */}
-             <UiEntity
+            {/* TOTAL TEXTURE COUNT */}
+            <UiEntity
               uiTransform={{
                 width: '100%',
                 height: 'auto',
@@ -514,7 +506,7 @@ export class SceneInfo {
                 fontSize={this.fontSize * 0.7}
               />
               <Label
-                value= {this.totalTextureCountValue.toString()}
+                value={this.totalTextureCountValue.toString()}
                 fontSize={this.fontSize * 0.7}
               />
             </UiEntity>
@@ -524,8 +516,8 @@ export class SceneInfo {
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
 
-             {/* TOTAL TEXTURE MEMORY */}
-             <UiEntity
+            {/* TOTAL TEXTURE MEMORY */}
+            <UiEntity
               uiTransform={{
                 width: '100%',
                 height: 'auto',
@@ -539,7 +531,7 @@ export class SceneInfo {
                 fontSize={this.fontSize * 0.7}
               />
               <Label
-                value= {this.totalTextureMemoryValue.toString() + 'mb'}
+                value={this.totalTextureMemoryValue.toString() + 'mb'}
                 fontSize={this.fontSize * 0.7}
               />
             </UiEntity>
@@ -559,21 +551,17 @@ export class SceneInfo {
                 flexDirection: 'row'
               }}
             >
+              <Label value="Total Entities" fontSize={this.fontSize * 0.7} />
               <Label
-                value="Total Entities"
-                fontSize={this.fontSize * 0.7}
-              />
-              <Label
-                value= {this.totalEntitiesValue.toString()}
+                value={this.totalEntitiesValue.toString()}
                 fontSize={this.fontSize * 0.7}
               />
             </UiEntity>
-
           </UiEntity>
           <UiEntity
             uiTransform={{
               display: this.isMenuOpen ? 'flex' : 'none',
-                minWidth: 250,
+              minWidth: 250,
               width: canvasInfo.width * 0.15,
               height: 'auto',
               justifyContent: 'center',
@@ -607,9 +595,7 @@ export class SceneInfo {
                 alignItems: 'center',
                 flexDirection: 'row'
               }}
-              onMouseDown={() => {
-                
-              }}
+              onMouseDown={() => {}}
               onMouseEnter={() => {
                 // this.sceneUiBackgroundColor = ALMOST_WHITE
               }}
@@ -624,7 +610,7 @@ export class SceneInfo {
               />
               <UiEntity
                 uiTransform={{
-                  width: this.fontSize * 1.2 * 65 / 36,
+                  width: (this.fontSize * 1.2 * 65) / 36,
                   height: this.fontSize * 1.2,
                   margin: this.fontSize * 0.5
                 }}
@@ -656,7 +642,6 @@ export class SceneInfo {
                 this.setHomeBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
               }}
             >
-              
               <UiEntity
                 uiTransform={{
                   width: this.fontSize * 1.2,
@@ -669,7 +654,7 @@ export class SceneInfo {
                 }}
               />
               <Label
-                value={this.isHome?'Unset as Home':'Set as Home'}
+                value={this.isHome ? 'Unset as Home' : 'Set as Home'}
                 fontSize={this.fontSize}
                 color={this.setHomeBackgroundColor}
               />
@@ -696,7 +681,6 @@ export class SceneInfo {
                 this.setFavBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
               }}
             >
-              
               <UiEntity
                 uiTransform={{
                   width: this.fontSize * 1.2,
@@ -704,11 +688,11 @@ export class SceneInfo {
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
-                  ...getBackgroundFromAtlas(this.favIcon),
+                  ...getBackgroundFromAtlas(this.favIcon)
                 }}
               />
               <Label
-                value={this.isFav? 'Unmark as Favourite':'Mark as Favourite'}
+                value={this.isFav ? 'Unmark as Favourite' : 'Mark as Favourite'}
                 fontSize={this.fontSize}
                 color={this.setFavBackgroundColor}
               />
@@ -735,7 +719,6 @@ export class SceneInfo {
                 this.reloadBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
               }}
             >
-              
               <UiEntity
                 uiTransform={{
                   width: this.fontSize * 1.2,
@@ -775,7 +758,6 @@ export class SceneInfo {
                 this.openInfoBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
               }}
             >
-              
               <UiEntity
                 uiTransform={{
                   width: this.fontSize * 1.2,
