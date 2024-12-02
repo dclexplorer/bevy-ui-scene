@@ -34,7 +34,7 @@ function TextButton(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor ?? Color4.create(0, 0, 0, 0),
+        color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
 
         textureMode: 'nine-slices',
         texture: {

@@ -34,8 +34,54 @@ export class SceneInfo {
   public sceneUiBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
   public setFavBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
 
+  public fpsValue: number = 0
+  public uniqueGltfMeshesValue: number = 0
+  public visibleMeshCountValue: number = 0
+  public visibleTriangleCountValue: number = 0
+  public uniqueGltfMaterialsValue: number = 0
+  public visibleMaterialCountValue: number = 0
+  public totalTextureCountValue: number = 0
+  public totalTextureMemoryValue: number = 0
+  public totalEntitiesValue: number = 0
+
   constructor(uiController: UIController) {
     this.uiController = uiController
+  }
+
+  setFps(arg:number):void {
+    this.fpsValue = arg
+  }
+
+  setUniqueGltfMeshes(arg:number):void {
+    this.uniqueGltfMeshesValue = arg
+  }
+
+  setVisibleMeshCount(arg:number):void {
+    this.visibleMeshCountValue = arg
+  }
+
+  setVisibleTriangleCount(arg:number):void {
+    this.visibleTriangleCountValue = arg
+  }
+
+  setUniqueGltfMaterials(arg:number):void {
+    this.uniqueGltfMaterialsValue = arg
+  }
+
+  setVisibleMaterialCount(arg:number):void {
+    this.visibleMaterialCountValue = arg
+  }
+
+  setTotalTextureCount(arg:number):void {
+    this.totalTextureCountValue = arg
+  }
+
+  setTotalTextureMemory(arg:number):void {
+    this.totalTextureMemoryValue = arg
+  }
+
+  setTotalEntities(arg:number):void {
+    this.totalEntitiesValue = arg
   }
 
   updateIcons(): void {
@@ -91,7 +137,8 @@ export class SceneInfo {
       <Canvas>
         <UiEntity
           uiTransform={{
-            width: canvasInfo.width * 0.2,
+            width: canvasInfo.width * 0.15,
+            minWidth: 250,
             height: 'auto',
             justifyContent: 'center',
             alignItems: 'center',
@@ -253,14 +300,237 @@ export class SceneInfo {
           <UiEntity
             uiTransform={{
               display: this.isExpanded ? 'flex' : 'none',
-              width: '100%',
-              height: this.fontSize * 3
+              width: '95%',
+              height: 'auto',
+              flexDirection:'column',
+              
             }}
-            uiText={{ value: 'PREVIEW INFO', textAlign: 'middle-center' }}
-          />
+          >
+            {/* FPS */}
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+            >
+              <Label
+                value="FPS"
+                fontSize={this.fontSize * 0.7}
+              />
+              <Label
+                value={this.fpsValue.toString()}
+                fontSize={this.fontSize * 0.7}
+              />
+            </UiEntity>
+
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+            />
+
+             {/* UNIQUE GLTF MESHES */}
+             <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+            >
+              <Label
+                value="Unique GLTF Meshes"
+                fontSize={this.fontSize * 0.7}
+              />
+              <Label
+                value= {this.uniqueGltfMeshesValue.toString()}
+                fontSize={this.fontSize * 0.7}
+              />
+            </UiEntity>
+
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+            />
+            
+             {/* VISIBLE MESH COUNT */}
+             <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+            >
+              <Label
+                value="Visible Mesh Count"
+                fontSize={this.fontSize * 0.7}
+              />
+              <Label
+                value= {this.visibleMeshCountValue.toString()}
+                fontSize={this.fontSize * 0.7}
+              />
+            </UiEntity>
+
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+            />
+
+             {/* VISIBLE TRIANGLE COUNT */}
+             <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+            >
+              <Label
+                value="Visible Triangle Count"
+                fontSize={this.fontSize * 0.7}
+              />
+              <Label
+                value= {this.visibleTriangleCountValue.toString()}
+                fontSize={this.fontSize * 0.7}
+              />
+            </UiEntity>
+
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+            />
+            
+            {/* UNIQUE GLTF MATERIALS */}
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+            >
+              <Label
+                value="Unique GLTF Materials"
+                fontSize={this.fontSize * 0.7}
+              />
+              <Label
+                value= {this.uniqueGltfMaterialsValue.toString()}
+                fontSize={this.fontSize * 0.7}
+              />
+            </UiEntity>
+
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+            />
+
+            {/* VISIBLE MATERIAL COUNT */}
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+            >
+              <Label
+                value="Visible Material Count"
+                fontSize={this.fontSize * 0.7}
+              />
+              <Label
+                value= {this.visibleMaterialCountValue.toString()}
+                fontSize={this.fontSize * 0.7}
+              />
+            </UiEntity>
+
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+            />
+
+             {/* TOTAL TEXTURE COUNT */}
+             <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+            >
+              <Label
+                value="Total Texture Count"
+                fontSize={this.fontSize * 0.7}
+              />
+              <Label
+                value= {this.totalTextureCountValue.toString()}
+                fontSize={this.fontSize * 0.7}
+              />
+            </UiEntity>
+
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+            />
+
+             {/* TOTAL TEXTURE MEMORY */}
+             <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+            >
+              <Label
+                value="Total Texture Memory"
+                fontSize={this.fontSize * 0.7}
+              />
+              <Label
+                value= {this.totalTextureMemoryValue.toString() + 'mb'}
+                fontSize={this.fontSize * 0.7}
+              />
+            </UiEntity>
+
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+            />
+
+            {/* TOTAL ENTITIES */}
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+            >
+              <Label
+                value="Total Entities"
+                fontSize={this.fontSize * 0.7}
+              />
+              <Label
+                value= {this.totalEntitiesValue.toString()}
+                fontSize={this.fontSize * 0.7}
+              />
+            </UiEntity>
+
+          </UiEntity>
           <UiEntity
             uiTransform={{
               display: this.isMenuOpen ? 'flex' : 'none',
+                minWidth: 250,
               width: canvasInfo.width * 0.15,
               height: 'auto',
               justifyContent: 'center',
@@ -323,7 +593,7 @@ export class SceneInfo {
             </UiEntity>
             <UiEntity
               uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.1 } }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
             <UiEntity
               uiTransform={{
@@ -363,7 +633,7 @@ export class SceneInfo {
             </UiEntity>
             <UiEntity
               uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.1 } }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
             <UiEntity
               uiTransform={{
@@ -402,7 +672,7 @@ export class SceneInfo {
             </UiEntity>
             <UiEntity
               uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.1 } }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
             <UiEntity
               uiTransform={{
@@ -442,7 +712,7 @@ export class SceneInfo {
             </UiEntity>
             <UiEntity
               uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.1 } }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
             <UiEntity
               uiTransform={{

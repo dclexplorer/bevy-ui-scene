@@ -7,6 +7,7 @@ import Canvas from '../canvas/canvas'
 // import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
 import { SceneInfo } from './sceneInfo'
+import { type Icon } from '../../utils/definitions'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
@@ -14,65 +15,71 @@ export class MainHud {
   public fontSize: number = 16
   public readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
-  readonly bellIcon: { atlasName: string; spriteName: string } = {
+  readonly bellIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Notifications off'
   }
 
-  readonly backpackIcon: { atlasName: string; spriteName: string } = {
+  readonly backpackIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'
   }
 
-  readonly walletIcon: { atlasName: string; spriteName: string } = {
+  readonly walletIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Wallet'
   }
 
-  readonly mapIcon: { atlasName: string; spriteName: string } = {
+  readonly mapIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Map off'
   }
 
-  readonly settingsIcon: { atlasName: string; spriteName: string } = {
+  readonly settingsIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Settings off'
   }
 
-  private readonly helpIcon: { atlasName: string; spriteName: string } = {
+  private readonly helpIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'HelpIcon Off'
+  }
+
+  private readonly exploreIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Explore off'
   }
 
   // private friendsIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Friends off'}
   // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off'}
   // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff'}
-  private readonly emotesIcon: { atlasName: string; spriteName: string } = {
+  private readonly emotesIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Emote off'
   }
 
-  private bellHint: boolean = false
   private backpackHint: boolean = false
-  private walletHint: boolean = false
+  private bellHint: boolean = false
+  private emotesHint: boolean = false
+  private exploreHint: boolean = false
+  private helpHint: boolean = false
   private mapHint: boolean = false
   private settingsHint: boolean = false
-  private helpHint: boolean = false
+  private walletHint: boolean = false
   // private friendsHint: boolean = false
   // private cameraHint: boolean = false
   // private experiencesHint: boolean = false
-  private emotesHint: boolean = false
 
-  private bellBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private backpackBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private walletBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private mapBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private settingsBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private helpBackground: Color4 = Color4.create(0, 0, 0, 0)
-  // private friendsBackground: Color4 = Color4.create(0, 0, 0, 0)
-  // private cameraBackground: Color4 = Color4.create(0, 0, 0, 0)
-  // private experiencesBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private emotesBackground: Color4 = Color4.create(0, 0, 0, 0)
+  private bellBackground: Color4 | undefined = undefined
+  private backpackBackground: Color4 | undefined = undefined
+  private walletBackground: Color4 | undefined = undefined
+  private mapBackground: Color4 | undefined = undefined
+  private settingsBackground: Color4 | undefined = undefined
+  private helpBackground: Color4 | undefined = undefined
+  // private friendsBackground: Color4 | undefined = undefined
+  // private cameraBackground: Color4 | undefined = undefined
+  // private experiencesBackground: Color4 | undefined = undefined
+  private emotesBackground: Color4 | undefined = undefined
 
   public readonly sceneName: string = 'Scene Name'
   public readonly sceneCoords: { x: number; y: number } = { x: -5, y: 0 }
@@ -130,25 +137,25 @@ export class MainHud {
 
   updateButtons(): void {
     this.walletIcon.spriteName = 'Wallet'
-    this.walletBackground = Color4.create(0, 0, 0, 0)
+    this.walletBackground = undefined
     this.walletHint = false
     this.bellIcon.spriteName = 'Notifications off'
-    this.bellBackground = Color4.create(0, 0, 0, 0)
+    this.bellBackground = undefined
     this.bellHint = false
     this.mapIcon.spriteName = 'Map off'
-    this.mapBackground = Color4.create(0, 0, 0, 0)
+    this.mapBackground = undefined
     this.mapHint = false
     this.backpackIcon.spriteName = 'Backpack off'
-    this.backpackBackground = Color4.create(0, 0, 0, 0)
+    this.backpackBackground = undefined
     this.backpackHint = false
     this.settingsIcon.spriteName = 'Settings off'
-    this.settingsBackground = Color4.create(0, 0, 0, 0)
+    this.settingsBackground = undefined
     this.settingsHint = false
     this.helpIcon.spriteName = 'HelpIcon Off'
-    this.helpBackground = Color4.create(0, 0, 0, 0)
+    this.helpBackground = undefined
     this.helpHint = false
     this.emotesIcon.spriteName = 'Emote off'
-    this.emotesBackground = Color4.create(0, 0, 0, 0)
+    this.emotesBackground = undefined
     this.emotesHint = false
   }
 
