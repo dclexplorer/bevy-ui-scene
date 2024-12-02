@@ -116,7 +116,7 @@ function dropdownField(props: {
         <UiEntity
           uiTransform={{
             width: '100%',
-            height: 'auto'
+            height: props.fontSize * 2.2
           }}
           uiText={{
             value: props.options[props.selectedOption],

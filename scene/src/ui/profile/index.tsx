@@ -167,7 +167,7 @@ export class Profile {
       ...Color4.Black(),
       a: 0.35
     }
-    if (this.typedBirth === '' || isValidDate(this.typedBirth)){
+    if (this.typedBirth === '' || isValidDate(this.typedBirth)) {
       this.savedIntro = this.typedIntro
       this.savedHobbie = this.typedHobbie
       this.savedBirth = this.typedBirth
@@ -201,10 +201,10 @@ export class Profile {
     this.selectedSexualOrientation = this.savedSexualOrientation
     this.selectedEmploymentStatus = this.savedEmploymentStatus
     this.typedHobbie = this.savedHobbie
-    this.typedBirth = this.savedBirth 
-    this.typedRealName = this.savedRealName 
-    this.typedProfession = this.savedProfession 
-     this.typedIntro = this.savedIntro
+    this.typedBirth = this.savedBirth
+    this.typedRealName = this.savedRealName
+    this.typedProfession = this.savedProfession
+    this.typedIntro = this.savedIntro
 
     this.editInfoButtonColor = {
       ...Color4.Black(),
@@ -790,7 +790,7 @@ export class Profile {
                         value={
                           'Use this space to describe yourself in a few words.'
                         }
-                        fontSize={this.fontSize}
+                        fontSize={this.fontSize * 0.8}
                         textAlign="middle-left"
                         uiTransform={{
                           width: '100%',
@@ -799,33 +799,33 @@ export class Profile {
                         }}
                       />
                       <InputField
-                      uiTransform={{
-                        minWidth: '90%',
-                        maxWidth:'90%',
-                        margin: {
-                          right: this.fontSize,
-                          bottom: this.fontSize
-                        }
-                      }}
-                      onValueUpdate={(arg) => {
-                        this.typedIntro = arg
-                      }}
-                      title={''}
-                      placeholder={'Write about you'}
-                      icon={{
-                        atlasName: '',
-                        spriteName: ''
-                      }}
-                      fontSize={this.fontSize}
-                      value={this.typedIntro}
-                      savedValue={this.savedIntro}
-                      isEditing={this.isInfoEditing}
+                        uiTransform={{
+                          minWidth: canvasInfo.width * 0.53,
+                          maxWidth: canvasInfo.width * 0.53,
+                          margin: {
+                            right: this.fontSize,
+                            bottom: this.fontSize
+                          }
+                        }}
+                        onValueUpdate={(arg) => {
+                          this.typedIntro = arg
+                        }}
+                        title={''}
+                        placeholder={'Write about you'}
+                        icon={{
+                          atlasName: '',
+                          spriteName: ''
+                        }}
+                        fontSize={this.fontSize}
+                        value={this.typedIntro}
+                        savedValue={this.savedIntro}
+                        isEditing={this.isInfoEditing}
                       />
                       <Label
                         value={
                           'You can extend your profile information using this fields. Those which are not completed will not be displayed.'
                         }
-                        fontSize={this.fontSize}
+                        fontSize={this.fontSize * 0.8}
                         textAlign="middle-left"
                         uiTransform={{
                           width: '100%',
@@ -846,7 +846,11 @@ export class Profile {
                       >
                         <DropdownField
                           uiTransform={{
-                            minWidth: '18%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -873,7 +877,11 @@ export class Profile {
                         />
                         <DropdownField
                           uiTransform={{
-                            minWidth: '18%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -900,8 +908,11 @@ export class Profile {
                         />
                         <InputField
                           uiTransform={{
-                            minWidth: '18%',
-                            maxWidth:'100%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -921,10 +932,14 @@ export class Profile {
                           savedValue={this.savedBirth}
                           isEditing={this.isInfoEditing}
                         />
-                        
+
                         <DropdownField
                           uiTransform={{
-                            minWidth: '18%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -951,7 +966,11 @@ export class Profile {
                         />
                         <DropdownField
                           uiTransform={{
-                            minWidth: '18%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -979,7 +998,11 @@ export class Profile {
                         />
                         <DropdownField
                           uiTransform={{
-                            minWidth: '18%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1007,7 +1030,11 @@ export class Profile {
                         />
                         <DropdownField
                           uiTransform={{
-                            minWidth: '18%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1032,11 +1059,12 @@ export class Profile {
                           options={LANGUAGES}
                           isEditing={this.isInfoEditing}
                         />
-                        
+
                         <InputField
                           uiTransform={{
-                            minWidth: '18%',
-                            maxWidth:'100%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1058,7 +1086,11 @@ export class Profile {
                         />
                         <DropdownField
                           uiTransform={{
-                            minWidth: '18%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1086,8 +1118,10 @@ export class Profile {
                         />
                         <InputField
                           uiTransform={{
-                            minWidth: '18%',
-                            maxWidth:'100%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1109,8 +1143,11 @@ export class Profile {
                         />
                         <InputField
                           uiTransform={{
-                            minWidth: '18%',
-                            maxWidth:'100%',
+                            minWidth: canvasInfo.width * 0.125,
+                            maxWidth: canvasInfo.width * 0.125,
+
+
+
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize

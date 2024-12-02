@@ -7,6 +7,7 @@ import { ALMOST_WHITE } from '../utils/constants'
 import { type Icon } from '../utils/definitions'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { type Color4 } from '@dcl/sdk/math'
+import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 
 function inputField(props: {
   // Events
@@ -25,6 +26,8 @@ function inputField(props: {
   savedValue: string
   isEditing: boolean
 }): ReactEcs.JSX.Element | null {
+  const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
+  if (canvasInfo === null) return null
   return (
     <UiEntity
       uiTransform={{
@@ -35,13 +38,14 @@ function inputField(props: {
         alignItems: 'flex-start',
         ...props.uiTransform
       }}
+
     >
       {/* TITLE AND ICON */}
       <UiEntity
         uiTransform={{
-          display: props.title.length === 0 ?'none': 'flex',
-          width:'100%',
-          height:'auto',
+          display: props.title.length === 0 ? 'none' : 'flex',
+          width: '100%',
+          height: 'auto',
           flexDirection: 'row',
           justifyContent: 'flex-start',
           alignItems: 'center',
@@ -80,7 +84,7 @@ function inputField(props: {
         uiTransform={{
           display: !props.isEditing ? 'flex' : 'none',
           width: 'auto',
-          
+
           height: props.fontSize * 1.25
         }}
         uiText={{
@@ -96,7 +100,7 @@ function inputField(props: {
         uiTransform={{
           display: props.isEditing ? 'flex' : 'none',
           width: '100%',
-          height: props.fontSize * 2,
+          height: props.fontSize * 2.2,
           padding: props.fontSize * 0.3,
           justifyContent: 'space-between',
           alignItems: 'center',
