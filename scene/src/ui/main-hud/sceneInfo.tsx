@@ -18,9 +18,22 @@ export class SceneInfo {
   public readonly isSdk6: boolean = true
   public isFav: boolean = true
   public isExpanded: boolean = false
+  public isMenuOpen: boolean = false
+  public isHome: boolean = false
   public favIcon: Icon = { atlasName: 'toggles', spriteName: 'HeartOnOutlined' }
-public expandIcon: Icon = { atlasName: 'icons', spriteName: 'DownArrow' }
-public expandBackgroundColor: Color4 = {...ALMOST_BLACK, a:0.8}
+  public expandIcon: Icon = { atlasName: 'icons', spriteName: 'DownArrow' }
+  public setAtHomeIcon: Icon = { atlasName: 'icons', spriteName: 'HomeOutline' }
+  public reloadIcon: Icon = { atlasName: 'icons', spriteName: 'Reset' }
+  public infoIcon: Icon = { atlasName: 'icons', spriteName: 'InfoButton' }
+  public sceneUiToggle: Icon = { atlasName: 'toggles', spriteName: 'SwitchOff' }
+  public expandBackgroundColor: Color4 = { ...ALMOST_BLACK, a: 0.4 }
+  public menuBackgroundColor: Color4 = { ...ALMOST_BLACK, a: 0.4 }
+  public setHomeBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
+  public reloadBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
+  public openInfoBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
+  public sceneUiBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
+  public setFavBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
+
   constructor(uiController: UIController) {
     this.uiController = uiController
   }
@@ -32,10 +45,15 @@ public expandBackgroundColor: Color4 = {...ALMOST_BLACK, a:0.8}
       this.favIcon.spriteName = 'HeartOffOutlined'
     }
     if (this.isExpanded) {
-        this.expandIcon.spriteName = 'UpArrow'
-      } else {
-        this.expandIcon.spriteName = 'DownArrow'
-      }
+      this.expandIcon.spriteName = 'UpArrow'
+    } else {
+      this.expandIcon.spriteName = 'DownArrow'
+    }
+    if (this.isHome) {
+      this.setAtHomeIcon.spriteName = 'Home'
+    } else {
+      this.setAtHomeIcon.spriteName = 'HomeOutline'
+    }
   }
 
   setFav(arg: boolean): void {
@@ -43,9 +61,26 @@ public expandBackgroundColor: Color4 = {...ALMOST_BLACK, a:0.8}
     this.updateIcons()
   }
 
+  setMenuOpen(arg: boolean): void {
+    this.isMenuOpen = arg
+  }
+
   setExpanded(arg: boolean): void {
     this.isExpanded = arg
     this.updateIcons()
+  }
+
+  setHome(arg: boolean): void {
+    this.isHome = arg
+    this.updateIcons()
+  }
+
+  reloadScene(): void {
+    console.log('RELOAD SCENE')
+  }
+
+  openSceneInfo(): void {
+    console.log('OPEN INFO MODAL')
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -56,7 +91,7 @@ public expandBackgroundColor: Color4 = {...ALMOST_BLACK, a:0.8}
       <Canvas>
         <UiEntity
           uiTransform={{
-            width: canvasInfo.width * 0.175,
+            width: canvasInfo.width * 0.2,
             height: 'auto',
             justifyContent: 'center',
             alignItems: 'center',
@@ -65,7 +100,7 @@ public expandBackgroundColor: Color4 = {...ALMOST_BLACK, a:0.8}
               left: this.uiController.mainHud.isSideBarVisible
                 ? canvasInfo.width * 0.034
                 : canvasInfo.width * 0.01,
-              top: canvasInfo.width * 0.01  
+              top: canvasInfo.width * 0.01 * 20
             },
             positionType: 'absolute'
           }}
@@ -83,119 +118,369 @@ public expandBackgroundColor: Color4 = {...ALMOST_BLACK, a:0.8}
             }
           }}
         >
-        <UiEntity
-        uiTransform={{
-            width: '100%',
-            height: 'auto',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexDirection: 'row'
-          }}
-        >
-          <IconButton
-            onMouseDown={()=>{this.setExpanded(!this.isExpanded)}}
-            onMouseEnter={()=>{this.expandBackgroundColor = {...ALMOST_BLACK, a:0.5}}}
-            onMouseLeave={()=>{this.expandBackgroundColor = {...ALMOST_BLACK, a:0.8}}}
-            uiTransform={{width:this.fontSize * 2, height:this.fontSize * 2, margin:{left:this.fontSize*0.5}}}
-            backgroundColor={ this.expandBackgroundColor }
-            icon={this.expandIcon}
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: 'auto',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexDirection: 'row'
+            }}
+          >
+            <IconButton
+              onMouseDown={() => {
+                this.setExpanded(!this.isExpanded)
+              }}
+              onMouseEnter={() => {
+                this.expandBackgroundColor = { ...ALMOST_BLACK, a: 0.2 }
+              }}
+              onMouseLeave={() => {
+                this.expandBackgroundColor = { ...ALMOST_BLACK, a: 0.4 }
+              }}
+              uiTransform={{
+                width: this.fontSize * 2,
+                height: this.fontSize * 2,
+                margin: { left: this.fontSize * 0.5 }
+              }}
+              backgroundColor={this.expandBackgroundColor}
+              icon={this.expandIcon}
+            />
+            <UiEntity
+              uiTransform={{
+                width: 'auto',
+                height: 'auto',
+                justifyContent: 'flex-start',
+                padding: this.fontSize * 0.5,
+                alignItems: 'flex-start',
+                flexDirection: 'column',
+                flexGrow: 1
+              }}
+            >
+              <Label
+                value={this.sceneName}
+                fontSize={this.fontSize}
+                uiTransform={{ height: this.fontSize * 1.1 }}
+                textAlign="middle-left"
+              />
+              <UiEntity
+                uiTransform={{
+                  width: '100%',
+                  height: this.fontSize,
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  margin: {
+                    left: this.fontSize * 0.25,
+                    top: this.fontSize * 0.25
+                  }
+                }}
+              >
+                <UiEntity
+                  uiTransform={{
+                    width: this.fontSize * 0.875,
+                    height: this.fontSize * 0.875
+                  }}
+                  uiBackground={{
+                    ...getBackgroundFromAtlas({
+                      atlasName: 'icons',
+                      spriteName: 'PinIcn'
+                    }),
+                    color: { ...ALMOST_WHITE, a: 0.5 }
+                  }}
+                />
+                <Label
+                  value={
+                    this.sceneCoords.x.toString() +
+                    ',' +
+                    this.sceneCoords.y.toString()
+                  }
+                  fontSize={this.fontSize}
+                  uiTransform={{
+                      margin:{right:this.fontSize}
+
+                  }}
+                />
+                <UiEntity
+                  uiTransform={{
+                    width: this.fontSize * 0.875,
+                    height: this.fontSize * 0.875,
+                    display: this.isSceneBroken ? 'flex' : 'none'
+                  }}
+                  uiBackground={{
+                    ...getBackgroundFromAtlas({
+                      atlasName: 'icons',
+                      spriteName: 'WarningError'
+                    }),
+                    color: Color4.create(254 / 255, 162 / 255, 23 / 255, 1)
+                  }}
+                />
+                <UiEntity
+                  uiTransform={{
+                    display: this.isSdk6 ? 'flex' : 'none',
+                    width: (this.fontSize * 0.875) / 0.41,
+                    height: this.fontSize * 0.875
+                  }}
+                  uiBackground={{
+                    ...getBackgroundFromAtlas({
+                      atlasName: 'icons',
+                      spriteName: 'Tag'
+                    })
+                  }}
+                />
+              </UiEntity>
+            </UiEntity>
+
+            
+            <IconButton
+              onMouseDown={() => {
+                this.setMenuOpen(!this.isMenuOpen)
+              }}
+              onMouseEnter={() => {
+                this.menuBackgroundColor = { ...ALMOST_BLACK, a: 0.2 }
+              }}
+              onMouseLeave={() => {
+                this.menuBackgroundColor = { ...ALMOST_BLACK, a: 0.4 }
+              }}
+              uiTransform={{
+                width: this.fontSize * 2,
+                height: this.fontSize * 2,
+                margin: { right: this.fontSize * 0.5 }
+              }}
+              backgroundColor={this.menuBackgroundColor}
+              icon={{ atlasName: 'icons', spriteName: 'Menu' }}
+            />
+          </UiEntity>
+          <UiEntity
+            uiTransform={{
+              display: this.isExpanded ? 'flex' : 'none',
+              width: '100%',
+              height: this.fontSize * 3
+            }}
+            uiText={{ value: 'PREVIEW INFO', textAlign: 'middle-center' }}
           />
           <UiEntity
             uiTransform={{
-              width: 'auto',
+              display: this.isMenuOpen ? 'flex' : 'none',
+              width: canvasInfo.width * 0.15,
               height: 'auto',
-              justifyContent: 'flex-start',
-              padding: this.fontSize * 0.5,
-              alignItems: 'flex-start',
+              justifyContent: 'center',
+              alignItems: 'center',
               flexDirection: 'column',
-              flexGrow: 1
+              position: {
+                left: '105%',
+                top: 0
+              },
+              positionType: 'absolute'
+            }}
+            uiBackground={{
+              color: { ...Color4.Black(), a: 0.8 },
+              textureMode: 'nine-slices',
+              texture: {
+                src: 'assets/images/backgrounds/rounded.png'
+              },
+              textureSlices: {
+                top: 0.5,
+                bottom: 0.5,
+                left: 0.5,
+                right: 0.5
+              }
             }}
           >
-            <Label
-              value={this.sceneName}
-              fontSize={this.fontSize}
-              uiTransform={{ height: this.fontSize * 1.1 }}
-              textAlign="middle-left"
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+              onMouseDown={() => {
+                
+              }}
+              onMouseEnter={() => {
+                // this.sceneUiBackgroundColor = ALMOST_WHITE
+              }}
+              onMouseLeave={() => {
+                // this.sceneUiBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
+              }}
+            >
+              <Label
+                value="Scene UI"
+                fontSize={this.fontSize}
+                color={this.sceneUiBackgroundColor}
+              />
+              <UiEntity
+                uiTransform={{
+                  width: this.fontSize * 1.2 * 65 / 36,
+                  height: this.fontSize * 1.2,
+                  margin: this.fontSize * 0.5
+                }}
+                uiBackground={{
+                  ...getBackgroundFromAtlas(this.sceneUiToggle),
+                  color: this.sceneUiBackgroundColor
+                }}
+              />
+            </UiEntity>
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.1 } }}
             />
             <UiEntity
               uiTransform={{
                 width: '100%',
-                height: this.fontSize,
+                height: 'auto',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                flexDirection: 'row',
-                margin: {
-                  left: this.fontSize * 0.25,
-                  top: this.fontSize * 0.25
-                }
+                flexDirection: 'row'
+              }}
+              onMouseDown={() => {
+                this.setHome(!this.isHome)
+              }}
+              onMouseEnter={() => {
+                this.setHomeBackgroundColor = ALMOST_WHITE
+              }}
+              onMouseLeave={() => {
+                this.setHomeBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
               }}
             >
+              
               <UiEntity
                 uiTransform={{
-                  width: this.fontSize * 0.875,
-                  height: this.fontSize * 0.875
+                  width: this.fontSize * 1.2,
+                  height: this.fontSize * 1.2,
+                  margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
-                  ...getBackgroundFromAtlas({
-                    atlasName: 'icons',
-                    spriteName: 'PinIcn'
-                  }),
-                  color: { ...ALMOST_WHITE, a: 0.5 }
+                  ...getBackgroundFromAtlas(this.setAtHomeIcon),
+                  color: this.setHomeBackgroundColor
                 }}
               />
               <Label
-                value={
-                  this.sceneCoords.x.toString() +
-                  ',' +
-                  this.sceneCoords.y.toString()
-                }
+                value="Set as Home"
                 fontSize={this.fontSize}
+                color={this.setHomeBackgroundColor}
               />
+            </UiEntity>
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.1 } }}
+            />
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+              onMouseDown={() => {
+                this.setFav(!this.isFav)
+              }}
+              onMouseEnter={() => {
+                this.setFavBackgroundColor = ALMOST_WHITE
+              }}
+              onMouseLeave={() => {
+                this.setFavBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
+              }}
+            >
+              
               <UiEntity
                 uiTransform={{
-                  width: this.fontSize * 0.875,
-                  height: this.fontSize * 0.875,
-                  display: this.isSceneBroken ? 'flex' : 'none'
+                  width: this.fontSize * 1.2,
+                  height: this.fontSize * 1.2,
+                  margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
-                  ...getBackgroundFromAtlas({
-                    atlasName: 'icons',
-                    spriteName: 'WarningError'
-                  }),
-                  color: Color4.create(254 / 255, 162 / 255, 23 / 255, 1)
+                  ...getBackgroundFromAtlas(this.favIcon),
                 }}
               />
+              <Label
+                value="Mark as Favourite"
+                fontSize={this.fontSize}
+                color={this.setFavBackgroundColor}
+              />
+            </UiEntity>
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.1 } }}
+            />
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+              onMouseDown={() => {
+                this.reloadScene()
+              }}
+              onMouseEnter={() => {
+                this.reloadBackgroundColor = ALMOST_WHITE
+              }}
+              onMouseLeave={() => {
+                this.reloadBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
+              }}
+            >
+              
               <UiEntity
                 uiTransform={{
-                  display: this.isSdk6 ? 'flex' : 'none',
-                  width: (this.fontSize * 0.875) / 0.41,
-                  height: this.fontSize * 0.875
+                  width: this.fontSize * 1.2,
+                  height: this.fontSize * 1.2,
+                  margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
-                  ...getBackgroundFromAtlas({
-                    atlasName: 'icons',
-                    spriteName: 'Tag'
-                  })
+                  ...getBackgroundFromAtlas(this.reloadIcon),
+                  color: this.reloadBackgroundColor
                 }}
+              />
+              <Label
+                value="Reload Scene"
+                fontSize={this.fontSize}
+                color={this.reloadBackgroundColor}
+              />
+            </UiEntity>
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.1 } }}
+            />
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                flexDirection: 'row'
+              }}
+              onMouseDown={() => {
+                this.openSceneInfo()
+              }}
+              onMouseEnter={() => {
+                this.openInfoBackgroundColor = ALMOST_WHITE
+              }}
+              onMouseLeave={() => {
+                this.openInfoBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
+              }}
+            >
+              
+              <UiEntity
+                uiTransform={{
+                  width: this.fontSize * 1.2,
+                  height: this.fontSize * 1.2,
+                  margin: this.fontSize * 0.5
+                }}
+                uiBackground={{
+                  ...getBackgroundFromAtlas(this.infoIcon),
+                  color: this.openInfoBackgroundColor
+                }}
+              />
+              <Label
+                value="Scene Info"
+                fontSize={this.fontSize}
+                color={this.openInfoBackgroundColor}
               />
             </UiEntity>
           </UiEntity>
-
-          <UiEntity
-            uiTransform={{
-              width: this.fontSize * 1.2,
-              height: this.fontSize * 1.2,
-              margin: this.fontSize * 0.5
-            }}
-            uiBackground={{
-              ...getBackgroundFromAtlas(this.favIcon)
-            }}
-            onMouseDown={() => {
-              this.setFav(!this.isFav)
-            }}
-          />
-        </UiEntity>
-        <UiEntity uiTransform={{display: this.isExpanded ? 'flex':'none', width:'100%', height:this.fontSize * 3}} uiText={{value:'PREVIEW INFO', textAlign:'middle-center'}}/>
         </UiEntity>
       </Canvas>
     )
