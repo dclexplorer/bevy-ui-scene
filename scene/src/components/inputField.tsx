@@ -38,7 +38,6 @@ function inputField(props: {
         alignItems: 'flex-start',
         ...props.uiTransform
       }}
-
     >
       {/* TITLE AND ICON */}
       <UiEntity

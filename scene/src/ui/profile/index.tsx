@@ -849,8 +849,6 @@ export class Profile {
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
 
-
-
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -879,8 +877,6 @@ export class Profile {
                           uiTransform={{
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
-
-
 
                             margin: {
                               right: this.fontSize,
@@ -911,8 +907,6 @@ export class Profile {
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
 
-
-
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -937,8 +931,6 @@ export class Profile {
                           uiTransform={{
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
-
-
 
                             margin: {
                               right: this.fontSize,
@@ -968,8 +960,6 @@ export class Profile {
                           uiTransform={{
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
-
-
 
                             margin: {
                               right: this.fontSize,
@@ -1001,8 +991,6 @@ export class Profile {
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
 
-
-
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1032,8 +1020,6 @@ export class Profile {
                           uiTransform={{
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
-
-
 
                             margin: {
                               right: this.fontSize,
@@ -1089,8 +1075,6 @@ export class Profile {
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
 
-
-
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1121,7 +1105,6 @@ export class Profile {
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
 
-
                             margin: {
                               right: this.fontSize,
                               bottom: this.fontSize
@@ -1145,8 +1128,6 @@ export class Profile {
                           uiTransform={{
                             minWidth: canvasInfo.width * 0.125,
                             maxWidth: canvasInfo.width * 0.125,
-
-
 
                             margin: {
                               right: this.fontSize,

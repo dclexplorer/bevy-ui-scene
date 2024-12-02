@@ -6,11 +6,13 @@ import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../canvas/canvas'
 // import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
+import { SceneInfo } from './sceneInfo'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 export class MainHud {
-  private readonly isSideBarVisible: boolean = true
+  public fontSize: number = 16
+  public readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
   readonly bellIcon: { atlasName: string; spriteName: string } = {
     atlasName: 'navbar',
@@ -72,8 +74,16 @@ export class MainHud {
   // private experiencesBackground: Color4 = Color4.create(0, 0, 0, 0)
   private emotesBackground: Color4 = Color4.create(0, 0, 0, 0)
 
+  public readonly sceneName: string = 'Scene Name'
+  public readonly sceneCoords: { x: number; y: number } = { x: -5, y: 0 }
+  public readonly isSdk6: boolean = true
+  public readonly isFav: boolean = true
+
+  private readonly sceneInfo: SceneInfo
+
   constructor(uiController: UIController) {
     this.uiController = uiController
+    this.sceneInfo = new SceneInfo(uiController)
   }
 
   walletEnter(): void {
@@ -383,6 +393,7 @@ export class MainHud {
             </UiEntity>
           </UiEntity>
         </UiEntity>
+        {this.sceneInfo.mainUi()}
       </Canvas>
     )
   }
