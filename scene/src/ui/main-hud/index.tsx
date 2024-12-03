@@ -214,7 +214,7 @@ export class MainHud {
             >
               <IconButton
                 uiTransform={{
-                  margin: { top: 300, bottom: 5 },
+                  margin: { top: 5, bottom: 5 },
                   height: (canvasInfo.width * 2.1) / 100,
                   minHeight: buttonSize,
                   width: (canvasInfo.width * 2.1) / 100,
