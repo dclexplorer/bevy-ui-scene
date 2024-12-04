@@ -20,8 +20,6 @@ export class ChatAndLogs {
   private readonly visibleMessages: Message[] = []
 
   private backgroundVisible: boolean = true
-  private backgroundColor: Color4 | undefined = undefined
-  private closeButtonColor: Color4 = { ...Color4.Black(), a: 0.35 }
   private inputValue: string = ''
 
   constructor(uiController: UIController) {
@@ -39,6 +37,11 @@ export class ChatAndLogs {
     console.log(this.messages)
   }
 
+  handleSubmitMessageFromDcl(value: string): void {
+    this.messages.push({ from: 'dcl', text: value })
+    console.log(this.messages)
+  }
+
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
@@ -49,35 +52,8 @@ export class ChatAndLogs {
     } else {
       leftPosition = (canvasInfo.width * 3.4) / 100
     }
-
     return (
       <Canvas>
-        {/* AREA TO HIDE/SHOW THE CHAT */}
-        <UiEntity
-          uiTransform={{
-            display: this.backgroundVisible ? 'flex' : 'none',
-            width: canvasInfo.width * 0.15,
-            minWidth: 250,
-            height: 250,
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column-reverse',
-            position: {
-              left: this.uiController.mainHud.isSideBarVisible
-                ? leftPosition
-                : canvasInfo.width * 0.01,
-              bottom: canvasInfo.width * 0.01
-            },
-            positionType: 'absolute'
-          }}
-          onMouseEnter={() => {
-            this.backgroundColor = { ...Color4.Black(), a: 0.4 }
-          }}
-          onMouseLeave={() => {
-            this.backgroundColor = undefined
-          }}
-        />
-
         <UiEntity
           uiTransform={{
             width: canvasInfo.width * 0.15,
@@ -90,16 +66,16 @@ export class ChatAndLogs {
             padding:
               canvasInfo.width * 0.005 > 2.5 ? canvasInfo.width * 0.005 : 2.5,
             position: {
-              left: 1000,
-              // left: this.uiController.mainHud.isSideBarVisible
-              //   ? leftPosition
-              //   : canvasInfo.width * 0.01,
+            
+              left: this.uiController.mainHud.isSideBarVisible
+                ? leftPosition
+                : canvasInfo.width * 0.01,
               bottom: canvasInfo.width * 0.01
             },
             positionType: 'absolute'
           }}
           uiBackground={{
-            color: this.backgroundColor ?? { ...Color4.Black(), a: 0 },
+            color: { ...Color4.Black(), a: 0.05 },
             textureMode: 'nine-slices',
             texture: {
               src: 'assets/images/backgrounds/rounded.png'
@@ -112,16 +88,15 @@ export class ChatAndLogs {
             }
           }}
         >
-
           {/* INPUT AREA */}
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: 30,
+              height: this.fontSize * 3,
               justifyContent: 'space-between',
               alignItems: 'center',
               flexDirection: 'row',
-              margin:{top: canvasInfo.height * 0.005}
+              margin: { top: canvasInfo.height * 0.005 }
             }}
             onMouseDown={() => {
               this.backgroundVisible = true
@@ -142,11 +117,12 @@ export class ChatAndLogs {
           >
             <Input
               uiTransform={{
-                padding: this.fontSize * 0.5,
+                padding: {left: this.fontSize * 0.5},
                 width: '80%',
-                height: this.fontSize * 2,
+                height: 1.4 * this.fontSize,
                 alignContent: 'center'
               }}
+              textAlign='middle-center'
               fontSize={this.fontSize}
               color={ALMOST_WHITE}
               onChange={($) => {
@@ -181,6 +157,17 @@ export class ChatAndLogs {
               }}
               icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
             />
+            <IconButton
+              onMouseDown={() => {
+                this.handleSubmitMessageFromDcl(this.inputValue)
+                this.inputValue = ''
+              }}
+              uiTransform={{
+                width: 20,
+                height: 20
+              }}
+              icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
+            />
           </UiEntity>
 
           {/* CHAT AREA */}
@@ -188,79 +175,41 @@ export class ChatAndLogs {
             uiTransform={{
               width: '100%',
               height: 'auto',
-              // maxHeight: canvasInfo.height * 0.4,
               flexDirection: 'column',
-              alignItems:'flex-start',
+              alignItems: 'flex-start',
 
-              justifyContent:'flex-end',
-              // overflow: 'scroll',
-              flexGrow:1
-              
-            }}
-            // uiBackground={{ color: Color4.Green() }}
-          >
-            <UiEntity
-            uiTransform={{
-              width: '90%',
-              height: '100%',
-              flexDirection: 'column',
-              justifyContent:'flex-end',
-              position:{bottom:0},
-scrollPosition: {x:0, y:1}         // maxHeight: canvasInfo.height * 0.4,
-              // minHeight:200,
+              justifyContent: 'flex-end'
             }}
           >
-            {/* <UiEntity uiTransform={{width:10, height:10}} uiBackground={{color:Color4.Black()}}/>
-            <UiEntity uiTransform={{width:10, height:10}} uiBackground={{color:Color4.Black()}}/> */}
-            {this.messages.length > 0 && (
-              <ChatMessage message={this.messages[this.messages.length - 1]} />
-            )}
             <UiEntity
               uiTransform={{
-                display:this.backgroundVisible?'flex':'none',
-                width: '100%',
-                height: 'auto',
-
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column'
+                width: '90%',
+                height: '100%',
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
+                position: { bottom: 0 }
               }}
             >
-              {this.messages.length > 1 &&
-                this.messages.map(
-                  (message, index) =>
-                    index !== this.messages.length - 1 && index > this.messages.length - this.BUFFER_SIZE && (
-                      <ChatMessage message={message} />
-                    )
-                )}
+              <UiEntity
+                uiTransform={{
+                  width: '100%',
+                  height: 'auto',
+
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'column'
+                }}
+              >
+                {this.messages.length >= 1 &&
+                  this.messages.map(
+                    (message, index) =>
+                      index > this.messages.length - this.BUFFER_SIZE && (
+                        <ChatMessage message={message} />
+                      )
+                  )}
+              </UiEntity>
             </UiEntity>
-            </UiEntity>
-            
           </UiEntity>
-
-          {/* BUTTONS */}
-          <IconButton
-            onMouseEnter={() => {
-              this.closeButtonColor = { ...Color4.Black(), a: 0.7 }
-            }}
-            onMouseLeave={() => {
-              this.closeButtonColor = { ...Color4.Black(), a: 0.35 }
-            }}
-            onMouseDown={() => {
-              this.backgroundVisible = false
-              // this.backgroundColor = undefined
-            }}
-            uiTransform={{
-              display: this.backgroundVisible ? 'flex' : 'none',
-              width: 2 * this.fontSize,
-              height: 2 * this.fontSize,
-              pointerFilter: 'none',
-            }}
-            backgroundColor={this.closeButtonColor}
-            icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
-          />
-
-
         </UiEntity>
       </Canvas>
     )

@@ -1,4 +1,6 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { getBackgroundFromAtlas } from '../utils/ui-utils'
+
 import ReactEcs, {
   Label,
   UiEntity,
@@ -39,19 +41,25 @@ function ChatMessage(props: {
               ? { left: canvasInfo.width * 0.005 }
               : { right: canvasInfo.width * 0.005 }
         }}
-        uiBackground={{
-          color: props.message.from === 'me' ? Color4.Red() : Color4.Blue(),
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
-        }}
+        uiBackground={
+          props.message.from === 'dcl'
+            ? getBackgroundFromAtlas({atlasName:'icons', spriteName:'DdlIconColor'})
+              
+            : {
+                color:
+                  props.message.from === 'me' ? Color4.Red() : Color4.Blue(),
+                textureMode: 'nine-slices',
+                texture: {
+                  src: 'assets/images/backgrounds/rounded.png'
+                },
+                textureSlices: {
+                  top: 0.5,
+                  bottom: 0.5,
+                  left: 0.5,
+                  right: 0.5
+                }
+              }
+        }
       />
 
       <UiEntity
@@ -84,9 +92,9 @@ function ChatMessage(props: {
             maxWidth: canvasInfo.width * 0.09,
             height: props.fontSize ?? 14
           }}
-          value={props.message.from + ':'}
+          value={props.message.from === 'dcl' ? 'DCL System:' : props.message.from + ':'}
           fontSize={props.fontSize ?? 14}
-          color={LAVANDER}
+          color={props.message.from === 'dcl' ? Color4.Green() : LAVANDER}
           textWrap="wrap"
           textAlign="middle-left"
         />
