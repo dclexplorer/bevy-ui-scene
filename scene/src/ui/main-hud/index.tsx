@@ -8,6 +8,7 @@ import Canvas from '../canvas/canvas'
 import { BevyApi } from '../../bevy-api'
 import { SceneInfo } from './sceneInfo'
 import { type Icon } from '../../utils/definitions'
+import { ChatAndLogs } from './chat-and-logs'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
@@ -88,10 +89,12 @@ export class MainHud {
   public readonly isFav: boolean = true
 
   private readonly sceneInfo: SceneInfo
+  private readonly chatAndLogs: ChatAndLogs
 
   constructor(uiController: UIController) {
     this.uiController = uiController
     this.sceneInfo = new SceneInfo(uiController)
+    this.chatAndLogs = new ChatAndLogs(uiController)
   }
 
   walletEnter(): void {
@@ -455,6 +458,7 @@ export class MainHud {
           </UiEntity>
         </UiEntity>
         {this.sceneInfo.mainUi()}
+        {this.chatAndLogs.mainUi()}
       </Canvas>
     )
   }

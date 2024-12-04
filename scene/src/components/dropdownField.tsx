@@ -7,6 +7,7 @@ import ReactEcs, {
 import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../utils/constants'
 import { type Icon } from '../utils/definitions'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
+import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 
 function dropdownField(props: {
   isOpen: boolean
@@ -27,6 +28,8 @@ function dropdownField(props: {
   options: string[]
   isEditing: boolean
 }): ReactEcs.JSX.Element | null {
+  const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
+  if (canvasInfo === null) return null
   return (
     <UiEntity
       uiTransform={{
@@ -140,7 +143,20 @@ function dropdownField(props: {
             color: Color4.Black()
           }}
         />
-
+        {/* <UiEntity
+          uiTransform={{
+            display: props.isOpen ? 'flex' : 'none',
+            width: canvasInfo.width * 3,
+            height: canvasInfo.height * 3,
+            positionType: 'absolute',
+            position: { left:  -1.5*canvasInfo.width, top: -1.5*canvasInfo.height },
+            zIndex: 1,
+          }}
+          uiBackground={{
+            color: ALMOST_BLACK
+          }}
+          onMouseDown={props.onMouseDown}
+        /> */}
         <UiEntity
           uiTransform={{
             display: props.isOpen ? 'flex' : 'none',
@@ -151,7 +167,8 @@ function dropdownField(props: {
                 : props.fontSize * props.options.length * 1.5,
 
             positionType: 'absolute',
-            position: { left: 0, top: 2.5 * props.fontSize }
+            position: { left: 0, top: 2.5 * props.fontSize },
+            zIndex: 1
           }}
           uiBackground={{
             color: ALMOST_WHITE,

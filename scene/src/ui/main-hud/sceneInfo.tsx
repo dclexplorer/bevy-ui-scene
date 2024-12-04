@@ -164,10 +164,10 @@ export class SceneInfo {
     if (canvasInfo === null) return null
     let leftPosition: number
 
-    if ((canvasInfo.width * 2.5) / 100 < 45){
-      leftPosition = 45 + canvasInfo.width * 1 / 100
+    if ((canvasInfo.width * 2.5) / 100 < 45) {
+      leftPosition = 45 + (canvasInfo.width * 1) / 100
     } else {
-      leftPosition = canvasInfo.width * 3.4 / 100
+      leftPosition = (canvasInfo.width * 3.4) / 100
     }
 
     return (
