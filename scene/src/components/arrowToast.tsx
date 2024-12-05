@@ -32,6 +32,7 @@ function ArrowToast(props: {
         justifyContent: 'center',
         alignItems: 'center',
         margin: { left: props.fontSize },
+        zIndex:1,
         ...props.uiTransform
       }}
     >

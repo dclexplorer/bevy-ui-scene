@@ -51,7 +51,8 @@ export class MainHud {
     spriteName: 'Explore off'
   }
 
-  // private friendsIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Friends off'}
+  private readonly friendsIcon: Icon = { atlasName: 'navbar', spriteName: 'Friends off' }
+  private readonly chatIcon: Icon = { atlasName: 'navbar', spriteName: 'Chat off' }
   // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off'}
   // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff'}
   private readonly emotesIcon: Icon = {
@@ -67,7 +68,8 @@ export class MainHud {
   private mapHint: boolean = false
   private settingsHint: boolean = false
   private walletHint: boolean = false
-  // private friendsHint: boolean = false
+  private friendsHint: boolean = false
+  private chatHint: boolean = false
   // private cameraHint: boolean = false
   // private experiencesHint: boolean = false
 
@@ -79,7 +81,8 @@ export class MainHud {
   private mapBackground: Color4 | undefined = undefined
   private settingsBackground: Color4 | undefined = undefined
   private walletBackground: Color4 | undefined = undefined
-  // private friendsBackground: Color4 | undefined = undefined
+  private friendsBackground: Color4 | undefined = undefined
+  private chatBackground: Color4 | undefined = undefined
   // private cameraBackground: Color4 | undefined = undefined
   // private experiencesBackground: Color4 | undefined = undefined
 
@@ -90,6 +93,8 @@ export class MainHud {
 
   private readonly sceneInfo: SceneInfo
   private readonly chatAndLogs: ChatAndLogs
+  public chatOpen: boolean = false
+  public friendsOpen: boolean = false
 
   constructor(uiController: UIController) {
     this.uiController = uiController
@@ -145,6 +150,18 @@ export class MainHud {
     this.emotesHint = true
   }
 
+  friendsEnter(): void {
+    this.friendsIcon.spriteName = 'Friends on'
+    this.friendsBackground = SELECTED_BUTTON_COLOR
+    this.friendsHint = true
+  }
+
+  chatEnter(): void {
+    this.chatIcon.spriteName = 'Chat on'
+    this.chatBackground = SELECTED_BUTTON_COLOR
+    this.chatHint = true
+  }
+
   updateButtons(): void {
     this.walletIcon.spriteName = 'Wallet'
     this.walletBackground = undefined
@@ -170,6 +187,14 @@ export class MainHud {
     this.exploreIcon.spriteName = 'Explore off'
     this.exploreBackground = undefined
     this.exploreHint = false
+    this.friendsIcon.spriteName = 'Friends off'
+    this.friendsBackground = undefined
+    this.friendsHint = false
+    if (!this.chatOpen){
+      this.chatIcon.spriteName = 'Chat off'
+      this.chatBackground = undefined
+    }
+    this.chatHint = false
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -421,15 +446,48 @@ export class MainHud {
                 icon={this.experiencesIcon}
                 hintText={'Experiences'}
                 showHint={this.experiencesHint} />
-
-                <IconButton uiTransform={{height:buttonSize, width:buttonSize}}
-                onMouseEnter={()=>{this.friendsEnter()}}
-                onMouseLeave={()=>{this.updateButtons()}}
-                onMouseDown={()=>{console.log('Wallet clicked')}}
+              */}
+              <IconButton
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
+                onMouseEnter={() => {
+                  this.friendsEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  console.log('Wallet clicked')
+                }}
                 backgroundColor={this.friendsBackground}
                 icon={this.friendsIcon}
                 hintText={'Friends'}
-                showHint={this.friendsHint} /> */}
+                showHint={this.friendsHint}
+              />
+
+              <IconButton
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
+                onMouseEnter={() => {
+                  this.chatEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  this.chatOpen = !this.chatOpen
+                }}
+                backgroundColor={this.chatBackground}
+                icon={this.chatIcon}
+                hintText={'Chat'}
+                showHint={this.chatHint}
+              />
 
               <IconButton
                 uiTransform={{
@@ -458,7 +516,7 @@ export class MainHud {
           </UiEntity>
         </UiEntity>
         {this.sceneInfo.mainUi()}
-        {this.chatAndLogs.mainUi()}
+        {this.chatOpen && this.chatAndLogs.mainUi()}
       </Canvas>
     )
   }

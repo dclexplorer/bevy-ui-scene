@@ -67,7 +67,7 @@ function IconButton(props: {
             width: 'auto',
             height: 'auto',
             positionType: 'absolute',
-            position: { left: '100%' }
+            position: { left: '100%' },
           }}
           text={props.hintText}
           fontSize={FONT_SIZE}

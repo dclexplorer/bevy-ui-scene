@@ -66,7 +66,6 @@ export class ChatAndLogs {
             padding:
               canvasInfo.width * 0.005 > 2.5 ? canvasInfo.width * 0.005 : 2.5,
             position: {
-            
               left: this.uiController.mainHud.isSideBarVisible
                 ? leftPosition
                 : canvasInfo.width * 0.01,
@@ -117,12 +116,12 @@ export class ChatAndLogs {
           >
             <Input
               uiTransform={{
-                padding: {left: this.fontSize * 0.5},
+                padding: { left: this.fontSize * 0.5 },
                 width: '80%',
                 height: 1.4 * this.fontSize,
                 alignContent: 'center'
               }}
-              textAlign='middle-center'
+              textAlign="middle-center"
               fontSize={this.fontSize}
               color={ALMOST_WHITE}
               onChange={($) => {
@@ -130,6 +129,7 @@ export class ChatAndLogs {
               }}
               value={this.inputValue}
               placeholder="Click to chat"
+              placeholderColor={{...ALMOST_WHITE, a:0.6}}
               onSubmit={(value) => {
                 this.handleSubmitMessage(value)
               }}

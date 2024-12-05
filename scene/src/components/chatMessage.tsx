@@ -43,8 +43,10 @@ function ChatMessage(props: {
         }}
         uiBackground={
           props.message.from === 'dcl'
-            ? getBackgroundFromAtlas({atlasName:'icons', spriteName:'DdlIconColor'})
-              
+            ? getBackgroundFromAtlas({
+                atlasName: 'icons',
+                spriteName: 'DdlIconColor'
+              })
             : {
                 color:
                   props.message.from === 'me' ? Color4.Red() : Color4.Blue(),
@@ -92,7 +94,11 @@ function ChatMessage(props: {
             maxWidth: canvasInfo.width * 0.09,
             height: props.fontSize ?? 14
           }}
-          value={props.message.from === 'dcl' ? 'DCL System:' : props.message.from + ':'}
+          value={
+            props.message.from === 'dcl'
+              ? 'DCL System:'
+              : props.message.from + ':'
+          }
           fontSize={props.fontSize ?? 14}
           color={props.message.from === 'dcl' ? Color4.Green() : LAVANDER}
           textWrap="wrap"
