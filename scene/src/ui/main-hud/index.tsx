@@ -55,7 +55,7 @@ export class MainHud {
     atlasName: 'navbar',
     spriteName: 'Friends off'
   }
-  
+
   private readonly chatIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Chat off'

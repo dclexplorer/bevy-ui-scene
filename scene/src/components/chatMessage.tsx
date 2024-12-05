@@ -1,3 +1,5 @@
+import { getPlayer } from '@dcl/sdk/src/players'
+
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 
@@ -17,13 +19,19 @@ function ChatMessage(props: {
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
+  const myPlayer = getPlayer()
+  if (myPlayer === null) {
+    return null
+  }
+  const playerName = getPlayer({ userId: props.message.from })?.avatar?.name
 
   return (
     <UiEntity
       uiTransform={{
         height: 'auto',
         width: '100%',
-        flexDirection: props.message.from === 'me' ? 'row-reverse' : 'row',
+        flexDirection:
+          props.message.from === myPlayer.userId ? 'row-reverse' : 'row',
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
         margin: { bottom: 2, top: 2 },
@@ -37,7 +45,7 @@ function ChatMessage(props: {
           justifyContent: 'center',
           alignItems: 'center',
           margin:
-            props.message.from === 'me'
+            props.message.from === myPlayer.userId
               ? { left: canvasInfo.width * 0.005 }
               : { right: canvasInfo.width * 0.005 }
         }}
@@ -47,20 +55,7 @@ function ChatMessage(props: {
                 atlasName: 'icons',
                 spriteName: 'DdlIconColor'
               })
-            : {
-                color:
-                  props.message.from === 'me' ? Color4.Red() : Color4.Blue(),
-                textureMode: 'nine-slices',
-                texture: {
-                  src: 'assets/images/backgrounds/rounded.png'
-                },
-                textureSlices: {
-                  top: 0.5,
-                  bottom: 0.5,
-                  left: 0.5,
-                  right: 0.5
-                }
-              }
+            : { avatarTexture: { userId: props.message.from } }
         }
       />
 
@@ -95,13 +90,10 @@ function ChatMessage(props: {
             height: props.fontSize ?? 14
           }}
           value={
-            props.message.from === 'dcl'
-              ? 'DCL System:'
-              : props.message.from + ':'
+            props.message.from === 'dcl' ? 'DCL System:' : playerName + ':'
           }
           fontSize={props.fontSize ?? 14}
           color={props.message.from === 'dcl' ? Color4.Green() : LAVANDER}
-          textWrap="wrap"
           textAlign="middle-left"
         />
         {/* TEXT */}

@@ -8,6 +8,7 @@ import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_WHITE } from '../../utils/constants'
 import { type Message } from '../../utils/definitions'
 import Canvas from '../canvas/canvas'
+import { getPlayer } from '@dcl/sdk/src/players'
 
 export class ChatAndLogs {
   private readonly uiController: UIController
@@ -21,15 +22,17 @@ export class ChatAndLogs {
 
   private backgroundVisible: boolean = true
   private inputValue: string = ''
-
+  private readonly myPlayer = getPlayer()
   constructor(uiController: UIController) {
     this.uiController = uiController
   }
 
   handleSubmitMessage(value: string): void {
-    this.messages.push({ from: 'me', text: value })
-    console.log(this.messages)
-    this.backgroundVisible = true
+    if (this.myPlayer !== null) {
+      this.messages.push({ from: this.myPlayer.userId, text: value })
+      console.log(this.messages)
+      this.backgroundVisible = true
+    }
   }
 
   handleSubmitMessageFromOther(value: string): void {
