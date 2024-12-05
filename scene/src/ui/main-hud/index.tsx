@@ -51,9 +51,21 @@ export class MainHud {
     spriteName: 'Explore off'
   }
 
-  private readonly friendsIcon: Icon = { atlasName: 'navbar', spriteName: 'Friends off' }
-  private readonly chatIcon: Icon = { atlasName: 'navbar', spriteName: 'Chat off' }
-  private readonly voiceChatIcon: Icon = { atlasName: 'voice-chat', spriteName: 'Mic off' }
+  private readonly friendsIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Friends off'
+  }
+  
+  private readonly chatIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Chat off'
+  }
+
+  private readonly voiceChatIcon: Icon = {
+    atlasName: 'voice-chat',
+    spriteName: 'Mic off'
+  }
+
   // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off'}
   // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff'}
   private readonly emotesIcon: Icon = {
@@ -107,7 +119,7 @@ export class MainHud {
   }
 
   voiceChatDown(): void {
-    if (this.voiceChatOn){
+    if (this.voiceChatOn) {
       this.voiceChatIcon.spriteName = 'Mic off'
       this.voiceChatOn = false
     } else {
@@ -209,12 +221,12 @@ export class MainHud {
     this.friendsIcon.spriteName = 'Friends off'
     this.friendsBackground = undefined
     this.friendsHint = false
-    if (!this.chatOpen){
+    if (!this.chatOpen) {
       this.chatIcon.spriteName = 'Chat off'
       this.chatBackground = undefined
     }
     this.chatHint = false
-    if (!this.voiceChatOn){
+    if (!this.voiceChatOn) {
       this.voiceChatIcon.spriteName = 'Mic off'
       this.voiceChatBackground = undefined
     }
@@ -491,7 +503,7 @@ export class MainHud {
                 hintText={'Friends'}
                 showHint={this.friendsHint}
               />
-<IconButton
+              <IconButton
                 uiTransform={{
                   height: buttonSize,
                   width: buttonSize,
@@ -505,7 +517,6 @@ export class MainHud {
                 }}
                 onMouseDown={() => {
                   this.voiceChatDown()
-
                 }}
                 backgroundColor={this.voiceChatBackground}
                 icon={this.voiceChatIcon}
@@ -532,7 +543,6 @@ export class MainHud {
                 hintText={'Chat'}
                 showHint={this.chatHint}
               />
-              
 
               <IconButton
                 uiTransform={{

@@ -129,7 +129,7 @@ export class ChatAndLogs {
               }}
               value={this.inputValue}
               placeholder="Click to chat"
-              placeholderColor={{...ALMOST_WHITE, a:0.6}}
+              placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
               onSubmit={(value) => {
                 this.handleSubmitMessage(value)
               }}
@@ -183,7 +183,7 @@ export class ChatAndLogs {
           >
             <UiEntity
               uiTransform={{
-                width: '90%',
+                width: '100%',
                 height: '100%',
                 flexDirection: 'column',
                 justifyContent: 'flex-end',

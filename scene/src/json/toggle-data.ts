@@ -16,21 +16,21 @@ export const toggleJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'FlagAdult.png': {
+    'adult.png': {
       frame: { x: 0, y: 0, w: 32, h: 32 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 32, h: 32 },
       sourceSize: { w: 32, h: 32 }
     },
-    'FlagRestricted.png': {
+    'restricted.png': {
       frame: { x: 32, y: 0, w: 32, h: 32 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 32, h: 32 },
       sourceSize: { w: 32, h: 32 }
     },
-    'FlagTeen.png': {
+    'teen.png': {
       frame: { x: 64, y: 0, w: 32, h: 32 },
       rotated: false,
       trimmed: false,

@@ -12,10 +12,10 @@ import IconButton from '../../components/iconButton'
 export class SceneInfo {
   private readonly uiController: UIController
   public fontSize: number = 16
-  private readonly isSceneBroken: boolean = false
-  public readonly sceneName: string = 'Scene Name ASD'
-  public readonly sceneCoords: { x: number; y: number } = { x: -2, y: 0 }
-  public readonly isSdk6: boolean = true
+  private isWarningScene: boolean = true
+  public sceneName: string = 'Scene Name ASD'
+  public sceneCoords: { x: number; y: number } = { x: -155, y: 123 }
+  public isSdk6: boolean = true
   public isFav: boolean = true
   public isExpanded: boolean = false
   public isMenuOpen: boolean = false
@@ -43,7 +43,14 @@ export class SceneInfo {
   public totalTextureCountValue: number = 0
   public totalTextureMemoryValue: number = 0
   public totalEntitiesValue: number = 0
+  public flag: 'adult' | 'restricted' | 'teen' | undefined = 'adult'
+  private flagHint: string = 'This scene was rated as an adult scene.'
+  private isFlagHintVisible: boolean = false
+  private warningHint: string =
+    'This scene is restricting the use of some features: \n - The camera is locked'
 
+  private isWarningHintVisible: boolean = false
+  private isLoadingHintVisible: boolean = false
   private isSceneLoading: boolean = false
   private readonly loadingIcon: Icon = {
     atlasName: 'icons',
@@ -54,6 +61,26 @@ export class SceneInfo {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
+  }
+
+  setWarning(status: boolean, message: string): void {
+    this.isWarningScene = status
+    this.warningHint = message
+  }
+
+  setFlag(arg: 'adult' | 'restricted' | 'teen' | undefined): void {
+    this.flag = arg
+    switch (arg) {
+      case 'adult':
+        this.flagHint = 'This scene was rated as an adult scene.'
+        break
+      case 'restricted':
+        this.flagHint = 'This scene was rated as a restricted scene.'
+        break
+      case 'teen':
+        this.flagHint = 'This scene was rated as a teen scene.'
+        break
+    }
   }
 
   setFps(arg: number): void {
@@ -184,7 +211,7 @@ export class SceneInfo {
               left: this.uiController.mainHud.isSideBarVisible
                 ? leftPosition
                 : canvasInfo.width * 0.01,
-              top: canvasInfo.width * 0.01
+              top: canvasInfo.width * 0.01 * 20
             },
             positionType: 'absolute'
           }}
@@ -280,29 +307,15 @@ export class SceneInfo {
                     this.sceneCoords.y.toString()
                   }
                   fontSize={this.fontSize}
-                  uiTransform={{
-                    margin: { right: this.fontSize }
-                  }}
+                  uiTransform={{}}
                 />
-                <UiEntity
-                  uiTransform={{
-                    width: this.fontSize * 0.875,
-                    height: this.fontSize * 0.875,
-                    display: this.isSceneBroken ? 'flex' : 'none'
-                  }}
-                  uiBackground={{
-                    ...getBackgroundFromAtlas({
-                      atlasName: 'icons',
-                      spriteName: 'WarningError'
-                    }),
-                    color: Color4.create(254 / 255, 162 / 255, 23 / 255, 1)
-                  }}
-                />
+
                 <UiEntity
                   uiTransform={{
                     display: this.isSdk6 ? 'flex' : 'none',
                     width: (this.fontSize * 0.875) / 0.41,
-                    height: this.fontSize * 0.875
+                    height: this.fontSize * 0.875,
+                    margin: { left: this.fontSize * 0.5 }
                   }}
                   uiBackground={{
                     ...getBackgroundFromAtlas({
@@ -311,14 +324,62 @@ export class SceneInfo {
                     })
                   }}
                 />
-                <UiEntity
+
+                <IconButton
+                  uiTransform={{
+                    display:
+                      this.isWarningScene !== undefined ? 'flex' : 'none',
+                    width: this.fontSize * 1.2,
+                    height: this.fontSize * 1.2,
+                    margin: { left: this.fontSize * 0.5 }
+                  }}
+                  icon={{ atlasName: 'icons', spriteName: 'WarningError' }}
+                  onMouseEnter={() => {
+                    this.isWarningHintVisible = true
+                  }}
+                  onMouseLeave={() => {
+                    this.isWarningHintVisible = false
+                  }}
+                  hintText={this.warningHint}
+                  showHint={this.isWarningHintVisible}
+                  hintFontSize={this.fontSize * 0.75}
+                />
+
+                <IconButton
+                  uiTransform={{
+                    display: this.flag !== undefined ? 'flex' : 'none',
+                    width: this.fontSize * 1.2,
+                    height: this.fontSize * 1.2,
+                    margin: { left: this.fontSize * 0.5 }
+                  }}
+                  icon={{ atlasName: 'toggles', spriteName: this.flag ?? '' }}
+                  onMouseEnter={() => {
+                    this.isFlagHintVisible = true
+                  }}
+                  onMouseLeave={() => {
+                    this.isFlagHintVisible = false
+                  }}
+                  hintText={this.flagHint}
+                  showHint={this.isFlagHintVisible}
+                  hintFontSize={this.fontSize * 0.75}
+                />
+                <IconButton
                   uiTransform={{
                     display: this.isSceneLoading ? 'flex' : 'none',
-                    width: this.fontSize * 0.875,
-                    height: this.fontSize * 0.875,
-                    margin: { left: this.fontSize }
+                    width: this.fontSize * 1.2,
+                    height: this.fontSize * 1.2,
+                    margin: { left: this.fontSize * 0.5 }
                   }}
-                  uiBackground={getBackgroundFromAtlas(this.loadingIcon)}
+                  icon={this.loadingIcon}
+                  onMouseEnter={() => {
+                    this.isLoadingHintVisible = true
+                  }}
+                  onMouseLeave={() => {
+                    this.isLoadingHintVisible = false
+                  }}
+                  hintText="Scene is loading"
+                  showHint={this.isLoadingHintVisible}
+                  hintFontSize={this.fontSize * 0.75}
                 />
               </UiEntity>
             </UiEntity>
@@ -567,8 +628,8 @@ export class SceneInfo {
           <UiEntity
             uiTransform={{
               display: this.isMenuOpen ? 'flex' : 'none',
-              minWidth: 250,
-              width: canvasInfo.width * 0.15,
+              minWidth: 175,
+              width: canvasInfo.width * 0.1,
               height: 'auto',
               justifyContent: 'center',
               alignItems: 'center',
@@ -611,13 +672,13 @@ export class SceneInfo {
             >
               <Label
                 value="Hide Scene UI"
-                fontSize={this.fontSize}
+                fontSize={this.fontSize * 0.8}
                 color={this.sceneUiBackgroundColor}
               />
               <UiEntity
                 uiTransform={{
-                  width: (this.fontSize * 1.2 * 65) / 36,
-                  height: this.fontSize * 1.2,
+                  width: (this.fontSize * 0.8 * 65) / 36,
+                  height: this.fontSize * 0.8,
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
@@ -650,8 +711,8 @@ export class SceneInfo {
             >
               <UiEntity
                 uiTransform={{
-                  width: this.fontSize * 1.2,
-                  height: this.fontSize * 1.2,
+                  width: this.fontSize * 0.8,
+                  height: this.fontSize * 0.8,
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
@@ -661,7 +722,7 @@ export class SceneInfo {
               />
               <Label
                 value={this.isHome ? 'Unset as Home' : 'Set as Home'}
-                fontSize={this.fontSize}
+                fontSize={this.fontSize * 0.8}
                 color={this.setHomeBackgroundColor}
               />
             </UiEntity>
@@ -689,17 +750,18 @@ export class SceneInfo {
             >
               <UiEntity
                 uiTransform={{
-                  width: this.fontSize * 1.2,
-                  height: this.fontSize * 1.2,
+                  width: this.fontSize * 0.8,
+                  height: this.fontSize * 0.8,
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
-                  ...getBackgroundFromAtlas(this.favIcon)
+                  ...getBackgroundFromAtlas(this.favIcon),
+                  color: this.setFavBackgroundColor
                 }}
               />
               <Label
                 value={this.isFav ? 'Unmark as Favourite' : 'Mark as Favourite'}
-                fontSize={this.fontSize}
+                fontSize={this.fontSize * 0.8}
                 color={this.setFavBackgroundColor}
               />
             </UiEntity>
@@ -727,8 +789,8 @@ export class SceneInfo {
             >
               <UiEntity
                 uiTransform={{
-                  width: this.fontSize * 1.2,
-                  height: this.fontSize * 1.2,
+                  width: this.fontSize * 0.8,
+                  height: this.fontSize * 0.8,
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
@@ -738,7 +800,7 @@ export class SceneInfo {
               />
               <Label
                 value="Reload Scene"
-                fontSize={this.fontSize}
+                fontSize={this.fontSize * 0.8}
                 color={this.reloadBackgroundColor}
               />
             </UiEntity>
@@ -766,8 +828,8 @@ export class SceneInfo {
             >
               <UiEntity
                 uiTransform={{
-                  width: this.fontSize * 1.2,
-                  height: this.fontSize * 1.2,
+                  width: this.fontSize * 0.8,
+                  height: this.fontSize * 0.8,
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
@@ -777,7 +839,7 @@ export class SceneInfo {
               />
               <Label
                 value="Scene Info"
-                fontSize={this.fontSize}
+                fontSize={this.fontSize * 0.8}
                 color={this.openInfoBackgroundColor}
               />
             </UiEntity>

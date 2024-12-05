@@ -13,13 +13,14 @@ function IconButton(props: {
   // Events
   onMouseEnter?: Callback
   onMouseLeave?: Callback
-  onMouseDown: Callback
+  onMouseDown?: Callback
   // Shape
   uiTransform: UiTransformProps
   backgroundColor?: Color4
   icon: Icon
   hintText?: string
   showHint?: boolean
+  hintFontSize?: number
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -67,10 +68,10 @@ function IconButton(props: {
             width: 'auto',
             height: 'auto',
             positionType: 'absolute',
-            position: { left: '100%' },
+            position: { left: '100%' }
           }}
           text={props.hintText}
-          fontSize={FONT_SIZE}
+          fontSize={props.hintFontSize ?? FONT_SIZE}
           arrowSide={'left'}
         />
       )}

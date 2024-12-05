@@ -32,30 +32,28 @@ function ArrowToast(props: {
         justifyContent: 'center',
         alignItems: 'center',
         margin: { left: props.fontSize },
-        zIndex:1,
+        zIndex: 1,
         ...props.uiTransform
       }}
     >
       {/* ARROW */}
 
-      
-        <UiEntity
-          uiTransform={{
-            display: props.arrowSide !== undefined ? 'flex' : 'none',
-            width: props.fontSize,
-            height: props.fontSize,
-            positionType: 'absolute',
-            position
-          }}
-          uiBackground={{
-            color: Color4.Black(),
-            textureMode: 'stretch',
-            texture: {
-              src: 'assets/images/toastArrow.png'
-            }
-          }}
-        />
-     
+      <UiEntity
+        uiTransform={{
+          display: props.arrowSide !== undefined ? 'flex' : 'none',
+          width: props.fontSize,
+          height: props.fontSize,
+          positionType: 'absolute',
+          position
+        }}
+        uiBackground={{
+          color: Color4.Black(),
+          textureMode: 'stretch',
+          texture: {
+            src: 'assets/images/toastArrow.png'
+          }
+        }}
+      />
 
       <UiEntity
         uiTransform={{
@@ -83,7 +81,7 @@ function ArrowToast(props: {
           uiTransform={{
             width: '100%',
             height: '80%',
-            padding:{left:props.fontSize * 0.5}
+            padding: { left: props.fontSize * 0.5 }
           }}
           uiText={{
             value: props.text,
