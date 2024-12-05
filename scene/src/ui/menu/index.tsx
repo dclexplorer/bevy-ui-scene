@@ -26,7 +26,7 @@ export class MainMenu {
     atlasName: 'navbar',
     spriteName: 'Explore off'
   }
-  
+
   readonly settingsIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Settings off'
