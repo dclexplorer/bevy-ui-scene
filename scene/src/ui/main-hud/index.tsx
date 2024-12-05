@@ -53,6 +53,7 @@ export class MainHud {
 
   private readonly friendsIcon: Icon = { atlasName: 'navbar', spriteName: 'Friends off' }
   private readonly chatIcon: Icon = { atlasName: 'navbar', spriteName: 'Chat off' }
+  private readonly voiceChatIcon: Icon = { atlasName: 'voice-chat', spriteName: 'Mic off' }
   // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off'}
   // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff'}
   private readonly emotesIcon: Icon = {
@@ -70,6 +71,7 @@ export class MainHud {
   private walletHint: boolean = false
   private friendsHint: boolean = false
   private chatHint: boolean = false
+  private voiceChatHint: boolean = false
   // private cameraHint: boolean = false
   // private experiencesHint: boolean = false
 
@@ -83,6 +85,7 @@ export class MainHud {
   private walletBackground: Color4 | undefined = undefined
   private friendsBackground: Color4 | undefined = undefined
   private chatBackground: Color4 | undefined = undefined
+  private voiceChatBackground: Color4 | undefined = undefined
   // private cameraBackground: Color4 | undefined = undefined
   // private experiencesBackground: Color4 | undefined = undefined
 
@@ -95,11 +98,22 @@ export class MainHud {
   private readonly chatAndLogs: ChatAndLogs
   public chatOpen: boolean = false
   public friendsOpen: boolean = false
+  public voiceChatOn: boolean = false
 
   constructor(uiController: UIController) {
     this.uiController = uiController
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatAndLogs(uiController)
+  }
+
+  voiceChatDown(): void {
+    if (this.voiceChatOn){
+      this.voiceChatIcon.spriteName = 'Mic off'
+      this.voiceChatOn = false
+    } else {
+      this.voiceChatIcon.spriteName = 'Mic on'
+      this.voiceChatOn = true
+    }
   }
 
   walletEnter(): void {
@@ -162,6 +176,11 @@ export class MainHud {
     this.chatHint = true
   }
 
+  voiceChatEnter(): void {
+    this.voiceChatBackground = SELECTED_BUTTON_COLOR
+    this.voiceChatHint = true
+  }
+
   updateButtons(): void {
     this.walletIcon.spriteName = 'Wallet'
     this.walletBackground = undefined
@@ -195,6 +214,11 @@ export class MainHud {
       this.chatBackground = undefined
     }
     this.chatHint = false
+    if (!this.voiceChatOn){
+      this.voiceChatIcon.spriteName = 'Mic off'
+      this.voiceChatBackground = undefined
+    }
+    this.voiceChatHint = false
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -467,7 +491,27 @@ export class MainHud {
                 hintText={'Friends'}
                 showHint={this.friendsHint}
               />
+<IconButton
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
+                onMouseEnter={() => {
+                  this.voiceChatEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  this.voiceChatDown()
 
+                }}
+                backgroundColor={this.voiceChatBackground}
+                icon={this.voiceChatIcon}
+                hintText={'Voice Chat'}
+                showHint={this.voiceChatHint}
+              />
               <IconButton
                 uiTransform={{
                   height: buttonSize,
@@ -488,6 +532,7 @@ export class MainHud {
                 hintText={'Chat'}
                 showHint={this.chatHint}
               />
+              
 
               <IconButton
                 uiTransform={{

@@ -8,6 +8,7 @@ import { contextJson } from '../json/context-data'
 import { toggleJson } from '../json/toggle-data'
 import { backgroundsJson } from '../json/backgrounds-data'
 import { profileJson } from '../json/profile-data'
+import { voiceChatJson } from '../json/voice-chat-data'
 
 export function getUvs(icon: Icon): number[] {
   let parsedJson: AtlasData | undefined
@@ -32,6 +33,9 @@ export function getUvs(icon: Icon): number[] {
       break
     case 'toggles':
       parsedJson = toggleJson
+      break
+    case 'voice-chat':
+      parsedJson = voiceChatJson
       break
   }
   if (parsedJson !== undefined) {

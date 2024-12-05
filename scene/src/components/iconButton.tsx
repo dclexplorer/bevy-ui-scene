@@ -71,7 +71,7 @@ function IconButton(props: {
           }}
           text={props.hintText}
           fontSize={FONT_SIZE}
-          arrowSide={'none'}
+          arrowSide={'left'}
         />
       )}
     </UiEntity>
