@@ -2,6 +2,7 @@ import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, {
   type Callback,
+  Label,
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
@@ -21,6 +22,7 @@ function IconButton(props: {
   hintText?: string
   showHint?: boolean
   hintFontSize?: number
+  notifications?: number
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -62,6 +64,32 @@ function IconButton(props: {
         }}
         uiBackground={getBackgroundFromAtlas(props.icon)}
       />
+      <UiEntity
+        uiTransform={{
+          width: '40%',
+          height: '40%',
+          flexDirection: 'row',
+          alignItems: 'center',
+          positionType: 'absolute',
+          position: {bottom: '-5%', right: '-5%'},
+          display: props.notifications !== undefined  && props.notifications > 0 ? 'flex':'none'
+        }}
+        uiBackground={{
+          color: { ...Color4.Red() },
+          textureMode: 'nine-slices',
+          texture: {
+            src: 'assets/images/backgrounds/rounded.png'
+          },
+          textureSlices: {
+            top: 0.5,
+            bottom: 0.5,
+            left: 0.5,
+            right: 0.5
+          }
+        }}
+      >
+        <Label value={props.notifications?.toString() ?? '0'} textAlign='middle-center' uiTransform={{width:'100%', height:'100%'}}/>
+        </UiEntity>
       {props.showHint !== false && props.hintText !== undefined && (
         <ArrowToast
           uiTransform={{

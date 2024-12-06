@@ -18,6 +18,8 @@ export class UIController {
   public mapPage: MapPage
   public explorePage: ExplorePage
 
+  public friendsNotifications: number = 3
+
   profileButton: ProfileButton
   profile: Profile
   loadingAndLogin: LoadingUI

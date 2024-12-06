@@ -18,9 +18,7 @@ export class ChatAndLogs {
   private readonly BUFFER_SIZE: number = 9
 
   public messages: Message[] = []
-  private readonly visibleMessages: Message[] = []
 
-  private backgroundVisible: boolean = true
   private inputValue: string = ''
   private readonly myPlayer = getPlayer()
   constructor(uiController: UIController) {
@@ -31,7 +29,6 @@ export class ChatAndLogs {
     if (this.myPlayer !== null) {
       this.messages.push({ from: this.myPlayer.userId, text: value })
       console.log(this.messages)
-      this.backgroundVisible = true
     }
   }
 
@@ -100,9 +97,7 @@ export class ChatAndLogs {
               flexDirection: 'row',
               margin: { top: canvasInfo.height * 0.005 }
             }}
-            onMouseDown={() => {
-              this.backgroundVisible = true
-            }}
+          
             uiBackground={{
               color: { ...Color4.Black(), a: 0.4 },
               textureMode: 'nine-slices',

@@ -502,6 +502,7 @@ export class MainHud {
                 icon={this.friendsIcon}
                 hintText={'Friends'}
                 showHint={this.friendsHint}
+                notifications={this.uiController.friendsNotifications}
               />
               <IconButton
                 uiTransform={{
