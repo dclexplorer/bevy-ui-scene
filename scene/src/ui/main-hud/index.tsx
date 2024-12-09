@@ -9,6 +9,7 @@ import { BevyApi } from '../../bevy-api'
 import { SceneInfo } from './sceneInfo'
 import { type Icon } from '../../utils/definitions'
 import { ChatAndLogs } from './chat-and-logs'
+import { Friends } from './friends'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
@@ -81,9 +82,9 @@ export class MainHud {
   private mapHint: boolean = false
   private settingsHint: boolean = false
   private walletHint: boolean = false
-  private friendsHint: boolean = false
   private chatHint: boolean = false
   private voiceChatHint: boolean = false
+  private friendsHint: boolean = false
   // private cameraHint: boolean = false
   // private experiencesHint: boolean = false
 
@@ -95,9 +96,9 @@ export class MainHud {
   private mapBackground: Color4 | undefined = undefined
   private settingsBackground: Color4 | undefined = undefined
   private walletBackground: Color4 | undefined = undefined
-  private friendsBackground: Color4 | undefined = undefined
   private chatBackground: Color4 | undefined = undefined
   private voiceChatBackground: Color4 | undefined = undefined
+  private friendsBackground: Color4 | undefined = undefined
   // private cameraBackground: Color4 | undefined = undefined
   // private experiencesBackground: Color4 | undefined = undefined
 
@@ -111,11 +112,13 @@ export class MainHud {
   public chatOpen: boolean = false
   public friendsOpen: boolean = false
   public voiceChatOn: boolean = false
+  private readonly friends: Friends
 
   constructor(uiController: UIController) {
     this.uiController = uiController
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatAndLogs(uiController)
+    this.friends = new Friends(uiController)
   }
 
   voiceChatDown(): void {
@@ -218,8 +221,11 @@ export class MainHud {
     this.exploreIcon.spriteName = 'Explore off'
     this.exploreBackground = undefined
     this.exploreHint = false
-    this.friendsIcon.spriteName = 'Friends off'
-    this.friendsBackground = undefined
+
+    if (!this.friendsOpen) {
+      this.friendsIcon.spriteName = 'Friends off'
+      this.friendsBackground = undefined
+    }
     this.friendsHint = false
     if (!this.chatOpen) {
       this.chatIcon.spriteName = 'Chat off'
@@ -239,6 +245,13 @@ export class MainHud {
 
     const buttonSize: number = 38
     const buttonMargin: Partial<Position> = { top: 5, bottom: 5 }
+
+    let leftPosition: number
+    if ((canvasInfo.width * 2.5) / 100 < 45) {
+      leftPosition = 45 + (canvasInfo.width * 1) / 100
+    } else {
+      leftPosition = (canvasInfo.width * 3.4) / 100
+    }
 
     return (
       <Canvas>
@@ -496,7 +509,8 @@ export class MainHud {
                   this.updateButtons()
                 }}
                 onMouseDown={() => {
-                  console.log('Wallet clicked')
+                  this.uiController.mainHud.friendsOpen =
+                    !this.uiController.mainHud.friendsOpen
                 }}
                 backgroundColor={this.friendsBackground}
                 icon={this.friendsIcon}
@@ -543,6 +557,7 @@ export class MainHud {
                 icon={this.chatIcon}
                 hintText={'Chat'}
                 showHint={this.chatHint}
+                notifications={this.uiController.chatsNotifications}
               />
 
               <IconButton
@@ -572,7 +587,43 @@ export class MainHud {
           </UiEntity>
         </UiEntity>
         {this.sceneInfo.mainUi()}
-        {this.chatOpen && this.chatAndLogs.mainUi()}
+        <UiEntity
+          uiTransform={{
+            alignItems: 'flex-end',
+            width: 'auto',
+            height: 'auto',
+            position: {
+              left: this.uiController.mainHud.isSideBarVisible
+                ? leftPosition
+                : canvasInfo.width * 0.01,
+              bottom: canvasInfo.width * 0.01
+            },
+            positionType: 'absolute'
+          }}
+        >
+          <UiEntity
+            uiTransform={{
+              flexDirection: 'column-reverse',
+              display: this.chatOpen ? 'flex' : 'none',
+              width: 'auto',
+              height: 'auto',
+              margin: { right: canvasInfo.width / 100 }
+            }}
+          >
+            {this.chatAndLogs.mainUi()}
+          </UiEntity>
+
+          <UiEntity
+            uiTransform={{
+              flexDirection: 'column-reverse',
+              display: this.friendsOpen ? 'flex' : 'none',
+              width: 'auto',
+              height: 'auto'
+            }}
+          >
+            {this.friends.mainUi()}
+          </UiEntity>
+        </UiEntity>
       </Canvas>
     )
   }

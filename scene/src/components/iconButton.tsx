@@ -71,8 +71,11 @@ function IconButton(props: {
           flexDirection: 'row',
           alignItems: 'center',
           positionType: 'absolute',
-          position: {bottom: '-5%', right: '-5%'},
-          display: props.notifications !== undefined  && props.notifications > 0 ? 'flex':'none'
+          position: { bottom: '-5%', right: '-5%' },
+          display:
+            props.notifications !== undefined && props.notifications > 0
+              ? 'flex'
+              : 'none'
         }}
         uiBackground={{
           color: { ...Color4.Red() },
@@ -88,8 +91,12 @@ function IconButton(props: {
           }
         }}
       >
-        <Label value={props.notifications?.toString() ?? '0'} textAlign='middle-center' uiTransform={{width:'100%', height:'100%'}}/>
-        </UiEntity>
+        <Label
+          value={props.notifications?.toString() ?? '0'}
+          textAlign="middle-center"
+          uiTransform={{ width: '100%', height: '100%' }}
+        />
+      </UiEntity>
       {props.showHint !== false && props.hintText !== undefined && (
         <ArrowToast
           uiTransform={{

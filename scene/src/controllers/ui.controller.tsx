@@ -9,19 +9,23 @@ import { SettingsPage } from '../ui/settings-page'
 import { ProfileButton } from '../ui/profile-button'
 import { Profile } from '../ui/profile'
 import { ExplorePage } from '../ui/explore-page'
+import { Friends } from '../ui/main-hud/friends'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
   public isProfileVisible: boolean = false
+  public isFriendsVisible: boolean = false
   public settingsPage: SettingsPage
   public backpackPage: BackpackPage
   public mapPage: MapPage
   public explorePage: ExplorePage
 
   public friendsNotifications: number = 3
+  public chatsNotifications: number = 2
 
   profileButton: ProfileButton
   profile: Profile
+  friends: Friends
   loadingAndLogin: LoadingUI
   gameController: GameController
   mainHud: MainHud
@@ -38,6 +42,7 @@ export class UIController {
     this.explorePage = new ExplorePage()
     this.profileButton = new ProfileButton(this)
     this.profile = new Profile(this)
+    this.friends = new Friends(this)
 
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
@@ -48,6 +53,7 @@ export class UIController {
         {this.mainHud.mainUi()}
         {this.isMainMenuVisible && this.menu.mainUi()}
         {this.isProfileVisible && this.profile.mainUi()}
+        {this.isFriendsVisible && this.friends.mainUi()}
         {/* Loading & Login */}
         {/* {this.loadingAndLogin?.mainUi()} */}
       </UiEntity>
