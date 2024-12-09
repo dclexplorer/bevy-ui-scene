@@ -99,7 +99,8 @@ function Slider(props: {
               positionType: 'absolute',
               position: { left: props.sliderSize / 2 - grabberSize.x / 2 },
               width: grabberSize.x,
-              height: grabberSize.y
+              height: grabberSize.y,
+              zIndex: 1
             }}
             key="first"
             uiBackground={{

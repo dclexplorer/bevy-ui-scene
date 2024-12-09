@@ -7,50 +7,61 @@ import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_BLACK } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
 import Canvas from '../canvas/canvas'
+import { ProfileButton } from '../profile-button'
 
-export type MenuPage = 'map' | 'backpack' | 'settings'
+export type MenuPage = 'map' | 'backpack' | 'settings' | 'explore'
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 export class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
   private readonly uiController: UIController
+  private readonly profileButton: ProfileButton
   readonly backpackIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'
   }
 
   readonly mapIcon: Icon = { atlasName: 'navbar', spriteName: 'Map off' }
+  readonly exploreIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Explore off'
+  }
+
   readonly settingsIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Settings off'
   }
 
-  private closeButtonColor: Color4 = Color4.Black()
+  private closeButtonColor: Color4 | undefined
 
-  private backpackBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private mapBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private settingsBackground: Color4 = Color4.create(0, 0, 0, 0)
+  private backpackBackground: Color4 | undefined
+  private mapBackground: Color4 | undefined
+  private exploreBackground: Color4 | undefined
+  private settingsBackground: Color4 | undefined
 
   constructor(uiController: UIController) {
     this.uiController = uiController
+    this.profileButton = new ProfileButton(uiController)
   }
 
   mapEnter(): void {
     this.mapIcon.spriteName = 'Map on'
     this.mapBackground = SELECTED_BUTTON_COLOR
-    console.log('on mouse enter map')
   }
 
   backpackEnter(): void {
     this.backpackIcon.spriteName = 'Backpack on'
     this.backpackBackground = SELECTED_BUTTON_COLOR
-    console.log('on mouse enter backpack')
+  }
+
+  exploreEnter(): void {
+    this.exploreIcon.spriteName = 'Explore on'
+    this.exploreBackground = SELECTED_BUTTON_COLOR
   }
 
   settingsEnter(): void {
     this.settingsIcon.spriteName = 'Settings on'
     this.settingsBackground = SELECTED_BUTTON_COLOR
-    console.log('on mouse enter settings')
   }
 
   hide(): void {
@@ -67,11 +78,13 @@ export class MainMenu {
 
   updateButtons(): void {
     this.settingsIcon.spriteName = 'Settings off'
-    this.settingsBackground = Color4.create(0, 0, 0, 0)
+    this.settingsBackground = undefined
     this.backpackIcon.spriteName = 'Backpack off'
-    this.backpackBackground = Color4.create(0, 0, 0, 0)
+    this.backpackBackground = undefined
     this.mapIcon.spriteName = 'Map off'
-    this.mapBackground = Color4.create(0, 0, 0, 0)
+    this.mapBackground = undefined
+    this.exploreIcon.spriteName = 'Explore off'
+    this.exploreBackground = undefined
     switch (this.activePage) {
       case 'settings':
         this.settingsEnter()
@@ -81,6 +94,9 @@ export class MainMenu {
         break
       case 'backpack':
         this.backpackEnter()
+        break
+      case 'explore':
+        this.exploreEnter()
         break
     }
   }
@@ -155,6 +171,29 @@ export class MainMenu {
                   margin: { left: 15, right: 15 }
                 }}
                 onMouseEnter={() => {
+                  this.exploreEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  this.show('explore')
+                }}
+                backgroundColor={this.exploreBackground}
+                icon={this.exploreIcon}
+                value={'EXPLORE'}
+                fontSize={10}
+                iconSize={50}
+                direction={'column'}
+              />
+
+              <TextIconButton
+                uiTransform={{
+                  height: '90%',
+                  width: 4 * buttonSize,
+                  margin: { left: 15, right: 15 }
+                }}
+                onMouseEnter={() => {
                   this.backpackEnter()
                 }}
                 onMouseLeave={() => {
@@ -194,7 +233,33 @@ export class MainMenu {
                 direction={'column'}
               />
             </UiEntity>
-
+          </UiEntity>
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: 'auto',
+              flexGrow: 1
+            }}
+            uiBackground={{ color: { ...Color4.Green(), a: 0.1 } }}
+          >
+            {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
+            {this.activePage === 'explore' &&
+              this.uiController.explorePage.mainUi()}
+            {this.activePage === 'backpack' &&
+              this.uiController.backpackPage.mainUi()}
+            {this.activePage === 'settings' &&
+              this.uiController.settingsPage.mainUi()}
+          </UiEntity>
+          <UiEntity
+            uiTransform={{
+              width: 'auto',
+              height: '8%',
+              positionType: 'absolute',
+              alignItems: 'center',
+              position: { right: buttonSize, top: 0 }
+            }}
+          >
+            {this.profileButton.mainUi()}
             <IconButton
               onMouseEnter={() => {
                 this.closeButtonColor = ALMOST_BLACK
@@ -207,27 +272,11 @@ export class MainMenu {
               }}
               uiTransform={{
                 width: buttonSize,
-                height: buttonSize,
-                positionType: 'absolute',
-                position: { right: 45 }
+                height: buttonSize
               }}
               backgroundColor={this.closeButtonColor}
               icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
             />
-          </UiEntity>
-          <UiEntity
-            uiTransform={{
-              width: '100%',
-              height: 'auto',
-              flexGrow: 1
-            }}
-            uiBackground={{ color: { ...Color4.Green(), a: 0.1 } }}
-          >
-            {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
-            {this.activePage === 'backpack' &&
-              this.uiController.backpackPage.mainUi()}
-            {this.activePage === 'settings' &&
-              this.uiController.settingsPage.mainUi()}
           </UiEntity>
         </UiEntity>
       </Canvas>
