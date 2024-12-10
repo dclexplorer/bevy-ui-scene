@@ -6,80 +6,141 @@ import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../canvas/canvas'
 // import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
+import { SceneInfo } from './sceneInfo'
+import { type Icon } from '../../utils/definitions'
+import { ChatAndLogs } from './chat-and-logs'
+import { Friends } from './friends'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 export class MainHud {
-  private readonly isSideBarVisible: boolean = true
+  public fontSize: number = 16
+  public readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
-  readonly bellIcon: { atlasName: string; spriteName: string } = {
+  readonly bellIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Notifications off'
   }
 
-  readonly backpackIcon: { atlasName: string; spriteName: string } = {
+  readonly backpackIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'
   }
 
-  readonly walletIcon: { atlasName: string; spriteName: string } = {
+  readonly walletIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Wallet'
   }
 
-  readonly mapIcon: { atlasName: string; spriteName: string } = {
+  readonly mapIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Map off'
   }
 
-  readonly settingsIcon: { atlasName: string; spriteName: string } = {
+  readonly settingsIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Settings off'
   }
 
-  private readonly helpIcon: { atlasName: string; spriteName: string } = {
+  private readonly helpIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'HelpIcon Off'
   }
 
-  // private friendsIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Friends off'}
+  private readonly exploreIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Explore off'
+  }
+
+  private readonly friendsIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Friends off'
+  }
+
+  private readonly chatIcon: Icon = {
+    atlasName: 'navbar',
+    spriteName: 'Chat off'
+  }
+
+  private readonly voiceChatIcon: Icon = {
+    atlasName: 'voice-chat',
+    spriteName: 'Mic off'
+  }
+
   // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off'}
   // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff'}
-  private readonly emotesIcon: { atlasName: string; spriteName: string } = {
+  private readonly emotesIcon: Icon = {
     atlasName: 'navbar',
     spriteName: 'Emote off'
   }
 
-  private bellHint: boolean = false
   private backpackHint: boolean = false
-  private walletHint: boolean = false
+  private bellHint: boolean = false
+  private emotesHint: boolean = false
+  private exploreHint: boolean = false
+  private helpHint: boolean = false
   private mapHint: boolean = false
   private settingsHint: boolean = false
-  private helpHint: boolean = false
-  // private friendsHint: boolean = false
+  private walletHint: boolean = false
+  private chatHint: boolean = false
+  private voiceChatHint: boolean = false
+  private friendsHint: boolean = false
   // private cameraHint: boolean = false
   // private experiencesHint: boolean = false
-  private emotesHint: boolean = false
 
-  private bellBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private backpackBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private walletBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private mapBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private settingsBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private helpBackground: Color4 = Color4.create(0, 0, 0, 0)
-  // private friendsBackground: Color4 = Color4.create(0, 0, 0, 0)
-  // private cameraBackground: Color4 = Color4.create(0, 0, 0, 0)
-  // private experiencesBackground: Color4 = Color4.create(0, 0, 0, 0)
-  private emotesBackground: Color4 = Color4.create(0, 0, 0, 0)
+  private bellBackground: Color4 | undefined = undefined
+  private backpackBackground: Color4 | undefined = undefined
+  private emotesBackground: Color4 | undefined = undefined
+  private exploreBackground: Color4 | undefined = undefined
+  private helpBackground: Color4 | undefined = undefined
+  private mapBackground: Color4 | undefined = undefined
+  private settingsBackground: Color4 | undefined = undefined
+  private walletBackground: Color4 | undefined = undefined
+  private chatBackground: Color4 | undefined = undefined
+  private voiceChatBackground: Color4 | undefined = undefined
+  private friendsBackground: Color4 | undefined = undefined
+  // private cameraBackground: Color4 | undefined = undefined
+  // private experiencesBackground: Color4 | undefined = undefined
+
+  public readonly sceneName: string = 'Scene Name'
+  public readonly sceneCoords: { x: number; y: number } = { x: -5, y: 0 }
+  public readonly isSdk6: boolean = true
+  public readonly isFav: boolean = true
+
+  private readonly sceneInfo: SceneInfo
+  private readonly chatAndLogs: ChatAndLogs
+  public chatOpen: boolean = false
+  public friendsOpen: boolean = false
+  public voiceChatOn: boolean = false
+  private readonly friends: Friends
 
   constructor(uiController: UIController) {
     this.uiController = uiController
+    this.sceneInfo = new SceneInfo(uiController)
+    this.chatAndLogs = new ChatAndLogs(uiController)
+    this.friends = new Friends(uiController)
+  }
+
+  voiceChatDown(): void {
+    if (this.voiceChatOn) {
+      this.voiceChatIcon.spriteName = 'Mic off'
+      this.voiceChatOn = false
+    } else {
+      this.voiceChatIcon.spriteName = 'Mic on'
+      this.voiceChatOn = true
+    }
   }
 
   walletEnter(): void {
     this.walletIcon.spriteName = 'Wallet on'
     this.walletBackground = SELECTED_BUTTON_COLOR
     this.walletHint = true
+  }
+
+  exploreEnter(): void {
+    this.exploreIcon.spriteName = 'Explore on'
+    this.exploreBackground = SELECTED_BUTTON_COLOR
+    this.exploreHint = true
   }
 
   notificationsEnter(): void {
@@ -118,45 +179,88 @@ export class MainHud {
     this.emotesHint = true
   }
 
+  friendsEnter(): void {
+    this.friendsIcon.spriteName = 'Friends on'
+    this.friendsBackground = SELECTED_BUTTON_COLOR
+    this.friendsHint = true
+  }
+
+  chatEnter(): void {
+    this.chatIcon.spriteName = 'Chat on'
+    this.chatBackground = SELECTED_BUTTON_COLOR
+    this.chatHint = true
+  }
+
+  voiceChatEnter(): void {
+    this.voiceChatBackground = SELECTED_BUTTON_COLOR
+    this.voiceChatHint = true
+  }
+
   updateButtons(): void {
     this.walletIcon.spriteName = 'Wallet'
-    this.walletBackground = Color4.create(0, 0, 0, 0)
+    this.walletBackground = undefined
     this.walletHint = false
     this.bellIcon.spriteName = 'Notifications off'
-    this.bellBackground = Color4.create(0, 0, 0, 0)
+    this.bellBackground = undefined
     this.bellHint = false
     this.mapIcon.spriteName = 'Map off'
-    this.mapBackground = Color4.create(0, 0, 0, 0)
+    this.mapBackground = undefined
     this.mapHint = false
     this.backpackIcon.spriteName = 'Backpack off'
-    this.backpackBackground = Color4.create(0, 0, 0, 0)
+    this.backpackBackground = undefined
     this.backpackHint = false
     this.settingsIcon.spriteName = 'Settings off'
-    this.settingsBackground = Color4.create(0, 0, 0, 0)
+    this.settingsBackground = undefined
     this.settingsHint = false
     this.helpIcon.spriteName = 'HelpIcon Off'
-    this.helpBackground = Color4.create(0, 0, 0, 0)
+    this.helpBackground = undefined
     this.helpHint = false
     this.emotesIcon.spriteName = 'Emote off'
-    this.emotesBackground = Color4.create(0, 0, 0, 0)
+    this.emotesBackground = undefined
     this.emotesHint = false
+    this.exploreIcon.spriteName = 'Explore off'
+    this.exploreBackground = undefined
+    this.exploreHint = false
+
+    if (!this.friendsOpen) {
+      this.friendsIcon.spriteName = 'Friends off'
+      this.friendsBackground = undefined
+    }
+    this.friendsHint = false
+    if (!this.chatOpen) {
+      this.chatIcon.spriteName = 'Chat off'
+      this.chatBackground = undefined
+    }
+    this.chatHint = false
+    if (!this.voiceChatOn) {
+      this.voiceChatIcon.spriteName = 'Mic off'
+      this.voiceChatBackground = undefined
+    }
+    this.voiceChatHint = false
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
-    const buttonSize: number = sideBarHeight * 0.9
+    const buttonSize: number = 38
     const buttonMargin: Partial<Position> = { top: 5, bottom: 5 }
+
+    let leftPosition: number
+    if ((canvasInfo.width * 2.5) / 100 < 45) {
+      leftPosition = 45 + (canvasInfo.width * 1) / 100
+    } else {
+      leftPosition = (canvasInfo.width * 3.4) / 100
+    }
 
     return (
       <Canvas>
         <UiEntity
           uiTransform={{
-            width: '2.4%',
+            width: (canvasInfo.width * 2.5) / 100,
+            minWidth: 45,
             height: '100%',
-            position: { left: 500, top: 0 },
+            position: { left: 0, top: 0 },
             positionType: 'absolute'
           }}
           // onMouseEnter={() => (this.isSideBarVisible = true)}
@@ -187,9 +291,12 @@ export class MainHud {
             >
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
-                  margin: buttonMargin
+                  margin: { top: 5, bottom: 5 },
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize
                 }}
                 onMouseEnter={() => {
                   this.walletEnter()
@@ -198,18 +305,21 @@ export class MainHud {
                   this.updateButtons()
                 }}
                 onMouseDown={() => {
-                  console.log('Wallet clicked')
+                  this.uiController.profile.showCard()
                 }}
                 backgroundColor={this.walletBackground}
                 icon={this.walletIcon}
-                hintText={'Wallet'}
+                hintText={'Profile'}
                 showHint={this.walletHint}
               />
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -234,8 +344,11 @@ export class MainHud {
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -252,11 +365,37 @@ export class MainHud {
                 hintText={'Map'}
                 showHint={this.mapHint}
               />
+              <IconButton
+                uiTransform={{
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
+                  margin: buttonMargin
+                }}
+                onMouseEnter={() => {
+                  this.exploreEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  this.uiController.menu?.show('explore')
+                }}
+                backgroundColor={this.exploreBackground}
+                icon={this.exploreIcon}
+                hintText={'Explore'}
+                showHint={this.exploreHint}
+              />
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -276,8 +415,11 @@ export class MainHud {
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -302,8 +444,11 @@ export class MainHud {
 
               <IconButton
                 uiTransform={{
-                  height: buttonSize,
-                  width: buttonSize,
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -350,20 +495,78 @@ export class MainHud {
                 icon={this.experiencesIcon}
                 hintText={'Experiences'}
                 showHint={this.experiencesHint} />
-
-                <IconButton uiTransform={{height:buttonSize, width:buttonSize}}
-                onMouseEnter={()=>{this.friendsEnter()}}
-                onMouseLeave={()=>{this.updateButtons()}}
-                onMouseDown={()=>{console.log('Wallet clicked')}}
-                backgroundColor={this.friendsBackground}
-                icon={this.friendsIcon}
-                hintText={'Friends'}
-                showHint={this.friendsHint} /> */}
-
+              */}
               <IconButton
                 uiTransform={{
                   height: buttonSize,
                   width: buttonSize,
+                  margin: buttonMargin
+                }}
+                onMouseEnter={() => {
+                  this.friendsEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  this.uiController.mainHud.friendsOpen =
+                    !this.uiController.mainHud.friendsOpen
+                }}
+                backgroundColor={this.friendsBackground}
+                icon={this.friendsIcon}
+                hintText={'Friends'}
+                showHint={this.friendsHint}
+                notifications={this.uiController.friendsNotifications}
+              />
+              <IconButton
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
+                onMouseEnter={() => {
+                  this.voiceChatEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  this.voiceChatDown()
+                }}
+                backgroundColor={this.voiceChatBackground}
+                icon={this.voiceChatIcon}
+                hintText={'Voice Chat'}
+                showHint={this.voiceChatHint}
+              />
+              <IconButton
+                uiTransform={{
+                  height: buttonSize,
+                  width: buttonSize,
+                  margin: buttonMargin
+                }}
+                onMouseEnter={() => {
+                  this.chatEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  this.chatOpen = !this.chatOpen
+                }}
+                backgroundColor={this.chatBackground}
+                icon={this.chatIcon}
+                hintText={'Chat'}
+                showHint={this.chatHint}
+                notifications={this.uiController.chatsNotifications}
+              />
+
+              <IconButton
+                uiTransform={{
+                  height: (canvasInfo.width * 2.1) / 100,
+                  minHeight: buttonSize,
+                  width: (canvasInfo.width * 2.1) / 100,
+
+                  minWidth: buttonSize,
                   margin: buttonMargin
                 }}
                 onMouseEnter={() => {
@@ -382,72 +585,44 @@ export class MainHud {
               />
             </UiEntity>
           </UiEntity>
+        </UiEntity>
+        {this.sceneInfo.mainUi()}
+        <UiEntity
+          uiTransform={{
+            alignItems: 'flex-end',
+            width: 'auto',
+            height: 'auto',
+            position: {
+              left: this.uiController.mainHud.isSideBarVisible
+                ? leftPosition
+                : canvasInfo.width * 0.01,
+              bottom: canvasInfo.width * 0.01
+            },
+            positionType: 'absolute'
+          }}
+        >
           <UiEntity
             uiTransform={{
-              width: 20,
-              height: 100,
-              positionType: 'absolute',
-              position: { top: '60%', right: -30 }
+              flexDirection: 'column-reverse',
+              display: this.chatOpen ? 'flex' : 'none',
+              width: 'auto',
+              height: 'auto',
+              margin: { right: canvasInfo.width / 100 }
             }}
-            uiBackground={{
-              color: Color4.Blue(),
-
-              textureMode: 'nine-slices',
-              texture: {
-                src: 'assets/images/buttonBackground100.png'
-              },
-              textureSlices: {
-                top: 0.25,
-                bottom: 0.25,
-                left: 0.25,
-                right: 0.25
-              }
-            }}
-          />
-
-          <UiEntity
-            uiTransform={{
-              width: 100,
-              height: 12,
-              positionType: 'absolute',
-              position: { top: '55%', right: 30 }
-            }}
-            uiBackground={{
-              textureMode: 'nine-slices',
-              texture: {
-                src: 'assets/images/buttonBackground100.png'
-              },
-              textureSlices: {
-                top: 0.25,
-                bottom: 0.25,
-                left: 0.25,
-                right: 0.25
-              }
-            }}
-          />
+          >
+            {this.chatAndLogs.mainUi()}
+          </UiEntity>
 
           <UiEntity
             uiTransform={{
-              width: 60,
-              height: 60,
-              positionType: 'absolute',
-              position: { top: '60%', right: 30 }
+              flexDirection: 'column-reverse',
+              display: this.friendsOpen ? 'flex' : 'none',
+              width: 'auto',
+              height: 'auto'
             }}
-            uiBackground={{
-              color: Color4.Black(),
-
-              textureMode: 'nine-slices',
-              texture: {
-                src: 'assets/images/buttonBackground100.png'
-              },
-              textureSlices: {
-                top: 0.25,
-                bottom: 0.25,
-                left: 0.25,
-                right: 0.25
-              }
-            }}
-          />
+          >
+            {this.friends.mainUi()}
+          </UiEntity>
         </UiEntity>
       </Canvas>
     )

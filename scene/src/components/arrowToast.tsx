@@ -16,11 +16,11 @@ function ArrowToast(props: {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
 
-  let position: Partial<Position> = { left: -props.fontSize * 0.8 }
-  if (props.arrowSide === 'left') position = { left: -props.fontSize * 0.8 }
-  if (props.arrowSide === 'right') position = { right: -props.fontSize * 0.8 }
-  if (props.arrowSide === 'top') position = { top: -props.fontSize * 0.8 }
-  if (props.arrowSide === 'bottom') position = { bottom: -props.fontSize * 0.8 }
+  let position: Partial<Position> = { left: -props.fontSize * 0.4 }
+  if (props.arrowSide === 'left') position = { left: -props.fontSize * 0.4 }
+  if (props.arrowSide === 'right') position = { right: -props.fontSize * 0.4 }
+  if (props.arrowSide === 'top') position = { top: -props.fontSize * 0.4 }
+  if (props.arrowSide === 'bottom') position = { bottom: -props.fontSize * 0.4 }
 
   return (
     <UiEntity
@@ -32,28 +32,28 @@ function ArrowToast(props: {
         justifyContent: 'center',
         alignItems: 'center',
         margin: { left: props.fontSize },
+        zIndex: 1,
         ...props.uiTransform
       }}
     >
       {/* ARROW */}
 
-      {props.arrowSide !== 'none' && (
-        <UiEntity
-          uiTransform={{
-            width: props.fontSize * 2,
-            height: props.fontSize * 2,
-            positionType: 'absolute',
-            position
-          }}
-          uiBackground={{
-            color: Color4.Black(),
-            textureMode: 'stretch',
-            texture: {
-              src: 'assets/images/toastArrow.png'
-            }
-          }}
-        />
-      )}
+      <UiEntity
+        uiTransform={{
+          display: props.arrowSide !== undefined ? 'flex' : 'none',
+          width: props.fontSize,
+          height: props.fontSize,
+          positionType: 'absolute',
+          position
+        }}
+        uiBackground={{
+          color: Color4.Black(),
+          textureMode: 'stretch',
+          texture: {
+            src: 'assets/images/toastArrow.png'
+          }
+        }}
+      />
 
       <UiEntity
         uiTransform={{
@@ -66,22 +66,22 @@ function ArrowToast(props: {
           color: Color4.Black(),
           textureMode: 'nine-slices',
           texture: {
-            src: 'assets/images/buttonBackground100.png'
+            src: 'assets/images/backgrounds/rounded.png'
           },
           textureSlices: {
-            top: 0.25,
-            bottom: 0.25,
-            left: 0.25,
-            right: 0.25
+            top: 0.5,
+            bottom: 0.5,
+            left: 0.5,
+            right: 0.5
           }
         }}
       >
         {/* TEXT */}
         <UiEntity
           uiTransform={{
-            width: '90%',
+            width: '100%',
             height: '80%',
-            padding: { right: props.fontSize }
+            padding: { left: props.fontSize * 0.5 }
           }}
           uiText={{
             value: props.text,

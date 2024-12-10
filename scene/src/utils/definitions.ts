@@ -54,3 +54,6 @@ export const INPUT_KEYS_ARRAY: SlotsInputs[] = [
   InputAction.IA_ACTION_5,
   InputAction.IA_ACTION_6
 ]
+
+export type Message = { from: string; text: string }
+export type Invitation = { from: string; sent: boolean }
