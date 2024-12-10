@@ -1,4 +1,5 @@
 import { Color4 } from '@dcl/sdk/math'
+import { type Friend } from './definitions'
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)
@@ -425,3 +426,9 @@ export const EMPLOYMENT_STATUS = [
 ]
 
 export const TEST = ['- Select an option -', 'Test', 'Other']
+
+export const TEST_FRIENDS: Friend[] = [
+  { id: '', name: 'Player 1', status: 'online' },
+  { id: '', name: 'Player 2', status: 'offline' },
+  { id: '', name: 'Player 3', status: 'online' }
+]

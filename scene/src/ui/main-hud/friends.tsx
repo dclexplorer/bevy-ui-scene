@@ -1,11 +1,12 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
-import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 // import IconButton from '../../components/iconButton'
 import TextButton from '../../components/textButton'
 import { type UIController } from '../../controllers/ui.controller'
-import { ALMOST_BLACK, ALMOST_WHITE } from '../../utils/constants'
-import { type Icon } from '../../utils/definitions'
+import { ALMOST_BLACK, ALMOST_WHITE, TEST_FRIENDS } from '../../utils/constants'
+import { type Friend, type Icon } from '../../utils/definitions'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 export class Friends {
   private readonly uiController: UIController
@@ -19,6 +20,10 @@ export class Friends {
   public buttonClicked: 'pending' | 'friends' = 'friends'
   private friendsTextColor: Color4 = ALMOST_WHITE
   private pendingTextColor: Color4 = ALMOST_BLACK
+  private readonly friendsList: Friend[] = TEST_FRIENDS
+
+  private isOnlineOpen: boolean = false
+  private isOfflineOpen: boolean = false
 
   constructor(uiController: UIController) {
     this.uiController = uiController
@@ -142,6 +147,120 @@ export class Friends {
             height: 'auto'
           }}
         ></UiEntity>
+        <UiEntity
+          uiTransform={{
+            display: this.buttonClicked === 'friends' ? 'flex' : 'none',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+            height: 'auto'
+          }}
+        >
+          <UiEntity
+            uiTransform={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              height: 'auto'
+            }}
+            onMouseDown={() => {
+              this.isOnlineOpen = !this.isOnlineOpen
+            }}
+            uiBackground={{color:ALMOST_WHITE}}
+          >
+            <Label
+              value={
+                'ONLINE (' +
+                this.friendsList
+                  .filter((friend) => friend.status === 'online')
+                  .length.toString() +
+                ')'
+              }
+              fontSize={this.fontSize}
+              color={ALMOST_BLACK}
+
+            />
+            <UiEntity
+              uiTransform={{
+                width: this.fontSize,
+                height: this.fontSize
+              }}
+              uiBackground={{...getBackgroundFromAtlas({
+                atlasName: 'icons',
+                spriteName: this.isOnlineOpen ? 'UpArrow' : 'DownArrow'
+              }), color: ALMOST_BLACK}}
+            />
+          </UiEntity>
+          <UiEntity
+            uiTransform={{
+              display:this.isOnlineOpen?'flex':'none',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              height: 'auto',
+              overflow:'scroll'
+            }}
+            
+            uiBackground={{color:Color4.Red()}}
+          >
+            {this.friendsList.filter((friend) => friend.status === 'online').map((friend) => <Label value={friend.name} /> )}
+           
+          </UiEntity>
+
+          <UiEntity
+            uiTransform={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              height: 'auto'
+            }}
+            onMouseDown={() => {
+              this.isOfflineOpen = !this.isOfflineOpen
+            }}
+            uiBackground={{color:ALMOST_WHITE}}
+          >
+            <Label
+              value={
+                'OFFLINE (' +
+                this.friendsList
+                  .filter((friend) => friend.status === 'offline')
+                  .length.toString() +
+                ')'
+              }
+              fontSize={this.fontSize}
+              color={ALMOST_BLACK}
+            />
+            <UiEntity
+              uiTransform={{
+                width: this.fontSize,
+                height: this.fontSize
+              }}
+              uiBackground={{...getBackgroundFromAtlas({
+                atlasName: 'icons',
+                spriteName: this.isOfflineOpen ? 'UpArrow' : 'DownArrow'
+              }), color: ALMOST_BLACK}}
+            />
+          </UiEntity>
+          <UiEntity
+            uiTransform={{
+              display:this.isOfflineOpen?'flex':'none',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              flexShrink: 1,
+              overflow:'scroll'
+            }}
+            
+            uiBackground={{color:Color4.Red()}}
+          >
+            {this.friendsList.filter((friend) => friend.status === 'offline').map((friend) => <Label value={friend.name} /> )}
+           
+          </UiEntity>
+        </UiEntity>
       </UiEntity>
     )
   }
