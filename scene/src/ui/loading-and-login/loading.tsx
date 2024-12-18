@@ -1,8 +1,8 @@
-import * as utils from '@dcl-sdk/utils'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
 // import { openExternalUrl } from '~system/RestrictedActions'
+import { BevyApi } from '../../bevy-api'
 import ArrowToast from '../../components/arrowToast'
 import TextButton from '../../components/textButton'
 import TextIconButton from '../../components/textIconButton'
@@ -13,15 +13,14 @@ import {
   CLICKED_PRIMARY_COLOR,
   RUBY
 } from '../../utils/constants'
-import Canvas from '../canvas/canvas'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import Canvas from '../canvas/canvas'
 
 type StatusType =
   | 'loading'
-  | 'menu'
+  | 'sign-in-or-guest'
+  | 'reuse-login-or-new'
   | 'secure-step'
-  | 'fetching-data'
-  | 'ready-to-start'
 
 export class LoadingUI {
   private status: StatusType = 'loading'
@@ -45,13 +44,16 @@ export class LoadingUI {
   private firstButtonText: string = ''
   private secondButtonText: string = ''
 
+  private firstButtonAction: () => void = () => {}
+  private secondButtonAction: () => void = () => {}
+  private backButtonAction: () => void = () => {}
+
   private backgroundGradientSrc: string =
     'assets/images/login/HorizontalVioletGradient.png'
 
   private isVisible: boolean
   private toastOpen: boolean = false
   readonly countDown: string = '5:00'
-  readonly playerName: string = 'Name'
   public timer: number = 2
   private readonly uiController: UIController
 
@@ -74,24 +76,27 @@ export class LoadingUI {
     return this.isVisible
   }
 
-  fetchData(): void {
-    this.status = 'fetching-data'
-    this.updateLayout()
-    utils.timers.setTimeout(() => {
-      this.status = 'ready-to-start'
-      this.updateLayout()
-    }, 500)
-  }
-
   updateLayout(): void {
     this.firstButtonBackground = RUBY
     this.secondButtonBackground = ALMOST_BLACK
+
+    this.firstButtonAction = () => {
+      console.log('first button action')
+    }
+
+    this.secondButtonAction = () => {
+      console.log('second button action')
+    }
+
+    this.backButtonAction = () => {
+      console.log('back button action')
+    }
 
     switch (this.status) {
       case 'loading':
         break
 
-      case 'menu':
+      case 'sign-in-or-guest':
         this.backgroundGradientSrc =
           'assets/images/login/HorizontalVioletGradient.png'
         this.isBackButtonVisible = false
@@ -103,8 +108,29 @@ export class LoadingUI {
         this.subtitleText = 'shaped by its community of\ncreators & explorers.'
         this.parragraphText = ''
         this.codeText = ''
-        this.firstButtonText = 'START'
-        this.secondButtonText = 'EXIT'
+        this.firstButtonText = 'START WITH ACCOUNT'
+        this.firstButtonAction = () => {
+          const { code: getCode, success: getSuccess } = BevyApi.loginNew()
+          getCode
+            .then(async (code) => {
+              this.codeText = code.toString()
+              this.setStatus('secure-step')
+              await getSuccess
+
+              // TODO: should this be redirected to backpack?
+              this.finishLoading()
+            })
+            .catch((error) => {
+              // TODO: handle the error properly
+              console.error('Error logging in with new account:', error)
+            })
+        }
+        this.secondButtonText = 'EXPLORE AS GUEST'
+        this.secondButtonAction = () => {
+          console.log('login guest')
+          BevyApi.loginGuest()
+          this.finishLoading()
+        }
         break
 
       case 'secure-step':
@@ -120,38 +146,46 @@ export class LoadingUI {
 
         this.parragraphText =
           'Remember the verification number below.\nYou’ll be prompted to confirm it in your\nweb browser to securely link your sign in.'
-        this.codeText = Math.floor(Math.random() * 100).toString()
+
+        this.backButtonAction = () => {
+          BevyApi.loginCancel()
+          this.setStatus('sign-in-or-guest')
+        }
         break
 
-      case 'fetching-data':
+      case 'reuse-login-or-new': {
+        // TODO: this is a temporary background, we need to change it to the avatar panel
+        // this.backgroundGradientSrc =
+        //   'assets/images/login/BackgroundsAvatarAlpha.png'
         this.backgroundGradientSrc =
           'assets/images/login/HorizontalVioletGradient.png'
-        this.isBackButtonVisible = false
-        this.isFirstButtonVisible = false
-        this.isSecondButtonVisible = false
-        this.isSpinnerVisible = true
-        this.isLogoVisible = true
-        this.titleText = 'Discover a virtual social world'
-        this.subtitleText = 'shaped by its community of\ncreators & explorers.'
-        this.parragraphText = ''
-        break
-
-      case 'ready-to-start':
-        this.backgroundGradientSrc =
-          'assets/images/login/BackgroundsAvatarAlpha.png'
         this.isBackButtonVisible = false
         this.isFirstButtonVisible = true
         this.isSecondButtonVisible = true
         this.isLogoVisible = true
         this.isSpinnerVisible = false
-        this.titleText = 'Welcome back ' + this.playerName
+        this.titleText = 'Welcome back!'
         this.subtitleText = 'Ready to explore?'
         this.parragraphText = ''
         this.codeText = ''
         this.firstButtonText = 'JUMP INTO DECENTRALAND'
+        this.firstButtonAction = () => {
+          BevyApi.loginPrevious()
+            .then(() => {
+              this.finishLoading()
+            })
+            .catch((error) => {
+              // TODO: handle the error properly
+              console.error('Error logging in with previous account:', error)
+            })
+        }
         this.secondButtonText = 'USE DIFFERENT ACCOUNT'
+        this.secondButtonAction = () => {
+          this.setStatus('sign-in-or-guest')
+        }
 
         break
+      }
       default:
         this.backgroundGradientSrc =
           'assets/images/login/HorizontalVioletGradient.png'
@@ -162,24 +196,8 @@ export class LoadingUI {
     }
   }
 
-  nextStep(): void {
-    switch (this.status) {
-      case 'loading':
-        this.status = 'menu'
-        break
-      case 'menu':
-        this.status = 'secure-step'
-        break
-      case 'secure-step':
-        this.status = 'fetching-data'
-        break
-      case 'fetching-data':
-        this.status = 'ready-to-start'
-        break
-      case 'ready-to-start':
-        this.isVisible = false
-        break
-    }
+  setStatus(newStatus: StatusType): void {
+    this.status = newStatus
     this.updateLayout()
   }
 
@@ -209,8 +227,9 @@ export class LoadingUI {
 
     const LEFT_PANEL_HEIGHT: number = canvasInfo.height * 0.5
     const LEFT_PANEL_WIDTH: number = canvasInfo.width * 0.3
-    const AVATAR_PANEL_WIDTH: number = canvasInfo.height * 0.4
-    const AVATAR_PANEL_HEIGHT: number = canvasInfo.height * 0.8
+    // TODO: back when avatar panel is implemented
+    // const AVATAR_PANEL_WIDTH: number = canvasInfo.height * 0.4
+    // const AVATAR_PANEL_HEIGHT: number = canvasInfo.height * 0.8
 
     const HEADER_HEIGHT: number = LEFT_PANEL_HEIGHT * 0.15
     return (
@@ -265,7 +284,7 @@ export class LoadingUI {
                 }}
               >
                 {/* FLOATING BUTTON */}
-                <UiEntity
+                {/* <UiEntity
                   uiTransform={{
                     display: this.status === 'secure-step' ? 'flex' : 'none',
                     width: '150',
@@ -278,9 +297,10 @@ export class LoadingUI {
                   onMouseDown={() => {
                     this.fetchData()
                   }}
-                />
+                  /> */}
                 {/* AVATAR PANEL */}
-                {this.status === 'ready-to-start' && (
+                {/* TODO: this will be implemented when avatar preview is implemented for UI :) */}
+                {/* {this.status === 'reuse-login-or-new' && (
                   <UiEntity
                     uiTransform={{
                       positionType: 'absolute',
@@ -306,7 +326,7 @@ export class LoadingUI {
                       }}
                     />
                   </UiEntity>
-                )}
+                )} */}
 
                 {/* LEFT PANEL */}
                 <UiEntity
@@ -344,22 +364,15 @@ export class LoadingUI {
                       }}
                       iconColor={RUBY}
                       icon={{ atlasName: 'icons', spriteName: 'LeftArrow' }}
-                      onMouseDown={() => {
-                        console.log('click back')
-                        utils.timers.setTimeout(() => {
-                          this.status = 'menu'
-                          this.updateLayout()
-                          this.toastOpen = false
-                        }, 100)
-                      }}
+                      onMouseDown={this.backButtonAction}
                       value={'BACK'}
                       fontSize={BUTTON_FONT_SIZE * 0.7}
                       fontColor={ALMOST_BLACK}
                       onMouseEnter={function (): void {
-                        throw new Error('Function not implemented.')
+                        // throw new Error('Function not implemented.')
                       }}
                       onMouseLeave={function (): void {
-                        throw new Error('Function not implemented.')
+                        // throw new Error('Function not implemented.')
                       }}
                       backgroundColor={ALMOST_WHITE}
                     />
@@ -553,11 +566,7 @@ export class LoadingUI {
                           }}
                           backgroundColor={this.firstButtonBackground}
                           isLoading={this.firstButtonLoading}
-                          onMouseDown={() => {
-                            utils.timers.setTimeout(() => {
-                              this.nextStep()
-                            }, 200)
-                          }}
+                          onMouseDown={this.firstButtonAction}
                           onMouseEnter={() =>
                             (this.firstButtonBackground = CLICKED_PRIMARY_COLOR)
                           }
@@ -579,15 +588,7 @@ export class LoadingUI {
                           }}
                           backgroundColor={this.secondButtonBackground}
                           isLoading={this.secondButtonLoading}
-                          onMouseDown={() => {
-                            if (this.status === 'ready-to-start') {
-                              this.toastOpen = false
-                              utils.timers.setTimeout(() => {
-                                this.status = 'secure-step'
-                                this.updateLayout()
-                              }, 200)
-                            }
-                          }}
+                          onMouseDown={this.secondButtonAction}
                           onMouseEnter={() =>
                             (this.secondButtonBackground = Color4.Gray())
                           }
@@ -627,7 +628,7 @@ export class LoadingUI {
                   }}
                 />
 
-                <UiEntity
+                {/* <UiEntity
                   uiTransform={{
                     width: '150',
                     height: '30',
@@ -637,10 +638,10 @@ export class LoadingUI {
                   uiBackground={{ color: Color4.create(0, 0, 0, 0.1) }}
                   uiText={{ value: 'skip loading screen' }}
                   onMouseDown={() => {
-                    this.status = 'menu'
+                    this.status = 'sign-in-or-guest'
                     this.updateLayout()
                   }}
-                />
+                /> */}
               </UiEntity>
             )}
           </UiEntity>
