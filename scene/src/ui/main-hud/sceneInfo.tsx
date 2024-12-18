@@ -5,7 +5,12 @@ import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../canvas/canvas'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { ALMOST_BLACK, ALMOST_WHITE } from '../../utils/constants'
+import {
+  ALMOST_BLACK,
+  ALMOST_WHITE,
+  LEFT_PANEL_MIN_WIDTH,
+  LEFT_PANEL_WIDTH_FACTOR
+} from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
 import IconButton from '../../components/iconButton'
 
@@ -197,12 +202,19 @@ export class SceneInfo {
       leftPosition = (canvasInfo.width * 3.4) / 100
     }
 
+    let panelWidth: number
+
+    if (canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR < LEFT_PANEL_MIN_WIDTH) {
+      panelWidth = LEFT_PANEL_MIN_WIDTH
+    } else {
+      panelWidth = canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR
+    }
+
     return (
       <Canvas>
         <UiEntity
           uiTransform={{
-            width: canvasInfo.width * 0.15,
-            minWidth: 250,
+            width: panelWidth,
             height: 'auto',
             justifyContent: 'center',
             alignItems: 'center',
@@ -211,7 +223,7 @@ export class SceneInfo {
               left: this.uiController.mainHud.isSideBarVisible
                 ? leftPosition
                 : canvasInfo.width * 0.01,
-              top: canvasInfo.width * 0.01 * 20
+              top: canvasInfo.width * 0.01
             },
             positionType: 'absolute'
           }}

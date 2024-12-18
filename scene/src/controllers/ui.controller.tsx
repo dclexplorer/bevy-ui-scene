@@ -10,18 +10,17 @@ import { ProfileButton } from '../ui/profile-button'
 import { Profile } from '../ui/profile'
 import { ExplorePage } from '../ui/explore-page'
 import { Friends } from '../ui/main-hud/friends'
+import { ActionPopUp } from '../ui/main-hud/actionPopUp'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
   public isProfileVisible: boolean = false
   public isFriendsVisible: boolean = false
+  public actionPopUpVisible: boolean = false
   public settingsPage: SettingsPage
   public backpackPage: BackpackPage
   public mapPage: MapPage
   public explorePage: ExplorePage
-
-  public friendsNotifications: number = 3
-  public chatsNotifications: number = 2
 
   profileButton: ProfileButton
   profile: Profile
@@ -30,6 +29,7 @@ export class UIController {
   gameController: GameController
   mainHud: MainHud
   menu: MainMenu
+  actionPopUp: ActionPopUp
 
   constructor(gameController: GameController) {
     this.gameController = gameController
@@ -43,6 +43,7 @@ export class UIController {
     this.profileButton = new ProfileButton(this)
     this.profile = new Profile(this)
     this.friends = new Friends(this)
+    this.actionPopUp = new ActionPopUp(this)
 
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
@@ -54,8 +55,9 @@ export class UIController {
         {this.isMainMenuVisible && this.menu.mainUi()}
         {this.isProfileVisible && this.profile.mainUi()}
         {this.isFriendsVisible && this.friends.mainUi()}
+        {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {/* Loading & Login */}
-        {/* {this.loadingAndLogin?.mainUi()} */}
+        {this.loadingAndLogin?.mainUi()}
       </UiEntity>
     )
   }

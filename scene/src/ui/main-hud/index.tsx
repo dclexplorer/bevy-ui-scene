@@ -10,8 +10,7 @@ import { SceneInfo } from './sceneInfo'
 import { type Icon } from '../../utils/definitions'
 import { ChatAndLogs } from './chat-and-logs'
 import { Friends } from './friends'
-
-const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
+import { SELECTED_BUTTON_COLOR } from '../../utils/constants'
 
 export class MainHud {
   public fontSize: number = 16
@@ -237,6 +236,20 @@ export class MainHud {
       this.voiceChatBackground = undefined
     }
     this.voiceChatHint = false
+  }
+
+  openCloseChat(): void {
+    this.chatEnter()
+    this.chatOpen = !this.chatOpen
+    this.friendsOpen = false
+    this.updateButtons()
+  }
+
+  openCloseFriends(): void {
+    this.friendsEnter()
+    this.friendsOpen = !this.friendsOpen
+    this.chatOpen = false
+    this.updateButtons()
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -509,14 +522,16 @@ export class MainHud {
                   this.updateButtons()
                 }}
                 onMouseDown={() => {
-                  this.uiController.mainHud.friendsOpen =
-                    !this.uiController.mainHud.friendsOpen
+                  this.openCloseFriends()
                 }}
                 backgroundColor={this.friendsBackground}
                 icon={this.friendsIcon}
                 hintText={'Friends'}
                 showHint={this.friendsHint}
-                notifications={this.uiController.friendsNotifications}
+                notifications={
+                  this.uiController.friends.incomingFriendsMessages +
+                  this.uiController.friends.requestsNumber
+                }
               />
               <IconButton
                 uiTransform={{
@@ -551,13 +566,13 @@ export class MainHud {
                   this.updateButtons()
                 }}
                 onMouseDown={() => {
-                  this.chatOpen = !this.chatOpen
+                  this.openCloseChat()
                 }}
                 backgroundColor={this.chatBackground}
                 icon={this.chatIcon}
                 hintText={'Chat'}
                 showHint={this.chatHint}
-                notifications={this.uiController.chatsNotifications}
+                notifications={0}
               />
 
               <IconButton
