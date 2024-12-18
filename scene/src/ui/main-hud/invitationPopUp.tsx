@@ -5,10 +5,14 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import IconButton from '../../components/iconButton'
 import TextButton from '../../components/textButton'
 import { type UIController } from '../../controllers/ui.controller'
-import { RUBY, LEFT_PANEL_WIDTH_FACTOR, LEFT_PANEL_MIN_WIDTH, ALMOST_BLACK } from '../../utils/constants'
+import {
+  RUBY,
+  LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALMOST_BLACK
+} from '../../utils/constants'
 import { type Invitation } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-
 
 export class InvitationPopUp {
   private readonly uiController: UIController

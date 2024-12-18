@@ -558,7 +558,6 @@ export class MainHud {
                   this.chatOpen = !this.chatOpen
                   this.friendsOpen = false
                   this.updateButtons()
-
                 }}
                 backgroundColor={this.chatBackground}
                 icon={this.chatIcon}

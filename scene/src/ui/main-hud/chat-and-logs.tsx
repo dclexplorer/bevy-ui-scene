@@ -6,7 +6,11 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import ChatMessage from '../../components/chatMessage'
 import IconButton from '../../components/iconButton'
 import { type UIController } from '../../controllers/ui.controller'
-import { ALMOST_WHITE, LEFT_PANEL_MIN_WIDTH, LEFT_PANEL_WIDTH_FACTOR } from '../../utils/constants'
+import {
+  ALMOST_WHITE,
+  LEFT_PANEL_MIN_WIDTH,
+  LEFT_PANEL_WIDTH_FACTOR
+} from '../../utils/constants'
 import { type Message } from '../../utils/definitions'
 
 export class ChatAndLogs {
@@ -50,10 +54,8 @@ export class ChatAndLogs {
     } else {
       panelWidth = canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR
     }
-    
 
     return (
-
       <UiEntity
         uiTransform={{
           width: panelWidth,
