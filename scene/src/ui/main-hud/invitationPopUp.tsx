@@ -70,9 +70,10 @@ export class InvitationPopUp {
     this.profileHint = false
   }
 
+
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-    console.log(this.invitation)
+    // console.log(this.invitation)
     if (canvasInfo === null) return null
     if (this.invitation === undefined) return null
 
