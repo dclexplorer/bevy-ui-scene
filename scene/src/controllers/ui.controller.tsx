@@ -20,9 +20,6 @@ export class UIController {
   public mapPage: MapPage
   public explorePage: ExplorePage
 
-  public friendsNotifications: number = 3
-  public chatsNotifications: number = 2
-
   profileButton: ProfileButton
   profile: Profile
   friends: Friends
@@ -55,7 +52,7 @@ export class UIController {
         {this.isProfileVisible && this.profile.mainUi()}
         {this.isFriendsVisible && this.friends.mainUi()}
         {/* Loading & Login */}
-        {/* {this.loadingAndLogin?.mainUi()} */}
+        {this.loadingAndLogin?.mainUi()}
       </UiEntity>
     )
   }

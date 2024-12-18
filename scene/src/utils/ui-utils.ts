@@ -87,3 +87,22 @@ export function isValidDate(date: string): boolean {
   const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/
   return dateRegex.test(date)
 }
+
+export function truncateWithoutBreakingWords(
+  str: string,
+  maxLength: number
+): string {
+  if (str.length <= maxLength) {
+    return str
+  }
+
+  let truncated = str.slice(0, maxLength)
+
+  const lastSpace = truncated.lastIndexOf(' ')
+
+  if (lastSpace > 0) {
+    truncated = truncated.slice(0, lastSpace)
+  }
+
+  return truncated + '...'
+}

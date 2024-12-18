@@ -10,8 +10,7 @@ import { SceneInfo } from './sceneInfo'
 import { type Icon } from '../../utils/definitions'
 import { ChatAndLogs } from './chat-and-logs'
 import { Friends } from './friends'
-
-const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
+import { SELECTED_BUTTON_COLOR } from '../../utils/constants'
 
 export class MainHud {
   public fontSize: number = 16
@@ -511,12 +510,17 @@ export class MainHud {
                 onMouseDown={() => {
                   this.uiController.mainHud.friendsOpen =
                     !this.uiController.mainHud.friendsOpen
+                  this.chatOpen = false
+                  this.updateButtons()
                 }}
                 backgroundColor={this.friendsBackground}
                 icon={this.friendsIcon}
                 hintText={'Friends'}
                 showHint={this.friendsHint}
-                notifications={this.uiController.friendsNotifications}
+                notifications={
+                  this.uiController.friends.incomingFriendsMessages +
+                  this.uiController.friends.requestsNumber
+                }
               />
               <IconButton
                 uiTransform={{
@@ -552,12 +556,15 @@ export class MainHud {
                 }}
                 onMouseDown={() => {
                   this.chatOpen = !this.chatOpen
+                  this.friendsOpen = false
+                  this.updateButtons()
+
                 }}
                 backgroundColor={this.chatBackground}
                 icon={this.chatIcon}
                 hintText={'Chat'}
                 showHint={this.chatHint}
-                notifications={this.uiController.chatsNotifications}
+                notifications={0}
               />
 
               <IconButton

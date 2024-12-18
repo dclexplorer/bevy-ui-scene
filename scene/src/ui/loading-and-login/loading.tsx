@@ -547,7 +547,9 @@ export class LoadingUI {
                       {this.isFirstButtonVisible && (
                         <TextButton
                           uiTransform={{
-                            width: BUTTON_WIDTH
+                            width: BUTTON_WIDTH,
+                            padding: BUTTON_FONT_SIZE * 0.3,
+                            margin: BUTTON_FONT_SIZE * 0.3
                           }}
                           backgroundColor={this.firstButtonBackground}
                           isLoading={this.firstButtonLoading}
@@ -571,7 +573,9 @@ export class LoadingUI {
                       {this.isSecondButtonVisible && (
                         <TextButton
                           uiTransform={{
-                            width: BUTTON_WIDTH
+                            width: BUTTON_WIDTH,
+                            padding: BUTTON_FONT_SIZE * 0.3,
+                            margin: BUTTON_FONT_SIZE * 0.3
                           }}
                           backgroundColor={this.secondButtonBackground}
                           isLoading={this.secondButtonLoading}

@@ -56,5 +56,10 @@ export const INPUT_KEYS_ARRAY: SlotsInputs[] = [
 ]
 
 export type Message = { from: string; text: string }
-export type Invitation = { from: string; to: boolean }
-export type Friend = { id: string; name: string; status: 'online' | 'offline' }
+export type Friend = { id: string; status: 'online' | 'offline' }
+export type Invitation = {
+  id: string
+  status: 'sent' | 'received'
+  message: string
+  date: string
+}

@@ -146,6 +146,8 @@ export class Profile {
     this.isProfileOpen = true
     this.isCardOpen = false
     this.updatePage(this.activePage)
+    if (!this.uiController.isProfileVisible)
+      this.uiController.isProfileVisible = true
   }
 
   showCard(): void {
@@ -385,7 +387,13 @@ export class Profile {
               onMouseDown={() => {
                 this.showProfile()
               }}
-              uiTransform={{ width: '90%', height: this.fontSize * 3 }}
+              uiTransform={{
+                width: '90%',
+                height: this.fontSize * 3,
+
+                padding: this.fontSize * 0.3,
+                margin: this.fontSize * 0.3
+              }}
               value={'MY PROFILE'}
               fontSize={this.fontSize}
               backgroundColor={{ ...ALMOST_WHITE, a: 0.1 }}
@@ -665,6 +673,10 @@ export class Profile {
                     fontSize={this.fontSize}
                     fontColor={this.overviewText}
                     backgroundColor={this.overviewBackground}
+                    uiTransform={{
+                      padding: this.fontSize * 0.3,
+                      margin: this.fontSize * 0.3
+                    }}
                   />
                   {/* <TextButton
                       onMouseDown={() => {
@@ -1190,7 +1202,10 @@ export class Profile {
                           }}
                           uiTransform={{
                             width: 5 * this.fontSize,
-                            height: 2 * this.fontSize
+                            height: 2 * this.fontSize,
+
+                            padding: this.fontSize * 0.3,
+                            margin: this.fontSize * 0.3
                           }}
                           backgroundColor={this.cancelInfoButtonColor}
                           value={'CANCEL'}
@@ -1212,7 +1227,10 @@ export class Profile {
                           }}
                           uiTransform={{
                             width: 5 * this.fontSize,
-                            height: 2 * this.fontSize
+                            height: 2 * this.fontSize,
+
+                            padding: this.fontSize * 0.3,
+                            margin: this.fontSize * 0.3
                           }}
                           backgroundColor={this.saveInfoButtonColor}
                           value={'SAVE'}
@@ -1354,7 +1372,9 @@ export class Profile {
                                 <TextButton
                                   uiTransform={{
                                     height: this.fontSize * 1.5,
-                                    width: 5 * this.fontSize
+                                    width: 5 * this.fontSize,
+                                    padding: this.fontSize * 0.3,
+                                    margin: this.fontSize * 0.3
                                   }}
                                   backgroundColor={this.addLinkBackground}
                                   value={'+ ADD'}
@@ -1425,7 +1445,9 @@ export class Profile {
                           }}
                           uiTransform={{
                             width: 5 * this.fontSize,
-                            height: 2 * this.fontSize
+                            height: 2 * this.fontSize,
+                            padding: this.fontSize * 0.3,
+                            margin: this.fontSize * 0.3
                           }}
                           backgroundColor={this.cancelLinksButtonColor}
                           value={'CANCEL'}
@@ -1452,7 +1474,9 @@ export class Profile {
                           }}
                           uiTransform={{
                             width: 5 * this.fontSize,
-                            height: 2 * this.fontSize
+                            height: 2 * this.fontSize,
+                            padding: this.fontSize * 0.3,
+                            margin: this.fontSize * 0.3
                           }}
                           backgroundColor={this.saveLinksButtonColor}
                           value={'SAVE'}

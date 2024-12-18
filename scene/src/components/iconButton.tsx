@@ -3,6 +3,7 @@ import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, {
   type Callback,
   Label,
+  type Position,
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
@@ -23,11 +24,18 @@ function IconButton(props: {
   showHint?: boolean
   hintFontSize?: number
   notifications?: number
+  side?: 'left' | 'right' | 'top' | 'bottom'
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
 
   const FONT_SIZE = Math.max(canvasInfo.height * 0.02, 12)
+
+  let position: Partial<Position> = { left: '100%' }
+
+  if (props.side === 'right') position = { right: '100%' }
+  if (props.side === 'bottom') position = { bottom: '100%' }
+  if (props.side === 'top') position = { top: '100%' }
 
   return (
     <UiEntity
@@ -103,11 +111,11 @@ function IconButton(props: {
             width: 'auto',
             height: 'auto',
             positionType: 'absolute',
-            position: { left: '100%' }
+            position
           }}
           text={props.hintText}
           fontSize={props.hintFontSize ?? FONT_SIZE}
-          arrowSide={'left'}
+          arrowSide={props.side ?? 'left'}
         />
       )}
     </UiEntity>

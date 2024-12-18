@@ -6,14 +6,12 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import ChatMessage from '../../components/chatMessage'
 import IconButton from '../../components/iconButton'
 import { type UIController } from '../../controllers/ui.controller'
-import { ALMOST_WHITE } from '../../utils/constants'
+import { ALMOST_WHITE, LEFT_PANEL_MIN_WIDTH, LEFT_PANEL_WIDTH_FACTOR } from '../../utils/constants'
 import { type Message } from '../../utils/definitions'
 
 export class ChatAndLogs {
   private readonly uiController: UIController
   public fontSize: number = 14
-  // private readonly MESSAGE_HEIGHT: number = 50
-  // private readonly VIEWPORT_HEIGHT: number = 600
   private readonly BUFFER_SIZE: number = 9
   public messages: Message[] = []
 
@@ -47,13 +45,15 @@ export class ChatAndLogs {
 
     let panelWidth: number
 
-    if (canvasInfo.width * 0.15 < 250) {
-      panelWidth = 250
+    if (canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR < LEFT_PANEL_MIN_WIDTH) {
+      panelWidth = LEFT_PANEL_MIN_WIDTH
     } else {
-      panelWidth = canvasInfo.width * 0.15
+      panelWidth = canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR
     }
+    
 
     return (
+
       <UiEntity
         uiTransform={{
           width: panelWidth,
