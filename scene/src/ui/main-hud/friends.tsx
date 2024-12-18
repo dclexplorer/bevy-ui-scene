@@ -20,7 +20,7 @@ import {
   type Icon,
   type Invitation
 } from '../../utils/definitions'
-import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { getBackgroundFromAtlas, getName } from '../../utils/ui-utils'
 import { InvitationPopUp } from './invitationPopUp'
 
 export class Friends {
@@ -114,9 +114,37 @@ export class Friends {
     this.profileHint = true
   }
 
+  profileDown(): void {
+    this.uiController.profile.showCard()
+  }
+
   unfriendEnter(): void {
     this.unfriendBackground = SELECTED_BUTTON_COLOR
     this.unfriendHint = true
+  }
+
+  unfriendDown(): void {
+    this.uiController.actionPopUpVisible = true
+    this.uiController.actionPopUp.action = () => {
+      console.log('unfriend')
+    }
+    this.uiController.actionPopUp.message = `Are you sure you want to unfriend ${getName(
+      this.selectedId ?? ''
+    )}?`
+  }
+
+  messageDown(): void {
+    this.uiController.mainHud.openCloseChat()
+  }
+
+  blockDown(): void {
+    this.uiController.actionPopUpVisible = true
+    this.uiController.actionPopUp.action = () => {
+      console.log('block')
+    }
+    this.uiController.actionPopUp.message = `Are you sure you want to unfriend and block ${getName(
+      this.selectedId ?? ''
+    )}?`
   }
 
   blockEnter(): void {
@@ -639,7 +667,7 @@ export class Friends {
               this.updateButtons()
             }}
             onMouseDown={() => {
-              this.uiController.profile.showCard()
+              this.messageDown()
             }}
             backgroundColor={this.messageBackground}
             icon={{ atlasName: 'context', spriteName: 'Chat' }}
@@ -679,7 +707,7 @@ export class Friends {
               this.updateButtons()
             }}
             onMouseDown={() => {
-              this.uiController.profile.showCard()
+              this.unfriendDown()
             }}
             backgroundColor={this.unfriendBackground}
             icon={{ atlasName: 'context', spriteName: 'Unfriends' }}
@@ -699,7 +727,7 @@ export class Friends {
               this.updateButtons()
             }}
             onMouseDown={() => {
-              this.uiController.profile.showCard()
+              this.blockDown()
             }}
             backgroundColor={this.blockBackground}
             icon={{ atlasName: 'context', spriteName: 'Block' }}

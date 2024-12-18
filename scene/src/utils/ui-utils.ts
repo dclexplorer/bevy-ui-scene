@@ -9,6 +9,7 @@ import { toggleJson } from '../json/toggle-data'
 import { backgroundsJson } from '../json/backgrounds-data'
 import { profileJson } from '../json/profile-data'
 import { voiceChatJson } from '../json/voice-chat-data'
+import { getPlayer } from '@dcl/sdk/src/players'
 
 export function getUvs(icon: Icon): number[] {
   let parsedJson: AtlasData | undefined
@@ -105,4 +106,10 @@ export function truncateWithoutBreakingWords(
   }
 
   return truncated + '...'
+}
+
+export function getName(id: string): string {
+  const player = getPlayer({ userId: id })
+  const playerName = player?.avatar?.name ?? 'Name'
+  return playerName
 }

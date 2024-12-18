@@ -238,6 +238,20 @@ export class MainHud {
     this.voiceChatHint = false
   }
 
+  openCloseChat(): void {
+    this.chatEnter()
+    this.chatOpen = !this.chatOpen
+    this.friendsOpen = false
+    this.updateButtons()
+  }
+
+  openCloseFriends(): void {
+    this.friendsEnter()
+    this.friendsOpen = !this.friendsOpen
+    this.chatOpen = false
+    this.updateButtons()
+  }
+
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
@@ -508,10 +522,7 @@ export class MainHud {
                   this.updateButtons()
                 }}
                 onMouseDown={() => {
-                  this.uiController.mainHud.friendsOpen =
-                    !this.uiController.mainHud.friendsOpen
-                  this.chatOpen = false
-                  this.updateButtons()
+                  this.openCloseFriends()
                 }}
                 backgroundColor={this.friendsBackground}
                 icon={this.friendsIcon}
@@ -555,9 +566,7 @@ export class MainHud {
                   this.updateButtons()
                 }}
                 onMouseDown={() => {
-                  this.chatOpen = !this.chatOpen
-                  this.friendsOpen = false
-                  this.updateButtons()
+                  this.openCloseChat()
                 }}
                 backgroundColor={this.chatBackground}
                 icon={this.chatIcon}
