@@ -2,7 +2,7 @@ export type BevyApiInterface = {
   openSceneLogger: () => Promise<void>
   checkForUpdate: () => Promise<{ description: string; url: string }>
   messageOfTheDay: () => Promise<{ message: string }>
-  getPreviousLogin: () => Promise<{ user_id: string }>
+  getPreviousLogin: () => Promise<{ userId: string }>
   loginPrevious: () => Promise<{ success: boolean; error: string }>
   loginNew: () => {
     code: Promise<number>

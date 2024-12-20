@@ -25,7 +25,7 @@ async function init(retry: boolean): Promise<void> {
   const previousLogin = await BevyApi.getPreviousLogin()
   console.log('Previous login', previousLogin)
 
-  if (previousLogin.user_id !== '') {
+  if (previousLogin.userId !== null) {
     gameInstance.uiController.loadingAndLogin.setStatus('reuse-login-or-new')
   } else {
     gameInstance.uiController.loadingAndLogin.setStatus('sign-in-or-guest')

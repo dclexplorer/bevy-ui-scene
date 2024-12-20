@@ -11,12 +11,14 @@ import { Profile } from '../ui/profile'
 import { ExplorePage } from '../ui/explore-page'
 import { Friends } from '../ui/main-hud/friends'
 import { ActionPopUp } from '../ui/main-hud/actionPopUp'
+import { WarningPopUp } from '../ui/main-hud/warningPopUp'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
   public isProfileVisible: boolean = false
   public isFriendsVisible: boolean = false
   public actionPopUpVisible: boolean = false
+  public warningPopUpVisible: boolean = false
   public settingsPage: SettingsPage
   public backpackPage: BackpackPage
   public mapPage: MapPage
@@ -30,6 +32,7 @@ export class UIController {
   mainHud: MainHud
   menu: MainMenu
   actionPopUp: ActionPopUp
+  warningPopUp: WarningPopUp
 
   constructor(gameController: GameController) {
     this.gameController = gameController
@@ -44,6 +47,7 @@ export class UIController {
     this.profile = new Profile(this)
     this.friends = new Friends(this)
     this.actionPopUp = new ActionPopUp(this)
+    this.warningPopUp = new WarningPopUp(this)
 
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
@@ -58,6 +62,7 @@ export class UIController {
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {/* Loading & Login */}
         {this.loadingAndLogin?.mainUi()}
+        {this.warningPopUpVisible && this.warningPopUp.mainUi()}
       </UiEntity>
     )
   }

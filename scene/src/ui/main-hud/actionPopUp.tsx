@@ -55,9 +55,17 @@ export class ActionPopUp {
   }
 
   close(): void {
-    this.uiController.actionPopUpVisible = false
+    this.hide()
     this.updateButtons()
     this.action = undefined
+  }
+
+  show(): void {
+    this.uiController.actionPopUpVisible = true
+  }
+
+  hide(): void {
+    this.uiController.actionPopUpVisible = false
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
