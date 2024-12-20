@@ -15,6 +15,7 @@ import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 export class WarningPopUp {
   private readonly uiController: UIController
   public fontSize: number = 14
+  public icon: 'WarningColor' | 'DdlIconColor' = 'DdlIconColor'
   public tittle: string | undefined
   public message: string | undefined
   public action: Callback | undefined
@@ -34,6 +35,7 @@ export class WarningPopUp {
       this.action()
       this.action = undefined
     }
+    this.hide()
     this.updateButtons()
     this.tittle = undefined
     this.message = undefined
@@ -54,7 +56,6 @@ export class WarningPopUp {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    if (this.action === undefined) return null
     if (this.message === undefined) return null
 
     let panelWidth: number
@@ -142,10 +143,9 @@ export class WarningPopUp {
                   <UiEntity
                     uiBackground={{
                       ...getBackgroundFromAtlas({
-                        atlasName: 'context',
-                        spriteName: 'Unpublish'
-                      }),
-                      color: Color4.Red()
+                        atlasName: 'icons',
+                        spriteName: this.icon
+                      })
                     }}
                     uiTransform={{
                       width: '100%',

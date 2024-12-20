@@ -127,6 +127,7 @@ export class LoadingUI {
               this.uiController.warningPopUp.tittle =
                 'Error logging in with new account:'
               this.uiController.warningPopUp.action = () => {}
+              this.uiController.warningPopUp.icon = 'WarningColor'
               this.uiController.warningPopUp.show()
             })
         }
@@ -186,6 +187,7 @@ export class LoadingUI {
               this.uiController.warningPopUp.action = () => {
                 this.setStatus('sign-in-or-guest')
               }
+              this.uiController.warningPopUp.icon = 'WarningColor'
               this.uiController.warningPopUp.show()
             })
         }
