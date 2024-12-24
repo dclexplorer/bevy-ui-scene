@@ -129,6 +129,10 @@ export class SettingsPage {
     this.toggleIcon.spriteName = this.toggleStatus ? 'SwitchOn' : 'SwitchOff'
   }
 
+  selectOption(index: number): void {
+    console.log(index)
+  }
+
   controllerSystem(): void {
     // for (const [, pos, uiTransform] of engine.getEntitiesWith(
     //   UiScrollResult,
@@ -421,42 +425,57 @@ export class SettingsPage {
               }
             }
           >
+            <Dropdown
+        options={[`Red`, `Blue`, `Green`]}
+        onChange={this.selectOption}
+        uiTransform={{
+          width: '100px',
+          height: '40px',
+        }}
+      />
             {this.uiController.settings
               .filter((setting) => {
                   return setting.category.toLowerCase() === this.buttonClicked
               })
               .map((setting, index) => {
-                // if (setting.namedVariants.length > 0) {
-                //   return (
-                //     <UiEntity
-                //     uiTransform={{
-                //       width: sliderWidth,
-                //       height: sliderHeight,
-                //       flexDirection: 'row',
-                //       alignItems: 'center',
-                //       justifyContent: 'space-between'
-                //     }}
-                //     onMouseEnter={() => {
-                //       // this.settingsInfoTitle = setting.name
-                //       this.settingsInfoDescription = setting.description
-                //     }}
-                //   >
-                //     <Label value={setting.name} fontSize={fontSize} />
-                //     <Dropdown
-                //       key={index}
-                //       uiTransform={{ width: '40%' }}
-                //       options={setting.namedVariants.map((variant) => variant.variantName)}
-                //       color={ALMOST_WHITE}
-                //       font="sans-serif"
-                //       fontSize={fontSize}
-                //       selectedIndex={setting.value}
-                //       onChange={(index) =>
-                //         {BevyApi.setValue(setting.name, setting.namedVariants.map((variant) => variant.variantName)[index])}
-                //       }
-                //     />
-                //     </UiEntity>
-                //   )
-                // } else {
+                const namedVariants = setting.namedVariants ?? []
+                if (namedVariants.length > 0) {
+                  return (
+                    <UiEntity
+                    uiTransform={{
+                      width: sliderWidth,
+                      height: sliderHeight,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}
+                    onMouseEnter={() => {
+                      // this.settingsInfoTitle = setting.name
+                      this.settingsInfoDescription = setting.description
+                      
+                    }}
+                  >
+                    <Label value={setting.name} fontSize={fontSize} />
+                    <Dropdown
+                      key={index}
+                      uiTransform={{ width: '40%' }}
+                      // options={setting.namedVariants.map((variant) => variant.name)}
+                      options={['asd', 'qwe', 'zxc']}
+                      
+                      color={ALMOST_WHITE}
+                      font="sans-serif"
+                      fontSize={fontSize}
+                      selectedIndex={setting.value}
+                      onChange={ this.selectOption
+                        // (index) =>
+                        // {BevyApi.setSetting(setting.name, setting.namedVariants.map((variant) => variant.name)[index]).catch(console.error)
+                        // this.settingsSelectedDescription = setting.namedVariants[index].description
+                        // }
+                      }
+                    />
+                    </UiEntity>
+                  )
+                } else {
                 return (
                   <Slider
                     title={setting.name}
@@ -471,10 +490,11 @@ export class SettingsPage {
                     onMouseEnter={() => {
                       // this.settingsInfoTitle = setting.name
                       this.settingsInfoDescription = setting.description
+                      this.settingsSelectedDescription = ''
                     }}
                   />
                 )}
-              // }
+              }
               )}
           </UiEntity>
 

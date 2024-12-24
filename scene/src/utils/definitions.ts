@@ -70,6 +70,6 @@ export type Setting = {
   description: string
   minValue: number
   maxValue: number
-  namedVariants: [{ variantName: string; variantDescription: string; toString: () => string }]
+  namedVariants: [{ name: string; description: string}]
   value: number
 }

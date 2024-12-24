@@ -15,7 +15,7 @@ export type BevyApiInterface = {
   logout: () => void
 
   getSettings: () => Promise<Setting[]>
-  setValue: (name: string, value: string) => void
+  setSetting: (name: string, value: string) => Promise<void>
 }
 
 // system api module

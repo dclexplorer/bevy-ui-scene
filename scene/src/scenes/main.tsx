@@ -37,8 +37,11 @@ async function init(retry: boolean): Promise<void> {
 
   gameInstance.uiController.settings = settingsArray
  
-  const fog = settingsArray.find((setting) => setting.name === 'Fog')
-  console.log('name: ', fog?.name)
+  // const fog = settingsArray.find((setting) => setting.name === 'Fog')
+  // console.log('name: ', fog?.name)
+  // console.log('namedVariants: ', fog?.namedVariants)
+
+  // console.log(fog?.namedVariants.length)
 
   const previousLogin = await BevyApi.getPreviousLogin()
   if (previousLogin.userId !== null) {
