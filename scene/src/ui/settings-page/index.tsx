@@ -5,13 +5,19 @@ import {
   // UiTransform,
   engine
 } from '@dcl/sdk/ecs'
-import ReactEcs, { Dropdown, Label, UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import Slider from '../../components/slider'
+import StyledDropdown from '../../components/styledDropdown'
 import TextIconButton from '../../components/textIconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
-import { BevyApi } from '../../bevy-api'
+
+type settingData = {
+  name: string
+  value: number
+  isOpen: boolean
+}
 
 export class SettingsPage {
   private readonly uiController: UIController
@@ -23,6 +29,7 @@ export class SettingsPage {
 
   private readonly toggleStatus: boolean = false
 
+  private readonly dataArray: settingData[] = []
   private backgroundIcon: string = 'assets/images/menu/GeneralImg.png'
   private generalTextColor: Color4 = ALMOST_WHITE
   private graphicsTextColor: Color4 = ALMOST_BLACK
@@ -129,8 +136,11 @@ export class SettingsPage {
     this.toggleIcon.spriteName = this.toggleStatus ? 'SwitchOn' : 'SwitchOff'
   }
 
-  selectOption(index: number): void {
-    console.log(index)
+  selectOption(index: number, name: string): void {
+    const data = this.dataArray.find((data) => data.name === name)
+    if (data !== null && data !== undefined) {
+      data.value = index
+    }
   }
 
   controllerSystem(): void {
@@ -425,77 +435,85 @@ export class SettingsPage {
               }
             }
           >
-            <Dropdown
-        options={[`Red`, `Blue`, `Green`]}
-        onChange={this.selectOption}
-        uiTransform={{
-          width: '100px',
-          height: '40px',
-        }}
-      />
             {this.uiController.settings
               .filter((setting) => {
-                  return setting.category.toLowerCase() === this.buttonClicked
+                return setting.category.toLowerCase() === this.buttonClicked
               })
               .map((setting, index) => {
+                this.dataArray.push({
+                  name: setting.name,
+                  value: setting.value,
+                  isOpen: false
+                })
                 const namedVariants = setting.namedVariants ?? []
                 if (namedVariants.length > 0) {
                   return (
                     <UiEntity
-                    uiTransform={{
-                      width: sliderWidth,
-                      height: sliderHeight,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
-                    }}
-                    onMouseEnter={() => {
-                      // this.settingsInfoTitle = setting.name
-                      this.settingsInfoDescription = setting.description
-                      
-                    }}
-                  >
-                    <Label value={setting.name} fontSize={fontSize} />
-                    <Dropdown
-                      key={index}
-                      uiTransform={{ width: '40%' }}
-                      // options={setting.namedVariants.map((variant) => variant.name)}
-                      options={['asd', 'qwe', 'zxc']}
-                      
-                      color={ALMOST_WHITE}
-                      font="sans-serif"
-                      fontSize={fontSize}
-                      selectedIndex={setting.value}
-                      onChange={ this.selectOption
-                        // (index) =>
-                        // {BevyApi.setSetting(setting.name, setting.namedVariants.map((variant) => variant.name)[index]).catch(console.error)
-                        // this.settingsSelectedDescription = setting.namedVariants[index].description
-                        // }
-                      }
-                    />
+                      uiTransform={{
+                        width: sliderWidth,
+                        height: sliderHeight,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}
+                      onMouseEnter={() => {
+                        // this.settingsInfoTitle = setting.name
+                        this.settingsInfoDescription = setting.description
+                      }}
+                    >
+                      <StyledDropdown
+                        uiTransform={{ width: '100%' }}
+                        options={setting.namedVariants.map(
+                          (variant) => variant.name
+                        )}
+                        fontSize={fontSize}
+                        isOpen={
+                          this.dataArray.find(
+                            (data) => data.name === setting.name
+                          )?.isOpen ?? false
+                        }
+                        onMouseDown={() => {
+                          const data = this.dataArray.find(
+                            (data) => data.name === setting.name
+                          )
+                          if (data !== null && data !== undefined) {
+                            data.isOpen = !data.isOpen
+                          }
+                        }}
+                        onOptionMouseDown={() => {
+                          this.selectOption(index, setting.name)
+                        }}
+                        title={setting.name}
+                        value={
+                          this.dataArray.find(
+                            (data) => data.name === setting.name
+                          )?.value ?? 0
+                        }
+                      />
                     </UiEntity>
                   )
                 } else {
-                return (
-                  <Slider
-                    title={setting.name}
-                    fontSize={fontSize}
-                    value={setting.value.toString()}
-                    uiTransform={{ width: sliderWidth, height: sliderHeight }}
-                    sliderSize={sliderWidth * 2}
-                    id={setting.name}
-                    position={
-                      1 - setting.value / (setting.maxValue - setting.minValue)
-                    }
-                    onMouseEnter={() => {
-                      // this.settingsInfoTitle = setting.name
-                      this.settingsInfoDescription = setting.description
-                      this.settingsSelectedDescription = ''
-                    }}
-                  />
-                )}
-              }
-              )}
+                  return (
+                    <Slider
+                      title={setting.name}
+                      fontSize={fontSize}
+                      value={setting.value.toString()}
+                      uiTransform={{ width: sliderWidth, height: sliderHeight }}
+                      sliderSize={sliderWidth * 2}
+                      id={setting.name}
+                      position={
+                        1 -
+                        setting.value / (setting.maxValue - setting.minValue)
+                      }
+                      onMouseEnter={() => {
+                        // this.settingsInfoTitle = setting.name
+                        this.settingsInfoDescription = setting.description
+                        this.settingsSelectedDescription = ''
+                      }}
+                    />
+                  )
+                }
+              })}
           </UiEntity>
 
           <UiEntity

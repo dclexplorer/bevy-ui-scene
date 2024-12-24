@@ -31,12 +31,14 @@ async function init(retry: boolean): Promise<void> {
   }
 
   const settingsArray = await BevyApi.getSettings()
-  if(settingsArray.length === 0) {console.log('No settings found')}else{
+  if (settingsArray.length === 0) {
+    console.log('No settings found')
+  } else {
     console.log('Settings found: ', settingsArray.length)
   }
 
   gameInstance.uiController.settings = settingsArray
- 
+
   // const fog = settingsArray.find((setting) => setting.name === 'Fog')
   // console.log('name: ', fog?.name)
   // console.log('namedVariants: ', fog?.namedVariants)
