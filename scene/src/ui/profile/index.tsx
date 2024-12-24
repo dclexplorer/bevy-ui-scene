@@ -27,6 +27,7 @@ import {
 import { getBackgroundFromAtlas, isValidDate } from '../../utils/ui-utils'
 import { AddLink } from '../add-link'
 import Canvas from '../canvas/canvas'
+import { BevyApi } from '../../bevy-api'
 
 export class Profile {
   private savedIntro: string = ''
@@ -212,6 +213,14 @@ export class Profile {
       ...Color4.Black(),
       a: 0.35
     }
+  }
+
+  async logout(): Promise<void> {
+    console.log('logout now')
+    BevyApi.logout()
+    this.uiController.loadingAndLogin.startLoading()
+    this.uiController.loadingAndLogin.setStatus('sign-in-or-guest')
+    this.hideProfile()
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -403,14 +412,16 @@ export class Profile {
               uiBackground={{ color: { ...Color4.White(), a: 0.1 } }}
             />
             <TextIconButton
-              onMouseDown={() => {}}
+              onMouseDown={() => {
+                void this.logout()
+              }}
               uiTransform={{
                 width: '90%',
-                height: this.fontSize * 3,
+                height: this.fontSize * 2,
                 justifyContent: 'flex-start'
               }}
               value={'SIGN OUT'}
-              fontSize={this.fontSize}
+              fontSize={this.fontSize * 0.8}
               icon={{
                 atlasName: 'icons',
                 spriteName: 'LogoutIcon'
@@ -420,7 +431,7 @@ export class Profile {
               onMouseDown={() => {}}
               uiTransform={{
                 width: '90%',
-                height: this.fontSize * 3,
+                height: this.fontSize * 2,
                 justifyContent: 'flex-start'
               }}
               value={'EXIT'}

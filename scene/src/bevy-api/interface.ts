@@ -1,3 +1,5 @@
+import { type Setting } from '../utils/definitions'
+
 export type BevyApiInterface = {
   openSceneLogger: () => Promise<void>
   checkForUpdate: () => Promise<{ description: string; url: string }>
@@ -10,7 +12,10 @@ export type BevyApiInterface = {
   }
   loginCancel: () => void
   loginGuest: () => void
-  logout: () => Promise<void>
+  logout: () => void
+
+  getSettings: () => Promise<Setting[]>
+  setValue: (name: string, value: string) => void
 }
 
 // system api module

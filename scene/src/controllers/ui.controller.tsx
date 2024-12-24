@@ -12,6 +12,7 @@ import { ExplorePage } from '../ui/explore-page'
 import { Friends } from '../ui/main-hud/friends'
 import { ActionPopUp } from '../ui/main-hud/actionPopUp'
 import { WarningPopUp } from '../ui/main-hud/warningPopUp'
+import { type Setting } from '../utils/definitions'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
@@ -23,6 +24,7 @@ export class UIController {
   public backpackPage: BackpackPage
   public mapPage: MapPage
   public explorePage: ExplorePage
+  public settings: Setting[] = []
 
   profileButton: ProfileButton
   profile: Profile
@@ -39,7 +41,7 @@ export class UIController {
     this.loadingAndLogin = new LoadingUI(this)
     this.mainHud = new MainHud(this)
     this.menu = new MainMenu(this)
-    this.settingsPage = new SettingsPage()
+    this.settingsPage = new SettingsPage(this)
     this.backpackPage = new BackpackPage()
     this.mapPage = new MapPage()
     this.explorePage = new ExplorePage()

@@ -63,3 +63,13 @@ export type Invitation = {
   message: string
   date: string
 }
+
+export type Setting = {
+  name: string
+  category: string
+  description: string
+  minValue: number
+  maxValue: number
+  namedVariants: [{ variantName: string; variantDescription: string; toString: () => string }]
+  value: number
+}
