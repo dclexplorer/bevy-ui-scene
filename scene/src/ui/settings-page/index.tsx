@@ -1,6 +1,8 @@
 import { Color4 } from '@dcl/ecs-math'
 import {
   UiCanvasInformation,
+  UiScrollResult,
+  UiTransform,
   // UiScrollResult,
   // UiTransform,
   engine
@@ -12,12 +14,21 @@ import TextIconButton from '../../components/textIconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
+import { BevyApi } from '../../bevy-api'
 
 type settingData = {
   name: string
   value: number
   isOpen: boolean
+  isDropdown: boolean
 }
+
+type typeOfSetting =
+  | 'general'
+  | 'audio'
+  | 'graphics'
+  | 'gameplay'
+  | 'performance'
 
 export class SettingsPage {
   private readonly uiController: UIController
@@ -29,26 +40,22 @@ export class SettingsPage {
 
   private readonly toggleStatus: boolean = false
 
-  private readonly dataArray: settingData[] = []
+  private dataArray: settingData[] = []
+  private settingsToSave: settingData[] = []
   private backgroundIcon: string = 'assets/images/menu/GeneralImg.png'
-  private generalTextColor: Color4 = ALMOST_WHITE
+  // private generalTextColor: Color4 = ALMOST_WHITE
   private graphicsTextColor: Color4 = ALMOST_BLACK
   private audioTextColor: Color4 = ALMOST_BLACK
   private gameplayTextColor: Color4 = ALMOST_BLACK
   private performanceTextColor: Color4 = ALMOST_BLACK
   private restoreTextColor: Color4 = Color4.Red()
-  private generalBackgroundColor: Color4 = ORANGE
+  // private generalBackgroundColor: Color4 = ORANGE
   private graphicsBackgroundColor: Color4 = ALMOST_WHITE
   private audioBackgroundColor: Color4 = ALMOST_WHITE
   private gameplayBackgroundColor: Color4 = ALMOST_WHITE
   private performanceBackgroundColor: Color4 = ALMOST_WHITE
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
-  private buttonClicked:
-    | 'general'
-    | 'audio'
-    | 'graphics'
-    | 'gameplay'
-    | 'performance' = 'performance'
+  private buttonClicked: typeOfSetting = 'performance'
 
   // private settingsInfoTitle: string = ''
   private settingsInfoDescription: string = ''
@@ -59,17 +66,39 @@ export class SettingsPage {
     engine.addSystem(this.controllerSystem.bind(this))
   }
 
-  setButtonClicked(
-    button: 'general' | 'audio' | 'graphics' | 'gameplay' | 'performance'
-  ): void {
-    this.buttonClicked = button
-    this.updateButtons()
+  setButtonClicked(button: typeOfSetting): void {
+    if (this.settingsToSave.length > 0) {
+      let unsavedSettings: string = ''
+      for (const setting of this.settingsToSave) {
+        if (setting.isDropdown) {
+          unsavedSettings += `${setting.name}: ${this.uiController.settings.find(s => s.name === setting.name)?.namedVariants[setting.value].name}\n`
+        } else {
+          unsavedSettings += `${setting.name}: ${setting.value}\n`
+        }
+      }
+      this.uiController.actionPopUp.show()
+      this.uiController.actionPopUp.tittle = 'You have unsaved settings:'
+      this.uiController.actionPopUp.message =
+        unsavedSettings + 'Do you want to save them?'
+      this.uiController.actionPopUp.action = () => {
+        this.saveModifiedSettings(button)
+      }
+      this.uiController.actionPopUp.actionText = 'SAVE'
+      this.uiController.actionPopUp.cancel = () => {
+        this.discardChanges(button)
+      }
+      this.uiController.actionPopUp.cancelText = 'DISCARD'
+    } else {
+      this.dataArray = []
+      this.buttonClicked = button
+      this.updateButtons()
+    }
   }
 
-  generalEnter(): void {
-    this.generalBackgroundColor = ORANGE
-    this.generalTextColor = ALMOST_WHITE
-  }
+  // generalEnter(): void {
+  //   this.generalBackgroundColor = ORANGE
+  //   this.generalTextColor = ALMOST_WHITE
+  // }
 
   audioEnter(): void {
     this.audioBackgroundColor = ORANGE
@@ -97,12 +126,12 @@ export class SettingsPage {
   }
 
   updateButtons(): void {
-    this.generalBackgroundColor = ALMOST_WHITE
+    // this.generalBackgroundColor = ALMOST_WHITE
     this.graphicsBackgroundColor = ALMOST_WHITE
     this.audioBackgroundColor = ALMOST_WHITE
     this.gameplayBackgroundColor = ALMOST_WHITE
     this.performanceBackgroundColor = ALMOST_WHITE
-    this.generalTextColor = ALMOST_BLACK
+    // this.generalTextColor = ALMOST_BLACK
     this.graphicsTextColor = ALMOST_BLACK
     this.audioTextColor = ALMOST_BLACK
     this.gameplayTextColor = ALMOST_BLACK
@@ -111,10 +140,10 @@ export class SettingsPage {
     this.restoreBackgroundColor = ALMOST_WHITE
 
     switch (this.buttonClicked) {
-      case 'general':
-        this.generalEnter()
-        this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
-        break
+      // case 'general':
+      //   this.generalEnter()
+      //   this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
+      //   break
       case 'audio':
         this.audioEnter()
         this.backgroundIcon = 'assets/images/menu/SoundImg.png'
@@ -144,35 +173,76 @@ export class SettingsPage {
   }
 
   controllerSystem(): void {
-    // for (const [, pos, uiTransform] of engine.getEntitiesWith(
-    //   UiScrollResult,
-    //   UiTransform
-    // )) {
-    //   if (pos === undefined) break
-    //   if (uiTransform.elementId === this.slider1Id && pos.value !== undefined) {
-    //     this.slider1Value = 100 - Math.round(100 * pos.value.x)
-    //     this.slider1Pos = pos.value.x
-    //   }
-    //   if (uiTransform.elementId === this.slider2Id && pos.value !== undefined) {
-    //     this.slider2Value = 100 - Math.round(100 * pos.value.x)
-    //     this.slider2Pos = pos.value.x
-    //   }
-    //   if (uiTransform.elementId === this.slider3Id && pos.value !== undefined) {
-    //     this.slider3Value = 100 - Math.round(100 * pos.value.x)
-    //     this.slider3Pos = pos.value.x
-    //   }
-    //   if (uiTransform.elementId === this.slider4Id && pos.value !== undefined) {
-    //     this.slider4Value = 100 - Math.round(100 * pos.value.x)
-    //     this.slider4Pos = pos.value.x
-    //   }
-    //   if (uiTransform.elementId === this.slider5Id && pos.value !== undefined) {
-    //     this.slider5Value = 100 - Math.round(100 * pos.value.x)
-    //     this.slider5Pos = pos.value.x
-    //   }
-    //   if (uiTransform.elementId === this.slider6Id && pos.value !== undefined) {
-    //     this.slider6Value = 100 - Math.round(100 * pos.value.x)
-    //     this.slider6Pos = pos.value.x
-    //   }
+    for (const setting of this.uiController.settings) {
+      // check if the setting is in the dataArray (client side data values)
+      const modifiedSetting = this.dataArray.find(
+        (data) => data.name === setting.name
+      )
+
+      // clear the setting from the settingsToSave array if it is already saved
+      if (modifiedSetting !== undefined) {
+        this.settingsToSave = this.settingsToSave.filter(
+          (setting) => setting.name !== modifiedSetting.name
+        )
+
+        // check if the setting value is different from the modified value
+        if (setting.value !== Math.floor(modifiedSetting.value)) {
+          
+          // add the setting to the settingsToSave array
+          this.settingsToSave.push(modifiedSetting)
+        }
+      }
+    }
+
+    for (const [, pos, uiTransform] of engine.getEntitiesWith(
+      UiScrollResult,
+      UiTransform
+    )) {
+      if (pos === undefined) break
+      for (const setting of this.uiController.settings) {
+        if (uiTransform.elementId === setting.name && pos.value !== undefined) {
+          const filteredSetting = this.dataArray.find(
+            (data) => data.name === setting.name
+          )
+
+          if (filteredSetting !== undefined) {
+            filteredSetting.value = Math.floor(
+              setting.minValue +
+                (1 - pos.value.x) * (setting.maxValue - setting.minValue)
+            )
+          }
+        }
+      }
+    }
+  }
+
+  saveModifiedSettings(button: typeOfSetting): void {
+    for (const setting of this.settingsToSave) {
+      BevyApi.setSetting(setting.name, setting.value)
+        .then(() => {
+          const settingToUpdate = this.uiController.settings.find(s => s.name === setting.name)
+          if (settingToUpdate !== undefined) {
+            settingToUpdate.value = setting.value
+          }
+          this.settingsToSave = this.settingsToSave.filter(
+            (set) => set.name !== setting.name 
+          )
+          if (this.settingsToSave.length === 0) {
+            void this.uiController.updateSettings().then(() => {this.setButtonClicked(button)})
+            
+          }
+        })
+        .catch((error) => {
+          this.uiController.warningPopUp.show()
+          this.uiController.warningPopUp.tittle = `Failed to save ${setting.name}:`
+          this.uiController.warningPopUp.message = error.message
+        })
+    }
+  }
+
+  discardChanges(button: typeOfSetting): void {
+    this.settingsToSave = []
+    this.setButtonClicked(button)
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -272,28 +342,6 @@ export class SettingsPage {
               }}
               backgroundColor={this.performanceBackgroundColor}
             />
-            {/* <TextIconButton
-              uiTransform={{
-                margin: { left: 10, right: 10 },
-                padding: { left: 10, right: 10 },
-                width: 'auto'
-              }}
-              iconColor={this.generalTextColor}
-              icon={{ atlasName: 'navbar', spriteName: 'Settings off' }}
-              value={'General'}
-              fontSize={fontSize}
-              fontColor={this.generalTextColor}
-              onMouseEnter={() => {
-                this.generalEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.setButtonClicked('general')
-              }}
-              backgroundColor={this.generalBackgroundColor}
-            /> */}
 
             <TextIconButton
               uiTransform={{
@@ -389,8 +437,11 @@ export class SettingsPage {
                 this.updateButtons()
               }}
               onMouseDown={() => {
-                console.log('Restored default values')
-              }}
+                this.uiController.settings.filter(
+                  (setting) => setting.category.toLowerCase() === this.buttonClicked
+                ).forEach((setting) => {
+                  console.log('setting: ', setting.name, 'value: ', setting.value)
+                })}}
               backgroundColor={this.restoreBackgroundColor}
             />
           </UiEntity>
@@ -440,13 +491,14 @@ export class SettingsPage {
                 return setting.category.toLowerCase() === this.buttonClicked
               })
               .map((setting, index) => {
-                this.dataArray.push({
-                  name: setting.name,
-                  value: setting.value,
-                  isOpen: false
-                })
                 const namedVariants = setting.namedVariants ?? []
                 if (namedVariants.length > 0) {
+                  this.dataArray.push({
+                    name: setting.name,
+                    value: setting.value,
+                    isOpen: false,
+                    isDropdown: true
+                  })
                   return (
                     <UiEntity
                       uiTransform={{
@@ -457,7 +509,6 @@ export class SettingsPage {
                         justifyContent: 'space-between'
                       }}
                       onMouseEnter={() => {
-                        // this.settingsInfoTitle = setting.name
                         this.settingsInfoDescription = setting.description
                       }}
                     >
@@ -493,12 +544,26 @@ export class SettingsPage {
                     </UiEntity>
                   )
                 } else {
+                  this.dataArray.push({
+                    name: setting.name,
+                    value: setting.value,
+                    isOpen: false,
+                    isDropdown: false
+                  })
                   return (
                     <Slider
                       title={setting.name}
                       fontSize={fontSize}
-                      value={setting.value.toString()}
-                      uiTransform={{ width: sliderWidth, height: sliderHeight }}
+                      value={
+                        this.dataArray
+                          .find((data) => data.name === setting.name)
+                          ?.value.toString() ?? setting.value.toString()
+                      }
+                      uiTransform={{
+                        width: sliderWidth,
+                        height: sliderHeight,
+                        elementId: setting.name
+                      }}
                       sliderSize={sliderWidth * 2}
                       id={setting.name}
                       position={
@@ -506,7 +571,6 @@ export class SettingsPage {
                         setting.value / (setting.maxValue - setting.minValue)
                       }
                       onMouseEnter={() => {
-                        // this.settingsInfoTitle = setting.name
                         this.settingsInfoDescription = setting.description
                         this.settingsSelectedDescription = ''
                       }}

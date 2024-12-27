@@ -13,6 +13,7 @@ import { Friends } from '../ui/main-hud/friends'
 import { ActionPopUp } from '../ui/main-hud/actionPopUp'
 import { WarningPopUp } from '../ui/main-hud/warningPopUp'
 import { type Setting } from '../utils/definitions'
+import { BevyApi } from '../bevy-api'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
@@ -54,6 +55,17 @@ export class UIController {
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
 
+  async updateSettings(): Promise<void> {
+    const settingsArray =  await BevyApi.getSettings()
+      if (settingsArray.length === 0) {
+        console.log('No settings found')
+      } else {
+        console.log('Settings found: ', settingsArray.length)
+      }
+    this.settings = settingsArray
+  }
+
+
   ui(): ReactEcs.JSX.Element {
     return (
       <UiEntity>
@@ -61,9 +73,9 @@ export class UIController {
         {this.isMainMenuVisible && this.menu.mainUi()}
         {this.isProfileVisible && this.profile.mainUi()}
         {this.isFriendsVisible && this.friends.mainUi()}
-        {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {/* Loading & Login */}
         {this.loadingAndLogin?.mainUi()}
+        {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
       </UiEntity>
     )

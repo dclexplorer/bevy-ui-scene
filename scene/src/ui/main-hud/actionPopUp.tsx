@@ -12,12 +12,17 @@ import {
   RUBY
 } from '../../utils/constants'
 import Canvas from '../canvas/canvas'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 export class ActionPopUp {
   private readonly uiController: UIController
   public fontSize: number = 14
+  public tittle: string | undefined
   public message: string | undefined
   public action: Callback | undefined
+  public actionText: string | undefined
+  public cancel: Callback | undefined
+  public cancelText: string | undefined
 
   closeBackground: Color4 | undefined
   confirmBackground: Color4 = RUBY
@@ -32,8 +37,12 @@ export class ActionPopUp {
   }
 
   cancelAction(): void {
-    this.updateButtons()
-    this.action = undefined
+    if (this.cancel !== undefined) {
+      this.cancel()
+      console.log('WARNING POP UP CANCEL ACTION PRESSED')
+    }
+    this.undefineButtons()
+    this.hide()
   }
 
   confirmEnter(): void {
@@ -44,8 +53,15 @@ export class ActionPopUp {
     if (this.action !== undefined) {
       this.action()
     }
-    this.updateButtons()
+    this.hide()
+  }
+
+  undefineButtons(): void {
     this.action = undefined
+    this.cancel = undefined
+    this.actionText = undefined
+    this.cancelText = undefined
+    this.updateButtons()
   }
 
   updateButtons(): void {
@@ -57,7 +73,6 @@ export class ActionPopUp {
   close(): void {
     this.hide()
     this.updateButtons()
-    this.action = undefined
   }
 
   show(): void {
@@ -71,7 +86,6 @@ export class ActionPopUp {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    if (this.action === undefined) return null
     if (this.message === undefined) return null
 
     let panelWidth: number
@@ -98,26 +112,28 @@ export class ActionPopUp {
             height: '100%',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            zIndex:1
           }}
           uiBackground={{
             color: { ...Color4.Black(), a: 0.9 }
+          }}
+          onMouseDown={() => {
+            this.close()
           }}
         >
           <UiEntity
             uiTransform={{
               padding: {
                 top: panelHeight * 0.05,
-                bottom: panelHeight * 0.05,
-                left: panelWidth * 0.1,
-                right: panelWidth * 0.1
+                bottom: panelHeight * 0.1
               },
 
               width: panelWidth,
               height: 'auto',
-              maxHeight: panelHeight,
               flexDirection: 'column',
-              alignItems: 'center'
+              alignItems: 'center',
+              justifyContent: 'space-between'
             }}
             uiBackground={{
               color: { ...ALMOST_WHITE, a: 0.9 },
@@ -133,67 +149,108 @@ export class ActionPopUp {
               }
             }}
           >
-            {/* CLOSE BUTTON */}
+            {/* ERROR AREA */}
             <UiEntity
               uiTransform={{
-                width: '100%',
-                height: 'auto',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'flex-end'
+                flexDirection: 'column',
+
+                width: panelWidth * 0.8,
+                height: panelHeight * 0.4,
+                flexGrow: 1
               }}
             >
-              <IconButton
+              <UiEntity
                 uiTransform={{
-                  height: 2 * this.fontSize,
-                  width: 2 * this.fontSize
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  width: '100%',
+                  margin: { bottom: this.fontSize * 0.5 }
                 }}
-                onMouseEnter={() => {
-                  this.closeBackground = ALMOST_BLACK
+              >
+                {/* ICON */}
+                <UiEntity
+                  uiBackground={{
+                    ...getBackgroundFromAtlas({
+                      atlasName: 'navbar',
+                      spriteName: 'HelpIcon Off'
+                    }),
+                    color: ALMOST_BLACK
+                  }}
+                  uiTransform={{
+                    height: 2 * this.fontSize,
+                    width: 2 * this.fontSize
+                  }}
+                />
+
+                {/* TITTLE */}
+                <Label
+                  uiTransform={{
+                    width: '50%',
+                    flexGrow: 1
+                  }}
+                  value={this.tittle ?? ''}
+                  color={Color4.Black()}
+                  fontSize={this.fontSize * 1.2}
+                  textAlign="middle-left"
+                />
+
+                {/* CLOSE BUTTON */}
+                <IconButton
+                  uiTransform={{
+                    height: 2 * this.fontSize,
+                    width: 2 * this.fontSize
+                  }}
+                  onMouseEnter={() => {
+                    this.closeBackground = { ...ALMOST_BLACK, a: 0.8 }
+                  }}
+                  onMouseLeave={() => {
+                    this.updateButtons()
+                  }}
+                  onMouseDown={() => {
+                    this.close()
+                    this.updateButtons()
+                  }}
+                  backgroundColor={this.closeBackground}
+                  icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+                  iconColor={ALMOST_BLACK}
+                />
+              </UiEntity>
+
+              {/* SCROLLEABLE AREA */}
+              <UiEntity
+                uiTransform={{
+                  flexDirection: 'column',
+                  width: '100%',
+                  height: 'auto',
+                  maxHeight: panelHeight * 0.4,
+                  flexGrow: 1,
+                  overflow: 'scroll'
                 }}
-                onMouseLeave={() => {
-                  this.updateButtons()
-                }}
-                onMouseDown={() => {
-                  this.close()
-                  this.updateButtons()
-                }}
-                backgroundColor={this.closeBackground}
-                icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
-              />
+              >
+                {/* MESSAGE */}
+                <Label
+                  uiTransform={{
+                    padding: {
+                      right: this.fontSize,
+                      left: this.fontSize * 0.5
+                    },
+                    flexGrow: 1,
+                    minHeight: this.fontSize * 4
+                  }}
+                  value={this.message}
+                  color={ALMOST_BLACK}
+                  fontSize={this.fontSize}
+                  textAlign="middle-left"
+                />
+              </UiEntity>
             </UiEntity>
 
             <UiEntity
               uiTransform={{
                 flexDirection: 'row',
-                width: panelWidth * 0.8,
-                height: 'auto',
-                maxHeight: '50%',
-                overflow: 'scroll'
-              }}
-            >
-              <Label
-                uiTransform={{
-                  padding: {
-                    right: this.fontSize,
-                    left: this.fontSize * 0.5,
-                    top: this.fontSize * 0.5,
-                    bottom: this.fontSize * 0.5
-                  }
-                }}
-                value={this.message}
-                color={ALMOST_BLACK}
-                fontSize={this.fontSize}
-                textAlign="middle-left"
-              />
-            </UiEntity>
-            <UiEntity
-              uiTransform={{
-                flexDirection: 'row',
                 alignItems: 'center',
                 width: panelWidth * 0.8,
-                justifyContent: 'space-between',
-                flexGrow: 1
+                justifyContent: 'space-between'
               }}
             >
               <TextButton
@@ -211,7 +268,7 @@ export class ActionPopUp {
                   this.updateButtons()
                 }}
                 backgroundColor={this.cancelBackground}
-                value={'CANCEL'}
+                value={this.cancelText ?? 'CANCEL'}
                 fontSize={this.fontSize * 0.8}
               />
               <TextButton
@@ -229,7 +286,7 @@ export class ActionPopUp {
                   this.updateButtons()
                 }}
                 backgroundColor={this.confirmBackground}
-                value={'CONFIRM'}
+                value={this.actionText ?? 'CONFIRM'}
                 fontSize={this.fontSize * 0.8}
               />
             </UiEntity>

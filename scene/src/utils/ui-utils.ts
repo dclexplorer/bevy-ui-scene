@@ -113,3 +113,5 @@ export function getName(id: string): string {
   const playerName = player?.avatar?.name ?? 'Name'
   return playerName
 }
+
+
