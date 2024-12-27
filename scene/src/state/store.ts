@@ -1,3 +1,5 @@
+import { reducer } from './reducer';
+import { settingsInitialState } from './settings/state';
 import { type AppState, type Action } from './types';
 
 export class Store {
@@ -13,6 +15,7 @@ export class Store {
     }
 
     dispatch(action: Action): void {
+        console.log(`Dispatching action: ${action.type}`, action)
         this.state = this.reducer(this.state, action);
         this.listeners.forEach(listener => { listener(); });
     }
@@ -24,3 +27,7 @@ export class Store {
         };
     }
 }
+
+export const store = new Store(reducer, {
+    settings: settingsInitialState
+})

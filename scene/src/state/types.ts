@@ -1,10 +1,9 @@
+import type { AppActions } from './actions'
+import type { SettingsState } from './settings/state'
+
 export type AppState = {
-    counter: number
-    message: string
+    settings: SettingsState
 }
 
-export type Action = {
-    type: string
-    payload?: any
-}
+export type Action = AppActions
 

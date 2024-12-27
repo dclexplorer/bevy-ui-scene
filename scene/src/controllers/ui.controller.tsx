@@ -12,8 +12,6 @@ import { ExplorePage } from '../ui/explore-page'
 import { Friends } from '../ui/main-hud/friends'
 import { ActionPopUp } from '../ui/main-hud/actionPopUp'
 import { WarningPopUp } from '../ui/main-hud/warningPopUp'
-import { type Setting } from '../utils/definitions'
-import { BevyApi } from '../bevy-api'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
@@ -25,7 +23,6 @@ export class UIController {
   public backpackPage: BackpackPage
   public mapPage: MapPage
   public explorePage: ExplorePage
-  public settings: Setting[] = []
 
   profileButton: ProfileButton
   profile: Profile
@@ -54,17 +51,6 @@ export class UIController {
 
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
-
-  async updateSettings(): Promise<void> {
-    const settingsArray =  await BevyApi.getSettings()
-      if (settingsArray.length === 0) {
-        console.log('No settings found')
-      } else {
-        console.log('Settings found: ', settingsArray.length)
-      }
-    this.settings = settingsArray
-  }
-
 
   ui(): ReactEcs.JSX.Element {
     return (

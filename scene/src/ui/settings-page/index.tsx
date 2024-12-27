@@ -3,8 +3,6 @@ import {
   UiCanvasInformation,
   UiScrollResult,
   UiTransform,
-  // UiScrollResult,
-  // UiTransform,
   engine
 } from '@dcl/sdk/ecs'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
@@ -12,18 +10,20 @@ import Slider from '../../components/slider'
 import StyledDropdown from '../../components/styledDropdown'
 import TextIconButton from '../../components/textIconButton'
 import { type UIController } from '../../controllers/ui.controller'
+import {
+  discardNewValues,
+  saveSettingsToExplorer,
+  setSettingValue
+} from '../../state/settings/actions'
+import { store } from '../../state/store'
 import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
-import { BevyApi } from '../../bevy-api'
+import {
+  sliderPercentageToValue,
+  sliderValueToPercentage
+} from '../../utils/ui-utils'
 
-type settingData = {
-  name: string
-  value: number
-  isOpen: boolean
-  isDropdown: boolean
-}
-
-type typeOfSetting =
+type SettingCategory =
   | 'general'
   | 'audio'
   | 'graphics'
@@ -40,8 +40,9 @@ export class SettingsPage {
 
   private readonly toggleStatus: boolean = false
 
-  private dataArray: settingData[] = []
-  private settingsToSave: settingData[] = []
+  // private dataArray: settingData[] = []
+  // private settingsToSave: settingData[] = []
+  private dropdownOpenedSettingName: string = ''
   private backgroundIcon: string = 'assets/images/menu/GeneralImg.png'
   // private generalTextColor: Color4 = ALMOST_WHITE
   private graphicsTextColor: Color4 = ALMOST_BLACK
@@ -55,33 +56,34 @@ export class SettingsPage {
   private gameplayBackgroundColor: Color4 = ALMOST_WHITE
   private performanceBackgroundColor: Color4 = ALMOST_WHITE
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
-  private buttonClicked: typeOfSetting = 'performance'
+  private buttonClicked: SettingCategory = 'performance'
 
   // private settingsInfoTitle: string = ''
   private settingsInfoDescription: string = ''
   private settingsSelectedDescription: string = ''
+
+  // just for debug purpose
+  // private entityStates: Map<Entity, { value: number; elementId: string }> =
+  // new Map()
 
   constructor(uiController: UIController) {
     this.uiController = uiController
     engine.addSystem(this.controllerSystem.bind(this))
   }
 
-  setButtonClicked(button: typeOfSetting): void {
-    if (this.settingsToSave.length > 0) {
-      let unsavedSettings: string = ''
-      for (const setting of this.settingsToSave) {
-        if (setting.isDropdown) {
-          unsavedSettings += `${setting.name}: ${this.uiController.settings.find(s => s.name === setting.name)?.namedVariants[setting.value].name}\n`
-        } else {
-          unsavedSettings += `${setting.name}: ${setting.value}\n`
-        }
-      }
+  setButtonClicked(button: SettingCategory): void {
+    if (Object.keys(store.getState().settings.newValues).length > 0) {
       this.uiController.actionPopUp.show()
       this.uiController.actionPopUp.tittle = 'You have unsaved settings:'
       this.uiController.actionPopUp.message =
-        unsavedSettings + 'Do you want to save them?'
+        'Do you want to save them?\n' +
+        Object.keys(store.getState().settings.newValues)
+          .map(
+            (key) => `\t- ${key}: ${store.getState().settings.newValues[key]}`
+          )
+          .join('\n')
       this.uiController.actionPopUp.action = () => {
-        this.saveModifiedSettings(button)
+        store.dispatch(saveSettingsToExplorer())
       }
       this.uiController.actionPopUp.actionText = 'SAVE'
       this.uiController.actionPopUp.cancel = () => {
@@ -89,7 +91,7 @@ export class SettingsPage {
       }
       this.uiController.actionPopUp.cancelText = 'DISCARD'
     } else {
-      this.dataArray = []
+      // this.dataArray = []
       this.buttonClicked = button
       this.updateButtons()
     }
@@ -165,90 +167,103 @@ export class SettingsPage {
     this.toggleIcon.spriteName = this.toggleStatus ? 'SwitchOn' : 'SwitchOff'
   }
 
-  selectOption(index: number, name: string): void {
-    const data = this.dataArray.find((data) => data.name === name)
-    if (data !== null && data !== undefined) {
-      data.value = index
-    }
+  selectOption(index: number, title: string): void {
+    store.dispatch(setSettingValue({ name: title, value: index }))
   }
 
   controllerSystem(): void {
-    for (const setting of this.uiController.settings) {
-      // check if the setting is in the dataArray (client side data values)
-      const modifiedSetting = this.dataArray.find(
-        (data) => data.name === setting.name
-      )
+    // just for debug purpose
+    // const currentEntities = new Set<Entity>()
 
-      // clear the setting from the settingsToSave array if it is already saved
-      if (modifiedSetting !== undefined) {
-        this.settingsToSave = this.settingsToSave.filter(
-          (setting) => setting.name !== modifiedSetting.name
-        )
+    // for (const [entity, uiTransform] of engine.getEntitiesWith(UiTransform)) {
+    //   const currentElementId = uiTransform.elementId ?? ''
+    //   if (currentElementId.length === 0) continue
 
-        // check if the setting value is different from the modified value
-        if (setting.value !== Math.floor(modifiedSetting.value)) {
-          
-          // add the setting to the settingsToSave array
-          this.settingsToSave.push(modifiedSetting)
-        }
-      }
-    }
+    //   currentEntities.add(entity)
+    //   // Handle new entities
+    //   if (!this.entityStates.has(entity)) {
+    //     console.log(
+    //       `New entity detected: ${entity} (elementId: ${currentElementId})`
+    //     )
+    //     this.entityStates.set(entity, {
+    //       value: uiTransform.rightOf,
+    //       elementId: currentElementId
+    //     })
+    //     continue
+    //   }
 
+    //   const previousState = this.entityStates.get(entity)!
+    //   const currentValue = uiTransform.rightOf ?? 0
+
+    //   // Check for elementId changes
+    //   if (previousState.elementId !== currentElementId) {
+    //     console.log(
+    //       `Entity ${entity} elementId changed from "${previousState.elementId}" to "${currentElementId}"`
+    //     )
+    //     previousState.elementId = currentElementId
+    //   }
+
+    //   // Check for value changes
+    //   if (previousState.value !== currentValue) {
+    //     console.log(
+    //       `Entity ${entity} (${currentElementId}) value changed from ${previousState.value} to ${currentValue}`
+    //     )
+    //     previousState.value = currentValue
+    //   }
+    // }
+
+    // // Check for removed entities
+    // for (const [entity, state] of this.entityStates) {
+    //   if (!currentEntities.has(entity)) {
+    //     console.log(`Entity ${entity} (${state.elementId}) was removed`)
+    //     this.entityStates.delete(entity)
+    //   }
+    // }
+
+    const settings = Object.values(store.getState().settings.explorerSettings)
     for (const [, pos, uiTransform] of engine.getEntitiesWith(
       UiScrollResult,
       UiTransform
     )) {
-      if (pos === undefined) break
-      for (const setting of this.uiController.settings) {
-        if (uiTransform.elementId === setting.name && pos.value !== undefined) {
-          const filteredSetting = this.dataArray.find(
-            (data) => data.name === setting.name
-          )
+      if (pos.value === undefined) continue
+      const setting = settings.find(
+        (setting) => uiTransform.elementId === `setting-${setting.name}`
+      )
+      if (setting === undefined) continue
 
-          if (filteredSetting !== undefined) {
-            filteredSetting.value = Math.floor(
-              setting.minValue +
-                (1 - pos.value.x) * (setting.maxValue - setting.minValue)
-            )
-          }
-        }
+      const scrollValue = sliderPercentageToValue(
+        pos.value.x,
+        setting.minValue,
+        setting.maxValue
+      )
+      const currentValue =
+        store.getState().settings.newValues[setting.name] ?? setting.value
+      if (currentValue !== scrollValue) {
+        store.dispatch(
+          setSettingValue({ name: setting.name, value: scrollValue })
+        )
+        console.log(
+          `Setting ${setting.name} updated to ${scrollValue}`,
+          pos.value.x,
+          setting.minValue,
+          setting.maxValue,
+          ' from ',
+          currentValue
+        )
       }
     }
   }
 
-  saveModifiedSettings(button: typeOfSetting): void {
-    for (const setting of this.settingsToSave) {
-      BevyApi.setSetting(setting.name, setting.value)
-        .then(() => {
-          const settingToUpdate = this.uiController.settings.find(s => s.name === setting.name)
-          if (settingToUpdate !== undefined) {
-            settingToUpdate.value = setting.value
-          }
-          this.settingsToSave = this.settingsToSave.filter(
-            (set) => set.name !== setting.name 
-          )
-          if (this.settingsToSave.length === 0) {
-            void this.uiController.updateSettings().then(() => {this.setButtonClicked(button)})
-            
-          }
-        })
-        .catch((error) => {
-          this.uiController.warningPopUp.show()
-          this.uiController.warningPopUp.tittle = `Failed to save ${setting.name}:`
-          this.uiController.warningPopUp.message = error.message
-        })
-    }
-  }
-
-  discardChanges(button: typeOfSetting): void {
-    this.settingsToSave = []
+  discardChanges(button: SettingCategory): void {
+    store.dispatch(discardNewValues())
     this.setButtonClicked(button)
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    if (this.uiController.settings === undefined) return null
+    if (Object.keys(store.getState().settings.explorerSettings).length === 0)
+      return null
 
     const sliderWidth: number = canvasInfo.width * 0.3
     const sliderHeight: number = canvasInfo.height * 0.1
@@ -437,11 +452,20 @@ export class SettingsPage {
                 this.updateButtons()
               }}
               onMouseDown={() => {
-                this.uiController.settings.filter(
-                  (setting) => setting.category.toLowerCase() === this.buttonClicked
-                ).forEach((setting) => {
-                  console.log('setting: ', setting.name, 'value: ', setting.value)
-                })}}
+                // this.uiController.settings
+                //   .filter(
+                //     (setting) =>
+                //       setting.category.toLowerCase() === this.buttonClicked
+                //   )
+                //   .forEach((setting) => {
+                //     console.log(
+                //       'setting: ',
+                //       setting.name,
+                //       'value: ',
+                //       setting.value
+                //     )
+                //   })
+              }}
               backgroundColor={this.restoreBackgroundColor}
             />
           </UiEntity>
@@ -486,27 +510,27 @@ export class SettingsPage {
               }
             }
           >
-            {this.uiController.settings
-              .filter((setting) => {
-                return setting.category.toLowerCase() === this.buttonClicked
-              })
+            {Object.values(store.getState().settings.explorerSettings)
+              .filter(
+                (setting) =>
+                  setting.category.toLowerCase() === this.buttonClicked
+              )
               .map((setting, index) => {
                 const namedVariants = setting.namedVariants ?? []
                 if (namedVariants.length > 0) {
-                  this.dataArray.push({
-                    name: setting.name,
-                    value: setting.value,
-                    isOpen: false,
-                    isDropdown: true
-                  })
                   return (
                     <UiEntity
                       uiTransform={{
+                        // display:
+                        //   setting.category.toLowerCase() === this.buttonClicked
+                        //     ? 'flex'
+                        //     : 'none',
                         width: sliderWidth,
                         height: sliderHeight,
                         flexDirection: 'row',
                         alignItems: 'center',
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
+                        elementId: `setting-${setting.name}-${index}-parent`
                       }}
                       onMouseEnter={() => {
                         this.settingsInfoDescription = setting.description
@@ -518,58 +542,51 @@ export class SettingsPage {
                           (variant) => variant.name
                         )}
                         fontSize={fontSize}
-                        isOpen={
-                          this.dataArray.find(
-                            (data) => data.name === setting.name
-                          )?.isOpen ?? false
-                        }
+                        isOpen={this.dropdownOpenedSettingName === setting.name}
                         onMouseDown={() => {
-                          const data = this.dataArray.find(
-                            (data) => data.name === setting.name
-                          )
-                          if (data !== null && data !== undefined) {
-                            data.isOpen = !data.isOpen
+                          if (this.dropdownOpenedSettingName === setting.name) {
+                            this.dropdownOpenedSettingName = ''
+                          } else {
+                            this.dropdownOpenedSettingName = setting.name
                           }
                         }}
-                        onOptionMouseDown={() => {
-                          this.selectOption(index, setting.name)
+                        onOptionMouseDown={(selectedIndex, title) => {
+                          this.selectOption(selectedIndex, title)
+                          this.dropdownOpenedSettingName = ''
                         }}
                         title={setting.name}
                         value={
-                          this.dataArray.find(
-                            (data) => data.name === setting.name
-                          )?.value ?? 0
+                          store.getState().settings.newValues[setting.name] ??
+                          setting.value
                         }
                       />
                     </UiEntity>
                   )
                 } else {
-                  this.dataArray.push({
-                    name: setting.name,
-                    value: setting.value,
-                    isOpen: false,
-                    isDropdown: false
-                  })
                   return (
                     <Slider
                       title={setting.name}
                       fontSize={fontSize}
-                      value={
-                        this.dataArray
-                          .find((data) => data.name === setting.name)
-                          ?.value.toString() ?? setting.value.toString()
-                      }
+                      value={`${
+                        store.getState().settings.newValues[setting.name] ??
+                        setting.value
+                      }`}
                       uiTransform={{
                         width: sliderWidth,
                         height: sliderHeight,
-                        elementId: setting.name
+                        elementId: `setting-${setting.name}-${index}-parent`
+                        // display:
+                        //   setting.category.toLowerCase() === this.buttonClicked
+                        //     ? 'flex'
+                        //     : 'none'
                       }}
                       sliderSize={sliderWidth * 2}
-                      id={setting.name}
-                      position={
-                        1 -
-                        setting.value / (setting.maxValue - setting.minValue)
-                      }
+                      id={`setting-${setting.name}`}
+                      position={sliderValueToPercentage(
+                        setting.value,
+                        setting.minValue,
+                        setting.maxValue
+                      )}
                       onMouseEnter={() => {
                         this.settingsInfoDescription = setting.description
                         this.settingsSelectedDescription = ''
@@ -578,6 +595,15 @@ export class SettingsPage {
                   )
                 }
               })}
+            {/* <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 400,
+                flexDirection: 'column',
+                alignItems: 'flex-start'
+              }}
+              uiBackground={{ color: ALMOST_WHITE }}
+            /> */}
           </UiEntity>
 
           <UiEntity

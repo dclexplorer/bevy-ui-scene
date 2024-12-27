@@ -1,4 +1,13 @@
-import { type Setting } from '../utils/definitions'
+
+export type ExplorerSetting = {
+  name: string
+  category: string
+  description: string
+  minValue: number
+  maxValue: number
+  namedVariants: [{ name: string; description: string }]
+  value: number
+}
 
 export type BevyApiInterface = {
   openSceneLogger: () => Promise<void>
@@ -14,7 +23,7 @@ export type BevyApiInterface = {
   loginGuest: () => void
   logout: () => void
 
-  getSettings: () => Promise<Setting[]>
+  getSettings: () => Promise<ExplorerSetting[]>
   setSetting: (name: string, value: number) => Promise<void>
 }
 

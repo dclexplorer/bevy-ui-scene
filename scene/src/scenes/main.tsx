@@ -1,5 +1,8 @@
 import { BevyApi } from '../bevy-api'
+import type { ExplorerSetting } from '../bevy-api/interface'
 import { GameController } from '../controllers/game.controller'
+import { loadSettingsFromExplorer } from '../state/settings/actions'
+import { store } from '../state/store'
 
 let gameInstance: GameController
 
@@ -37,7 +40,15 @@ async function init(retry: boolean): Promise<void> {
     console.log('Settings found: ', settingsArray.length)
   }
 
-  gameInstance.uiController.settings = settingsArray
+  const explorerSettings = settingsArray.reduce(
+    (acc: Record<string, ExplorerSetting>, setting) => {
+      acc[setting.name] = setting
+      return acc
+    },
+    {}
+  )
+
+  store.dispatch(loadSettingsFromExplorer(explorerSettings))
 
   // const fog = settingsArray.find((setting) => setting.name === 'Fog')
   // console.log('name: ', fog?.name)

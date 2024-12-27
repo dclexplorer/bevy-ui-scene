@@ -1,21 +1,13 @@
-import { type AppState, type Action } from './types';
-import { DECREMENT, INCREMENT, SET_MESSAGE } from './actions';
+import type { AppState, Action } from './types';
+import { reducer as settingsReducer } from './settings/reducers';
 
 
-export function reducer(state: AppState = initialState, action: Action): AppState {
-    switch (action.type) {
-        case INCREMENT:
-            return { ...state, counter: state.counter + 1 };
-        case DECREMENT:
-            return { ...state, counter: state.counter - 1 };
-        case SET_MESSAGE:
-                return { ...state, message: action.payload };
-        default:
-            return state;
+export function reducer(state: AppState, action: Action): AppState {
+    const newState = { ...state };
+
+    if (action.__reducer === 'settings') {
+        newState.settings = settingsReducer(state.settings, action);
     }
-}
 
-const initialState: AppState = {
-    message: 'Hello, World!',
-    counter: 0
-};
+    return newState;
+}

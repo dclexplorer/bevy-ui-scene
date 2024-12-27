@@ -12,7 +12,7 @@ function styledDropdown(props: {
   isOpen: boolean
   // Events
   onMouseDown: Callback
-  onOptionMouseDown: (arg: number, name: string) => void
+  onOptionMouseDown: (index: number, title: string) => void
   // Shape
   uiTransform?: UiTransformProps
   backgroundColor?: Color4
@@ -88,7 +88,7 @@ function styledDropdown(props: {
             height: props.fontSize * 2.2
           }}
           uiText={{
-            value: props.options[props.value],
+            value: props.options[props.value] ?? 'jajajajajaja',
             fontSize: props.fontSize,
             color: props.fontColor ?? ALMOST_BLACK,
             textAlign: 'middle-left'
