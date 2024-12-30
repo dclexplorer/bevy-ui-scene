@@ -43,6 +43,7 @@ export class SettingsPage {
   // private dataArray: settingData[] = []
   // private settingsToSave: settingData[] = []
   private dropdownOpenedSettingName: string = ''
+  private dropdownIndexEntered: number = -1
   private backgroundIcon: string = 'assets/images/menu/GeneralImg.png'
   // private generalTextColor: Color4 = ALMOST_WHITE
   private graphicsTextColor: Color4 = ALMOST_BLACK
@@ -60,7 +61,6 @@ export class SettingsPage {
 
   // private settingsInfoTitle: string = ''
   private settingsInfoDescription: string = ''
-  private settingsSelectedDescription: string = ''
 
   // just for debug purpose
   // private entityStates: Map<Entity, { value: number; elementId: string }> =
@@ -533,7 +533,11 @@ export class SettingsPage {
                         elementId: `setting-${setting.name}-${index}-parent`
                       }}
                       onMouseEnter={() => {
-                        this.settingsInfoDescription = setting.description
+                        this.settingsInfoDescription = setting.namedVariants[store.getState().settings.newValues[setting.name] ??
+                        setting.value].description
+                      }}
+                      onMouseLeave={() => {
+                        this.dropdownIndexEntered = -1
                       }}
                     >
                       <StyledDropdown
@@ -541,6 +545,7 @@ export class SettingsPage {
                         options={setting.namedVariants.map(
                           (variant) => variant.name
                         )}
+                        entered={this.dropdownIndexEntered}
                         fontSize={fontSize}
                         isOpen={this.dropdownOpenedSettingName === setting.name}
                         onMouseDown={() => {
@@ -554,6 +559,11 @@ export class SettingsPage {
                           this.selectOption(selectedIndex, title)
                           this.dropdownOpenedSettingName = ''
                         }}
+                        onOptionMouseEnter={(selectedIndex) => {
+                          this.dropdownIndexEntered = selectedIndex
+                          this.settingsInfoDescription = setting.namedVariants[this.dropdownIndexEntered].description
+                        }}
+                        onOptionMouseLeave={() => {this.dropdownIndexEntered = -1}}
                         title={setting.name}
                         value={
                           store.getState().settings.newValues[setting.name] ??
@@ -589,7 +599,6 @@ export class SettingsPage {
                       )}
                       onMouseEnter={() => {
                         this.settingsInfoDescription = setting.description
-                        this.settingsSelectedDescription = ''
                       }}
                     />
                   )
@@ -651,19 +660,13 @@ export class SettingsPage {
                 }}
               >
                 <Label
-                  uiTransform={{ width: '100%', height: '100%' }}
+                  uiTransform={{ width: '100%', height: 'auto' }}
                   value={this.settingsInfoDescription}
                   fontSize={fontSize}
                   textWrap="wrap"
                   textAlign="top-left"
                 />
-                <Label
-                  uiTransform={{ width: '100%', height: '100%' }}
-                  value={this.settingsSelectedDescription}
-                  fontSize={fontSize}
-                  textWrap="wrap"
-                  textAlign="top-left"
-                />
+                
               </UiEntity>
             </UiEntity>
           </UiEntity>

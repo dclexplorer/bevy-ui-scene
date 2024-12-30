@@ -4,7 +4,7 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../utils/constants'
+import { ALMOST_BLACK, ALMOST_WHITE, CLICKED_PRIMARY_COLOR, ORANGE } from '../utils/constants'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 
@@ -13,6 +13,8 @@ function styledDropdown(props: {
   // Events
   onMouseDown: Callback
   onOptionMouseDown: (index: number, title: string) => void
+  onOptionMouseEnter: (index: number) => void
+  onOptionMouseLeave: () => void
   // Shape
   uiTransform?: UiTransformProps
   backgroundColor?: Color4
@@ -21,6 +23,7 @@ function styledDropdown(props: {
   fontSize: number
   fontColor?: Color4
   value: number
+  entered: number
   options: string[]
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
@@ -88,7 +91,7 @@ function styledDropdown(props: {
             height: props.fontSize * 2.2
           }}
           uiText={{
-            value: props.options[props.value] ?? 'jajajajajaja',
+            value: props.options[props.value],
             fontSize: props.fontSize,
             color: props.fontColor ?? ALMOST_BLACK,
             textAlign: 'middle-left'
@@ -115,13 +118,13 @@ function styledDropdown(props: {
             display: props.isOpen ? 'flex' : 'none',
             width: '100%',
             height:
-              props.options.length >= 6
-                ? props.fontSize * 1.5 * 6
-                : props.fontSize * props.options.length * 1.5,
+              props.options.length >= 4
+                ? props.fontSize * 2.1 * 4
+                : props.fontSize * props.options.length * 2.1,
 
             positionType: 'absolute',
             position: { left: 0, top: 2.5 * props.fontSize },
-            zIndex: 1
+            zIndex: 2
           }}
           uiBackground={{
             color: ALMOST_WHITE,
@@ -143,7 +146,7 @@ function styledDropdown(props: {
               height: '100%',
               flexDirection: 'column',
               overflow: 'scroll',
-              scrollVisible: 'hidden'
+              // scrollVisible: 'hidden'
             }}
           >
             <UiEntity
@@ -155,44 +158,57 @@ function styledDropdown(props: {
               }}
             >
               {props.options.map((option, index) => (
-                <UiEntity
-                  uiTransform={{
-                    width: '95%',
-                    height: 'auto',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}
-                  onMouseDown={() => {
-                    props.onOptionMouseDown(index, props.title)
-                  }}
-                >
+                <UiEntity uiTransform={{ width: '100%', height: 'auto', flexDirection: 'column' }}>	
+                  <UiEntity uiTransform={{ width: '100%', height: props.fontSize * 0.1, display: index>0?'flex':'none' }}/>
                   <UiEntity
                     uiTransform={{
-                      width: 'auto',
-                      height: props.fontSize * 2
+                      width: '95%',
+                      height: props.fontSize * 1.2,
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      margin: { top: props.fontSize * 0.3 }
                     }}
-                    uiText={{
-                      value: option,
-                      fontSize: props.fontSize,
-                      color: ALMOST_BLACK,
-                      textAlign: 'middle-left'
+                    uiBackground={{color: index === props.entered ? {...CLICKED_PRIMARY_COLOR, a: 0.5} : ALMOST_WHITE}}
+                    onMouseDown={() => {
+                      props.onOptionMouseDown(index, props.title)
                     }}
-                  />
+                    onMouseEnter={() => {
+                      props.onOptionMouseEnter(index)
+                    }}
+                    onMouseLeave={() => {
+                      props.onOptionMouseLeave()
+                    }}
+                  >
+                    <UiEntity
+                      uiTransform={{
+                        width: 'auto',
+                        height: '100%'
+                      }}
+                      uiText={{
+                        value: option,
+                        fontSize: props.fontSize,
+                        color: ALMOST_BLACK,
+                        textAlign: 'middle-left'
+                      }}
+                    />
 
-                  <UiEntity
-                    uiTransform={{
-                      display: props.value === index ? 'flex' : 'none',
-                      width: props.fontSize,
-                      height: props.fontSize
-                    }}
-                    uiBackground={{
-                      ...getBackgroundFromAtlas({
-                        atlasName: 'icons',
-                        spriteName: 'Check'
-                      }),
-                      color: ORANGE
-                    }}
-                  />
+                    <UiEntity
+                      uiTransform={{
+                        display: props.value === index ? 'flex' : 'none',
+                        width: props.fontSize,
+                        height: props.fontSize,
+                        margin: { right: props.fontSize * 0.3}
+                      }}
+                      uiBackground={{
+                        ...getBackgroundFromAtlas({
+                          atlasName: 'icons',
+                          spriteName: 'Check'
+                        }),
+                        color: ORANGE
+                      }}
+                    />
+                  </UiEntity>
+                  <UiEntity uiTransform={{ width: '100%', height: props.fontSize * 0.1 }}/>
                 </UiEntity>
               ))}
             </UiEntity>
