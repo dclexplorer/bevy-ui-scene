@@ -1,4 +1,3 @@
-
 export type ExplorerSetting = {
   name: string
   category: string

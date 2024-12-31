@@ -37,7 +37,7 @@ export function reducer(
         return state
       }
 
-      // if the value is the same as the saved value, remove it from the newValues 
+      // if the value is the same as the saved value, remove it from the newValues
       const savedStateValue = state.explorerSettings[name].value
       if (savedStateValue === value) {
         const newValues = { ...state.newValues }
@@ -45,7 +45,6 @@ export function reducer(
         delete newValues[name]
         return { ...state, newValues }
 
-        
         // return { ...state, newValues: { ...state.newValues, [name]: undefined } }
       }
 

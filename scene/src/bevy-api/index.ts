@@ -29,5 +29,3 @@ export const BevyApi = new Proxy(__BevyApi, {
     }
   }
 }) as BevyApiInterface
-
-

@@ -533,8 +533,11 @@ export class SettingsPage {
                         elementId: `setting-${setting.name}-${index}-parent`
                       }}
                       onMouseEnter={() => {
-                        this.settingsInfoDescription = setting.namedVariants[store.getState().settings.newValues[setting.name] ??
-                        setting.value].description
+                        this.settingsInfoDescription =
+                          setting.namedVariants[
+                            store.getState().settings.newValues[setting.name] ??
+                              setting.value
+                          ].description
                       }}
                       onMouseLeave={() => {
                         this.dropdownIndexEntered = -1
@@ -561,9 +564,14 @@ export class SettingsPage {
                         }}
                         onOptionMouseEnter={(selectedIndex) => {
                           this.dropdownIndexEntered = selectedIndex
-                          this.settingsInfoDescription = setting.namedVariants[this.dropdownIndexEntered].description
+                          this.settingsInfoDescription =
+                            setting.namedVariants[
+                              this.dropdownIndexEntered
+                            ].description
                         }}
-                        onOptionMouseLeave={() => {this.dropdownIndexEntered = -1}}
+                        onOptionMouseLeave={() => {
+                          this.dropdownIndexEntered = -1
+                        }}
                         title={setting.name}
                         value={
                           store.getState().settings.newValues[setting.name] ??
@@ -666,7 +674,6 @@ export class SettingsPage {
                   textWrap="wrap"
                   textAlign="top-left"
                 />
-                
               </UiEntity>
             </UiEntity>
           </UiEntity>

@@ -4,7 +4,12 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { ALMOST_BLACK, ALMOST_WHITE, CLICKED_PRIMARY_COLOR, ORANGE } from '../utils/constants'
+import {
+  ALMOST_BLACK,
+  ALMOST_WHITE,
+  CLICKED_PRIMARY_COLOR,
+  ORANGE
+} from '../utils/constants'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 
@@ -145,7 +150,7 @@ function styledDropdown(props: {
               width: '100%',
               height: '100%',
               flexDirection: 'column',
-              overflow: 'scroll',
+              overflow: 'scroll'
               // scrollVisible: 'hidden'
             }}
           >
@@ -158,8 +163,20 @@ function styledDropdown(props: {
               }}
             >
               {props.options.map((option, index) => (
-                <UiEntity uiTransform={{ width: '100%', height: 'auto', flexDirection: 'column' }}>	
-                  <UiEntity uiTransform={{ width: '100%', height: props.fontSize * 0.1, display: index>0?'flex':'none' }}/>
+                <UiEntity
+                  uiTransform={{
+                    width: '100%',
+                    height: 'auto',
+                    flexDirection: 'column'
+                  }}
+                >
+                  <UiEntity
+                    uiTransform={{
+                      width: '100%',
+                      height: props.fontSize * 0.1,
+                      display: index > 0 ? 'flex' : 'none'
+                    }}
+                  />
                   <UiEntity
                     uiTransform={{
                       width: '95%',
@@ -168,7 +185,12 @@ function styledDropdown(props: {
                       alignItems: 'center',
                       margin: { top: props.fontSize * 0.3 }
                     }}
-                    uiBackground={{color: index === props.entered ? {...CLICKED_PRIMARY_COLOR, a: 0.5} : ALMOST_WHITE}}
+                    uiBackground={{
+                      color:
+                        index === props.entered
+                          ? { ...CLICKED_PRIMARY_COLOR, a: 0.5 }
+                          : ALMOST_WHITE
+                    }}
                     onMouseDown={() => {
                       props.onOptionMouseDown(index, props.title)
                     }}
@@ -197,7 +219,7 @@ function styledDropdown(props: {
                         display: props.value === index ? 'flex' : 'none',
                         width: props.fontSize,
                         height: props.fontSize,
-                        margin: { right: props.fontSize * 0.3}
+                        margin: { right: props.fontSize * 0.3 }
                       }}
                       uiBackground={{
                         ...getBackgroundFromAtlas({
@@ -208,7 +230,12 @@ function styledDropdown(props: {
                       }}
                     />
                   </UiEntity>
-                  <UiEntity uiTransform={{ width: '100%', height: props.fontSize * 0.1 }}/>
+                  <UiEntity
+                    uiTransform={{
+                      width: '100%',
+                      height: props.fontSize * 0.1
+                    }}
+                  />
                 </UiEntity>
               ))}
             </UiEntity>

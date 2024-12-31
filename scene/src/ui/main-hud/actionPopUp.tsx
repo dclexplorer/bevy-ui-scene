@@ -113,7 +113,7 @@ export class ActionPopUp {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex:1
+            zIndex: 1
           }}
           uiBackground={{
             color: { ...Color4.Black(), a: 0.9 }
