@@ -188,7 +188,7 @@ export class SceneInfo {
   }
 
   openSceneInfo(): void {
-    console.log('OPEN INFO MODAL')
+    this.uiController.sceneCard.show()
   }
 
   mainUi(): ReactEcs.JSX.Element | null {

@@ -36,6 +36,8 @@ export const LINK_CHIP_HOVERED: Color4 = { ...Color4.Teal(), a: 0.1 }
 export const ALPHA_BLACK_HOVERED: Color4 = { ...Color4.Black(), a: 0.7 }
 export const ALPHA_BLACK_NORMAL: Color4 = { ...Color4.Black(), a: 0.35 }
 
+export const PANEL_BACKGROUND_COLOR: Color4 = Color4.create(228/255, 228/255, 228/255, 1)
+
 // LINKS
 export const DCL_DAO_EXPLORERS_DS: string =
   'https://discordapp.com/channels/1156930256545009674/1157417657562304522'
