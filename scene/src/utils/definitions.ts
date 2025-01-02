@@ -63,3 +63,5 @@ export type Invitation = {
   message: string
   date: string
 }
+
+export type SceneCategory = 'favorites' | 'art' | 'crypto' | 'social' | 'game' | 'shop' | 'education' | 'music' | 'fashion' | 'casino' | 'sports' | 'business' | 'poi'
