@@ -122,7 +122,13 @@ export class LoadingUI {
             })
             .catch((error) => {
               // TODO: handle the error properly
-              console.error('Error logging in with new account:', error)
+              // console.error('Error logging in with new account:', error)
+              this.uiController.warningPopUp.message = error
+              this.uiController.warningPopUp.tittle =
+                'Error logging in with new account:'
+              this.uiController.warningPopUp.action = () => {}
+              this.uiController.warningPopUp.icon = 'WarningColor'
+              this.uiController.warningPopUp.show()
             })
         }
         this.secondButtonText = 'EXPLORE AS GUEST'
@@ -153,7 +159,7 @@ export class LoadingUI {
         }
         break
 
-      case 'reuse-login-or-new': {
+      case 'reuse-login-or-new':
         // TODO: this is a temporary background, we need to change it to the avatar panel
         // this.backgroundGradientSrc =
         //   'assets/images/login/BackgroundsAvatarAlpha.png'
@@ -175,23 +181,27 @@ export class LoadingUI {
               this.finishLoading()
             })
             .catch((error) => {
-              // TODO: handle the error properly
-              console.error('Error logging in with previous account:', error)
+              this.uiController.warningPopUp.message = error.message
+              this.uiController.warningPopUp.tittle =
+                'Error logging in with previous account:'
+              this.uiController.warningPopUp.action = () => {
+                this.setStatus('sign-in-or-guest')
+              }
+              this.uiController.warningPopUp.icon = 'WarningColor'
+              this.uiController.warningPopUp.show()
             })
         }
         this.secondButtonText = 'USE DIFFERENT ACCOUNT'
         this.secondButtonAction = () => {
           this.setStatus('sign-in-or-guest')
         }
-
         break
-      }
+
       default:
         this.backgroundGradientSrc =
           'assets/images/login/HorizontalVioletGradient.png'
         this.isBackButtonVisible = false
         this.isLogoVisible = true
-
         break
     }
   }
@@ -203,10 +213,6 @@ export class LoadingUI {
 
   async openLink(url: string): Promise<void> {
     // await openExternalUrl({ url })
-  }
-
-  onMouseEnterFirstButton(): void {
-    console.log('enter first')
   }
 
   mainUi(): ReactEcs.JSX.Element | null {

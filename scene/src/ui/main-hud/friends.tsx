@@ -124,7 +124,7 @@ export class Friends {
   }
 
   unfriendDown(): void {
-    this.uiController.actionPopUpVisible = true
+    this.uiController.actionPopUp.show()
     this.uiController.actionPopUp.action = () => {
       console.log('unfriend')
     }
@@ -138,7 +138,7 @@ export class Friends {
   }
 
   blockDown(): void {
-    this.uiController.actionPopUpVisible = true
+    this.uiController.actionPopUp.show()
     this.uiController.actionPopUp.action = () => {
       console.log('block')
     }

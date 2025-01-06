@@ -27,7 +27,9 @@ function Slider(props: {
 
   return (
     <UiEntity
+      key={props.uiTransform.elementId ?? `${props.id}-parent`}
       uiTransform={{
+        ...props.uiTransform,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
@@ -69,6 +71,7 @@ function Slider(props: {
           elementId: props.id,
           scrollPosition: Vector2.create(props.position, 0)
         }}
+        key={props.id}
       >
         <UiEntity
           uiTransform={{

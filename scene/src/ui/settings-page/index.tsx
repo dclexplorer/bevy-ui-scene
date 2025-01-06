@@ -1,102 +1,106 @@
 import { Color4 } from '@dcl/ecs-math'
-import ReactEcs, { Dropdown, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import {
   UiCanvasInformation,
   UiScrollResult,
   UiTransform,
   engine
 } from '@dcl/sdk/ecs'
-import TextIconButton from '../../components/textIconButton'
-import {
-  ALMOST_BLACK,
-  ALMOST_WHITE,
-  DESPAWN_WORKAROUND_DESCRIPTION,
-  DESPAWN_WORKAROUND_TITLE,
-  MAX_AVATARS_DESCRIPTION,
-  MAX_AVATARS_TITLE,
-  MAX_DOWNLOADS_DESCRIPTION,
-  MAX_DOWNLOADS_TITLE,
-  MAX_VIDEOS_DESCRIPTION,
-  MAX_VIDEOS_TITLE,
-  ORANGE,
-  SCENE_LOAD_DISTANCE_DESCRIPTION,
-  SCENE_LOAD_DISTANCE_TITLE,
-  SCENE_THREADS_DESCRIPTION,
-  SCENE_THREADS_TITLE,
-  SCENE_UNLOAD_DISTANCE_DESCRIPTION,
-  SCENE_UNLOAD_DISTANCE_TITLE,
-  TARGET_FRAME_RATE_DESCRIPTION,
-  TARGET_FRAME_RATE_TITLE
-} from '../../utils/constants'
+import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import Slider from '../../components/slider'
-import IconButton from '../../components/iconButton'
+import StyledDropdown from '../../components/styledDropdown'
+import TextIconButton from '../../components/textIconButton'
+import { type UIController } from '../../controllers/ui.controller'
+import {
+  discardNewValues,
+  saveSettingsToExplorer,
+  setSettingValue
+} from '../../state/settings/actions'
+import { store } from '../../state/store'
+import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
+import {
+  sliderPercentageToValue,
+  sliderValueToPercentage
+} from '../../utils/ui-utils'
+
+type SettingCategory =
+  | 'general'
+  | 'audio'
+  | 'graphics'
+  | 'gameplay'
+  | 'performance'
 
 export class SettingsPage {
-  private readonly slider1Id: string = 'scene-load-distance'
-  private slider1Value: number = 50
-  private slider1Pos: number = 0
-  private slider1SavedPos: number = 0.1
-  private readonly slider2Id: string = 'scene-unload-distance'
-  private slider2Value: number = 50
-  private slider2Pos: number = 0
-  private slider2SavedPos: number = 0.1
-  private readonly slider3Id: string = 'scene-threads'
-  private slider3Value: number = 50
-  private slider3Pos: number = 0
-  private slider3SavedPos: number = 0.1
-  private readonly slider4Id: string = 'max-av-downloads'
-  private slider4Value: number = 50
-  private slider4Pos: number = 0
-  private slider4SavedPos: number = 0.1
-  private readonly slider5Id: string = 'max-avatars'
-  private slider5Value: number = 50
-  private slider5Pos: number = 0
-  private slider5SavedPos: number = 0.1
-  private readonly slider6Id: string = 'max-downloads'
-  private slider6Pos: number = 0
-  private slider6Value: number = 50
-  private slider6SavedPos: number = 0.1
+  private readonly uiController: UIController
 
   private readonly toggleIcon: Icon = {
     atlasName: 'toggles',
     spriteName: 'SwitchOn'
   }
 
-  private toggleStatus: boolean = false
+  private readonly toggleStatus: boolean = false
 
+  // private dataArray: settingData[] = []
+  // private settingsToSave: settingData[] = []
+  private dropdownOpenedSettingName: string = ''
+  private dropdownIndexEntered: number = -1
   private backgroundIcon: string = 'assets/images/menu/GeneralImg.png'
-  private generalTextColor: Color4 = ALMOST_WHITE
+  // private generalTextColor: Color4 = ALMOST_WHITE
   private graphicsTextColor: Color4 = ALMOST_BLACK
   private audioTextColor: Color4 = ALMOST_BLACK
-  private controlsTextColor: Color4 = ALMOST_BLACK
+  private gameplayTextColor: Color4 = ALMOST_BLACK
+  private performanceTextColor: Color4 = ALMOST_BLACK
   private restoreTextColor: Color4 = Color4.Red()
-  private generalBackgroundColor: Color4 = ORANGE
+  // private generalBackgroundColor: Color4 = ORANGE
   private graphicsBackgroundColor: Color4 = ALMOST_WHITE
   private audioBackgroundColor: Color4 = ALMOST_WHITE
-  private controlsBackgroundColor: Color4 = ALMOST_WHITE
+  private gameplayBackgroundColor: Color4 = ALMOST_WHITE
+  private performanceBackgroundColor: Color4 = ALMOST_WHITE
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
-  private buttonClicked: 'general' | 'audio' | 'graphics' | 'controls' =
-    'general'
+  private buttonClicked: SettingCategory = 'performance'
 
-  private settingsInfoTitle: string = ''
+  // private settingsInfoTitle: string = ''
   private settingsInfoDescription: string = ''
 
-  constructor() {
+  // just for debug purpose
+  // private entityStates: Map<Entity, { value: number; elementId: string }> =
+  // new Map()
+
+  constructor(uiController: UIController) {
+    this.uiController = uiController
     engine.addSystem(this.controllerSystem.bind(this))
   }
 
-  setButtonClicked(
-    button: 'general' | 'audio' | 'graphics' | 'controls'
-  ): void {
-    this.buttonClicked = button
-    this.updateButtons()
+  setButtonClicked(button: SettingCategory): void {
+    if (Object.keys(store.getState().settings.newValues).length > 0) {
+      this.uiController.actionPopUp.show()
+      this.uiController.actionPopUp.tittle = 'You have unsaved settings:'
+      this.uiController.actionPopUp.message =
+        'Do you want to save them?\n' +
+        Object.keys(store.getState().settings.newValues)
+          .map(
+            (key) => `\t- ${key}: ${store.getState().settings.newValues[key]}`
+          )
+          .join('\n')
+      this.uiController.actionPopUp.action = () => {
+        store.dispatch(saveSettingsToExplorer())
+      }
+      this.uiController.actionPopUp.actionText = 'SAVE'
+      this.uiController.actionPopUp.cancel = () => {
+        this.discardChanges(button)
+      }
+      this.uiController.actionPopUp.cancelText = 'DISCARD'
+    } else {
+      // this.dataArray = []
+      this.buttonClicked = button
+      this.updateButtons()
+    }
   }
 
-  generalEnter(): void {
-    this.generalBackgroundColor = ORANGE
-    this.generalTextColor = ALMOST_WHITE
-  }
+  // generalEnter(): void {
+  //   this.generalBackgroundColor = ORANGE
+  //   this.generalTextColor = ALMOST_WHITE
+  // }
 
   audioEnter(): void {
     this.audioBackgroundColor = ORANGE
@@ -108,9 +112,14 @@ export class SettingsPage {
     this.graphicsTextColor = ALMOST_WHITE
   }
 
-  controlsEnter(): void {
-    this.controlsBackgroundColor = ORANGE
-    this.controlsTextColor = ALMOST_WHITE
+  gameplayEnter(): void {
+    this.gameplayBackgroundColor = ORANGE
+    this.gameplayTextColor = ALMOST_WHITE
+  }
+
+  performanceEnter(): void {
+    this.performanceBackgroundColor = ORANGE
+    this.performanceTextColor = ALMOST_WHITE
   }
 
   restoreEnter(): void {
@@ -119,22 +128,24 @@ export class SettingsPage {
   }
 
   updateButtons(): void {
-    this.generalBackgroundColor = ALMOST_WHITE
+    // this.generalBackgroundColor = ALMOST_WHITE
     this.graphicsBackgroundColor = ALMOST_WHITE
     this.audioBackgroundColor = ALMOST_WHITE
-    this.controlsBackgroundColor = ALMOST_WHITE
-    this.generalTextColor = ALMOST_BLACK
+    this.gameplayBackgroundColor = ALMOST_WHITE
+    this.performanceBackgroundColor = ALMOST_WHITE
+    // this.generalTextColor = ALMOST_BLACK
     this.graphicsTextColor = ALMOST_BLACK
     this.audioTextColor = ALMOST_BLACK
-    this.controlsTextColor = ALMOST_BLACK
+    this.gameplayTextColor = ALMOST_BLACK
+    this.performanceTextColor = ALMOST_BLACK
     this.restoreTextColor = Color4.Red()
     this.restoreBackgroundColor = ALMOST_WHITE
 
     switch (this.buttonClicked) {
-      case 'general':
-        this.generalEnter()
-        this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
-        break
+      // case 'general':
+      //   this.generalEnter()
+      //   this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
+      //   break
       case 'audio':
         this.audioEnter()
         this.backgroundIcon = 'assets/images/menu/SoundImg.png'
@@ -143,8 +154,12 @@ export class SettingsPage {
         this.graphicsEnter()
         this.backgroundIcon = 'assets/images/menu/GraphicsImg.png'
         break
-      case 'controls':
-        this.controlsEnter()
+      case 'gameplay':
+        this.gameplayEnter()
+        this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
+        break
+      case 'performance':
+        this.performanceEnter()
         this.backgroundIcon = 'assets/images/menu/GeneralImg.png'
         break
     }
@@ -152,51 +167,103 @@ export class SettingsPage {
     this.toggleIcon.spriteName = this.toggleStatus ? 'SwitchOn' : 'SwitchOff'
   }
 
+  selectOption(index: number, title: string): void {
+    store.dispatch(setSettingValue({ name: title, value: index }))
+  }
+
   controllerSystem(): void {
+    // just for debug purpose
+    // const currentEntities = new Set<Entity>()
+
+    // for (const [entity, uiTransform] of engine.getEntitiesWith(UiTransform)) {
+    //   const currentElementId = uiTransform.elementId ?? ''
+    //   if (currentElementId.length === 0) continue
+
+    //   currentEntities.add(entity)
+    //   // Handle new entities
+    //   if (!this.entityStates.has(entity)) {
+    //     console.log(
+    //       `New entity detected: ${entity} (elementId: ${currentElementId})`
+    //     )
+    //     this.entityStates.set(entity, {
+    //       value: uiTransform.rightOf,
+    //       elementId: currentElementId
+    //     })
+    //     continue
+    //   }
+
+    //   const previousState = this.entityStates.get(entity)!
+    //   const currentValue = uiTransform.rightOf ?? 0
+
+    //   // Check for elementId changes
+    //   if (previousState.elementId !== currentElementId) {
+    //     console.log(
+    //       `Entity ${entity} elementId changed from "${previousState.elementId}" to "${currentElementId}"`
+    //     )
+    //     previousState.elementId = currentElementId
+    //   }
+
+    //   // Check for value changes
+    //   if (previousState.value !== currentValue) {
+    //     console.log(
+    //       `Entity ${entity} (${currentElementId}) value changed from ${previousState.value} to ${currentValue}`
+    //     )
+    //     previousState.value = currentValue
+    //   }
+    // }
+
+    // // Check for removed entities
+    // for (const [entity, state] of this.entityStates) {
+    //   if (!currentEntities.has(entity)) {
+    //     console.log(`Entity ${entity} (${state.elementId}) was removed`)
+    //     this.entityStates.delete(entity)
+    //   }
+    // }
+
+    const settings = Object.values(store.getState().settings.explorerSettings)
     for (const [, pos, uiTransform] of engine.getEntitiesWith(
       UiScrollResult,
       UiTransform
     )) {
-      if (pos === undefined) break
-      if (uiTransform.elementId === this.slider1Id && pos.value !== undefined) {
-        this.slider1Value = 100 - Math.round(100 * pos.value.x)
-        this.slider1Pos = pos.value.x
-      }
-      if (uiTransform.elementId === this.slider2Id && pos.value !== undefined) {
-        this.slider2Value = 100 - Math.round(100 * pos.value.x)
-        this.slider2Pos = pos.value.x
-      }
-      if (uiTransform.elementId === this.slider3Id && pos.value !== undefined) {
-        this.slider3Value = 100 - Math.round(100 * pos.value.x)
-        this.slider3Pos = pos.value.x
-      }
-      if (uiTransform.elementId === this.slider4Id && pos.value !== undefined) {
-        this.slider4Value = 100 - Math.round(100 * pos.value.x)
-        this.slider4Pos = pos.value.x
-      }
-      if (uiTransform.elementId === this.slider5Id && pos.value !== undefined) {
-        this.slider5Value = 100 - Math.round(100 * pos.value.x)
-        this.slider5Pos = pos.value.x
-      }
-      if (uiTransform.elementId === this.slider6Id && pos.value !== undefined) {
-        this.slider6Value = 100 - Math.round(100 * pos.value.x)
-        this.slider6Pos = pos.value.x
+      if (pos.value === undefined) continue
+      const setting = settings.find(
+        (setting) => uiTransform.elementId === `setting-${setting.name}`
+      )
+      if (setting === undefined) continue
+
+      const scrollValue = sliderPercentageToValue(
+        pos.value.x,
+        setting.minValue,
+        setting.maxValue
+      )
+      const currentValue =
+        store.getState().settings.newValues[setting.name] ?? setting.value
+      if (currentValue !== scrollValue) {
+        store.dispatch(
+          setSettingValue({ name: setting.name, value: scrollValue })
+        )
+        console.log(
+          `Setting ${setting.name} updated to ${scrollValue}`,
+          pos.value.x,
+          setting.minValue,
+          setting.maxValue,
+          ' from ',
+          currentValue
+        )
       }
     }
   }
 
-  saveValues(): void {
-    this.slider1SavedPos = this.slider1Pos
-    this.slider2SavedPos = this.slider2Pos
-    this.slider3SavedPos = this.slider3Pos
-    this.slider4SavedPos = this.slider4Pos
-    this.slider5SavedPos = this.slider5Pos
-    this.slider6SavedPos = this.slider6Pos
+  discardChanges(button: SettingCategory): void {
+    store.dispatch(discardNewValues())
+    this.setButtonClicked(button)
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
+    if (Object.keys(store.getState().settings.explorerSettings).length === 0)
+      return null
 
     const sliderWidth: number = canvasInfo.width * 0.3
     const sliderHeight: number = canvasInfo.height * 0.1
@@ -274,21 +341,21 @@ export class SettingsPage {
                 padding: { left: 10, right: 10 },
                 width: 'auto'
               }}
-              iconColor={this.generalTextColor}
-              icon={{ atlasName: 'navbar', spriteName: 'Settings off' }}
-              value={'General'}
+              iconColor={this.performanceTextColor}
+              icon={{ atlasName: 'icons', spriteName: 'Filter' }}
+              value={'Performance'}
               fontSize={fontSize}
-              fontColor={this.generalTextColor}
+              fontColor={this.performanceTextColor}
               onMouseEnter={() => {
-                this.generalEnter()
+                this.performanceEnter()
               }}
               onMouseLeave={() => {
                 this.updateButtons()
               }}
               onMouseDown={() => {
-                this.setButtonClicked('general')
+                this.setButtonClicked('performance')
               }}
-              backgroundColor={this.generalBackgroundColor}
+              backgroundColor={this.performanceBackgroundColor}
             />
 
             <TextIconButton
@@ -310,10 +377,10 @@ export class SettingsPage {
               }}
               onMouseDown={() => {
                 this.setButtonClicked('graphics')
-                this.slider1Pos = 0.5
               }}
               backgroundColor={this.graphicsBackgroundColor}
             />
+
             <TextIconButton
               uiTransform={{
                 margin: { left: 10, right: 10 },
@@ -343,23 +410,24 @@ export class SettingsPage {
                 padding: { left: 10, right: 10 },
                 width: 'auto'
               }}
-              iconColor={this.controlsTextColor}
+              iconColor={this.gameplayTextColor}
               icon={{ atlasName: 'icons', spriteName: 'ControlsIcn' }}
-              value={'Controls'}
+              value={'Gameplay'}
               fontSize={fontSize}
-              fontColor={this.controlsTextColor}
+              fontColor={this.gameplayTextColor}
               onMouseEnter={() => {
-                this.controlsEnter()
+                this.gameplayEnter()
               }}
               onMouseLeave={() => {
                 this.updateButtons()
               }}
               onMouseDown={() => {
-                this.setButtonClicked('controls')
+                this.setButtonClicked('gameplay')
               }}
-              backgroundColor={this.controlsBackgroundColor}
+              backgroundColor={this.gameplayBackgroundColor}
             />
           </UiEntity>
+
           <UiEntity
             uiTransform={{
               width: 'auto',
@@ -384,7 +452,19 @@ export class SettingsPage {
                 this.updateButtons()
               }}
               onMouseDown={() => {
-                console.log('Restored default values')
+                // this.uiController.settings
+                //   .filter(
+                //     (setting) =>
+                //       setting.category.toLowerCase() === this.buttonClicked
+                //   )
+                //   .forEach((setting) => {
+                //     console.log(
+                //       'setting: ',
+                //       setting.name,
+                //       'value: ',
+                //       setting.value
+                //     )
+                //   })
               }}
               backgroundColor={this.restoreBackgroundColor}
             />
@@ -430,145 +510,119 @@ export class SettingsPage {
               }
             }
           >
-            <Slider
-              title={SCENE_LOAD_DISTANCE_TITLE}
-              fontSize={fontSize}
-              value={this.slider1Value.toString() + '%'}
-              uiTransform={{ width: sliderWidth, height: sliderHeight }}
-              sliderSize={sliderWidth * 2}
-              id={this.slider1Id}
-              position={1 - this.slider1SavedPos}
-              onMouseEnter={() => {
-                this.settingsInfoTitle = SCENE_LOAD_DISTANCE_TITLE
-                this.settingsInfoDescription = SCENE_LOAD_DISTANCE_DESCRIPTION
-              }}
-            />
-            <Slider
-              title={SCENE_UNLOAD_DISTANCE_TITLE}
-              fontSize={fontSize}
-              value={this.slider2Value.toString() + '%'}
-              uiTransform={{ width: sliderWidth, height: sliderHeight }}
-              sliderSize={sliderWidth * 2}
-              id={this.slider2Id}
-              position={1 - this.slider2SavedPos}
-              onMouseEnter={() => {
-                this.settingsInfoTitle = SCENE_UNLOAD_DISTANCE_TITLE
-                this.settingsInfoDescription = SCENE_UNLOAD_DISTANCE_DESCRIPTION
-              }}
-            />
-            <UiEntity
+            {Object.values(store.getState().settings.explorerSettings)
+              .filter(
+                (setting) =>
+                  setting.category.toLowerCase() === this.buttonClicked
+              )
+              .map((setting, index) => {
+                const namedVariants = setting.namedVariants ?? []
+                if (namedVariants.length > 0) {
+                  return (
+                    <UiEntity
+                      uiTransform={{
+                        // display:
+                        //   setting.category.toLowerCase() === this.buttonClicked
+                        //     ? 'flex'
+                        //     : 'none',
+                        width: sliderWidth,
+                        height: sliderHeight,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        elementId: `setting-${setting.name}-${index}-parent`
+                      }}
+                      onMouseEnter={() => {
+                        this.settingsInfoDescription =
+                          setting.namedVariants[
+                            store.getState().settings.newValues[setting.name] ??
+                              setting.value
+                          ].description
+                      }}
+                      onMouseLeave={() => {
+                        this.dropdownIndexEntered = -1
+                      }}
+                    >
+                      <StyledDropdown
+                        uiTransform={{ width: '100%' }}
+                        options={setting.namedVariants.map(
+                          (variant) => variant.name
+                        )}
+                        entered={this.dropdownIndexEntered}
+                        fontSize={fontSize}
+                        isOpen={this.dropdownOpenedSettingName === setting.name}
+                        onMouseDown={() => {
+                          if (this.dropdownOpenedSettingName === setting.name) {
+                            this.dropdownOpenedSettingName = ''
+                          } else {
+                            this.dropdownOpenedSettingName = setting.name
+                          }
+                        }}
+                        onOptionMouseDown={(selectedIndex, title) => {
+                          this.selectOption(selectedIndex, title)
+                          this.dropdownOpenedSettingName = ''
+                        }}
+                        onOptionMouseEnter={(selectedIndex) => {
+                          this.dropdownIndexEntered = selectedIndex
+                          this.settingsInfoDescription =
+                            setting.namedVariants[
+                              this.dropdownIndexEntered
+                            ].description
+                        }}
+                        onOptionMouseLeave={() => {
+                          this.dropdownIndexEntered = -1
+                        }}
+                        title={setting.name}
+                        value={
+                          store.getState().settings.newValues[setting.name] ??
+                          setting.value
+                        }
+                      />
+                    </UiEntity>
+                  )
+                } else {
+                  return (
+                    <Slider
+                      title={setting.name}
+                      fontSize={fontSize}
+                      value={`${
+                        store.getState().settings.newValues[setting.name] ??
+                        setting.value
+                      }`}
+                      uiTransform={{
+                        width: sliderWidth,
+                        height: sliderHeight,
+                        elementId: `setting-${setting.name}-${index}-parent`
+                        // display:
+                        //   setting.category.toLowerCase() === this.buttonClicked
+                        //     ? 'flex'
+                        //     : 'none'
+                      }}
+                      sliderSize={sliderWidth * 2}
+                      id={`setting-${setting.name}`}
+                      position={sliderValueToPercentage(
+                        setting.value,
+                        setting.minValue,
+                        setting.maxValue
+                      )}
+                      onMouseEnter={() => {
+                        this.settingsInfoDescription = setting.description
+                      }}
+                    />
+                  )
+                }
+              })}
+            {/* <UiEntity
               uiTransform={{
-                width: sliderWidth,
-                height: sliderHeight,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between'
+                width: '100%',
+                height: 400,
+                flexDirection: 'column',
+                alignItems: 'flex-start'
               }}
-              onMouseEnter={() => {
-                this.settingsInfoTitle = TARGET_FRAME_RATE_TITLE
-                this.settingsInfoDescription = TARGET_FRAME_RATE_DESCRIPTION
-              }}
-            >
-              <Label value={TARGET_FRAME_RATE_TITLE} fontSize={fontSize} />
-              <Dropdown
-                uiTransform={{ width: '40%' }}
-                options={[
-                  '10',
-                  '15',
-                  '20',
-                  '30',
-                  '60',
-                  '120',
-                  '144',
-                  'Uncapped'
-                ]}
-                color={ALMOST_WHITE}
-                font="sans-serif"
-                fontSize={fontSize}
-                // selectedIndex={value}
-                // onChange={(index) => value = index}
-              />
-            </UiEntity>
-
-            <Slider
-              title={SCENE_THREADS_TITLE}
-              fontSize={fontSize}
-              value={this.slider3Value.toString() + '%'}
-              uiTransform={{ width: sliderWidth, height: sliderHeight }}
-              sliderSize={sliderWidth * 2}
-              id={this.slider3Id}
-              position={1 - this.slider3SavedPos}
-              onMouseEnter={() => {
-                this.settingsInfoTitle = SCENE_THREADS_TITLE
-                this.settingsInfoDescription = SCENE_THREADS_DESCRIPTION
-              }}
-            />
-            <Slider
-              title={MAX_VIDEOS_TITLE}
-              fontSize={fontSize}
-              value={this.slider4Value.toString() + '%'}
-              uiTransform={{ width: sliderWidth, height: sliderHeight }}
-              sliderSize={sliderWidth * 2}
-              id={this.slider4Id}
-              position={1 - this.slider4SavedPos}
-              onMouseEnter={() => {
-                this.settingsInfoTitle = MAX_VIDEOS_TITLE
-                this.settingsInfoDescription = MAX_VIDEOS_DESCRIPTION
-              }}
-            />
-            <Slider
-              title={MAX_AVATARS_TITLE}
-              fontSize={fontSize}
-              value={this.slider5Value.toString() + '%'}
-              uiTransform={{ width: sliderWidth, height: sliderHeight }}
-              sliderSize={sliderWidth * 2}
-              id={this.slider5Id}
-              position={1 - this.slider5SavedPos}
-              onMouseEnter={() => {
-                this.settingsInfoTitle = MAX_AVATARS_TITLE
-                this.settingsInfoDescription = MAX_AVATARS_DESCRIPTION
-              }}
-            />
-            <Slider
-              title={MAX_DOWNLOADS_TITLE}
-              fontSize={fontSize}
-              value={this.slider6Value.toString() + '%'}
-              uiTransform={{ width: sliderWidth, height: sliderHeight }}
-              sliderSize={sliderWidth * 2}
-              id={this.slider6Id}
-              position={1 - this.slider6SavedPos}
-              onMouseEnter={() => {
-                this.settingsInfoTitle = MAX_DOWNLOADS_TITLE
-                this.settingsInfoDescription = MAX_DOWNLOADS_DESCRIPTION
-              }}
-            />
-            <UiEntity
-              uiTransform={{
-                width: sliderWidth,
-                height: sliderHeight,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}
-              onMouseEnter={() => {
-                this.settingsInfoTitle = DESPAWN_WORKAROUND_TITLE
-                this.settingsInfoDescription = DESPAWN_WORKAROUND_DESCRIPTION
-              }}
-            >
-              <Label value={DESPAWN_WORKAROUND_TITLE} fontSize={fontSize} />
-              <IconButton
-                onMouseDown={() => {
-                  this.toggleStatus = !this.toggleStatus
-                  this.updateButtons()
-                }}
-                uiTransform={{
-                  width: sliderHeight / 3 / 0.55,
-                  height: sliderHeight / 3
-                }}
-                icon={this.toggleIcon}
-              />
-            </UiEntity>
+              uiBackground={{ color: ALMOST_WHITE }}
+            /> */}
           </UiEntity>
+
           <UiEntity
             uiTransform={{
               width: '40%',
@@ -604,7 +658,6 @@ export class SettingsPage {
                 }}
                 uiBackground={{ color: ALMOST_WHITE }}
               />
-              <Label value={this.settingsInfoTitle} fontSize={fontSize} />
               <UiEntity
                 uiTransform={{
                   width: '100%',
@@ -615,7 +668,7 @@ export class SettingsPage {
                 }}
               >
                 <Label
-                  uiTransform={{ width: '100%', height: '100%' }}
+                  uiTransform={{ width: '100%', height: 'auto' }}
                   value={this.settingsInfoDescription}
                   fontSize={fontSize}
                   textWrap="wrap"
