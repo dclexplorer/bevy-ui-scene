@@ -35,37 +35,21 @@ export const SECONDARY_COLOR: Color4 = Color4.create(0, 0, 0, 0.2)
 export const LINK_CHIP_HOVERED: Color4 = { ...Color4.Teal(), a: 0.1 }
 export const ALPHA_BLACK_HOVERED: Color4 = { ...Color4.Black(), a: 0.7 }
 export const ALPHA_BLACK_NORMAL: Color4 = { ...Color4.Black(), a: 0.35 }
+export const ALPHA_BLACK_PANEL: Color4 = { ...Color4.Black(), a: 0.9 }
+export const UNSELECTED_TEXT_WHITE: Color4 = { ...ALMOST_WHITE, a: 0.5 }
 
-export const PANEL_BACKGROUND_COLOR: Color4 = Color4.create(228/255, 228/255, 228/255, 1)
+export const PANEL_BACKGROUND_COLOR: Color4 = Color4.create(
+  228 / 255,
+  228 / 255,
+  228 / 255,
+  1
+)
+
+export const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 // LINKS
 export const DCL_DAO_EXPLORERS_DS: string =
   'https://discordapp.com/channels/1156930256545009674/1157417657562304522'
-
-export const SCENE_LOAD_DISTANCE_TITLE = 'Scene Load Distance'
-export const SCENE_LOAD_DISTANCE_DESCRIPTION =
-  'The distance at which neighbouring scenes will be spawned. A scene is 16 meters, so for example a value of 64 will load 4 scenes in all directions.'
-export const SCENE_UNLOAD_DISTANCE_TITLE = 'Scene Unload Distance'
-export const SCENE_UNLOAD_DISTANCE_DESCRIPTION =
-  'The additional distance (above the load distance) at which neighbouring scenes will be despawned. Using too low a setting will cause churn as scenes load and unload frequently.'
-export const TARGET_FRAME_RATE_TITLE = 'Target Frame Rate'
-export const TARGET_FRAME_RATE_DESCRIPTION =
-  'Lower values may be uncomfortable or jerky, while higher values will result in a smoother experience but increased CPU and GPU load.'
-export const SCENE_THREADS_TITLE = 'Scene Threads'
-export const SCENE_THREADS_DESCRIPTION =
-  'Number of threads to use for running scenes concurrently. A low number will result in infrequent updates to distant scenes. A high number will result in smoother distant scene update frequency, but will increase CPU usage and may impact overall framerate if it is set higher than half the core count of the CPU.'
-export const MAX_VIDEOS_TITLE = 'Max AV Sources'
-export const MAX_VIDEOS_DESCRIPTION =
-  'Maximum number of audio streams and videos to process simultaneously. Allowing more AV sources puts a higher burden on both CPU and GPU.\nIf scenes spawn more audio and video sources than this maximum, more distant sources from the player will be paused.'
-export const MAX_AVATARS_TITLE = 'Max Avatars'
-export const MAX_AVATARS_DESCRIPTION =
-  'How many avatars to render. Limiting this can help reduce frame rate drops in busy environments. If there are more avatars nearby, only the closest will be shown. This applies to other users and to scene-created avatars.'
-export const MAX_DOWNLOADS_TITLE = 'Max Downloads'
-export const MAX_DOWNLOADS_DESCRIPTION =
-  'Maximum number of simultaneous downloads to allow. Higher numbers may cause more PCIE/GPU memory pressure and more network usage, potentially leading to hiccups, but may also result in scenes loading faster.'
-export const DESPAWN_WORKAROUND_TITLE = 'Despawn Workaround'
-export const DESPAWN_WORKAROUND_DESCRIPTION =
-  'On some linux systems, despawning multiple v8 engines simultaneously causes seg faults. This workaround can be enabled to throttle the scene despawn rate to avoid this crash.'
 
 export const COUNTRIES = [
   '- Select an option -',
@@ -426,8 +410,6 @@ export const EMPLOYMENT_STATUS = [
   'Retired',
   'Other'
 ]
-
-export const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 export const TEST = ['- Select an option -', 'Test', 'Other']
 

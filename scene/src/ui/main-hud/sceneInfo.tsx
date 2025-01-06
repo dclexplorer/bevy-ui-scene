@@ -1,15 +1,17 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import { Color4 } from '@dcl/sdk/math'
+import type { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 // import IconButton from '../../components/iconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../canvas/canvas'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import {
-  ALMOST_BLACK,
   ALMOST_WHITE,
+  ALPHA_BLACK_PANEL,
   LEFT_PANEL_MIN_WIDTH,
-  LEFT_PANEL_WIDTH_FACTOR
+  LEFT_PANEL_WIDTH_FACTOR,
+  SELECTED_BUTTON_COLOR,
+  UNSELECTED_TEXT_WHITE
 } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
 import IconButton from '../../components/iconButton'
@@ -31,13 +33,13 @@ export class SceneInfo {
   public reloadIcon: Icon = { atlasName: 'icons', spriteName: 'Reset' }
   public infoIcon: Icon = { atlasName: 'icons', spriteName: 'InfoButton' }
   public sceneUiToggle: Icon = { atlasName: 'toggles', spriteName: 'SwitchOff' }
-  public expandBackgroundColor: Color4 = { ...ALMOST_BLACK, a: 0.4 }
-  public menuBackgroundColor: Color4 = { ...ALMOST_BLACK, a: 0.4 }
-  public setHomeBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
-  public reloadBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
-  public openInfoBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
-  public sceneUiBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
-  public setFavBackgroundColor: Color4 = { ...ALMOST_WHITE, a: 0.5 }
+  public expandBackgroundColor: Color4 | undefined = undefined
+  public menuBackgroundColor: Color4 | undefined = undefined
+  public setHomeLabelColor: Color4 = UNSELECTED_TEXT_WHITE
+  public reloadLabelColor: Color4 = UNSELECTED_TEXT_WHITE
+  public openInfoLabelColor: Color4 = UNSELECTED_TEXT_WHITE
+  public sceneUiLabelColor: Color4 = UNSELECTED_TEXT_WHITE
+  public setFavLabelColor: Color4 = UNSELECTED_TEXT_WHITE
 
   public fpsValue: number = 0
   public uniqueGltfMeshesValue: number = 0
@@ -228,7 +230,7 @@ export class SceneInfo {
             positionType: 'absolute'
           }}
           uiBackground={{
-            color: { ...Color4.Black(), a: 0.8 },
+            color: ALPHA_BLACK_PANEL,
             textureMode: 'nine-slices',
             texture: {
               src: 'assets/images/backgrounds/rounded.png'
@@ -256,10 +258,12 @@ export class SceneInfo {
                 this.setLoading(!this.isExpanded)
               }}
               onMouseEnter={() => {
-                this.expandBackgroundColor = { ...ALMOST_BLACK, a: 0.2 }
+                this.expandBackgroundColor = SELECTED_BUTTON_COLOR
               }}
               onMouseLeave={() => {
-                this.expandBackgroundColor = { ...ALMOST_BLACK, a: 0.4 }
+                this.expandBackgroundColor = this.isExpanded
+                  ? SELECTED_BUTTON_COLOR
+                  : undefined
               }}
               uiTransform={{
                 width: this.fontSize * 2,
@@ -309,7 +313,7 @@ export class SceneInfo {
                       atlasName: 'icons',
                       spriteName: 'PinIcn'
                     }),
-                    color: { ...ALMOST_WHITE, a: 0.5 }
+                    color: UNSELECTED_TEXT_WHITE
                   }}
                 />
                 <Label
@@ -401,10 +405,12 @@ export class SceneInfo {
                 this.setMenuOpen(!this.isMenuOpen)
               }}
               onMouseEnter={() => {
-                this.menuBackgroundColor = { ...ALMOST_BLACK, a: 0.2 }
+                this.menuBackgroundColor = SELECTED_BUTTON_COLOR
               }}
               onMouseLeave={() => {
-                this.menuBackgroundColor = { ...ALMOST_BLACK, a: 0.4 }
+                this.menuBackgroundColor = this.isMenuOpen
+                  ? SELECTED_BUTTON_COLOR
+                  : undefined
               }}
               uiTransform={{
                 width: this.fontSize * 2,
@@ -653,7 +659,7 @@ export class SceneInfo {
               positionType: 'absolute'
             }}
             uiBackground={{
-              color: { ...Color4.Black(), a: 0.8 },
+              color: ALPHA_BLACK_PANEL,
               textureMode: 'nine-slices',
               texture: {
                 src: 'assets/images/backgrounds/rounded.png'
@@ -679,13 +685,13 @@ export class SceneInfo {
                 // this.sceneUiBackgroundColor = ALMOST_WHITE
               }}
               onMouseLeave={() => {
-                // this.sceneUiBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
+                // this.sceneUiBackgroundColor = UNSELECTED_TEXT_WHITE
               }}
             >
               <Label
                 value="Hide Scene UI"
                 fontSize={this.fontSize * 0.8}
-                color={this.sceneUiBackgroundColor}
+                color={this.sceneUiLabelColor}
               />
               <UiEntity
                 uiTransform={{
@@ -695,7 +701,7 @@ export class SceneInfo {
                 }}
                 uiBackground={{
                   ...getBackgroundFromAtlas(this.sceneUiToggle),
-                  color: this.sceneUiBackgroundColor
+                  color: this.sceneUiLabelColor
                 }}
               />
             </UiEntity>
@@ -715,10 +721,10 @@ export class SceneInfo {
                 this.setHome(!this.isHome)
               }}
               onMouseEnter={() => {
-                this.setHomeBackgroundColor = ALMOST_WHITE
+                this.setHomeLabelColor = ALMOST_WHITE
               }}
               onMouseLeave={() => {
-                this.setHomeBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
+                this.setHomeLabelColor = UNSELECTED_TEXT_WHITE
               }}
             >
               <UiEntity
@@ -729,13 +735,13 @@ export class SceneInfo {
                 }}
                 uiBackground={{
                   ...getBackgroundFromAtlas(this.setAtHomeIcon),
-                  color: this.setHomeBackgroundColor
+                  color: this.setHomeLabelColor
                 }}
               />
               <Label
                 value={this.isHome ? 'Unset as Home' : 'Set as Home'}
                 fontSize={this.fontSize * 0.8}
-                color={this.setHomeBackgroundColor}
+                color={this.setHomeLabelColor}
               />
             </UiEntity>
             <UiEntity
@@ -754,10 +760,10 @@ export class SceneInfo {
                 this.setFav(!this.isFav)
               }}
               onMouseEnter={() => {
-                this.setFavBackgroundColor = ALMOST_WHITE
+                this.setFavLabelColor = ALMOST_WHITE
               }}
               onMouseLeave={() => {
-                this.setFavBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
+                this.setFavLabelColor = UNSELECTED_TEXT_WHITE
               }}
             >
               <UiEntity
@@ -768,13 +774,13 @@ export class SceneInfo {
                 }}
                 uiBackground={{
                   ...getBackgroundFromAtlas(this.favIcon),
-                  color: this.setFavBackgroundColor
+                  color: this.setFavLabelColor
                 }}
               />
               <Label
                 value={this.isFav ? 'Unmark as Favourite' : 'Mark as Favourite'}
                 fontSize={this.fontSize * 0.8}
-                color={this.setFavBackgroundColor}
+                color={this.setFavLabelColor}
               />
             </UiEntity>
             <UiEntity
@@ -793,10 +799,10 @@ export class SceneInfo {
                 this.reloadScene()
               }}
               onMouseEnter={() => {
-                this.reloadBackgroundColor = ALMOST_WHITE
+                this.reloadLabelColor = ALMOST_WHITE
               }}
               onMouseLeave={() => {
-                this.reloadBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
+                this.reloadLabelColor = UNSELECTED_TEXT_WHITE
               }}
             >
               <UiEntity
@@ -807,13 +813,13 @@ export class SceneInfo {
                 }}
                 uiBackground={{
                   ...getBackgroundFromAtlas(this.reloadIcon),
-                  color: this.reloadBackgroundColor
+                  color: this.reloadLabelColor
                 }}
               />
               <Label
                 value="Reload Scene"
                 fontSize={this.fontSize * 0.8}
-                color={this.reloadBackgroundColor}
+                color={this.reloadLabelColor}
               />
             </UiEntity>
             <UiEntity
@@ -832,10 +838,10 @@ export class SceneInfo {
                 this.openSceneInfo()
               }}
               onMouseEnter={() => {
-                this.openInfoBackgroundColor = ALMOST_WHITE
+                this.openInfoLabelColor = ALMOST_WHITE
               }}
               onMouseLeave={() => {
-                this.openInfoBackgroundColor = { ...ALMOST_WHITE, a: 0.5 }
+                this.openInfoLabelColor = UNSELECTED_TEXT_WHITE
               }}
             >
               <UiEntity
@@ -846,13 +852,13 @@ export class SceneInfo {
                 }}
                 uiBackground={{
                   ...getBackgroundFromAtlas(this.infoIcon),
-                  color: this.openInfoBackgroundColor
+                  color: this.openInfoLabelColor
                 }}
               />
               <Label
                 value="Scene Info"
                 fontSize={this.fontSize * 0.8}
-                color={this.openInfoBackgroundColor}
+                color={this.openInfoLabelColor}
               />
             </UiEntity>
           </UiEntity>

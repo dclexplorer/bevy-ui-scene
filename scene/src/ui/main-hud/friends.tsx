@@ -7,13 +7,14 @@ import IconButton from '../../components/iconButton'
 import InvitationItem from '../../components/invitationItem'
 import { type UIController } from '../../controllers/ui.controller'
 import {
-  ALMOST_BLACK,
   ALMOST_WHITE,
+  ALPHA_BLACK_PANEL,
   LEFT_PANEL_MIN_WIDTH,
   LEFT_PANEL_WIDTH_FACTOR,
   SELECTED_BUTTON_COLOR,
   TEST_FRIENDS,
-  TEST_INVITATIONS
+  TEST_INVITATIONS,
+  UNSELECTED_TEXT_WHITE
 } from '../../utils/constants'
 import {
   type Friend,
@@ -37,7 +38,7 @@ export class Friends {
 
   public buttonClicked: 'requests' | 'friends' = 'friends'
   private friendsTextColor: Color4 = ALMOST_WHITE
-  private requestsTextColor: Color4 = ALMOST_BLACK
+  private requestsTextColor: Color4 = UNSELECTED_TEXT_WHITE
   private readonly friendsList: Friend[] = TEST_FRIENDS
   private readonly invitationsList: Invitation[] = TEST_INVITATIONS
   public requestsNumber: number = TEST_INVITATIONS.filter(
@@ -80,8 +81,8 @@ export class Friends {
   }
 
   updateButtons(): void {
-    this.requestsTextColor = ALMOST_BLACK
-    this.friendsTextColor = ALMOST_BLACK
+    this.requestsTextColor = UNSELECTED_TEXT_WHITE
+    this.friendsTextColor = UNSELECTED_TEXT_WHITE
     this.friendsIcon.spriteName = 'Friends off'
 
     this.messageBackground = undefined
@@ -183,7 +184,7 @@ export class Friends {
           flexDirection: 'column'
         }}
         uiBackground={{
-          color: { ...Color4.Black(), a: 0.9 },
+          color: ALPHA_BLACK_PANEL,
           textureMode: 'nine-slices',
           texture: {
             src: 'assets/images/backgrounds/rounded.png'
@@ -641,7 +642,7 @@ export class Friends {
             alignItems: 'center'
           }}
           uiBackground={{
-            color: { ...Color4.Black(), a: 0.9 },
+            color: ALPHA_BLACK_PANEL,
             textureMode: 'nine-slices',
             texture: {
               src: 'assets/images/backgrounds/roundedRight.png'

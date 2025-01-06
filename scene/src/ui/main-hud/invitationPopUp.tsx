@@ -9,7 +9,9 @@ import {
   RUBY,
   LEFT_PANEL_WIDTH_FACTOR,
   LEFT_PANEL_MIN_WIDTH,
-  ALMOST_BLACK
+  ALMOST_BLACK,
+  SELECTED_BUTTON_COLOR,
+  ALPHA_BLACK_PANEL
 } from '../../utils/constants'
 import { type Invitation } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
@@ -30,12 +32,12 @@ export class InvitationPopUp {
   }
 
   profileEnter(): void {
-    this.profileBackground = { ...Color4.White(), a: 0.2 }
+    this.profileBackground = SELECTED_BUTTON_COLOR
     this.profileHint = true
   }
 
   rejectEnter(): void {
-    this.rejectBackground = { ...Color4.Black(), a: 0.8 }
+    this.rejectBackground = SELECTED_BUTTON_COLOR
   }
 
   rejectInvitation(): void {
@@ -114,7 +116,7 @@ export class InvitationPopUp {
           alignItems: 'center'
         }}
         uiBackground={{
-          color: { ...Color4.Black(), a: 0.9 },
+          color: ALPHA_BLACK_PANEL,
           textureMode: 'nine-slices',
           texture: {
             src: 'assets/images/backgrounds/rounded.png'

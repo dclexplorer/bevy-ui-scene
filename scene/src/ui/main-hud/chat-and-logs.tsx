@@ -8,6 +8,7 @@ import IconButton from '../../components/iconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_WHITE,
+  ALPHA_BLACK_PANEL,
   LEFT_PANEL_MIN_WIDTH,
   LEFT_PANEL_WIDTH_FACTOR
 } from '../../utils/constants'
@@ -69,7 +70,7 @@ export class ChatAndLogs {
             canvasInfo.width * 0.005 > 2.5 ? canvasInfo.width * 0.005 : 2.5
         }}
         uiBackground={{
-          color: { ...Color4.Black(), a: 0.05 },
+          color: ALPHA_BLACK_PANEL,
           textureMode: 'nine-slices',
           texture: {
             src: 'assets/images/backgrounds/rounded.png'

@@ -1,5 +1,5 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import { Color4 } from '@dcl/sdk/math'
+import type { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Position, UiEntity } from '@dcl/sdk/react-ecs'
 import IconButton from '../../components/iconButton'
 import { type UIController } from '../../controllers/ui.controller'
@@ -10,7 +10,7 @@ import { SceneInfo } from './sceneInfo'
 import { type Icon } from '../../utils/definitions'
 import { ChatAndLogs } from './chat-and-logs'
 import { Friends } from './friends'
-import { SELECTED_BUTTON_COLOR } from '../../utils/constants'
+import { ALPHA_BLACK_PANEL, SELECTED_BUTTON_COLOR } from '../../utils/constants'
 
 export class MainHud {
   public fontSize: number = 16
@@ -289,7 +289,7 @@ export class MainHud {
               flexDirection: 'column'
             }}
             uiBackground={{
-              color: { ...Color4.Black(), a: 0.8 }
+              color: ALPHA_BLACK_PANEL
             }}
           >
             <UiEntity

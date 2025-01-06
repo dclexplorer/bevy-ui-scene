@@ -64,4 +64,17 @@ export type Invitation = {
   date: string
 }
 
-export type SceneCategory = 'favorites' | 'art' | 'crypto' | 'social' | 'game' | 'shop' | 'education' | 'music' | 'fashion' | 'casino' | 'sports' | 'business' | 'poi'
+export type SceneCategory =
+  | 'favorites'
+  | 'art'
+  | 'crypto'
+  | 'social'
+  | 'game'
+  | 'shop'
+  | 'education'
+  | 'music'
+  | 'fashion'
+  | 'casino'
+  | 'sports'
+  | 'business'
+  | 'poi'
