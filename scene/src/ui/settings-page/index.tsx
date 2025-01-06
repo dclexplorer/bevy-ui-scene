@@ -262,6 +262,10 @@ export class SettingsPage {
     if (canvasInfo === null) return null
     if (Object.keys(store.getState().settings.explorerSettings).length === 0)
       return null
+    
+    const sliderWidth: number = canvasInfo.width * 0.3
+    const sliderHeight: number = canvasInfo.height * 0.1
+    const fontSize: number = canvasInfo.height * 0.02
 
     return (
       <UiEntity
