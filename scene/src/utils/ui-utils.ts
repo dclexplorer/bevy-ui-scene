@@ -113,3 +113,29 @@ export function getName(id: string): string {
   const playerName = player?.avatar?.name ?? 'Name'
   return playerName
 }
+
+export function sliderValueToPercentage(
+  value: number,
+  min: number,
+  max: number,
+  continuos: boolean = false
+): number {
+  const percentage = 1 - (value - min) / (max - min)
+  // to float32
+  const float32Percentage = Float32Array.from([percentage])[0]
+  return float32Percentage
+}
+
+export function sliderPercentageToValue(
+  perc: number,
+  min: number,
+  max: number,
+  continuos: boolean = false
+): number {
+  const value = min + (1 - perc) * (max - min)
+  if (!continuos) {
+    return Math.round(value)
+  } else {
+    return value
+  }
+}

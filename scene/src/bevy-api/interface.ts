@@ -1,8 +1,18 @@
+export type ExplorerSetting = {
+  name: string
+  category: string
+  description: string
+  minValue: number
+  maxValue: number
+  namedVariants: [{ name: string; description: string }]
+  value: number
+}
+
 export type BevyApiInterface = {
   openSceneLogger: () => Promise<void>
   checkForUpdate: () => Promise<{ description: string; url: string }>
   messageOfTheDay: () => Promise<{ message: string }>
-  getPreviousLogin: () => Promise<{ user_id: string }>
+  getPreviousLogin: () => Promise<{ userId: string }>
   loginPrevious: () => Promise<{ success: boolean; error: string }>
   loginNew: () => {
     code: Promise<number>
@@ -10,7 +20,10 @@ export type BevyApiInterface = {
   }
   loginCancel: () => void
   loginGuest: () => void
-  logout: () => Promise<void>
+  logout: () => void
+
+  getSettings: () => Promise<ExplorerSetting[]>
+  setSetting: (name: string, value: number) => Promise<void>
 }
 
 // system api module

@@ -20,6 +20,7 @@ function IconButton(props: {
   uiTransform: UiTransformProps
   backgroundColor?: Color4
   icon: Icon
+  iconColor?: Color4
   hintText?: string
   showHint?: boolean
   hintFontSize?: number
@@ -70,7 +71,10 @@ function IconButton(props: {
           flexDirection: 'row',
           alignItems: 'center'
         }}
-        uiBackground={getBackgroundFromAtlas(props.icon)}
+        uiBackground={{
+          ...getBackgroundFromAtlas(props.icon),
+          color: props.iconColor ?? Color4.White()
+        }}
       />
       <UiEntity
         uiTransform={{

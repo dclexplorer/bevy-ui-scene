@@ -1,7 +1,11 @@
+import { Label } from '@dcl/react-ecs/dist/components/Label'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
+import ChipButton from '../../components/chipButton'
+import DropdownField from '../../components/dropdownField'
 import IconButton from '../../components/iconButton'
+import InputField from '../../components/inputField'
 import TextButton from '../../components/textButton'
 import TextIconButton from '../../components/textIconButton'
 import { type UIController } from '../../controllers/ui.controller'
@@ -21,12 +25,9 @@ import {
   SEXUAL_ORIENTATIONS
 } from '../../utils/constants'
 import { getBackgroundFromAtlas, isValidDate } from '../../utils/ui-utils'
-import Canvas from '../canvas/canvas'
-import { Label } from '@dcl/react-ecs/dist/components/Label'
-import ChipButton from '../../components/chipButton'
-import DropdownField from '../../components/dropdownField'
 import { AddLink } from '../add-link'
-import InputField from '../../components/inputField'
+import Canvas from '../canvas/canvas'
+import { BevyApi } from '../../bevy-api'
 
 export class Profile {
   private savedIntro: string = ''
@@ -212,6 +213,14 @@ export class Profile {
       ...Color4.Black(),
       a: 0.35
     }
+  }
+
+  async logout(): Promise<void> {
+    console.log('logout now')
+    BevyApi.logout()
+    this.uiController.loadingAndLogin.startLoading()
+    this.uiController.loadingAndLogin.setStatus('sign-in-or-guest')
+    this.hideProfile()
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -403,14 +412,16 @@ export class Profile {
               uiBackground={{ color: { ...Color4.White(), a: 0.1 } }}
             />
             <TextIconButton
-              onMouseDown={() => {}}
+              onMouseDown={() => {
+                void this.logout()
+              }}
               uiTransform={{
                 width: '90%',
-                height: this.fontSize * 3,
+                height: this.fontSize * 2,
                 justifyContent: 'flex-start'
               }}
               value={'SIGN OUT'}
-              fontSize={this.fontSize}
+              fontSize={this.fontSize * 0.8}
               icon={{
                 atlasName: 'icons',
                 spriteName: 'LogoutIcon'
@@ -420,11 +431,11 @@ export class Profile {
               onMouseDown={() => {}}
               uiTransform={{
                 width: '90%',
-                height: this.fontSize * 3,
+                height: this.fontSize * 2,
                 justifyContent: 'flex-start'
               }}
               value={'EXIT'}
-              fontSize={this.fontSize}
+              fontSize={this.fontSize * 0.8}
               icon={{
                 atlasName: 'icons',
                 spriteName: 'ExitIcn'

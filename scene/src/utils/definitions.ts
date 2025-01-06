@@ -78,3 +78,12 @@ export type SceneCategory =
   | 'sports'
   | 'business'
   | 'poi'
+export type Setting = {
+  name: string
+  category: string
+  description: string
+  minValue: number
+  maxValue: number
+  namedVariants: [{ name: string; description: string }]
+  value: number
+}
