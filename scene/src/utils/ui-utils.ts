@@ -10,12 +10,16 @@ import { backgroundsJson } from '../json/backgrounds-data'
 import { profileJson } from '../json/profile-data'
 import { voiceChatJson } from '../json/voice-chat-data'
 import { getPlayer } from '@dcl/sdk/src/players'
+import { mapJson } from '../json/map-data'
 
 export function getUvs(icon: Icon): number[] {
   let parsedJson: AtlasData | undefined
   switch (icon.atlasName) {
     case 'profile':
       parsedJson = profileJson
+      break
+    case 'map':
+      parsedJson = mapJson
       break
     case 'backgrounds':
       parsedJson = backgroundsJson

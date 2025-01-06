@@ -1,15 +1,22 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
-import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, {
+  Label,
+  UiEntity,
+  type UiTransformProps
+} from '@dcl/sdk/react-ecs'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
   ALMOST_WHITE,
-  PANEL_BACKGROUND_COLOR
+  DCL_SNOW,
+  PANEL_BACKGROUND_COLOR,
+  SELECTED_BUTTON_COLOR
 } from '../../utils/constants'
 import type { Icon, SceneCategory } from '../../utils/definitions'
 import Canvas from '../canvas/canvas'
 import IconButton from '../../components/iconButton'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 export class SceneInfoCard {
   private readonly uiController: UIController
@@ -31,13 +38,14 @@ export class SceneInfoCard {
 
   public selectedTab: 'overview' | 'photos' | 'events' = 'overview'
 
-  public sceneTitle: string = 'Scene Name ASD'
+  public sceneTitle: string = 'Sad Escobar Vibes Scene'
+  public sceneCreator: string = 'Robtfm'
   public sceneCoords: { x: number; y: number } = { x: -155, y: 123 }
   public sceneParcels: number = 1
   public sceneDescription: string =
     'Collect mining ores and magic stones through mining as well as farm magic plant nearby Elswyth Magic School, create wearables through alchemy and crafting! Collect mining ores and magic stones through mining as well as farm magic plant nearby Elswyth Magic School, create wearables through alchemy and crafting!'
 
-  public tags: SceneCategory[] = ['game', 'poi']
+  public tags: SceneCategory[] = ['poi', 'social', 'casino', 'business']
 
   constructor(uiController: UIController) {
     this.uiController = uiController
@@ -144,11 +152,108 @@ export class SceneInfoCard {
             uiBackground={{
               textureMode: 'stretch',
               texture: {
-                src: 'assets/images/login/background.png'
+                src: 'assets/images/backgrounds/montage.png'
               }
             }}
           />
           {this.topBar()}
+          <UiEntity
+            uiTransform={{
+              width: '90%',
+              height: 'auto',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              flexDirection: 'column'
+            }}
+          >
+            <Label
+              value={this.sceneTitle}
+              fontSize={this.fontSize * 1.2}
+              textAlign="bottom-left"
+              uiTransform={{ width: '100%' }}
+              color={ALMOST_BLACK}
+            />
+            <Label
+              value={'Created by ' + this.sceneCreator}
+              fontSize={this.fontSize}
+              textAlign="bottom-left"
+              uiTransform={{ width: '100%' }}
+              color={ALMOST_BLACK}
+            />
+            <UiEntity
+              uiTransform={{ width: '100%', height: 1 }}
+              uiBackground={{ color: SELECTED_BUTTON_COLOR }}
+            />
+            <Label
+              value={'DESCRIPTION'}
+              fontSize={this.fontSize}
+              textAlign="bottom-left"
+              uiTransform={{ width: '100%' }}
+              color={ALMOST_BLACK}
+            />
+
+            <Label
+              value={this.sceneDescription}
+              fontSize={this.fontSize}
+              textAlign="bottom-left"
+              uiTransform={{ width: '100%' }}
+              color={ALMOST_BLACK}
+            />
+
+            <Label
+              value={'APPEARS ON'}
+              fontSize={this.fontSize}
+              textAlign="bottom-left"
+              uiTransform={{
+                width: '100%',
+                height: this.fontSize * 1.2,
+                margin: { top: this.fontSize }
+              }}
+              color={ALMOST_BLACK}
+            />
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                flexDirection: 'row',
+                flexWrap: 'wrap'
+              }}
+            >
+              {this.tags.map((tag, index) => this.filterChip(tag, index))}
+            </UiEntity>
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                flexDirection: 'row',
+                margin: { top: this.fontSize }
+              }}
+            >
+              {this.infoDetail(
+                'LOCATION',
+                this.sceneCoords.x + ',' + this.sceneCoords.y,
+                {
+                  atlasName: 'icons',
+                  spriteName: 'PinIcn'
+                },
+                { width: '30%', height: 'auto' },
+                ALMOST_BLACK
+              )}
+              {this.infoDetail(
+                'PARCELS',
+                this.sceneParcels.toString(),
+                {
+                  atlasName: 'icons',
+                  spriteName: 'Parcels'
+                },
+                { width: '30%', height: 'auto' }
+              )}
+            </UiEntity>
+          </UiEntity>
         </UiEntity>
       </Canvas>
     )
@@ -193,6 +298,182 @@ export class SceneInfoCard {
           fontSize={this.fontSize}
           textAlign="middle-center"
           uiTransform={{ width: '100%' }}
+        />
+      </UiEntity>
+    )
+  }
+
+  infoDetail(
+    title: string,
+    value: string,
+    icon: Icon,
+    uiTransform: Partial<UiTransformProps>,
+    color?: Color4
+  ): ReactEcs.JSX.Element {
+    return (
+      <UiEntity
+        uiTransform={{
+          ...uiTransform,
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start'
+        }}
+      >
+        <Label
+          value={title}
+          fontSize={this.fontSize}
+          textAlign="middle-left"
+          uiTransform={{ width: '100%', height: this.fontSize * 1.2 }}
+          color={ALMOST_BLACK}
+        />
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            margin: { top: this.fontSize / 2 }
+          }}
+        >
+          <UiEntity
+            uiTransform={{
+              width: this.fontSize,
+              height: this.fontSize,
+              margin: { left: this.fontSize * 0.25 }
+            }}
+            uiBackground={
+              color !== undefined
+                ? { ...getBackgroundFromAtlas(icon), color }
+                : getBackgroundFromAtlas(icon)
+            }
+          />
+          <Label
+            value={value}
+            fontSize={this.fontSize}
+            textAlign="middle-left"
+            uiTransform={{ width: '70%', height: this.fontSize * 1.2 }}
+            color={ALMOST_BLACK}
+          />
+        </UiEntity>
+      </UiEntity>
+    )
+  }
+
+  filterChip(
+    type: SceneCategory,
+    index: string | number
+  ): ReactEcs.JSX.Element {
+    let title = ''
+    let spriteName = ''
+
+    switch (type) {
+      case 'game':
+        title = 'GAME'
+        spriteName = 'Games'
+        break
+      case 'favorites':
+        title = 'FAVORITES'
+        spriteName = 'Favourites'
+        break
+      case 'art':
+        title = 'ART'
+        spriteName = 'Art'
+        break
+      case 'crypto':
+        title = 'CRYPTO'
+        spriteName = 'Crypto'
+        break
+      case 'social':
+        title = 'SOCIAL'
+        spriteName = 'Social'
+        break
+      case 'shop':
+        title = 'SHOP'
+        spriteName = 'Shop'
+        break
+      case 'education':
+        title = 'EDUCATION'
+        spriteName = 'Education'
+        break
+      case 'music':
+        title = 'MUSIC'
+        spriteName = 'Music'
+        break
+      case 'fashion':
+        title = 'FASHION'
+        spriteName = 'Fashion'
+        break
+      case 'casino':
+        title = 'CASINO'
+        spriteName = 'Casino'
+        break
+      case 'sports':
+        title = 'SPORTS'
+        spriteName = 'Sports'
+        break
+      case 'business':
+        title = 'BUSINESS'
+        spriteName = 'Business'
+        break
+      case 'poi':
+        title = 'POINT OF INTEREST'
+        spriteName = 'POI'
+        break
+      default:
+        title = 'UNKNOWN'
+        spriteName = 'UnknownIcon'
+        break
+    }
+
+    return (
+      <UiEntity
+        key={index}
+        uiTransform={{
+          width: 'auto',
+          height: this.fontSize * 2,
+          flexDirection: 'row',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          margin: {
+            right: this.fontSize / 2,
+            top: this.fontSize / 4,
+            bottom: this.fontSize / 4
+          }
+        }}
+        uiBackground={{
+          color: DCL_SNOW,
+          textureMode: 'nine-slices',
+          texture: {
+            src: 'assets/images/backgrounds/rounded.png'
+          },
+          textureSlices: {
+            top: 0.5,
+            bottom: 0.5,
+            left: 0.5,
+            right: 0.5
+          }
+        }}
+      >
+        <UiEntity
+          uiTransform={{
+            width: this.fontSize * 1.5,
+            height: this.fontSize * 1.5,
+            margin: { right: this.fontSize / 4, left: this.fontSize / 4 }
+          }}
+          uiBackground={getBackgroundFromAtlas({
+            atlasName: 'map',
+            spriteName
+          })}
+        />
+        <Label
+          value={title}
+          fontSize={this.fontSize}
+          textAlign="middle-left"
+          textWrap="nowrap"
+          uiTransform={{
+            width: 'auto',
+            height: this.fontSize * 1.2,
+            margin: { right: this.fontSize / 4 }
+          }}
+          color={ALMOST_BLACK}
         />
       </UiEntity>
     )

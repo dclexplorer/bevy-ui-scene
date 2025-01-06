@@ -45,6 +45,13 @@ export const PANEL_BACKGROUND_COLOR: Color4 = Color4.create(
   1
 )
 
+export const DCL_SNOW: Color4 = Color4.create(
+  252 / 255,
+  252 / 255,
+  252 / 255,
+  1
+)
+
 export const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 // LINKS
