@@ -26,7 +26,7 @@ export class SceneInfoCard {
   public fontSize: number = 16
   public isFav: boolean = false
   public isLiked: boolean = false
-  public isUnliked: boolean = false
+  public isDisliked: boolean = false
   public favIcon: Icon = {
     atlasName: 'toggles',
     spriteName: 'HeartOffOutlined'
@@ -34,11 +34,11 @@ export class SceneInfoCard {
 
   public shareIcon: Icon = { atlasName: 'context', spriteName: 'Share' }
   public likeIcon: Icon = { atlasName: 'icons', spriteName: 'Like' }
-  public unlikeIcon: Icon = { atlasName: 'icons', spriteName: 'Dislike' }
+  public dislikeIcon: Icon = { atlasName: 'icons', spriteName: 'Dislike' }
   public closeBackground: Color4 | undefined
   public setFavBackgroundColor: Color4 = DCL_SNOW
   public likeBackgroundColor: Color4 = DCL_SNOW
-  public unlikeBackgroundColor: Color4 = DCL_SNOW
+  public dislikeBackgroundColor: Color4 = DCL_SNOW
   public shareBackgroundColor: Color4 = DCL_SNOW
 
   public selectedTab: 'overview' | 'photos' | 'events' = 'overview'
@@ -68,12 +68,10 @@ export class SceneInfoCard {
     this.uiController.sceneInfoCardVisible = false
   }
 
-  
-
   updateBackgrounds(): void {
     this.closeBackground = undefined
     this.likeBackgroundColor = DCL_SNOW
-    this.unlikeBackgroundColor = DCL_SNOW
+    this.dislikeBackgroundColor = DCL_SNOW
     this.shareBackgroundColor = DCL_SNOW
     this.setFavBackgroundColor = DCL_SNOW
   }
@@ -89,10 +87,10 @@ export class SceneInfoCard {
     } else {
       this.likeIcon.spriteName = 'Like'
     }
-    if (this.isUnliked) {
-      this.unlikeIcon.spriteName = 'Dislike solid'
+    if (this.isDisliked) {
+      this.dislikeIcon.spriteName = 'Dislike solid'
     } else {
-      this.unlikeIcon.spriteName = 'Dislike'
+      this.dislikeIcon.spriteName = 'Dislike'
     }
   }
 
@@ -103,17 +101,17 @@ export class SceneInfoCard {
 
   setLike(arg: boolean): void {
     if (arg) {
-      this.isUnliked = false
+      this.isDisliked = false
     }
     this.isLiked = arg
     this.updateIcons()
   }
 
-  setUnlike(arg: boolean): void {
+  setDislike(arg: boolean): void {
     if (arg) {
       this.isLiked = false
     }
-    this.isUnliked = arg
+    this.isDisliked = arg
     this.updateIcons()
   }
 
@@ -121,21 +119,19 @@ export class SceneInfoCard {
     this.selectedTab = tab
   }
 
-  onLikeEnter():void{
+  onLikeEnter(): void {
     this.likeBackgroundColor = SELECTED_BUTTON_COLOR
   }
 
-  onUnlikeEnter():void{
-    this.unlikeBackgroundColor = SELECTED_BUTTON_COLOR
+  onDislikeEnter(): void {
+    this.dislikeBackgroundColor = SELECTED_BUTTON_COLOR
   }
 
-  onFavEnter():void{
+  onFavEnter(): void {
     this.setFavBackgroundColor = SELECTED_BUTTON_COLOR
   }
 
-  onShareEnter():void{
-    
-  }
+  onShareEnter(): void {}
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
@@ -189,7 +185,6 @@ export class SceneInfoCard {
                 canvasInfo.height - 14.5 * this.fontSize - panelWidth * 0.75
             }}
             // uiBackground={{color:Color4.Red()}}
-
           >
             {this.selectedTab === 'overview' && this.overview()}
           </UiEntity>
@@ -437,26 +432,25 @@ export class SceneInfoCard {
           )}
         </UiEntity>
 
-        
-          <TextIconButton
-            uiTransform={{ width: '100%', height: 2 * this.fontSize }}
-            onMouseDown={() => {}}
-            value={'JUMP IN'}
-            backgroundColor={RUBY}
-            fontSize={this.fontSize}
-            iconSize={1.5 * this.fontSize}
-            icon={{
-              atlasName: 'map',
-              spriteName: 'JumpInOutline'
-            }}
-          />
-          <UiEntity
+        <TextIconButton
+          uiTransform={{ width: '100%', height: 2 * this.fontSize }}
+          onMouseDown={() => {}}
+          value={'JUMP IN'}
+          backgroundColor={RUBY}
+          fontSize={this.fontSize}
+          iconSize={1.5 * this.fontSize}
+          icon={{
+            atlasName: 'map',
+            spriteName: 'JumpInOutline'
+          }}
+        />
+        <UiEntity
           uiTransform={{
             width: '100%',
             height: 'auto',
             alignItems: 'center',
             justifyContent: 'space-between',
-            margin:{top:this.fontSize * 0.5}
+            margin: { top: this.fontSize * 0.5 }
           }}
         >
           <IconButton
@@ -468,9 +462,15 @@ export class SceneInfoCard {
             icon={this.likeIcon}
             backgroundColor={this.likeBackgroundColor}
             iconColor={this.isLiked ? RUBY : BLACK_TEXT}
-            onMouseEnter={()=> {this.onLikeEnter()}}
-            onMouseLeave={()=> {this.updateBackgrounds()}}
-            onMouseDown={()=>{this.setLike(!this.isLiked)}}
+            onMouseEnter={() => {
+              this.onLikeEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateBackgrounds()
+            }}
+            onMouseDown={() => {
+              this.setLike(!this.isLiked)
+            }}
           />
           <IconButton
             uiTransform={{
@@ -478,12 +478,18 @@ export class SceneInfoCard {
               height: this.fontSize * 2
             }}
             iconSize={this.fontSize * 1.5}
-            icon={this.unlikeIcon}
-            backgroundColor={this.unlikeBackgroundColor}
-            iconColor={this.isUnliked ? RUBY : BLACK_TEXT}
-            onMouseEnter={()=> {this.onUnlikeEnter()}}
-            onMouseLeave={()=> {this.updateBackgrounds()}}
-            onMouseDown={()=>{this.setUnlike(!this.isUnliked)}}
+            icon={this.dislikeIcon}
+            backgroundColor={this.dislikeBackgroundColor}
+            iconColor={this.isDisliked ? RUBY : BLACK_TEXT}
+            onMouseEnter={() => {
+              this.onDislikeEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateBackgrounds()
+            }}
+            onMouseDown={() => {
+              this.setDislike(!this.isDisliked)
+            }}
           />
           <IconButton
             uiTransform={{
@@ -494,9 +500,15 @@ export class SceneInfoCard {
             icon={this.favIcon}
             backgroundColor={this.setFavBackgroundColor}
             iconColor={this.isFav ? Color4.Red() : BLACK_TEXT}
-            onMouseEnter={()=> {this.onFavEnter()}}
-            onMouseLeave={()=> {this.updateBackgrounds()}}
-            onMouseDown={()=>{this.setFav(!this.isFav)}}
+            onMouseEnter={() => {
+              this.onFavEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateBackgrounds()
+            }}
+            onMouseDown={() => {
+              this.setFav(!this.isFav)
+            }}
           />
           <IconButton
             uiTransform={{

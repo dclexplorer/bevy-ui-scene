@@ -20,7 +20,7 @@ function IconButton(props: {
   uiTransform: UiTransformProps
   backgroundColor?: Color4
   icon: Icon
-  iconSize?: number,
+  iconSize?: number
   iconColor?: Color4
   hintText?: string
   showHint?: boolean
