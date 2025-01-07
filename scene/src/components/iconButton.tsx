@@ -20,6 +20,7 @@ function IconButton(props: {
   uiTransform: UiTransformProps
   backgroundColor?: Color4
   icon: Icon
+  iconSize?: number,
   iconColor?: Color4
   hintText?: string
   showHint?: boolean
@@ -66,8 +67,8 @@ function IconButton(props: {
 
       <UiEntity
         uiTransform={{
-          width: '70%',
-          height: '70%',
+          width: props.iconSize ?? '70%',
+          height: props.iconSize ?? '70%',
           flexDirection: 'row',
           alignItems: 'center'
         }}

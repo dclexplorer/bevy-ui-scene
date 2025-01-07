@@ -38,6 +38,15 @@ export const ALPHA_BLACK_NORMAL: Color4 = { ...Color4.Black(), a: 0.35 }
 export const ALPHA_BLACK_PANEL: Color4 = { ...Color4.Black(), a: 0.9 }
 export const UNSELECTED_TEXT_WHITE: Color4 = { ...ALMOST_WHITE, a: 0.5 }
 
+export const GRAY_TEXT: Color4 = Color4.create(
+  113 / 255,
+  107 / 255,
+  124 / 255,
+  1
+)
+
+export const BLACK_TEXT: Color4 = Color4.create(22 / 255, 21 / 255, 24 / 255, 1)
+
 export const PANEL_BACKGROUND_COLOR: Color4 = Color4.create(
   228 / 255,
   228 / 255,
