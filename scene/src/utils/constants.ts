@@ -1,5 +1,6 @@
 import { Color4 } from '@dcl/sdk/math'
-import { type Invitation, type Friend } from './definitions'
+import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
+import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)
@@ -35,6 +36,33 @@ export const SECONDARY_COLOR: Color4 = Color4.create(0, 0, 0, 0.2)
 export const LINK_CHIP_HOVERED: Color4 = { ...Color4.Teal(), a: 0.1 }
 export const ALPHA_BLACK_HOVERED: Color4 = { ...Color4.Black(), a: 0.7 }
 export const ALPHA_BLACK_NORMAL: Color4 = { ...Color4.Black(), a: 0.35 }
+export const ALPHA_BLACK_PANEL: Color4 = { ...Color4.Black(), a: 0.9 }
+export const UNSELECTED_TEXT_WHITE: Color4 = { ...ALMOST_WHITE, a: 0.5 }
+
+export const GRAY_TEXT: Color4 = Color4.create(
+  113 / 255,
+  107 / 255,
+  124 / 255,
+  1
+)
+
+export const BLACK_TEXT: Color4 = Color4.create(22 / 255, 21 / 255, 24 / 255, 1)
+
+export const PANEL_BACKGROUND_COLOR: Color4 = Color4.create(
+  228 / 255,
+  228 / 255,
+  228 / 255,
+  1
+)
+
+export const DCL_SNOW: Color4 = Color4.create(
+  252 / 255,
+  252 / 255,
+  252 / 255,
+  1
+)
+
+export const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
 // LINKS
 export const DCL_DAO_EXPLORERS_DS: string =
@@ -400,8 +428,6 @@ export const EMPLOYMENT_STATUS = [
   'Other'
 ]
 
-export const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
-
 export const TEST = ['- Select an option -', 'Test', 'Other']
 
 export const TEST_FRIENDS: Friend[] = [
@@ -443,3 +469,6 @@ export const TEST_INVITATIONS: Invitation[] = [
 
 export const LEFT_PANEL_MIN_WIDTH = 320
 export const LEFT_PANEL_WIDTH_FACTOR = 0.15
+
+export const HELP_URL: string = 'https://decentraland.org/help/'
+export const DCL_EXPLORER_URL: string = 'https://dclexplorer.com/'

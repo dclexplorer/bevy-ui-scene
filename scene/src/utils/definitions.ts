@@ -22,7 +22,7 @@ export type Sprite = {
   sourceSize: { w: number; h: number }
 }
 
-export type Icon = { atlasName: string; spriteName: string }
+export type AtlasIcon = { atlasName: Atlas; spriteName: string }
 
 export type ToggleType =
   | ['HeartOn', 'HeartOff']
@@ -55,15 +55,20 @@ export const INPUT_KEYS_ARRAY: SlotsInputs[] = [
   InputAction.IA_ACTION_6
 ]
 
-export type Message = { from: string; text: string }
-export type Friend = { id: string; status: 'online' | 'offline' }
-export type Invitation = {
-  id: string
-  status: 'sent' | 'received'
-  message: string
-  date: string
-}
-
+export type SceneCategory =
+  | 'favorites'
+  | 'art'
+  | 'crypto'
+  | 'social'
+  | 'game'
+  | 'shop'
+  | 'education'
+  | 'music'
+  | 'fashion'
+  | 'casino'
+  | 'sports'
+  | 'business'
+  | 'poi'
 export type Setting = {
   name: string
   category: string
@@ -73,3 +78,13 @@ export type Setting = {
   namedVariants: [{ name: string; description: string }]
   value: number
 }
+
+export type Atlas =
+  | 'profile'
+  | 'map'
+  | 'backpack'
+  | 'navbar'
+  | 'icons'
+  | 'context'
+  | 'toggles'
+  | 'voice-chat'
