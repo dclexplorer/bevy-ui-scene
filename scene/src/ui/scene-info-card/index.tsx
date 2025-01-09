@@ -17,9 +17,9 @@ import {
 } from '../../utils/constants'
 import type { Icon, SceneCategory } from '../../utils/definitions'
 import Canvas from '../canvas/canvas'
-import IconButton from '../../components/button-icon/ButtonIcon'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import TextIconButton from '../../components/textIconButton'
+import { ButtonIcon } from '../../components/button-icon'
+import { ButtonTextIcon } from '../../components/button-text-icon'
 
 export class SceneInfoCard {
   private readonly uiController: UIController
@@ -207,7 +207,7 @@ export class SceneInfoCard {
         }}
         uiBackground={{ color: { ...Color4.Black(), a: 0.8 } }}
       >
-        <IconButton
+        <ButtonIcon
           uiTransform={{
             height: this.fontSize * 1.5,
             width: this.fontSize * 1.5,
@@ -432,7 +432,7 @@ export class SceneInfoCard {
           )}
         </UiEntity>
 
-        <TextIconButton
+        <ButtonTextIcon
           uiTransform={{ width: '100%', height: 2 * this.fontSize }}
           onMouseDown={() => {}}
           value={'JUMP IN'}
@@ -453,7 +453,7 @@ export class SceneInfoCard {
             margin: { top: this.fontSize * 0.5 }
           }}
         >
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               width: '23%',
               height: this.fontSize * 2
@@ -472,7 +472,7 @@ export class SceneInfoCard {
               this.setLike(!this.isLiked)
             }}
           />
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               width: '23%',
               height: this.fontSize * 2
@@ -491,7 +491,7 @@ export class SceneInfoCard {
               this.setDislike(!this.isDisliked)
             }}
           />
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               width: '23%',
               height: this.fontSize * 2
@@ -510,7 +510,7 @@ export class SceneInfoCard {
               this.setFav(!this.isFav)
             }}
           />
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               width: '23%',
               height: this.fontSize * 2

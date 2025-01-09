@@ -6,9 +6,6 @@ import {
   engine
 } from '@dcl/sdk/ecs'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
-import Slider from '../../components/slider'
-import StyledDropdown from '../../components/styledDropdown'
-import TextIconButton from '../../components/textIconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   discardNewValues,
@@ -22,6 +19,9 @@ import {
   sliderPercentageToValue,
   sliderValueToPercentage
 } from '../../utils/ui-utils'
+import { ButtonTextIcon } from '../../components/button-text-icon'
+import { DropdownStyled } from '../../components/dropdown-styled'
+import { Slider } from '../../components/slider'
 
 type SettingCategory =
   | 'general'
@@ -333,7 +333,7 @@ export class SettingsPage {
               }}
             />
 
-            <TextIconButton
+            <ButtonTextIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -356,7 +356,7 @@ export class SettingsPage {
               backgroundColor={this.performanceBackgroundColor}
             />
 
-            <TextIconButton
+            <ButtonTextIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -379,7 +379,7 @@ export class SettingsPage {
               backgroundColor={this.graphicsBackgroundColor}
             />
 
-            <TextIconButton
+            <ButtonTextIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -402,7 +402,7 @@ export class SettingsPage {
               backgroundColor={this.audioBackgroundColor}
             />
 
-            <TextIconButton
+            <ButtonTextIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -432,7 +432,7 @@ export class SettingsPage {
               height: 'auto'
             }}
           >
-            <TextIconButton
+            <ButtonTextIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -541,7 +541,7 @@ export class SettingsPage {
                         this.dropdownIndexEntered = -1
                       }}
                     >
-                      <StyledDropdown
+                      <DropdownStyled
                         uiTransform={{ width: '100%' }}
                         options={setting.namedVariants.map(
                           (variant) => variant.name
@@ -556,11 +556,11 @@ export class SettingsPage {
                             this.dropdownOpenedSettingName = setting.name
                           }
                         }}
-                        onOptionMouseDown={(selectedIndex, title) => {
+                        onOptionMouseDown={(selectedIndex: number, title: string) => {
                           this.selectOption(selectedIndex, title)
                           this.dropdownOpenedSettingName = ''
                         }}
-                        onOptionMouseEnter={(selectedIndex) => {
+                        onOptionMouseEnter={(selectedIndex: number) => {
                           this.dropdownIndexEntered = selectedIndex
                           this.settingsInfoDescription =
                             setting.namedVariants[

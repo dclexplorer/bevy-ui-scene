@@ -1,7 +1,7 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import type { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Position, UiEntity } from '@dcl/sdk/react-ecs'
-import IconButton from '../../components/button-icon/ButtonIcon'
+import ButtonIcon from '../../components/button-icon/ButtonIcon'
 import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../canvas/canvas'
 // import { openExternalUrl } from '~system/RestrictedActions'
@@ -302,7 +302,7 @@ export class MainHud {
                 flexDirection: 'column'
               }}
             >
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   margin: { top: 5, bottom: 5 },
                   height: (canvasInfo.width * 2.1) / 100,
@@ -326,7 +326,7 @@ export class MainHud {
                 showHint={this.walletHint}
               />
 
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: (canvasInfo.width * 2.1) / 100,
                   minHeight: buttonSize,
@@ -355,7 +355,7 @@ export class MainHud {
                 uiBackground={{ color: SELECTED_BUTTON_COLOR }}
               />
 
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: (canvasInfo.width * 2.1) / 100,
                   minHeight: buttonSize,
@@ -378,7 +378,7 @@ export class MainHud {
                 hintText={'Map'}
                 showHint={this.mapHint}
               />
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: (canvasInfo.width * 2.1) / 100,
                   minHeight: buttonSize,
@@ -402,7 +402,7 @@ export class MainHud {
                 showHint={this.exploreHint}
               />
 
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: (canvasInfo.width * 2.1) / 100,
                   minHeight: buttonSize,
@@ -426,7 +426,7 @@ export class MainHud {
                 showHint={this.backpackHint}
               />
 
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: (canvasInfo.width * 2.1) / 100,
                   minHeight: buttonSize,
@@ -455,7 +455,7 @@ export class MainHud {
                 uiBackground={{ color: SELECTED_BUTTON_COLOR }}
               />
 
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: (canvasInfo.width * 2.1) / 100,
                   minHeight: buttonSize,
@@ -491,7 +491,7 @@ export class MainHud {
                 flexDirection: 'column'
               }}
             >
-              {/* <IconButton uiTransform={{height:buttonSize, width:buttonSize}}
+              {/* <ButtonIcon uiTransform={{height:buttonSize, width:buttonSize}}
                 onMouseEnter={()=>{this.cameraEnter()}}
                 onMouseLeave={()=>{this.cameraLeave()}}
                 onMouseDown={()=>{console.log('Camera clicked')}}
@@ -500,7 +500,7 @@ export class MainHud {
                 hintText={'Camera'}
                 showHint={this.cameraHint} />
 
-                <IconButton uiTransform={{height:buttonSize, width:buttonSize}}
+                <ButtonIcon uiTransform={{height:buttonSize, width:buttonSize}}
                 onMouseEnter={()=>{this.experiencesEnter()}}
                 onMouseLeave={()=>{this.updateButtons()}}
                 onMouseDown={()=>{console.log('clicked')}}
@@ -509,7 +509,7 @@ export class MainHud {
                 hintText={'Experiences'}
                 showHint={this.experiencesHint} />
               */}
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: buttonSize,
                   width: buttonSize,
@@ -533,7 +533,7 @@ export class MainHud {
                   this.uiController.friends.requestsNumber
                 }
               />
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: buttonSize,
                   width: buttonSize,
@@ -553,7 +553,7 @@ export class MainHud {
                 hintText={'Voice Chat'}
                 showHint={this.voiceChatHint}
               />
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: buttonSize,
                   width: buttonSize,
@@ -575,7 +575,7 @@ export class MainHud {
                 notifications={0}
               />
 
-              <IconButton
+              <ButtonIcon
                 uiTransform={{
                   height: (canvasInfo.width * 2.1) / 100,
                   minHeight: buttonSize,

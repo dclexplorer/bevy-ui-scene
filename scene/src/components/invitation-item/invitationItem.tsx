@@ -6,12 +6,10 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
-import {
-  getBackgroundFromAtlas,
-  truncateWithoutBreakingWords
-} from '../utils/ui-utils'
-import { type Invitation } from '../utils/definitions'
-import { ALMOST_WHITE } from '../utils/constants'
+import { ALMOST_WHITE } from '../../utils/constants'
+import type { Invitation } from '../../utils/definitions'
+import { getBackgroundFromAtlas, truncateWithoutBreakingWords } from '../../utils/ui-utils'
+
 
 function InvitationItem(props: {
   // Events

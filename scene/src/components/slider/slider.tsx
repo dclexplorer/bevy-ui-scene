@@ -5,7 +5,7 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { ALMOST_WHITE, RUBY } from '../utils/constants'
+import { ALMOST_WHITE, RUBY } from '../../utils/constants'
 import { Vector2 } from '@dcl/sdk/math'
 
 function Slider(props: {

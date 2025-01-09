@@ -1,8 +1,8 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-import IconButton from '../../components/button-icon/ButtonIcon'
-import TextIconButton from '../../components/textIconButton'
+import ButtonIcon from '../../components/button-icon/ButtonIcon'
+import { ButtonTextIcon } from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_BLACK } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
@@ -141,7 +141,7 @@ export class MainMenu {
                 flexDirection: 'row'
               }}
             >
-              <TextIconButton
+              <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
@@ -164,7 +164,7 @@ export class MainMenu {
                 direction={'column'}
               />
 
-              <TextIconButton
+              <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
@@ -187,7 +187,7 @@ export class MainMenu {
                 direction={'column'}
               />
 
-              <TextIconButton
+              <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
@@ -210,7 +210,7 @@ export class MainMenu {
                 direction={'column'}
               />
 
-              <TextIconButton
+              <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
@@ -260,7 +260,7 @@ export class MainMenu {
             }}
           >
             {this.profileButton.mainUi()}
-            <IconButton
+            <ButtonIcon
               onMouseEnter={() => {
                 this.closeButtonColor = ALMOST_BLACK
               }}

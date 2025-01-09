@@ -3,9 +3,9 @@ import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
 // import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
-import ArrowToast from '../../components/arrowToast'
-import TextButton from '../../components/button-text/ButtonText'
-import TextIconButton from '../../components/textIconButton'
+import {ArrowToast} from '../../components/arrow-toast'
+import {ButtonText} from '../../components/button-text'
+import {ButtonTextIcon} from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
@@ -362,7 +362,7 @@ export class LoadingUI {
                     // uiBackground={{ color: Color4.Red() }}
                   >
                     {/* BACK BUTTON */}
-                    <TextIconButton
+                    <ButtonTextIcon
                       uiTransform={{
                         margin: 0,
                         display: this.isBackButtonVisible ? 'flex' : 'none',
@@ -564,7 +564,7 @@ export class LoadingUI {
 
                       {/* FIRST BUTTON */}
                       {this.isFirstButtonVisible && (
-                        <TextButton
+                        <ButtonText
                           uiTransform={{
                             width: BUTTON_WIDTH,
                             padding: BUTTON_FONT_SIZE * 0.3,
@@ -586,7 +586,7 @@ export class LoadingUI {
 
                       {/* SECOND BUTTON */}
                       {this.isSecondButtonVisible && (
-                        <TextButton
+                        <ButtonText
                           uiTransform={{
                             width: BUTTON_WIDTH,
                             padding: BUTTON_FONT_SIZE * 0.3,

@@ -6,7 +6,7 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { getBackgroundFromAtlas } from '../utils/ui-utils'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 function FriendItem(props: {
   // Events

@@ -1,10 +1,10 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Input, UiEntity } from '@dcl/sdk/react-ecs'
-// import IconButton from '../../components/iconButton'
+// import ButtonIcon from '../../components/ButtonIcon'
 import { getPlayer } from '@dcl/sdk/src/players'
-import ChatMessage from '../../components/chatMessage'
-import IconButton from '../../components/button-icon/ButtonIcon'
+import {ChatMessage} from '../../components/chat-message'
+import ButtonIcon from '../../components/button-icon/ButtonIcon'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_WHITE,
@@ -129,7 +129,7 @@ export class ChatAndLogs {
             }}
           />
 
-          <IconButton
+          <ButtonIcon
             onMouseDown={() => {
               this.handleSubmitMessage(this.inputValue)
               this.inputValue = ''
@@ -140,7 +140,7 @@ export class ChatAndLogs {
             }}
             icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
           />
-          <IconButton
+          <ButtonIcon
             onMouseDown={() => {
               this.handleSubmitMessageFromOther(this.inputValue)
               this.inputValue = ''
@@ -151,7 +151,7 @@ export class ChatAndLogs {
             }}
             icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
           />
-          <IconButton
+          <ButtonIcon
             onMouseDown={() => {
               this.handleSubmitMessageFromDcl(this.inputValue)
               this.inputValue = ''

@@ -1,8 +1,8 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Callback, Label, UiEntity } from '@dcl/sdk/react-ecs'
-import IconButton from '../../components/button-icon/ButtonIcon'
-import TextButton from '../../components/button-text/ButtonText'
+import ButtonIcon from '../../components/button-icon/ButtonIcon'
+import ButtonText from '../../components/button-text/ButtonText'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
@@ -195,7 +195,7 @@ export class ActionPopUp {
                 />
 
                 {/* CLOSE BUTTON */}
-                <IconButton
+                <ButtonIcon
                   uiTransform={{
                     height: 2 * this.fontSize,
                     width: 2 * this.fontSize
@@ -253,7 +253,7 @@ export class ActionPopUp {
                 justifyContent: 'space-between'
               }}
             >
-              <TextButton
+              <ButtonText
                 uiTransform={{
                   width: '47.5%',
                   height: 'auto'
@@ -271,7 +271,7 @@ export class ActionPopUp {
                 value={this.cancelText ?? 'CANCEL'}
                 fontSize={this.fontSize * 0.8}
               />
-              <TextButton
+              <ButtonText
                 uiTransform={{
                   width: '47.5%',
                   height: 'auto'

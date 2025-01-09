@@ -1,7 +1,7 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import type { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
-// import IconButton from '../../components/iconButton'
+// import ButtonIcon from '../../components/ButtonIcon'
 import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../canvas/canvas'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
@@ -14,7 +14,7 @@ import {
   UNSELECTED_TEXT_WHITE
 } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
-import IconButton from '../../components/button-icon/ButtonIcon'
+import ButtonIcon from '../../components/button-icon/ButtonIcon'
 
 export class SceneInfo {
   private readonly uiController: UIController
@@ -252,7 +252,7 @@ export class SceneInfo {
               flexDirection: 'row'
             }}
           >
-            <IconButton
+            <ButtonIcon
               onMouseDown={() => {
                 this.setExpanded(!this.isExpanded)
                 this.setLoading(!this.isExpanded)
@@ -341,7 +341,7 @@ export class SceneInfo {
                   }}
                 />
 
-                <IconButton
+                <ButtonIcon
                   uiTransform={{
                     display:
                       this.isWarningScene !== undefined ? 'flex' : 'none',
@@ -361,7 +361,7 @@ export class SceneInfo {
                   hintFontSize={this.fontSize * 0.75}
                 />
 
-                <IconButton
+                <ButtonIcon
                   uiTransform={{
                     display: this.flag !== undefined ? 'flex' : 'none',
                     width: this.fontSize * 1.2,
@@ -379,7 +379,7 @@ export class SceneInfo {
                   showHint={this.isFlagHintVisible}
                   hintFontSize={this.fontSize * 0.75}
                 />
-                <IconButton
+                <ButtonIcon
                   uiTransform={{
                     display: this.isSceneLoading ? 'flex' : 'none',
                     width: this.fontSize * 1.2,
@@ -400,7 +400,7 @@ export class SceneInfo {
               </UiEntity>
             </UiEntity>
 
-            <IconButton
+            <ButtonIcon
               onMouseDown={() => {
                 this.setMenuOpen(!this.isMenuOpen)
               }}

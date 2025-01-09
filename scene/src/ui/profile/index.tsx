@@ -2,12 +2,6 @@ import { Label } from '@dcl/react-ecs/dist/components/Label'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-import ChipButton from '../../components/chipButton'
-import DropdownField from '../../components/dropdownField'
-import IconButton from '../../components/button-icon/ButtonIcon'
-import InputField from '../../components/inputField'
-import TextButton from '../../components/button-text/ButtonText'
-import TextIconButton from '../../components/textIconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
@@ -28,6 +22,12 @@ import { getBackgroundFromAtlas, isValidDate } from '../../utils/ui-utils'
 import { AddLink } from '../add-link'
 import Canvas from '../canvas/canvas'
 import { BevyApi } from '../../bevy-api'
+import { ButtonTextIcon } from '../../components/button-text-icon'
+import { ButtonText } from '../../components/button-text'
+import { DropdownField } from '../../components/dropdown-field'
+import { InputField } from '../../components/input-field'
+import { ButtonIcon } from '../../components/button-icon'
+import { ButtonChip } from '../../components/button-chip'
 
 export class Profile {
   private savedIntro: string = ''
@@ -392,7 +392,7 @@ export class Profile {
                 />
               )}
             </UiEntity>
-            <TextButton
+            <ButtonText
               onMouseDown={() => {
                 this.showProfile()
               }}
@@ -411,7 +411,7 @@ export class Profile {
               uiTransform={{ margin: '5%', width: '100%', height: 1 }}
               uiBackground={{ color: { ...Color4.White(), a: 0.1 } }}
             />
-            <TextIconButton
+            <ButtonTextIcon
               onMouseDown={() => {
                 void this.logout()
               }}
@@ -427,7 +427,7 @@ export class Profile {
                 spriteName: 'LogoutIcon'
               }}
             />
-            <TextIconButton
+            <ButtonTextIcon
               onMouseDown={() => {}}
               uiTransform={{
                 width: '90%',
@@ -676,7 +676,7 @@ export class Profile {
                 // uiBackground={{color:Color4.Yellow()}}
               >
                 <UiEntity>
-                  <TextButton
+                  <ButtonText
                     onMouseDown={() => {
                       this.updatePage('overview')
                     }}
@@ -689,7 +689,7 @@ export class Profile {
                       margin: this.fontSize * 0.3
                     }}
                   />
-                  {/* <TextButton
+                  {/* <ButtonText
                       onMouseDown={() => {
                         this.updatePage('badges')
                       }}
@@ -699,7 +699,7 @@ export class Profile {
                       backgroundColor={this.badgesBackground}
                     /> */}
                 </UiEntity>
-                <IconButton
+                <ButtonIcon
                   onMouseEnter={() => {
                     this.closeButtonColor = { ...Color4.Black(), a: 0.7 }
                   }}
@@ -784,7 +784,7 @@ export class Profile {
                       >
                         <Label value={'INFO'} fontSize={this.fontSize} />
                         {!this.isInfoEditing && (
-                          <IconButton
+                          <ButtonIcon
                             onMouseEnter={() => {
                               this.editInfoButtonColor = {
                                 ...Color4.Black(),
@@ -830,7 +830,7 @@ export class Profile {
                             bottom: this.fontSize
                           }
                         }}
-                        onValueUpdate={(arg) => {
+                        onValueUpdate={(arg: string) => {
                           this.typedIntro = arg
                         }}
                         title={''}
@@ -886,7 +886,7 @@ export class Profile {
                           onMouseDown={() => {
                             this.isGenderOpen = !this.isGenderOpen
                           }}
-                          onOptionMouseDown={(index) => {
+                          onOptionMouseDown={(index: number) => {
                             this.selectedGender = index
                             this.isGenderOpen = false
                           }}
@@ -915,7 +915,7 @@ export class Profile {
                           onMouseDown={() => {
                             this.isCountryOpen = !this.isCountryOpen
                           }}
-                          onOptionMouseDown={(index) => {
+                          onOptionMouseDown={(index: number) => {
                             this.selectedCountry = index
                             this.isCountryOpen = false
                           }}
@@ -935,7 +935,7 @@ export class Profile {
                               bottom: this.fontSize
                             }
                           }}
-                          onValueUpdate={(arg) => {
+                          onValueUpdate={(arg: string) => {
                             this.typedBirth = arg
                           }}
                           title={'BIRTH DATE'}
@@ -969,7 +969,7 @@ export class Profile {
                           onMouseDown={() => {
                             this.isPronounsOpen = !this.isPronounsOpen
                           }}
-                          onOptionMouseDown={(index) => {
+                          onOptionMouseDown={(index: number) => {
                             this.selectedPronouns = index
                             this.isPronounsOpen = false
                           }}
@@ -999,7 +999,7 @@ export class Profile {
                             this.isRelationshipStatusOpen =
                               !this.isRelationshipStatusOpen
                           }}
-                          onOptionMouseDown={(index) => {
+                          onOptionMouseDown={(index: number) => {
                             this.selectedRelationshipStatus = index
                             this.isRelationshipStatusOpen = false
                           }}
@@ -1029,7 +1029,7 @@ export class Profile {
                             this.isSexualOrientationOpen =
                               !this.isSexualOrientationOpen
                           }}
-                          onOptionMouseDown={(index) => {
+                          onOptionMouseDown={(index: number) => {
                             this.selectedSexualOrientation = index
                             this.isSexualOrientationOpen = false
                           }}
@@ -1058,7 +1058,7 @@ export class Profile {
                           onMouseDown={() => {
                             this.isLanguageOpen = !this.isLanguageOpen
                           }}
-                          onOptionMouseDown={(index) => {
+                          onOptionMouseDown={(index: number) => {
                             this.selectedLanguage = index
                             this.isLanguageOpen = false
                           }}
@@ -1079,7 +1079,7 @@ export class Profile {
                               bottom: this.fontSize
                             }
                           }}
-                          onValueUpdate={(arg) => {
+                          onValueUpdate={(arg: string) => {
                             this.typedProfession = arg
                           }}
                           title={'PROFESSION'}
@@ -1113,7 +1113,7 @@ export class Profile {
                             this.isEmploymentStatusOpen =
                               !this.isEmploymentStatusOpen
                           }}
-                          onOptionMouseDown={(index) => {
+                          onOptionMouseDown={(index: number) => {
                             this.selectedEmploymentStatus = index
                             this.isEmploymentStatusOpen = false
                           }}
@@ -1133,7 +1133,7 @@ export class Profile {
                               bottom: this.fontSize
                             }
                           }}
-                          onValueUpdate={(arg) => {
+                          onValueUpdate={(arg: string) => {
                             this.typedHobbie = arg
                           }}
                           title={'HOBBIES'}
@@ -1157,7 +1157,7 @@ export class Profile {
                               bottom: this.fontSize
                             }
                           }}
-                          onValueUpdate={(arg) => {
+                          onValueUpdate={(arg: string) => {
                             this.typedRealName = arg
                           }}
                           title={'REAL NAME'}
@@ -1195,7 +1195,7 @@ export class Profile {
                             color: { ...ALMOST_WHITE, a: 0.2 }
                           }}
                         />
-                        <TextButton
+                        <ButtonText
                           onMouseEnter={() => {
                             this.cancelInfoButtonColor = {
                               ...Color4.Black(),
@@ -1222,7 +1222,7 @@ export class Profile {
                           value={'CANCEL'}
                           fontSize={this.fontSize}
                         />
-                        <TextButton
+                        <ButtonText
                           onMouseEnter={() => {
                             this.saveInfoButtonColor = {
                               ...RUBY,
@@ -1261,7 +1261,7 @@ export class Profile {
                       >
                         <Label value={'LINKS'} fontSize={this.fontSize} />
                         {!this.isLinkEditing && (
-                          <IconButton
+                          <ButtonIcon
                             onMouseEnter={() => {
                               this.editLinksButtonColor = {
                                 ...Color4.Black(),
@@ -1336,7 +1336,7 @@ export class Profile {
                               }}
                             >
                               {this.linksToShow.map((link, index) => (
-                                <ChipButton
+                                <ButtonChip
                                   onMouseDown={() => {}}
                                   onMouseEnter={() => {
                                     this.linkChipsBackgrounds[index] =
@@ -1380,7 +1380,7 @@ export class Profile {
                             </UiEntity>
                             {this.isLinkEditing &&
                               this.linksToShow.length < 5 && (
-                                <TextButton
+                                <ButtonText
                                   uiTransform={{
                                     height: this.fontSize * 1.5,
                                     width: 5 * this.fontSize,
@@ -1433,7 +1433,7 @@ export class Profile {
                             color: { ...ALMOST_WHITE, a: 0.2 }
                           }}
                         />
-                        <TextButton
+                        <ButtonText
                           onMouseEnter={() => {
                             this.cancelLinksButtonColor = {
                               ...Color4.Black(),
@@ -1464,7 +1464,7 @@ export class Profile {
                           value={'CANCEL'}
                           fontSize={this.fontSize}
                         />
-                        <TextButton
+                        <ButtonText
                           onMouseEnter={() => {
                             this.saveLinksButtonColor = {
                               ...RUBY,

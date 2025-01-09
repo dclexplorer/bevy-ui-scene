@@ -6,7 +6,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import type { Icon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import IconButton from '../button-icon/ButtonIcon'
+import ButtonIcon from '../button-icon/ButtonIcon'
 
 
 function ButtonChip(props: {
@@ -81,7 +81,7 @@ function ButtonChip(props: {
 
       {/* DELETE ICON */}
       {props.isRemovable && (
-        <IconButton
+        <ButtonIcon
           onMouseDown={() => {
             props.deleteChip()
           }}

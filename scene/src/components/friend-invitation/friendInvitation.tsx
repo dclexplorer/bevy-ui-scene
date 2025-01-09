@@ -4,7 +4,7 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { getBackgroundFromAtlas } from '../utils/ui-utils'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 function FriendInvitation(props: {
   // Events

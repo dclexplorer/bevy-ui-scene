@@ -1,7 +1,7 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Input, Label, UiEntity } from '@dcl/sdk/react-ecs'
-import TextButton from '../../components/button-text/ButtonText'
+import ButtonText from '../../components/button-text/ButtonText'
 import { type UIController } from '../../controllers/ui.controller'
 import { RUBY } from '../../utils/constants'
 import { isValidURL } from '../../utils/ui-utils'
@@ -173,7 +173,7 @@ export class AddLink {
               margin: { top: this.fontSize }
             }}
           >
-            <TextButton
+            <ButtonText
               onMouseEnter={() => {
                 this.cancelButtonColor = {
                   ...Color4.Black(),
@@ -197,7 +197,7 @@ export class AddLink {
               value={'CANCEL'}
               fontSize={this.fontSize}
             />
-            <TextButton
+            <ButtonText
               onMouseEnter={() => {
                 this.onSaveEnter()
               }}

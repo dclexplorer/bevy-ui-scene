@@ -4,16 +4,12 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import {
-  ALMOST_BLACK,
-  ALMOST_WHITE,
-  CLICKED_PRIMARY_COLOR,
-  ORANGE
-} from '../utils/constants'
-import { getBackgroundFromAtlas } from '../utils/ui-utils'
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 
-function StyledDropdown(props: {
+import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { ALMOST_WHITE, ALMOST_BLACK, CLICKED_PRIMARY_COLOR, ORANGE } from '../../utils/constants'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+
+function DropdownStyled(props: {
   isOpen: boolean
   // Events
   onMouseDown: Callback
@@ -246,4 +242,4 @@ function StyledDropdown(props: {
   )
 }
 
-export default StyledDropdown
+export default DropdownStyled

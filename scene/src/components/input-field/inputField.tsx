@@ -3,9 +3,9 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { ALMOST_WHITE } from '../utils/constants'
-import { type Icon } from '../utils/definitions'
-import { getBackgroundFromAtlas } from '../utils/ui-utils'
+import { ALMOST_WHITE } from '../../utils/constants'
+import { type Icon } from '../../utils/definitions'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { type Color4 } from '@dcl/sdk/math'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 

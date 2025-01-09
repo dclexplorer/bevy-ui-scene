@@ -1,10 +1,10 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
-// import IconButton from '../../components/iconButton'
-import FriendItem from '../../components/friendItem'
-import IconButton from '../../components/button-icon/ButtonIcon'
-import InvitationItem from '../../components/invitationItem'
+// import ButtonIcon from '../../components/ButtonIcon'
+import {FriendItem} from '../../components/friend-item'
+import ButtonIcon from '../../components/button-icon/ButtonIcon'
+import {InvitationItem} from '../../components/invitation-item'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_WHITE,
@@ -655,7 +655,7 @@ export class Friends {
             }
           }}
         >
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               margin: 2,
               height: 2 * this.fontSize,
@@ -675,7 +675,7 @@ export class Friends {
             hintText={'Message'}
             showHint={this.messageHint}
           />
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               margin: { top: 5, bottom: 5 },
               height: 2 * this.fontSize,
@@ -695,7 +695,7 @@ export class Friends {
             hintText={'View Profile'}
             showHint={this.profileHint}
           />
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               margin: { top: 5, bottom: 5 },
               height: 2 * this.fontSize,
@@ -715,7 +715,7 @@ export class Friends {
             hintText={'Unfriend'}
             showHint={this.unfriendHint}
           />
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               margin: { top: 5, bottom: 5 },
               height: 2 * this.fontSize,

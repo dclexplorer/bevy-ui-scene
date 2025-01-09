@@ -2,8 +2,8 @@ import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
-import IconButton from '../../components/button-icon/ButtonIcon'
-import TextButton from '../../components/button-text/ButtonText'
+import ButtonIcon from '../../components/button-icon/ButtonIcon'
+import ButtonText from '../../components/button-text/ButtonText'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   RUBY,
@@ -162,7 +162,7 @@ export class InvitationPopUp {
               textAlign="middle-left"
             />
           </UiEntity>
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               height: 2 * this.fontSize,
               width: 2 * this.fontSize
@@ -216,7 +216,7 @@ export class InvitationPopUp {
               uiTransform={{ height: this.fontSize * 1.2 }}
             />
           </UiEntity>
-          <IconButton
+          <ButtonIcon
             uiTransform={{
               margin: { top: 5, bottom: 5 },
               height: 2 * this.fontSize,
@@ -285,7 +285,7 @@ export class InvitationPopUp {
             flexGrow: 1
           }}
         >
-          <TextButton
+          <ButtonText
             uiTransform={{
               width: '47.5%',
               height: 'auto'
@@ -303,7 +303,7 @@ export class InvitationPopUp {
             value={'REJECT'}
             fontSize={this.fontSize * 0.8}
           />
-          <TextButton
+          <ButtonText
             uiTransform={{
               width: '47.5%',
               height: 'auto'
@@ -332,7 +332,7 @@ export class InvitationPopUp {
             flexGrow: 1
           }}
         >
-          <TextButton
+          <ButtonText
             uiTransform={{
               width: '100%',
               height: 'auto'
