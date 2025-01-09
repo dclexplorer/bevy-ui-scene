@@ -74,7 +74,7 @@ function ButtonText(props: {
             }}
             uiBackground={{
               textureMode: 'stretch',
-              texture: { src: 'assets/images/Spinner.png' }
+              texture: { src: 'assets/images/spinner.png' }
             }}
           />
         )}

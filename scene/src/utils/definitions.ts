@@ -55,8 +55,6 @@ export const INPUT_KEYS_ARRAY: SlotsInputs[] = [
   InputAction.IA_ACTION_6
 ]
 
-export type Message = { from: string; text: string }
-export type Friend = { id: string; status: 'online' | 'offline' }
 export type Invitation = {
   id: string
   status: 'sent' | 'received'

@@ -1,18 +1,18 @@
 import ReactEcs, { ReactEcsRenderer, UiEntity } from '@dcl/sdk/react-ecs'
-import { LoadingUI } from '../ui/loading-and-login/loading'
-import { MainHud } from '../ui/main-hud'
-import { MainMenu } from '../ui/menu'
 import { type GameController } from './game.controller'
-import { BackpackPage } from '../ui/backpack-page'
-import { MapPage } from '../ui/map-page'
-import { SettingsPage } from '../ui/settings-page'
-import { ProfileButton } from '../ui/profile-button'
-import { Profile } from '../ui/profile'
-import { ExplorePage } from '../ui/explore-page'
-import { Friends } from '../ui/main-hud/friends'
-import { ActionPopUp } from '../ui/main-hud/actionPopUp'
-import { SceneInfoCard } from '../ui/scene-info-card'
-import { WarningPopUp } from '../ui/main-hud/warningPopUp'
+import { BackpackPage } from '../ui-classes/main-menu/backpack-page'
+import { ProfileButton } from '../ui-classes/profile/profile-button'
+import { Profile } from '../ui-classes/profile'
+import { MainHud } from '../ui-classes/main-hud'
+import { Friends } from '../ui-classes/main-hud/friends'
+import { MainMenu } from '../ui-classes/main-menu'
+import { ExplorePage } from '../ui-classes/main-menu/explore-page'
+import { MapPage } from '../ui-classes/main-menu/map-page'
+import { SettingsPage } from '../ui-classes/main-menu/settings-page'
+import { LoadingAndLogin } from '../ui-classes/loading-and-login'
+import { PopUpAction } from '../ui-classes/main-hud/pop-up-action'
+import { PopUpWarning } from '../ui-classes/main-hud/pop-up-warning'
+import { SceneInfoCard } from '../ui-classes/scene-info-card'
 
 export class UIController {
   public isMainMenuVisible: boolean = false
@@ -29,17 +29,17 @@ export class UIController {
   profileButton: ProfileButton
   profile: Profile
   friends: Friends
-  loadingAndLogin: LoadingUI
+  loadingAndLogin: LoadingAndLogin
   gameController: GameController
   mainHud: MainHud
   menu: MainMenu
-  actionPopUp: ActionPopUp
+  actionPopUp: PopUpAction
   sceneCard: SceneInfoCard
-  warningPopUp: WarningPopUp
+  warningPopUp: PopUpWarning
 
   constructor(gameController: GameController) {
     this.gameController = gameController
-    this.loadingAndLogin = new LoadingUI(this)
+    this.loadingAndLogin = new LoadingAndLogin(this)
     this.mainHud = new MainHud(this)
     this.menu = new MainMenu(this)
     this.settingsPage = new SettingsPage(this)
@@ -49,9 +49,9 @@ export class UIController {
     this.profileButton = new ProfileButton(this)
     this.profile = new Profile(this)
     this.friends = new Friends(this)
-    this.actionPopUp = new ActionPopUp(this)
+    this.actionPopUp = new PopUpAction(this)
     this.sceneCard = new SceneInfoCard(this)
-    this.warningPopUp = new WarningPopUp(this)
+    this.warningPopUp = new PopUpWarning(this)
 
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }

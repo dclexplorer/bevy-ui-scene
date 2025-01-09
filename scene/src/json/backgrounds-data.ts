@@ -16,21 +16,21 @@ export const backgroundsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 24, h: 24 },
       sourceSize: { w: 24, h: 24 }
     },
-    'roundedLeft.png': {
+    'rounded-left.png': {
       frame: { x: 48, y: 0, w: 24, h: 24 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 24, h: 24 },
       sourceSize: { w: 24, h: 24 }
     },
-    'roundedRight.png': {
+    'rounded-right.png': {
       frame: { x: 72, y: 0, w: 24, h: 24 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 24, h: 24 },
       sourceSize: { w: 24, h: 24 }
     },
-    'roundedTop.png': {
+    'rounded-top.png': {
       frame: { x: 96, y: 0, w: 24, h: 24 },
       rotated: false,
       trimmed: false,

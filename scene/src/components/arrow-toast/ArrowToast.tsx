@@ -50,7 +50,7 @@ function ArrowToast(props: {
           color: Color4.Black(),
           textureMode: 'stretch',
           texture: {
-            src: 'assets/images/toastArrow.png'
+            src: 'assets/images/toast-arrow.png'
           }
         }}
       />
