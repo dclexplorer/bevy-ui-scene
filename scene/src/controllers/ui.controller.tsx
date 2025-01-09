@@ -19,7 +19,7 @@ export class UIController {
   public isProfileVisible: boolean = false
   public isFriendsVisible: boolean = false
   public actionPopUpVisible: boolean = false
-  public sceneInfoCardVisible: boolean = true
+  public sceneInfoCardVisible: boolean = false
   public warningPopUpVisible: boolean = false
   public settingsPage: SettingsPage
   public backpackPage: BackpackPage
