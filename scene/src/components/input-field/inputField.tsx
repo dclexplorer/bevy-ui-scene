@@ -19,12 +19,12 @@ function InputField(props: {
   title: string
   value: string
   placeholder: string
-  icon: AtlasIcon
   fontSize: number
-  fontColor?: Color4
-  iconColor?: Color4
   savedValue: string
   isEditing: boolean
+  icon?: AtlasIcon
+  fontColor?: Color4
+  iconColor?: Color4
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -52,17 +52,19 @@ function InputField(props: {
         }}
       >
         {/* ICON */}
-        <UiEntity
-          uiTransform={{
-            width: props.fontSize * 1.2,
-            height: props.fontSize * 1.2,
-            margin: { right: -props.fontSize * 0.5 }
-          }}
-          uiBackground={{
-            ...getBackgroundFromAtlas(props.icon),
-            color: ALMOST_WHITE
-          }}
-        />
+        {props.icon !== undefined ?? (
+          <UiEntity
+            uiTransform={{
+              width: props.fontSize * 1.2,
+              height: props.fontSize * 1.2,
+              margin: { right: -props.fontSize * 0.5 }
+            }}
+            uiBackground={{
+              ...getBackgroundFromAtlas(props.icon),
+              color: ALMOST_WHITE
+            }}
+          />
+        )}
 
         {/* Title */}
         <UiEntity

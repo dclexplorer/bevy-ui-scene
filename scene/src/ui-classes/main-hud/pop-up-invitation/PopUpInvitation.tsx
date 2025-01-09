@@ -178,7 +178,7 @@ export default class PopUpInvitation {
               this.updateButtons()
             }}
             backgroundColor={this.closeBackground}
-            icon={{ atlasName: 'icons', spriteName: 'CloseAtlasIcon' }}
+            icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
           />
         </UiEntity>
 
@@ -204,7 +204,7 @@ export default class PopUpInvitation {
                   ? { avatarTexture: { userId: this.invitation.id } }
                   : getBackgroundFromAtlas({
                       atlasName: 'icons',
-                      spriteName: 'DdlAtlasIconColor'
+                      spriteName: 'DdlIconColor'
                     })
               }
             />

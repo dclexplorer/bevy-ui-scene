@@ -2,7 +2,7 @@ import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
 import ButtonIcon from '../../components/button-icon/ButtonIcon'
-import { ButtonTextAtlasIcon } from '../../components/button-text-icon'
+import { ButtonTextIcon } from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_BLACK } from '../../utils/constants'
 import { type AtlasIcon } from '../../utils/definitions'
@@ -16,22 +16,22 @@ export default class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
   private readonly uiController: UIController
   private readonly profileButton: ProfileButton
-  readonly backpackAtlasIcon: AtlasIcon = {
+  readonly backpackIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'
   }
 
-  readonly mapAtlasIcon: AtlasIcon = {
+  readonly mapIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Map off'
   }
 
-  readonly exploreAtlasIcon: AtlasIcon = {
+  readonly exploreIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Explore off'
   }
 
-  readonly settingsAtlasIcon: AtlasIcon = {
+  readonly settingsIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Settings off'
   }
@@ -49,22 +49,22 @@ export default class MainMenu {
   }
 
   mapEnter(): void {
-    this.mapAtlasIcon.spriteName = 'Map on'
+    this.mapIcon.spriteName = 'Map on'
     this.mapBackground = SELECTED_BUTTON_COLOR
   }
 
   backpackEnter(): void {
-    this.backpackAtlasIcon.spriteName = 'Backpack on'
+    this.backpackIcon.spriteName = 'Backpack on'
     this.backpackBackground = SELECTED_BUTTON_COLOR
   }
 
   exploreEnter(): void {
-    this.exploreAtlasIcon.spriteName = 'Explore on'
+    this.exploreIcon.spriteName = 'Explore on'
     this.exploreBackground = SELECTED_BUTTON_COLOR
   }
 
   settingsEnter(): void {
-    this.settingsAtlasIcon.spriteName = 'Settings on'
+    this.settingsIcon.spriteName = 'Settings on'
     this.settingsBackground = SELECTED_BUTTON_COLOR
   }
 
@@ -81,13 +81,13 @@ export default class MainMenu {
   }
 
   updateButtons(): void {
-    this.settingsAtlasIcon.spriteName = 'Settings off'
+    this.settingsIcon.spriteName = 'Settings off'
     this.settingsBackground = undefined
-    this.backpackAtlasIcon.spriteName = 'Backpack off'
+    this.backpackIcon.spriteName = 'Backpack off'
     this.backpackBackground = undefined
-    this.mapAtlasIcon.spriteName = 'Map off'
+    this.mapIcon.spriteName = 'Map off'
     this.mapBackground = undefined
-    this.exploreAtlasIcon.spriteName = 'Explore off'
+    this.exploreIcon.spriteName = 'Explore off'
     this.exploreBackground = undefined
     switch (this.activePage) {
       case 'settings':
@@ -145,7 +145,7 @@ export default class MainMenu {
                 flexDirection: 'row'
               }}
             >
-              <ButtonTextAtlasIcon
+              <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
@@ -161,14 +161,14 @@ export default class MainMenu {
                   this.show('map')
                 }}
                 backgroundColor={this.mapBackground}
-                icon={this.mapAtlasIcon}
+                icon={this.mapIcon}
                 value={'MAP [M]'}
                 fontSize={10}
                 iconSize={50}
                 direction={'column'}
               />
 
-              <ButtonTextAtlasIcon
+              <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
@@ -184,14 +184,14 @@ export default class MainMenu {
                   this.show('explore')
                 }}
                 backgroundColor={this.exploreBackground}
-                icon={this.exploreAtlasIcon}
+                icon={this.exploreIcon}
                 value={'EXPLORE'}
                 fontSize={10}
                 iconSize={50}
                 direction={'column'}
               />
 
-              <ButtonTextAtlasIcon
+              <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
@@ -207,14 +207,14 @@ export default class MainMenu {
                   this.show('backpack')
                 }}
                 backgroundColor={this.backpackBackground}
-                icon={this.backpackAtlasIcon}
+                icon={this.backpackIcon}
                 value={'BACKPACK [B]'}
                 fontSize={10}
                 iconSize={50}
                 direction={'column'}
               />
 
-              <ButtonTextAtlasIcon
+              <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
@@ -230,7 +230,7 @@ export default class MainMenu {
                   this.show('settings')
                 }}
                 backgroundColor={this.settingsBackground}
-                icon={this.settingsAtlasIcon}
+                icon={this.settingsIcon}
                 value={'SETTINGS [P]'}
                 fontSize={10}
                 iconSize={50}
@@ -279,7 +279,7 @@ export default class MainMenu {
                 height: buttonSize
               }}
               backgroundColor={this.closeButtonColor}
-              icon={{ atlasName: 'icons', spriteName: 'CloseAtlasIcon' }}
+              icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
             />
           </UiEntity>
         </UiEntity>

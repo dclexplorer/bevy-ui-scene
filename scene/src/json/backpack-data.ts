@@ -2,154 +2,154 @@ import { type AtlasData } from '../utils/definitions'
 
 export const backpackJson: AtlasData = {
   frames: {
-    'AllAtlasIcon.png': {
+    'AllIcon.png': {
       frame: { x: 0, y: 0, w: 52, h: 51 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 52, h: 51 },
       sourceSize: { w: 52, h: 51 }
     },
-    'BodyAtlasIcon.png': {
+    'BodyIcon.png': {
       frame: { x: 52, y: 0, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'DefaultAtlasIcon.png': {
+    'DefaultIcon.png': {
       frame: { x: 132, y: 0, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'EarringsAtlasIcon.png': {
+    'EarringsIcon.png': {
       frame: { x: 212, y: 0, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'EmptyAtlasIcon.png': {
+    'EmptyIcon.png': {
       frame: { x: 292, y: 0, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'EyebrowsAtlasIcon.png': {
+    'EyebrowsIcon.png': {
       frame: { x: 372, y: 0, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'EyesAtlasIcon.png': {
+    'EyesIcon.png': {
       frame: { x: 0, y: 81, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'EyewearAtlasIcon.png': {
+    'EyewearIcon.png': {
       frame: { x: 80, y: 81, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'FacilHairAtlasIcon.png': {
+    'FacilHairIcon.png': {
       frame: { x: 160, y: 81, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'FeetAtlasIcon.png': {
+    'FeetIcon.png': {
       frame: { x: 240, y: 81, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'FemaleAtlasIcon.png': {
+    'FemaleIcon.png': {
       frame: { x: 320, y: 81, w: 81, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 81, h: 81 },
       sourceSize: { w: 81, h: 81 }
     },
-    'HairAtlasIcon.png': {
+    'HairIcon.png': {
       frame: { x: 0, y: 162, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'HandsAtlasIcon.png': {
+    'HandsIcon.png': {
       frame: { x: 80, y: 162, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'HandwearAtlasIcon.png': {
+    'HandwearIcon.png': {
       frame: { x: 160, y: 162, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'HatAtlasIcon.png': {
+    'HatIcon.png': {
       frame: { x: 240, y: 162, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'HeadAtlasIcon.png': {
+    'HeadIcon.png': {
       frame: { x: 320, y: 162, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'HelmetAtlasIcon.png': {
+    'HelmetIcon.png': {
       frame: { x: 400, y: 162, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'LowerBodyAtlasIcon.png': {
+    'LowerBodyIcon.png': {
       frame: { x: 0, y: 243, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'MaleAtlasIcon.png': {
+    'MaleIcon.png': {
       frame: { x: 80, y: 243, w: 81, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 81, h: 81 },
       sourceSize: { w: 81, h: 81 }
     },
-    'MaskAtlasIcon.png': {
+    'MaskIcon.png': {
       frame: { x: 161, y: 243, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'MouthAtlasIcon.png': {
+    'MouthIcon.png': {
       frame: { x: 241, y: 243, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'OutfitAtlasIcon.png': {
+    'OutfitIcon.png': {
       frame: { x: 321, y: 243, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
@@ -163,28 +163,28 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 49 },
       sourceSize: { w: 48, h: 49 }
     },
-    'SkinsAtlasIcon.png': {
+    'SkinsIcon.png': {
       frame: { x: 0, y: 324, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'TiaraAtlasIcon.png': {
+    'TiaraIcon.png': {
       frame: { x: 80, y: 324, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'UnisexAtlasIcon.png': {
+    'UnisexIcon.png': {
       frame: { x: 160, y: 324, w: 81, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 81, h: 81 },
       sourceSize: { w: 81, h: 81 }
     },
-    'UpperBodyAtlasIcon.png': {
+    'UpperBodyIcon.png': {
       frame: { x: 241, y: 324, w: 80, h: 81 },
       rotated: false,
       trimmed: false,

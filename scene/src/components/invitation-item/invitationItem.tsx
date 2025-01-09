@@ -65,7 +65,7 @@ function InvitationItem(props: {
             ? { avatarTexture: { userId: props.invitation.id } }
             : getBackgroundFromAtlas({
                 atlasName: 'icons',
-                spriteName: 'DdlAtlasIconColor'
+                spriteName: 'DdlIconColor'
               })
         }
       />

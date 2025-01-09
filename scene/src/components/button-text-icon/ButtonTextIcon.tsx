@@ -4,10 +4,10 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import type { AtlasIcon } from '../../utils/definitions'
+import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
-function ButtonTextAtlasIcon(props: {
+function ButtonTextIcon(props: {
   // Events
   onMouseEnter?: Callback
   onMouseLeave?: Callback
@@ -80,4 +80,4 @@ function ButtonTextAtlasIcon(props: {
   )
 }
 
-export default ButtonTextAtlasIcon
+export default ButtonTextIcon

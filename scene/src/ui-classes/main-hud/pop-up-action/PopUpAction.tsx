@@ -172,7 +172,7 @@ export default class PopUpAction {
                   uiBackground={{
                     ...getBackgroundFromAtlas({
                       atlasName: 'navbar',
-                      spriteName: 'HelpAtlasIcon Off'
+                      spriteName: 'HelpIcon Off'
                     }),
                     color: ALMOST_BLACK
                   }}
@@ -211,7 +211,7 @@ export default class PopUpAction {
                     this.updateButtons()
                   }}
                   backgroundColor={this.closeBackground}
-                  icon={{ atlasName: 'icons', spriteName: 'CloseAtlasIcon' }}
+                  icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
                   iconColor={ALMOST_BLACK}
                 />
               </UiEntity>

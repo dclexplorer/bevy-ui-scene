@@ -28,7 +28,7 @@ export default class Friends {
   public fontSize: number = 14
   private selectedId: string | undefined
 
-  private readonly friendsAtlasIcon: AtlasIcon = {
+  private readonly friendsIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Friends off'
   }
@@ -80,7 +80,7 @@ export default class Friends {
   updateButtons(): void {
     this.requestsTextColor = UNSELECTED_TEXT_WHITE
     this.friendsTextColor = UNSELECTED_TEXT_WHITE
-    this.friendsAtlasIcon.spriteName = 'Friends off'
+    this.friendsIcon.spriteName = 'Friends off'
 
     this.messageBackground = undefined
     this.profileBackground = undefined

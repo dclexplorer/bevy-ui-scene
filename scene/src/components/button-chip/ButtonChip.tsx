@@ -4,7 +4,7 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import type { AtlasIcon } from '../../utils/definitions'
+import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import ButtonIcon from '../button-icon/ButtonIcon'
 
@@ -92,7 +92,7 @@ function ButtonChip(props: {
           backgroundColor={{ ...Color4.Black(), a: 0.7 }}
           icon={{
             atlasName: 'icons',
-            spriteName: 'CloseAtlasIcon'
+            spriteName: 'CloseIcon'
           }}
         />
       )}

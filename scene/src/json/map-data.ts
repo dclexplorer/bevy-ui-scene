@@ -135,7 +135,7 @@ export const mapJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 28, h: 28 },
       sourceSize: { w: 28, h: 28 }
     },
-    'LiveAtlasIcon.png': {
+    'LiveIcon.png': {
       frame: { x: 14, y: 0, w: 15, h: 11 },
       rotated: false,
       trimmed: false,
@@ -268,7 +268,7 @@ export const mapJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 34, h: 38 },
       sourceSize: { w: 34, h: 38 }
     },
-    'PlusAtlasIcon.png': {
+    'PlusIcon.png': {
       frame: { x: 0, y: 0, w: 14, h: 14 },
       rotated: false,
       trimmed: false,

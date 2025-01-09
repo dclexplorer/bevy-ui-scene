@@ -6,7 +6,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { ALMOST_WHITE, ALMOST_BLACK, ORANGE } from '../../utils/constants'
-import type { AtlasIcon } from '../../utils/definitions'
+import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 function DropdownField(props: {

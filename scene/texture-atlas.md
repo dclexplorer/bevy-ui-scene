@@ -60,7 +60,7 @@ export function getUvs(icon: AtlasIcon): number[] {
 ```
 
 4. **Using getBackgroundFromAtlas**
-The getBackgroundFromAtlas function takes an AtlasIcon object as input and returns a UiBackgroundProps object with the appropriate texture and UV mapping. Example usage:
+The getBackgroundFromAtlas function takes an Icon object as input and returns a UiBackgroundProps object with the appropriate texture and UV mapping. Example usage:
 
 ```typescript
 export function getBackgroundFromAtlas(icon: AtlasIcon): UiBackgroundProps {

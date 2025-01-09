@@ -27,27 +27,27 @@ export default class SceneInfo {
   public isExpanded: boolean = false
   public isMenuOpen: boolean = false
   public isHome: boolean = false
-  public favAtlasIcon: AtlasIcon = {
+  public favIcon: AtlasIcon = {
     atlasName: 'toggles',
     spriteName: 'HeartOnOutlined'
   }
 
-  public expandAtlasIcon: AtlasIcon = {
+  public expandIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'DownArrow'
   }
 
-  public setAtHomeAtlasIcon: AtlasIcon = {
+  public setAtHomeIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'HomeOutline'
   }
 
-  public reloadAtlasIcon: AtlasIcon = {
+  public reloadIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'Reset'
   }
 
-  public infoAtlasIcon: AtlasIcon = {
+  public infoIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'InfoButton'
   }
@@ -83,7 +83,7 @@ export default class SceneInfo {
   private isWarningHintVisible: boolean = false
   private isLoadingHintVisible: boolean = false
   private isSceneLoading: boolean = false
-  private readonly loadingAtlasIcon: AtlasIcon = {
+  private readonly loadingIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'Graphics'
   }
@@ -162,37 +162,37 @@ export default class SceneInfo {
   loadingSystem(): void {
     if (this.timer > 500) {
       this.timer = 0
-      if (this.loadingAtlasIcon.spriteName === 'Graphics') {
-        this.loadingAtlasIcon.spriteName = 'Download'
+      if (this.loadingIcon.spriteName === 'Graphics') {
+        this.loadingIcon.spriteName = 'Download'
       } else {
-        this.loadingAtlasIcon.spriteName = 'Graphics'
+        this.loadingIcon.spriteName = 'Graphics'
       }
     } else {
       this.timer = this.timer + 5
     }
   }
 
-  updateAtlasIcons(): void {
+  updateIcons(): void {
     if (this.isFav) {
-      this.favAtlasIcon.spriteName = 'HeartOnOutlined'
+      this.favIcon.spriteName = 'HeartOnOutlined'
     } else {
-      this.favAtlasIcon.spriteName = 'HeartOffOutlined'
+      this.favIcon.spriteName = 'HeartOffOutlined'
     }
     if (this.isExpanded) {
-      this.expandAtlasIcon.spriteName = 'UpArrow'
+      this.expandIcon.spriteName = 'UpArrow'
     } else {
-      this.expandAtlasIcon.spriteName = 'DownArrow'
+      this.expandIcon.spriteName = 'DownArrow'
     }
     if (this.isHome) {
-      this.setAtHomeAtlasIcon.spriteName = 'Home'
+      this.setAtHomeIcon.spriteName = 'Home'
     } else {
-      this.setAtHomeAtlasIcon.spriteName = 'HomeOutline'
+      this.setAtHomeIcon.spriteName = 'HomeOutline'
     }
   }
 
   setFav(arg: boolean): void {
     this.isFav = arg
-    this.updateAtlasIcons()
+    this.updateIcons()
   }
 
   setMenuOpen(arg: boolean): void {
@@ -201,12 +201,12 @@ export default class SceneInfo {
 
   setExpanded(arg: boolean): void {
     this.isExpanded = arg
-    this.updateAtlasIcons()
+    this.updateIcons()
   }
 
   setHome(arg: boolean): void {
     this.isHome = arg
-    this.updateAtlasIcons()
+    this.updateIcons()
   }
 
   reloadScene(): void {
@@ -295,7 +295,7 @@ export default class SceneInfo {
                 margin: { left: this.fontSize * 0.5 }
               }}
               backgroundColor={this.expandBackgroundColor}
-              icon={this.expandAtlasIcon}
+              icon={this.expandIcon}
             />
             <UiEntity
               uiTransform={{
@@ -410,7 +410,7 @@ export default class SceneInfo {
                     height: this.fontSize * 1.2,
                     margin: { left: this.fontSize * 0.5 }
                   }}
-                  icon={this.loadingAtlasIcon}
+                  icon={this.loadingIcon}
                   onMouseEnter={() => {
                     this.isLoadingHintVisible = true
                   }}
@@ -758,7 +758,7 @@ export default class SceneInfo {
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
-                  ...getBackgroundFromAtlas(this.setAtHomeAtlasIcon),
+                  ...getBackgroundFromAtlas(this.setAtHomeIcon),
                   color: this.setHomeLabelColor
                 }}
               />
@@ -797,7 +797,7 @@ export default class SceneInfo {
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
-                  ...getBackgroundFromAtlas(this.favAtlasIcon),
+                  ...getBackgroundFromAtlas(this.favIcon),
                   color: this.setFavLabelColor
                 }}
               />
@@ -836,7 +836,7 @@ export default class SceneInfo {
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
-                  ...getBackgroundFromAtlas(this.reloadAtlasIcon),
+                  ...getBackgroundFromAtlas(this.reloadIcon),
                   color: this.reloadLabelColor
                 }}
               />
@@ -875,7 +875,7 @@ export default class SceneInfo {
                   margin: this.fontSize * 0.5
                 }}
                 uiBackground={{
-                  ...getBackgroundFromAtlas(this.infoAtlasIcon),
+                  ...getBackgroundFromAtlas(this.infoIcon),
                   color: this.openInfoLabelColor
                 }}
               />

@@ -5,7 +5,7 @@ import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
 import { BevyApi } from '../../bevy-api'
 import { ArrowToast } from '../../components/arrow-toast'
 import { ButtonText } from '../../components/button-text'
-import { ButtonTextAtlasIcon } from '../../components/button-text-icon'
+import { ButtonTextIcon } from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
@@ -362,7 +362,7 @@ export default class LoadingAndLogin {
                     // uiBackground={{ color: Color4.Red() }}
                   >
                     {/* BACK BUTTON */}
-                    <ButtonTextAtlasIcon
+                    <ButtonTextIcon
                       uiTransform={{
                         margin: 0,
                         display: this.isBackButtonVisible ? 'flex' : 'none',

@@ -60,7 +60,7 @@ function FriendItem(props: {
             ? { avatarTexture: { userId: props.userId } }
             : getBackgroundFromAtlas({
                 atlasName: 'icons',
-                spriteName: 'DdlAtlasIconColor'
+                spriteName: 'DdlIconColor'
               })
         }
       />

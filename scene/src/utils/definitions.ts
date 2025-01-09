@@ -22,7 +22,7 @@ export type Sprite = {
   sourceSize: { w: number; h: number }
 }
 
-export type AtlasIcon = { atlasName: string; spriteName: string }
+export type AtlasIcon = { atlasName: Atlas; spriteName: string }
 
 export type ToggleType =
   | ['HeartOn', 'HeartOff']

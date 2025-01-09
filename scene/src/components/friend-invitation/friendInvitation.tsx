@@ -61,7 +61,7 @@ function FriendInvitation(props: {
           uiBackground={{
             ...getBackgroundFromAtlas({
               atlasName: 'icons',
-              spriteName: 'CloseAtlasIcon'
+              spriteName: 'CloseIcon'
             }),
             color: Color4.Red()
           }}

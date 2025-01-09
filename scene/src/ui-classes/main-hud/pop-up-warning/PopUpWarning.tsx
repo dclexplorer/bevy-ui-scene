@@ -15,7 +15,7 @@ import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 export default class WarningPopUp {
   private readonly uiController: UIController
   public fontSize: number = 14
-  public icon: 'WarningColor' | 'DdlAtlasIconColor' = 'DdlAtlasIconColor'
+  public icon: 'WarningColor' | 'DdlIconColor' = 'DdlIconColor'
   public tittle: string | undefined
   public message: string | undefined
   public action: Callback | undefined

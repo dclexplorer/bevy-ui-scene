@@ -1,1 +1,1 @@
-export { default as ButtonTextAtlasIcon } from './ButtonTextAtlasIcon'
+export { default as ButtonTextIcon } from './ButtonTextIcon'

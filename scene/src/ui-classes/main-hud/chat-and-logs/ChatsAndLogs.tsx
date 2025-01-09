@@ -138,7 +138,7 @@ export default class ChatAndLogs {
               width: 20,
               height: 20
             }}
-            icon={{ atlasName: 'icons', spriteName: 'PublishAtlasIcon' }}
+            icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
           />
           <ButtonIcon
             onMouseDown={() => {
@@ -149,7 +149,7 @@ export default class ChatAndLogs {
               width: 20,
               height: 20
             }}
-            icon={{ atlasName: 'icons', spriteName: 'PublishAtlasIcon' }}
+            icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
           />
           <ButtonIcon
             onMouseDown={() => {
@@ -160,7 +160,7 @@ export default class ChatAndLogs {
               width: 20,
               height: 20
             }}
-            icon={{ atlasName: 'icons', spriteName: 'PublishAtlasIcon' }}
+            icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
           />
         </UiEntity>
 
