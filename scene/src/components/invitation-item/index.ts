@@ -1,1 +1,1 @@
-export { default as InvitationItem } from './InvitationItem'
+export { default as InvitationItem } from './temp_InvitationItem'
