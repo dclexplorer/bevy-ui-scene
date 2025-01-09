@@ -1,7 +1,7 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import type { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Position, UiEntity } from '@dcl/sdk/react-ecs'
-import IconButton from '../../components/iconButton'
+import IconButton from '../../components/button-icon/iconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../canvas/canvas'
 // import { openExternalUrl } from '~system/RestrictedActions'

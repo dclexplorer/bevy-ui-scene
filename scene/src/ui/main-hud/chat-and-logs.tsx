@@ -4,7 +4,7 @@ import ReactEcs, { Input, UiEntity } from '@dcl/sdk/react-ecs'
 // import IconButton from '../../components/iconButton'
 import { getPlayer } from '@dcl/sdk/src/players'
 import ChatMessage from '../../components/chatMessage'
-import IconButton from '../../components/iconButton'
+import IconButton from '../../components/button-icon/iconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_WHITE,

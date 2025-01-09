@@ -4,8 +4,8 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { ALMOST_WHITE } from '../utils/constants'
 import { Color4 } from '@dcl/sdk/math'
+import { ALMOST_WHITE } from '../../utils/constants'
 
 function ArrowToast(props: {
   uiTransform: UiTransformProps

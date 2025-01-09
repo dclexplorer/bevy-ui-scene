@@ -3,7 +3,7 @@ import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 // import IconButton from '../../components/iconButton'
 import FriendItem from '../../components/friendItem'
-import IconButton from '../../components/iconButton'
+import IconButton from '../../components/button-icon/iconButton'
 import InvitationItem from '../../components/invitationItem'
 import { type UIController } from '../../controllers/ui.controller'
 import {

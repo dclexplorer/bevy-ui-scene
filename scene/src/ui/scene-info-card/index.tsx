@@ -17,7 +17,7 @@ import {
 } from '../../utils/constants'
 import type { Icon, SceneCategory } from '../../utils/definitions'
 import Canvas from '../canvas/canvas'
-import IconButton from '../../components/iconButton'
+import IconButton from '../../components/button-icon/iconButton'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import TextIconButton from '../../components/textIconButton'
 

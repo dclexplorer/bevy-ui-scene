@@ -2,8 +2,8 @@ import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
-import IconButton from '../../components/iconButton'
-import TextButton from '../../components/textButton'
+import IconButton from '../../components/button-icon/iconButton'
+import TextButton from '../../components/button-text/textButton'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   RUBY,

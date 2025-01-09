@@ -8,8 +8,8 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import ArrowToast from './arrowToast'
-import { type Icon } from '../utils/definitions'
-import { getBackgroundFromAtlas } from '../utils/ui-utils'
+import { type Icon } from '../../utils/definitions'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 function IconButton(props: {
   // Events

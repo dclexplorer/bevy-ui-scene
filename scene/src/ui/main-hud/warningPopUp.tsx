@@ -1,7 +1,7 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Callback, Label, UiEntity } from '@dcl/sdk/react-ecs'
-import TextButton from '../../components/textButton'
+import TextButton from '../../components/button-text/textButton'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,

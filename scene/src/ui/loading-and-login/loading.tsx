@@ -4,7 +4,7 @@ import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
 // import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
 import ArrowToast from '../../components/arrowToast'
-import TextButton from '../../components/textButton'
+import TextButton from '../../components/button-text/textButton'
 import TextIconButton from '../../components/textIconButton'
 import { type UIController } from '../../controllers/ui.controller'
 import {

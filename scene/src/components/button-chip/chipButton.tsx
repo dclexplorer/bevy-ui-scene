@@ -4,9 +4,10 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { type Icon } from '../utils/definitions'
-import { getBackgroundFromAtlas } from '../utils/ui-utils'
-import IconButton from './iconButton'
+import type { Icon } from '../../utils/definitions'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import IconButton from '../button-icon/iconButton'
+
 
 function chipButton(props: {
   // Events
