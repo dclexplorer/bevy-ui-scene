@@ -1,18 +1,17 @@
 import { type Coords } from '@dcl/sdk/ecs'
-import { type Icon, type AtlasData, type Sprite } from './definitions'
+import { type AtlasIcon, type AtlasData, type Sprite } from './definitions'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
 import { backpackJson } from '../json/backpack-data'
 import { navbarJson } from '../json/navbar-data'
 import { iconsJson } from '../json/icons-data'
 import { contextJson } from '../json/context-data'
 import { toggleJson } from '../json/toggle-data'
-import { backgroundsJson } from '../json/backgrounds-data'
 import { profileJson } from '../json/profile-data'
 import { voiceChatJson } from '../json/voice-chat-data'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { mapJson } from '../json/map-data'
 
-export function getUvs(icon: Icon): number[] {
+export function getUvs(icon: AtlasIcon): number[] {
   let parsedJson: AtlasData | undefined
   switch (icon.atlasName) {
     case 'profile':
@@ -20,9 +19,6 @@ export function getUvs(icon: Icon): number[] {
       break
     case 'map':
       parsedJson = mapJson
-      break
-    case 'backgrounds':
-      parsedJson = backgroundsJson
       break
     case 'backpack':
       parsedJson = backpackJson
@@ -73,7 +69,7 @@ export function getUvs(icon: Icon): number[] {
   return []
 }
 
-export function getBackgroundFromAtlas(icon: Icon): UiBackgroundProps {
+export function getBackgroundFromAtlas(icon: AtlasIcon): UiBackgroundProps {
   const textureMode = 'stretch'
   const uvs = getUvs(icon)
   const texture = { src: `assets/images/atlas/${icon.atlasName}.png` }
@@ -146,30 +142,45 @@ export function sliderPercentageToValue(
 }
 
 export function formatEventTime(timestampInSecs: number): string {
-  const now = new Date();
-  const eventDate = new Date(timestampInSecs * 1000); // convert to miliseconds
+  const now = new Date()
+  const eventDate = new Date(timestampInSecs * 1000) // convert to miliseconds
 
   if (eventDate > now) {
-      // Format: MON, 24 JUL AT 02:00PM
-      const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-      const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-      const day = days[eventDate.getUTCDay()];
-      const date = eventDate.getUTCDate();
-      const month = months[eventDate.getUTCMonth()];
-      const hours = eventDate.getUTCHours();
-      const minutes = eventDate.getUTCMinutes();
-      const formattedTime = `${isNaN(hours % 12) ? 12 : hours % 12}:${minutes.toString().padStart(2, "0")}${hours >= 12 ? "PM" : "AM"}`;
-      return `${day}, ${date} ${month} AT ${formattedTime}`;
+    // Format: MON, 24 JUL AT 02:00PM
+    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+    const months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC'
+    ]
+    const day = days[eventDate.getUTCDay()]
+    const date = eventDate.getUTCDate()
+    const month = months[eventDate.getUTCMonth()]
+    const hours = eventDate.getUTCHours()
+    const minutes = eventDate.getUTCMinutes()
+    const formattedTime = `${isNaN(hours % 12) ? 12 : hours % 12}:${minutes
+      .toString()
+      .padStart(2, '0')}${hours >= 12 ? 'PM' : 'AM'}`
+    return `${day}, ${date} ${month} AT ${formattedTime}`
   } else {
-      // Calcular diferencia
-      const diff = Math.abs(now.getTime() - eventDate.getTime()); // Diferencia en milisegundos
-      const minutesDiff = Math.floor(diff / (1000 * 60));
-      const hoursDiff = Math.floor(minutesDiff / 60);
+    // Calcular diferencia
+    const diff = Math.abs(now.getTime() - eventDate.getTime()) // Diferencia en milisegundos
+    const minutesDiff = Math.floor(diff / (1000 * 60))
+    const hoursDiff = Math.floor(minutesDiff / 60)
 
-      if (hoursDiff > 0) {
-          return `Event started ${hoursDiff} hours ago.`;
-      } else {
-          return `Event started ${minutesDiff} minutes ago.`;
-      }
+    if (hoursDiff > 0) {
+      return `Event started ${hoursDiff} hours ago.`
+    } else {
+      return `Event started ${minutesDiff} minutes ago.`
+    }
   }
 }

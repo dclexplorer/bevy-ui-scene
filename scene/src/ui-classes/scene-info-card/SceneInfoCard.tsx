@@ -15,11 +15,11 @@ import {
   RUBY,
   SELECTED_BUTTON_COLOR
 } from '../../utils/constants'
-import type { Icon, SceneCategory } from '../../utils/definitions'
+import type { AtlasIcon, SceneCategory } from '../../utils/definitions'
 import Canvas from '../../components/canvas/Canvas'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { ButtonIcon } from '../../components/button-icon'
-import { ButtonTextIcon } from '../../components/button-text-icon'
+import { ButtonTextAtlasIcon } from '../../components/button-text-icon'
 
 export default class SceneInfoCard {
   private readonly uiController: UIController
@@ -27,14 +27,22 @@ export default class SceneInfoCard {
   public isFav: boolean = false
   public isLiked: boolean = false
   public isDisliked: boolean = false
-  public favIcon: Icon = {
+  public favAtlasIcon: AtlasIcon = {
     atlasName: 'toggles',
     spriteName: 'HeartOffOutlined'
   }
 
-  public shareIcon: Icon = { atlasName: 'context', spriteName: 'Share' }
-  public likeIcon: Icon = { atlasName: 'icons', spriteName: 'Like' }
-  public dislikeIcon: Icon = { atlasName: 'icons', spriteName: 'Dislike' }
+  public shareAtlasIcon: AtlasIcon = {
+    atlasName: 'context',
+    spriteName: 'Share'
+  }
+
+  public likeAtlasIcon: AtlasIcon = { atlasName: 'icons', spriteName: 'Like' }
+  public dislikeAtlasIcon: AtlasIcon = {
+    atlasName: 'icons',
+    spriteName: 'Dislike'
+  }
+
   public closeBackground: Color4 | undefined
   public setFavBackgroundColor: Color4 = DCL_SNOW
   public likeBackgroundColor: Color4 = DCL_SNOW
@@ -76,27 +84,27 @@ export default class SceneInfoCard {
     this.setFavBackgroundColor = DCL_SNOW
   }
 
-  updateIcons(): void {
+  updateAtlasIcons(): void {
     if (this.isFav) {
-      this.favIcon.spriteName = 'HeartOnOutlined'
+      this.favAtlasIcon.spriteName = 'HeartOnOutlined'
     } else {
-      this.favIcon.spriteName = 'HeartOffOutlined'
+      this.favAtlasIcon.spriteName = 'HeartOffOutlined'
     }
     if (this.isLiked) {
-      this.likeIcon.spriteName = 'Like solid'
+      this.likeAtlasIcon.spriteName = 'Like solid'
     } else {
-      this.likeIcon.spriteName = 'Like'
+      this.likeAtlasIcon.spriteName = 'Like'
     }
     if (this.isDisliked) {
-      this.dislikeIcon.spriteName = 'Dislike solid'
+      this.dislikeAtlasIcon.spriteName = 'Dislike solid'
     } else {
-      this.dislikeIcon.spriteName = 'Dislike'
+      this.dislikeAtlasIcon.spriteName = 'Dislike'
     }
   }
 
   setFav(arg: boolean): void {
     this.isFav = arg
-    this.updateIcons()
+    this.updateAtlasIcons()
   }
 
   setLike(arg: boolean): void {
@@ -104,7 +112,7 @@ export default class SceneInfoCard {
       this.isDisliked = false
     }
     this.isLiked = arg
-    this.updateIcons()
+    this.updateAtlasIcons()
   }
 
   setDislike(arg: boolean): void {
@@ -112,7 +120,7 @@ export default class SceneInfoCard {
       this.isLiked = false
     }
     this.isDisliked = arg
-    this.updateIcons()
+    this.updateAtlasIcons()
   }
 
   setTab(tab: 'overview' | 'photos' | 'events'): void {
@@ -225,7 +233,7 @@ export default class SceneInfoCard {
             this.updateBackgrounds()
           }}
           backgroundColor={this.closeBackground}
-          icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+          icon={{ atlasName: 'icons', spriteName: 'CloseAtlasIcon' }}
         />
         <Label
           value={this.sceneTitle}
@@ -411,7 +419,7 @@ export default class SceneInfoCard {
           {/* Need to implement number formating */}
           {this.infoDetail(
             this.sceneViews.toString() + 'k',
-            { atlasName: 'icons', spriteName: 'PreviewIcon' },
+            { atlasName: 'icons', spriteName: 'PreviewAtlasIcon' },
             {
               width: 'auto',
               height: this.fontSize,
@@ -432,7 +440,7 @@ export default class SceneInfoCard {
           )}
         </UiEntity>
 
-        <ButtonTextIcon
+        <ButtonTextAtlasIcon
           uiTransform={{ width: '100%', height: 2 * this.fontSize }}
           onMouseDown={() => {}}
           value={'JUMP IN'}
@@ -459,7 +467,7 @@ export default class SceneInfoCard {
               height: this.fontSize * 2
             }}
             iconSize={this.fontSize * 1.5}
-            icon={this.likeIcon}
+            icon={this.likeAtlasIcon}
             backgroundColor={this.likeBackgroundColor}
             iconColor={this.isLiked ? RUBY : BLACK_TEXT}
             onMouseEnter={() => {
@@ -478,7 +486,7 @@ export default class SceneInfoCard {
               height: this.fontSize * 2
             }}
             iconSize={this.fontSize * 1.5}
-            icon={this.dislikeIcon}
+            icon={this.dislikeAtlasIcon}
             backgroundColor={this.dislikeBackgroundColor}
             iconColor={this.isDisliked ? RUBY : BLACK_TEXT}
             onMouseEnter={() => {
@@ -497,7 +505,7 @@ export default class SceneInfoCard {
               height: this.fontSize * 2
             }}
             iconSize={this.fontSize * 1.5}
-            icon={this.favIcon}
+            icon={this.favAtlasIcon}
             backgroundColor={this.setFavBackgroundColor}
             iconColor={this.isFav ? Color4.Red() : BLACK_TEXT}
             onMouseEnter={() => {
@@ -516,7 +524,7 @@ export default class SceneInfoCard {
               height: this.fontSize * 2
             }}
             iconSize={this.fontSize * 1.5}
-            icon={this.shareIcon}
+            icon={this.shareAtlasIcon}
             backgroundColor={this.shareBackgroundColor}
             iconColor={GRAY_TEXT}
           />
@@ -527,7 +535,7 @@ export default class SceneInfoCard {
 
   infoDetail(
     value: string,
-    icon: Icon,
+    icon: AtlasIcon,
     uiTransform: Partial<UiTransformProps>,
     color?: Color4,
     title?: string
@@ -643,7 +651,7 @@ export default class SceneInfoCard {
         break
       default:
         title = 'UNKNOWN'
-        spriteName = 'UnknownIcon'
+        spriteName = 'UnknownAtlasIcon'
         break
     }
 

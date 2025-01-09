@@ -45,9 +45,9 @@ export const atlasJson: AtlasData = {
 Ensure that the metadata file is included in the getUvs function. Add the exported JSON constant to the switch statement based on the atlas name. Example:
 
 ```typescript
-export type Icon = { atlasName: string; spriteName: string }
+export type AtlasIcon = { atlasName: string; spriteName: string }
 
-export function getUvs(icon: Icon): number[] {
+export function getUvs(icon: AtlasIcon): number[] {
   let parsedJson: AtlasData | undefined;
   switch (icon.atlasName) {
     case 'atlas':
@@ -60,10 +60,10 @@ export function getUvs(icon: Icon): number[] {
 ```
 
 4. **Using getBackgroundFromAtlas**
-The getBackgroundFromAtlas function takes an Icon object as input and returns a UiBackgroundProps object with the appropriate texture and UV mapping. Example usage:
+The getBackgroundFromAtlas function takes an AtlasIcon object as input and returns a UiBackgroundProps object with the appropriate texture and UV mapping. Example usage:
 
 ```typescript
-export function getBackgroundFromAtlas(icon: Icon): UiBackgroundProps {
+export function getBackgroundFromAtlas(icon: AtlasIcon): UiBackgroundProps {
   const textureMode = 'stretch';
   const uvs = getUvs(icon);
   const texture = { src: `assets/images/atlas/${icon.atlasName}.png` };

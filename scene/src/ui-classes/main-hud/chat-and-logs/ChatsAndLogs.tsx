@@ -7,8 +7,12 @@ import { ButtonIcon } from '../../../components/button-icon'
 import { ChatMessage } from '../../../components/chat-message'
 import { type Message } from '../../../components/chat-message/ChatMessage.types'
 import { type UIController } from '../../../controllers/ui.controller'
-import { LEFT_PANEL_WIDTH_FACTOR, LEFT_PANEL_MIN_WIDTH, ALPHA_BLACK_PANEL, ALMOST_WHITE } from '../../../utils/constants'
-
+import {
+  LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALPHA_BLACK_PANEL,
+  ALMOST_WHITE
+} from '../../../utils/constants'
 
 export default class ChatAndLogs {
   private readonly uiController: UIController
@@ -134,7 +138,7 @@ export default class ChatAndLogs {
               width: 20,
               height: 20
             }}
-            icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
+            icon={{ atlasName: 'icons', spriteName: 'PublishAtlasIcon' }}
           />
           <ButtonIcon
             onMouseDown={() => {
@@ -145,7 +149,7 @@ export default class ChatAndLogs {
               width: 20,
               height: 20
             }}
-            icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
+            icon={{ atlasName: 'icons', spriteName: 'PublishAtlasIcon' }}
           />
           <ButtonIcon
             onMouseDown={() => {
@@ -156,7 +160,7 @@ export default class ChatAndLogs {
               width: 20,
               height: 20
             }}
-            icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
+            icon={{ atlasName: 'icons', spriteName: 'PublishAtlasIcon' }}
           />
         </UiEntity>
 

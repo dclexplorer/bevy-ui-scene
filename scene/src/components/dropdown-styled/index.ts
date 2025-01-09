@@ -1,1 +1,1 @@
-export { default as DropdownStyled } from './DropdownStyled';
+export { default as DropdownStyled } from './DropdownStyled'

@@ -1,1 +1,1 @@
-export { default as SceneInfo } from './SceneInfo';
+export { default as SceneInfo } from './SceneInfo'

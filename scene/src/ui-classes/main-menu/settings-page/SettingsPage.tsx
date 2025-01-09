@@ -14,12 +14,12 @@ import {
 } from '../../../state/settings/actions'
 import { store } from '../../../state/store'
 import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../../utils/constants'
-import { type Icon } from '../../../utils/definitions'
+import { type AtlasIcon } from '../../../utils/definitions'
 import {
   sliderPercentageToValue,
   sliderValueToPercentage
 } from '../../../utils/ui-utils'
-import { ButtonTextIcon } from '../../../components/button-text-icon'
+import { ButtonTextAtlasIcon } from '../../../components/button-text-icon'
 import { DropdownStyled } from '../../../components/dropdown-styled'
 import { Slider } from '../../../components/slider'
 
@@ -33,7 +33,7 @@ type SettingCategory =
 export default class SettingsPage {
   private readonly uiController: UIController
 
-  private readonly toggleIcon: Icon = {
+  private readonly toggleAtlasIcon: AtlasIcon = {
     atlasName: 'toggles',
     spriteName: 'SwitchOn'
   }
@@ -44,7 +44,7 @@ export default class SettingsPage {
   // private settingsToSave: settingData[] = []
   private dropdownOpenedSettingName: string = ''
   private dropdownIndexEntered: number = -1
-  private backgroundIcon: string = 'assets/images/menu/general-img.png.png'
+  private backgroundAtlasIcon: string = 'assets/images/menu/general-img.png.png'
   // private generalTextColor: Color4 = ALMOST_WHITE
   private graphicsTextColor: Color4 = ALMOST_BLACK
   private audioTextColor: Color4 = ALMOST_BLACK
@@ -144,23 +144,23 @@ export default class SettingsPage {
     switch (this.buttonClicked) {
       // case 'general':
       //   this.generalEnter()
-      //   this.backgroundIcon = 'assets/images/menu/general-img.png.png'
+      //   this.backgroundAtlasIcon = 'assets/images/menu/general-img.png.png'
       //   break
       case 'audio':
         this.audioEnter()
-        this.backgroundIcon = 'assets/images/menu/sound-img.png.png'
+        this.backgroundAtlasIcon = 'assets/images/menu/sound-img.png.png'
         break
       case 'graphics':
         this.graphicsEnter()
-        this.backgroundIcon = 'assets/images/menu/graphics-img.png.png'
+        this.backgroundAtlasIcon = 'assets/images/menu/graphics-img.png.png'
         break
       case 'gameplay':
         this.gameplayEnter()
-        this.backgroundIcon = 'assets/images/menu/general-img.png.png'
+        this.backgroundAtlasIcon = 'assets/images/menu/general-img.png.png'
         break
       case 'performance':
         this.performanceEnter()
-        this.backgroundIcon = 'assets/images/menu/general-img.png.png'
+        this.backgroundAtlasIcon = 'assets/images/menu/general-img.png.png'
         break
     }
   }
@@ -283,7 +283,7 @@ export default class SettingsPage {
           texture: { src: 'assets/images/menu/Background.png' }
         }}
       >
-        {/* Icon Background */}
+        {/* AtlasIcon Background */}
         <UiEntity
           uiTransform={{
             width: canvasInfo.height * 0.65,
@@ -294,7 +294,7 @@ export default class SettingsPage {
           uiBackground={{
             color: { ...Color4.White(), a: 0.3 },
             textureMode: 'stretch',
-            texture: { src: this.backgroundIcon }
+            texture: { src: this.backgroundAtlasIcon }
           }}
         />
 
@@ -333,7 +333,7 @@ export default class SettingsPage {
               }}
             />
 
-            <ButtonTextIcon
+            <ButtonTextAtlasIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -356,7 +356,7 @@ export default class SettingsPage {
               backgroundColor={this.performanceBackgroundColor}
             />
 
-            <ButtonTextIcon
+            <ButtonTextAtlasIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -379,7 +379,7 @@ export default class SettingsPage {
               backgroundColor={this.graphicsBackgroundColor}
             />
 
-            <ButtonTextIcon
+            <ButtonTextAtlasIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -402,7 +402,7 @@ export default class SettingsPage {
               backgroundColor={this.audioBackgroundColor}
             />
 
-            <ButtonTextIcon
+            <ButtonTextAtlasIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -432,7 +432,7 @@ export default class SettingsPage {
               height: 'auto'
             }}
           >
-            <ButtonTextIcon
+            <ButtonTextAtlasIcon
               uiTransform={{
                 margin: { left: 10, right: 10 },
                 padding: { left: 10, right: 10 },
@@ -556,7 +556,10 @@ export default class SettingsPage {
                             this.dropdownOpenedSettingName = setting.name
                           }
                         }}
-                        onOptionMouseDown={(selectedIndex: number, title: string) => {
+                        onOptionMouseDown={(
+                          selectedIndex: number,
+                          title: string
+                        ) => {
                           this.selectOption(selectedIndex, title)
                           this.dropdownOpenedSettingName = ''
                         }}

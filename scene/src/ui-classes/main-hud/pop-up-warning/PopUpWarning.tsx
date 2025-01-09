@@ -4,14 +4,18 @@ import ReactEcs, { type Callback, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { ButtonText } from '../../../components/button-text'
 import Canvas from '../../../components/canvas/Canvas'
 import { type UIController } from '../../../controllers/ui.controller'
-import { LEFT_PANEL_WIDTH_FACTOR, LEFT_PANEL_MIN_WIDTH, ALMOST_WHITE, ALMOST_BLACK } from '../../../utils/constants'
+import {
+  LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALMOST_WHITE,
+  ALMOST_BLACK
+} from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
-
 
 export default class WarningPopUp {
   private readonly uiController: UIController
   public fontSize: number = 14
-  public icon: 'WarningColor' | 'DdlIconColor' = 'DdlIconColor'
+  public icon: 'WarningColor' | 'DdlAtlasIconColor' = 'DdlAtlasIconColor'
   public tittle: string | undefined
   public message: string | undefined
   public action: Callback | undefined

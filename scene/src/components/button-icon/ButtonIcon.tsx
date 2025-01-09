@@ -7,7 +7,7 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { type Icon } from '../../utils/definitions'
+import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { ArrowToast } from '../arrow-toast'
 
@@ -19,7 +19,7 @@ function ButtonIcon(props: {
   // Shape
   uiTransform: UiTransformProps
   backgroundColor?: Color4
-  icon: Icon
+  icon: AtlasIcon
   iconSize?: number
   iconColor?: Color4
   hintText?: string

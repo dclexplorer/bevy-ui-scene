@@ -469,6 +469,5 @@ export const TEST_INVITATIONS: Invitation[] = [
 export const LEFT_PANEL_MIN_WIDTH = 320
 export const LEFT_PANEL_WIDTH_FACTOR = 0.15
 
-
 export const HELP_URL: string = 'https://decentraland.org/help/'
 export const DCL_EXPLORER_URL: string = 'https://dclexplorer.com/'

@@ -1,1 +1,1 @@
-export { default as SceneInfoCard } from './SceneInfoCard';
+export { default as SceneInfoCard } from './SceneInfoCard'

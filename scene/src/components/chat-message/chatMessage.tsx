@@ -53,7 +53,7 @@ function ChatMessage(props: {
           props.message.from === 'dcl'
             ? getBackgroundFromAtlas({
                 atlasName: 'icons',
-                spriteName: 'DdlIconColor'
+                spriteName: 'DdlAtlasIconColor'
               })
             : { avatarTexture: { userId: props.message.from } }
         }

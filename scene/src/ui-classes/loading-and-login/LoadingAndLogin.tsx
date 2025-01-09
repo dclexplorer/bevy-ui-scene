@@ -3,9 +3,9 @@ import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
 // import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
-import {ArrowToast} from '../../components/arrow-toast'
-import {ButtonText} from '../../components/button-text'
-import {ButtonTextIcon} from '../../components/button-text-icon'
+import { ArrowToast } from '../../components/arrow-toast'
+import { ButtonText } from '../../components/button-text'
+import { ButtonTextAtlasIcon } from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
@@ -362,7 +362,7 @@ export default class LoadingAndLogin {
                     // uiBackground={{ color: Color4.Red() }}
                   >
                     {/* BACK BUTTON */}
-                    <ButtonTextIcon
+                    <ButtonTextAtlasIcon
                       uiTransform={{
                         margin: 0,
                         display: this.isBackButtonVisible ? 'flex' : 'none',
@@ -391,7 +391,9 @@ export default class LoadingAndLogin {
                       }}
                       uiBackground={{
                         textureMode: 'stretch',
-                        texture: { src: 'assets/images/login/logo-with-text.png' }
+                        texture: {
+                          src: 'assets/images/login/logo-with-text.png'
+                        }
                       }}
                     />
                   </UiEntity>

@@ -5,10 +5,16 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import { ButtonIcon } from '../../../components/button-icon'
 import { ButtonText } from '../../../components/button-text'
 import { type UIController } from '../../../controllers/ui.controller'
-import { RUBY, SELECTED_BUTTON_COLOR, LEFT_PANEL_WIDTH_FACTOR, LEFT_PANEL_MIN_WIDTH, ALPHA_BLACK_PANEL, ALMOST_BLACK } from '../../../utils/constants'
+import {
+  RUBY,
+  SELECTED_BUTTON_COLOR,
+  LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALPHA_BLACK_PANEL,
+  ALMOST_BLACK
+} from '../../../utils/constants'
 import { type Invitation } from '../../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
-
 
 export default class PopUpInvitation {
   private readonly uiController: UIController
@@ -172,7 +178,7 @@ export default class PopUpInvitation {
               this.updateButtons()
             }}
             backgroundColor={this.closeBackground}
-            icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+            icon={{ atlasName: 'icons', spriteName: 'CloseAtlasIcon' }}
           />
         </UiEntity>
 
@@ -198,7 +204,7 @@ export default class PopUpInvitation {
                   ? { avatarTexture: { userId: this.invitation.id } }
                   : getBackgroundFromAtlas({
                       atlasName: 'icons',
-                      spriteName: 'DdlIconColor'
+                      spriteName: 'DdlAtlasIconColor'
                     })
               }
             />

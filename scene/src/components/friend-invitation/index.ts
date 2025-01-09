@@ -1,1 +1,1 @@
-export { default as FriendInvitation } from './FriendInvitation';
+export { default as FriendInvitation } from './FriendInvitation'

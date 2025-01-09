@@ -4,7 +4,7 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { ALMOST_WHITE } from '../../utils/constants'
-import { type Icon } from '../../utils/definitions'
+import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { type Color4 } from '@dcl/sdk/math'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
@@ -19,7 +19,7 @@ function InputField(props: {
   title: string
   value: string
   placeholder: string
-  icon: Icon
+  icon: AtlasIcon
   fontSize: number
   fontColor?: Color4
   iconColor?: Color4

@@ -72,14 +72,14 @@ export const navbarJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 72, h: 73 },
       sourceSize: { w: 72, h: 73 }
     },
-    'ExperienceIconOff.png': {
+    'ExperienceAtlasIconOff.png': {
       frame: { x: 72, y: 219, w: 72, h: 73 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 72, h: 73 },
       sourceSize: { w: 72, h: 73 }
     },
-    'ExperienceIconOn.png': {
+    'ExperienceAtlasIconOn.png': {
       frame: { x: 144, y: 219, w: 72, h: 73 },
       rotated: false,
       trimmed: false,
@@ -114,14 +114,14 @@ export const navbarJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 73, h: 73 },
       sourceSize: { w: 73, h: 73 }
     },
-    'HelpIcon Off.png': {
+    'HelpAtlasIcon Off.png': {
       frame: { x: 73, y: 365, w: 72, h: 73 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 72, h: 73 },
       sourceSize: { w: 72, h: 73 }
     },
-    'HelpIcon On.png': {
+    'HelpAtlasIcon On.png': {
       frame: { x: 145, y: 365, w: 72, h: 73 },
       rotated: false,
       trimmed: false,

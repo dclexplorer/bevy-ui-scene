@@ -1,1 +1,1 @@
-export { default as ChatsAndLogs } from './ChatsAndLogs';
+export { default as ChatsAndLogs } from './ChatsAndLogs'

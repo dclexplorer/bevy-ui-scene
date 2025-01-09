@@ -1,17 +1,25 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
-import { type Icon, type Invitation } from '../../../utils/definitions'
+import { type AtlasIcon, type Invitation } from '../../../utils/definitions'
 import { ButtonIcon } from '../../../components/button-icon'
 import { FriendItem } from '../../../components/friend-item'
 import { InvitationItem } from '../../../components/invitation-item'
 import { type UIController } from '../../../controllers/ui.controller'
-import { ALMOST_WHITE, UNSELECTED_TEXT_WHITE, TEST_FRIENDS, TEST_INVITATIONS, SELECTED_BUTTON_COLOR, LEFT_PANEL_WIDTH_FACTOR, LEFT_PANEL_MIN_WIDTH, ALPHA_BLACK_PANEL } from '../../../utils/constants'
+import {
+  ALMOST_WHITE,
+  UNSELECTED_TEXT_WHITE,
+  TEST_FRIENDS,
+  TEST_INVITATIONS,
+  SELECTED_BUTTON_COLOR,
+  LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALPHA_BLACK_PANEL
+} from '../../../utils/constants'
 import { getName, getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { PopUpInvitation } from '../pop-up-invitation'
 import { type Friend } from './Friends.types'
 // import ButtonIcon from '../../components/ButtonIcon'
-
 
 export default class Friends {
   private readonly uiController: UIController
@@ -20,7 +28,7 @@ export default class Friends {
   public fontSize: number = 14
   private selectedId: string | undefined
 
-  private readonly friendsIcon: Icon = {
+  private readonly friendsAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Friends off'
   }
@@ -72,7 +80,7 @@ export default class Friends {
   updateButtons(): void {
     this.requestsTextColor = UNSELECTED_TEXT_WHITE
     this.friendsTextColor = UNSELECTED_TEXT_WHITE
-    this.friendsIcon.spriteName = 'Friends off'
+    this.friendsAtlasIcon.spriteName = 'Friends off'
 
     this.messageBackground = undefined
     this.profileBackground = undefined

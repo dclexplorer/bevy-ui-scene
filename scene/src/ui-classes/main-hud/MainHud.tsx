@@ -6,7 +6,7 @@ import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../../components/canvas/Canvas'
 // import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
-import { type Icon } from '../../utils/definitions'
+import { type AtlasIcon } from '../../utils/definitions'
 import { ALPHA_BLACK_PANEL, SELECTED_BUTTON_COLOR } from '../../utils/constants'
 import { ChatsAndLogs } from './chat-and-logs'
 import { Friends } from './friends'
@@ -16,59 +16,59 @@ export default class MainHud {
   public fontSize: number = 16
   public readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
-  readonly bellIcon: Icon = {
+  readonly bellAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Notifications off'
   }
 
-  readonly backpackIcon: Icon = {
+  readonly backpackAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'
   }
 
-  readonly walletIcon: Icon = {
+  readonly walletAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Wallet'
   }
 
-  readonly mapIcon: Icon = {
+  readonly mapAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Map off'
   }
 
-  readonly settingsIcon: Icon = {
+  readonly settingsAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Settings off'
   }
 
-  private readonly helpIcon: Icon = {
+  private readonly helpAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
-    spriteName: 'HelpIcon Off'
+    spriteName: 'HelpAtlasIcon Off'
   }
 
-  private readonly exploreIcon: Icon = {
+  private readonly exploreAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Explore off'
   }
 
-  private readonly friendsIcon: Icon = {
+  private readonly friendsAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Friends off'
   }
 
-  private readonly chatIcon: Icon = {
+  private readonly chatAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Chat off'
   }
 
-  private readonly voiceChatIcon: Icon = {
+  private readonly voiceChatAtlasIcon: AtlasIcon = {
     atlasName: 'voice-chat',
     spriteName: 'Mic off'
   }
 
-  // private cameraIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off'}
-  // private experiencesIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceIconOff'}
-  private readonly emotesIcon: Icon = {
+  // private cameraAtlasIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'Camera Off'}
+  // private experiencesAtlasIcon: {atlasName:string, spriteName:string} = {atlasName:'navbar',  spriteName:'ExperienceAtlasIconOff'}
+  private readonly emotesAtlasIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Emote off'
   }
@@ -122,70 +122,70 @@ export default class MainHud {
 
   voiceChatDown(): void {
     if (this.voiceChatOn) {
-      this.voiceChatIcon.spriteName = 'Mic off'
+      this.voiceChatAtlasIcon.spriteName = 'Mic off'
       this.voiceChatOn = false
     } else {
-      this.voiceChatIcon.spriteName = 'Mic on'
+      this.voiceChatAtlasIcon.spriteName = 'Mic on'
       this.voiceChatOn = true
     }
   }
 
   walletEnter(): void {
-    this.walletIcon.spriteName = 'Wallet on'
+    this.walletAtlasIcon.spriteName = 'Wallet on'
     this.walletBackground = SELECTED_BUTTON_COLOR
     this.walletHint = true
   }
 
   exploreEnter(): void {
-    this.exploreIcon.spriteName = 'Explore on'
+    this.exploreAtlasIcon.spriteName = 'Explore on'
     this.exploreBackground = SELECTED_BUTTON_COLOR
     this.exploreHint = true
   }
 
   notificationsEnter(): void {
-    this.bellIcon.spriteName = 'Notifications on'
+    this.bellAtlasIcon.spriteName = 'Notifications on'
     this.bellBackground = SELECTED_BUTTON_COLOR
     this.bellHint = true
   }
 
   mapEnter(): void {
-    this.mapIcon.spriteName = 'Map on'
+    this.mapAtlasIcon.spriteName = 'Map on'
     this.mapBackground = SELECTED_BUTTON_COLOR
     this.mapHint = true
   }
 
   backpackEnter(): void {
-    this.backpackIcon.spriteName = 'Backpack on'
+    this.backpackAtlasIcon.spriteName = 'Backpack on'
     this.backpackBackground = SELECTED_BUTTON_COLOR
     this.backpackHint = true
   }
 
   settingsEnter(): void {
-    this.settingsIcon.spriteName = 'Settings on'
+    this.settingsAtlasIcon.spriteName = 'Settings on'
     this.settingsBackground = SELECTED_BUTTON_COLOR
     this.settingsHint = true
   }
 
   helpEnter(): void {
-    this.helpIcon.spriteName = 'HelpIcon On'
+    this.helpAtlasIcon.spriteName = 'HelpAtlasIcon On'
     this.helpBackground = SELECTED_BUTTON_COLOR
     this.helpHint = true
   }
 
   emotesEnter(): void {
-    this.emotesIcon.spriteName = 'Emote on'
+    this.emotesAtlasIcon.spriteName = 'Emote on'
     this.emotesBackground = SELECTED_BUTTON_COLOR
     this.emotesHint = true
   }
 
   friendsEnter(): void {
-    this.friendsIcon.spriteName = 'Friends on'
+    this.friendsAtlasIcon.spriteName = 'Friends on'
     this.friendsBackground = SELECTED_BUTTON_COLOR
     this.friendsHint = true
   }
 
   chatEnter(): void {
-    this.chatIcon.spriteName = 'Chat on'
+    this.chatAtlasIcon.spriteName = 'Chat on'
     this.chatBackground = SELECTED_BUTTON_COLOR
     this.chatHint = true
   }
@@ -196,43 +196,43 @@ export default class MainHud {
   }
 
   updateButtons(): void {
-    this.walletIcon.spriteName = 'Wallet'
+    this.walletAtlasIcon.spriteName = 'Wallet'
     this.walletBackground = undefined
     this.walletHint = false
-    this.bellIcon.spriteName = 'Notifications off'
+    this.bellAtlasIcon.spriteName = 'Notifications off'
     this.bellBackground = undefined
     this.bellHint = false
-    this.mapIcon.spriteName = 'Map off'
+    this.mapAtlasIcon.spriteName = 'Map off'
     this.mapBackground = undefined
     this.mapHint = false
-    this.backpackIcon.spriteName = 'Backpack off'
+    this.backpackAtlasIcon.spriteName = 'Backpack off'
     this.backpackBackground = undefined
     this.backpackHint = false
-    this.settingsIcon.spriteName = 'Settings off'
+    this.settingsAtlasIcon.spriteName = 'Settings off'
     this.settingsBackground = undefined
     this.settingsHint = false
-    this.helpIcon.spriteName = 'HelpIcon Off'
+    this.helpAtlasIcon.spriteName = 'HelpAtlasIcon Off'
     this.helpBackground = undefined
     this.helpHint = false
-    this.emotesIcon.spriteName = 'Emote off'
+    this.emotesAtlasIcon.spriteName = 'Emote off'
     this.emotesBackground = undefined
     this.emotesHint = false
-    this.exploreIcon.spriteName = 'Explore off'
+    this.exploreAtlasIcon.spriteName = 'Explore off'
     this.exploreBackground = undefined
     this.exploreHint = false
 
     if (!this.friendsOpen) {
-      this.friendsIcon.spriteName = 'Friends off'
+      this.friendsAtlasIcon.spriteName = 'Friends off'
       this.friendsBackground = undefined
     }
     this.friendsHint = false
     if (!this.chatOpen) {
-      this.chatIcon.spriteName = 'Chat off'
+      this.chatAtlasIcon.spriteName = 'Chat off'
       this.chatBackground = undefined
     }
     this.chatHint = false
     if (!this.voiceChatOn) {
-      this.voiceChatIcon.spriteName = 'Mic off'
+      this.voiceChatAtlasIcon.spriteName = 'Mic off'
       this.voiceChatBackground = undefined
     }
     this.voiceChatHint = false
@@ -321,7 +321,7 @@ export default class MainHud {
                   this.uiController.profile.showCard()
                 }}
                 backgroundColor={this.walletBackground}
-                icon={this.walletIcon}
+                icon={this.walletAtlasIcon}
                 hintText={'Profile'}
                 showHint={this.walletHint}
               />
@@ -345,7 +345,7 @@ export default class MainHud {
                   console.log('clicked')
                 }}
                 backgroundColor={this.bellBackground}
-                icon={this.bellIcon}
+                icon={this.bellAtlasIcon}
                 hintText={'Notifications'}
                 showHint={this.bellHint}
               />
@@ -374,7 +374,7 @@ export default class MainHud {
                   this.uiController.menu?.show('map')
                 }}
                 backgroundColor={this.mapBackground}
-                icon={this.mapIcon}
+                icon={this.mapAtlasIcon}
                 hintText={'Map'}
                 showHint={this.mapHint}
               />
@@ -397,7 +397,7 @@ export default class MainHud {
                   this.uiController.menu?.show('explore')
                 }}
                 backgroundColor={this.exploreBackground}
-                icon={this.exploreIcon}
+                icon={this.exploreAtlasIcon}
                 hintText={'Explore'}
                 showHint={this.exploreHint}
               />
@@ -421,7 +421,7 @@ export default class MainHud {
                   this.uiController.menu?.show('backpack')
                 }}
                 backgroundColor={this.backpackBackground}
-                icon={this.backpackIcon}
+                icon={this.backpackAtlasIcon}
                 hintText={'Backpack'}
                 showHint={this.backpackHint}
               />
@@ -445,7 +445,7 @@ export default class MainHud {
                   this.uiController.menu?.show('settings')
                 }}
                 backgroundColor={this.settingsBackground}
-                icon={this.settingsIcon}
+                icon={this.settingsAtlasIcon}
                 hintText={'Settings'}
                 showHint={this.settingsHint}
               />
@@ -475,7 +475,7 @@ export default class MainHud {
                   // openExternalUrl({ url: 'https://decentraland.org/help/' }).catch(console.error)
                 }}
                 backgroundColor={this.helpBackground}
-                icon={this.helpIcon}
+                icon={this.helpAtlasIcon}
                 hintText={'Help'}
                 showHint={this.helpHint}
               />
@@ -496,7 +496,7 @@ export default class MainHud {
                 onMouseLeave={()=>{this.cameraLeave()}}
                 onMouseDown={()=>{console.log('Camera clicked')}}
                 backgroundColor={this.cameraBackground}
-                icon={this.cameraIcon}
+                icon={this.cameraAtlasIcon}
                 hintText={'Camera'}
                 showHint={this.cameraHint} />
 
@@ -505,7 +505,7 @@ export default class MainHud {
                 onMouseLeave={()=>{this.updateButtons()}}
                 onMouseDown={()=>{console.log('clicked')}}
                 backgroundColor={this.experiencesBackground}
-                icon={this.experiencesIcon}
+                icon={this.experiencesAtlasIcon}
                 hintText={'Experiences'}
                 showHint={this.experiencesHint} />
               */}
@@ -525,7 +525,7 @@ export default class MainHud {
                   this.openCloseFriends()
                 }}
                 backgroundColor={this.friendsBackground}
-                icon={this.friendsIcon}
+                icon={this.friendsAtlasIcon}
                 hintText={'Friends'}
                 showHint={this.friendsHint}
                 notifications={
@@ -549,7 +549,7 @@ export default class MainHud {
                   this.voiceChatDown()
                 }}
                 backgroundColor={this.voiceChatBackground}
-                icon={this.voiceChatIcon}
+                icon={this.voiceChatAtlasIcon}
                 hintText={'Voice Chat'}
                 showHint={this.voiceChatHint}
               />
@@ -569,7 +569,7 @@ export default class MainHud {
                   this.openCloseChat()
                 }}
                 backgroundColor={this.chatBackground}
-                icon={this.chatIcon}
+                icon={this.chatAtlasIcon}
                 hintText={'Chat'}
                 showHint={this.chatHint}
                 notifications={0}
@@ -594,7 +594,7 @@ export default class MainHud {
                   console.log('clicked')
                 }}
                 backgroundColor={this.emotesBackground}
-                icon={this.emotesIcon}
+                icon={this.emotesAtlasIcon}
                 hintText={'Emotes'}
                 showHint={this.emotesHint}
               />
@@ -608,7 +608,7 @@ export default class MainHud {
             width: 'auto',
             height: 'auto',
             position: {
-              left: this.uiController.mainHud.isSideBarVisible === true
+              left: this.uiController.mainHud.isSideBarVisible
                 ? leftPosition
                 : canvasInfo.width * 0.01,
               bottom: canvasInfo.width * 0.01

@@ -30,7 +30,7 @@ async function init(retry: boolean): Promise<void> {
   if (message !== '') {
     gameInstance.uiController.warningPopUp.tittle = 'Message of the day:'
     gameInstance.uiController.warningPopUp.message = message
-    gameInstance.uiController.warningPopUp.icon = 'DdlIconColor'
+    gameInstance.uiController.warningPopUp.icon = 'DdlAtlasIconColor'
     gameInstance.uiController.warningPopUp.show()
   }
 

@@ -6,7 +6,12 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import { ALMOST_WHITE, ALMOST_BLACK, CLICKED_PRIMARY_COLOR, ORANGE } from '../../utils/constants'
+import {
+  ALMOST_WHITE,
+  ALMOST_BLACK,
+  CLICKED_PRIMARY_COLOR,
+  ORANGE
+} from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 function DropdownStyled(props: {

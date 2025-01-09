@@ -1,1 +1,1 @@
-export { default as ArrowToast } from './ArrowToast';
+export { default as ArrowToast } from './ArrowToast'

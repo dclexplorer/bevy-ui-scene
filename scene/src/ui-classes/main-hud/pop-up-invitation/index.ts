@@ -1,1 +1,1 @@
-export { default as PopUpInvitation } from './PopUpInvitation';
+export { default as PopUpInvitation } from './PopUpInvitation'

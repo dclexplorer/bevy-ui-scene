@@ -9,7 +9,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 49, h: 48 },
       sourceSize: { w: 49, h: 48 }
     },
-    'BackStepIcon.png': {
+    'BackStepAtlasIcon.png': {
       frame: { x: 49, y: 38, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -51,14 +51,14 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 49, h: 49 },
       sourceSize: { w: 49, h: 49 }
     },
-    'BugIcon.png': {
+    'BugAtlasIcon.png': {
       frame: { x: 192, y: 807, w: 50, h: 49 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 50, h: 49 },
       sourceSize: { w: 50, h: 49 }
     },
-    'BuyIcon.png': {
+    'BuyAtlasIcon.png': {
       frame: { x: 97, y: 38, w: 51, h: 48 },
       rotated: false,
       trimmed: false,
@@ -72,7 +72,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'CatalogIcon.png': {
+    'CatalogAtlasIcon.png': {
       frame: { x: 196, y: 38, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -93,7 +93,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 49 },
       sourceSize: { w: 48, h: 49 }
     },
-    'CloseIcon.png': {
+    'CloseAtlasIcon.png': {
       frame: { x: 98, y: 856, w: 48, h: 49 },
       rotated: false,
       trimmed: false,
@@ -128,28 +128,28 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'CopyIcon.png': {
+    'CopyAtlasIcon.png': {
       frame: { x: 145, y: 86, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'DdlIcon.png': {
+    'DdlAtlasIcon.png': {
       frame: { x: 193, y: 86, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'DdlIconColor.png': {
+    'DdlAtlasIconColor.png': {
       frame: { x: 0, y: 134, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'DebugIcon.png': {
+    'DebugAtlasIcon.png': {
       frame: { x: 146, y: 856, w: 48, h: 49 },
       rotated: false,
       trimmed: false,
@@ -163,21 +163,21 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 50, h: 49 },
       sourceSize: { w: 50, h: 49 }
     },
-    'DeleteIconOutline.png': {
+    'DeleteAtlasIconOutline.png': {
       frame: { x: 48, y: 134, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'DetailsIcon-1.png': {
+    'DetailsAtlasIcon-1.png': {
       frame: { x: 96, y: 134, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'DetailsIcon.png': {
+    'DetailsAtlasIcon.png': {
       frame: { x: 144, y: 134, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -212,7 +212,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 49, h: 49 },
       sourceSize: { w: 49, h: 49 }
     },
-    'DownloadIcon.png': {
+    'DownloadAtlasIcon.png': {
       frame: { x: 192, y: 134, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -247,7 +247,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 49, h: 48 },
       sourceSize: { w: 49, h: 48 }
     },
-    'EntityListIcon.png': {
+    'EntityListAtlasIcon.png': {
       frame: { x: 49, y: 182, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -338,7 +338,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 49, h: 48 },
       sourceSize: { w: 49, h: 48 }
     },
-    'HideUIIcon.png': {
+    'HideUIAtlasIcon.png': {
       frame: { x: 98, y: 278, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -471,14 +471,14 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'LogoutIcon.png': {
+    'LogoutAtlasIcon.png': {
       frame: { x: 144, y: 1052, w: 50, h: 49 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 50, h: 49 },
       sourceSize: { w: 50, h: 49 }
     },
-    'MagnetIcon.png': {
+    'MagnetAtlasIcon.png': {
       frame: { x: 48, y: 374, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -555,7 +555,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 91, h: 36 },
       sourceSize: { w: 91, h: 36 }
     },
-    'OperatorIcon.png': {
+    'OperatorAtlasIcon.png': {
       frame: { x: 97, y: 422, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -569,7 +569,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 49, h: 48 },
       sourceSize: { w: 49, h: 48 }
     },
-    'OwnerIcon.png': {
+    'OwnerAtlasIcon.png': {
       frame: { x: 194, y: 422, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -639,7 +639,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 49, h: 48 },
       sourceSize: { w: 49, h: 48 }
     },
-    'PreviewIcon.png': {
+    'PreviewAtlasIcon.png': {
       frame: { x: 147, y: 518, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -660,7 +660,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 49, h: 48 },
       sourceSize: { w: 49, h: 48 }
     },
-    'PublishIcon.png': {
+    'PublishAtlasIcon.png': {
       frame: { x: 49, y: 566, w: 48, h: 48 },
       rotated: false,
       trimmed: false,
@@ -716,7 +716,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'SaleIcon.png': {
+    'SaleAtlasIcon.png': {
       frame: { x: 48, y: 614, w: 49, h: 48 },
       rotated: false,
       trimmed: false,
@@ -786,7 +786,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 49, h: 48 },
       sourceSize: { w: 49, h: 48 }
     },
-    'SupportIcon.png': {
+    'SupportAtlasIcon.png': {
       frame: { x: 146, y: 1150, w: 42, h: 49 },
       rotated: false,
       trimmed: false,
@@ -800,7 +800,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 39, h: 16 },
       sourceSize: { w: 39, h: 16 }
     },
-    'ToolsIcon2.png': {
+    'ToolsAtlasIcon2.png': {
       frame: { x: 188, y: 1150, w: 50, h: 49 },
       rotated: false,
       trimmed: false,
@@ -912,7 +912,7 @@ export const iconsJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 48 },
       sourceSize: { w: 48, h: 48 }
     },
-    'WorldsIconColor.png': {
+    'WorldsAtlasIconColor.png': {
       frame: { x: 145, y: 758, w: 48, h: 48 },
       rotated: false,
       trimmed: false,

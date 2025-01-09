@@ -5,9 +5,14 @@ import { ButtonIcon } from '../../../components/button-icon'
 import { ButtonText } from '../../../components/button-text'
 import Canvas from '../../../components/canvas/Canvas'
 import { type UIController } from '../../../controllers/ui.controller'
-import { RUBY, LEFT_PANEL_WIDTH_FACTOR, LEFT_PANEL_MIN_WIDTH, ALMOST_WHITE, ALMOST_BLACK } from '../../../utils/constants'
+import {
+  RUBY,
+  LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALMOST_WHITE,
+  ALMOST_BLACK
+} from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
-
 
 export default class PopUpAction {
   private readonly uiController: UIController
@@ -167,7 +172,7 @@ export default class PopUpAction {
                   uiBackground={{
                     ...getBackgroundFromAtlas({
                       atlasName: 'navbar',
-                      spriteName: 'HelpIcon Off'
+                      spriteName: 'HelpAtlasIcon Off'
                     }),
                     color: ALMOST_BLACK
                   }}
@@ -206,7 +211,7 @@ export default class PopUpAction {
                     this.updateButtons()
                   }}
                   backgroundColor={this.closeBackground}
-                  icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+                  icon={{ atlasName: 'icons', spriteName: 'CloseAtlasIcon' }}
                   iconColor={ALMOST_BLACK}
                 />
               </UiEntity>

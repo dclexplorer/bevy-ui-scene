@@ -1,1 +1,1 @@
-export { default as BackpackPage } from './BackpackPage';
+export { default as BackpackPage } from './BackpackPage'

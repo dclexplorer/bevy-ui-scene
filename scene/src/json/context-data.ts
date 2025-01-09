@@ -30,7 +30,7 @@ export const contextJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 44, h: 44 },
       sourceSize: { w: 44, h: 44 }
     },
-    'CopyIconOutline.png': {
+    'CopyAtlasIconOutline.png': {
       frame: { x: 0, y: 88, w: 44, h: 44 },
       rotated: false,
       trimmed: false,
@@ -121,7 +121,7 @@ export const contextJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 44, h: 44 },
       sourceSize: { w: 44, h: 44 }
     },
-    'QuitIconOutline.png': {
+    'QuitAtlasIconOutline.png': {
       frame: { x: 0, y: 308, w: 44, h: 44 },
       rotated: false,
       trimmed: false,
@@ -142,7 +142,7 @@ export const contextJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 44, h: 46 },
       sourceSize: { w: 44, h: 46 }
     },
-    'SettingsOutlineIcon.png': {
+    'SettingsOutlineAtlasIcon.png': {
       frame: { x: 0, y: 352, w: 44, h: 44 },
       rotated: false,
       trimmed: false,

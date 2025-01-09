@@ -1,1 +1,1 @@
-export { default as ButtonChip } from './ButtonChip';
+export { default as ButtonChip } from './ButtonChip'

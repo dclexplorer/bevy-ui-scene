@@ -1,1 +1,1 @@
-export { default as MainHud } from './MainHud';
+export { default as MainHud } from './MainHud'

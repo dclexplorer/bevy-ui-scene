@@ -1,1 +1,1 @@
-export { default as PopUpWarning } from './PopUpWarning';
+export { default as PopUpWarning } from './PopUpWarning'

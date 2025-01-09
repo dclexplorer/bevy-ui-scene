@@ -22,7 +22,7 @@ import { getBackgroundFromAtlas, isValidDate } from '../../utils/ui-utils'
 import { AddLink } from '../add-link'
 import Canvas from '../../components/canvas/Canvas'
 import { BevyApi } from '../../bevy-api'
-import { ButtonTextIcon } from '../../components/button-text-icon'
+import { ButtonTextAtlasIcon } from '../../components/button-text-icon'
 import { ButtonText } from '../../components/button-text'
 import { DropdownField } from '../../components/dropdown-field'
 import { InputField } from '../../components/input-field'
@@ -41,7 +41,7 @@ export default class Profile {
   private typedProfession: string = ''
   private typedRealName: string = ''
   private readonly isMyProfile: boolean = true
-  private readonly statusIconSprite: string =
+  private readonly statusAtlasIconSprite: string =
     'assets/images/passport/online.png'
 
   private readonly name: string = 'BevyUser'
@@ -385,7 +385,7 @@ export default class Profile {
                   uiBackground={{
                     ...getBackgroundFromAtlas({
                       atlasName: 'icons',
-                      spriteName: 'CopyIcon'
+                      spriteName: 'CopyAtlasIcon'
                     }),
                     color: { ...ALMOST_WHITE, a: 0.2 }
                   }}
@@ -411,7 +411,7 @@ export default class Profile {
               uiTransform={{ margin: '5%', width: '100%', height: 1 }}
               uiBackground={{ color: { ...Color4.White(), a: 0.1 } }}
             />
-            <ButtonTextIcon
+            <ButtonTextAtlasIcon
               onMouseDown={() => {
                 void this.logout()
               }}
@@ -424,10 +424,10 @@ export default class Profile {
               fontSize={this.fontSize * 0.8}
               icon={{
                 atlasName: 'icons',
-                spriteName: 'LogoutIcon'
+                spriteName: 'LogoutAtlasIcon'
               }}
             />
-            <ButtonTextIcon
+            <ButtonTextAtlasIcon
               onMouseDown={() => {}}
               uiTransform={{
                 width: '90%',
@@ -456,7 +456,7 @@ export default class Profile {
               }}
               uiBackground={{
                 texture: {
-                  src: 'assets/images/backgrounds/roundedBottom.png'
+                  src: 'assets/images/backgrounds/rounded-bottom.png'
                 },
                 color: Color4.Black(),
                 textureMode: 'nine-slices',
@@ -546,7 +546,7 @@ export default class Profile {
                     height: this.fontSize * 0.75
                   }}
                   uiBackground={{
-                    texture: { src: this.statusIconSprite },
+                    texture: { src: this.statusAtlasIconSprite },
                     textureMode: 'stretch'
                   }}
                 />
@@ -600,7 +600,7 @@ export default class Profile {
                   uiBackground={{
                     ...getBackgroundFromAtlas({
                       atlasName: 'icons',
-                      spriteName: 'CopyIcon'
+                      spriteName: 'CopyAtlasIcon'
                     }),
                     color: { ...ALMOST_WHITE, a: 0.2 }
                   }}
@@ -638,7 +638,7 @@ export default class Profile {
                   uiBackground={{
                     ...getBackgroundFromAtlas({
                       atlasName: 'icons',
-                      spriteName: 'CopyIcon'
+                      spriteName: 'CopyAtlasIcon'
                     }),
                     color: { ...ALMOST_WHITE, a: 0.2 }
                   }}
@@ -714,7 +714,7 @@ export default class Profile {
                     height: 2 * this.fontSize
                   }}
                   backgroundColor={this.closeButtonColor}
-                  icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+                  icon={{ atlasName: 'icons', spriteName: 'CloseAtlasIcon' }}
                 />
               </UiEntity>
 

@@ -67,7 +67,7 @@ export default class AddLink {
     return (
       <UiEntity
         uiTransform={{
-          display: this.uiController.profile.addLinkOpen === true ? 'flex' : 'none',
+          display: this.uiController.profile.addLinkOpen ? 'flex' : 'none',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',

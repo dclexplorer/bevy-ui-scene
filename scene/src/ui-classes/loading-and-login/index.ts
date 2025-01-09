@@ -1,1 +1,1 @@
-export { default as LoadingAndLogin } from './LoadingAndLogin';
+export { default as LoadingAndLogin } from './LoadingAndLogin'
