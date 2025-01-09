@@ -55,7 +55,6 @@ export const INPUT_KEYS_ARRAY: SlotsInputs[] = [
   InputAction.IA_ACTION_6
 ]
 
-
 export type SceneCategory =
   | 'favorites'
   | 'art'
