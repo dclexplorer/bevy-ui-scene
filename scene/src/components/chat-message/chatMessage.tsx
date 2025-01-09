@@ -9,8 +9,8 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { LAVANDER, ALMOST_WHITE } from '../../utils/constants'
-import type { Message } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { type Message } from './ChatMessage.types'
 
 function ChatMessage(props: {
   uiTransform?: UiTransformProps

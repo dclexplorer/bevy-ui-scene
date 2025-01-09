@@ -1,7 +1,7 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
-import { type AtlasIcon, type Invitation } from '../../../utils/definitions'
+import { type AtlasIcon } from '../../../utils/definitions'
 import { ButtonIcon } from '../../../components/button-icon'
 import { FriendItem } from '../../../components/friend-item'
 import { InvitationItem } from '../../../components/invitation-item'
@@ -19,6 +19,7 @@ import {
 import { getName, getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { PopUpInvitation } from '../pop-up-invitation'
 import { type Friend } from './Friends.types'
+import { type Invitation } from '../../../components/friend-invitation/FriendInvitation.types'
 // import ButtonIcon from '../../components/ButtonIcon'
 
 export default class Friends {

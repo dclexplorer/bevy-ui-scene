@@ -1,5 +1,6 @@
 import { Color4 } from '@dcl/sdk/math'
-import { type Invitation, type Friend } from './definitions'
+import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
+import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)

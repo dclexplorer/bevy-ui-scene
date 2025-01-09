@@ -13,8 +13,8 @@ import {
   ALPHA_BLACK_PANEL,
   ALMOST_BLACK
 } from '../../../utils/constants'
-import { type Invitation } from '../../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
+import { type Invitation } from '../../../components/friend-invitation/FriendInvitation.types'
 
 export default class PopUpInvitation {
   private readonly uiController: UIController

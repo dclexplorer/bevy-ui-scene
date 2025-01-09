@@ -55,12 +55,6 @@ export const INPUT_KEYS_ARRAY: SlotsInputs[] = [
   InputAction.IA_ACTION_6
 ]
 
-export type Invitation = {
-  id: string
-  status: 'sent' | 'received'
-  message: string
-  date: string
-}
 
 export type SceneCategory =
   | 'favorites'

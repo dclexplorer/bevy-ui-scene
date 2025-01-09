@@ -7,11 +7,11 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { ALMOST_WHITE } from '../../utils/constants'
-import type { Invitation } from '../../utils/definitions'
 import {
   getBackgroundFromAtlas,
   truncateWithoutBreakingWords
 } from '../../utils/ui-utils'
+import { type Invitation } from '../friend-invitation/FriendInvitation.types'
 
 function InvitationItem(props: {
   // Events
