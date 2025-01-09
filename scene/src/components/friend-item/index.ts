@@ -1,1 +1,1 @@
-export { default as FriendItem } from './temp_FriendItem'
+export { default as FriendItem } from './FriendItem'

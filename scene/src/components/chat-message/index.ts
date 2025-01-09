@@ -1,1 +1,1 @@
-export { default as ChatMessage } from './temp_ChatMessage'
+export { default as ChatMessage } from './ChatMessage'
