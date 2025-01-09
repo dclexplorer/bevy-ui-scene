@@ -8,7 +8,7 @@ import ReactEcs, {
 import { getPlayer } from '@dcl/sdk/src/players'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 
-function friendItem(props: {
+function FriendItem(props: {
   // Events
   onMouseDown?: Callback
   // Shape
@@ -81,4 +81,4 @@ function friendItem(props: {
   )
 }
 
-export default friendItem
+export default FriendItem

@@ -13,7 +13,7 @@ import {
 import { type Invitation } from '../utils/definitions'
 import { ALMOST_WHITE } from '../utils/constants'
 
-function invitationItem(props: {
+function InvitationItem(props: {
   // Events
   onMouseDown?: Callback
   // Shape
@@ -122,4 +122,4 @@ function invitationItem(props: {
   )
 }
 
-export default invitationItem
+export default InvitationItem

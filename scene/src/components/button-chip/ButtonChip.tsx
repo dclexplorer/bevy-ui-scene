@@ -6,10 +6,10 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import type { Icon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import IconButton from '../button-icon/iconButton'
+import IconButton from '../button-icon/ButtonIcon'
 
 
-function chipButton(props: {
+function ButtonChip(props: {
   // Events
   onMouseEnter?: Callback
   onMouseLeave?: Callback
@@ -101,4 +101,4 @@ function chipButton(props: {
   )
 }
 
-export default chipButton
+export default ButtonChip

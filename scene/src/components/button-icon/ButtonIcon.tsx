@@ -7,11 +7,11 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import ArrowToast from './arrowToast'
 import { type Icon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { ArrowToast } from '../arrow-toast'
 
-function IconButton(props: {
+function ButtonIcon(props: {
   // Events
   onMouseEnter?: Callback
   onMouseLeave?: Callback
@@ -127,4 +127,4 @@ function IconButton(props: {
   )
 }
 
-export default IconButton
+export default ButtonIcon

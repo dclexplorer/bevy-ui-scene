@@ -4,8 +4,11 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
+import type { Icon } from '../../utils/definitions'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
-function TextButton(props: {
+
+function ButtonTextIcon(props: {
   // Events
   onMouseEnter?: Callback
   onMouseLeave?: Callback
@@ -16,26 +19,25 @@ function TextButton(props: {
   // Text
   value: string
   fontSize: number
+  icon: Icon
+  iconSize?: number
   fontColor?: Color4
-  // Status
-  isLoading?: boolean
+  iconColor?: Color4
+  direction?: 'row' | 'column'
 }): ReactEcs.JSX.Element | null {
   //   const ICON_MARGIN = Math.max(canvasInfo.height * 0.01, 2)
   return (
     <UiEntity
       uiTransform={{
         // padding: props.fontSize * 0.3,
-        // margin: props.fontSize * 0.3,
-        flexDirection: 'row',
+        // margin: { bottom: props.fontSize * 0.3, top: props.fontSize * 0.3 },
+        flexDirection: props.direction ?? 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        width: 'auto',
-        height: 'auto',
         ...props.uiTransform
       }}
       uiBackground={{
         color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
-
         textureMode: 'nine-slices',
         texture: {
           src: 'assets/images/backgrounds/rounded.png'
@@ -51,6 +53,18 @@ function TextButton(props: {
       onMouseEnter={props.onMouseEnter}
       onMouseLeave={props.onMouseLeave}
     >
+      {/* ICON */}
+
+      <UiEntity
+        uiTransform={{
+          width: props.iconSize ?? 2 * props.fontSize,
+          height: props.iconSize ?? 2 * props.fontSize
+        }}
+        uiBackground={{
+          ...getBackgroundFromAtlas(props.icon),
+          color: props.iconColor
+        }}
+      />
       {/* TEXT */}
       <UiEntity
         uiTransform={{
@@ -62,25 +76,9 @@ function TextButton(props: {
           fontSize: props.fontSize,
           color: props.fontColor ?? Color4.White()
         }}
-      >
-        {/* ICON */}
-        {props.isLoading === true && (
-          <UiEntity
-            uiTransform={{
-              width: props.fontSize,
-              height: props.fontSize,
-              positionType: 'absolute',
-              position: { top: '25%', left: -1.25 * props.fontSize }
-            }}
-            uiBackground={{
-              textureMode: 'stretch',
-              texture: { src: 'assets/images/Spinner.png' }
-            }}
-          />
-        )}
-      </UiEntity>
+      ></UiEntity>
     </UiEntity>
   )
 }
 
-export default TextButton
+export default ButtonTextIcon

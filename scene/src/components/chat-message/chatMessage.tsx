@@ -1,16 +1,16 @@
 import { getPlayer } from '@dcl/sdk/src/players'
 
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import { getBackgroundFromAtlas } from '../utils/ui-utils'
 
 import ReactEcs, {
   Label,
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { ALMOST_WHITE, LAVANDER } from '../utils/constants'
 import { Color4 } from '@dcl/sdk/math'
-import { type Message } from '../utils/definitions'
+import { LAVANDER, ALMOST_WHITE } from '../../utils/constants'
+import type { Message } from '../../utils/definitions'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 function ChatMessage(props: {
   uiTransform?: UiTransformProps

@@ -13,7 +13,7 @@ import {
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 
-function styledDropdown(props: {
+function StyledDropdown(props: {
   isOpen: boolean
   // Events
   onMouseDown: Callback
@@ -246,4 +246,4 @@ function styledDropdown(props: {
   )
 }
 
-export default styledDropdown
+export default StyledDropdown

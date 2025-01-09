@@ -4,12 +4,12 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../utils/constants'
-import { type Icon } from '../utils/definitions'
-import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { ALMOST_WHITE, ALMOST_BLACK, ORANGE } from '../../utils/constants'
+import type { Icon } from '../../utils/definitions'
+import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
-function dropdownField(props: {
+function DropdownField(props: {
   isOpen: boolean
   // Events
   onMouseDown: Callback
@@ -250,4 +250,4 @@ function dropdownField(props: {
   )
 }
 
-export default dropdownField
+export default DropdownField

@@ -9,7 +9,7 @@ import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { type Color4 } from '@dcl/sdk/math'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 
-function inputField(props: {
+function InputField(props: {
   // Events
   onValueUpdate: (arg: string) => void
   // Shape
@@ -129,4 +129,4 @@ function inputField(props: {
   )
 }
 
-export default inputField
+export default InputField

@@ -14,7 +14,7 @@ import {
   UNSELECTED_TEXT_WHITE
 } from '../../utils/constants'
 import { type Icon } from '../../utils/definitions'
-import IconButton from '../../components/button-icon/iconButton'
+import IconButton from '../../components/button-icon/ButtonIcon'
 
 export class SceneInfo {
   private readonly uiController: UIController
