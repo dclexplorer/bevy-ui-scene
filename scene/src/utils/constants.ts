@@ -1,6 +1,7 @@
 import { Color4 } from '@dcl/sdk/math'
 import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
 import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
+import { type DclEvent } from '../ui-classes/scene-info-card/SceneInfoCard.types'
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)
@@ -472,3 +473,27 @@ export const LEFT_PANEL_WIDTH_FACTOR = 0.15
 
 export const HELP_URL: string = 'https://decentraland.org/help/'
 export const DCL_EXPLORER_URL: string = 'https://dclexplorer.com/'
+
+export const DCL_EVENTS: DclEvent[] = [
+  {
+    title: 'Event 1',
+    date: 1736880527,
+    interestedPeople: 5,
+    interested: true,
+    id: 0
+  },
+  {
+    title: 'Event 2',
+    date: 1736388929,
+    interestedPeople: 54,
+    interested: true,
+    id: 1
+  },
+  {
+    title: 'Event 3',
+    date: 1746730663,
+    interestedPeople: 1,
+    interested: false,
+    id: 2
+  }
+]

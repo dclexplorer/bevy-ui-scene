@@ -1,3 +1,4 @@
+import { eventsInitialState } from './sceneInfo/state'
 import { reducer } from './reducer'
 import { settingsInitialState } from './settings/state'
 import { type AppState, type Action } from './types'
@@ -34,5 +35,6 @@ export class Store {
 }
 
 export const store = new Store(reducer, {
-  settings: settingsInitialState
+  settings: settingsInitialState,
+  events: eventsInitialState
 })

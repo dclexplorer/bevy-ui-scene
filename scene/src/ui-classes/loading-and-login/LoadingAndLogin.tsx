@@ -51,7 +51,7 @@ export default class LoadingAndLogin {
   private backgroundGradientSrc: string =
     'assets/images/login/horizontal-violet-gradient.png'
 
-  private isVisible: boolean
+  private isVisible: boolean = false
   private toastOpen: boolean = false
   readonly countDown: string = '5:00'
   public timer: number = 2
@@ -59,11 +59,10 @@ export default class LoadingAndLogin {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
-    this.isVisible = false
   }
 
   startLoading(): void {
-    this.status = 'loading'
+    this.status = 'sign-in-or-guest'
     this.updateLayout()
     this.isVisible = true
   }

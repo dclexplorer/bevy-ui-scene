@@ -149,7 +149,8 @@ export default class MainMenu {
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
+                  margin: { left: 15, right: 15 },
+                  flexDirection: 'column'
                 }}
                 onMouseEnter={() => {
                   this.mapEnter()
@@ -165,14 +166,14 @@ export default class MainMenu {
                 value={'MAP [M]'}
                 fontSize={10}
                 iconSize={50}
-                direction={'column'}
               />
 
               <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
+                  margin: { left: 15, right: 15 },
+                  flexDirection: 'column'
                 }}
                 onMouseEnter={() => {
                   this.exploreEnter()
@@ -188,14 +189,14 @@ export default class MainMenu {
                 value={'EXPLORE'}
                 fontSize={10}
                 iconSize={50}
-                direction={'column'}
               />
 
               <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
+                  margin: { left: 15, right: 15 },
+                  flexDirection: 'column'
                 }}
                 onMouseEnter={() => {
                   this.backpackEnter()
@@ -211,14 +212,14 @@ export default class MainMenu {
                 value={'BACKPACK [B]'}
                 fontSize={10}
                 iconSize={50}
-                direction={'column'}
               />
 
               <ButtonTextIcon
                 uiTransform={{
                   height: '90%',
                   width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
+                  margin: { left: 15, right: 15 },
+                  flexDirection: 'column'
                 }}
                 onMouseEnter={() => {
                   this.settingsEnter()
@@ -234,7 +235,6 @@ export default class MainMenu {
                 value={'SETTINGS [P]'}
                 fontSize={10}
                 iconSize={50}
-                direction={'column'}
               />
             </UiEntity>
           </UiEntity>

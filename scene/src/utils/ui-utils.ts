@@ -141,11 +141,15 @@ export function sliderPercentageToValue(
   }
 }
 
-export function formatEventTime(timestampInSecs: number): string {
+export function formatEventTime(
+  startTimestamp: number,
+  endTimestamp: number
+): string {
   const now = new Date()
-  const eventDate = new Date(timestampInSecs * 1000) // convert to miliseconds
+  const eventStart = new Date(startTimestamp)
+  const eventEnd = new Date(endTimestamp)
 
-  if (eventDate > now) {
+  if (eventStart > now) {
     // Format: MON, 24 JUL AT 02:00PM
     const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
     const months = [
@@ -162,25 +166,47 @@ export function formatEventTime(timestampInSecs: number): string {
       'NOV',
       'DEC'
     ]
-    const day = days[eventDate.getUTCDay()]
-    const date = eventDate.getUTCDate()
-    const month = months[eventDate.getUTCMonth()]
-    const hours = eventDate.getUTCHours()
-    const minutes = eventDate.getUTCMinutes()
+    const day = days[eventStart.getUTCDay()]
+    const date = eventStart.getUTCDate()
+    const month = months[eventStart.getUTCMonth()]
+    const hours = eventStart.getUTCHours()
+    const minutes = eventStart.getUTCMinutes()
     const formattedTime = `${isNaN(hours % 12) ? 12 : hours % 12}:${minutes
       .toString()
       .padStart(2, '0')}${hours >= 12 ? 'PM' : 'AM'}`
     return `${day}, ${date} ${month} AT ${formattedTime}`
-  } else {
+  } else if (eventEnd > now) {
     // Calcular diferencia
-    const diff = Math.abs(now.getTime() - eventDate.getTime()) // Diferencia en milisegundos
+    const diff = Math.abs(now.getTime() - eventStart.getTime()) // Diferencia en milisegundos
     const minutesDiff = Math.floor(diff / (1000 * 60))
     const hoursDiff = Math.floor(minutesDiff / 60)
+    const daysDiff = Math.floor(hoursDiff / 24)
 
-    if (hoursDiff > 0) {
-      return `Event started ${hoursDiff} hours ago.`
+    if (daysDiff > 0) {
+      if (daysDiff === 1) {
+        return `Event started ${daysDiff} day ago.`
+      } else {
+        return `Event started ${daysDiff} days ago.`
+      }
+    } else if (hoursDiff > 0) {
+      if (hoursDiff === 1) {
+        return `Event started ${hoursDiff} hour ago.`
+      } else {
+        return `Event started ${hoursDiff} hours ago.`
+      }
     } else {
-      return `Event started ${minutesDiff} minutes ago.`
+      if (hoursDiff === 1) {
+        return `Event started ${minutesDiff} minute ago.`
+      } else {
+        return `Event started ${minutesDiff} minutes ago.`
+      }
     }
+  } else {
+    return `Event is over.`
   }
+}
+
+export function getTimestamp(dateString: string): number {
+  const date = new Date(dateString)
+  return date.getTime()
 }
