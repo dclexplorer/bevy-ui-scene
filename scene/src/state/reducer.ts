@@ -8,8 +8,8 @@ export function reducer(state: AppState, action: Action): AppState {
   if (action.__reducer === 'settings') {
     newState.settings = settingsReducer(state.settings, action)
   }
-  if (action.__reducer === 'events') {
-    newState.events = eventsReducer(state.events, action)
+  if (action.__reducer === 'scene') {
+    newState.scene = eventsReducer(state.scene, action)
   }
 
   return newState

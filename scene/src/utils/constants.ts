@@ -1,7 +1,7 @@
 import { Color4 } from '@dcl/sdk/math'
 import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
 import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
-import { type DclEvent } from '../ui-classes/scene-info-card/SceneInfoCard.types'
+import type { PlaceFromApi, DclEvent } from '../ui-classes/scene-info-card/SceneInfoCard.types'
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)
@@ -62,6 +62,15 @@ export const DCL_SNOW: Color4 = Color4.create(
   252 / 255,
   1
 )
+
+export const EVENT_BACKGROUND_COLOR: Color4 = Color4.create(
+  242 / 255,
+  242 / 255,
+  242 / 255,
+  1
+)
+
+
 
 export const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
@@ -497,3 +506,38 @@ export const DCL_EVENTS: DclEvent[] = [
     id: 2
   }
 ]
+
+export const EMPTY_PLACE: PlaceFromApi = {
+  id: 'id',
+  title: 'Title',
+  description: 'Description',
+  image:
+    'https://peer.decentraland.org/content/contents/-',
+  owner: null,
+  positions: ['-9999,-9999'],
+  base_position: '-9999,-9999',
+  contact_name: 'contact_name',
+  contact_email: null,
+  content_rating: 'RP',
+  disabled: false,
+  disabled_at: null,
+  created_at: '2023-05-09T19:05:10.218Z',
+  updated_at: '2023-05-09T19:05:10.218Z',
+  favorites: 126,
+  likes: 75,
+  dislikes: 11,
+  categories: ['poi', 'social'],
+  like_rate: 0.83928573,
+  highlighted: false,
+  highlighted_image: null,
+  world: false,
+  world_name: null,
+  deployed_at: '2024-12-11T22:40:12.047Z',
+  textsearch: "'bitcinema':1A 'by':3B,6B 'powered':2B,5B 'vtatv':4B,7B",
+  like_score: 0.7250946,
+  user_favorite: false,
+  user_like: false,
+  user_dislike: false,
+  user_count: 0,
+  user_visits: 298
+}

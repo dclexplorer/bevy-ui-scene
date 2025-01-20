@@ -55,44 +55,58 @@ export type EventFromApi = {
   live: boolean
 }
 
+export type CategoryFromApi =
+  | 'art'
+  | 'business'
+  | 'casino'
+  | 'crypto'
+  | 'education'
+  | 'fashion'
+  | 'game'
+  | 'music'
+  | 'poi'
+  | 'shop'
+  | 'social'
+  | 'sports'
+
 export type PlaceFromApi = {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  owner: string | null;
-  positions: string[];
-  base_position: string;
-  contact_name: string;
-  contact_email: string | null; 
-  content_rating: string;
-  disabled: boolean;
-  disabled_at: string | null; 
-  created_at: string;
-  updated_at: string;
-  favorites: number;
-  likes: number;
-  dislikes: number;
-  categories: string[];
-  like_rate: number;
-  highlighted: boolean;
-  highlighted_image: string;
-  world: boolean;
-  world_name: string | null; 
-  deployed_at: string;
-  textsearch: string;
-  like_score: number;
-  user_favorite: boolean;
-  user_like: boolean;
-  user_dislike: boolean;
-  user_count: number;
-  user_visits: number;
+  id: string
+  title: string
+  description: string | null
+  image: string
+  owner: string | null
+  positions: string[]
+  base_position: string
+  contact_name: string
+  contact_email: string | null
+  content_rating: string
+  disabled: boolean
+  disabled_at: string | null
+  created_at: string
+  updated_at: string
+  favorites: number
+  likes: number
+  dislikes: number
+  categories: CategoryFromApi[]
+  like_rate: number | null
+  highlighted: boolean
+  highlighted_image: string | null
+  world: boolean
+  world_name: string | null
+  deployed_at: string
+  textsearch: string
+  like_score: number | null
+  user_favorite: boolean
+  user_like: boolean
+  user_dislike: boolean
+  user_count: number
+  user_visits: number
 }
 
 export type PhotoFromApi = {
-  id: string,
-  url: string,
-  thumbnailUrl: string,
-  isPublic: boolean,
+  id: string
+  url: string
+  thumbnailUrl: string
+  isPublic: boolean
   dateTime: number
 }

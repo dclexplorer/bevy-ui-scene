@@ -10,12 +10,13 @@ import {
   ALMOST_BLACK,
   BLACK_TEXT,
   DCL_SNOW,
+  EVENT_BACKGROUND_COLOR,
   GRAY_TEXT,
   PANEL_BACKGROUND_COLOR,
   RUBY,
   SELECTED_BUTTON_COLOR
 } from '../../utils/constants'
-import type { AtlasIcon, SceneCategory } from '../../utils/definitions'
+import type { AtlasIcon } from '../../utils/definitions'
 import Canvas from '../../components/canvas/Canvas'
 import {
   formatEventTime,
@@ -25,10 +26,19 @@ import {
 } from '../../utils/ui-utils'
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
-import { PhotoFromApi, PlaceFromApi, type EventFromApi } from './SceneInfoCard.types'
-import { fetchEvents, fetchPhotos, fetchPlaceId } from 'src/utils/promise-utils'
+import type {
+  PhotoFromApi,
+  PlaceFromApi,
+  EventFromApi,
+  CategoryFromApi
+} from './SceneInfoCard.types'
+import { fetchEvents, fetchPhotos, fetchPhotosQuantity, fetchPlaceId } from 'src/utils/promise-utils'
 import { store } from 'src/state/store'
-import { loadEventsFromApi } from 'src/state/sceneInfo/actions'
+import {
+  loadEventsFromApi,
+  loadPhotosFromApi,
+  loadPlaceFromApi
+} from 'src/state/sceneInfo/actions'
 
 export default class SceneInfoCard {
   private readonly uiController: UIController
@@ -59,56 +69,30 @@ export default class SceneInfoCard {
   public shareBackgroundColor: Color4 = DCL_SNOW
   public interestedEventsId: string[] = []
 
-  public selectedTab: 'overview' | 'photos' | 'events' = 'events'
-
-  public sceneTitle: string = 'Sad Escobar Vibes Scene'
-  public sceneCreator: string = 'Robtfm'
-  public sceneOnline: number = 0
-  public sceneRating: number = 0
-  public sceneViews: number = 0
-  public scenePhotosNumber: number = 5
-  public sceneCoords: { x: number; y: number } = { x: -10009, y: -93 }
-  public sceneParcels: number = 1
-  public sceneDescription: string =
-    'Pablo Escobar wandered alone through the empty halls of his hideout, a shadow of the powerful man he once was. Sitting on a rusty swing in the garden, he gazed into the distance, lost in memories of his family and the life he had built—now slipping away. The laughter of his children, the warmth of his wife, and the triumph of his empire felt like distant echoes, replaced by betrayal and isolation.'
-
-  public tags: SceneCategory[] = ['poi', 'social', 'casino', 'business']
+  public selectedTab: 'overview' | 'photos' | 'events' = 'overview'
 
   constructor(uiController: UIController) {
     this.uiController = uiController
   }
 
-
-  async changeSceneCoords(x:number, y:number): Promise<void>{
-
-    // Fetch Events
-    const eventsArray = await fetchEvents()
-    if (eventsArray.length === 0) {
-      console.log('No events found')
-    } else {
-      console.log('Events found: ', eventsArray.length)
-    }
-    
+  async changeSceneCoords(x: number, y: number): Promise<void> {
     const place: PlaceFromApi = await fetchPlaceId(x, y)
-    const photosArray: PhotoFromApi[]= await fetchPhotos(place.id)
-    
+    const photosQuantityInPlace: number = await fetchPhotosQuantity(place.id)
+    const photosArray: PhotoFromApi[] = await fetchPhotos(place.id, photosQuantityInPlace)
+    const eventsArray: EventFromApi[] = await fetchEvents(place.positions)
+
     store.dispatch(loadEventsFromApi(eventsArray))
     store.dispatch(loadPhotosFromApi(photosArray))
     store.dispatch(loadPlaceFromApi(place))
 
+    this.isFav = place.user_favorite
+    this.isLiked = place.user_like
+    this.isDisliked = place.user_dislike
   }
-
 
   async show(): Promise<void> {
     this.uiController.sceneInfoCardVisible = true
-    // Llama a la función
-    const eventsArray = await fetchEvents()
-    if (eventsArray.length === 0) {
-      console.log('No events found')
-    } else {
-      console.log('Events found: ', eventsArray.length)
-    }
-    store.dispatch(loadEventsFromApi(eventsArray))
+    await this.changeSceneCoords(-9,-9)
   }
 
   hide(): void {
@@ -192,6 +176,7 @@ export default class SceneInfoCard {
       panelWidth = canvasInfo.width / 4
     }
 
+    const place: PlaceFromApi = store.getState().scene.explorerPlace
     return (
       <Canvas>
         <UiEntity
@@ -217,7 +202,7 @@ export default class SceneInfoCard {
             uiBackground={{
               textureMode: 'stretch',
               texture: {
-                src: 'assets/images/backgrounds/montage.png'
+                src: place.image.replace("https://camera-reel-service.decentraland.org/api/images/", "https://camera-reel-s3-bucket.decentraland.org/")
               }
             }}
           />
@@ -253,6 +238,7 @@ export default class SceneInfoCard {
   }
 
   topBar(): ReactEcs.JSX.Element {
+    const place: PlaceFromApi = store.getState().scene.explorerPlace
     return (
       <UiEntity
         uiTransform={{
@@ -287,7 +273,7 @@ export default class SceneInfoCard {
           icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
         />
         <Label
-          value={this.sceneTitle}
+          value={place.title}
           fontSize={this.fontSize}
           textAlign="middle-center"
           uiTransform={{ width: '100%' }}
@@ -362,7 +348,11 @@ export default class SceneInfoCard {
             }}
           >
             <Label
-              value={'PHOTOS (' + this.scenePhotosNumber + ')'}
+              value={
+                'PHOTOS (' +
+                Object.values(store.getState().scene.explorerPhotos).length +
+                ')'
+              }
               color={BLACK_TEXT}
               fontSize={this.fontSize}
             />
@@ -390,11 +380,7 @@ export default class SceneInfoCard {
             <Label
               value={
                 'EVENTS (' +
-                Object.values(store.getState().events.explorerEvents).filter(
-                  (event) =>
-                    event.x === this.sceneCoords.x &&
-                    event.y === this.sceneCoords.y
-                ).length +
+                Object.values(store.getState().scene.explorerEvents).length +
                 ')'
               }
               color={BLACK_TEXT}
@@ -422,6 +408,8 @@ export default class SceneInfoCard {
   }
 
   sceneInfo(): ReactEcs.JSX.Element {
+    const place: PlaceFromApi = store.getState().scene.explorerPlace
+    const likeRate: number = place.like_rate ?? 0
     return (
       <UiEntity
         uiTransform={{
@@ -435,7 +423,7 @@ export default class SceneInfoCard {
         // uiBackground={{color:Color4.Blue()}}
       >
         <Label
-          value={this.sceneTitle}
+          value={place.title}
           fontSize={this.fontSize * 1.2}
           textAlign="middle-left"
           uiTransform={{
@@ -445,8 +433,8 @@ export default class SceneInfoCard {
           }}
           color={BLACK_TEXT}
         />
-        <Label
-          value={'Created by ' + this.sceneCreator}
+        { place.contact_name !== null && <Label
+          value={'Created by ' + place.contact_name}
           fontSize={this.fontSize * 0.8}
           textAlign="middle-left"
           uiTransform={{
@@ -455,7 +443,7 @@ export default class SceneInfoCard {
             margin: { left: this.fontSize * 0.5 }
           }}
           color={BLACK_TEXT}
-        />
+        />}
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -465,7 +453,7 @@ export default class SceneInfoCard {
         >
           {/* Need to implement last visitors portrait */}
           {this.infoDetail(
-            this.sceneOnline.toString(),
+            place.user_count.toString(),
             { atlasName: 'icons', spriteName: 'Members' },
             {
               width: 'auto',
@@ -477,7 +465,7 @@ export default class SceneInfoCard {
 
           {/* Need to implement number formating */}
           {this.infoDetail(
-            this.sceneViews.toString() + 'k',
+            place.user_visits.toString() + 'k',
             { atlasName: 'icons', spriteName: 'PreviewIcon' },
             {
               width: 'auto',
@@ -487,8 +475,8 @@ export default class SceneInfoCard {
             BLACK_TEXT
           )}
 
-          {this.infoDetail(
-            this.sceneRating.toString() + '%',
+          {likeRate > 0 && this.infoDetail(
+            Math.round((likeRate * 100)).toString() + '%',
             { atlasName: 'icons', spriteName: 'Like solid' },
             {
               width: 'auto',
@@ -653,7 +641,7 @@ export default class SceneInfoCard {
   }
 
   filterChip(
-    type: SceneCategory,
+    type: CategoryFromApi,
     index: string | number
   ): ReactEcs.JSX.Element {
     let title = ''
@@ -663,10 +651,6 @@ export default class SceneInfoCard {
       case 'game':
         title = 'GAME'
         spriteName = 'GamesIcn'
-        break
-      case 'favorites':
-        title = 'FAVORITES'
-        spriteName = 'FavouritesIcn'
         break
       case 'art':
         title = 'ART'
@@ -775,6 +759,7 @@ export default class SceneInfoCard {
   }
 
   overviewContent(): ReactEcs.JSX.Element {
+    const place: PlaceFromApi = store.getState().scene.explorerPlace
     return (
       <UiEntity
         uiTransform={{
@@ -785,22 +770,22 @@ export default class SceneInfoCard {
           flexDirection: 'column'
         }}
       >
-        <Label
+        { place.description !== null &&<Label
           value={'DESCRIPTION'}
           fontSize={this.fontSize}
           textAlign="bottom-left"
           uiTransform={{ width: '100%' }}
           color={GRAY_TEXT}
-        />
+        />}
 
-        <Label
-          value={this.sceneDescription}
+        { place.description !== null && <Label
+          value={place.description}
           fontSize={this.fontSize}
           textAlign="bottom-left"
           uiTransform={{ width: '100%' }}
           color={BLACK_TEXT}
-        />
-
+        />}
+{ place.categories.length !== 0 &&
         <Label
           value={'APPEARS ON'}
           fontSize={this.fontSize}
@@ -811,7 +796,8 @@ export default class SceneInfoCard {
             margin: { top: this.fontSize }
           }}
           color={GRAY_TEXT}
-        />
+        />}
+        { place.categories.length !== 0 &&
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -822,8 +808,10 @@ export default class SceneInfoCard {
             flexWrap: 'wrap'
           }}
         >
-          {this.tags.map((tag, index) => this.filterChip(tag, index))}
-        </UiEntity>
+          {place.categories.map((tag, index) =>
+            this.filterChip(tag, index)
+          )}
+        </UiEntity>}
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -835,7 +823,7 @@ export default class SceneInfoCard {
           }}
         >
           {this.infoDetail(
-            this.sceneCoords.x + ',' + this.sceneCoords.y,
+            place.base_position,
             {
               atlasName: 'icons',
               spriteName: 'PinIcn'
@@ -845,7 +833,7 @@ export default class SceneInfoCard {
             'LOCATION'
           )}
           {this.infoDetail(
-            this.sceneParcels.toString(),
+            place.positions.length.toString(),
             {
               atlasName: 'map',
               spriteName: 'ParcelsIcn'
@@ -876,7 +864,7 @@ export default class SceneInfoCard {
           margin: { bottom: this.fontSize }
         }}
         uiBackground={{
-          color: DCL_SNOW,
+          color: EVENT_BACKGROUND_COLOR,
           textureMode: 'nine-slices',
           texture: {
             src: 'assets/images/backgrounds/rounded-right.png'
@@ -913,19 +901,21 @@ export default class SceneInfoCard {
               getTimestamp(event.start_at),
               getTimestamp(event.finish_at)
             )}
-            fontSize={SMALL_TEXT * 0.7}
+            fontSize={SMALL_TEXT}
             uiTransform={{
               height: SMALL_TEXT * 1.1,
-              margin: { left: BIG_TEXT * 0.2 }
+              margin: { left: BIG_TEXT * 0.2, bottom: BIG_TEXT * 0.3 }
             }}
             color={Color4.Black()}
           />
           <Label
             value={truncateWithoutBreakingWords(event.name, 20)}
             fontSize={BIG_TEXT}
-            uiTransform={{ height: BIG_TEXT, width: '90%' }}
+            uiTransform={{ height: BIG_TEXT, width: '90%', margin: { bottom: BIG_TEXT * 0.3 }
+          }}
             color={Color4.Black()}
             textWrap="nowrap"
+            textAlign='middle-left'
           />
           <UiEntity
             uiTransform={{
@@ -949,12 +939,12 @@ export default class SceneInfoCard {
               }}
             />
             <Label
-              value={event.total_attendees.toString() + ' interested'}
+              value={event.total_attendees.toString()}
               fontSize={SMALL_TEXT}
               color={GRAY_TEXT}
             />
           </UiEntity>
-          <UiEntity uiTransform={{ width: '100%' }}>
+          <UiEntity uiTransform={{ width: '100%', margin:{ top: BIG_TEXT * 0.3 } }}>
             {getTimestamp(event.start_at) <= Date.now() / 1000 && (
               <ButtonTextIcon
                 uiTransform={{
@@ -995,7 +985,7 @@ export default class SceneInfoCard {
                   }
                 }}
                 value={'INTERESTED'}
-                backgroundColor={DCL_SNOW}
+                backgroundColor={Color4.White()}
                 fontSize={BIG_TEXT}
                 iconSize={1.2 * BIG_TEXT}
                 fontColor={BLACK_TEXT}
@@ -1013,8 +1003,8 @@ export default class SceneInfoCard {
             )}
             <ButtonIcon
               uiTransform={{
-                width: 2 * BIG_TEXT,
-                height: 2 * BIG_TEXT,
+                minHeight: 2 * BIG_TEXT,
+                minWidth: 2 * BIG_TEXT,
                 margin: { left: BIG_TEXT / 2.5 }
               }}
               iconSize={1.2 * BIG_TEXT}
@@ -1023,7 +1013,7 @@ export default class SceneInfoCard {
                 spriteName: 'Share'
               }}
               backgroundColor={DCL_SNOW}
-              iconColor={GRAY_TEXT}
+              iconColor={BLACK_TEXT}
             />
           </UiEntity>
         </UiEntity>
@@ -1032,12 +1022,7 @@ export default class SceneInfoCard {
   }
 
   eventsContent(): ReactEcs.JSX.Element {
-    const eventsArray = Object.values(
-      store.getState().events.explorerEvents
-    ).filter(
-      (event) =>
-        event.x === this.sceneCoords.x && event.y === this.sceneCoords.y
-    )
+    const eventsArray = Object.values(store.getState().scene.explorerEvents)
     return (
       <UiEntity
         uiTransform={{
@@ -1063,7 +1048,7 @@ export default class SceneInfoCard {
   }
 
   photosContent(): ReactEcs.JSX.Element {
-    const photosArray = []
+    const photosArray = Object.values(store.getState().scene.explorerPhotos)
     return (
       <UiEntity
         uiTransform={{
@@ -1074,7 +1059,18 @@ export default class SceneInfoCard {
           flexDirection: 'column'
         }}
       >
-        
+        {photosArray.length > 0 &&
+          photosArray.map((photo) => (
+            <UiEntity
+              uiTransform={{ width: '100%', height: this.fontSize * 16, margin:this.fontSize*0.1 }}
+              uiBackground={{
+                textureMode: 'stretch',
+                texture: {
+                  src: photo.url.replace("https://camera-reel-service.decentraland.org/api/images/", "https://camera-reel-s3-bucket.decentraland.org/")
+                }
+              }}
+            />
+          ))}
         {photosArray.length === 0 &&
           this.noResults(
             { atlasName: 'icons', spriteName: 'Camera' },
