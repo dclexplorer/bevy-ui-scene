@@ -27,7 +27,6 @@ import {
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
 import type {
-  PhotoFromApi,
   PlaceFromApi,
   EventFromApi,
   CategoryFromApi
@@ -39,6 +38,7 @@ import {
   loadPhotosFromApi,
   loadPlaceFromApi
 } from 'src/state/sceneInfo/actions'
+import type { PhotoFromApi } from '../photos/Photos.types'
 
 export default class SceneInfoCard {
   private readonly uiController: UIController
@@ -81,6 +81,8 @@ export default class SceneInfoCard {
     const photosArray: PhotoFromApi[] = await fetchPhotos(place.id, photosQuantityInPlace)
     const eventsArray: EventFromApi[] = await fetchEvents(place.positions)
 
+
+    
     store.dispatch(loadEventsFromApi(eventsArray))
     store.dispatch(loadPhotosFromApi(photosArray))
     store.dispatch(loadPlaceFromApi(place))
@@ -175,6 +177,7 @@ export default class SceneInfoCard {
     } else {
       panelWidth = canvasInfo.width / 4
     }
+    console.log(panelWidth)
 
     const place: PlaceFromApi = store.getState().scene.explorerPlace
     return (
@@ -1111,4 +1114,5 @@ export default class SceneInfoCard {
       </UiEntity>
     )
   }
+
 }

@@ -102,11 +102,3 @@ export type PlaceFromApi = {
   user_count: number
   user_visits: number
 }
-
-export type PhotoFromApi = {
-  id: string
-  url: string
-  thumbnailUrl: string
-  isPublic: boolean
-  dateTime: number
-}

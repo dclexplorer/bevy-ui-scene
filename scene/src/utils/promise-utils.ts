@@ -1,8 +1,11 @@
+// import { getPlayer } from '@dcl/sdk/src/players'
+import type { PhotoFromApi } from 'src/ui-classes/photos/Photos.types'
 import type {
   EventFromApi,
-  PhotoFromApi,
   PlaceFromApi
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
+// import { getRealm } from '~system/Runtime'
+// import { signedFetch } from '~system/SignedFetch'
 
 type EventsResponse = {
   ok: boolean
@@ -91,3 +94,28 @@ export async function fetchPlaceId(
     throw error
   }
 }
+
+// export async function main(): Promise<void> {
+//   const user = getPlayer()
+//   const realm = await getRealm({})
+//   if (user?.userId === null || realm?.baseUrl === null) return
+//   const response = await signedFetch({
+//     url: 'https://rewards.decentraland.org/api/rewards',
+//     init: {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         campaign_key: '[DISPENSER_KEY]',
+//         beneficiary: user.userId,
+//         catalyst: realm.baseUrl,
+//       }),
+//     },
+//   })
+
+//   if (!response || !response.body) {
+//     throw new Error('Invalid response')
+//   }
+//   let json = await JSON.parse(response.body)
+// }
