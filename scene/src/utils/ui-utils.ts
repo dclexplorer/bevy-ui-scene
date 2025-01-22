@@ -211,79 +211,112 @@ export function getTimestamp(dateString: string): number {
   return date.getTime()
 }
 
-type FontSizes = {
-  title: number;
-  paragraph: number;
-  smallText: number;
+export function formatTimestamp(timestamp: string): string {
+  const date = new Date(+timestamp * 1000)
+
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ]
+
+  const day = date.getDate()
+  const month = months[date.getMonth()]
+  const year = date.getFullYear()
+
+  // Determinar el sufijo del día (st, nd, rd, th)
+  const daySuffix = (() => {
+    if (day % 10 === 1 && day !== 11) return 'st'
+    if (day % 10 === 2 && day !== 12) return 'nd'
+    if (day % 10 === 3 && day !== 13) return 'rd'
+    return 'th'
+  })()
+
+  return `${month} ${day}${daySuffix} ${year}`
 }
 
+type FontSizes = {
+  title: number
+  paragraph: number
+  smallText: number
+}
 
 export function getFontSizesByResolution(): FontSizes {
   const retinaFactor = 1
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
 
-  if (canvasInfo === null) return {
-    title: Math.round(18 * retinaFactor),
-    paragraph: Math.round(14 * retinaFactor),
-    smallText: Math.round(12 * retinaFactor),
-  }
-  
+  if (canvasInfo === null)
+    return {
+      title: Math.round(18 * retinaFactor),
+      paragraph: Math.round(14 * retinaFactor),
+      smallText: Math.round(12 * retinaFactor)
+    }
+
   // Configuración por rangos de resolución
   if (canvasInfo.width <= 480) {
     // Móviles pequeños
     return {
       title: Math.round(18 * retinaFactor),
       paragraph: Math.round(14 * retinaFactor),
-      smallText: Math.round(12 * retinaFactor),
-    };
+      smallText: Math.round(12 * retinaFactor)
+    }
   } else if (canvasInfo.width <= 1024) {
     // Tabletas y móviles grandes
     return {
       title: Math.round(24 * retinaFactor),
       paragraph: Math.round(18 * retinaFactor),
-      smallText: Math.round(14 * retinaFactor),
-    };
+      smallText: Math.round(14 * retinaFactor)
+    }
   } else if (canvasInfo.width <= 1920) {
     // Escritorio estándar (Full HD)
     return {
       title: Math.round(32 * retinaFactor),
       paragraph: Math.round(20 * retinaFactor),
-      smallText: Math.round(16 * retinaFactor),
-    };
+      smallText: Math.round(16 * retinaFactor)
+    }
   } else if (canvasInfo.width <= 2880) {
     // Pantallas Retina estándar (MacBook Pro 13" y similares)
     return {
       title: Math.round(36 * retinaFactor),
       paragraph: Math.round(24 * retinaFactor),
-      smallText: Math.round(18 * retinaFactor),
-    };
+      smallText: Math.round(18 * retinaFactor)
+    }
   } else if (canvasInfo.width <= 3456) {
     // MacBook Pro 14" y dispositivos similares
     return {
       title: Math.round(40 * retinaFactor),
       paragraph: Math.round(28 * retinaFactor),
-      smallText: Math.round(22 * retinaFactor),
-    };
+      smallText: Math.round(22 * retinaFactor)
+    }
   } else if (canvasInfo.width <= 4096) {
     // iMac 4K y pantallas similares
     return {
       title: Math.round(44 * retinaFactor),
       paragraph: Math.round(30 * retinaFactor),
-      smallText: Math.round(24 * retinaFactor),
-    };
+      smallText: Math.round(24 * retinaFactor)
+    }
   } else if (canvasInfo.width <= 5120) {
     // iMac 5K y pantallas similares
     return {
       title: Math.round(48 * retinaFactor),
       paragraph: Math.round(32 * retinaFactor),
-      smallText: Math.round(26 * retinaFactor),
-    };
+      smallText: Math.round(26 * retinaFactor)
+    }
   } else {
     // Pantallas ultrapanorámicas o muy grandes
     return {
       title: Math.round(56 * retinaFactor),
       paragraph: Math.round(36 * retinaFactor),
-      smallText: Math.round(28 * retinaFactor),
-    };
+      smallText: Math.round(28 * retinaFactor)
+    }
   }
 }

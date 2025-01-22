@@ -1,7 +1,8 @@
 import { Color4 } from '@dcl/sdk/math'
 import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
 import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
-import type { PlaceFromApi, DclEvent } from '../ui-classes/scene-info-card/SceneInfoCard.types'
+import type { PlaceFromApi } from '../ui-classes/scene-info-card/SceneInfoCard.types'
+import type { PhotoMetadataResponse } from 'src/ui-classes/photos/Photos.types'
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)
@@ -69,8 +70,6 @@ export const EVENT_BACKGROUND_COLOR: Color4 = Color4.create(
   242 / 255,
   1
 )
-
-
 
 export const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
@@ -483,36 +482,11 @@ export const LEFT_PANEL_WIDTH_FACTOR = 0.15
 export const HELP_URL: string = 'https://decentraland.org/help/'
 export const DCL_EXPLORER_URL: string = 'https://dclexplorer.com/'
 
-export const DCL_EVENTS: DclEvent[] = [
-  {
-    title: 'Event 1',
-    date: 1736880527,
-    interestedPeople: 5,
-    interested: true,
-    id: 0
-  },
-  {
-    title: 'Event 2',
-    date: 1736388929,
-    interestedPeople: 54,
-    interested: true,
-    id: 1
-  },
-  {
-    title: 'Event 3',
-    date: 1746730663,
-    interestedPeople: 1,
-    interested: false,
-    id: 2
-  }
-]
-
 export const EMPTY_PLACE: PlaceFromApi = {
   id: 'id',
   title: 'Title',
   description: 'Description',
-  image:
-    'https://peer.decentraland.org/content/contents/-',
+  image: 'https://peer.decentraland.org/content/contents/-',
   owner: null,
   positions: ['-9999,-9999'],
   base_position: '-9999,-9999',
@@ -540,4 +514,26 @@ export const EMPTY_PLACE: PlaceFromApi = {
   user_dislike: false,
   user_count: 0,
   user_visits: 298
+}
+
+export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
+  id: '00000000-0000-0000-0000-000000000000',
+  url: 'https://example.com/default-image.jpg',
+  thumbnailUrl: 'https://example.com/default-thumbnail.jpg',
+  isPublic: false,
+  metadata: {
+    userName: 'Anonymous',
+    userAddress: '0x0000000000000000000000000000000000000000',
+    dateTime: '0',
+    realm: 'unknown',
+    scene: {
+      name: 'Default Scene',
+      location: {
+        x: '0',
+        y: '0'
+      }
+    },
+    visiblePeople: [],
+    placeId: '00000000-0000-0000-0000-000000000000'
+  }
 }

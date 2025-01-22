@@ -8,10 +8,7 @@
     "types": ["node"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": ".",
-    "paths": {
-      "~system/*": ["src/system/*"]
-    }
+    "baseUrl": "."
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/ui-classes/main-menu/map-page", "assets/images/atlas/*.json"],
   "extends": "@dcl/sdk/types/tsconfig.ecs7.json"

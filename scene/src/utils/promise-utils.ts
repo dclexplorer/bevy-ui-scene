@@ -1,10 +1,13 @@
 // import { getPlayer } from '@dcl/sdk/src/players'
-import type { PhotoFromApi } from 'src/ui-classes/photos/Photos.types'
+import type {
+  PhotoFromApi,
+  PhotoMetadataResponse
+} from 'src/ui-classes/photos/Photos.types'
 import type {
   EventFromApi,
   PlaceFromApi
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
-// import { getRealm } from '~system/Runtime'
+import { EMPTY_PHOTO_METADATA } from './constants'
 // import { signedFetch } from '~system/SignedFetch'
 
 type EventsResponse = {
@@ -24,7 +27,7 @@ type PhotosResponse = {
 }
 
 export async function fetchEvents(coords: string[]): Promise<EventFromApi[]> {
-  const param = coords.map(coord => `positions[]=${coord}`).join('&')
+  const param = coords.map((coord) => `positions[]=${coord}`).join('&')
   try {
     const response: Response = await fetch(
       `https://events.decentraland.org/api/events/?${param}`
@@ -42,7 +45,10 @@ export async function fetchEvents(coords: string[]): Promise<EventFromApi[]> {
   }
 }
 
-export async function fetchPhotos(placeId: string, limit:number ): Promise<PhotoFromApi[]> {
+export async function fetchPhotos(
+  placeId: string,
+  limit: number
+): Promise<PhotoFromApi[]> {
   try {
     const response: Response = await fetch(
       `https://camera-reel-service.decentraland.org/api/places/${placeId}/images?limit=${limit}`
@@ -75,6 +81,26 @@ export async function fetchPhotosQuantity(placeId: string): Promise<number> {
   }
 }
 
+export async function fetchPhotoMetadata(
+  photoId: string
+): Promise<PhotoMetadataResponse> {
+  try {
+    const response: Response = await fetch(
+      `https://camera-reel-service.decentraland.org/api/images/${photoId}/metadata`
+    )
+    if (!response.ok) {
+      return EMPTY_PHOTO_METADATA
+    }
+
+    const photoMetadata: PhotoMetadataResponse =
+      (await response.json()) as PhotoMetadataResponse
+    return photoMetadata
+  } catch (error) {
+    console.error('Error fetching photos:', error)
+    return EMPTY_PHOTO_METADATA
+  }
+}
+
 export async function fetchPlaceId(
   x: number,
   y: number
@@ -95,27 +121,37 @@ export async function fetchPlaceId(
   }
 }
 
-// export async function main(): Promise<void> {
-//   const user = getPlayer()
-//   const realm = await getRealm({})
-//   if (user?.userId === null || realm?.baseUrl === null) return
-//   const response = await signedFetch({
-//     url: 'https://rewards.decentraland.org/api/rewards',
-//     init: {
-//       method: 'POST',
+// type PatchFavoritesResponse = {
+//   ok: boolean;
+//   data: {
+//     favorites: number;
+//     user_favorite: boolean;
+//   };
+// };
+
+// export async function updateFavoriteStatus(
+//   placeId: string,
+//   isFavorite: boolean
+// ): Promise<PatchFavoritesResponse> {
+//   const url = `https://places.decentraland.org/places/${placeId}/favorites?favorites=${isFavorite}`;
+
+//   try {
+//     const response = await signedFetch({url, init:{
+//       method: 'PATCH',
 //       headers: {
 //         'Content-Type': 'application/json',
 //       },
-//       body: JSON.stringify({
-//         campaign_key: '[DISPENSER_KEY]',
-//         beneficiary: user.userId,
-//         catalyst: realm.baseUrl,
-//       }),
-//     },
-//   })
+//     }});
 
-//   if (!response || !response.body) {
-//     throw new Error('Invalid response')
+//     if (response.ok === false) {
+//       throw new Error(`HTTP error! Status: ${response.status}`);
+//     }
+
+//     const data: PatchFavoritesResponse = JSON.parse(response.body);
+//     console.log({data})
+//     return data;
+//   } catch (error) {
+//     console.error('Error updating favorite status:', error);
+//     throw new Error('Failed to update favorite status');
 //   }
-//   let json = await JSON.parse(response.body)
 // }

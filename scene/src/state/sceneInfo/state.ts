@@ -1,5 +1,5 @@
+import type { PhotoFromApi } from 'src/ui-classes/photos/Photos.types'
 import type {
-  PhotoFromApi,
   PlaceFromApi,
   EventFromApi
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
