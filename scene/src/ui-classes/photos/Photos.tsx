@@ -1,19 +1,35 @@
+import { openExternalUrl } from '~system/RestrictedActions'
 import { Color4 } from '@dcl/ecs-math/dist/Color4'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { ButtonIcon } from 'src/components/button-icon'
 import { store } from 'src/state/store'
-import { DCL_SNOW, GRAY_TEXT, ORANGE } from 'src/utils/constants'
+import {
+  DCL_SNOW,
+  EMPTY_WEARABLE_DATA,
+  GRAY_TEXT,
+  ORANGE,
+  RUBY
+} from 'src/utils/constants'
 import Canvas from '../../components/canvas/Canvas'
 import { type UIController } from '../../controllers/ui.controller'
 import type {
   PhotoFromApi,
   PhotoMetadataResponse,
-  VisiblePerson
+  VisiblePerson,
+  WearableData
 } from './Photos.types'
-import { fetchPhotoMetadata } from 'src/utils/promise-utils'
-import { loadPhotoInfoFromApi } from 'src/state/photoInfo/actions'
-import { formatTimestamp, getBackgroundFromAtlas } from 'src/utils/ui-utils'
+import { fetchPhotoMetadata, fetchWearable } from 'src/utils/promise-utils'
+import {
+  loadPhotoInfoFromApi,
+  loadWearablesFromPhoto
+} from 'src/state/photoInfo/actions'
+import {
+  formatTimestamp,
+  formatURN,
+  getBackgroundFromAtlas
+} from 'src/utils/ui-utils'
+import { ButtonText } from 'src/components/button-text'
 
 export default class Photos {
   private readonly uiController: UIController
@@ -34,7 +50,9 @@ export default class Photos {
   }
 
   showPhoto(index: number): void {
-    void this.getMetadata(store.getState().scene.explorerPhotos[index].id)
+    void this.getMetadataAndWearables(
+      store.getState().scene.explorerPhotos[index].id
+    )
     this.index = index
     this.selectedPeople = -1
   }
@@ -43,11 +61,30 @@ export default class Photos {
     this.uiController.isPhotosVisible = false
   }
 
-  async getMetadata(photoId: string): Promise<void> {
+  async getMetadataAndWearables(photoId: string): Promise<void> {
     const photoMetadata: PhotoMetadataResponse =
       await fetchPhotoMetadata(photoId)
     store.dispatch(loadPhotoInfoFromApi(photoMetadata))
+    store.dispatch(loadWearablesFromPhoto([]))
     this.uiController.isPhotosVisible = true
+    if (photoMetadata.metadata.visiblePeople.length > 0) {
+      for (let i = 0; i < photoMetadata.metadata.visiblePeople.length; i++) {
+        if (photoMetadata.metadata.visiblePeople[i].wearables.length > 0) {
+          for (
+            let j = 0;
+            j < photoMetadata.metadata.visiblePeople[i].wearables.length;
+            j++
+          ) {
+            const wearable: WearableData = await fetchWearable(
+              photoMetadata.metadata.visiblePeople[i].wearables[j]
+            )
+            const wearables: WearableData[] =
+              store.getState().photo.wearablesInfo
+            store.dispatch(loadWearablesFromPhoto([...wearables, wearable]))
+          }
+        }
+      }
+    }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -225,7 +262,7 @@ export default class Photos {
               color={GRAY_TEXT}
               textAlign="middle-center"
               fontSize={this.fontSize}
-              uiTransform={{ width: 'auto', height: 4 * this.fontSize }}
+              uiTransform={{ width: 'auto', height: 2 * this.fontSize }}
             />
             <UiEntity
               uiTransform={{
@@ -257,7 +294,7 @@ export default class Photos {
                 }
                 textAlign="middle-center"
                 fontSize={this.fontSize}
-                uiTransform={{ width: 'auto', height: 4 * this.fontSize }}
+                uiTransform={{ width: 'auto', height: 2 * this.fontSize }}
               />
               <ButtonIcon
                 uiTransform={{
@@ -277,9 +314,35 @@ export default class Photos {
               fontSize={this.fontSize}
               uiTransform={{ width: 'auto', height: 4 * this.fontSize }}
             />
-            {photoInfo.metadata.visiblePeople.map((person, index) =>
-              this.person(person, index)
-            )}
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: canvasInfo.height - this.fontSize * 10,
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                overflow: 'scroll'
+              }}
+            >
+              {photoInfo.metadata.visiblePeople.map((person, index) => (
+                <UiEntity
+                  uiTransform={{
+                    width: '90%',
+                    height: 'auto',
+                    flexDirection: 'column'
+                  }}
+                >
+                  {this.person(person, index)}
+                  <UiEntity
+                    uiTransform={{
+                      width: '100%',
+                      height: 1,
+                      margin: { bottom: this.fontSize, top: this.fontSize }
+                    }}
+                    uiBackground={{ color: { ...GRAY_TEXT, a: 0.5 } }}
+                  />
+                </UiEntity>
+              ))}
+            </UiEntity>
           </UiEntity>
         </UiEntity>
       </Canvas>
@@ -288,53 +351,149 @@ export default class Photos {
 
   person(person: VisiblePerson, index: number): ReactEcs.JSX.Element {
     return (
-      <UiEntity uiTransform={{ width: '90%', height: 'auto', flexDirection:'column'}}>
-        <UiEntity uiTransform={{ width: '100%', height: 'auto' , justifyContent:'space-between', alignItems:'center' }} >
-        <UiEntity uiTransform={{ width: '100%', height: 'auto' }}>
-          <UiEntity
-                  uiTransform={{
-                    width: this.fontSize * 2.5,
-                    height: this.fontSize * 2.5,
-                  }}
-                  uiBackground={
-                             getBackgroundFromAtlas({
-                                  atlasName: 'icons',
-                                  spriteName: 'DdlIconColor'
-                                })
-                              // : { avatarTexture: { userId: props.message.from } }
-                          }
-                />
-          
-          <Label
-            value={person.userName}
-            fontSize={this.fontSize}
-            uiTransform={{ width: 'auto', height: 'auto' }}
-          />
+      <UiEntity
+        // uiTransform={{ width: '100%', height: this.selectedPeople === index ? this.fontSize * 7 * person.wearables.length + this.fontSize * 4 : this.fontSize * 4, flexDirection: 'column' }}
+        uiTransform={{ width: '100%', height: 'auto', flexDirection: 'column' }}
+      >
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <UiEntity uiTransform={{ width: '100%', height: 'auto' }}>
+            <UiEntity
+              uiTransform={{
+                width: this.fontSize * 2.5,
+                height: this.fontSize * 2.5
+              }}
+              uiBackground={
+                getBackgroundFromAtlas({
+                  atlasName: 'icons',
+                  spriteName: 'DdlIconColor'
+                })
+                // : { avatarTexture: { userId: props.message.from } }
+              }
+            />
+
+            <Label
+              value={person.userName}
+              fontSize={this.fontSize * 1.25}
+              uiTransform={{ width: 'auto', height: 'auto' }}
+            />
           </UiEntity>
           <ButtonIcon
-            onMouseDown={() => { if(index === this.selectedPeople){this.selectedPeople = -1} else{this.selectedPeople = index}}}
-            uiTransform={{ width: 2 * this.fontSize, height: 2 * this.fontSize }}
+            onMouseDown={() => {
+              if (index === this.selectedPeople) {
+                this.selectedPeople = -1
+              } else {
+                this.selectedPeople = index
+              }
+            }}
+            uiTransform={{
+              width: 2 * this.fontSize,
+              height: 2 * this.fontSize
+            }}
+            iconSize={2 * this.fontSize}
             icon={{
               atlasName: 'icons',
               spriteName:
                 this.selectedPeople === index ? 'UpArrow' : 'DownArrow'
             }}
-            
           />
         </UiEntity>
-        <UiEntity uiTransform={{ width: '100%', height: this.fontSize * 2, display: index === this.selectedPeople ? 'flex':'none' }}> 
-          { person.wearables.length > 0 ?<Label
-            value={'WEARABLES'}
-            fontSize={this.fontSize}
-            uiTransform={{ width: 'auto', height: 'auto' }}
-          />:<Label
-            value={'No collectibles equipped when the photo was taken.'}
-            fontSize={this.fontSize}
-            textWrap='wrap'
-            uiTransform={{ width: 'auto', height: 'auto' }}
-          /> }
-          </UiEntity>
-          <UiEntity uiTransform={{width:'100%', height:1, margin:{bottom:this.fontSize, top:this.fontSize}}} uiBackground={{color:{...GRAY_TEXT, a:0.5}}}/>
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            display: index === this.selectedPeople ? 'flex' : 'none',
+            flexDirection: 'column'
+          }}
+        >
+          {person.wearables.length > 0 ? (
+            person.wearables.map((wearable) => this.wearable(wearable))
+          ) : (
+            <Label
+              value={'No collectibles equipped when the photo was taken.'}
+              fontSize={this.fontSize}
+              textWrap="wrap"
+              uiTransform={{ width: 'auto', height: 'auto' }}
+            />
+          )}
+        </UiEntity>
+      </UiEntity>
+    )
+  }
+
+  wearable(wearable: string): ReactEcs.JSX.Element {
+    const wearables: WearableData[] = store.getState().photo.wearablesInfo
+    const wearableData =
+      wearables.find((wearableToShow) =>
+        wearable.includes(wearableToShow.urn)
+      ) ?? EMPTY_WEARABLE_DATA
+
+    return (
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: this.fontSize * 6,
+          margin: this.fontSize * 0.25,
+          padding: this.fontSize * 0.5,
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+        uiBackground={{
+          color: { ...Color4.White(), a: 0.1 },
+          textureMode: 'nine-slices',
+          texture: {
+            src: 'assets/images/backgrounds/rounded.png'
+          },
+          textureSlices: {
+            top: 0.5,
+            bottom: 0.5,
+            left: 0.5,
+            right: 0.5
+          }
+        }}
+      >
+        <UiEntity>
+          <UiEntity
+            uiTransform={{
+              width: this.fontSize * 4,
+              height: this.fontSize * 4
+            }}
+            uiBackground={{
+              textureMode: 'stretch',
+              texture: { src: wearableData.thumbnail }
+            }}
+          />
+          <Label
+            value={wearableData.name}
+            fontSize={this.fontSize * 1.25}
+            textAlign="middle-left"
+          />
+          {/* <Label value={`${formatURN(wearableData.urn).contractAddress}- ${formatURN(wearableData.urn).itemId}`} fontSize={this.fontSize * 0.75} textAlign='middle-left'/> */}
+        </UiEntity>
+        <ButtonText
+          onMouseDown={() => {
+            openExternalUrl(
+              `https://decentraland.org/marketplace/contracts/${
+                formatURN(wearableData.urn).contractAddress
+              }/items/${formatURN(wearableData.urn).itemId}`
+            )
+          }}
+          // onMouseDown={() => {openExternalUrl(`google.com`)}}
+          value={'BUY'}
+          fontSize={this.fontSize * 1.25}
+          backgroundColor={RUBY}
+          uiTransform={{
+            width: 'auto',
+            height: 2.5 * this.fontSize,
+            margin: { right: this.fontSize * 0.5 }
+          }}
+        />
       </UiEntity>
     )
   }

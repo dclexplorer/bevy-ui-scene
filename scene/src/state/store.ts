@@ -20,7 +20,7 @@ export class Store {
   }
 
   dispatch(action: Action): void {
-    console.log(`Dispatching action: ${action.type}`, action)
+    // console.log(`Dispatching action: ${action.type}`, action)
     this.state = this.reducer(this.state, action)
     this.listeners.forEach((listener) => {
       listener()

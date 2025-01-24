@@ -35,8 +35,9 @@ import {
   fetchEvents,
   fetchPhotos,
   fetchPhotosQuantity,
-  fetchPlaceId
-  // updateFavoriteStatus
+  fetchPlaceId,
+  type PatchFavoritesResponse,
+  updateFavoriteStatus
 } from 'src/utils/promise-utils'
 import { store } from 'src/state/store'
 import {
@@ -137,13 +138,18 @@ export default class SceneInfoCard {
     }
   }
 
-  // async toggleFav(): Promise<void> {
-  //   const sceneId: string = store.getState().scene.explorerPlace.id
-  //   const arg:boolean = !store.getState().scene.explorerPlace.user_favorite
-  //   await updateFavoriteStatus(sceneId, arg).then(() => {
-  //     this.updateIcons()
-  //   })
-  // }
+  async toggleFav(): Promise<void> {
+    const sceneId: string = store.getState().scene.explorerPlace.id
+    const arg: boolean = !store.getState().scene.explorerPlace.user_favorite
+    const favData: PatchFavoritesResponse = await updateFavoriteStatus(
+      sceneId,
+      arg
+    )
+    if (favData.ok) {
+      this.isFav = favData.data.user_favorite
+      this.updateIcons()
+    }
+  }
 
   setLike(arg: boolean): void {
     if (arg) {
@@ -191,7 +197,6 @@ export default class SceneInfoCard {
     } else {
       panelWidth = canvasInfo.width / 4
     }
-    console.log(panelWidth)
 
     const place: PlaceFromApi = store.getState().scene.explorerPlace
     return (
@@ -589,7 +594,7 @@ export default class SceneInfoCard {
               this.updateBackgrounds()
             }}
             onMouseDown={() => {
-              // void this.toggleFav()
+              void this.toggleFav()
             }}
           />
           <ButtonIcon

@@ -1,14 +1,17 @@
 // import { getPlayer } from '@dcl/sdk/src/players'
 import type {
   PhotoFromApi,
-  PhotoMetadataResponse
+  PhotoMetadataResponse,
+  WearableData,
+  WearableResponse
 } from 'src/ui-classes/photos/Photos.types'
 import type {
   EventFromApi,
   PlaceFromApi
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
-import { EMPTY_PHOTO_METADATA } from './constants'
-// import { signedFetch } from '~system/SignedFetch'
+import { EMPTY_PHOTO_METADATA, EMPTY_WEARABLE_DATA } from './constants'
+import { formatURN } from './ui-utils'
+import { signedFetch } from '~system/SignedFetch'
 
 type EventsResponse = {
   ok: boolean
@@ -101,6 +104,29 @@ export async function fetchPhotoMetadata(
   }
 }
 
+export async function fetchWearable(urn: string): Promise<WearableData> {
+  try {
+    const response: Response = await fetch(
+      `https://marketplace-api.decentraland.org/v1/items?contractAddress=${
+        formatURN(urn).contractAddress
+      }&itemId=${formatURN(urn).itemId}`
+    )
+    if (!response.ok) {
+      return EMPTY_WEARABLE_DATA
+    }
+    const wearableData: WearableResponse =
+      (await response.json()) as WearableResponse
+
+    if (wearableData.total === 0) {
+      return EMPTY_WEARABLE_DATA
+    }
+    return wearableData.data[0]
+  } catch (error) {
+    console.error('Error fetching photos:', error)
+    return EMPTY_WEARABLE_DATA
+  }
+}
+
 export async function fetchPlaceId(
   x: number,
   y: number
@@ -121,37 +147,40 @@ export async function fetchPlaceId(
   }
 }
 
-// type PatchFavoritesResponse = {
-//   ok: boolean;
-//   data: {
-//     favorites: number;
-//     user_favorite: boolean;
-//   };
-// };
+export type PatchFavoritesResponse = {
+  ok: boolean
+  data: {
+    favorites: number
+    user_favorite: boolean
+  }
+}
 
-// export async function updateFavoriteStatus(
-//   placeId: string,
-//   isFavorite: boolean
-// ): Promise<PatchFavoritesResponse> {
-//   const url = `https://places.decentraland.org/places/${placeId}/favorites?favorites=${isFavorite}`;
+export async function updateFavoriteStatus(
+  placeId: string,
+  isFavorite: boolean
+): Promise<PatchFavoritesResponse> {
+  const url = `https://places.decentraland.org/places/${placeId}/favorites?favorites=${isFavorite}`
 
-//   try {
-//     const response = await signedFetch({url, init:{
-//       method: 'PATCH',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     }});
+  try {
+    const response = await signedFetch({
+      url,
+      init: {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    })
 
-//     if (response.ok === false) {
-//       throw new Error(`HTTP error! Status: ${response.status}`);
-//     }
+    if (response.ok === false) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
 
-//     const data: PatchFavoritesResponse = JSON.parse(response.body);
-//     console.log({data})
-//     return data;
-//   } catch (error) {
-//     console.error('Error updating favorite status:', error);
-//     throw new Error('Failed to update favorite status');
-//   }
-// }
+    const data: PatchFavoritesResponse = JSON.parse(response.body)
+    console.log('LOGGED DATA:', { data })
+    return data
+  } catch (error) {
+    console.error('Error updating favorite status:', error)
+    throw new Error('Failed to update favorite status')
+  }
+}

@@ -8,6 +8,8 @@ export function reducer(
   switch (action.type) {
     case 'GET_PHOTO_FROM_API':
       return { ...state, photoInfo: action.payload }
+    case 'GET_WEARABLES_FROM_API':
+      return { ...state, wearablesInfo: action.payload }
     default:
       return state
   }

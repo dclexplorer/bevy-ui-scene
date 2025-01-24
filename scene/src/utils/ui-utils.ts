@@ -320,3 +320,19 @@ export function getFontSizesByResolution(): FontSizes {
     }
   }
 }
+
+export function formatURN(urn: string): {
+  contractAddress: string
+  itemId: string
+} {
+  const parts = urn.split(':')
+
+  if (parts.length >= 5) {
+    const contractAddress = parts[4]
+    const itemId = parts[5]
+    return { contractAddress, itemId }
+  } else {
+    console.error('Invalid URN format')
+    return { contractAddress: 'contractAddress', itemId: 'itemId' }
+  }
+}
