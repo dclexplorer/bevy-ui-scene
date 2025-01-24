@@ -35,9 +35,9 @@ import {
   fetchEvents,
   fetchPhotos,
   fetchPhotosQuantity,
-  fetchPlaceId,
-  type PatchFavoritesResponse,
-  updateFavoriteStatus
+  fetchPlaceId
+  // type PatchFavoritesResponse,
+  // updateFavoriteStatus
 } from 'src/utils/promise-utils'
 import { store } from 'src/state/store'
 import {
@@ -139,16 +139,16 @@ export default class SceneInfoCard {
   }
 
   async toggleFav(): Promise<void> {
-    const sceneId: string = store.getState().scene.explorerPlace.id
-    const arg: boolean = !store.getState().scene.explorerPlace.user_favorite
-    const favData: PatchFavoritesResponse = await updateFavoriteStatus(
-      sceneId,
-      arg
-    )
-    if (favData.ok) {
-      this.isFav = favData.data.user_favorite
-      this.updateIcons()
-    }
+    // const sceneId: string = store.getState().scene.explorerPlace.id
+    // const arg: boolean = !store.getState().scene.explorerPlace.user_favorite
+    // // const favData: PatchFavoritesResponse = await updateFavoriteStatus(
+    // //   sceneId,
+    // //   arg
+    // // )
+    // // if (favData.ok) {
+    // //   this.isFav = favData.data.user_favorite
+    // //   this.updateIcons()
+    // // }
   }
 
   setLike(arg: boolean): void {

@@ -1,7 +1,11 @@
-import { openExternalUrl } from '~system/RestrictedActions'
+// import { openExternalUrl } from '~system/RestrictedActions'
 import { Color4 } from '@dcl/ecs-math/dist/Color4'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, {
+  Label,
+  UiEntity,
+  type UiTransformProps
+} from '@dcl/sdk/react-ecs'
 import { ButtonIcon } from 'src/components/button-icon'
 import { store } from 'src/state/store'
 import {
@@ -26,7 +30,7 @@ import {
 } from 'src/state/photoInfo/actions'
 import {
   formatTimestamp,
-  formatURN,
+  // formatURN,
   getBackgroundFromAtlas
 } from 'src/utils/ui-utils'
 import { ButtonText } from 'src/components/button-text'
@@ -440,7 +444,7 @@ export default class Photos {
           width: '100%',
           height: this.fontSize * 6,
           margin: this.fontSize * 0.25,
-          padding: this.fontSize * 0.5,
+          padding: this.fontSize * 0.25,
           justifyContent: 'space-between',
           alignItems: 'center'
         }}
@@ -458,31 +462,31 @@ export default class Photos {
           }
         }}
       >
-        <UiEntity>
-          <UiEntity
-            uiTransform={{
-              width: this.fontSize * 4,
-              height: this.fontSize * 4
-            }}
-            uiBackground={{
-              textureMode: 'stretch',
-              texture: { src: wearableData.thumbnail }
-            }}
-          />
+        <UiEntity
+          uiTransform={{
+            width: 'auto',
+            height: 'auto',
+            justifyContent: 'flex-start',
+            alignItems: 'center'
+          }}
+        >
+          {this.wearableThumbnail(wearableData, {
+            minWidth: 5.5 * this.fontSize,
+            minHeight: 5.5 * this.fontSize
+          })}
           <Label
-            value={wearableData.name}
+            value={wearableData.data.wearable.category}
             fontSize={this.fontSize * 1.25}
             textAlign="middle-left"
           />
-          {/* <Label value={`${formatURN(wearableData.urn).contractAddress}- ${formatURN(wearableData.urn).itemId}`} fontSize={this.fontSize * 0.75} textAlign='middle-left'/> */}
         </UiEntity>
         <ButtonText
           onMouseDown={() => {
-            openExternalUrl(
-              `https://decentraland.org/marketplace/contracts/${
-                formatURN(wearableData.urn).contractAddress
-              }/items/${formatURN(wearableData.urn).itemId}`
-            )
+            // openExternalUrl(
+            //   `https://decentraland.org/marketplace/contracts/${
+            //     formatURN(wearableData.urn).contractAddress
+            //   }/items/${formatURN(wearableData.urn).itemId}`
+            // )
           }}
           // onMouseDown={() => {openExternalUrl(`google.com`)}}
           value={'BUY'}
@@ -493,6 +497,60 @@ export default class Photos {
             height: 2.5 * this.fontSize,
             margin: { right: this.fontSize * 0.5 }
           }}
+        />
+      </UiEntity>
+    )
+  }
+
+  wearableThumbnail(
+    wearable: WearableData,
+    uiTransform?: Partial<UiTransformProps>
+  ): ReactEcs.JSX.Element {
+    return (
+      <UiEntity
+        uiTransform={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          ...uiTransform
+        }}
+        uiBackground={getBackgroundFromAtlas({
+          atlasName: 'backpack',
+          spriteName: wearable.data.wearable.rarity
+        })}
+      >
+        <UiEntity
+          uiTransform={{
+            width: '95%',
+            height: '95%'
+          }}
+          uiBackground={{
+            textureMode: 'stretch',
+            texture: { src: wearable.thumbnail }
+          }}
+        />
+        <UiEntity
+          uiTransform={{
+            positionType: 'absolute',
+            position: { top: '0%', left: '0%' },
+            width: '38%',
+            height: '38%'
+          }}
+          uiBackground={getBackgroundFromAtlas({
+            atlasName: 'backpack',
+            spriteName: `${wearable.data.wearable.rarity}-category`
+          })}
+        />
+        <UiEntity
+          uiTransform={{
+            positionType: 'absolute',
+            position: { top: '3%', left: '3%' },
+            width: '15%',
+            height: '15%'
+          }}
+          uiBackground={getBackgroundFromAtlas({
+            atlasName: 'backpack',
+            spriteName: wearable.data.wearable.category
+          })}
         />
       </UiEntity>
     )
