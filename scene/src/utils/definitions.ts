@@ -88,3 +88,4 @@ export type Atlas =
   | 'context'
   | 'toggles'
   | 'voice-chat'
+  | 'social'

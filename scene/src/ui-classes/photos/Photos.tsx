@@ -9,10 +9,10 @@ import ReactEcs, {
 import { ButtonIcon } from 'src/components/button-icon'
 import { store } from 'src/state/store'
 import {
+  DCL_SHADOW,
   DCL_SNOW,
   EMPTY_WEARABLE_DATA,
   GRAY_TEXT,
-  ORANGE,
   RUBY
 } from 'src/utils/constants'
 import Canvas from '../../components/canvas/Canvas'
@@ -39,8 +39,10 @@ export default class Photos {
   private readonly uiController: UIController
   public fontSize: number = 16
   public index: number = 0
-  public leftColor: Color4 = DCL_SNOW
-  public rightColor: Color4 = DCL_SNOW
+  public closeBackgroundColor: Color4 = { ...Color4.White(), a: 0.05 }
+  public infoBackgroundColor: Color4 = { ...Color4.White(), a: 0.05 }
+  public rightBackgroundColor: Color4 = { ...Color4.White(), a: 0.05 }
+  public leftBackgroundColor: Color4 = { ...Color4.White(), a: 0.05 }
   private infoVisible: boolean = false
   selectedPeople: number = -1
 
@@ -49,8 +51,10 @@ export default class Photos {
   }
 
   updateButtons(): void {
-    this.leftColor = DCL_SNOW
-    this.rightColor = DCL_SNOW
+    this.closeBackgroundColor = { ...Color4.White(), a: 0.05 }
+    this.infoBackgroundColor = { ...Color4.White(), a: 0.05 }
+    this.rightBackgroundColor = { ...Color4.White(), a: 0.05 }
+    this.leftBackgroundColor = { ...Color4.White(), a: 0.05 }
   }
 
   showPhoto(index: number): void {
@@ -157,13 +161,15 @@ export default class Photos {
             >
               <ButtonIcon
                 uiTransform={{
-                  height: this.fontSize * 4,
-                  width: this.fontSize * 4,
-                  display: this.index > 0 ? 'flex' : 'none'
+                  height: this.fontSize * 2,
+                  width: this.fontSize * 2,
+                  display: this.index > 0 ? 'flex' : 'none',
+                  margin: { left: this.fontSize * 2 }
                 }}
-                iconColor={this.leftColor}
+                iconColor={DCL_SNOW}
+                backgroundColor={this.leftBackgroundColor}
                 onMouseEnter={() => {
-                  this.leftColor = ORANGE
+                  this.leftBackgroundColor = { ...Color4.White(), a: 0.1 }
                 }}
                 onMouseLeave={() => {
                   this.updateButtons()
@@ -177,13 +183,15 @@ export default class Photos {
               <UiEntity uiTransform={{ width: 1, height: 1 }} />
               <ButtonIcon
                 uiTransform={{
-                  height: this.fontSize * 4,
-                  width: this.fontSize * 4,
-                  display: this.index < arrayPhotos.length ? 'flex' : 'none'
+                  height: this.fontSize * 2,
+                  width: this.fontSize * 2,
+                  display: this.index < arrayPhotos.length ? 'flex' : 'none',
+                  margin: { right: this.fontSize * 2 }
                 }}
-                iconColor={this.rightColor}
+                iconColor={DCL_SNOW}
+                backgroundColor={this.rightBackgroundColor}
                 onMouseEnter={() => {
-                  this.rightColor = ORANGE
+                  this.rightBackgroundColor = { ...Color4.White(), a: 0.1 }
                 }}
                 onMouseLeave={() => {
                   this.updateButtons()
@@ -208,38 +216,161 @@ export default class Photos {
             >
               <ButtonIcon
                 uiTransform={{
-                  height: this.fontSize * 4,
-                  width: this.fontSize * 4
+                  height: this.fontSize * 2,
+                  width: this.fontSize * 2,
+                  margin: { left: this.fontSize * 1, top: this.fontSize * 1 }
                 }}
-                iconColor={ORANGE}
+                backgroundColor={this.closeBackgroundColor}
+                onMouseEnter={() => {
+                  this.closeBackgroundColor = { ...Color4.White(), a: 0.1 }
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                iconColor={DCL_SNOW}
                 onMouseDown={() => {
                   this.hide()
                 }}
-                icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+                icon={{ atlasName: 'icons', spriteName: 'Twitter' }}
+                iconSize={this.fontSize}
               />
+              <UiEntity
+                uiTransform={{
+                  height: 'auto',
+                  width: 'auto',
+                  margin: { right: this.fontSize * 1, top: this.fontSize * 1 }
+                }}
+              >
+                <ButtonIcon
+                  uiTransform={{
+                    height: this.fontSize * 2,
+                    width: this.fontSize * 2,
+                    margin: { left: this.fontSize }
+                  }}
+                  backgroundColor={this.infoBackgroundColor}
+                  onMouseEnter={() => {
+                    this.infoBackgroundColor = { ...Color4.White(), a: 0.1 }
+                  }}
+                  onMouseLeave={() => {
+                    this.updateButtons()
+                  }}
+                  iconColor={DCL_SNOW}
+                  onMouseDown={() => {
+                    this.infoVisible = !this.infoVisible
+                  }}
+                  icon={{
+                    atlasName: 'social',
+                    spriteName: 'Twitter'
+                  }}
+                  iconSize={this.fontSize}
+                />
+                <ButtonIcon
+                  uiTransform={{
+                    height: this.fontSize * 2,
+                    width: this.fontSize * 2,
+                    margin: { left: this.fontSize }
+                  }}
+                  backgroundColor={this.infoBackgroundColor}
+                  onMouseEnter={() => {
+                    this.infoBackgroundColor = { ...Color4.White(), a: 0.1 }
+                  }}
+                  onMouseLeave={() => {
+                    this.updateButtons()
+                  }}
+                  iconColor={DCL_SNOW}
+                  onMouseDown={() => {
+                    this.infoVisible = !this.infoVisible
+                  }}
+                  icon={{
+                    atlasName: 'social',
+                    spriteName: 'Link'
+                  }}
+                  iconSize={this.fontSize}
+                />
+                <ButtonIcon
+                  uiTransform={{
+                    height: this.fontSize * 2,
+                    width: this.fontSize * 2,
+                    margin: { left: this.fontSize }
+                  }}
+                  backgroundColor={this.infoBackgroundColor}
+                  onMouseEnter={() => {
+                    this.infoBackgroundColor = { ...Color4.White(), a: 0.1 }
+                  }}
+                  onMouseLeave={() => {
+                    this.updateButtons()
+                  }}
+                  iconColor={DCL_SNOW}
+                  onMouseDown={() => {
+                    this.infoVisible = !this.infoVisible
+                  }}
+                  icon={{
+                    atlasName: 'icons',
+                    spriteName: 'DownloadIcon'
+                  }}
+                  iconSize={this.fontSize}
+                />
+                <ButtonIcon
+                  uiTransform={{
+                    height: this.fontSize * 2,
+                    width: this.fontSize * 2,
+                    margin: { left: this.fontSize }
+                  }}
+                  backgroundColor={this.infoBackgroundColor}
+                  onMouseEnter={() => {
+                    this.infoBackgroundColor = { ...Color4.White(), a: 0.1 }
+                  }}
+                  onMouseLeave={() => {
+                    this.updateButtons()
+                  }}
+                  iconColor={DCL_SNOW}
+                  onMouseDown={() => {
+                    this.infoVisible = !this.infoVisible
+                  }}
+                  icon={{
+                    atlasName: 'icons',
+                    spriteName: 'Delete'
+                  }}
+                  iconSize={this.fontSize}
+                />
 
-              <ButtonIcon
-                uiTransform={{
-                  height: this.fontSize * 4,
-                  width: this.fontSize * 4
-                }}
-                iconColor={ORANGE}
-                onMouseDown={() => {
-                  void this.uiController.sceneCard.changeSceneCoords(0, 0)
-                }}
-                icon={{ atlasName: 'context', spriteName: 'Download' }}
-              />
-              <ButtonIcon
-                uiTransform={{
-                  height: this.fontSize * 4,
-                  width: this.fontSize * 4
-                }}
-                iconColor={ORANGE}
-                onMouseDown={() => {
-                  this.infoVisible = !this.infoVisible
-                }}
-                icon={{ atlasName: 'icons', spriteName: 'Menu' }}
-              />
+                <UiEntity
+                  uiTransform={{
+                    height: '100%',
+                    width: 1,
+                    margin: {
+                      right: this.fontSize * 1,
+                      left: this.fontSize * 1
+                    }
+                  }}
+                  uiBackground={{ color: { ...Color4.White(), a: 0.1 } }}
+                />
+                <ButtonIcon
+                  uiTransform={{
+                    height: this.fontSize * 2,
+                    width: this.fontSize * 2,
+                    margin: { left: this.fontSize }
+                  }}
+                  backgroundColor={this.infoBackgroundColor}
+                  onMouseEnter={() => {
+                    this.infoBackgroundColor = { ...Color4.White(), a: 0.1 }
+                  }}
+                  onMouseLeave={() => {
+                    this.updateButtons()
+                  }}
+                  iconColor={DCL_SNOW}
+                  onMouseDown={() => {
+                    this.infoVisible = !this.infoVisible
+                  }}
+                  icon={{
+                    atlasName: 'icons',
+                    spriteName: this.infoVisible
+                      ? 'DoubleRightArrow'
+                      : 'DoubleLeftArrow'
+                  }}
+                  iconSize={this.fontSize}
+                />
+              </UiEntity>
             </UiEntity>
           </UiEntity>
           {/* INFO */}
@@ -252,6 +383,7 @@ export default class Photos {
               display: this.infoVisible ? 'flex' : 'none',
               alignItems: 'flex-start'
             }}
+            uiBackground={{ color: DCL_SHADOW }}
           >
             <Label
               value={`${formatTimestamp(
@@ -449,7 +581,7 @@ export default class Photos {
           alignItems: 'center'
         }}
         uiBackground={{
-          color: { ...Color4.White(), a: 0.1 },
+          color: { ...Color4.White(), a: 0.05 },
           textureMode: 'nine-slices',
           texture: {
             src: 'assets/images/backgrounds/rounded.png'
