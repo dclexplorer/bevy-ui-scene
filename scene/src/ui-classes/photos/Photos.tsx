@@ -1,4 +1,4 @@
-// import { openExternalUrl } from '~system/RestrictedActions'
+import { openExternalUrl } from '~system/RestrictedActions'
 import { Color4 } from '@dcl/ecs-math/dist/Color4'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import ReactEcs, {
@@ -30,6 +30,7 @@ import {
 } from 'src/state/photoInfo/actions'
 import {
   formatTimestamp,
+  formatURN,
   // formatURN,
   getBackgroundFromAtlas
 } from 'src/utils/ui-utils'
@@ -77,18 +78,23 @@ export default class Photos {
     this.uiController.isPhotosVisible = true
     if (photoMetadata.metadata.visiblePeople.length > 0) {
       for (let i = 0; i < photoMetadata.metadata.visiblePeople.length; i++) {
+        console.log('user: ', photoMetadata.metadata.visiblePeople[i].userName)
+
         if (photoMetadata.metadata.visiblePeople[i].wearables.length > 0) {
           for (
             let j = 0;
             j < photoMetadata.metadata.visiblePeople[i].wearables.length;
             j++
           ) {
+            console.log(formatURN(photoMetadata.metadata.visiblePeople[i].wearables[j]))
             const wearable: WearableData = await fetchWearable(
               photoMetadata.metadata.visiblePeople[i].wearables[j]
+              
             )
             const wearables: WearableData[] =
               store.getState().photo.wearablesInfo
             store.dispatch(loadWearablesFromPhoto([...wearables, wearable]))
+            
           }
         }
       }
@@ -486,6 +492,7 @@ export default class Photos {
   }
 
   person(person: VisiblePerson, index: number): ReactEcs.JSX.Element {
+    
     return (
       <UiEntity
         // uiTransform={{ width: '100%', height: this.selectedPeople === index ? this.fontSize * 7 * person.wearables.length + this.fontSize * 4 : this.fontSize * 4, flexDirection: 'column' }}
@@ -607,18 +614,20 @@ export default class Photos {
             minHeight: 5.5 * this.fontSize
           })}
           <Label
-            value={wearableData.data.wearable.category}
-            fontSize={this.fontSize * 1.25}
+            // value={wearableData.name}
+            // fontSize={this.fontSize * 1.25}
+            value={wearableData.urn}
+            fontSize={this.fontSize * 0.5}
             textAlign="middle-left"
           />
         </UiEntity>
         <ButtonText
           onMouseDown={() => {
-            // openExternalUrl(
-            //   `https://decentraland.org/marketplace/contracts/${
-            //     formatURN(wearableData.urn).contractAddress
-            //   }/items/${formatURN(wearableData.urn).itemId}`
-            // )
+            openExternalUrl({url:
+              `https://decentraland.org/marketplace/contracts/${
+                formatURN(wearableData.urn).contractAddress
+              }/items/${formatURN(wearableData.urn).itemId}`
+            })
           }}
           // onMouseDown={() => {openExternalUrl(`google.com`)}}
           value={'BUY'}
