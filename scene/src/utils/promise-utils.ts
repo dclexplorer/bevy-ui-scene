@@ -11,7 +11,7 @@ import type {
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { EMPTY_PHOTO_METADATA, EMPTY_WEARABLE_DATA } from './constants'
 import { formatURN } from './ui-utils'
-// import { signedFetch } from '~system/SignedFetch'
+import { signedFetch } from '~system/SignedFetch'
 
 type EventsResponse = {
   ok: boolean
@@ -155,32 +155,32 @@ export type PatchFavoritesResponse = {
   }
 }
 
-// export async function updateFavoriteStatus(
-//   placeId: string,
-//   isFavorite: boolean
-// ): Promise<PatchFavoritesResponse> {
-//   const url = `https://places.decentraland.org/places/${placeId}/favorites?favorites=${isFavorite}`
+export async function updateFavoriteStatus(
+  placeId: string,
+  isFavorite: boolean
+): Promise<PatchFavoritesResponse> {
+  const url = `https://places.decentraland.org/places/${placeId}/favorites?favorites=${isFavorite}`
 
-//   try {
-//     const response = await signedFetch({
-//       url,
-//       init: {
-//         method: 'PATCH',
-//         headers: {
-//           'Content-Type': 'application/json'
-//         }
-//       }
-//     })
+  try {
+    const response = await signedFetch({
+      url,
+      init: {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    })
 
-//     if (response.ok === false) {
-//       throw new Error(`HTTP error! Status: ${response.status}`)
-//     }
+    if (response.ok === false) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
 
-//     const data: PatchFavoritesResponse = JSON.parse(response.body)
-//     console.log('LOGGED DATA:', { data })
-//     return data
-//   } catch (error) {
-//     console.error('Error updating favorite status:', error)
-//     throw new Error('Failed to update favorite status')
-//   }
-// }
+    const data: PatchFavoritesResponse = JSON.parse(response.body)
+    console.log('LOGGED DATA:', { data })
+    return data
+  } catch (error) {
+    console.error('Error updating favorite status:', error)
+    throw new Error('Failed to update favorite status')
+  }
+}

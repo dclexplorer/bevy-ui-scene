@@ -1,4 +1,4 @@
-// import { openExternalUrl } from '~system/RestrictedActions'
+import { openExternalUrl } from '~system/RestrictedActions'
 import { Color4 } from '@dcl/ecs-math/dist/Color4'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import ReactEcs, {
@@ -30,7 +30,7 @@ import {
 } from 'src/state/photoInfo/actions'
 import {
   formatTimestamp,
-  // formatURN,
+  formatURN,
   getBackgroundFromAtlas
 } from 'src/utils/ui-utils'
 import { ButtonText } from 'src/components/button-text'
@@ -231,7 +231,7 @@ export default class Photos {
                 onMouseDown={() => {
                   this.hide()
                 }}
-                icon={{ atlasName: 'icons', spriteName: 'Twitter' }}
+                icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
                 iconSize={this.fontSize}
               />
               <UiEntity
@@ -614,11 +614,11 @@ export default class Photos {
         </UiEntity>
         <ButtonText
           onMouseDown={() => {
-            // openExternalUrl(
-            //   `https://decentraland.org/marketplace/contracts/${
-            //     formatURN(wearableData.urn).contractAddress
-            //   }/items/${formatURN(wearableData.urn).itemId}`
-            // )
+            openExternalUrl(
+              `https://decentraland.org/marketplace/contracts/${
+                formatURN(wearableData.urn).contractAddress
+              }/items/${formatURN(wearableData.urn).itemId}`
+            )
           }}
           // onMouseDown={() => {openExternalUrl(`google.com`)}}
           value={'BUY'}
