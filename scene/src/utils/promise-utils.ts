@@ -11,6 +11,8 @@ import type {
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { EMPTY_PHOTO_METADATA } from './constants'
 import type { FormattedURN } from './definitions'
+import { BevyApi } from 'src/bevy-api'
+import type { KernelFetchRespose } from 'src/bevy-api/interface'
 // import { signedFetch } from '~system/SignedFetch'
 
 type EventsResponse = {
@@ -162,32 +164,31 @@ export type PatchFavoritesResponse = {
   }
 }
 
-// export async function updateFavoriteStatus(
-//   placeId: string,
-//   isFavorite: boolean
-// ): Promise<PatchFavoritesResponse> {
-//   const url = `https://places.decentraland.org/places/${placeId}/favorites?favorites=${isFavorite}`
+export async function updateFavoriteStatus(
+  placeId: string,
+  isFavorite: boolean
+): Promise<KernelFetchRespose> 
+{
+  const url = `https://places.decentraland.org/api/places/${placeId}/favorites`
 
-//   try {
-//     const response = await signedFetch({
-//       url,
-//       init: {
-//         method: 'PATCH',
-//         headers: {
-//           'Content-Type': 'application/json'
-//         }
-//       }
-//     })
+  const patchData = {
+    favorites: isFavorite
+  }
 
-//     if (response.ok === false) {
-//       throw new Error(`HTTP error! Status: ${response.status}`)
-//     }
-
-//     const data: PatchFavoritesResponse = JSON.parse(response.body)
-//     console.log('LOGGED DATA:', { data })
-//     return data
-//   } catch (error) {
-//     console.error('Error updating favorite status:', error)
-//     throw new Error('Failed to update favorite status')
-//   }
-// }
+  try {
+    const response = await BevyApi.kernelFetch({
+      url,
+      init: {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(patchData)
+      }
+    })
+    return response
+} catch (error) {
+      console.error('Error updating favorite status:', error)
+      throw new Error('Failed to update favorite status')
+    }
+}

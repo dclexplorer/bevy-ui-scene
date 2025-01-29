@@ -95,3 +95,4 @@ export type FormattedURN = {
   contractAddress: string
   itemId: string
 }
+

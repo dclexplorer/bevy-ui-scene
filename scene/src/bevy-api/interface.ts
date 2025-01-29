@@ -8,6 +8,23 @@ export type ExplorerSetting = {
   value: number
 }
 
+export type KernelFetch = {
+  url: string,
+  init: {
+    method: 'PATCH' | 'POST'| 'GET'| 'DELETE',	
+    headers: Record<string, string>,
+    body: string
+  }
+}
+
+export type KernelFetchRespose = {
+  ok: boolean,
+  status: number,
+  statusText: string,
+  headers: Array<Record<string, string>>,
+  body: string,
+}
+
 export type BevyApiInterface = {
   openSceneLogger: () => Promise<void>
   checkForUpdate: () => Promise<{ description: string; url: string }>
@@ -24,6 +41,7 @@ export type BevyApiInterface = {
 
   getSettings: () => Promise<ExplorerSetting[]>
   setSetting: (name: string, value: number) => Promise<void>
+  kernelFetch: (requestBody: KernelFetch) => Promise<KernelFetchRespose>
 }
 
 // system api module

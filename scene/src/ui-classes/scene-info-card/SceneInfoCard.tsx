@@ -35,9 +35,8 @@ import {
   fetchEvents,
   fetchPhotos,
   fetchPhotosQuantity,
-  fetchPlaceId
-  // type PatchFavoritesResponse,
-  // updateFavoriteStatus
+  fetchPlaceId,
+  updateFavoriteStatus
 } from 'src/utils/promise-utils'
 import { store } from 'src/state/store'
 import {
@@ -48,6 +47,7 @@ import {
 import type { PhotoFromApi } from '../photos/Photos.types'
 
 export default class SceneInfoCard {
+  private sceneCoords: {x:number, y:number} = {x:0, y:0}
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
   public fontSize: number = 16
@@ -84,8 +84,13 @@ export default class SceneInfoCard {
   }
 
   async changeSceneCoords(x: number, y: number): Promise<void> {
-    this.scrollPos = Vector2.create(0, 0)
-    const place: PlaceFromApi = await fetchPlaceId(x, y)
+    this.sceneCoords = {x, y}
+    await this.updateSceneInfo()
+    
+  }
+
+  async updateSceneInfo(): Promise<void> {
+    const place: PlaceFromApi = await fetchPlaceId(this.sceneCoords.x, this.sceneCoords.y)
     const photosQuantityInPlace: number = await fetchPhotosQuantity(place.id)
     const photosArray: PhotoFromApi[] = await fetchPhotos(
       place.id,
@@ -97,9 +102,11 @@ export default class SceneInfoCard {
     store.dispatch(loadPhotosFromApi(photosArray))
     store.dispatch(loadPlaceFromApi(place))
 
+    console.log('Is Favorite: ', place.user_favorite)
     this.isFav = place.user_favorite
     this.isLiked = place.user_like
     this.isDisliked = place.user_dislike
+    this.updateIcons()
   }
 
   async show(): Promise<void> {
@@ -139,16 +146,17 @@ export default class SceneInfoCard {
   }
 
   async toggleFav(): Promise<void> {
-    // const sceneId: string = store.getState().scene.explorerPlace.id
+    const sceneId: string = store.getState().scene.explorerPlace.id
     // const arg: boolean = !store.getState().scene.explorerPlace.user_favorite
-    // // const favData: PatchFavoritesResponse = await updateFavoriteStatus(
-    // //   sceneId,
-    // //   arg
-    // // )
-    // // if (favData.ok) {
-    // //   this.isFav = favData.data.user_favorite
-    // //   this.updateIcons()
-    // // }
+    const arg: boolean = true
+    const favData = await updateFavoriteStatus(
+      sceneId,
+      arg
+    )
+    console.log({favData})
+    if (favData.ok) {
+      await this.updateSceneInfo()
+    }
   }
 
   setLike(arg: boolean): void {
