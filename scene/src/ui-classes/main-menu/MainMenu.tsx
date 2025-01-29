@@ -110,7 +110,8 @@ export default class MainMenu {
     if (canvasInfo === null) return null
 
     // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
-    const buttonSize: number = Math.max(canvasInfo.height * 0.024, 46)
+    const buttonSize: number = Math.max(canvasInfo.height * 0.05, 50)
+    const iconSize: number = Math.max(canvasInfo.height * 0.03, 30)
 
     return (
       <Canvas>
@@ -127,7 +128,7 @@ export default class MainMenu {
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: '8%',
+              height: buttonSize * 1.1,
               justifyContent: 'center',
               alignItems: 'center',
               flexDirection: 'row'
@@ -147,8 +148,8 @@ export default class MainMenu {
             >
               <ButtonTextIcon
                 uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
+                  height: buttonSize,
+                  width: 3 * buttonSize,
                   margin: { left: 15, right: 15 },
                   flexDirection: 'column'
                 }}
@@ -165,13 +166,13 @@ export default class MainMenu {
                 icon={this.mapIcon}
                 value={'MAP [M]'}
                 fontSize={10}
-                iconSize={50}
+                iconSize={iconSize}
               />
 
               <ButtonTextIcon
                 uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
+                  height: buttonSize,
+                  width: 3 * buttonSize,
                   margin: { left: 15, right: 15 },
                   flexDirection: 'column'
                 }}
@@ -188,13 +189,13 @@ export default class MainMenu {
                 icon={this.exploreIcon}
                 value={'EXPLORE'}
                 fontSize={10}
-                iconSize={50}
+                iconSize={iconSize}
               />
 
               <ButtonTextIcon
                 uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
+                  height: buttonSize,
+                  width: 3 * buttonSize,
                   margin: { left: 15, right: 15 },
                   flexDirection: 'column'
                 }}
@@ -211,13 +212,13 @@ export default class MainMenu {
                 icon={this.backpackIcon}
                 value={'BACKPACK [B]'}
                 fontSize={10}
-                iconSize={50}
+                iconSize={iconSize}
               />
 
               <ButtonTextIcon
                 uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
+                  height: buttonSize,
+                  width: 3 * buttonSize,
                   margin: { left: 15, right: 15 },
                   flexDirection: 'column'
                 }}
@@ -234,7 +235,7 @@ export default class MainMenu {
                 icon={this.settingsIcon}
                 value={'SETTINGS [P]'}
                 fontSize={10}
-                iconSize={50}
+                iconSize={iconSize}
               />
             </UiEntity>
           </UiEntity>
@@ -257,7 +258,7 @@ export default class MainMenu {
           <UiEntity
             uiTransform={{
               width: 'auto',
-              height: '8%',
+              height: buttonSize * 1.1,
               positionType: 'absolute',
               alignItems: 'center',
               position: { right: buttonSize, top: 0 }

@@ -6,7 +6,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { DCL_SNOW } from '../../utils/constants'
+import { TRANSPARENT } from 'src/utils/constants'
 
 function ButtonTextIcon(props: {
   // Events
@@ -32,7 +32,7 @@ function ButtonTextIcon(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor ?? DCL_SNOW,
+        color: props.backgroundColor ?? TRANSPARENT,
         textureMode: 'nine-slices',
         texture: {
           src: 'assets/images/backgrounds/rounded.png'

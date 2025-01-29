@@ -66,6 +66,7 @@ export const DCL_SNOW: Color4 = Color4.create(
   1
 )
 export const DCL_SHADOW: Color4 = Color4.create(22 / 255, 21 / 255, 24 / 255, 1)
+export const TRANSPARENT: Color4 = Color4.create(255 / 255, 255 / 255, 255 / 255, 0)
 
 export const EVENT_BACKGROUND_COLOR: Color4 = Color4.create(
   242 / 255,
