@@ -11,7 +11,6 @@ import { store } from 'src/state/store'
 import {
   DCL_SHADOW,
   DCL_SNOW,
-  EMPTY_WEARABLE_DATA,
   GRAY_TEXT,
   RUBY
 } from 'src/utils/constants'
@@ -86,15 +85,24 @@ export default class Photos {
             j < photoMetadata.metadata.visiblePeople[i].wearables.length;
             j++
           ) {
-            console.log(formatURN(photoMetadata.metadata.visiblePeople[i].wearables[j]))
-            const wearable: WearableData = await fetchWearable(
+            const urn = formatURN(
               photoMetadata.metadata.visiblePeople[i].wearables[j]
-              
             )
-            const wearables: WearableData[] =
-              store.getState().photo.wearablesInfo
-            store.dispatch(loadWearablesFromPhoto([...wearables, wearable]))
-            
+
+            if (urn === undefined || urn.version !== 'collections-v2') {
+              console.error('Invalid urn: ', urn)
+              continue
+            }
+
+            const wearable: WearableData | null = await fetchWearable(urn)
+
+            if (wearable === null) {
+              console.error('Wearable not found: ', urn)
+            } else {
+              const wearables: WearableData[] =
+                store.getState().photo.wearablesInfo
+              store.dispatch(loadWearablesFromPhoto([...wearables, wearable]))
+            }
           }
         }
       }
@@ -237,7 +245,7 @@ export default class Photos {
                 onMouseDown={() => {
                   this.hide()
                 }}
-                icon={{ atlasName: 'icons', spriteName: 'Twitter' }}
+                icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
                 iconSize={this.fontSize}
               />
               <UiEntity
@@ -492,11 +500,10 @@ export default class Photos {
   }
 
   person(person: VisiblePerson, index: number): ReactEcs.JSX.Element {
-    
     return (
       <UiEntity
-        // uiTransform={{ width: '100%', height: this.selectedPeople === index ? this.fontSize * 7 * person.wearables.length + this.fontSize * 4 : this.fontSize * 4, flexDirection: 'column' }}
         uiTransform={{ width: '100%', height: 'auto', flexDirection: 'column' }}
+        key={index}
       >
         <UiEntity
           uiTransform={{
@@ -512,13 +519,10 @@ export default class Photos {
                 width: this.fontSize * 2.5,
                 height: this.fontSize * 2.5
               }}
-              uiBackground={
-                getBackgroundFromAtlas({
-                  atlasName: 'icons',
-                  spriteName: 'DdlIconColor'
-                })
-                // : { avatarTexture: { userId: props.message.from } }
-              }
+              uiBackground={getBackgroundFromAtlas({
+                atlasName: 'icons',
+                spriteName: 'DdlIconColor'
+              })}
             />
 
             <Label
@@ -556,7 +560,9 @@ export default class Photos {
           }}
         >
           {person.wearables.length > 0 ? (
-            person.wearables.map((wearable) => this.wearable(wearable))
+            person.wearables.map((wearable, index) =>
+              this.wearable(wearable, index)
+            )
           ) : (
             <Label
               value={'No collectibles equipped when the photo was taken.'}
@@ -570,13 +576,12 @@ export default class Photos {
     )
   }
 
-  wearable(wearable: string): ReactEcs.JSX.Element {
+  wearable(wearable: string, key: number): ReactEcs.JSX.Element | null {
     const wearables: WearableData[] = store.getState().photo.wearablesInfo
-    const wearableData =
-      wearables.find((wearableToShow) =>
-        wearable.includes(wearableToShow.urn)
-      ) ?? EMPTY_WEARABLE_DATA
-
+    const wearableData = wearables.find((wearableToShow) =>
+      wearable.includes(wearableToShow.urn)
+    )
+    if (wearableData === undefined) return null
     return (
       <UiEntity
         uiTransform={{
@@ -587,6 +592,7 @@ export default class Photos {
           justifyContent: 'space-between',
           alignItems: 'center'
         }}
+        key={key}
         uiBackground={{
           color: { ...Color4.White(), a: 0.05 },
           textureMode: 'nine-slices',
@@ -614,22 +620,21 @@ export default class Photos {
             minHeight: 5.5 * this.fontSize
           })}
           <Label
-            // value={wearableData.name}
-            // fontSize={this.fontSize * 1.25}
-            value={wearableData.urn}
-            fontSize={this.fontSize * 0.5}
+            value={wearableData.name}
+            fontSize={this.fontSize * 1.25}
+            // value={wearableData.urn}
+            // fontSize={this.fontSize * 0.5}
             textAlign="middle-left"
           />
         </UiEntity>
         <ButtonText
           onMouseDown={() => {
-            openExternalUrl({url:
-              `https://decentraland.org/marketplace/contracts/${
-                formatURN(wearableData.urn).contractAddress
-              }/items/${formatURN(wearableData.urn).itemId}`
-            })
+            if (wearableData.formattedUrn !== undefined) {
+              openExternalUrl({
+                url: `https://decentraland.org/marketplace/contracts/${wearableData.formattedUrn.contractAddress}/items/${wearableData.formattedUrn.itemId}`
+              })
+            }
           }}
-          // onMouseDown={() => {openExternalUrl(`google.com`)}}
           value={'BUY'}
           fontSize={this.fontSize * 1.25}
           backgroundColor={RUBY}

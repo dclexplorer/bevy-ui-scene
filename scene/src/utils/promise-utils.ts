@@ -9,8 +9,8 @@ import type {
   EventFromApi,
   PlaceFromApi
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
-import { EMPTY_PHOTO_METADATA, EMPTY_WEARABLE_DATA } from './constants'
-import { formatURN } from './ui-utils'
+import { EMPTY_PHOTO_METADATA } from './constants'
+import type { FormattedURN } from './definitions'
 // import { signedFetch } from '~system/SignedFetch'
 
 type EventsResponse = {
@@ -104,26 +104,33 @@ export async function fetchPhotoMetadata(
   }
 }
 
-export async function fetchWearable(urn: string): Promise<WearableData> {
+export async function fetchWearable(
+  urn: FormattedURN
+): Promise<WearableData | null> {
   try {
+    console.log(
+      'FETCHING WEARABLE contractAddress = ',
+      urn.contractAddress,
+      ' - ItemId = ',
+      urn.itemId
+    )
     const response: Response = await fetch(
-      `https://marketplace-api.decentraland.org/v1/items?contractAddress=${
-        formatURN(urn).contractAddress
-      }&itemId=${formatURN(urn).itemId}`
+      `https://marketplace-api.decentraland.org/v1/items?contractAddress=${urn.contractAddress}&itemId=${urn.itemId}`
     )
     if (!response.ok) {
-      return EMPTY_WEARABLE_DATA
+      return null
     }
     const wearableData: WearableResponse =
       (await response.json()) as WearableResponse
 
     if (wearableData.total === 0) {
-      return EMPTY_WEARABLE_DATA
+      return null
     }
+    console.log({ wearableData })
     return wearableData.data[0]
   } catch (error) {
     console.error('Error fetching photos:', error)
-    return EMPTY_WEARABLE_DATA
+    return null
   }
 }
 

@@ -1,5 +1,5 @@
 import { engine, UiCanvasInformation, type Coords } from '@dcl/sdk/ecs'
-import { type AtlasIcon, type AtlasData, type Sprite } from './definitions'
+import type { AtlasIcon, AtlasData, Sprite, FormattedURN } from './definitions'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
 import { backpackJson } from '../json/backpack-data'
 import { navbarJson } from '../json/navbar-data'
@@ -325,18 +325,17 @@ export function getFontSizesByResolution(): FontSizes {
   }
 }
 
-export function formatURN(urn: string): {
-  contractAddress: string
-  itemId: string
-} {
+export function formatURN(urn: string): FormattedURN | undefined {
   const parts = urn.split(':')
 
   if (parts.length >= 5) {
+    const version = parts[3]
     const contractAddress = parts[4]
     const itemId = parts[5]
-    return { contractAddress, itemId }
+
+    return { contractAddress, itemId, version }
   } else {
     console.error('Invalid URN format')
-    return { contractAddress: 'contractAddress', itemId: 'itemId' }
+    return undefined
   }
 }

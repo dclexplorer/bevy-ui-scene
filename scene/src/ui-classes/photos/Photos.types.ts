@@ -1,3 +1,5 @@
+import type { FormattedURN } from 'src/utils/definitions'
+
 export type PhotoFromApi = {
   id: string
   url: string
@@ -77,6 +79,7 @@ export type WearableData = {
   network: string
   chainId: number
   urn: string
+  formattedUrn: FormattedURN | undefined
   picks: {
     itemId: string
     count: number

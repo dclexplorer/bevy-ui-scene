@@ -89,3 +89,9 @@ export type Atlas =
   | 'toggles'
   | 'voice-chat'
   | 'social'
+
+export type FormattedURN = {
+  version: string
+  contractAddress: string
+  itemId: string
+}

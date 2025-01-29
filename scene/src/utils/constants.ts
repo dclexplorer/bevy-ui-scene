@@ -3,8 +3,7 @@ import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
 import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
 import type { PlaceFromApi } from '../ui-classes/scene-info-card/SceneInfoCard.types'
 import type {
-  PhotoMetadataResponse,
-  WearableData
+  PhotoMetadataResponse
 } from 'src/ui-classes/photos/Photos.types'
 
 // PRIMARY COLORS
@@ -542,40 +541,4 @@ export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
   }
 }
 
-export const EMPTY_WEARABLE_DATA: WearableData = {
-  id: '',
-  name: 'Wearable Name',
-  thumbnail: '',
-  url: '',
-  category: '',
-  contractAddress: '',
-  itemId: '',
-  rarity: '',
-  price: '0',
-  available: '0',
-  isOnSale: false,
-  creator: '',
-  tradeId: null,
-  beneficiary: null,
-  createdAt: '',
-  updatedAt: '',
-  reviewedAt: '',
-  soldAt: '',
-  data: {
-    wearable: {
-      bodyShapes: [],
-      category: '',
-      description: '',
-      rarity: '',
-      isSmart: false
-    }
-  },
-  network: '',
-  chainId: 0,
-  urn: '',
-  picks: {
-    itemId: '',
-    count: 0
-  },
-  utility: null
-}
+
