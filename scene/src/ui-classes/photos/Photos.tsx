@@ -112,7 +112,6 @@ export default class Photos {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    // const {title, paragraph, smallText} = getFontSizesByResolution()
 
     const arrayPhotos: PhotoFromApi[] = store.getState().scene.explorerPhotos
     const photoInfo: PhotoMetadataResponse = store.getState().photo.photoInfo
@@ -255,7 +254,7 @@ export default class Photos {
                   margin: { right: this.fontSize * 1, top: this.fontSize * 1 }
                 }}
               >
-                <ButtonIcon
+                {/* <ButtonIcon
                   uiTransform={{
                     height: this.fontSize * 2,
                     width: this.fontSize * 2,
@@ -346,7 +345,7 @@ export default class Photos {
                     spriteName: 'Delete'
                   }}
                   iconSize={this.fontSize}
-                />
+                /> */}
 
                 <UiEntity
                   uiTransform={{
