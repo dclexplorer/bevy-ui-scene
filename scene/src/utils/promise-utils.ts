@@ -42,7 +42,6 @@ export async function fetchEvents(coords: string[]): Promise<EventFromApi[]> {
     }
 
     const events: EventsResponse = (await response.json()) as EventsResponse
-    console.log('EVENTOS CARGADOS')
     return events.data
   } catch (error) {
     console.error('Error fetching events:', error)

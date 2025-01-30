@@ -147,8 +147,8 @@ export default class SceneInfoCard {
 
   async toggleFav(): Promise<void> {
     const sceneId: string = store.getState().scene.explorerPlace.id
-    // const arg: boolean = !store.getState().scene.explorerPlace.user_favorite
-    const arg: boolean = true
+    const arg: boolean = !store.getState().scene.explorerPlace.user_favorite
+    console.log({arg})
     const favData = await updateFavoriteStatus(
       sceneId,
       arg
