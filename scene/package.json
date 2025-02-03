@@ -28,10 +28,10 @@
   },
   "dependencies": {
     "@dcl-sdk/utils": "^1.2.8",
-    "@dcl/js-runtime": "7.6.4-11515577295.commit-620b210",
+    "@dcl/js-runtime": "7.7.3-13093143335.commit-dc52da3",
     "@dcl/react-ecs": "7.5.6",
-    "@dcl/sdk": "https://sdk-team-cdn.decentraland.org/@dcl/js-sdk-toolchain/branch/feat/ui-hover/dcl-sdk-7.6.6-12138639965.commit-c9acb27.tgz",
-    "@dcl/sdk-commands": "7.6.4-11515577295.commit-620b210",
+    "@dcl/sdk": "^7.7.3-13093143335.commit-dc52da3",
+    "@dcl/sdk-commands": "7.7.3-13093143335.commit-dc52da3",
     "dcl-npc-toolkit": "^1.2.2",
     "dcl-ui-toolkit": "^0.10.0",
     "fp-future": "^1.0.1",

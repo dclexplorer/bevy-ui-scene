@@ -1,6 +1,7 @@
 node_modules
 *.js
 bin/
+bevy-explorer-backup/
 .DS_Store
 **/.DS_Store
 npm-debug.log*
