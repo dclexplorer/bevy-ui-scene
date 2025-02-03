@@ -1,4 +1,4 @@
-import { engine, UiCanvasInformation, type Coords } from '@dcl/sdk/ecs'
+import { type Coords } from '@dcl/sdk/ecs'
 import type { AtlasIcon, AtlasData, Sprite, FormattedURN } from './definitions'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
 import { backpackJson } from '../json/backpack-data'
