@@ -1,6 +1,6 @@
 import ReactEcs, { UiEntity } from '@dcl/react-ecs'
-import { CameraLayer, TextureCamera, Transform, UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
+import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { Color4 } from '@dcl/sdk/math'
 import { avatarCamera } from './AvatarPreview'
 
 export default class BackpackPage {
@@ -10,31 +10,31 @@ export default class BackpackPage {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    // texturecam
-    const cam = engine.addEntity();
-    const camPos = Vector3.create(0, 1, 0);
-    const camTarget = Vector3.create(8, 1, 8);
+    // // texturecam
+    // const cam = engine.addEntity();
+    // const camPos = Vector3.create(0, 1, 0);
+    // const camTarget = Vector3.create(8, 1, 8);
     
-    CameraLayer.create(cam, {
-      layer: 1,
-      directionalLight: true,
-      showAvatars: true,
+    // CameraLayer.create(cam, {
+    //   layer: 1,
+    //   directionalLight: true,
+    //   showAvatars: true,
 
-    });
+    // });
 
-    Transform.create(cam, {position: camPos, rotation: Quaternion.fromLookAt(camPos, camTarget, Vector3.Up()) });
-    TextureCamera.create(cam, {
-      width: 512, 
-      height: 512, 
-      layer: 1, 
-      clearColor: Color4.create(0.4, 0.4, 1.0, 0.5),
-      mode: {
-        // $case: "orthographic",
-        // orthographic: { verticalRange: 10 }
-        $case: "perspective",
-        perspective: { fieldOfView: 0.8 }
-      }
-    });
+    // Transform.create(cam, {position: camPos, rotation: Quaternion.fromLookAt(camPos, camTarget, Vector3.Up()) });
+    // TextureCamera.create(cam, {
+    //   width: 512, 
+    //   height: 512, 
+    //   layer: 1, 
+    //   clearColor: Color4.create(0.4, 0.4, 1.0, 0.5),
+    //   mode: {
+    //     // $case: "orthographic",
+    //     // orthographic: { verticalRange: 10 }
+    //     $case: "perspective",
+    //     perspective: { fieldOfView: 0.8 }
+    //   }
+    // });
 
     return (
       <UiEntity
