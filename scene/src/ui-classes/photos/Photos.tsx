@@ -8,12 +8,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { ButtonIcon } from 'src/components/button-icon'
 import { store } from 'src/state/store'
-import {
-  DCL_SHADOW,
-  DCL_SNOW,
-  GRAY_TEXT,
-  RUBY
-} from 'src/utils/constants'
+import { DCL_SHADOW, DCL_SNOW, GRAY_TEXT, RUBY } from 'src/utils/constants'
 import Canvas from '../../components/canvas/Canvas'
 import { type UIController } from '../../controllers/ui.controller'
 import type {

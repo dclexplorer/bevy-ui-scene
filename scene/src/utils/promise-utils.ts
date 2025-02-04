@@ -166,8 +166,7 @@ export type PatchFavoritesResponse = {
 export async function updateFavoriteStatus(
   placeId: string,
   isFavorite: boolean
-): Promise<KernelFetchRespose> 
-{
+): Promise<KernelFetchRespose> {
   const url = `https://places.decentraland.org/api/places/${placeId}/favorites`
 
   const patchData = {
@@ -180,14 +179,14 @@ export async function updateFavoriteStatus(
       init: {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(patchData)
       }
     })
     return response
-} catch (error) {
-      console.error('Error updating favorite status:', error)
-      throw new Error('Failed to update favorite status')
-    }
+  } catch (error) {
+    console.error('Error updating favorite status:', error)
+    throw new Error('Failed to update favorite status')
+  }
 }

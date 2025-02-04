@@ -9,20 +9,20 @@ export type ExplorerSetting = {
 }
 
 export type KernelFetch = {
-  url: string,
+  url: string
   init: {
-    method: 'PATCH' | 'POST'| 'GET'| 'DELETE',	
-    headers: Record<string, string>,
+    method: 'PATCH' | 'POST' | 'GET' | 'DELETE'
+    headers: Record<string, string>
     body: string
   }
 }
 
 export type KernelFetchRespose = {
-  ok: boolean,
-  status: number,
-  statusText: string,
-  headers: Array<Record<string, string>>,
-  body: string,
+  ok: boolean
+  status: number
+  statusText: string
+  headers: Array<Record<string, string>>
+  body: string
 }
 
 export type BevyApiInterface = {

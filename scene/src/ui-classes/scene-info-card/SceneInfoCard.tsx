@@ -47,7 +47,7 @@ import {
 import type { PhotoFromApi } from '../photos/Photos.types'
 
 export default class SceneInfoCard {
-  private sceneCoords: {x:number, y:number} = {x:0, y:0}
+  private sceneCoords: { x: number; y: number } = { x: 0, y: 0 }
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
   public fontSize: number = 16
@@ -84,13 +84,15 @@ export default class SceneInfoCard {
   }
 
   async changeSceneCoords(x: number, y: number): Promise<void> {
-    this.sceneCoords = {x, y}
+    this.sceneCoords = { x, y }
     await this.updateSceneInfo()
-    
   }
 
   async updateSceneInfo(): Promise<void> {
-    const place: PlaceFromApi = await fetchPlaceId(this.sceneCoords.x, this.sceneCoords.y)
+    const place: PlaceFromApi = await fetchPlaceId(
+      this.sceneCoords.x,
+      this.sceneCoords.y
+    )
     const photosQuantityInPlace: number = await fetchPhotosQuantity(place.id)
     const photosArray: PhotoFromApi[] = await fetchPhotos(
       place.id,
@@ -146,16 +148,16 @@ export default class SceneInfoCard {
   }
 
   async toggleFav(): Promise<void> {
+    // There are some extra lines for avoid eslint issues (maybe I've got a bad config)
+
     const sceneId: string = store.getState().scene.explorerPlace.id
-    const userFavorite: boolean = store.getState().scene.explorerPlace.user_favorite
+    const userFavorite: boolean =
+      store.getState().scene.explorerPlace.user_favorite
     const arg: boolean = !userFavorite
-    console.log({arg})
-    const favData = await updateFavoriteStatus(
-      sceneId,
-      arg
-    )
-    console.log({favData})
-    if (favData.ok === true) {
+    console.log({ arg })
+    const favData = await updateFavoriteStatus(sceneId, arg)
+    const favDataOk: boolean = favData.ok
+    if (favDataOk) {
       await this.updateSceneInfo()
     }
   }

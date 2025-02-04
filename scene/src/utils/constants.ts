@@ -2,9 +2,7 @@ import { Color4 } from '@dcl/sdk/math'
 import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
 import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
 import type { PlaceFromApi } from '../ui-classes/scene-info-card/SceneInfoCard.types'
-import type {
-  PhotoMetadataResponse
-} from 'src/ui-classes/photos/Photos.types'
+import type { PhotoMetadataResponse } from 'src/ui-classes/photos/Photos.types'
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)
@@ -66,7 +64,12 @@ export const DCL_SNOW: Color4 = Color4.create(
   1
 )
 export const DCL_SHADOW: Color4 = Color4.create(22 / 255, 21 / 255, 24 / 255, 1)
-export const TRANSPARENT: Color4 = Color4.create(255 / 255, 255 / 255, 255 / 255, 0)
+export const TRANSPARENT: Color4 = Color4.create(
+  255 / 255,
+  255 / 255,
+  255 / 255,
+  0
+)
 
 export const EVENT_BACKGROUND_COLOR: Color4 = Color4.create(
   242 / 255,
@@ -541,5 +544,3 @@ export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
     placeId: '00000000-0000-0000-0000-000000000000'
   }
 }
-
-

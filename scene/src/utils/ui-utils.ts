@@ -248,7 +248,6 @@ export function formatTimestamp(timestamp: string): string {
   return `${month} ${day}${daySuffix} ${year}`
 }
 
-
 export function formatURN(urn: string): FormattedURN | undefined {
   const parts = urn.split(':')
 
