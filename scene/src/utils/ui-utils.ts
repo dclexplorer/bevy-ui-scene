@@ -1,5 +1,5 @@
 import { type Coords } from '@dcl/sdk/ecs'
-import { type AtlasIcon, type AtlasData, type Sprite } from './definitions'
+import type { AtlasIcon, AtlasData, Sprite, FormattedURN } from './definitions'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
 import { backpackJson } from '../json/backpack-data'
 import { navbarJson } from '../json/navbar-data'
@@ -10,6 +10,7 @@ import { profileJson } from '../json/profile-data'
 import { voiceChatJson } from '../json/voice-chat-data'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { mapJson } from '../json/map-data'
+import { socialJson } from 'src/json/social-data'
 
 export function getUvs(icon: AtlasIcon): number[] {
   let parsedJson: AtlasData | undefined
@@ -37,6 +38,9 @@ export function getUvs(icon: AtlasIcon): number[] {
       break
     case 'voice-chat':
       parsedJson = voiceChatJson
+      break
+    case 'social':
+      parsedJson = socialJson
       break
   }
   if (parsedJson !== undefined) {
@@ -141,11 +145,15 @@ export function sliderPercentageToValue(
   }
 }
 
-export function formatEventTime(timestampInSecs: number): string {
+export function formatEventTime(
+  startTimestamp: number,
+  endTimestamp: number
+): string {
   const now = new Date()
-  const eventDate = new Date(timestampInSecs * 1000) // convert to miliseconds
+  const eventStart = new Date(startTimestamp)
+  const eventEnd = new Date(endTimestamp)
 
-  if (eventDate > now) {
+  if (eventStart > now) {
     // Format: MON, 24 JUL AT 02:00PM
     const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
     const months = [
@@ -162,25 +170,95 @@ export function formatEventTime(timestampInSecs: number): string {
       'NOV',
       'DEC'
     ]
-    const day = days[eventDate.getUTCDay()]
-    const date = eventDate.getUTCDate()
-    const month = months[eventDate.getUTCMonth()]
-    const hours = eventDate.getUTCHours()
-    const minutes = eventDate.getUTCMinutes()
+    const day = days[eventStart.getUTCDay()]
+    const date = eventStart.getUTCDate()
+    const month = months[eventStart.getUTCMonth()]
+    const hours = eventStart.getUTCHours()
+    const minutes = eventStart.getUTCMinutes()
     const formattedTime = `${isNaN(hours % 12) ? 12 : hours % 12}:${minutes
       .toString()
       .padStart(2, '0')}${hours >= 12 ? 'PM' : 'AM'}`
     return `${day}, ${date} ${month} AT ${formattedTime}`
-  } else {
+  } else if (eventEnd > now) {
     // Calcular diferencia
-    const diff = Math.abs(now.getTime() - eventDate.getTime()) // Diferencia en milisegundos
+    const diff = Math.abs(now.getTime() - eventStart.getTime()) // Diferencia en milisegundos
     const minutesDiff = Math.floor(diff / (1000 * 60))
     const hoursDiff = Math.floor(minutesDiff / 60)
+    const daysDiff = Math.floor(hoursDiff / 24)
 
-    if (hoursDiff > 0) {
-      return `Event started ${hoursDiff} hours ago.`
+    if (daysDiff > 0) {
+      if (daysDiff === 1) {
+        return `Event started ${daysDiff} day ago.`
+      } else {
+        return `Event started ${daysDiff} days ago.`
+      }
+    } else if (hoursDiff > 0) {
+      if (hoursDiff === 1) {
+        return `Event started ${hoursDiff} hour ago.`
+      } else {
+        return `Event started ${hoursDiff} hours ago.`
+      }
     } else {
-      return `Event started ${minutesDiff} minutes ago.`
+      if (hoursDiff === 1) {
+        return `Event started ${minutesDiff} minute ago.`
+      } else {
+        return `Event started ${minutesDiff} minutes ago.`
+      }
     }
+  } else {
+    return `Event is over.`
+  }
+}
+
+export function getTimestamp(dateString: string): number {
+  const date = new Date(dateString)
+  return date.getTime()
+}
+
+export function formatTimestamp(timestamp: string): string {
+  const date = new Date(+timestamp * 1000)
+
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ]
+
+  const day = date.getDate()
+  const month = months[date.getMonth()]
+  const year = date.getFullYear()
+
+  // Determinar el sufijo del día (st, nd, rd, th)
+  const daySuffix = (() => {
+    if (day % 10 === 1 && day !== 11) return 'st'
+    if (day % 10 === 2 && day !== 12) return 'nd'
+    if (day % 10 === 3 && day !== 13) return 'rd'
+    return 'th'
+  })()
+
+  return `${month} ${day}${daySuffix} ${year}`
+}
+
+export function formatURN(urn: string): FormattedURN | undefined {
+  const parts = urn.split(':')
+
+  if (parts.length >= 5) {
+    const version = parts[3]
+    const contractAddress = parts[4]
+    const itemId = parts[5]
+
+    return { contractAddress, itemId, version }
+  } else {
+    console.error('Invalid URN format')
+    return undefined
   }
 }

@@ -1,3 +1,4 @@
+// import { loadEventsFromApi } from 'src/state/events/actions'
 import { BevyApi } from '../bevy-api'
 import type { ExplorerSetting } from '../bevy-api/interface'
 import { GameController } from '../controllers/game.controller'
@@ -16,7 +17,7 @@ export function main(): void {
 async function init(retry: boolean): Promise<void> {
   gameInstance = new GameController()
   gameInstance.uiController.loadingAndLogin.startLoading()
-  gameInstance.uiController.loadingAndLogin.finishLoading()
+  // gameInstance.uiController.loadingAndLogin.finishLoading()
 
   const { description, url } = await BevyApi.checkForUpdate()
 
@@ -48,14 +49,7 @@ async function init(retry: boolean): Promise<void> {
     },
     {}
   )
-
   store.dispatch(loadSettingsFromExplorer(explorerSettings))
-
-  // const fog = settingsArray.find((setting) => setting.name === 'Fog')
-  // console.log('name: ', fog?.name)
-  // console.log('namedVariants: ', fog?.namedVariants)
-
-  // console.log(fog?.namedVariants.length)
 
   const previousLogin = await BevyApi.getPreviousLogin()
   if (previousLogin.userId !== null) {

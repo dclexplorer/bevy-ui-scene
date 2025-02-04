@@ -1,5 +1,5 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import { Color4 } from '@dcl/sdk/math'
+import { Color4, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, {
   Label,
   UiEntity,
@@ -10,19 +10,46 @@ import {
   ALMOST_BLACK,
   BLACK_TEXT,
   DCL_SNOW,
+  EVENT_BACKGROUND_COLOR,
   GRAY_TEXT,
   PANEL_BACKGROUND_COLOR,
   RUBY,
   SELECTED_BUTTON_COLOR
 } from '../../utils/constants'
-import type { AtlasIcon, SceneCategory } from '../../utils/definitions'
+import type { AtlasIcon } from '../../utils/definitions'
 import Canvas from '../../components/canvas/Canvas'
-import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import {
+  formatEventTime,
+  getBackgroundFromAtlas,
+  getTimestamp,
+  truncateWithoutBreakingWords
+} from '../../utils/ui-utils'
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
+import type {
+  PlaceFromApi,
+  EventFromApi,
+  CategoryFromApi
+} from './SceneInfoCard.types'
+import {
+  fetchEvents,
+  fetchPhotos,
+  fetchPhotosQuantity,
+  fetchPlaceId,
+  updateFavoriteStatus
+} from 'src/utils/promise-utils'
+import { store } from 'src/state/store'
+import {
+  loadEventsFromApi,
+  loadPhotosFromApi,
+  loadPlaceFromApi
+} from 'src/state/sceneInfo/actions'
+import type { PhotoFromApi } from '../photos/Photos.types'
 
 export default class SceneInfoCard {
+  private sceneCoords: { x: number; y: number } = { x: 0, y: 0 }
   private readonly uiController: UIController
+  private scrollPos: Vector2 = Vector2.create(0, 0)
   public fontSize: number = 16
   public isFav: boolean = false
   public isLiked: boolean = false
@@ -48,32 +75,50 @@ export default class SceneInfoCard {
   public likeBackgroundColor: Color4 = DCL_SNOW
   public dislikeBackgroundColor: Color4 = DCL_SNOW
   public shareBackgroundColor: Color4 = DCL_SNOW
+  public interestedEventsId: string[] = []
 
   public selectedTab: 'overview' | 'photos' | 'events' = 'overview'
-
-  public sceneTitle: string = 'Sad Escobar Vibes Scene'
-  public sceneCreator: string = 'Robtfm'
-  public sceneOnline: number = 0
-  public sceneRating: number = 0
-  public sceneViews: number = 0
-  public scenePhotosNumber: number = 5
-  public sceneCoords: { x: number; y: number } = { x: -155, y: 123 }
-  public sceneParcels: number = 1
-  public sceneDescription: string =
-    'Pablo Escobar wandered alone through the empty halls of his hideout, a shadow of the powerful man he once was. Sitting on a rusty swing in the garden, he gazed into the distance, lost in memories of his family and the life he had built—now slipping away. The laughter of his children, the warmth of his wife, and the triumph of his empire felt like distant echoes, replaced by betrayal and isolation.'
-
-  public tags: SceneCategory[] = ['poi', 'social', 'casino', 'business']
 
   constructor(uiController: UIController) {
     this.uiController = uiController
   }
 
-  show(): void {
+  async changeSceneCoords(x: number, y: number): Promise<void> {
+    this.sceneCoords = { x, y }
+    await this.updateSceneInfo()
+  }
+
+  async updateSceneInfo(): Promise<void> {
+    const place: PlaceFromApi = await fetchPlaceId(
+      this.sceneCoords.x,
+      this.sceneCoords.y
+    )
+    const photosQuantityInPlace: number = await fetchPhotosQuantity(place.id)
+    const photosArray: PhotoFromApi[] = await fetchPhotos(
+      place.id,
+      photosQuantityInPlace
+    )
+    const eventsArray: EventFromApi[] = await fetchEvents(place.positions)
+
+    store.dispatch(loadEventsFromApi(eventsArray))
+    store.dispatch(loadPhotosFromApi(photosArray))
+    store.dispatch(loadPlaceFromApi(place))
+
+    console.log('Is Favorite: ', place.user_favorite)
+    this.isFav = place.user_favorite
+    this.isLiked = place.user_like
+    this.isDisliked = place.user_dislike
+    this.updateIcons()
+  }
+
+  async show(): Promise<void> {
     this.uiController.sceneInfoCardVisible = true
+    await this.changeSceneCoords(-9, -9)
   }
 
   hide(): void {
     this.uiController.sceneInfoCardVisible = false
+    this.updateBackgrounds()
   }
 
   updateBackgrounds(): void {
@@ -102,9 +147,19 @@ export default class SceneInfoCard {
     }
   }
 
-  setFav(arg: boolean): void {
-    this.isFav = arg
-    this.updateIcons()
+  async toggleFav(): Promise<void> {
+    // There are some extra lines for avoid eslint issues (maybe I've got a bad config)
+
+    const sceneId: string = store.getState().scene.explorerPlace.id
+    const userFavorite: boolean =
+      store.getState().scene.explorerPlace.user_favorite
+    const arg: boolean = !userFavorite
+    console.log({ arg })
+    const favData = await updateFavoriteStatus(sceneId, arg)
+    const favDataOk: boolean = favData.ok
+    if (favDataOk) {
+      await this.updateSceneInfo()
+    }
   }
 
   setLike(arg: boolean): void {
@@ -124,6 +179,7 @@ export default class SceneInfoCard {
   }
 
   setTab(tab: 'overview' | 'photos' | 'events'): void {
+    this.scrollPos = Vector2.create(0, 0)
     this.selectedTab = tab
   }
 
@@ -144,14 +200,16 @@ export default class SceneInfoCard {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    const panelWidth: number = canvasInfo.width / 4
 
-    // if (canvasInfo.width / 4 < 470) {
-    //   panelWidth = 470
-    // } else {
-    //    panelWidth = canvasInfo.width / 4
-    // }
+    let panelWidth: number
 
+    if (canvasInfo.width / 4 < 360) {
+      panelWidth = 360
+    } else {
+      panelWidth = canvasInfo.width / 4
+    }
+
+    const place: PlaceFromApi = store.getState().scene.explorerPlace
     return (
       <Canvas>
         <UiEntity
@@ -176,25 +234,40 @@ export default class SceneInfoCard {
             uiBackground={{
               textureMode: 'stretch',
               texture: {
-                src: 'assets/images/backgrounds/montage.png'
+                src: place.image.replace(
+                  'https://camera-reel-service.decentraland.org/api/images/',
+                  'https://camera-reel-s3-bucket.decentraland.org/'
+                )
               }
             }}
           />
-          {this.topBar()}
-          {this.sceneInfo()}
-          {this.tabsBar()}
 
+          {this.topBar()}
           {/* CONTENT */}
           <UiEntity
             uiTransform={{
-              width: '90%',
+              width: '100%',
               overflow: 'scroll',
-              maxHeight:
-                canvasInfo.height - 14.5 * this.fontSize - panelWidth * 0.75
+              scrollPosition: this.scrollPos,
+              maxHeight: canvasInfo.height - panelWidth * 0.75,
+              flexDirection: 'column'
             }}
             // uiBackground={{color:Color4.Red()}}
           >
-            {this.selectedTab === 'overview' && this.overview()}
+            <UiEntity
+              uiTransform={{
+                width: '88%',
+                height: 'auto',
+                flexDirection: 'column',
+                margin: { left: '3%' }
+              }}
+            >
+              {this.sceneInfo()}
+              {this.tabsBar()}
+              {this.selectedTab === 'overview' && this.overviewContent()}
+              {this.selectedTab === 'photos' && this.photosContent(panelWidth)}
+              {this.selectedTab === 'events' && this.eventsContent()}
+            </UiEntity>
           </UiEntity>
         </UiEntity>
       </Canvas>
@@ -202,6 +275,7 @@ export default class SceneInfoCard {
   }
 
   topBar(): ReactEcs.JSX.Element {
+    const place: PlaceFromApi = store.getState().scene.explorerPlace
     return (
       <UiEntity
         uiTransform={{
@@ -213,7 +287,7 @@ export default class SceneInfoCard {
           justifyContent: 'flex-end',
           alignItems: 'center'
         }}
-        uiBackground={{ color: { ...Color4.Black(), a: 0.8 } }}
+        uiBackground={{ color: { ...Color4.Black(), a: 1 } }}
       >
         <ButtonIcon
           uiTransform={{
@@ -230,13 +304,12 @@ export default class SceneInfoCard {
           }}
           onMouseDown={() => {
             this.hide()
-            this.updateBackgrounds()
           }}
           backgroundColor={this.closeBackground}
           icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
         />
         <Label
-          value={this.sceneTitle}
+          value={place.title}
           fontSize={this.fontSize}
           textAlign="middle-center"
           uiTransform={{ width: '100%' }}
@@ -311,7 +384,11 @@ export default class SceneInfoCard {
             }}
           >
             <Label
-              value={'PHOTOS (' + this.scenePhotosNumber + ')'}
+              value={
+                'PHOTOS (' +
+                Object.values(store.getState().scene.explorerPhotos).length +
+                ')'
+              }
               color={BLACK_TEXT}
               fontSize={this.fontSize}
             />
@@ -337,7 +414,11 @@ export default class SceneInfoCard {
             }}
           >
             <Label
-              value={'EVENTS (' + this.scenePhotosNumber + ')'}
+              value={
+                'EVENTS (' +
+                Object.values(store.getState().scene.explorerEvents).length +
+                ')'
+              }
               color={BLACK_TEXT}
               fontSize={this.fontSize}
             />
@@ -363,10 +444,12 @@ export default class SceneInfoCard {
   }
 
   sceneInfo(): ReactEcs.JSX.Element {
+    const place: PlaceFromApi = store.getState().scene.explorerPlace
+    const likeRate: number = place.like_rate ?? 0
     return (
       <UiEntity
         uiTransform={{
-          width: '90%',
+          width: '100%',
           minHeight: this.fontSize * 9.5,
           maxHeight: this.fontSize * 9.5,
           justifyContent: 'flex-start',
@@ -376,7 +459,7 @@ export default class SceneInfoCard {
         // uiBackground={{color:Color4.Blue()}}
       >
         <Label
-          value={this.sceneTitle}
+          value={place.title}
           fontSize={this.fontSize * 1.2}
           textAlign="middle-left"
           uiTransform={{
@@ -386,17 +469,19 @@ export default class SceneInfoCard {
           }}
           color={BLACK_TEXT}
         />
-        <Label
-          value={'Created by ' + this.sceneCreator}
-          fontSize={this.fontSize * 0.8}
-          textAlign="middle-left"
-          uiTransform={{
-            width: '100%',
-            height: this.fontSize,
-            margin: { left: this.fontSize * 0.5 }
-          }}
-          color={BLACK_TEXT}
-        />
+        {place.contact_name !== null && (
+          <Label
+            value={'Created by ' + place.contact_name}
+            fontSize={this.fontSize * 0.8}
+            textAlign="middle-left"
+            uiTransform={{
+              width: '100%',
+              height: this.fontSize,
+              margin: { left: this.fontSize * 0.5 }
+            }}
+            color={BLACK_TEXT}
+          />
+        )}
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -406,7 +491,7 @@ export default class SceneInfoCard {
         >
           {/* Need to implement last visitors portrait */}
           {this.infoDetail(
-            this.sceneOnline.toString(),
+            place.user_count.toString(),
             { atlasName: 'icons', spriteName: 'Members' },
             {
               width: 'auto',
@@ -418,7 +503,7 @@ export default class SceneInfoCard {
 
           {/* Need to implement number formating */}
           {this.infoDetail(
-            this.sceneViews.toString() + 'k',
+            place.user_visits.toString() + 'k',
             { atlasName: 'icons', spriteName: 'PreviewIcon' },
             {
               width: 'auto',
@@ -428,28 +513,33 @@ export default class SceneInfoCard {
             BLACK_TEXT
           )}
 
-          {this.infoDetail(
-            this.sceneRating.toString() + '%',
-            { atlasName: 'icons', spriteName: 'Like solid' },
-            {
-              width: 'auto',
-              height: this.fontSize,
-              margin: { right: this.fontSize }
-            },
-            BLACK_TEXT
-          )}
+          {likeRate > 0 &&
+            this.infoDetail(
+              Math.round(likeRate * 100).toString() + '%',
+              { atlasName: 'icons', spriteName: 'Like solid' },
+              {
+                width: 'auto',
+                height: this.fontSize,
+                margin: { right: this.fontSize }
+              },
+              BLACK_TEXT
+            )}
         </UiEntity>
 
         <ButtonTextIcon
-          uiTransform={{ width: '100%', height: 2 * this.fontSize }}
+          uiTransform={{
+            width: '100%',
+            height: 2 * this.fontSize,
+            flexDirection: 'row-reverse'
+          }}
           onMouseDown={() => {}}
           value={'JUMP IN'}
           backgroundColor={RUBY}
           fontSize={this.fontSize}
           iconSize={1.5 * this.fontSize}
           icon={{
-            atlasName: 'map',
-            spriteName: 'JumpInOutline'
+            atlasName: 'icons',
+            spriteName: 'JumpIn'
           }}
         />
         <UiEntity
@@ -507,7 +597,7 @@ export default class SceneInfoCard {
             iconSize={this.fontSize * 1.5}
             icon={this.favIcon}
             backgroundColor={this.setFavBackgroundColor}
-            iconColor={this.isFav ? Color4.Red() : BLACK_TEXT}
+            iconColor={place.user_favorite ? Color4.Red() : BLACK_TEXT}
             onMouseEnter={() => {
               this.onFavEnter()
             }}
@@ -515,7 +605,7 @@ export default class SceneInfoCard {
               this.updateBackgrounds()
             }}
             onMouseDown={() => {
-              this.setFav(!this.isFav)
+              void this.toggleFav()
             }}
           />
           <ButtonIcon
@@ -590,7 +680,7 @@ export default class SceneInfoCard {
   }
 
   filterChip(
-    type: SceneCategory,
+    type: CategoryFromApi,
     index: string | number
   ): ReactEcs.JSX.Element {
     let title = ''
@@ -600,10 +690,6 @@ export default class SceneInfoCard {
       case 'game':
         title = 'GAME'
         spriteName = 'GamesIcn'
-        break
-      case 'favorites':
-        title = 'FAVORITES'
-        spriteName = 'FavouritesIcn'
         break
       case 'art':
         title = 'ART'
@@ -711,7 +797,8 @@ export default class SceneInfoCard {
     )
   }
 
-  overview(): ReactEcs.JSX.Element {
+  overviewContent(): ReactEcs.JSX.Element {
+    const place: PlaceFromApi = store.getState().scene.explorerPlace
     return (
       <UiEntity
         uiTransform={{
@@ -722,45 +809,52 @@ export default class SceneInfoCard {
           flexDirection: 'column'
         }}
       >
-        <Label
-          value={'DESCRIPTION'}
-          fontSize={this.fontSize}
-          textAlign="bottom-left"
-          uiTransform={{ width: '100%' }}
-          color={GRAY_TEXT}
-        />
+        {place.description !== null && (
+          <Label
+            value={'DESCRIPTION'}
+            fontSize={this.fontSize}
+            textAlign="bottom-left"
+            uiTransform={{ width: '100%' }}
+            color={GRAY_TEXT}
+          />
+        )}
 
-        <Label
-          value={this.sceneDescription}
-          fontSize={this.fontSize}
-          textAlign="bottom-left"
-          uiTransform={{ width: '100%' }}
-          color={BLACK_TEXT}
-        />
-
-        <Label
-          value={'APPEARS ON'}
-          fontSize={this.fontSize}
-          textAlign="bottom-left"
-          uiTransform={{
-            width: '100%',
-            height: this.fontSize * 1.2,
-            margin: { top: this.fontSize }
-          }}
-          color={GRAY_TEXT}
-        />
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: 'auto',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
-            flexDirection: 'row',
-            flexWrap: 'wrap'
-          }}
-        >
-          {this.tags.map((tag, index) => this.filterChip(tag, index))}
-        </UiEntity>
+        {place.description !== null && (
+          <Label
+            value={place.description}
+            fontSize={this.fontSize}
+            textAlign="bottom-left"
+            uiTransform={{ width: '100%' }}
+            color={BLACK_TEXT}
+          />
+        )}
+        {place.categories.length !== 0 && (
+          <Label
+            value={'APPEARS ON'}
+            fontSize={this.fontSize}
+            textAlign="bottom-left"
+            uiTransform={{
+              width: '100%',
+              height: this.fontSize * 1.2,
+              margin: { top: this.fontSize }
+            }}
+            color={GRAY_TEXT}
+          />
+        )}
+        {place.categories.length !== 0 && (
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: 'auto',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              flexDirection: 'row',
+              flexWrap: 'wrap'
+            }}
+          >
+            {place.categories.map((tag, index) => this.filterChip(tag, index))}
+          </UiEntity>
+        )}
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -772,7 +866,7 @@ export default class SceneInfoCard {
           }}
         >
           {this.infoDetail(
-            this.sceneCoords.x + ',' + this.sceneCoords.y,
+            place.base_position,
             {
               atlasName: 'icons',
               spriteName: 'PinIcn'
@@ -782,7 +876,7 @@ export default class SceneInfoCard {
             'LOCATION'
           )}
           {this.infoDetail(
-            this.sceneParcels.toString(),
+            place.positions.length.toString(),
             {
               atlasName: 'map',
               spriteName: 'ParcelsIcn'
@@ -792,6 +886,287 @@ export default class SceneInfoCard {
             'PARCELS'
           )}
         </UiEntity>
+      </UiEntity>
+    )
+  }
+
+  eventCard(event: EventFromApi): ReactEcs.JSX.Element | null {
+    const BIG_TEXT = this.fontSize
+    const SMALL_TEXT = BIG_TEXT * 0.8
+
+    const CARD_HEIGHT = this.fontSize * 8
+    const CARD_PADDING = this.fontSize * 0.5
+
+    return (
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: CARD_HEIGHT,
+          alignItems: 'center',
+          padding: CARD_PADDING,
+          margin: { bottom: this.fontSize }
+        }}
+        uiBackground={{
+          color: EVENT_BACKGROUND_COLOR,
+          textureMode: 'nine-slices',
+          texture: {
+            src: 'assets/images/backgrounds/rounded-right.png'
+          },
+          textureSlices: {
+            top: 0.5,
+            bottom: 0.5,
+            left: 0.5,
+            right: 0.5
+          }
+        }}
+      >
+        <UiEntity
+          uiTransform={{
+            minWidth: CARD_HEIGHT - CARD_PADDING * 4,
+            minHeight: CARD_HEIGHT - CARD_PADDING * 4
+          }}
+          uiBackground={{
+            textureMode: 'stretch',
+            texture: { src: event.image, wrapMode: 'clamp' }
+          }}
+        />
+        <UiEntity
+          uiTransform={{
+            width: '50%',
+            height: 'auto',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            margin: { left: CARD_PADDING }
+          }}
+        >
+          <Label
+            value={formatEventTime(
+              getTimestamp(event.start_at),
+              getTimestamp(event.finish_at)
+            )}
+            fontSize={SMALL_TEXT}
+            uiTransform={{
+              height: SMALL_TEXT * 1.1,
+              margin: { left: BIG_TEXT * 0.2, bottom: BIG_TEXT * 0.3 }
+            }}
+            color={Color4.Black()}
+          />
+          <Label
+            value={truncateWithoutBreakingWords(event.name, 20)}
+            fontSize={BIG_TEXT}
+            uiTransform={{
+              height: BIG_TEXT,
+              width: '90%',
+              margin: { bottom: BIG_TEXT * 0.3 }
+            }}
+            color={Color4.Black()}
+            textWrap="nowrap"
+            textAlign="middle-left"
+          />
+          <UiEntity
+            uiTransform={{
+              width: '90%',
+              height: BIG_TEXT,
+              alignItems: 'center'
+            }}
+          >
+            <UiEntity
+              uiTransform={{
+                width: this.fontSize * 0.8,
+                height: this.fontSize * 0.88,
+                margin: { left: this.fontSize * 0.5 }
+              }}
+              uiBackground={{
+                ...getBackgroundFromAtlas({
+                  atlasName: 'icons',
+                  spriteName: 'Members'
+                }),
+                color: GRAY_TEXT
+              }}
+            />
+            <Label
+              value={event.total_attendees.toString()}
+              fontSize={SMALL_TEXT}
+              color={GRAY_TEXT}
+            />
+          </UiEntity>
+          <UiEntity
+            uiTransform={{ width: '100%', margin: { top: BIG_TEXT * 0.3 } }}
+          >
+            {getTimestamp(event.start_at) <= Date.now() / 1000 && (
+              <ButtonTextIcon
+                uiTransform={{
+                  width: '100%',
+                  height: 2 * BIG_TEXT,
+                  flexDirection: 'row-reverse',
+                  flexGrow: 1
+                }}
+                onMouseDown={() => {}}
+                value={'JUMP IN'}
+                backgroundColor={RUBY}
+                fontSize={BIG_TEXT}
+                iconSize={1.2 * BIG_TEXT}
+                icon={{
+                  atlasName: 'icons',
+                  spriteName: 'JumpIn'
+                }}
+              />
+            )}
+            {getTimestamp(event.start_at) > Date.now() / 1000 && (
+              <ButtonTextIcon
+                uiTransform={{
+                  width: '100%',
+                  height: 2 * BIG_TEXT,
+                  flexGrow: 1
+                }}
+                onMouseDown={() => {
+                  if (
+                    this.interestedEventsId.find(
+                      (eventId) => eventId === event.id
+                    ) === undefined
+                  ) {
+                    this.interestedEventsId.push(event.id)
+                  } else {
+                    this.interestedEventsId = this.interestedEventsId.filter(
+                      (eventId) => eventId !== event.id
+                    )
+                  }
+                }}
+                value={'INTERESTED'}
+                backgroundColor={Color4.White()}
+                fontSize={BIG_TEXT}
+                iconSize={1.2 * BIG_TEXT}
+                fontColor={BLACK_TEXT}
+                iconColor={BLACK_TEXT}
+                icon={{
+                  atlasName: 'icons',
+                  spriteName:
+                    this.interestedEventsId.find(
+                      (eventId) => eventId === event.id
+                    ) !== undefined
+                      ? 'StarSolid'
+                      : 'StarOutline'
+                }}
+              />
+            )}
+            <ButtonIcon
+              uiTransform={{
+                minHeight: 2 * BIG_TEXT,
+                minWidth: 2 * BIG_TEXT,
+                margin: { left: BIG_TEXT / 2.5 }
+              }}
+              iconSize={1.2 * BIG_TEXT}
+              icon={{
+                atlasName: 'context',
+                spriteName: 'Share'
+              }}
+              backgroundColor={DCL_SNOW}
+              iconColor={BLACK_TEXT}
+            />
+          </UiEntity>
+        </UiEntity>
+      </UiEntity>
+    )
+  }
+
+  eventsContent(): ReactEcs.JSX.Element {
+    const eventsArray = Object.values(store.getState().scene.explorerEvents)
+    return (
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: 'auto',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          flexDirection: 'column'
+        }}
+      >
+        {eventsArray.length > 0 &&
+          eventsArray.map((event) => this.eventCard(event))}
+        {eventsArray.length === 0 &&
+          this.noResults(
+            { atlasName: 'icons', spriteName: 'Events' },
+            this.fontSize * 3,
+            'No Upcoming Events',
+            this.fontSize,
+            BLACK_TEXT
+          )}
+      </UiEntity>
+    )
+  }
+
+  photosContent(width: number): ReactEcs.JSX.Element {
+    const photosArray = Object.values(store.getState().scene.explorerPhotos)
+    return (
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: 'auto',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          flexDirection: 'column'
+        }}
+      >
+        {photosArray.length > 0 &&
+          photosArray.map((photo, index) => (
+            <UiEntity
+              uiTransform={{
+                width: width * 0.88,
+                height: width * 0.88 * 0.56,
+                margin: this.fontSize * 0.1
+              }}
+              onMouseDown={() => {
+                this.uiController.photosPanel.showPhoto(index)
+                this.hide()
+              }}
+              uiBackground={{
+                textureMode: 'stretch',
+                texture: {
+                  src: photo.url.replace(
+                    'https://camera-reel-service.decentraland.org/api/images/',
+                    'https://camera-reel-s3-bucket.decentraland.org/'
+                  )
+                }
+              }}
+            />
+          ))}
+        {photosArray.length === 0 &&
+          this.noResults(
+            { atlasName: 'icons', spriteName: 'Camera' },
+            this.fontSize * 3,
+            'There Are No Photos',
+            this.fontSize,
+            BLACK_TEXT
+          )}
+      </UiEntity>
+    )
+  }
+
+  noResults(
+    icon: AtlasIcon,
+    iconSize: number,
+    message: string,
+    fontSize: number,
+    color: Color4,
+    uiTransform?: Partial<UiTransformProps>
+  ): ReactEcs.JSX.Element {
+    return (
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          flexDirection: 'column',
+          alignItems: 'center',
+          flexGrow: 1,
+          justifyContent: 'center',
+          ...uiTransform
+        }}
+      >
+        <UiEntity
+          uiTransform={{ width: iconSize, height: iconSize }}
+          uiBackground={{ ...getBackgroundFromAtlas(icon), color }}
+        />
+        <Label value={message} color={color} fontSize={fontSize} />
       </UiEntity>
     )
   }

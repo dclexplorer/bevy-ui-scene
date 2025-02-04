@@ -1,5 +1,7 @@
-import { reducer } from './reducer'
+import { sceneInitialState } from './sceneInfo/state'
 import { settingsInitialState } from './settings/state'
+import { photoInitialState } from './photoInfo/state'
+import { reducer } from './reducer'
 import { type AppState, type Action } from './types'
 
 export class Store {
@@ -18,7 +20,7 @@ export class Store {
   }
 
   dispatch(action: Action): void {
-    console.log(`Dispatching action: ${action.type}`, action)
+    // console.log(`Dispatching action: ${action.type}`, action)
     this.state = this.reducer(this.state, action)
     this.listeners.forEach((listener) => {
       listener()
@@ -34,5 +36,7 @@ export class Store {
 }
 
 export const store = new Store(reducer, {
-  settings: settingsInitialState
+  settings: settingsInitialState,
+  scene: sceneInitialState,
+  photo: photoInitialState
 })

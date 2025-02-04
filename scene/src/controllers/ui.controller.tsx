@@ -13,8 +13,10 @@ import { LoadingAndLogin } from '../ui-classes/loading-and-login'
 import { PopUpAction } from '../ui-classes/main-hud/pop-up-action'
 import { PopUpWarning } from '../ui-classes/main-hud/pop-up-warning'
 import { SceneInfoCard } from '../ui-classes/scene-info-card'
+import Photos from 'src/ui-classes/photos/Photos'
 
 export class UIController {
+  public isPhotosVisible: boolean = false
   public isMainMenuVisible: boolean = false
   public isProfileVisible: boolean = false
   public isFriendsVisible: boolean = false
@@ -36,6 +38,7 @@ export class UIController {
   actionPopUp: PopUpAction
   sceneCard: SceneInfoCard
   warningPopUp: PopUpWarning
+  photosPanel: Photos
 
   constructor(gameController: GameController) {
     this.gameController = gameController
@@ -52,6 +55,7 @@ export class UIController {
     this.actionPopUp = new PopUpAction(this)
     this.sceneCard = new SceneInfoCard(this)
     this.warningPopUp = new PopUpWarning(this)
+    this.photosPanel = new Photos(this)
 
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
@@ -65,6 +69,7 @@ export class UIController {
         {this.isFriendsVisible && this.friends.mainUi()}
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.sceneInfoCardVisible && this.sceneCard.mainUi()}
+        {this.isPhotosVisible && this.photosPanel.mainUi()}
         {/* Loading & Login */}
         {this.loadingAndLogin?.mainUi()}
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
