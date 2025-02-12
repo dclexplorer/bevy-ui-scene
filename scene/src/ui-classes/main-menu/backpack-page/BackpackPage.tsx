@@ -1,6 +1,7 @@
 import ReactEcs, { UiEntity } from '@dcl/react-ecs'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
+import { NavButton } from '../../../components/nav-button/NavButton'
 
 export default class BackpackPage {
   public fontSize: number = 16
@@ -64,12 +65,32 @@ export default class BackpackPage {
             <UiEntity
               uiTransform={{
                 height: '100%',
-                width: 100 // TODO remove width
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                padding: { left: 10 },
+                width: 300 // TODO remove width
               }}
               uiBackground={{
                 color: { ...Color4.Blue(), a: 0.4 }
               }}
-            ></UiEntity>
+            >
+              <NavButton
+                icon={{
+                  spriteName: 'Wearables',
+                  atlasName: 'icons'
+                }}
+                active={true}
+                text={'Wearables'}
+              />
+              <NavButton
+                icon={{
+                  spriteName: 'Emotes',
+                  atlasName: 'icons'
+                }}
+                text={'Emotes'}
+                uiTransform={{ margin: { left: 12 } }}
+              />
+            </UiEntity>
           </UiEntity>
           <UiEntity></UiEntity>
         </UiEntity>
