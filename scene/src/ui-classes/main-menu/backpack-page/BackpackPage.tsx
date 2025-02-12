@@ -52,13 +52,12 @@ export default class BackpackPage {
             <UiEntity
               uiTransform={{
                 padding: 0,
-                margin: { top: -10, left: 4 }
+                margin: { top: -8, left: 4 }
               }}
               uiText={{
                 value: '<b>Backpack</b>',
                 font: 'serif',
-
-                fontSize: 40
+                fontSize: 36
               }}
             ></UiEntity>
             {/* NAV-BUTTON-BAR */}
