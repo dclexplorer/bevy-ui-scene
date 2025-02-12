@@ -1,7 +1,7 @@
 TASKS
 - [ ] Submenu space for: title + navigation buttons + filters + searechBox
 - [ ] Submenu nav-button (with icon) Wearables , Emotes Ative/Inactive
-
+- [ ] Have a look into InfoCard PR
 
 LATER
 - [ ] MainMenu icon should keep aspect ratio; ( screen 1284x750 )
