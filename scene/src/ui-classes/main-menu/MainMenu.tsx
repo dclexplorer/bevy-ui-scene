@@ -1,6 +1,6 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
-import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ButtonIcon from '../../components/button-icon/ButtonIcon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
@@ -9,8 +9,11 @@ import { type AtlasIcon } from '../../utils/definitions'
 import Canvas from '../../components/canvas/Canvas'
 import { ProfileButton } from '../profile/profile-button'
 import { type MenuPage } from './MainMenu.types'
+import { COLOR } from '../../components/color-palette'
+import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
+const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
 
 export default class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
@@ -81,6 +84,7 @@ export default class MainMenu {
   }
 
   updateButtons(): void {
+    console.log('updateButtons')
     this.settingsIcon.spriteName = 'Settings off'
     this.settingsBackground = undefined
     this.backpackIcon.spriteName = 'Backpack off'
@@ -108,9 +112,19 @@ export default class MainMenu {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-
     // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
-    const buttonSize: number = Math.max(canvasInfo.height * 0.024, 46)
+    const canvasScaleRatio = getCanvasScaleRatio()
+    const buttonSize: number =
+      Math.max(canvasInfo.height * 0.024, 46) * canvasScaleRatio
+    const ICON_SIZE = 60 * canvasScaleRatio
+    const BUTTON_ICON_FONT_SIZE = 28 * canvasScaleRatio
+    const buttonTransform: UiTransformProps = {
+      height: '90%',
+      margin: { left: 2 },
+      padding: { left: 20, right: 20 }
+    }
+    const LOGO_WIDTH = 165 * canvasScaleRatio * 2.1
+    const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1
 
     return (
       <Canvas>
@@ -122,20 +136,36 @@ export default class MainMenu {
             justifyContent: 'flex-start',
             alignItems: 'center'
           }}
-          uiBackground={{ color: Color4.Red() }}
+          uiBackground={{ color: Color4.create(0, 0, 0, 1) }}
         >
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: '8%',
+              height: '6%',
               justifyContent: 'center',
               alignItems: 'center',
               flexDirection: 'row'
             }}
             uiBackground={{
-              color: { ...Color4.Black(), a: 1 }
+              color: COLOR.MAIN_MENU_BACKGROUND
             }}
           >
+            <UiEntity
+              uiTransform={{
+                width: LOGO_WIDTH,
+                height: LOGO_HEIGHT,
+                margin: { left: 20 },
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start'
+              }}
+              uiBackground={{
+                texture: {
+                  wrapMode: 'clamp',
+                  src: 'assets/images/menu/menu-logo.png'
+                },
+                textureMode: 'stretch'
+              }}
+            ></UiEntity>
             <UiEntity
               uiTransform={{
                 width: '100%',
@@ -146,12 +176,9 @@ export default class MainMenu {
               }}
             >
               <ButtonTextIcon
-                uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
-                }}
+                uiTransform={buttonTransform}
                 onMouseEnter={() => {
+                  console.log('mapEnter')
                   this.mapEnter()
                 }}
                 onMouseLeave={() => {
@@ -162,18 +189,24 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.mapBackground}
                 icon={this.mapIcon}
-                value={'MAP [M]'}
-                fontSize={10}
-                iconSize={50}
+                value={'<b>MAP</b> [M]'}
+                fontSize={BUTTON_ICON_FONT_SIZE}
+                iconSize={ICON_SIZE}
                 direction={'column'}
+                iconColor={
+                  this.activePage === 'map'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
+                fontColor={
+                  this.activePage === 'map'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
               />
 
               <ButtonTextIcon
-                uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
-                }}
+                uiTransform={buttonTransform}
                 onMouseEnter={() => {
                   this.exploreEnter()
                 }}
@@ -185,18 +218,24 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.exploreBackground}
                 icon={this.exploreIcon}
-                value={'EXPLORE'}
-                fontSize={10}
-                iconSize={50}
+                value={'<b>EXPLORE</b> [X]'}
+                fontSize={BUTTON_ICON_FONT_SIZE}
+                iconSize={ICON_SIZE}
                 direction={'column'}
+                iconColor={
+                  this.activePage === 'explore'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
+                fontColor={
+                  this.activePage === 'explore'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
               />
 
               <ButtonTextIcon
-                uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
-                }}
+                uiTransform={buttonTransform}
                 onMouseEnter={() => {
                   this.backpackEnter()
                 }}
@@ -208,18 +247,24 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.backpackBackground}
                 icon={this.backpackIcon}
-                value={'BACKPACK [B]'}
-                fontSize={10}
-                iconSize={50}
+                value={'<b>BACKPACK</b> [B]'}
+                fontSize={BUTTON_ICON_FONT_SIZE}
+                iconSize={ICON_SIZE}
                 direction={'column'}
+                iconColor={
+                  this.activePage === 'backpack'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
+                fontColor={
+                  this.activePage === 'backpack'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
               />
 
               <ButtonTextIcon
-                uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
-                }}
+                uiTransform={buttonTransform}
                 onMouseEnter={() => {
                   this.settingsEnter()
                 }}
@@ -231,13 +276,35 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.settingsBackground}
                 icon={this.settingsIcon}
-                value={'SETTINGS [P]'}
-                fontSize={10}
-                iconSize={50}
+                value={'<b>SETTINGS</b> [P]'}
+                fontSize={BUTTON_ICON_FONT_SIZE}
+                iconSize={ICON_SIZE}
                 direction={'column'}
+                iconColor={
+                  this.activePage === 'settings'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
+                fontColor={
+                  this.activePage === 'settings'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
               />
             </UiEntity>
           </UiEntity>
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: 3 // TODO depends on canvas size
+            }}
+            uiBackground={{
+              texture: {
+                src: 'assets/images/menu/hr-gradient.png'
+              },
+              textureMode: 'stretch'
+            }}
+          ></UiEntity>
           <UiEntity
             uiTransform={{
               width: '100%',

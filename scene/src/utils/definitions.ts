@@ -1,4 +1,5 @@
 import { InputAction } from '@dcl/sdk/ecs'
+import { type WearableCategory } from '../service/wearable-categories'
 
 export type SpriteFromAtlas = {
   sprite: string
@@ -13,6 +14,30 @@ export type AtlasData = {
     [key: string]: any
   }
 }
+
+export type URN = string
+
+export type OutfitSetup = {
+  wearables: {
+    [K in WearableCategory]: URN | null
+  }
+  color: {
+    eyes: number[]
+    skin: number[]
+    hair: number[]
+  }
+}
+
+export type RarityName =
+  | 'base'
+  | 'common'
+  | 'epic'
+  | 'exotic'
+  | 'legendary'
+  | 'mythic'
+  | 'rare'
+  | 'uncommon'
+  | 'unique'
 
 export type Sprite = {
   frame: { x: number; y: number; w: number; h: number }

@@ -1,0 +1,14 @@
+import { Color4 } from '@dcl/sdk/math'
+
+const ACTIVE_BACKGROUND_COLOR = Color4.fromHexString('#FF7538')
+const ACTIVE_COLOR = Color4.fromHexString('#FFFFFF')
+
+export const COLOR = {
+  ACTIVE_COLOR,
+  ACTIVE_BACKGROUND_COLOR,
+  MAIN_MENU_BACKGROUND: Color4.fromHexString('#161518'),
+  NAV_BUTTON_ACTIVE_BACKGROUND: ACTIVE_BACKGROUND_COLOR,
+  NAV_BUTTON_ACTIVE_COLOR: ACTIVE_COLOR,
+  NAV_BUTTON_INACTIVE_BACKGROUND: Color4.fromHexString('#FFFFFF'),
+  NAV_BUTTON_INACTIVE_COLOR: Color4.fromHexString('#000000')
+}

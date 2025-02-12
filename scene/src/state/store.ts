@@ -1,5 +1,6 @@
 import { reducer } from './reducer'
 import { settingsInitialState } from './settings/state'
+import { backpackInitialState } from './backpack/state'
 import { type AppState, type Action } from './types'
 
 export class Store {
@@ -34,5 +35,6 @@ export class Store {
 }
 
 export const store = new Store(reducer, {
-  settings: settingsInitialState
+  settings: settingsInitialState,
+  backpack: backpackInitialState
 })

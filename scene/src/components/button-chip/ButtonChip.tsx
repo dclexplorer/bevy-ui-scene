@@ -53,7 +53,7 @@ function ButtonChip(props: {
       onMouseLeave={props.onMouseLeave}
     >
       {/* ICON */}
-
+      {/* // TODO Refactor: use Icon component */}
       <UiEntity
         uiTransform={{
           width: props.fontSize,

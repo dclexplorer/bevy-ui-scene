@@ -1,11 +1,12 @@
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, {
   type Callback,
+  type PositionUnit,
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { type AtlasIcon } from '../../utils/definitions'
-import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import Icon from '../icon/Icon'
 
 function ButtonTextIcon(props: {
   // Events
@@ -19,7 +20,7 @@ function ButtonTextIcon(props: {
   value: string
   fontSize: number
   icon: AtlasIcon
-  iconSize?: number
+  iconSize?: number | string
   fontColor?: Color4
   iconColor?: Color4
   direction?: 'row' | 'column'
@@ -54,15 +55,11 @@ function ButtonTextIcon(props: {
     >
       {/* ICON */}
 
-      <UiEntity
-        uiTransform={{
-          width: props.iconSize ?? 2 * props.fontSize,
-          height: props.iconSize ?? 2 * props.fontSize
-        }}
-        uiBackground={{
-          ...getBackgroundFromAtlas(props.icon),
-          color: props.iconColor
-        }}
+      <Icon
+        width={(props.iconSize as PositionUnit) ?? 2 * props.fontSize}
+        height={(props.iconSize as PositionUnit) ?? 2 * props.fontSize}
+        icon={props.icon}
+        iconColor={props.iconColor}
       />
       {/* TEXT */}
       <UiEntity

@@ -118,6 +118,11 @@ export default class MainHud {
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatsAndLogs(uiController)
     this.friends = new Friends(uiController)
+
+    setTimeout(() => {
+      // TODO remove, only for development
+      this.uiController.menu?.show('backpack')
+    })
   }
 
   voiceChatDown(): void {
