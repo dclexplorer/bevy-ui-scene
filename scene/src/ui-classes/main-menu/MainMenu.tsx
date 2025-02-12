@@ -12,6 +12,8 @@ import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
+const ICON_SIZE = 50;
+const BUTTON_ICON_FONT_SIZE = 10;
 
 export default class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
@@ -155,7 +157,6 @@ export default class MainMenu {
                   src: 'assets/images/menu/menu-logo.png'
                 }
               }}>
-
             </UiEntity>
             <UiEntity
               uiTransform={{
@@ -180,8 +181,8 @@ export default class MainMenu {
                 backgroundColor={this.mapBackground}
                 icon={this.mapIcon}
                 value={'MAP [M]'}
-                fontSize={10}
-                iconSize={50}
+                fontSize={BUTTON_ICON_FONT_SIZE}
+                iconSize={ICON_SIZE}
                 direction={'column'}
               />
 
@@ -199,8 +200,8 @@ export default class MainMenu {
                 backgroundColor={this.exploreBackground}
                 icon={this.exploreIcon}
                 value={'EXPLORE'}
-                fontSize={10}
-                iconSize={50}
+                fontSize={BUTTON_ICON_FONT_SIZE}
+                iconSize={ICON_SIZE}
                 direction={'column'}
               />
 
@@ -218,8 +219,8 @@ export default class MainMenu {
                 backgroundColor={this.backpackBackground}
                 icon={this.backpackIcon}
                 value={'BACKPACK [B]'}
-                fontSize={10}
-                iconSize={50}
+                fontSize={BUTTON_ICON_FONT_SIZE}
+                iconSize={ICON_SIZE}
                 direction={'column'}
               />
 
@@ -237,12 +238,24 @@ export default class MainMenu {
                 backgroundColor={this.settingsBackground}
                 icon={this.settingsIcon}
                 value={'SETTINGS [P]'}
-                fontSize={10}
-                iconSize={50}
+                fontSize={BUTTON_ICON_FONT_SIZE}
+                iconSize={ICON_SIZE}
                 direction={'column'}
               />
             </UiEntity>
           </UiEntity>
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: 6
+            }}
+            uiBackground={{
+              texture: {
+                src: 'assets/images/menu/hr-gradient.png',
+              },
+              textureMode:"stretch"
+            }}
+          ></UiEntity>
           <UiEntity
             uiTransform={{
               width: '100%',
