@@ -1,6 +1,6 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
-import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ButtonIcon from '../../components/button-icon/ButtonIcon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
@@ -9,6 +9,7 @@ import { type AtlasIcon } from '../../utils/definitions'
 import Canvas from '../../components/canvas/Canvas'
 import { ProfileButton } from '../profile/profile-button'
 import { type MenuPage } from './MainMenu.types'
+import { COLOR } from '../../components/color-palette'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 
@@ -111,6 +112,11 @@ export default class MainMenu {
 
     // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
     const buttonSize: number = Math.max(canvasInfo.height * 0.024, 46)
+    const buttonTransform:UiTransformProps = {
+      height: '90%',
+      width: 3*buttonSize,
+      margin: { left: 2 }
+    }
 
     return (
       <Canvas>
@@ -122,20 +128,35 @@ export default class MainMenu {
             justifyContent: 'flex-start',
             alignItems: 'center'
           }}
-          uiBackground={{ color: Color4.Red() }}
+          uiBackground={{ color:Color4.create(0,0,0,1) }}
         >
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: '8%',
+              height: '6%',
               justifyContent: 'center',
               alignItems: 'center',
               flexDirection: 'row'
             }}
             uiBackground={{
-              color: { ...Color4.Black(), a: 1 }
+              color:COLOR.MAIN_MENU_BACKGROUND
             }}
           >
+            <UiEntity
+              uiTransform={{
+                width: 200,
+                margin:{left:30},
+                height: "100%",
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+              }}
+              uiBackground={{
+                texture: {
+                  src: 'assets/images/menu/menu-logo.png'
+                }
+              }}>
+
+            </UiEntity>
             <UiEntity
               uiTransform={{
                 width: '100%',
@@ -146,11 +167,7 @@ export default class MainMenu {
               }}
             >
               <ButtonTextIcon
-                uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
-                }}
+                uiTransform={buttonTransform}
                 onMouseEnter={() => {
                   this.mapEnter()
                 }}
@@ -169,11 +186,7 @@ export default class MainMenu {
               />
 
               <ButtonTextIcon
-                uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
-                }}
+                uiTransform={buttonTransform}
                 onMouseEnter={() => {
                   this.exploreEnter()
                 }}
@@ -192,11 +205,7 @@ export default class MainMenu {
               />
 
               <ButtonTextIcon
-                uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
-                }}
+                uiTransform={buttonTransform}
                 onMouseEnter={() => {
                   this.backpackEnter()
                 }}
@@ -215,11 +224,7 @@ export default class MainMenu {
               />
 
               <ButtonTextIcon
-                uiTransform={{
-                  height: '90%',
-                  width: 4 * buttonSize,
-                  margin: { left: 15, right: 15 }
-                }}
+                uiTransform={buttonTransform}
                 onMouseEnter={() => {
                   this.settingsEnter()
                 }}
