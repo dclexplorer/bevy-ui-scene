@@ -13,7 +13,8 @@ import { COLOR } from '../../components/color-palette'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 const ICON_SIZE = 50;
-const BUTTON_ICON_FONT_SIZE = 10;
+const BUTTON_ICON_FONT_SIZE = 14;
+const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray();
 
 export default class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
@@ -180,10 +181,12 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.mapBackground}
                 icon={this.mapIcon}
-                value={'MAP [M]'}
+                value={'<b>MAP [M]</b>'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
+                iconColor={this.activePage === 'map' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
+                fontColor={this.activePage === 'map' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
               />
 
               <ButtonTextIcon
@@ -199,10 +202,12 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.exploreBackground}
                 icon={this.exploreIcon}
-                value={'EXPLORE'}
+                value={'<b>EXPLORE</b>'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
+                iconColor={this.activePage === 'explore' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
+                fontColor={this.activePage === 'explore' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
               />
 
               <ButtonTextIcon
@@ -218,10 +223,12 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.backpackBackground}
                 icon={this.backpackIcon}
-                value={'BACKPACK [B]'}
+                value={'<b>BACKPACK [B]</b>'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
+                iconColor={this.activePage === 'backpack' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
+                fontColor={this.activePage === 'backpack' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
               />
 
               <ButtonTextIcon
@@ -237,10 +244,12 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.settingsBackground}
                 icon={this.settingsIcon}
-                value={'SETTINGS [P]'}
+                value={'<b>SETTINGS [P]</b>'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
+                iconColor={this.activePage === 'settings' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
+                fontColor={this.activePage === 'settings' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
               />
             </UiEntity>
           </UiEntity>

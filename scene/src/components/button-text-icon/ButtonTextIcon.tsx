@@ -73,7 +73,8 @@ function ButtonTextIcon(props: {
         uiText={{
           value: props.value,
           fontSize: props.fontSize,
-          color: props.fontColor ?? Color4.White()
+          color: props.fontColor ?? Color4.White(),
+          font:"serif"
         }}
       ></UiEntity>
     </UiEntity>
