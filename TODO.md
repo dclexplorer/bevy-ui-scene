@@ -2,9 +2,12 @@ TASKS
 - [ ] Submenu space for: title + navigation buttons + filters + searechBox
 - [ ] Submenu nav-button (with icon) Wearables , Emotes Ative/Inactive
 
+
 LATER
 - [ ] MainMenu icon should keep aspect ratio; ( screen 1284x750 )
 - [ ] Refactor: move all color values from constants.tsx to color-palette.tsx file
+- [ ] Create storybook scene with components catalog
+- [ ] BUG mouseEnter,mouseLeave race condition happening on mainMenu buttons 
 
 DONE
 - [x] MainMenu Apply gradient separator, look for function in SDK7 but use background if missing, then ask for a feature.
