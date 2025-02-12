@@ -1,5 +1,5 @@
 import ReactEcs, { UiEntity } from '@dcl/react-ecs'
-import {  UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 
 export default class BackpackPage {
@@ -24,24 +24,55 @@ export default class BackpackPage {
           textureMode: 'stretch'
         }}
       >
-
         {/* NAVBAR */}
         <UiEntity
           uiTransform={{
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            padding: this.fontSize,
+            flexDirection: 'row',
             width: '100%',
-            height: canvasInfo.height * 0.075,
+            height: canvasInfo.height * (66 / 1200),
             pointerFilter: 'block'
           }}
-          uiBackground={
-            {
-              color:{ ...Color4.Black(), a: 0.35 }
-            }
-          }
+          uiBackground={{
+            color: { ...Color4.Black(), a: 0.4 }
+          }}
         >
+          {/* LEFT SECTION */}
+          <UiEntity
+            uiTransform={{
+              height: '100%',
+              flexDirection: 'row',
+              padding: 0,
+              alignItems: 'flex-start',
+              alignSelf: 'flex-start'
+            }}
+            uiBackground={{
+              color: { ...Color4.Green(), a: 0.4 }
+            }}
+          >
+            <UiEntity
+              uiTransform={{
+                padding: 0,
+                margin: { top: -10, left: 4 }
+              }}
+              uiText={{
+                value: '<b>Backpack</b>',
+                font: 'serif',
+
+                fontSize: 40
+              }}
+            ></UiEntity>
+            {/* NAV-BUTTON-BAR */}
+            <UiEntity
+              uiTransform={{
+                height: '100%',
+                width: 100 // TODO remove width
+              }}
+              uiBackground={{
+                color: { ...Color4.Blue(), a: 0.4 }
+              }}
+            ></UiEntity>
+          </UiEntity>
+          <UiEntity></UiEntity>
         </UiEntity>
         <UiEntity
           uiTransform={{
@@ -71,10 +102,7 @@ export default class BackpackPage {
               minHeight: canvasInfo.height * 0.9 * 0.85 * 0.1,
               pointerFilter: 'block'
             }}
-
-          >
-
-          </UiEntity>
+          ></UiEntity>
 
           {/* CONTENT */}
           <UiEntity
@@ -105,10 +133,7 @@ export default class BackpackPage {
                 right: 0.5
               }
             }}
-          >
-
-          </UiEntity>
-
+          ></UiEntity>
         </UiEntity>
       </UiEntity>
     )

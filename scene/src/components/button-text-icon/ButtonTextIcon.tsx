@@ -1,11 +1,11 @@
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, {
-  type Callback, type PositionUnit,
+  type Callback,
+  type PositionUnit,
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { type AtlasIcon } from '../../utils/definitions'
-import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import Icon from '../icon/Icon'
 
 function ButtonTextIcon(props: {
@@ -56,8 +56,8 @@ function ButtonTextIcon(props: {
       {/* ICON */}
 
       <Icon
-        width={ props.iconSize as PositionUnit ?? 2 * props.fontSize}
-        height={ props.iconSize as PositionUnit ?? 2 * props.fontSize}
+        width={(props.iconSize as PositionUnit) ?? 2 * props.fontSize}
+        height={(props.iconSize as PositionUnit) ?? 2 * props.fontSize}
         icon={props.icon}
         iconColor={props.iconColor}
       />
@@ -71,7 +71,7 @@ function ButtonTextIcon(props: {
           value: props.value,
           fontSize: props.fontSize,
           color: props.fontColor ?? Color4.White(),
-          font:"serif"
+          font: 'serif'
         }}
       ></UiEntity>
     </UiEntity>

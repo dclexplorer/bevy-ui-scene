@@ -119,8 +119,9 @@ export default class MainHud {
     this.chatAndLogs = new ChatsAndLogs(uiController)
     this.friends = new Friends(uiController)
 
-    setTimeout(()=>{// TODO remove, only for development
-      this.uiController.menu?.show("backpack")
+    setTimeout(() => {
+      // TODO remove, only for development
+      this.uiController.menu?.show('backpack')
     })
   }
 

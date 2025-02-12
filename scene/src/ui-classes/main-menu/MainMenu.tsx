@@ -12,9 +12,9 @@ import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
-const ICON_SIZE = 50;
-const BUTTON_ICON_FONT_SIZE = 14;
-const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray();
+const ICON_SIZE = 50
+const BUTTON_ICON_FONT_SIZE = 14
+const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
 
 export default class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
@@ -115,9 +115,9 @@ export default class MainMenu {
 
     // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
     const buttonSize: number = Math.max(canvasInfo.height * 0.024, 46)
-    const buttonTransform:UiTransformProps = {
+    const buttonTransform: UiTransformProps = {
       height: '90%',
-      width: 3*buttonSize,
+      width: 3 * buttonSize,
       margin: { left: 2 }
     }
 
@@ -131,7 +131,7 @@ export default class MainMenu {
             justifyContent: 'flex-start',
             alignItems: 'center'
           }}
-          uiBackground={{ color:Color4.create(0,0,0,1) }}
+          uiBackground={{ color: Color4.create(0, 0, 0, 1) }}
         >
           <UiEntity
             uiTransform={{
@@ -142,23 +142,23 @@ export default class MainMenu {
               flexDirection: 'row'
             }}
             uiBackground={{
-              color:COLOR.MAIN_MENU_BACKGROUND
+              color: COLOR.MAIN_MENU_BACKGROUND
             }}
           >
             <UiEntity
               uiTransform={{
                 width: 200,
-                margin:{left:30},
-                height: "100%",
+                margin: { left: 20 },
+                height: '100%',
                 justifyContent: 'flex-start',
-                alignItems: 'flex-start',
+                alignItems: 'flex-start'
               }}
               uiBackground={{
                 texture: {
                   src: 'assets/images/menu/menu-logo.png'
                 }
-              }}>
-            </UiEntity>
+              }}
+            ></UiEntity>
             <UiEntity
               uiTransform={{
                 width: '100%',
@@ -185,8 +185,16 @@ export default class MainMenu {
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
-                iconColor={this.activePage === 'map' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
-                fontColor={this.activePage === 'map' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
+                iconColor={
+                  this.activePage === 'map'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
+                fontColor={
+                  this.activePage === 'map'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
               />
 
               <ButtonTextIcon
@@ -206,8 +214,16 @@ export default class MainMenu {
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
-                iconColor={this.activePage === 'explore' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
-                fontColor={this.activePage === 'explore' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
+                iconColor={
+                  this.activePage === 'explore'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
+                fontColor={
+                  this.activePage === 'explore'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
               />
 
               <ButtonTextIcon
@@ -227,8 +243,16 @@ export default class MainMenu {
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
-                iconColor={this.activePage === 'backpack' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
-                fontColor={this.activePage === 'backpack' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
+                iconColor={
+                  this.activePage === 'backpack'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
+                fontColor={
+                  this.activePage === 'backpack'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
               />
 
               <ButtonTextIcon
@@ -248,21 +272,29 @@ export default class MainMenu {
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
-                iconColor={this.activePage === 'settings' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
-                fontColor={this.activePage === 'settings' ? undefined:BUTTON_TEXT_COLOR_INACTIVE}
+                iconColor={
+                  this.activePage === 'settings'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
+                fontColor={
+                  this.activePage === 'settings'
+                    ? undefined
+                    : BUTTON_TEXT_COLOR_INACTIVE
+                }
               />
             </UiEntity>
           </UiEntity>
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: 6
+              height: 3 // TODO depends on canvas size
             }}
             uiBackground={{
               texture: {
-                src: 'assets/images/menu/hr-gradient.png',
+                src: 'assets/images/menu/hr-gradient.png'
               },
-              textureMode:"stretch"
+              textureMode: 'stretch'
             }}
           ></UiEntity>
           <UiEntity
