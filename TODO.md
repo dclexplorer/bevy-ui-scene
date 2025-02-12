@@ -4,6 +4,7 @@ TASKS
 
 LATER
 - [ ] MainMenu icon should keep aspect ratio; ( screen 1284x750 )
+- [ ] Refactor: move all color values from constants.tsx to color-palette.tsx file
 
 DONE
 - [x] MainMenu Apply gradient separator, look for function in SDK7 but use background if missing, then ask for a feature.

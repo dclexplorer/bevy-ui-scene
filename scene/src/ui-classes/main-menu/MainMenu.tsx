@@ -181,7 +181,7 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.mapBackground}
                 icon={this.mapIcon}
-                value={'<b>MAP [M]</b>'}
+                value={'<b>MAP</b> [M]'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
@@ -202,7 +202,7 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.exploreBackground}
                 icon={this.exploreIcon}
-                value={'<b>EXPLORE</b>'}
+                value={'<b>EXPLORE</b> [X]'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
@@ -223,7 +223,7 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.backpackBackground}
                 icon={this.backpackIcon}
-                value={'<b>BACKPACK [B]</b>'}
+                value={'<b>BACKPACK</b> [B]'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
@@ -244,7 +244,7 @@ export default class MainMenu {
                 }}
                 backgroundColor={this.settingsBackground}
                 icon={this.settingsIcon}
-                value={'<b>SETTINGS [P]</b>'}
+                value={'<b>SETTINGS</b> [P]'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
                 direction={'column'}
