@@ -10,6 +10,7 @@ import ReactEcs, {
 import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { ArrowToast } from '../arrow-toast'
+import Icon from '../icon/Icon'
 
 function ButtonIcon(props: {
   // Events
@@ -65,18 +66,8 @@ function ButtonIcon(props: {
     >
       {/* ICON */}
 
-      <UiEntity
-        uiTransform={{
-          width: props.iconSize ?? '70%',
-          height: props.iconSize ?? '70%',
-          flexDirection: 'row',
-          alignItems: 'center'
-        }}
-        uiBackground={{
-          ...getBackgroundFromAtlas(props.icon),
-          color: props.iconColor ?? Color4.White()
-        }}
-      />
+      <Icon
+        icon={props.icon} iconColor={props.iconColor ?? Color4.White()} />
       <UiEntity
         uiTransform={{
           width: '40%',

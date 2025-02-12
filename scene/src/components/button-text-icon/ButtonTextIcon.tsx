@@ -6,6 +6,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import Icon from '../icon/Icon'
 
 function ButtonTextIcon(props: {
   // Events
@@ -54,15 +55,11 @@ function ButtonTextIcon(props: {
     >
       {/* ICON */}
 
-      <UiEntity
-        uiTransform={{
-          width: props.iconSize as PositionUnit ?? 2 * props.fontSize,
-          height: props.iconSize as PositionUnit ?? 2 * props.fontSize
-        }}
-        uiBackground={{
-          ...getBackgroundFromAtlas(props.icon),
-          color: props.iconColor
-        }}
+      <Icon
+        width={ props.iconSize as PositionUnit ?? 2 * props.fontSize}
+        height={ props.iconSize as PositionUnit ?? 2 * props.fontSize}
+        icon={props.icon}
+        iconColor={props.iconColor}
       />
       {/* TEXT */}
       <UiEntity
