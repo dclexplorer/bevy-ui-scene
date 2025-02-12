@@ -15,7 +15,7 @@ type IconProps = UiTransformProps & {
 
 const defaultIconProps: IconProps = {
   icon: { atlasName: 'icons', spriteName: 'icon.png' },
-  iconSize: '70%',
+  iconSize: 20,
   flexDirection: 'row',
   alignItems: 'center'
 }
@@ -23,15 +23,13 @@ const defaultIconProps: IconProps = {
 function Icon(
   props: IconProps = defaultIconProps
 ): ReactEcs.JSX.Element | null {
+  const _props = { ...defaultIconProps, ...props }
   return (
     <UiEntity
       uiTransform={{
-        ...defaultIconProps,
-        width: (props.iconSize as PositionUnit) ?? '70%',
-        height: (props.iconSize as PositionUnit) ?? '70%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        ...props
+        width: (_props.iconSize as PositionUnit) ?? '70%',
+        height: (_props.iconSize as PositionUnit) ?? '70%',
+        ..._props
       }}
       uiBackground={{
         ...getBackgroundFromAtlas(props.icon),
