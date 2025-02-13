@@ -1,4 +1,5 @@
 TASKS
+- [ ] Feat: Aspect Ratio for texts, icons, etc.
 - [ ] Submenu space for: title + navigation buttons + filters + searechBox
 - [ ] Submenu nav-button (with icon) Wearables , Emotes Ative/Inactive
 - [ ] Have a look into InfoCard PR
@@ -17,3 +18,14 @@ DONE
 - [x] MainMenu Add Decentraland Logo to left
 - [x] MainMenu fix margin, sizes, colors, etc. of central icons
 - [x] MainMenu Adapt font-size even if different font, try to use a cleaner font
+dece
+
+------
+NOTES
+
+On the unity explorer, for the main menu height:
+    1920x1200 => 66px
+    1920x1080 => 66px
+    3840x2160 => 132px
+    1860x1050 => 57px
+    2048x1280 => 70px

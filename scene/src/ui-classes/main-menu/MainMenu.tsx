@@ -10,10 +10,9 @@ import Canvas from '../../components/canvas/Canvas'
 import { ProfileButton } from '../profile/profile-button'
 import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
+import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
-const ICON_SIZE = 50
-const BUTTON_ICON_FONT_SIZE = 14
 const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
 
 export default class MainMenu {
@@ -85,6 +84,7 @@ export default class MainMenu {
   }
 
   updateButtons(): void {
+    console.log('updateButtons')
     this.settingsIcon.spriteName = 'Settings off'
     this.settingsBackground = undefined
     this.backpackIcon.spriteName = 'Backpack off'
@@ -112,14 +112,19 @@ export default class MainMenu {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-
     // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
-    const buttonSize: number = Math.max(canvasInfo.height * 0.024, 46)
+    const canvasScaleRatio = getCanvasScaleRatio()
+    const buttonSize: number =
+      Math.max(canvasInfo.height * 0.024, 46) * canvasScaleRatio
+    const ICON_SIZE = 60 * canvasScaleRatio
+    const BUTTON_ICON_FONT_SIZE = 28 * canvasScaleRatio
     const buttonTransform: UiTransformProps = {
       height: '90%',
-      width: 3 * buttonSize,
-      margin: { left: 2 }
+      margin: { left: 2 },
+      padding: { left: 20, right: 20 }
     }
+    const LOGO_WIDTH = 165 * canvasScaleRatio * 2.1
+    const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1
 
     return (
       <Canvas>
@@ -147,16 +152,18 @@ export default class MainMenu {
           >
             <UiEntity
               uiTransform={{
-                width: 200,
+                width: LOGO_WIDTH,
+                height: LOGO_HEIGHT,
                 margin: { left: 20 },
-                height: '100%',
                 justifyContent: 'flex-start',
                 alignItems: 'flex-start'
               }}
               uiBackground={{
                 texture: {
+                  wrapMode: 'clamp',
                   src: 'assets/images/menu/menu-logo.png'
-                }
+                },
+                textureMode: 'stretch'
               }}
             ></UiEntity>
             <UiEntity
@@ -171,6 +178,7 @@ export default class MainMenu {
               <ButtonTextIcon
                 uiTransform={buttonTransform}
                 onMouseEnter={() => {
+                  console.log('mapEnter')
                   this.mapEnter()
                 }}
                 onMouseLeave={() => {
