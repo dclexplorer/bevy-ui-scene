@@ -2,6 +2,7 @@ import ReactEcs, { UiEntity } from '@dcl/react-ecs'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { NavButton } from '../../../components/nav-button/NavButton'
+import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 
 export default class BackpackPage {
   public fontSize: number = 16
@@ -9,6 +10,7 @@ export default class BackpackPage {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
+    const canvasScaleRatio = getCanvasScaleRatio()
 
     return (
       <UiEntity
@@ -30,7 +32,7 @@ export default class BackpackPage {
           uiTransform={{
             flexDirection: 'row',
             width: '100%',
-            height: canvasInfo.height * (66 / 1200),
+            height: 120 * canvasScaleRatio,
             pointerFilter: 'block'
           }}
           uiBackground={{
@@ -58,7 +60,7 @@ export default class BackpackPage {
               uiText={{
                 value: '<b>Backpack</b>',
                 font: 'serif',
-                fontSize: 36
+                fontSize: 64 * canvasScaleRatio
               }}
             ></UiEntity>
             {/* NAV-BUTTON-BAR */}
@@ -67,8 +69,7 @@ export default class BackpackPage {
                 height: '100%',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
-                padding: { left: 10 },
-                width: 300 // TODO remove width
+                padding: { left: 10 * canvasScaleRatio * 2 }
               }}
               uiBackground={{
                 color: { ...Color4.Blue(), a: 0.4 }

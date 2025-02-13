@@ -2,8 +2,8 @@ import { type AtlasIcon } from '../../utils/definitions'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import Icon from '../icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
-import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
+import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 
 export type NavButtonProps = {
   icon?: AtlasIcon
@@ -18,11 +18,13 @@ export function NavButton({
   active = false,
   uiTransform
 }: NavButtonProps): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+
   return (
     <UiEntity
       uiTransform={{
         padding: 8,
-        height: '40vh',
+        height: 40 * canvasScaleRatio * 2,
         alignItems: 'center',
         ...uiTransform
       }}
@@ -45,7 +47,7 @@ export function NavButton({
       {icon != null ? (
         <Icon
           icon={icon}
-          iconSize={26}
+          iconSize={24 * canvasScaleRatio * 2}
           iconColor={
             active
               ? COLOR.NAV_BUTTON_ACTIVE_COLOR
@@ -55,7 +57,7 @@ export function NavButton({
       ) : null}
       <Label
         font={'serif'}
-        fontSize={18}
+        fontSize={16 * canvasScaleRatio * 2}
         value={`<b>${text}</b>`}
         color={
           active
