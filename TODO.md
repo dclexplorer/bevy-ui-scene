@@ -5,6 +5,7 @@ TASKS
 - [ ] Have a look into InfoCard PR
 
 LATER
+- [ ] Review getCanvasScaleRatio calculations for optimizations, if to use system or memoization
 - [ ] MainMenu icon should keep aspect ratio; ( screen 1284x750 )
 - [ ] Refactor: move all color values from constants.tsx to color-palette.tsx file
 - [ ] Create storybook scene with components catalog
