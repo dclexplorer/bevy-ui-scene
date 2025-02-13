@@ -59,7 +59,6 @@ export default class BackpackPage {
               }}
               uiText={{
                 value: '<b>Backpack</b>',
-                font: 'serif',
                 fontSize: 64 * canvasScaleRatio
               }}
             ></UiEntity>

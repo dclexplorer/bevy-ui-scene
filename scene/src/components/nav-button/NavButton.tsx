@@ -56,7 +56,6 @@ export function NavButton({
         />
       ) : null}
       <Label
-        font={'serif'}
         fontSize={16 * canvasScaleRatio * 2}
         value={`<b>${text}</b>`}
         color={
