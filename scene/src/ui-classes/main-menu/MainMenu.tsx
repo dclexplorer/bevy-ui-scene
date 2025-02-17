@@ -84,7 +84,6 @@ export default class MainMenu {
   }
 
   updateButtons(): void {
-    console.log('updateButtons')
     this.settingsIcon.spriteName = 'Settings off'
     this.settingsBackground = undefined
     this.backpackIcon.spriteName = 'Backpack off'
@@ -178,7 +177,6 @@ export default class MainMenu {
               <ButtonTextIcon
                 uiTransform={buttonTransform}
                 onMouseEnter={() => {
-                  console.log('mapEnter')
                   this.mapEnter()
                 }}
                 onMouseLeave={() => {
