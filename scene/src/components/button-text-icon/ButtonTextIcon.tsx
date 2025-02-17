@@ -56,8 +56,7 @@ function ButtonTextIcon(props: {
       {/* ICON */}
 
       <Icon
-        width={(props.iconSize as PositionUnit) ?? 2 * props.fontSize}
-        height={(props.iconSize as PositionUnit) ?? 2 * props.fontSize}
+        iconSize={(props.iconSize as PositionUnit) ?? 2 * props.fontSize}
         icon={props.icon}
         iconColor={props.iconColor}
       />

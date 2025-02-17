@@ -3,8 +3,9 @@ import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
-import { type WearableCategory } from '../../../service/wearable-categories'
+import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../../service/wearable-categories'
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
+import Icon from "../../../components/icon/Icon";
 
 type BackpackPageState = {
   activeWearableCategory: WearableCategory | null
@@ -146,7 +147,6 @@ export default class BackpackPage {
                 top: this.fontSize
               },
               padding: this.fontSize,
-              minHeight: canvasInfo.height * 0.9 * 0.85 * 0.1,
               pointerFilter: 'block'
             }}
             uiBackground={{
@@ -170,7 +170,47 @@ export default class BackpackPage {
                 (this.state.activeWearableCategory = category)
               }
             />
-            {/* GRID COLLECTION COLUMN */}
+            {/* CATALOG COLUMN */}
+            <UiEntity
+                uiTransform={{
+                    flexDirection:"column",
+                    padding: 14 * canvasScaleRatio,
+                    margin:{left: 30 * canvasScaleRatio}
+                }}
+                uiBackground={{
+                    color:Color4.create(0,1,0,0)
+                }}
+            >
+                {/* CATALOG NAV_BAR */}
+                <UiEntity uiTransform={{flexDirection:"row", width: '100%'}}>
+                    <NavButton
+                        active={this.state.activeWearableCategory === null}
+                        icon={{spriteName:"all", atlasName:"backpack"}}
+                        text={"ALL"}
+                        uiTransform={{padding:20*canvasScaleRatio}}
+                        onClick={() => {this.state.activeWearableCategory = null}}
+                    />
+                    <Icon
+                        uiTransform={{
+                            alignSelf:"center",
+                            margin:{left:20*canvasScaleRatio, right:20*canvasScaleRatio},
+                            display:this.state.activeWearableCategory === null ? "none":"flex"
+                        }}
+                        icon={{
+                        spriteName:"RightArrow",
+                        atlasName:"icons"
+                    }} />
+                    {this.state.activeWearableCategory === null
+                        ? null
+                        : <NavButton
+                            active={true}
+                            showDeleteButton={true}
+                            onDelete={()=> {this.state.activeWearableCategory = null}}
+                        icon={{spriteName:this.state.activeWearableCategory, atlasName:"backpack"}}
+                        text={WEARABLE_CATEGORY_DEFINITIONS[this.state.activeWearableCategory].label}
+                        uiTransform={{padding:20*canvasScaleRatio}} />}
+                </UiEntity>
+            </UiEntity>
             {/* SELECTED ITEM COLUMN */}
           </UiEntity>
         </UiEntity>

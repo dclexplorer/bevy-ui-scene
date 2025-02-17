@@ -6,18 +6,22 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import {getCanvasScaleRatio} from "../../service/canvas-ratio";
 
-type IconProps = UiTransformProps & {
+type IconProps = {
   icon: AtlasIcon
+  uiTransform?:UiTransformProps
   iconSize?: number | string
   iconColor?: Color4
 }
 
 const defaultIconProps: IconProps = {
   icon: { atlasName: 'icons', spriteName: 'icon.png' },
-  iconSize: 20,
-  flexDirection: 'row',
-  alignItems: 'center'
+  iconSize: 60 * getCanvasScaleRatio(),
+    uiTransform:{
+        flexDirection: 'row',
+        alignItems: 'center'
+    }
 }
 
 function Icon(
@@ -29,7 +33,7 @@ function Icon(
       uiTransform={{
         width: (_props.iconSize as PositionUnit) ?? '70%',
         height: (_props.iconSize as PositionUnit) ?? '70%',
-        ..._props
+        ..._props.uiTransform
       }}
       uiBackground={{
         ...getBackgroundFromAtlas(props.icon),
