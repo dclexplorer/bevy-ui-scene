@@ -187,13 +187,14 @@ export default class BackpackPage {
                         active={this.state.activeWearableCategory === null}
                         icon={{spriteName:"all", atlasName:"backpack"}}
                         text={"ALL"}
-                        uiTransform={{padding:20*canvasScaleRatio}}
+                        uiTransform={{padding:40*canvasScaleRatio}}
                         onClick={() => {this.state.activeWearableCategory = null}}
                     />
                     <Icon
+                        iconSize={40 * canvasScaleRatio}
                         uiTransform={{
                             alignSelf:"center",
-                            margin:{left:20*canvasScaleRatio, right:20*canvasScaleRatio},
+                            margin:{left:16*canvasScaleRatio, right:16*canvasScaleRatio},
                             display:this.state.activeWearableCategory === null ? "none":"flex"
                         }}
                         icon={{
