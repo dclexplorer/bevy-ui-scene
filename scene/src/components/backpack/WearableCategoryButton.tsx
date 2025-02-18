@@ -1,6 +1,6 @@
 import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { type WearableCategory } from '../../service/wearable-categories'
-import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
+import ReactEcs, {type ReactElement, UiBackgroundProps} from '@dcl/react-ecs'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
@@ -33,7 +33,20 @@ export function WearableCategoryButton({
     spriteName: category,
     atlasName: 'backpack'
   }
-  const iconSize = 34 * canvasScaleRatio * 2
+  const iconSize = 34 * canvasScaleRatio * 2;
+  const textureProps:UiBackgroundProps = selectedURN === null ? getBackgroundFromAtlas({
+      atlasName:"backpack",
+      spriteName:"nft-empty"
+  }):{
+      texture: {
+          src:
+              selectedURN === null
+                  ? 'assets/images/nft-empty.png'
+                  : `https://peer.decentraland.org/lambdas/collections/contents/${selectedURN}/thumbnail`
+      },
+      textureMode: 'stretch'
+  }
+
   return (
     <UiEntity
       uiTransform={{
@@ -111,13 +124,7 @@ export function WearableCategoryButton({
           height: 62 * canvasScaleRatio * 2
         }}
         uiBackground={{
-          texture: {
-            src:
-              selectedURN === null
-                ? 'assets/images/nft-empty.png'
-                : `https://peer.decentraland.org/lambdas/collections/contents/${selectedURN}/thumbnail`
-          },
-          textureMode: 'stretch'
+         ...textureProps
         }}
       />
     </UiEntity>

@@ -260,6 +260,7 @@ export default class BackpackPage {
                     uiTransorm={{
                         margin:{top:20*canvasScaleRatio},
                     }}
+                    loading={true}
                     wearables={this.state.shownWearables}
                     equippedWearables={store.getState().backpack.wearables}
                 />

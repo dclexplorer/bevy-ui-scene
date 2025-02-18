@@ -330,6 +330,20 @@ export const backpackJson: AtlasData = {
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
+    },
+    'nft-empty.png':{
+      frame: { x: 50, y: 1423, w: 70, h: 70 },
+      rotated: false,
+      trimmed: false,
+      spriteSourceSize: { x: 0, y: 0, w: 70, h: 70 },
+      sourceSize: { w: 70, h: 70 }
+    },
+    'loading-wearable.png':{
+      frame: { x: 121, y: 1423, w: 120, h: 120 },
+      rotated: false,
+      trimmed: false,
+      spriteSourceSize: { x: 0, y: 0, w: 120, h: 120 },
+      sourceSize: { w: 120, h: 120 }
     }
   },
   meta: {
@@ -337,7 +351,7 @@ export const backpackJson: AtlasData = {
     version: '1.0',
     image: 'backpack.png',
     format: 'RGBA8888',
-    size: { w: 241, h: 1423 },
+    size: { w: 241, h: 1800 },
     scale: '1',
     smartupdate:
       '$TexturePacker:SmartUpdate:c40da2566ce2ddc9ab6b8eed023a50ff:170ed190918a91690fb9dfa612aca69b:b5887609397a0877247b6252841cd8c2$'
