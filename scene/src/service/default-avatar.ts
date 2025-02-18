@@ -1,4 +1,4 @@
-import { type OutfitSetup } from '../utils/definitions'
+import {type OutfitSetup, URN} from '../utils/definitions'
 
 export function getDefaultOutfitSetup(): OutfitSetup {
   return {
@@ -30,6 +30,6 @@ export function getDefaultOutfitSetup(): OutfitSetup {
   }
 }
 
-function fromBaseToURN(baseKey: string): string {
+function fromBaseToURN(baseKey: string): URN {
   return `urn:decentraland:off-chain:base-avatars:${baseKey}`
 }
