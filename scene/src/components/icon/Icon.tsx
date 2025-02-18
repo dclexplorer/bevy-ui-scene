@@ -11,7 +11,7 @@ import {getCanvasScaleRatio} from "../../service/canvas-ratio";
 type IconProps = {
   icon: AtlasIcon
   uiTransform?:UiTransformProps
-  iconSize?: number | string
+  iconSize?: PositionUnit
   iconColor?: Color4
 }
 
@@ -31,8 +31,8 @@ function Icon(
   return (
     <UiEntity
       uiTransform={{
-        width: (_props.iconSize as PositionUnit) ?? '70%',
-        height: (_props.iconSize as PositionUnit) ?? '70%',
+        width:_props.iconSize,
+        height: _props.iconSize,
         ..._props.uiTransform
       }}
       uiBackground={{

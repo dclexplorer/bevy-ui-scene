@@ -115,12 +115,13 @@ export default class MainMenu {
     const canvasScaleRatio = getCanvasScaleRatio()
     const buttonSize: number =
       Math.max(canvasInfo.height * 0.024, 46) * canvasScaleRatio
-    const ICON_SIZE = 60 * canvasScaleRatio
-    const BUTTON_ICON_FONT_SIZE = 28 * canvasScaleRatio
+    const ICON_SIZE = 50 * canvasScaleRatio
+    const BUTTON_ICON_FONT_SIZE = 24 * canvasScaleRatio
     const buttonTransform: UiTransformProps = {
-      height: '90%',
-      margin: { left: 2 },
-      padding: { left: 20, right: 20 }
+      height: 100 * canvasScaleRatio,
+      margin: { left: 10 * canvasScaleRatio },
+      padding: { left: 20 * canvasScaleRatio, right: 20 * canvasScaleRatio },
+      flexDirection:"column"
     }
     const LOGO_WIDTH = 165 * canvasScaleRatio * 2.1
     const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1
@@ -190,7 +191,6 @@ export default class MainMenu {
                 value={'<b>MAP</b> [M]'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
-                direction={'column'}
                 iconColor={
                   this.activePage === 'map'
                     ? undefined
@@ -219,7 +219,6 @@ export default class MainMenu {
                 value={'<b>EXPLORE</b> [X]'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
-                direction={'column'}
                 iconColor={
                   this.activePage === 'explore'
                     ? undefined
@@ -248,7 +247,6 @@ export default class MainMenu {
                 value={'<b>BACKPACK</b> [B]'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
-                direction={'column'}
                 iconColor={
                   this.activePage === 'backpack'
                     ? undefined
@@ -277,7 +275,6 @@ export default class MainMenu {
                 value={'<b>SETTINGS</b> [P]'}
                 fontSize={BUTTON_ICON_FONT_SIZE}
                 iconSize={ICON_SIZE}
-                direction={'column'}
                 iconColor={
                   this.activePage === 'settings'
                     ? undefined

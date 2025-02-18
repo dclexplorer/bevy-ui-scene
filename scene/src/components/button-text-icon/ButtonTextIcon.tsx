@@ -21,7 +21,7 @@ function ButtonTextIcon(props: {
   value: string
   fontSize: number
   icon: AtlasIcon
-  iconSize?: number | string
+  iconSize?: PositionUnit
   fontColor?: Color4
   iconColor?: Color4
 }): ReactEcs.JSX.Element | null {
@@ -53,16 +53,12 @@ function ButtonTextIcon(props: {
       {/* ICON */}
 
       <Icon
-        iconSize={(props.iconSize as PositionUnit) ?? 2 * props.fontSize}
+        iconSize={props.iconSize}
         icon={props.icon}
         iconColor={props.iconColor}
       />
       {/* TEXT */}
       <UiEntity
-        uiTransform={{
-          width: 'auto',
-          height: 'auto'
-        }}
         uiText={{
           value: props.value,
           fontSize: props.fontSize,
