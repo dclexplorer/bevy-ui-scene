@@ -4,7 +4,7 @@ import ReactEcs, { type Position, UiEntity } from '@dcl/sdk/react-ecs'
 import ButtonIcon from '../../components/button-icon/ButtonIcon'
 import { type UIController } from '../../controllers/ui.controller'
 import Canvas from '../../components/canvas/Canvas'
-// import { openExternalUrl } from '~system/RestrictedActions'
+import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
 import { type AtlasIcon } from '../../utils/definitions'
 import { ALPHA_BLACK_PANEL, SELECTED_BUTTON_COLOR } from '../../utils/constants'
@@ -472,7 +472,7 @@ export default class MainHud {
                 }}
                 onMouseDown={() => {
                   BevyApi.openSceneLogger().catch(console.error)
-                  // openExternalUrl({ url: 'https://decentraland.org/help/' }).catch(console.error)
+                  openExternalUrl({ url: 'https://decentraland.org/help/' }).catch(console.error)
                 }}
                 backgroundColor={this.helpBackground}
                 icon={this.helpIcon}

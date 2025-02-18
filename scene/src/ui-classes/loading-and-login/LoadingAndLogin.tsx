@@ -1,7 +1,7 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-// import { openExternalUrl } from '~system/RestrictedActions'
+import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
 import { ArrowToast } from '../../components/arrow-toast'
 import { ButtonText } from '../../components/button-text'
@@ -211,7 +211,7 @@ export default class LoadingAndLogin {
   }
 
   async openLink(url: string): Promise<void> {
-    // await openExternalUrl({ url })
+    await openExternalUrl({ url })
   }
 
   mainUi(): ReactEcs.JSX.Element | null {

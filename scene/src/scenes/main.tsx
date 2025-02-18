@@ -7,14 +7,7 @@ import { store } from '../state/store'
 
 let gameInstance: GameController
 
-export function main(): void {
-  init(false).catch((e) => {
-    console.error('Fatal error during init')
-    console.error(e)
-  })
-}
-
-async function init(retry: boolean): Promise<void> {
+export async function init(retry: boolean): Promise<void> {
   gameInstance = new GameController()
   gameInstance.uiController.loadingAndLogin.startLoading()
   // gameInstance.uiController.loadingAndLogin.finishLoading()

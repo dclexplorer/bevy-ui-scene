@@ -20,7 +20,11 @@
     "eslint-config-standard-with-typescript": "^39.1.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.33.2",
-    "prettier": "3.0.3"
+    "prettier": "3.0.3",
+    "@dcl/sdk": "7.7.3-13093143335.commit-dc52da3",
+    "@dcl/sdk-commands": "7.7.3-13093143335.commit-dc52da3",
+    "@dcl/js-runtime": "7.7.3-13093143335.commit-dc52da3",
+    "@dcl/react-ecs": "7.7.3-13093143335.commit-dc52da3"
   },
   "engines": {
     "node": ">=16.0.0",
@@ -28,15 +32,8 @@
   },
   "dependencies": {
     "@dcl-sdk/utils": "^1.2.8",
-    "@dcl/js-runtime": "7.6.4-11515577295.commit-620b210",
-    "@dcl/react-ecs": "7.5.6",
-    "@dcl/sdk": "https://sdk-team-cdn.decentraland.org/@dcl/js-sdk-toolchain/branch/feat/ui-hover/dcl-sdk-7.6.6-12138639965.commit-c9acb27.tgz",
-    "@dcl/sdk-commands": "7.6.4-11515577295.commit-620b210",
     "dcl-npc-toolkit": "^1.2.2",
     "dcl-ui-toolkit": "^0.10.0",
-    "fp-future": "^1.0.1",
-    "install": "^0.13.0",
-    "npm": "^10.9.0",
-    "typescript": "5.5.4"
+    "fp-future": "^1.0.1"
   }
 }

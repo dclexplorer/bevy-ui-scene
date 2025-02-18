@@ -1,4 +1,3 @@
-import { openExternalUrl } from '~system/RestrictedActions'
 import { Color4 } from '@dcl/ecs-math/dist/Color4'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import ReactEcs, {
@@ -29,6 +28,7 @@ import {
   getBackgroundFromAtlas
 } from 'src/utils/ui-utils'
 import { ButtonText } from 'src/components/button-text'
+import { openExternalUrl } from '~system/RestrictedActions'
 
 export default class Photos {
   private readonly uiController: UIController
@@ -626,7 +626,7 @@ export default class Photos {
             if (wearableData.formattedUrn !== undefined) {
               openExternalUrl({
                 url: `https://decentraland.org/marketplace/contracts/${wearableData.formattedUrn.contractAddress}/items/${wearableData.formattedUrn.itemId}`
-              })
+              }).catch(console.error)
             }
           }}
           value={'BUY'}
