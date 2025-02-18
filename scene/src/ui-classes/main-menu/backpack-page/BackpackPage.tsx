@@ -6,15 +6,60 @@ import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../../service/wearable-categories'
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
 import Icon from "../../../components/icon/Icon";
+import {WearableCatalogGrid} from "../../../components/backpack/WearableCatalogGrid";
+import {store} from "../../../state/store";
+
+const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
 type BackpackPageState = {
-  activeWearableCategory: WearableCategory | null
+  activeWearableCategory: WearableCategory | null,
+  currentPage:number,
+    loadingPage:boolean,
+    shownWearables:any[] // TODO remove any type
 }
-
+type WearableCatalogPageParams = {
+    pageNum: number
+    pageSize: number
+    address: string
+    wearableCategory: WearableCategory | null
+    includeBase: boolean
+    includeOnChain: boolean
+}
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
+
+  // TODO consider redux
   private readonly state: BackpackPageState = {
-    activeWearableCategory: null
+    activeWearableCategory: null,
+    currentPage:0,
+    loadingPage:false,
+    shownWearables:new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null)
+  }
+
+  async fetchWearablesPage():Promise<void>{
+      return await (await fetch(getWearableCatalogPageURL({
+          pageNum:this.state.currentPage,
+          pageSize:WEARABLE_CATALOG_PAGE_SIZE,
+          address:'0x0000000000000000000000000000000000000000',// '0x598f8af1565003AE7456DaC280a18ee826Df7a2c'
+          wearableCategory:this.state.activeWearableCategory,
+          includeBase:true,
+          includeOnChain:true
+      }))).json();
+
+      function getWearableCatalogPageURL({pageNum, pageSize, address, wearableCategory, includeBase, includeOnChain}:WearableCatalogPageParams):string {
+          // TODO use realm BaseURL ?
+          let str:string = `https://peer.decentraland.org/explorer/${address}?pageNum=${pageNum}&pageSize=${pageSize}`;
+          if(wearableCategory !== null){
+              str += `&category=${wearableCategory}`
+          }
+          if(includeBase){
+              str += `&collectionType=base-wearable`
+          }
+          if(includeOnChain){
+              str += `&collectionType=on.chain`
+          }
+          return str;
+      }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -211,8 +256,20 @@ export default class BackpackPage {
                         text={WEARABLE_CATEGORY_DEFINITIONS[this.state.activeWearableCategory].label}
                         uiTransform={{padding:20*canvasScaleRatio}} />}
                 </UiEntity>
+                <WearableCatalogGrid
+                    uiTransorm={{
+                        margin:{top:20*canvasScaleRatio},
+                    }}
+                    wearables={this.state.shownWearables}
+                    equippedWearables={store.getState().backpack.wearables}
+                />
             </UiEntity>
             {/* SELECTED ITEM COLUMN */}
+            <UiEntity uiTransform={{
+                margin:{left: 40 * canvasScaleRatio },
+                width: 560 * canvasScaleRatio,
+                height: 1400 * canvasScaleRatio,
+            }} uiBackground={{color:Color4.create(0,0,1,0.3)}}></UiEntity>
           </UiEntity>
         </UiEntity>
       </UiEntity>

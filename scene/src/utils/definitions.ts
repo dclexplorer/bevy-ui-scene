@@ -15,7 +15,7 @@ export type AtlasData = {
   }
 }
 
-export type URN = string
+export type URN = string // TODO improve definition https://github.com/decentraland/urn-resolver
 
 export type OutfitSetup = {
   wearables: {
