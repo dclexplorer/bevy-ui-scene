@@ -39,7 +39,6 @@ export class Store {
 export const store = new Store(reducer, {
   settings: settingsInitialState,
   backpack: backpackInitialState,
-  settings: settingsInitialState,
   scene: sceneInitialState,
   photo: photoInitialState
 })

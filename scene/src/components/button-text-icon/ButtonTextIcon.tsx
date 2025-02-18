@@ -24,14 +24,13 @@ function ButtonTextIcon(props: {
   iconSize?: number | string
   fontColor?: Color4
   iconColor?: Color4
-  direction?: 'row' | 'column'
 }): ReactEcs.JSX.Element | null {
   return (
     <UiEntity
       uiTransform={{
-        flexDirection: props.direction ?? 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        flexDirection: 'row',
         ...props.uiTransform
       }}
       uiBackground={{
