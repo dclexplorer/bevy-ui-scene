@@ -472,7 +472,9 @@ export default class MainHud {
                 }}
                 onMouseDown={() => {
                   BevyApi.openSceneLogger().catch(console.error)
-                  openExternalUrl({ url: 'https://decentraland.org/help/' }).catch(console.error)
+                  openExternalUrl({
+                    url: 'https://decentraland.org/help/'
+                  }).catch(console.error)
                 }}
                 backgroundColor={this.helpBackground}
                 icon={this.helpIcon}
