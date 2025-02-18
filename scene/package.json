@@ -10,9 +10,14 @@
     "lint": "eslint ./**/*.{ts,tsx}",
     "lint:fix": "eslint --fix ./**/*.{ts,tsx}",
     "format": "prettier --config .prettierrc -c ./**/*.{ts,tsx}",
-    "format:fix": "prettier -w --config .prettierrc -c ./**/*.{ts,tsx}"
+    "format:fix": "prettier -w --config .prettierrc -c ./**/*.{ts,tsx}",
+    "upgrade-sdk": "npm install @dcl/sdk@protocol-squad @dcl/js-runtime@protocol-squad @dcl/react-ecs@protocol-squad @dcl/sdk-commands@protocol-squad --save-exact"
   },
   "devDependencies": {
+    "@dcl/js-runtime": "7.7.3-13093143335.commit-dc52da3",
+    "@dcl/react-ecs": "7.7.3-13093143335.commit-dc52da3",
+    "@dcl/sdk": "7.7.3-13093143335.commit-dc52da3",
+    "@dcl/sdk-commands": "7.7.3-13093143335.commit-dc52da3",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "eslint": "^8.53.0",
@@ -28,15 +33,8 @@
   },
   "dependencies": {
     "@dcl-sdk/utils": "^1.2.8",
-    "@dcl/js-runtime": "7.6.4-11515577295.commit-620b210",
-    "@dcl/react-ecs": "7.5.6",
-    "@dcl/sdk": "https://sdk-team-cdn.decentraland.org/@dcl/js-sdk-toolchain/branch/feat/ui-hover/dcl-sdk-7.6.6-12138639965.commit-c9acb27.tgz",
-    "@dcl/sdk-commands": "7.6.4-11515577295.commit-620b210",
     "dcl-npc-toolkit": "^1.2.2",
     "dcl-ui-toolkit": "^0.10.0",
-    "fp-future": "^1.0.1",
-    "install": "^0.13.0",
-    "npm": "^10.9.0",
-    "typescript": "5.5.4"
+    "fp-future": "^1.0.1"
   }
 }

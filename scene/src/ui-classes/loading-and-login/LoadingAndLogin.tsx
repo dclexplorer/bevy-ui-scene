@@ -1,7 +1,7 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-// import { openExternalUrl } from '~system/RestrictedActions'
+import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
 import { ArrowToast } from '../../components/arrow-toast'
 import { ButtonText } from '../../components/button-text'
@@ -51,7 +51,7 @@ export default class LoadingAndLogin {
   private backgroundGradientSrc: string =
     'assets/images/login/horizontal-violet-gradient.png'
 
-  private isVisible: boolean
+  private isVisible: boolean = false
   private toastOpen: boolean = false
   readonly countDown: string = '5:00'
   public timer: number = 2
@@ -59,11 +59,10 @@ export default class LoadingAndLogin {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
-    this.isVisible = false
   }
 
   startLoading(): void {
-    this.status = 'loading'
+    this.status = 'sign-in-or-guest'
     this.updateLayout()
     this.isVisible = true
   }
@@ -212,7 +211,7 @@ export default class LoadingAndLogin {
   }
 
   async openLink(url: string): Promise<void> {
-    // await openExternalUrl({ url })
+    await openExternalUrl({ url })
   }
 
   mainUi(): ReactEcs.JSX.Element | null {

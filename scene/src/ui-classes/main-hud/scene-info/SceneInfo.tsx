@@ -214,7 +214,7 @@ export default class SceneInfo {
   }
 
   openSceneInfo(): void {
-    this.uiController.sceneCard.show()
+    void this.uiController.sceneCard.show()
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
