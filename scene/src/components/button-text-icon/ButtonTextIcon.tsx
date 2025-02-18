@@ -7,6 +7,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { type AtlasIcon } from '../../utils/definitions'
 import Icon from '../icon/Icon'
+import { TRANSPARENT } from '../../utils/constants'
 
 function ButtonTextIcon(props: {
   // Events
@@ -25,19 +26,16 @@ function ButtonTextIcon(props: {
   iconColor?: Color4
   direction?: 'row' | 'column'
 }): ReactEcs.JSX.Element | null {
-  //   const ICON_MARGIN = Math.max(canvasInfo.height * 0.01, 2)
   return (
     <UiEntity
       uiTransform={{
-        // padding: props.fontSize * 0.3,
-        // margin: { bottom: props.fontSize * 0.3, top: props.fontSize * 0.3 },
         flexDirection: props.direction ?? 'row',
         justifyContent: 'center',
         alignItems: 'center',
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
+        color: props.backgroundColor ?? TRANSPARENT,
         textureMode: 'nine-slices',
         texture: {
           src: 'assets/images/backgrounds/rounded.png'

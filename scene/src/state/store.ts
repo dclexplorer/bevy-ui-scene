@@ -1,6 +1,8 @@
-import { reducer } from './reducer'
+import { sceneInitialState } from './sceneInfo/state'
 import { settingsInitialState } from './settings/state'
 import { backpackInitialState } from './backpack/state'
+import { photoInitialState } from './photoInfo/state'
+import { reducer } from './reducer'
 import { type AppState, type Action } from './types'
 
 export class Store {
@@ -36,5 +38,8 @@ export class Store {
 
 export const store = new Store(reducer, {
   settings: settingsInitialState,
-  backpack: backpackInitialState
+  backpack: backpackInitialState,
+  settings: settingsInitialState,
+  scene: sceneInitialState,
+  photo: photoInitialState
 })
