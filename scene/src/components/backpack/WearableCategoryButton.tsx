@@ -1,6 +1,6 @@
 import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { type WearableCategory } from '../../service/wearable-categories'
-import ReactEcs, {type ReactElement, UiBackgroundProps} from '@dcl/react-ecs'
+import ReactEcs, {type ReactElement, type UiBackgroundProps} from '@dcl/react-ecs'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
@@ -8,6 +8,7 @@ import Icon from '../icon/Icon'
 import { type AtlasIcon, type URN } from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import {catalystWearableMap} from "../../utils/promise-utils";
 
 type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps
@@ -115,7 +116,7 @@ export function WearableCategoryButton({
         }}
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
-          spriteName: 'base'
+          spriteName:  catalystWearableMap[selectedURN as URN]?.rarity ?? 'base'
         })}
       />
       <UiEntity

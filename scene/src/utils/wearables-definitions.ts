@@ -71,3 +71,7 @@ export type CatalystWearable = {
     thumbnail: string;
     metrics: Metrics;
 };
+
+export type CatalystWearableMap = {
+    [K in URN]:CatalystWearable
+}

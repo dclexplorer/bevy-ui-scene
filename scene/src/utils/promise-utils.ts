@@ -14,7 +14,7 @@ import type {FormattedURN, URN} from './definitions'
 import { BevyApi } from 'src/bevy-api'
 import type { KernelFetchRespose } from 'src/bevy-api/interface'
 import type {WearableCategory} from "../service/wearable-categories";
-import type {CatalystWearable} from "./wearables-definitions";
+import type {CatalystWearable, CatalystWearableMap} from "./wearables-definitions";
 
 type EventsResponse = {
   ok: boolean
@@ -238,18 +238,31 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
 
 }
 
-export async function fetchWearablesData(...wearableURNs:URN[]):Promise<CatalystWearable[]>{
-  try {
+export const catalystWearableMap:CatalystWearableMap = {};
 
+export async function fetchWearablesData(...wearableURNs:URN[]):Promise<CatalystWearable[]>{
+  if(wearableURNs.every((wearableURN)=>catalystWearableMap[wearableURN])){
+    return wearableURNs.map(wearableURN => (catalystWearableMap[wearableURN]))
+  }
+  try {
     const baseURL = `https://peer.decentraland.org/lambdas/collections/wearables`;
     const url = `${baseURL}?${wearableURNs.map((urn:URN) => {
-      const urnWithoutTokenId = urn.includes(":off-chain:") ? urn : urn.replace(/^(.*):[^:]+$/, "$1")
+      const urnWithoutTokenId = getURNWithoutTokenId(urn)
       return `wearableId=${urnWithoutTokenId}`;
     }).join('&')}`;
     const response = await fetch(url);
-    return (await response.json()).wearables;
+    const wearables = (await response.json()).wearables;
+    wearables.forEach((wearable:CatalystWearable) => {
+      catalystWearableMap[wearable.id] = wearable;
+    })
+    return wearables;
   }catch(error) {
     console.error("fetchWearablesData error", error);
     return []
   }
+}
+
+export function getURNWithoutTokenId(urn:URN):URN{
+  // TODO add unit test?
+  return (urn.includes(":off-chain:") || urn.split(":").length < 6 ? urn : urn.replace(/^(.*):[^:]+$/, "$1")) as URN
 }

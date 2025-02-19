@@ -10,7 +10,7 @@ import {WearableCatalogGrid} from "../../../components/backpack/WearableCatalogG
 import {fetchWearablesData, fetchWearablesPage} from "../../../utils/promise-utils";
 import { getPlayer } from '@dcl/sdk/src/players'
 import {type URN} from "../../../utils/definitions";
-import type { CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
+import type {CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
 import {EMPTY_OUTFIT, getOutfitSetupFromWearables} from "../../../service/outfit";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
@@ -40,11 +40,12 @@ export default class BackpackPage {
   }
 
     async initWearablePage(): Promise<void> {
+        this.state.loadingPage = true;
         const player = getPlayer();
         this.state.equippedWearables = player?.wearables as URN[] ?? [];
         const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...this.state.equippedWearables);
         this.state.outfitSetup.wearables =  getOutfitSetupFromWearables(equippedWearablesData);
-        this.state.loadingPage = true;
+
         // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
         const wearablesPage = await fetchWearablesPage({
             pageNum: 1,
