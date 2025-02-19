@@ -11,12 +11,13 @@ export type PaginationProps = {
     pages:number,
     currentPage:number,
     // eslint-disable-next-line @typescript-eslint/ban-types
-    onChange:Function
+    onChange:Function,
+    disabled?:boolean
 }
 
 const PAGE_BUTTONS = 5;
 
-export function Pagination({pages, currentPage, onChange = noop}:PaginationProps):ReactElement{
+export function Pagination({pages, currentPage, onChange = noop, disabled = false}:PaginationProps):ReactElement{
     const canvasScaleRatio = getCanvasScaleRatio();
     const offset = currentPage > 3 ? Math.min(currentPage - 3, pages-PAGE_BUTTONS): 0;
     const pageElements = new Array(Math.min(PAGE_BUTTONS, pages)).fill(null).map((_,index)=>{
@@ -41,7 +42,7 @@ export function Pagination({pages, currentPage, onChange = noop}:PaginationProps
                     backgroundColor={currentPage === pageElement?undefined:TRANSPARENT}
                     color={Color4.White()}
                     onClick={()=>{
-                        if(pageElement !== currentPage) {
+                        if(pageElement !== currentPage && !disabled) {
                             onChange(pageElement)
                         }
                     }}
