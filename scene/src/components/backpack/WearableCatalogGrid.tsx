@@ -35,7 +35,10 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                     margin: 10 * canvasScaleRatio,
                 }}
                 uiBackground={{
-                    ...( loading ? LOADING_TEXTURE_PROPS : undefined )
+                    ...( loading ? LOADING_TEXTURE_PROPS : getBackgroundFromAtlas({
+                        spriteName:_.rarity ?? 'base',
+                        atlasName:"backpack"
+                    }) )
                 }}
             >
                 {(!loading && (Boolean((_?.urn)))) ? <UiEntity
