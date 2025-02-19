@@ -9,6 +9,7 @@ import Icon from "../../../components/icon/Icon";
 import {WearableCatalogGrid} from "../../../components/backpack/WearableCatalogGrid";
 import {store} from "../../../state/store";
 import {fetchWearablesPage} from "../../../utils/promise-utils";
+import { getPlayer } from '@dcl/sdk/src/players'
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -34,12 +35,12 @@ export default class BackpackPage {
 
     async initWearablePage(): Promise<void> {
         this.state.loadingPage = true;
-
+        const player = getPlayer();
         // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
         const wearablesPage = await fetchWearablesPage({
             pageNum: 1,
             pageSize: WEARABLE_CATALOG_PAGE_SIZE,
-            address: "0x0000000000000000000000000000000000000000", // TODO
+            address: player?.userId ?? "0x0000000000000000000000000000000000000000",
             wearableCategory:this.state.activeWearableCategory,
         });
 
