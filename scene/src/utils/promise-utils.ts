@@ -10,10 +10,9 @@ import type {
   PlaceFromApi
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { EMPTY_PHOTO_METADATA } from './constants'
-import type { FormattedURN } from './definitions'
+import type {FormattedURN} from './definitions'
 import { BevyApi } from 'src/bevy-api'
 import type { KernelFetchRespose } from 'src/bevy-api/interface'
-// import { signedFetch } from '~system/SignedFetch'
 
 type EventsResponse = {
   ok: boolean

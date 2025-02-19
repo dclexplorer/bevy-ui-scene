@@ -40,6 +40,12 @@ export class UIController {
   warningPopUp: PopUpWarning
   photosPanel: Photos
 
+  show(page:string):void {
+    if(page === "backpack"){
+      void this.backpackPage.initWearablePage();
+    }
+  }
+
   constructor(gameController: GameController) {
     this.gameController = gameController
     this.loadingAndLogin = new LoadingAndLogin(this)
