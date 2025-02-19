@@ -80,7 +80,9 @@ export default class MainMenu {
     this.uiController.settingsPage.updateButtons()
     this.activePage = page
     this.uiController.isMainMenuVisible = true
-    this.updateButtons()
+    this.updateButtons();
+
+    this.uiController.show(page);
   }
 
   updateButtons(): void {

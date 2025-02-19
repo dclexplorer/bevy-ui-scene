@@ -13,7 +13,7 @@ import { EMPTY_PHOTO_METADATA } from './constants'
 import type { FormattedURN } from './definitions'
 import { BevyApi } from 'src/bevy-api'
 import type { KernelFetchRespose } from 'src/bevy-api/interface'
-// import { signedFetch } from '~system/SignedFetch'
+import type {WearableCategory} from "../service/wearable-categories";
 
 type EventsResponse = {
   ok: boolean
@@ -189,4 +189,51 @@ export async function updateFavoriteStatus(
     console.error('Error updating favorite status:', error)
     throw new Error('Failed to update favorite status')
   }
+}
+
+export type WearablesPageResponse = any;
+type WearableCatalogPageParams = {
+  pageNum: number
+  pageSize: number
+  address: string
+  wearableCategory: WearableCategory | null
+  includeBase: boolean
+  includeOnChain: boolean
+}
+
+export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, address}:any):Promise<WearablesPageResponse>{
+  try {
+    const wearableCatalogPageURL = getWearableCatalogPageURL({
+      pageNum,
+      pageSize,
+      address,
+      wearableCategory,
+      includeBase: true,
+      includeOnChain: true
+    });
+console.log("wearableCatalogPageURL",wearableCatalogPageURL)
+    const wearablesPageResponse:any = await fetch(wearableCatalogPageURL);
+
+    return wearablesPageResponse.json();
+  }catch(error) {
+    console.error('wearablesPage Error fetching:', error)
+    throw error
+  }
+
+
+  function getWearableCatalogPageURL({pageNum, pageSize, address, wearableCategory, includeBase, includeOnChain}:WearableCatalogPageParams):string {
+    // TODO use realm BaseURL ?
+    let str:string = `https://peer.decentraland.org/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}`;
+    if(wearableCategory !== null){
+      str += `&category=${wearableCategory}`
+    }
+    if(includeBase){
+      str += `&collectionType=base-wearable`
+    }
+    if(includeOnChain){
+      str += `&collectionType=on-chain`
+    }
+    return str;
+  }
+
 }

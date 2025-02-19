@@ -8,7 +8,7 @@ import {getBackgroundFromAtlas} from "../../utils/ui-utils";
 export type WearableCatalogGridProps = {
     wearables: any[] // TODO review what is the definition we will use
     equippedWearables: URN[],
-    uiTransorm:UiTransformProps,
+    uiTransform:UiTransformProps,
     loading: boolean
 }
 const LOADING_TEXTURE_PROPS = getBackgroundFromAtlas({
@@ -16,17 +16,18 @@ const LOADING_TEXTURE_PROPS = getBackgroundFromAtlas({
     spriteName: "loading-wearable"
 })
 
-export function WearableCatalogGrid({wearables, equippedWearables, uiTransorm, loading}: WearableCatalogGridProps): ReactElement {
+export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, loading}: WearableCatalogGridProps): ReactElement {
     const canvasScaleRatio = getCanvasScaleRatio();
 
     return <UiEntity uiTransform={{
         padding: 10 * canvasScaleRatio,
         width: 840 * canvasScaleRatio,
         flexWrap: 'wrap',
-        ...uiTransorm
+        ...uiTransform
     }} uiBackground={{color: Color4.create(1, 0, 0, 0)}}>
         {wearables.map((_,index) => {
             return <UiEntity
+                key={index}
                 uiTransform={{
                     width:180 * canvasScaleRatio,
                     height:180 * canvasScaleRatio,
@@ -37,7 +38,18 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransorm, l
                     ...( loading ? LOADING_TEXTURE_PROPS : undefined )
                 }}
             >
-
+                {(!loading && (Boolean((_?.urn)))) ? <UiEntity
+                    uiTransform={{
+                        width:"100%",
+                        height:"100%",
+                    }}
+                    uiBackground={{
+                        texture:{
+                            src:`https://peer.decentraland.org/lambdas/collections/contents/${_.urn}/thumbnail`
+                        },
+                        textureMode: "stretch"
+                    }}
+                ></UiEntity> : null}
             </UiEntity>;
         })}</UiEntity>
 }

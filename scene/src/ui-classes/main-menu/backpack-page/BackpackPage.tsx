@@ -8,6 +8,7 @@ import { WearableCategoryList } from '../../../components/backpack/WearableCateg
 import Icon from "../../../components/icon/Icon";
 import {WearableCatalogGrid} from "../../../components/backpack/WearableCatalogGrid";
 import {store} from "../../../state/store";
+import {fetchWearablesPage} from "../../../utils/promise-utils";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -16,57 +17,43 @@ type BackpackPageState = {
   currentPage:number,
     loadingPage:boolean,
     shownWearables:any[] // TODO remove any type
+    totalPages:number
 }
-type WearableCatalogPageParams = {
-    pageNum: number
-    pageSize: number
-    address: string
-    wearableCategory: WearableCategory | null
-    includeBase: boolean
-    includeOnChain: boolean
-}
+
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
 
   // TODO consider redux
   private readonly state: BackpackPageState = {
     activeWearableCategory: null,
-    currentPage:0,
+    currentPage:1,
     loadingPage:false,
-    shownWearables:new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null)
+    shownWearables:new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
+    totalPages:0
   }
 
-  async fetchWearablesPage():Promise<void>{
-      return await (await fetch(getWearableCatalogPageURL({
-          pageNum:this.state.currentPage,
-          pageSize:WEARABLE_CATALOG_PAGE_SIZE,
-          address:'0x0000000000000000000000000000000000000000',// '0x598f8af1565003AE7456DaC280a18ee826Df7a2c'
-          wearableCategory:this.state.activeWearableCategory,
-          includeBase:true,
-          includeOnChain:true
-      }))).json();
+    async initWearablePage(): Promise<void> {
+        this.state.loadingPage = true;
 
-      function getWearableCatalogPageURL({pageNum, pageSize, address, wearableCategory, includeBase, includeOnChain}:WearableCatalogPageParams):string {
-          // TODO use realm BaseURL ?
-          let str:string = `https://peer.decentraland.org/explorer/${address}?pageNum=${pageNum}&pageSize=${pageSize}`;
-          if(wearableCategory !== null){
-              str += `&category=${wearableCategory}`
-          }
-          if(includeBase){
-              str += `&collectionType=base-wearable`
-          }
-          if(includeOnChain){
-              str += `&collectionType=on.chain`
-          }
-          return str;
-      }
-  }
+        // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
+        const wearablesPage = await fetchWearablesPage({
+            pageNum: 1,
+            pageSize: WEARABLE_CATALOG_PAGE_SIZE,
+            address: "0x0000000000000000000000000000000000000000", // TODO
+            wearableCategory:this.state.activeWearableCategory,
+        });
+
+        this.state.totalPages = Math.ceil(wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE)
+        this.state.loadingPage = false;
+        this.state.shownWearables = wearablesPage.elements;
+    }
+
+
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
     const canvasScaleRatio = getCanvasScaleRatio()
-
     return (
       <UiEntity
         uiTransform={{
@@ -257,10 +244,10 @@ export default class BackpackPage {
                         uiTransform={{padding:20*canvasScaleRatio}} />}
                 </UiEntity>
                 <WearableCatalogGrid
-                    uiTransorm={{
+                    uiTransform={{
                         margin:{top:20*canvasScaleRatio},
                     }}
-                    loading={true}
+                    loading={this.state.loadingPage}
                     wearables={this.state.shownWearables}
                     equippedWearables={store.getState().backpack.wearables}
                 />
