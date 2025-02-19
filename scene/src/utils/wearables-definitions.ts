@@ -58,6 +58,11 @@ type Metrics = {
     bodies: number;
     entities: number;
 };
+export type FileContent = {
+    file: string;
+    hash: string;
+}
+
 
 export type CatalystWearable = {
     id: URN;
@@ -72,6 +77,35 @@ export type CatalystWearable = {
     metrics: Metrics;
 };
 
+export type CatalogWearableEntity = {
+    content: FileContent[]
+    id: string
+    metadata: CatalystWearable
+    pointers: URN[]
+    timestamp: number
+    type:string
+    version:string
+}
+export type WearableIndividualData = {
+    id:URN
+    price:string
+    tokenId:string
+    transferredAt:string
+}
+
+// TODO review rarities ids
+export type WearableRarity = 'base' | 'common' | 'rare' | 'epic' | 'exotic' | 'legendary' | 'unique';
+
+export type CatalogWearableElement = {
+    amount: number
+    category: WearableCategory
+    entity: CatalogWearableEntity
+    individualData:WearableIndividualData[]
+    name:string
+    rarity:WearableRarity
+    type:'on-chain' | 'off-chain' | 'base' // TODO review possible values
+    urn:URN
+}
 export type CatalystWearableMap = {
-    [K in URN]:CatalystWearable
+    [K in URN]: CatalystWearable
 }

@@ -1,9 +1,15 @@
 import type {WearableCategory} from "../service/wearable-categories";
-import type {CatalystWearable, CatalystWearableMap} from "./wearables-definitions";
+import type {CatalogWearableElement, CatalystWearable, CatalystWearableMap} from "./wearables-definitions";
 import type {URN} from "./definitions";
 
-export type WearablesPageResponse = any;
-type WearableCatalogPageParams = {
+export type WearablesPageResponse = {
+    elements:CatalogWearableElement[],
+    pageNum:number,
+    pageSize:number,
+    totalAmount:number
+};
+
+export type WearableCatalogPageParams = {
     pageNum: number
     pageSize: number
     address: string
