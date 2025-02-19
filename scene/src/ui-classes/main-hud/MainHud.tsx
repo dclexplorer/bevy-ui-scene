@@ -119,6 +119,8 @@ export default class MainHud {
     this.chatAndLogs = new ChatsAndLogs(uiController)
     this.friends = new Friends(uiController)
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     setTimeout(() => {
       // TODO remove, only for development
       this.uiController.menu?.show('backpack')
@@ -650,3 +652,4 @@ export default class MainHud {
     )
   }
 }
+

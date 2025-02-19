@@ -1,4 +1,4 @@
-import {UiEntity, UiTransformProps} from "@dcl/sdk/react-ecs";
+import {UiEntity, type UiTransformProps} from "@dcl/sdk/react-ecs";
 import ReactEcs, {type ReactElement} from "@dcl/react-ecs";
 import {type URN} from "../../utils/definitions";
 import {Color4} from "@dcl/sdk/math";
