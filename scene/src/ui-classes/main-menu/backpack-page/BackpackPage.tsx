@@ -66,7 +66,23 @@ export default class BackpackPage {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    const canvasScaleRatio = getCanvasScaleRatio()
+      const canvasScaleRatio = getCanvasScaleRatio()
+
+      const updatePage = async ():Promise<void> => {
+          this.state.loadingPage = true;
+          // TODO improve with throttle and remove disabled prop
+          const wearablesPage = await fetchWearablesPage({
+              pageNum: this.state.currentPage,
+              pageSize: WEARABLE_CATALOG_PAGE_SIZE,
+              address: getPlayer()?.userId ?? "0x0000000000000000000000000000000000000000",
+              wearableCategory: this.state.activeWearableCategory,
+          });
+
+          this.state.totalPages = Math.ceil(wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE)
+          this.state.loadingPage = false;
+          this.state.shownWearables = wearablesPage.elements;
+      }
+
     return (
       <UiEntity
         uiTransform={{
@@ -212,8 +228,11 @@ export default class BackpackPage {
               <WearableCategoryList
                   outfitSetup={this.state.outfitSetup}
                   activeCategory={this.state.activeWearableCategory}
-                  onSelectCategory={(category: WearableCategory | null) =>
+                  onSelectCategory={async (category: WearableCategory | null) =>{
                       (this.state.activeWearableCategory = category)
+                      await updatePage()
+                  }
+
                   }
               />
             {/* CATALOG COLUMN */}
@@ -234,7 +253,11 @@ export default class BackpackPage {
                         icon={{spriteName:"all", atlasName:"backpack"}}
                         text={"ALL"}
                         uiTransform={{padding:40*canvasScaleRatio}}
-                        onClick={() => {this.state.activeWearableCategory = null}}
+                        onClick={() => {
+                            if(this.state.activeWearableCategory === null) return;
+                            this.state.activeWearableCategory = null;
+                            void updatePage();
+                        }}
                     />
                     <Icon
                         iconSize={40 * canvasScaleRatio}
@@ -252,7 +275,10 @@ export default class BackpackPage {
                         : <NavButton
                             active={true}
                             showDeleteButton={true}
-                            onDelete={()=> {this.state.activeWearableCategory = null}}
+                            onDelete={()=> {
+                                this.state.activeWearableCategory = null
+                                void updatePage();
+                            }}
                         icon={{spriteName:this.state.activeWearableCategory, atlasName:"backpack"}}
                         text={WEARABLE_CATEGORY_DEFINITIONS[this.state.activeWearableCategory].label}
                         uiTransform={{padding:20*canvasScaleRatio}} />}
@@ -267,20 +293,9 @@ export default class BackpackPage {
                 />
                 <Pagination
                     disabled={this.state.loadingPage}
-                    onChange={async (page:number)=>{
+                    onChange={(page:number)=>{
                         this.state.currentPage = page;
-                        this.state.loadingPage = true;
-                        // TODO improve with throttle and remove disabled prop
-                        const wearablesPage = await fetchWearablesPage({
-                            pageNum: this.state.currentPage,
-                            pageSize: WEARABLE_CATALOG_PAGE_SIZE,
-                            address: getPlayer()?.userId ?? "0x0000000000000000000000000000000000000000",
-                            wearableCategory:this.state.activeWearableCategory,
-                        });
-
-                        this.state.totalPages = Math.ceil(wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE)
-                        this.state.loadingPage = false;
-                        this.state.shownWearables = wearablesPage.elements;
+                        void updatePage();
                     }}
                     pages={this.state.totalPages} currentPage={this.state.currentPage} />
             </UiEntity>
