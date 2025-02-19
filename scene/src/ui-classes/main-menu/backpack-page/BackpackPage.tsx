@@ -41,6 +41,7 @@ export default class BackpackPage {
   }
 
     async initWearablePage(): Promise<void> {
+      // TODO throttle
         this.state.loadingPage = true;
         const player = getPlayer();
         this.state.equippedWearables = player?.wearables as URN[] ?? [];
@@ -49,8 +50,8 @@ export default class BackpackPage {
 
         // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
         const wearablesPage = await fetchWearablesPage({
-            pageNum: 1,
             pageSize: WEARABLE_CATALOG_PAGE_SIZE,
+            pageNum: this.state.currentPage,
             address: player?.userId ?? "0x0000000000000000000000000000000000000000",
             wearableCategory:this.state.activeWearableCategory,
         });
@@ -264,7 +265,22 @@ export default class BackpackPage {
                     wearables={this.state.shownWearables}
                     equippedWearables={this.state.equippedWearables}
                 />
-                <Pagination onChange={()=>{}} pages={20} currentPage={1} />
+                <Pagination
+                    onChange={async (page:number)=>{
+                        this.state.currentPage = page;
+                        this.state.loadingPage = true;
+                        const wearablesPage = await fetchWearablesPage({
+                            pageNum: this.state.currentPage,
+                            pageSize: WEARABLE_CATALOG_PAGE_SIZE,
+                            address: getPlayer()?.userId ?? "0x0000000000000000000000000000000000000000",
+                            wearableCategory:this.state.activeWearableCategory,
+                        });
+
+                        this.state.totalPages = Math.ceil(wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE)
+                        this.state.loadingPage = false;
+                        this.state.shownWearables = wearablesPage.elements;
+                    }}
+                    pages={this.state.totalPages} currentPage={this.state.currentPage} />
             </UiEntity>
             {/* SELECTED ITEM COLUMN */}
             <UiEntity uiTransform={{
