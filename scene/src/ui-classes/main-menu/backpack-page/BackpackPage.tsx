@@ -90,18 +90,7 @@ export default class BackpackPage {
                     </NavBarLeftSection>
                 </NavBar>
 
-                <UiEntity
-                    uiTransform={{
-                        flexDirection: 'row',
-                        justifyContent: 'flex-start',
-                        alignItems: 'center',
-
-                        width: '100%',
-                        height: 'auto',
-                        flexGrow: 1,
-                        pointerFilter: 'block'
-                    }}
-                >
+                <Body>
                     {/* AVATAR */}
                     <UiEntity
                         uiTransform={{
@@ -120,7 +109,7 @@ export default class BackpackPage {
                         }}
                     ></UiEntity>
 
-                    {/* CONTENT */}
+                    {/* OUTFIT_EDITOR */}
                     <UiEntity
                         uiTransform={{
                             flexDirection: 'row',
@@ -218,7 +207,7 @@ export default class BackpackPage {
                             height: 1400 * canvasScaleRatio,
                         }} uiBackground={{color: Color4.create(0, 0, 1, 0.3)}}></UiEntity>
                     </UiEntity>
-                </UiEntity>
+                </Body>
             </MainContainer>
         )
 
@@ -290,6 +279,21 @@ export default class BackpackPage {
                 }}
                 uiBackground={{
                     color: {...Color4.Blue(), a: 0.0}
+                }}
+            >{children}</UiEntity>
+        }
+
+        function Body({children}: any): ReactElement {
+            return <UiEntity
+                uiTransform={{
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+
+                    width: '100%',
+                    height: 'auto',
+                    flexGrow: 1,
+                    pointerFilter: 'block'
                 }}
             >{children}</UiEntity>
         }
