@@ -8,7 +8,7 @@ import Icon from '../icon/Icon'
 import { type AtlasIcon, type URN } from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import {catalystWearableMap} from "../../utils/promise-utils";
+import {catalystWearableMap} from "../../utils/wearables-promise-utils";
 
 type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps

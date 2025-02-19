@@ -7,7 +7,7 @@ import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../../ser
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
 import Icon from "../../../components/icon/Icon";
 import {WearableCatalogGrid} from "../../../components/backpack/WearableCatalogGrid";
-import {fetchWearablesData, fetchWearablesPage} from "../../../utils/promise-utils";
+import {fetchWearablesData, fetchWearablesPage} from "../../../utils/wearables-promise-utils";
 import { getPlayer } from '@dcl/sdk/src/players'
 import {type URN} from "../../../utils/definitions";
 import type {CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
