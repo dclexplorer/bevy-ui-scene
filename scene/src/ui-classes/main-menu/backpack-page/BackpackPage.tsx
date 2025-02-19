@@ -83,6 +83,12 @@ export default class BackpackPage {
           this.state.shownWearables = wearablesPage.elements;
       }
 
+    const changeCategory = (category:WearableCategory|null):void => {
+        this.state.activeWearableCategory = category
+        this.state.currentPage = 1
+        void updatePage()
+    }
+
     return (
       <UiEntity
         uiTransform={{
@@ -228,12 +234,7 @@ export default class BackpackPage {
               <WearableCategoryList
                   outfitSetup={this.state.outfitSetup}
                   activeCategory={this.state.activeWearableCategory}
-                  onSelectCategory={async (category: WearableCategory | null) =>{
-                      (this.state.activeWearableCategory = category)
-                      await updatePage()
-                  }
-
-                  }
+                  onSelectCategory={changeCategory}
               />
             {/* CATALOG COLUMN */}
             <UiEntity
@@ -255,8 +256,7 @@ export default class BackpackPage {
                         uiTransform={{padding:40*canvasScaleRatio}}
                         onClick={() => {
                             if(this.state.activeWearableCategory === null) return;
-                            this.state.activeWearableCategory = null;
-                            void updatePage();
+                            changeCategory(null)
                         }}
                     />
                     <Icon
@@ -275,10 +275,7 @@ export default class BackpackPage {
                         : <NavButton
                             active={true}
                             showDeleteButton={true}
-                            onDelete={()=> {
-                                this.state.activeWearableCategory = null
-                                void updatePage();
-                            }}
+                            onDelete={()=> { changeCategory(null)}}
                         icon={{spriteName:this.state.activeWearableCategory, atlasName:"backpack"}}
                         text={WEARABLE_CATEGORY_DEFINITIONS[this.state.activeWearableCategory].label}
                         uiTransform={{padding:20*canvasScaleRatio}} />}
