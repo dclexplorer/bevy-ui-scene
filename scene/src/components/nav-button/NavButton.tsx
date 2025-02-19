@@ -4,8 +4,8 @@ import Icon from '../icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { COLOR } from '../color-palette'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-import {ButtonIcon} from "../button-icon";
 import {noop} from "../../utils/function-utils";
+import {type Color4} from "@dcl/sdk/math";
 
 export type NavButtonProps = {
   icon?: AtlasIcon
@@ -15,6 +15,8 @@ export type NavButtonProps = {
   showDeleteButton?: boolean
   onDelete?:()=>void
   onClick?:()=>void
+  backgroundColor?:Color4|null
+  color?:Color4|null
 }
 
 export function NavButton({
@@ -24,7 +26,9 @@ export function NavButton({
   uiTransform,
   showDeleteButton = false,
   onDelete = noop,
-  onClick = noop
+  onClick = noop,
+    backgroundColor = null,
+    color = null
 }: NavButtonProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const callbacks = {
@@ -39,9 +43,9 @@ export function NavButton({
         ...uiTransform
       }}
       uiBackground={{
-        color: active
+        color: backgroundColor ?? (active
           ? COLOR.NAV_BUTTON_ACTIVE_BACKGROUND
-          : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND,
+          : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND),
         textureMode: 'nine-slices',
         texture: {
           src: 'assets/images/backgrounds/rounded.png'
@@ -60,9 +64,9 @@ export function NavButton({
           icon={icon}
           iconSize={24 * canvasScaleRatio * 2}
           iconColor={
-            active
+            color ?? (active
               ? COLOR.NAV_BUTTON_ACTIVE_COLOR
-              : COLOR.NAV_BUTTON_INACTIVE_COLOR
+              : COLOR.NAV_BUTTON_INACTIVE_COLOR)
           }
         />
       ) : null}
@@ -70,9 +74,9 @@ export function NavButton({
         fontSize={16 * canvasScaleRatio * 2}
         value={`<b>${text}</b>`}
         color={
-          active
+          color ?? (active
             ? COLOR.NAV_BUTTON_ACTIVE_COLOR
-            : COLOR.NAV_BUTTON_INACTIVE_COLOR
+            : COLOR.NAV_BUTTON_INACTIVE_COLOR)
         }
       />
       {showDeleteButton ? <UiEntity

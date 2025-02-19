@@ -12,6 +12,7 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import {type URN} from "../../../utils/definitions";
 import type {CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
 import {EMPTY_OUTFIT, getOutfitSetupFromWearables} from "../../../service/outfit";
+import {Pagination} from "../../../components/pagination";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -44,7 +45,7 @@ export default class BackpackPage {
         const player = getPlayer();
         this.state.equippedWearables = player?.wearables as URN[] ?? [];
         const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...this.state.equippedWearables);
-        this.state.outfitSetup.wearables =  getOutfitSetupFromWearables(equippedWearablesData);
+        this.state.outfitSetup.wearables = getOutfitSetupFromWearables(equippedWearablesData);
 
         // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
         const wearablesPage = await fetchWearablesPage({
@@ -263,6 +264,7 @@ export default class BackpackPage {
                     wearables={this.state.shownWearables}
                     equippedWearables={this.state.equippedWearables}
                 />
+                <Pagination onChange={()=>{}} pages={20} currentPage={1} />
             </UiEntity>
             {/* SELECTED ITEM COLUMN */}
             <UiEntity uiTransform={{

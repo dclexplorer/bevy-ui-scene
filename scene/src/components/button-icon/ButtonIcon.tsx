@@ -17,7 +17,7 @@ function ButtonIcon(props: {
   onMouseLeave?: Callback
   onMouseDown?: Callback
   // Shape
-  uiTransform: UiTransformProps
+  uiTransform?: UiTransformProps
   backgroundColor?: Color4
   icon: AtlasIcon
   iconSize?: number
@@ -65,7 +65,7 @@ function ButtonIcon(props: {
     >
       {/* ICON */}
 
-      <Icon icon={props.icon} iconColor={props.iconColor ?? Color4.White()} />
+      <Icon icon={props.icon} iconColor={props.iconColor ?? Color4.White()} iconSize={props.iconSize} />
       <UiEntity
         uiTransform={{
           width: '40%',
