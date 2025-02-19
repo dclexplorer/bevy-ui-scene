@@ -36,7 +36,7 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                 }}
                 uiBackground={{
                     ...( loading ? LOADING_TEXTURE_PROPS : getBackgroundFromAtlas({
-                        spriteName:_.rarity ?? 'base',
+                        spriteName:_?.rarity ?? 'base',
                         atlasName:"backpack"
                     }) )
                 }}

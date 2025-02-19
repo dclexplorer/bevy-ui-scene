@@ -10,10 +10,11 @@ import type {
   PlaceFromApi
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { EMPTY_PHOTO_METADATA } from './constants'
-import type { FormattedURN } from './definitions'
+import type {FormattedURN, URN} from './definitions'
 import { BevyApi } from 'src/bevy-api'
 import type { KernelFetchRespose } from 'src/bevy-api/interface'
 import type {WearableCategory} from "../service/wearable-categories";
+import type {CatalystWearable} from "./wearables-definitions";
 
 type EventsResponse = {
   ok: boolean
@@ -211,7 +212,6 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
       includeBase: true,
       includeOnChain: true
     });
-console.log("wearableCatalogPageURL",wearableCatalogPageURL)
     const wearablesPageResponse:any = await fetch(wearableCatalogPageURL);
 
     return wearablesPageResponse.json();
@@ -236,4 +236,20 @@ console.log("wearableCatalogPageURL",wearableCatalogPageURL)
     return str;
   }
 
+}
+
+export async function fetchWearablesData(...wearableURNs:URN[]):Promise<CatalystWearable[]>{
+  try {
+
+    const baseURL = `https://peer.decentraland.org/lambdas/collections/wearables`;
+    const url = `${baseURL}?${wearableURNs.map((urn:URN) => {
+      const urnWithoutTokenId = urn.includes(":off-chain:") ? urn : urn.replace(/^(.*):[^:]+$/, "$1")
+      return `wearableId=${urnWithoutTokenId}`;
+    }).join('&')}`;
+    const response = await fetch(url);
+    return (await response.json()).wearables;
+  }catch(error) {
+    console.error("fetchWearablesData error", error);
+    return []
+  }
 }

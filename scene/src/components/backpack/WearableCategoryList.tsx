@@ -3,22 +3,22 @@ import { Color4 } from '@dcl/sdk/math'
 import { WearableCategoryButton } from './WearableCategoryButton'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import type { WearableCategory } from '../../service/wearable-categories'
-import { store } from '../../state/store'
-import { type OutfitSetup } from '../../utils/definitions'
+import { type OutfitSetup } from '../../utils/wearables-definitions'
 
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null
+  outfitSetup:OutfitSetup
   // eslint-disable-next-line @typescript-eslint/ban-types
   onSelectCategory: Function
 }
 export function WearableCategoryList({
   activeCategory,
+    outfitSetup,
   onSelectCategory
 }: WearableCategoryListProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const isWearableCategoryActive = (category: WearableCategory): boolean =>
     activeCategory === category
-  const outfitSetup: OutfitSetup = store.getState().backpack.outfitSetup
 
   return (
     <UiEntity>

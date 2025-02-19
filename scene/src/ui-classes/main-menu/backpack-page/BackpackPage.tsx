@@ -7,18 +7,22 @@ import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../../ser
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
 import Icon from "../../../components/icon/Icon";
 import {WearableCatalogGrid} from "../../../components/backpack/WearableCatalogGrid";
-import {store} from "../../../state/store";
-import {fetchWearablesPage} from "../../../utils/promise-utils";
+import {fetchWearablesData, fetchWearablesPage} from "../../../utils/promise-utils";
 import { getPlayer } from '@dcl/sdk/src/players'
+import {type URN} from "../../../utils/definitions";
+import type { CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
+import {EMPTY_OUTFIT, getOutfitSetupFromWearables} from "../../../service/outfit";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
 type BackpackPageState = {
-  activeWearableCategory: WearableCategory | null,
-  currentPage:number,
-    loadingPage:boolean,
-    shownWearables:any[] // TODO remove any type
-    totalPages:number
+    activeWearableCategory: WearableCategory | null,
+    currentPage: number,
+    loadingPage: boolean,
+    shownWearables: any[] // TODO remove any type
+    totalPages: number
+    equippedWearables: URN[]
+    outfitSetup: OutfitSetup
 }
 
 export default class BackpackPage {
@@ -30,12 +34,17 @@ export default class BackpackPage {
     currentPage:1,
     loadingPage:false,
     shownWearables:new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
-    totalPages:0
+    totalPages:0,
+    equippedWearables:getPlayer()?.wearables as URN[],
+    outfitSetup:EMPTY_OUTFIT
   }
 
     async initWearablePage(): Promise<void> {
-        this.state.loadingPage = true;
         const player = getPlayer();
+        this.state.equippedWearables = player?.wearables as URN[] ?? [];
+        const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...this.state.equippedWearables);
+        this.state.outfitSetup.wearables =  getOutfitSetupFromWearables(equippedWearablesData);
+        this.state.loadingPage = true;
         // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
         const wearablesPage = await fetchWearablesPage({
             pageNum: 1,
@@ -197,12 +206,13 @@ export default class BackpackPage {
             }}
           >
             {/* CATEGORY SELECTORS COLUMN */}
-            <WearableCategoryList
-              activeCategory={this.state.activeWearableCategory}
-              onSelectCategory={(category: WearableCategory | null) =>
-                (this.state.activeWearableCategory = category)
-              }
-            />
+              <WearableCategoryList
+                  outfitSetup={this.state.outfitSetup}
+                  activeCategory={this.state.activeWearableCategory}
+                  onSelectCategory={(category: WearableCategory | null) =>
+                      (this.state.activeWearableCategory = category)
+                  }
+              />
             {/* CATALOG COLUMN */}
             <UiEntity
                 uiTransform={{
@@ -250,7 +260,7 @@ export default class BackpackPage {
                     }}
                     loading={this.state.loadingPage}
                     wearables={this.state.shownWearables}
-                    equippedWearables={store.getState().backpack.wearables}
+                    equippedWearables={this.state.equippedWearables}
                 />
             </UiEntity>
             {/* SELECTED ITEM COLUMN */}

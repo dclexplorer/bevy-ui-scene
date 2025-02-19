@@ -17,7 +17,7 @@ export type AtlasData = {
 
 type CollectionName = string;
 type ContractAddress = string;
-type Network = 'eth' | 'polygon' | 'sepolia';
+type Network = 'eth' | 'matic' | 'polygon' | 'sepolia';
 
 // https://github.com/decentraland/urn-resolver
 type URN_VALUE = `decentraland:off-chain:base-avatars:${string}`
@@ -34,28 +34,6 @@ type URN_VALUE = `decentraland:off-chain:base-avatars:${string}`
   | `decentraland:${Network}:collections-thirdparty:${string}:${string}:${string}:${string}:${string}:${string}`
 
 export type URN = `urn:${URN_VALUE}`
-
-export type OutfitSetup = {
-  wearables: {
-    [K in WearableCategory]: URN | null
-  }
-  color: {
-    eyes: number[]
-    skin: number[]
-    hair: number[]
-  }
-}
-
-export type RarityName =
-  | 'base'
-  | 'common'
-  | 'epic'
-  | 'exotic'
-  | 'legendary'
-  | 'mythic'
-  | 'rare'
-  | 'uncommon'
-  | 'unique'
 
 export type Sprite = {
   frame: { x: number; y: number; w: number; h: number }
