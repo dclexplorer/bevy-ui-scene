@@ -266,9 +266,11 @@ export default class BackpackPage {
                     equippedWearables={this.state.equippedWearables}
                 />
                 <Pagination
+                    disabled={this.state.loadingPage}
                     onChange={async (page:number)=>{
                         this.state.currentPage = page;
                         this.state.loadingPage = true;
+                        // TODO improve with throttle and remove disabled prop
                         const wearablesPage = await fetchWearablesPage({
                             pageNum: this.state.currentPage,
                             pageSize: WEARABLE_CATALOG_PAGE_SIZE,
