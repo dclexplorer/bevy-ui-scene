@@ -18,6 +18,9 @@ export type WearableCatalogPageParams = {
     includeOnChain: boolean
 }
 
+// cache
+export const catalystWearableMap:CatalystWearableMap = {};
+
 export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, address}:any):Promise<WearablesPageResponse>{
     try {
         const wearableCatalogPageURL = getWearableCatalogPageURL({
@@ -29,8 +32,11 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
             includeOnChain: true
         });
         const wearablesPageResponse:any = await fetch(wearableCatalogPageURL);
-
-        return wearablesPageResponse.json();
+        const result:WearablesPageResponse =wearablesPageResponse.json();
+        result.elements?.forEach((wearableElement:CatalogWearableElement) => {
+            catalystWearableMap[wearableElement.urn] = wearableElement.entity.metadata;
+        })
+        return result;
     }catch(error) {
         console.error('wearablesPage Error fetching:', error)
         throw error
@@ -54,7 +60,7 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
 
 }
 
-export const catalystWearableMap:CatalystWearableMap = {};
+
 
 export async function fetchWearablesData(...wearableURNs:URN[]):Promise<CatalystWearable[]>{
     if(wearableURNs.every((wearableURN)=>catalystWearableMap[wearableURN])){
