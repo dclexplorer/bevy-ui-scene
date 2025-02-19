@@ -1,4 +1,4 @@
-import type {WearableCategory} from "../service/wearable-categories";
+import {WearableCategory, WearableCategoryURIParam} from "../service/wearable-categories";
 import type {CatalogWearableElement, CatalystWearable, CatalystWearableMap} from "./wearables-definitions";
 import type {URN} from "./definitions";
 
@@ -13,7 +13,7 @@ export type WearableCatalogPageParams = {
     pageNum: number
     pageSize: number
     address: string
-    wearableCategory: WearableCategory | null
+    wearableCategory: WearableCategoryURIParam | null
     includeBase: boolean
     includeOnChain: boolean
 }
@@ -27,12 +27,12 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
             pageNum,
             pageSize,
             address,
-            wearableCategory,
+            wearableCategory:fixBodyCategoryURIParam(wearableCategory),
             includeBase: true,
             includeOnChain: true
         });
         const wearablesPageResponse:any = await fetch(wearableCatalogPageURL);
-        const result:WearablesPageResponse =wearablesPageResponse.json();
+        const result:WearablesPageResponse = wearablesPageResponse.json();
         result.elements?.forEach((wearableElement:CatalogWearableElement) => {
             catalystWearableMap[wearableElement.urn] = wearableElement.entity.metadata;
         })
@@ -41,7 +41,6 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
         console.error('wearablesPage Error fetching:', error)
         throw error
     }
-
 
     function getWearableCatalogPageURL({pageNum, pageSize, address, wearableCategory, includeBase, includeOnChain}:WearableCatalogPageParams):string {
         // TODO use realm BaseURL ?
@@ -58,6 +57,10 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
         return str;
     }
 
+    function fixBodyCategoryURIParam(category:WearableCategory):WearableCategoryURIParam {
+        if(category === "body") return "body_shape"
+        return category;
+    }
 }
 
 
