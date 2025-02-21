@@ -32,7 +32,8 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
             includeOnChain: true
         });
         const wearablesPageResponse:any = await fetch(wearableCatalogPageURL);
-        const result:WearablesPageResponse = wearablesPageResponse.json();
+        const result:WearablesPageResponse = await wearablesPageResponse.json();
+
         result.elements?.forEach((wearableElement:CatalogWearableElement) => {
             catalystWearableMap[wearableElement.urn] = wearableElement.entity.metadata;
         })
@@ -44,7 +45,7 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
 
     function getWearableCatalogPageURL({pageNum, pageSize, address, wearableCategory, includeBase, includeOnChain}:WearableCatalogPageParams):string {
         // TODO use realm BaseURL ?
-        let str:string = `https://peer.decentraland.org/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}`;
+        let str:string = `https://peer.decentraland.org/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`;
         if(wearableCategory !== null){
             str += `&category=${wearableCategory}`
         }
