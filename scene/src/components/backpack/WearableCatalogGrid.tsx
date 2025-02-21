@@ -29,7 +29,7 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
             return <UiEntity
                 key={index}
                 uiTransform={{
-                    display: isEquipped(_, equippedWearables) ? "flex" : "none"
+                    display:isEquipped(_, equippedWearables)?"none":"flex"
                 }}
             >
                 <WearableCell catalystWearable={_} canvasScaleRatio={canvasScaleRatio} equipped={false} loading={loading} />
