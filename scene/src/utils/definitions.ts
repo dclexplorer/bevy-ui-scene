@@ -34,7 +34,7 @@ type URN_VALUE = `decentraland:off-chain:base-avatars:${string}`
   | `decentraland:${Network}:collections-thirdparty:${string}:${string}:${string}:${string}:${string}:${string}`
 
 export type URN = `urn:${URN_VALUE}`
-
+export type URNWithoutTokenId = URN;// TODO improve to specific strings
 export type Sprite = {
   frame: { x: number; y: number; w: number; h: number }
   rotated: false

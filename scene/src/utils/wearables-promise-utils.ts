@@ -1,6 +1,6 @@
-import {WearableCategory, WearableCategoryURIParam} from "../service/wearable-categories";
+import {type WearableCategory, type WearableCategoryURIParam} from "../service/wearable-categories";
 import type {CatalogWearableElement, CatalystWearable, CatalystWearableMap} from "./wearables-definitions";
-import type {URN} from "./definitions";
+import type {URN, URNWithoutTokenId} from "./definitions";
 
 export type WearablesPageResponse = {
     elements:CatalogWearableElement[],
@@ -65,14 +65,14 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
 
 
 
-export async function fetchWearablesData(...wearableURNs:URN[]):Promise<CatalystWearable[]>{
+export async function fetchWearablesData(...wearableURNs:URNWithoutTokenId[]):Promise<CatalystWearable[]>{
     if(wearableURNs.every((wearableURN)=>catalystWearableMap[wearableURN])){
         return wearableURNs.map(wearableURN => (catalystWearableMap[wearableURN]))
     }
     try {
         const baseURL = `https://peer.decentraland.org/lambdas/collections/wearables`;
-        const url = `${baseURL}?${wearableURNs.map((urn:URN) => {
-            const urnWithoutTokenId = getURNWithoutTokenId(urn)
+        const url = `${baseURL}?${wearableURNs.map((urn:URNWithoutTokenId) => {
+            const urnWithoutTokenId = urn
             return `wearableId=${urnWithoutTokenId}`;
         }).join('&')}`;
         const response = await fetch(url);
@@ -89,5 +89,6 @@ export async function fetchWearablesData(...wearableURNs:URN[]):Promise<Catalyst
 
 export function getURNWithoutTokenId(urn:URN):URN{
     // TODO add unit test?
+    // TODO should not break the URN when executed 2 times
     return (urn.includes(":off-chain:") || urn.split(":").length < 6 ? urn : urn.replace(/^(.*):[^:]+$/, "$1")) as URN
 }

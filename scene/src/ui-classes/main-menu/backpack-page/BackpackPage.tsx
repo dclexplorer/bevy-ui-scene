@@ -7,7 +7,7 @@ import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../../ser
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
 import Icon from "../../../components/icon/Icon";
 import {WearableCatalogGrid} from "../../../components/backpack/WearableCatalogGrid";
-import {fetchWearablesData, fetchWearablesPage} from "../../../utils/wearables-promise-utils";
+import {fetchWearablesData, fetchWearablesPage, getURNWithoutTokenId} from "../../../utils/wearables-promise-utils";
 import { getPlayer } from '@dcl/sdk/src/players'
 import {type URN} from "../../../utils/definitions";
 import type {CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
@@ -36,7 +36,7 @@ export default class BackpackPage {
     loadingPage:false,
     shownWearables:new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
     totalPages:0,
-    equippedWearables:getPlayer()?.wearables as URN[],
+    equippedWearables:getPlayer()?.wearables.map(i=> getURNWithoutTokenId(i as URN)) as URN[],
     outfitSetup:EMPTY_OUTFIT
   }
 
@@ -44,7 +44,7 @@ export default class BackpackPage {
       // TODO throttle
         this.state.loadingPage = true;
         const player = getPlayer();
-        this.state.equippedWearables = player?.wearables as URN[] ?? [];
+        this.state.equippedWearables = player?.wearables.map(i=> getURNWithoutTokenId(i as URN)) as URN[]
         const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...this.state.equippedWearables);
         this.state.outfitSetup.wearables = getOutfitSetupFromWearables(equippedWearablesData);
 
