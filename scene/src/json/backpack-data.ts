@@ -344,6 +344,13 @@ export const backpackJson: AtlasData = {
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 120, h: 120 },
       sourceSize: { w: 120, h: 120 }
+    },
+    'selection.png':{
+      frame: { x: 0, y: 1743, w: 160, h: 206 },
+      rotated: false,
+      trimmed: false,
+      spriteSourceSize: { x: 0, y: 0, w: 160, h: 206 },
+      sourceSize: { w: 160, h: 206 }
     }
   },
   meta: {
