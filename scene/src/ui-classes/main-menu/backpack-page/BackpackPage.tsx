@@ -15,8 +15,12 @@ import {
 } from "../../../utils/wearables-promise-utils";
 import { getPlayer } from '@dcl/sdk/src/players'
 import type {URN, URNWithoutTokenId} from "../../../utils/definitions";
-import type {CatalogWearableElement, CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
-import {EMPTY_OUTFIT, getOutfitSetupFromWearables} from "../../../service/outfit";
+import type {
+    CatalogWearableElement,
+    CatalystWearable,
+    OutfitSetup
+} from "../../../utils/wearables-definitions";
+import {EMPTY_OUTFIT, getOutfitSetupFromWearables, getWearablesFromOutfit} from "../../../service/outfit";
 import {Pagination} from "../../../components/pagination";
 import {InfoPanel} from "../../../components/backpack/InfoPanel";
 
@@ -231,12 +235,24 @@ export default class BackpackPage {
                         this.state.selectedURN =selectedURN
                     }}
                     onEquipWearable={(wearable:CatalogWearableElement):void=>{
-                        // TODO
-                        console.log("on Equip wearable", wearable)
+                        this.state.outfitSetup = {
+                            ...this.state.outfitSetup,
+                            wearables:{
+                                ...this.state.outfitSetup.wearables,
+                                [wearable.category]:wearable.urn
+                            }
+                        }
+                        this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
                     }}
                     onUnequipWearable={(wearable:CatalogWearableElement):void=>{
-                        // TODO
-                        console.log("on Unequi Wearable", wearable)
+                        this.state.outfitSetup = {
+                            ...this.state.outfitSetup,
+                            wearables:{
+                                ...this.state.outfitSetup.wearables,
+                                [wearable.category]:null
+                            }
+                        }
+                        this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
                     }}
                 />
                 <Pagination
