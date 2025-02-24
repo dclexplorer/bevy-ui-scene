@@ -47,14 +47,28 @@ export function InfoPanel({canvasScaleRatio, wearable}: InfoPanelProps): ReactEl
                 <UiEntity uiTransform={{
                     flexDirection: "row",
                     margin: {top: 80 * canvasScaleRatio},
+                    maxWidth: canvasScaleRatio * 500,
+                    alignItems: "flex-start",
+                    alignContent: "flex-start",
+                    justifyContent:"flex-start",
                 }}>
-                    <Icon icon={{
+                    <Icon
+                        uiTransform={{
+                            alignSelf: "flex-start",
+                            justifyContent: "flex-start",
+                            margin: { top: 20 * canvasScaleRatio }
+                        }}
+                        icon={{
                         spriteName: 'Wearables',
                         atlasName: 'icons'
-                    }} iconSize={35 * canvasScaleRatio} uiTransform={{
-                        alignSelf: "center",
-                    }}/>
-                    <Label value={`<b>${wearable?.name}</b>`} fontSize={35 * canvasScaleRatio}/>
+                    }} iconSize={35 * canvasScaleRatio} />
+                    <UiEntity  uiTransform={{
+                        alignSelf:"flex-start",
+                    }}  uiText={{
+                        value:`<b>${wearable?.name}</b>`,
+                        fontSize:35 * canvasScaleRatio,
+                        textWrap:"wrap", textAlign:"top-left"
+                    }} />
                 </UiEntity>
                 { /* rarity tag // TODO create component <Tag /> */}
                 <UiEntity
@@ -82,7 +96,7 @@ export function InfoPanel({canvasScaleRatio, wearable}: InfoPanelProps): ReactEl
                         },
                         color:rarityColor
                     }}>
-                        <Label value={`LEGENDARY`} fontSize={26 * canvasScaleRatio}/>
+                        <Label value={wearable?.rarity?.toUpperCase()??""} fontSize={26 * canvasScaleRatio}/>
                     </UiEntity>
 
                 </UiEntity>
