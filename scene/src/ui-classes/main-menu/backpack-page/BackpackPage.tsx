@@ -7,7 +7,12 @@ import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../../ser
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
 import Icon from "../../../components/icon/Icon";
 import {WearableCatalogGrid} from "../../../components/backpack/WearableCatalogGrid";
-import {fetchWearablesData, fetchWearablesPage, getURNWithoutTokenId} from "../../../utils/wearables-promise-utils";
+import {
+    catalystWearableMap,
+    fetchWearablesData,
+    fetchWearablesPage,
+    getURNWithoutTokenId
+} from "../../../utils/wearables-promise-utils";
 import { getPlayer } from '@dcl/sdk/src/players'
 import type {URN, URNWithoutTokenId} from "../../../utils/definitions";
 import type {CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
@@ -236,13 +241,15 @@ export default class BackpackPage {
             {/* SELECTED ITEM COLUMN */}
             <UiEntity uiTransform={{
                 margin:{left: 40 * canvasScaleRatio },
-                width:  (1400 * canvasScaleRatio) * 0.4266,
+                width:  600 * canvasScaleRatio,
                 height: 1400 * canvasScaleRatio,
             }}
                       uiBackground={{
                           ...getBackgroundFromAtlas({
                               atlasName:"info-panel",
-                              spriteName:"base"
+                              spriteName:this.state.selectedURN===null
+                                  ? 'empty'
+                                  : (catalystWearableMap[this.state.selectedURN].rarity !== undefined) ? catalystWearableMap[this.state.selectedURN].rarity : 'base'
                           })
 
             }}

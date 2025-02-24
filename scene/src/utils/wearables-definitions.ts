@@ -1,5 +1,5 @@
 import type {WearableCategory} from "../service/wearable-categories";
-import {type URN} from "./definitions";
+import type { URN, URNWithoutTokenId} from "./definitions";
 
 export type OutfitSetupWearables = {
     [K in WearableCategory]: URN | null
@@ -107,5 +107,5 @@ export type CatalogWearableElement = {
     urn:URN
 }
 export type CatalystWearableMap = {
-    [K in URN]: CatalystWearable
+    [K in URNWithoutTokenId]: CatalystWearable
 }
