@@ -9,10 +9,11 @@ import Icon from "../../../components/icon/Icon";
 import {WearableCatalogGrid} from "../../../components/backpack/WearableCatalogGrid";
 import {fetchWearablesData, fetchWearablesPage, getURNWithoutTokenId} from "../../../utils/wearables-promise-utils";
 import { getPlayer } from '@dcl/sdk/src/players'
-import {type URN} from "../../../utils/definitions";
+import type {URN, URNWithoutTokenId} from "../../../utils/definitions";
 import type {CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
 import {EMPTY_OUTFIT, getOutfitSetupFromWearables} from "../../../service/outfit";
 import {Pagination} from "../../../components/pagination";
+import {getBackgroundFromAtlas} from "../../../utils/ui-utils";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -22,8 +23,9 @@ type BackpackPageState = {
     loadingPage: boolean,
     shownWearables: any[] // TODO remove any type
     totalPages: number
-    equippedWearables: URN[]
-    outfitSetup: OutfitSetup
+    equippedWearables: URNWithoutTokenId[]
+    outfitSetup: OutfitSetup,
+    selectedURN:URNWithoutTokenId|null
 }
 
 export default class BackpackPage {
@@ -37,7 +39,8 @@ export default class BackpackPage {
     shownWearables:new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
     totalPages:0,
     equippedWearables:getPlayer()?.wearables.map(i=> getURNWithoutTokenId(i as URN)) as URN[],
-    outfitSetup:EMPTY_OUTFIT
+    outfitSetup:EMPTY_OUTFIT,
+  selectedURN:null
   }
 
     async initWearablePage(): Promise<void> {
@@ -218,6 +221,9 @@ export default class BackpackPage {
                     loading={this.state.loadingPage}
                     wearables={this.state.shownWearables}
                     equippedWearables={this.state.equippedWearables}
+                    onChangeSelection={(selectedURN)=>{
+                        this.state.selectedURN =selectedURN
+                    }}
                 />
                 <Pagination
                     disabled={this.state.loadingPage}
@@ -230,9 +236,17 @@ export default class BackpackPage {
             {/* SELECTED ITEM COLUMN */}
             <UiEntity uiTransform={{
                 margin:{left: 40 * canvasScaleRatio },
-                width: 560 * canvasScaleRatio,
+                width:  (1400 * canvasScaleRatio) * 0.4266,
                 height: 1400 * canvasScaleRatio,
-            }} uiBackground={{color:Color4.create(0,0,1,0.3)}}></UiEntity>
+            }}
+                      uiBackground={{
+                          ...getBackgroundFromAtlas({
+                              atlasName:"info-panel",
+                              spriteName:"base"
+                          })
+
+            }}
+            ></UiEntity>
           </UiEntity>
         </Content>
       </MainContent>

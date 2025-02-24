@@ -2,6 +2,7 @@
   "compilerOptions": {
     "jsx": "react",
     "allowJs": true,
+    "resolveJsonModule": true,
     "strict": true,
     "baseUrl": "."
   },

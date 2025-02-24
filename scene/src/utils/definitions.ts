@@ -1,5 +1,4 @@
 import { InputAction } from '@dcl/sdk/ecs'
-import { type WearableCategory } from '../service/wearable-categories'
 
 export type SpriteFromAtlas = {
   sprite: string
@@ -110,6 +109,7 @@ export type Atlas =
   | 'toggles'
   | 'voice-chat'
   | 'social'
+  | 'info-panel'
 
 export type FormattedURN = {
   version: string
