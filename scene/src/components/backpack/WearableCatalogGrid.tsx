@@ -1,4 +1,4 @@
-import {UiEntity, type UiTransformProps} from "@dcl/sdk/react-ecs";
+import {Label, UiEntity, type UiTransformProps} from "@dcl/sdk/react-ecs";
 import ReactEcs, {type ReactElement} from "@dcl/react-ecs";
 import {type URN, type URNWithoutTokenId} from "../../utils/definitions";
 import {Color4} from "@dcl/sdk/math";
@@ -78,11 +78,11 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                     }
                 }
             >
-                {state.selectedWearableURN !== _?.urn ? <WearableCell catalystWearable={_} canvasScaleRatio={canvasScaleRatio} loading={loading} /> : null}
+                {state.selectedWearableURN !== _?.urn ? <WearableCellThumbnail catalystWearable={_} canvasScaleRatio={canvasScaleRatio} loading={loading} /> : null}
                 { state.selectedWearableURN === _?.urn
                     ? <UiEntity uiTransform={{
                         width:canvasScaleRatio * 220,
-                        height:canvasScaleRatio * 340,
+                        height:canvasScaleRatio * 300,
                         positionType: "absolute",
                         position:{
                             top:-6*canvasScaleRatio,
@@ -97,7 +97,17 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                         pointerFilter:'none'
                     }}
                                 uiBackground={SELECTED_BACKGROUND} >
-                        <WearableCell catalystWearable={_} canvasScaleRatio={canvasScaleRatio} loading={loading} />
+                        <WearableCellThumbnail catalystWearable={_} canvasScaleRatio={canvasScaleRatio} loading={loading} />
+                        <RoundedButton
+                            uiTransform={{
+                                margin:{top:10*canvasScaleRatio},
+                                width:180*canvasScaleRatio,
+                                height:60*canvasScaleRatio
+                            }}
+                            fontSize={26*canvasScaleRatio}
+                            text={isEquipped(_, equippedWearables)?"UNEQUIP":"EQUIP"}
+                            isSecondary={isEquipped(_, equippedWearables)}
+                            />
                     </UiEntity>
                     : null}
             </UiEntity>;
@@ -122,8 +132,40 @@ export type WearableCellProps = {
     loading:boolean,
     catalystWearable:CatalogWearableElement
 }
+type RoundedButtonProps = {
+    uiTransform?:UiTransformProps,
+    isSecondary?:boolean,
+    onClick?:()=>void,
+    text:string,
+    fontSize?:number
+}
+function RoundedButton({isSecondary, text, onClick = noop, uiTransform, fontSize = 20}:RoundedButtonProps):ReactElement{
+    return <UiEntity
+        uiTransform={{
+            pointerFilter: "block",
+            flexDirection: "row",
+            alignItems: 'center',
+            justifyContent: 'center',
+            ...uiTransform
+        }}
+        onMouseDown={()=>{onClick()}} uiBackground={{
+        textureMode: 'nine-slices',
+        texture: {
+            src: 'assets/images/backgrounds/rounded.png'
+        },
+        textureSlices: {
+            top: 0.5,
+            bottom: 0.5,
+            left: 0.5,
+            right: 0.5
+        },
+        color:(isSecondary === true)?Color4.Black(): Color4.Red()
+    }}>
+        <Label value={text} fontSize={fontSize}/>
+    </UiEntity>
+}
 
-function WearableCell({canvasScaleRatio, loading, catalystWearable}:WearableCellProps):ReactElement{
+function WearableCellThumbnail({canvasScaleRatio, loading, catalystWearable}:WearableCellProps):ReactElement{
     return <UiEntity
         uiTransform={{
             width:canvasScaleRatio * 180,
