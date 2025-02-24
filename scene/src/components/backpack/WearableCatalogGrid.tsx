@@ -72,8 +72,7 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                 }:{})}
                 onMouseDown={
                     ()=>{
-                        if(isSelected(_.urn)) return;
-                        select(_.urn);
+                        select(isSelected(_.urn) ? null : _.urn);
                         onChangeSelection(state.selectedWearableURN)
                     }
                 }
@@ -118,7 +117,7 @@ function isSelected(wearableURN:URNWithoutTokenId):boolean{
     return state.selectedWearableURN === wearableURN;
 }
 
-function select(wearableURNWithoutTokenId:URNWithoutTokenId):void {
+function select(wearableURNWithoutTokenId: null | URNWithoutTokenId):void {
     state.selectedWearableURN = wearableURNWithoutTokenId;
 }
 
