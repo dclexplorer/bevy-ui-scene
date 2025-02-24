@@ -6,20 +6,40 @@ import {getCanvasScaleRatio} from "../../service/canvas-ratio";
 import {getBackgroundFromAtlas} from "../../utils/ui-utils";
 import type {CatalogWearableElement} from "../../utils/wearables-definitions";
 import {COLOR} from "../color-palette";
+import {noop} from "../../utils/function-utils";
 // TODO import {WearableData} from "../../ui-classes/photos/Photos.types";
+// TODO when  loading, don't let change any filter : category
+
 export type WearableCatalogGridProps = {
-    wearables: any[] // TODO review what is the definition we will use
+    wearables: CatalogWearableElement[] // TODO review what is the definition we will use
     equippedWearables: URNWithoutTokenId[],
     uiTransform:UiTransformProps,
-    loading: boolean
+    loading: boolean,
+    onChangeSelection?: (wearableURN:URNWithoutTokenId|null)=>void
 }
+
+type WearableCatalogGridState = {
+    selectedWearableURN:URNWithoutTokenId|null
+}
+
 const LOADING_TEXTURE_PROPS = getBackgroundFromAtlas({
     atlasName:"backpack",
     spriteName: "loading-wearable"
 })
 
-export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, loading}: WearableCatalogGridProps): ReactElement {
+const state:WearableCatalogGridState = {
+    selectedWearableURN:null
+}
+
+const SELECTED_BACKGROUND = {
+    ...getBackgroundFromAtlas({
+        atlasName:"backpack", spriteName:"selection"
+    })
+}
+
+export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, loading, onChangeSelection = noop}: WearableCatalogGridProps): ReactElement {
     const canvasScaleRatio = getCanvasScaleRatio();
+
     return <UiEntity uiTransform={{
         padding: 10 * canvasScaleRatio,
         width: 840 * canvasScaleRatio,
@@ -33,9 +53,10 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                     height:180 * canvasScaleRatio,
                     padding: 8 * canvasScaleRatio,
                     margin: 10 * canvasScaleRatio,
-                }}
+                }
+                }
                 key={index}
-                uiBackground={(!loading && isEquipped(_,equippedWearables))?{
+                uiBackground={((!loading && isEquipped(_,equippedWearables) && !isSelected(_?.urn))?{
                     textureMode:"nine-slices",
                     texture: {
                         // TODO improve image border
@@ -48,30 +69,65 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                         right: 0.5
                     },
                     color:COLOR.ACTIVE_BACKGROUND_COLOR
-                }:undefined}
+                }:{})}
+                onMouseDown={
+                    ()=>{
+                        if(isSelected(_.urn)) return;
+                        select(_.urn);
+                        onChangeSelection(state.selectedWearableURN)
+                    }
+                }
             >
-                <WearableCell catalystWearable={_} canvasScaleRatio={canvasScaleRatio} equipped={false} loading={loading} />
+                {state.selectedWearableURN !== _?.urn ? <WearableCell catalystWearable={_} canvasScaleRatio={canvasScaleRatio} loading={loading} /> : null}
+                { state.selectedWearableURN === _?.urn
+                    ? <UiEntity uiTransform={{
+                        width:canvasScaleRatio * 220,
+                        height:canvasScaleRatio * 340,
+                        positionType: "absolute",
+                        position:{
+                            top:-6*canvasScaleRatio,
+                            left:-16*canvasScaleRatio
+                        },
+                        padding:{
+                            top:24*canvasScaleRatio,
+                            left:16*canvasScaleRatio
+                        },
+                        zIndex:2,
+                        flexDirection:"column",
+                        pointerFilter:'none'
+                    }}
+                                uiBackground={SELECTED_BACKGROUND} >
+                        <WearableCell catalystWearable={_} canvasScaleRatio={canvasScaleRatio} loading={loading} />
+                    </UiEntity>
+                    : null}
             </UiEntity>;
         })}</UiEntity>
 }
 
-function isEquipped(wearable:CatalogWearableElement, equippedWearables:URN[]):Boolean {
+function isSelected(wearableURN:URNWithoutTokenId):boolean{
+    return state.selectedWearableURN === wearableURN;
+}
+
+function select(wearableURNWithoutTokenId:URNWithoutTokenId):void {
+    state.selectedWearableURN = wearableURNWithoutTokenId;
+}
+
+function isEquipped(wearable:CatalogWearableElement, equippedWearables:URN[]):boolean {
     if(wearable === null) return false;
     return equippedWearables.includes(wearable.urn);
 }
 
 export type WearableCellProps = {
-    equipped:boolean,
     canvasScaleRatio:number,
     loading:boolean,
     catalystWearable:CatalogWearableElement
 }
 
-function WearableCell({equipped, canvasScaleRatio, loading, catalystWearable}:WearableCellProps):ReactElement{
+function WearableCell({canvasScaleRatio, loading, catalystWearable}:WearableCellProps):ReactElement{
     return <UiEntity
         uiTransform={{
-            width:"100%",
-            height:"100%",
+            width:canvasScaleRatio * 180,
+            height:canvasScaleRatio * 180,
         }}
         uiBackground={{
             ...( loading ? LOADING_TEXTURE_PROPS : getBackgroundFromAtlas({
