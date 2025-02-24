@@ -63,7 +63,7 @@ export type FileContent = {
     hash: string;
 }
 
-
+// TODO refactor: maybe rename it to WearableEntity ?
 export type CatalystWearable = {
     id: URN;
     name: string;

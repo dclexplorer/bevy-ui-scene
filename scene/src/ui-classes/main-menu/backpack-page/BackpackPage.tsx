@@ -15,7 +15,7 @@ import {
 } from "../../../utils/wearables-promise-utils";
 import { getPlayer } from '@dcl/sdk/src/players'
 import type {URN, URNWithoutTokenId} from "../../../utils/definitions";
-import type {CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
+import type {CatalogWearableElement, CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
 import {EMPTY_OUTFIT, getOutfitSetupFromWearables} from "../../../service/outfit";
 import {Pagination} from "../../../components/pagination";
 import {InfoPanel} from "../../../components/backpack/InfoPanel";
@@ -47,7 +47,7 @@ export default class BackpackPage {
     outfitSetup:EMPTY_OUTFIT,
       selectedURN:"urn:decentraland:matic:collections-v2:0x12cbb53b824b8249af0babebccdb8daf6437bfa0:0" as URNWithoutTokenId
   }
-  
+
 
     async initWearablePage(): Promise<void> {
       // TODO throttle
@@ -227,8 +227,16 @@ export default class BackpackPage {
                     loading={this.state.loadingPage}
                     wearables={this.state.shownWearables}
                     equippedWearables={this.state.equippedWearables}
-                    onChangeSelection={(selectedURN)=>{
+                    onChangeSelection={(selectedURN:URNWithoutTokenId|null):void=>{
                         this.state.selectedURN =selectedURN
+                    }}
+                    onEquipWearable={(wearable:CatalogWearableElement):void=>{
+                        // TODO
+                        console.log("on Equip wearable", wearable)
+                    }}
+                    onUnequipWearable={(wearable:CatalogWearableElement):void=>{
+                        // TODO
+                        console.log("on Unequi Wearable", wearable)
                     }}
                 />
                 <Pagination

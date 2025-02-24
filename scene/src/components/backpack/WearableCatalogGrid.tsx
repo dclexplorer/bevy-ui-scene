@@ -16,6 +16,8 @@ export type WearableCatalogGridProps = {
     uiTransform:UiTransformProps,
     loading: boolean,
     onChangeSelection?: (wearableURN:URNWithoutTokenId|null)=>void
+    onEquipWearable:(wearable:CatalogWearableElement)=>void
+    onUnequipWearable:(wearable:CatalogWearableElement)=>void
 }
 
 type WearableCatalogGridState = {
@@ -37,7 +39,7 @@ const SELECTED_BACKGROUND = {
     })
 }
 
-export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, loading, onChangeSelection = noop}: WearableCatalogGridProps): ReactElement {
+export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, loading, onChangeSelection = noop, onEquipWearable = noop, onUnequipWearable = noop}: WearableCatalogGridProps): ReactElement {
     const canvasScaleRatio = getCanvasScaleRatio();
 
     return <UiEntity uiTransform={{
@@ -106,7 +108,14 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                             fontSize={26*canvasScaleRatio}
                             text={isEquipped(_, equippedWearables)?"UNEQUIP":"EQUIP"}
                             isSecondary={isEquipped(_, equippedWearables)}
-                            />
+                            onClick={()=>{
+                                if(isEquipped(_, equippedWearables)) {
+                                    onUnequipWearable(_);
+                                }else {
+                                    onEquipWearable(_);
+                                }
+                            }}
+                        />
                     </UiEntity>
                     : null}
             </UiEntity>;
