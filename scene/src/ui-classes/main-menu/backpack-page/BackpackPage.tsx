@@ -18,7 +18,7 @@ import type {URN, URNWithoutTokenId} from "../../../utils/definitions";
 import type {CatalystWearable, OutfitSetup} from "../../../utils/wearables-definitions";
 import {EMPTY_OUTFIT, getOutfitSetupFromWearables} from "../../../service/outfit";
 import {Pagination} from "../../../components/pagination";
-import {getBackgroundFromAtlas} from "../../../utils/ui-utils";
+import {InfoPanel} from "../../../components/backpack/InfoPanel";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -45,8 +45,9 @@ export default class BackpackPage {
     totalPages:0,
     equippedWearables:getPlayer()?.wearables.map(i=> getURNWithoutTokenId(i as URN)) as URN[],
     outfitSetup:EMPTY_OUTFIT,
-  selectedURN:null
+      selectedURN:"urn:decentraland:matic:collections-v2:0x12cbb53b824b8249af0babebccdb8daf6437bfa0:0" as URNWithoutTokenId
   }
+  
 
     async initWearablePage(): Promise<void> {
       // TODO throttle
@@ -239,21 +240,10 @@ export default class BackpackPage {
                     pages={this.state.totalPages} currentPage={this.state.currentPage} />
             </UiEntity>
             {/* SELECTED ITEM COLUMN */}
-            <UiEntity uiTransform={{
-                margin:{left: 40 * canvasScaleRatio },
-                width:  600 * canvasScaleRatio,
-                height: 1400 * canvasScaleRatio,
-            }}
-                      uiBackground={{
-                          ...getBackgroundFromAtlas({
-                              atlasName:"info-panel",
-                              spriteName:this.state.selectedURN===null
-                                  ? 'empty'
-                                  : (catalystWearableMap[this.state.selectedURN].rarity !== undefined) ? catalystWearableMap[this.state.selectedURN].rarity : 'base'
-                          })
-
-            }}
-            ></UiEntity>
+            <InfoPanel canvasScaleRatio={canvasScaleRatio} wearable={
+                this.state.selectedURN === null
+                    ? null
+                    : catalystWearableMap[this.state.selectedURN]} />
           </UiEntity>
         </Content>
       </MainContent>
