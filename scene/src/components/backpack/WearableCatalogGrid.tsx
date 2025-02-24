@@ -80,7 +80,7 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                 }
             >
                 {state.selectedWearableURN !== _?.urn ? <WearableCellThumbnail catalystWearable={_} canvasScaleRatio={canvasScaleRatio} loading={loading} /> : null}
-                { state.selectedWearableURN === _?.urn
+                { state.selectedWearableURN === _?.urn && !loading
                     ? <UiEntity uiTransform={{
                         width:canvasScaleRatio * 220,
                         height:canvasScaleRatio * 300,
