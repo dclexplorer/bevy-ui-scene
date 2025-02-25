@@ -61,7 +61,7 @@ export const EMPTY_OUTFIT: OutfitSetup = {
     }
 }
 
-export function getOutfitSetupFromWearables(equippedWearables:URN[], catalystWearables: CatalystWearable[]): OutfitSetupWearables {
+export function getOutfitSetupFromWearables(equippedWearables:URN[] = [], catalystWearables: CatalystWearable[]): OutfitSetupWearables {
     // TODO unit test candidate
     return catalystWearables.reduce((acc: OutfitSetupWearables, catalystWearable: CatalystWearable) => {
         acc[catalystWearable.data.category] = equippedWearables.find(e=> getURNWithoutTokenId(e) === catalystWearable.id) as URN;

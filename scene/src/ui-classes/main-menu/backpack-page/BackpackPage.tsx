@@ -58,7 +58,7 @@ export default class BackpackPage {
         this.state.loadingPage = true;
         const player = getPlayer();
         this.state.equippedWearables = player?.wearables as URN[]
-        const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...this.state.equippedWearables.map(i=> getURNWithoutTokenId(i) as URNWithoutTokenId));
+        const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...(this.state.equippedWearables??[]).map(i=> getURNWithoutTokenId(i) as URNWithoutTokenId));
         this.state.outfitSetup.wearables = getOutfitSetupFromWearables(this.state.equippedWearables, equippedWearablesData);
 
         // TODO use cache for pages/category? but clean cache when backpack is hidden/shown

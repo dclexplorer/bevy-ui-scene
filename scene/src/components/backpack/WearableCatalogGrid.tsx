@@ -139,7 +139,7 @@ const isEquippedMemo:{
     memo:{}
 };
 
-function isEquipped(wearable:CatalogWearableElement, equippedWearables:URN[]):boolean {
+function isEquipped(wearable:CatalogWearableElement, equippedWearables:URN[] = []):boolean {
     if(wearable === null) return false;
     if(equippedWearables !== isEquippedMemo.equippedWearables){
         isEquippedMemo.equippedWearables = equippedWearables;
