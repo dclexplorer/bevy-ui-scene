@@ -4,6 +4,7 @@ import { WearableCategoryButton } from './WearableCategoryButton'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import type { WearableCategory } from '../../service/wearable-categories'
 import { type OutfitSetup } from '../../utils/wearables-definitions'
+import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
 
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null
@@ -33,7 +34,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'body' ? null : 'body')
           }
-          selectedURN={outfitSetup.wearables.body}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.body)}
         />
         <WearableCategoryButton
           category={'eyebrows'}
@@ -41,7 +42,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'eyebrows' ? null : 'eyebrows')
           }
-          selectedURN={outfitSetup.wearables.eyebrows}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.eyebrows)}
         />
         <WearableCategoryButton
           category={'mouth'}
@@ -49,7 +50,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'mouth' ? null : 'mouth')
           }
-          selectedURN={outfitSetup.wearables.mouth}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.mouth)}
         />
         <WearableCategoryButton
           category={'upper_body'}
@@ -59,7 +60,7 @@ export function WearableCategoryList({
               activeCategory === 'upper_body' ? null : 'upper_body'
             )
           }
-          selectedURN={outfitSetup.wearables.upper_body}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.upper_body)}
         />
         <WearableCategoryButton
           category={'lower_body'}
@@ -69,7 +70,7 @@ export function WearableCategoryList({
               activeCategory === 'lower_body' ? null : 'lower_body'
             )
           }
-          selectedURN={outfitSetup.wearables.lower_body}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.lower_body)}
         />
         <WearableCategoryButton
           category={'hat'}
@@ -77,7 +78,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'hat' ? null : 'hat')
           }
-          selectedURN={outfitSetup.wearables.hat}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.hat)}
         />
         <WearableCategoryButton
           category={'earring'}
@@ -85,7 +86,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'earring' ? null : 'earring')
           }
-          selectedURN={outfitSetup.wearables.earring}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.earring)}
         />
         <WearableCategoryButton
           category={'tiara'}
@@ -93,7 +94,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'tiara' ? null : 'tiara')
           }
-          selectedURN={outfitSetup.wearables.tiara}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.tiara)}
         />
         <WearableCategoryButton
           category={'helmet'}
@@ -101,7 +102,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'helmet' ? null : 'helmet')
           }
-          selectedURN={outfitSetup.wearables.helmet}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.helmet)}
         />
       </UiEntity>
       <UiEntity
@@ -119,7 +120,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'hair' ? null : 'hair')
           }
-          selectedURN={outfitSetup.wearables.hair}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.hair)}
         />
         <WearableCategoryButton
           category={'eyes'}
@@ -127,7 +128,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'eyes' ? null : 'eyes')
           }
-          selectedURN={outfitSetup.wearables.eyes}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.eyes)}
         />
         <WearableCategoryButton
           category={'facial_hair'}
@@ -137,7 +138,7 @@ export function WearableCategoryList({
               activeCategory === 'facial_hair' ? null : 'facial_hair'
             )
           }
-          selectedURN={outfitSetup.wearables.facial_hair}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.facial_hair)}
         />
         <WearableCategoryButton
           category={'hands_wear'}
@@ -147,7 +148,7 @@ export function WearableCategoryList({
               activeCategory === 'hands_wear' ? null : 'hands_wear'
             )
           }
-          selectedURN={outfitSetup.wearables.hands_wear}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.hands_wear)}
         />
         <WearableCategoryButton
           category={'feet'}
@@ -155,7 +156,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'feet' ? null : 'feet')
           }
-          selectedURN={outfitSetup.wearables.feet}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.feet)}
         />
         <WearableCategoryButton
           category={'eyewear'}
@@ -163,7 +164,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'eyewear' ? null : 'eyewear')
           }
-          selectedURN={outfitSetup.wearables.eyewear}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.eyewear)}
         />
         <WearableCategoryButton
           category={'mask'}
@@ -171,7 +172,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'mask' ? null : 'mask')
           }
-          selectedURN={outfitSetup.wearables.mask}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.mask)}
         />
         <WearableCategoryButton
           category={'top_head'}
@@ -179,7 +180,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'top_head' ? null : 'top_head')
           }
-          selectedURN={outfitSetup.wearables.top_head}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.top_head)}
         />
         <WearableCategoryButton
           category={'skin'}
@@ -187,7 +188,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'skin' ? null : 'skin')
           }
-          selectedURN={outfitSetup.wearables.skin}
+          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.skin)}
         />
       </UiEntity>
     </UiEntity>

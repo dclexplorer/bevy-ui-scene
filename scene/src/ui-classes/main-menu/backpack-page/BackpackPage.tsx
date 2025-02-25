@@ -33,7 +33,7 @@ type BackpackPageState = {
     loadingPage: boolean,
     shownWearables: any[] // TODO remove any type
     totalPages: number
-    equippedWearables: URNWithoutTokenId[]
+    equippedWearables: URN[]
     outfitSetup: OutfitSetup,
     selectedURN:URNWithoutTokenId|null
 }
@@ -48,19 +48,18 @@ export default class BackpackPage {
     loadingPage:false,
     shownWearables:new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
     totalPages:0,
-    equippedWearables:getPlayer()?.wearables.map(i=> getURNWithoutTokenId(i as URN)) as URN[],
+    equippedWearables:getPlayer()?.wearables as URN[],
     outfitSetup:EMPTY_OUTFIT,
-      selectedURN:"urn:decentraland:matic:collections-v2:0x12cbb53b824b8249af0babebccdb8daf6437bfa0:0" as URNWithoutTokenId
+      selectedURN:null
   }
-
 
     async initWearablePage(): Promise<void> {
       // TODO throttle
         this.state.loadingPage = true;
         const player = getPlayer();
-        this.state.equippedWearables = player?.wearables.map(i=> getURNWithoutTokenId(i as URN)) as URN[]
-        const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...this.state.equippedWearables);
-        this.state.outfitSetup.wearables = getOutfitSetupFromWearables(equippedWearablesData);
+        this.state.equippedWearables = player?.wearables as URN[]
+        const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...this.state.equippedWearables.map(i=> getURNWithoutTokenId(i) as URNWithoutTokenId));
+        this.state.outfitSetup.wearables = getOutfitSetupFromWearables(this.state.equippedWearables, equippedWearablesData);
 
         // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
         const wearablesPage = await fetchWearablesPage({
@@ -85,7 +84,13 @@ export default class BackpackPage {
             }
         }
         this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
-        await BevyApi.setAvatar({ equip: {wearableUrns:this.state.equippedWearables, emoteUrns:[]} }) // TODO load emote URNS from profile
+        console.log("this.state.equippedWearables",this.state.equippedWearables);
+
+        try {
+            await BevyApi.setAvatar({ equip: {wearableUrns:this.state.equippedWearables, emoteUrns:[]} }) // TODO load emote URNS from profile
+        }catch (error){
+            console.log("setAvatar error",error)
+        }
     }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -249,7 +254,7 @@ export default class BackpackPage {
                     }}
 
                     onEquipWearable={async (wearable:CatalogWearableElement):Promise<void>=>{
-                        await this.updateEquippedWearable(wearable.category, wearable.urn);
+                        await this.updateEquippedWearable(wearable.category, wearable.individualData[0].id);
                     }}
 
                     onUnequipWearable={async(wearable:CatalogWearableElement):Promise<void>=>{

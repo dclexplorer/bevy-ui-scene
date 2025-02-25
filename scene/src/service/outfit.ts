@@ -1,6 +1,7 @@
 import type {URN, URNWithoutTokenId} from '../utils/definitions'
 import type {CatalystWearable, OutfitSetup, OutfitSetupWearables} from "../utils/wearables-definitions";
 import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from "./wearable-categories";
+import {getURNWithoutTokenId} from "../utils/wearables-promise-utils";
 
 export function getDefaultOutfitSetup(): OutfitSetup {
     return {
@@ -60,10 +61,10 @@ export const EMPTY_OUTFIT: OutfitSetup = {
     }
 }
 
-export function getOutfitSetupFromWearables(catalystWearables: CatalystWearable[]): OutfitSetupWearables {
+export function getOutfitSetupFromWearables(equippedWearables:URN[], catalystWearables: CatalystWearable[]): OutfitSetupWearables {
     // TODO unit test candidate
     return catalystWearables.reduce((acc: OutfitSetupWearables, catalystWearable: CatalystWearable) => {
-        acc[catalystWearable.data.category] = catalystWearable.id;
+        acc[catalystWearable.data.category] = equippedWearables.find(e=> getURNWithoutTokenId(e) === catalystWearable.id) as URN;
         return acc;
     }, EMPTY_OUTFIT.wearables)
 }

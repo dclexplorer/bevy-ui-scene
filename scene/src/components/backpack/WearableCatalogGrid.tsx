@@ -7,12 +7,12 @@ import {getBackgroundFromAtlas} from "../../utils/ui-utils";
 import type {CatalogWearableElement} from "../../utils/wearables-definitions";
 import {COLOR} from "../color-palette";
 import {noop} from "../../utils/function-utils";
-// TODO import {WearableData} from "../../ui-classes/photos/Photos.types";
+import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
 // TODO when  loading, don't let change any filter : category
 
 export type WearableCatalogGridProps = {
     wearables: CatalogWearableElement[] // TODO review what is the definition we will use
-    equippedWearables: URNWithoutTokenId[],
+    equippedWearables: URN[],
     uiTransform:UiTransformProps,
     loading: boolean,
     onChangeSelection?: (wearableURN:URNWithoutTokenId|null)=>void
@@ -126,13 +126,28 @@ function isSelected(wearableURN:URNWithoutTokenId):boolean{
     return state.selectedWearableURN === wearableURN;
 }
 
+
 function select(wearableURNWithoutTokenId: null | URNWithoutTokenId):void {
     state.selectedWearableURN = wearableURNWithoutTokenId;
 }
 
+const isEquippedMemo:{
+    equippedWearables:URN[]
+    memo:Record<URN, boolean> // TODO consider using Map if possible for performance improvement because long keys
+} = {
+    equippedWearables:[],
+    memo:{}
+};
+
 function isEquipped(wearable:CatalogWearableElement, equippedWearables:URN[]):boolean {
     if(wearable === null) return false;
-    return equippedWearables.includes(wearable.urn);
+    if(equippedWearables !== isEquippedMemo.equippedWearables){
+        isEquippedMemo.equippedWearables = equippedWearables;
+        isEquippedMemo.memo = {};
+    }
+    if(isEquippedMemo.memo[wearable.urn] !== undefined) return isEquippedMemo.memo[wearable.urn];
+    isEquippedMemo.memo[wearable.urn] = equippedWearables.map(i=> getURNWithoutTokenId(i)).includes(wearable.urn)
+    return isEquippedMemo.memo[wearable.urn];
 }
 
 export type WearableCellProps = {

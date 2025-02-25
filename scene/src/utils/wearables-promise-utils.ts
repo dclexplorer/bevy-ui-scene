@@ -68,8 +68,6 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
     }
 }
 
-
-
 export async function fetchWearablesData(...wearableURNs:URNWithoutTokenId[]):Promise<CatalystWearable[]>{
     if(wearableURNs.every((wearableURN)=>catalystWearableMap[wearableURN])){
         return wearableURNs.map(wearableURN => (catalystWearableMap[wearableURN]))
@@ -92,8 +90,13 @@ export async function fetchWearablesData(...wearableURNs:URNWithoutTokenId[]):Pr
     }
 }
 
-export function getURNWithoutTokenId(urn:URN):URN{
+const urnWithoutTokenIdMemo:Record<URN, URNWithoutTokenId> = {} // TODO consider using Map if possible for performance improvement because long keys
+
+export function getURNWithoutTokenId(urn:URN|null):URN|null{
+    if(urn === null) return null
+    if(urnWithoutTokenIdMemo[urn] !== undefined) return urnWithoutTokenIdMemo[urn];
     // TODO add unit test?
     // TODO should not break the URN when executed 2 times
-    return (urn.includes(":off-chain:") || urn.split(":").length < 6 ? urn : urn.replace(/^(.*):[^:]+$/, "$1")) as URN
+    urnWithoutTokenIdMemo[urn] = (urn.includes(":off-chain:") || urn.split(":").length < 6 ? urn : urn.replace(/^(.*):[^:]+$/, "$1")) as URNWithoutTokenId
+    return urnWithoutTokenIdMemo[urn];
 }
