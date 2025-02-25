@@ -1,3 +1,5 @@
+import {type URN} from "../utils/definitions";
+
 export type ExplorerSetting = {
   name: string
   category: string
@@ -25,7 +27,25 @@ export type KernelFetchRespose = {
   body: string
 }
 
+type PBAvatarEquippedData = {
+  wearableUrns: URN[];
+  emoteUrns: URN[];
+};
+type RGBColor = { r: number, g: number, b: number }
+type PbAvatarBase = {
+  name: string;
+  skinColor?: RGBColor;
+  eyesColor?: RGBColor;
+  hairColor?: RGBColor;
+  bodyShapeUrn: string;
+};
+
+type SetAvatarData = {
+  base?: PbAvatarBase;
+  equip?: PBAvatarEquippedData;
+};
 export type BevyApiInterface = {
+  setAvatar: (avatarData:SetAvatarData) => Promise<any> // TODO set profile type
   openSceneLogger: () => Promise<void>
   checkForUpdate: () => Promise<{ description: string; url: string }>
   messageOfTheDay: () => Promise<{ message: string }>

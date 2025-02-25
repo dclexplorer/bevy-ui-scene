@@ -23,6 +23,7 @@ import type {
 import {EMPTY_OUTFIT, getOutfitSetupFromWearables, getWearablesFromOutfit} from "../../../service/outfit";
 import {Pagination} from "../../../components/pagination";
 import {InfoPanel} from "../../../components/backpack/InfoPanel";
+import {BevyApi} from "../../../bevy-api";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -74,7 +75,18 @@ export default class BackpackPage {
         this.state.shownWearables = wearablesPage.elements;
     }
 
-
+    async updateEquippedWearable(category: WearableCategory, wearableURN: URN|null): Promise<void> {
+      // TODO handle base_body change
+        this.state.outfitSetup = {
+            ...this.state.outfitSetup,
+            wearables:{
+                ...this.state.outfitSetup.wearables,
+                [category]:wearableURN
+            }
+        }
+        this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
+        await BevyApi.setAvatar({ equip: {wearableUrns:this.state.equippedWearables, emoteUrns:[]} }) // TODO load emote URNS from profile
+    }
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
@@ -231,28 +243,17 @@ export default class BackpackPage {
                     loading={this.state.loadingPage}
                     wearables={this.state.shownWearables}
                     equippedWearables={this.state.equippedWearables}
+
                     onChangeSelection={(selectedURN:URNWithoutTokenId|null):void=>{
                         this.state.selectedURN =selectedURN
                     }}
-                    onEquipWearable={(wearable:CatalogWearableElement):void=>{
-                        this.state.outfitSetup = {
-                            ...this.state.outfitSetup,
-                            wearables:{
-                                ...this.state.outfitSetup.wearables,
-                                [wearable.category]:wearable.urn
-                            }
-                        }
-                        this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
+
+                    onEquipWearable={async (wearable:CatalogWearableElement):Promise<void>=>{
+                        await this.updateEquippedWearable(wearable.category, wearable.urn);
                     }}
-                    onUnequipWearable={(wearable:CatalogWearableElement):void=>{
-                        this.state.outfitSetup = {
-                            ...this.state.outfitSetup,
-                            wearables:{
-                                ...this.state.outfitSetup.wearables,
-                                [wearable.category]:null
-                            }
-                        }
-                        this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
+
+                    onUnequipWearable={async(wearable:CatalogWearableElement):Promise<void>=>{
+                        await this.updateEquippedWearable(wearable.category, null);
                     }}
                 />
                 <Pagination
