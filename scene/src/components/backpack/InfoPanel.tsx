@@ -56,11 +56,14 @@ export function InfoPanel({canvasScaleRatio, wearable}: InfoPanelProps): ReactEl
                         uiTransform={{
                             alignSelf: "flex-start",
                             justifyContent: "flex-start",
-                            margin: { top: 20 * canvasScaleRatio }
+                            flexShrink:0,
+                            margin: { top: 20 * canvasScaleRatio },
+                            width: canvasScaleRatio * 40,
+                            height: canvasScaleRatio * 40,
                         }}
                         icon={{
-                        spriteName: 'Wearables',
-                        atlasName: 'icons'
+                        spriteName: wearable?.data.category,
+                        atlasName: 'backpack'
                     }} iconSize={35 * canvasScaleRatio} />
                     <UiEntity  uiTransform={{
                         alignSelf:"flex-start",
@@ -100,10 +103,10 @@ export function InfoPanel({canvasScaleRatio, wearable}: InfoPanelProps): ReactEl
                     </UiEntity>
 
                 </UiEntity>
-                <Label value={`<b>DESCRIPTION</b>`}  fontSize={26 * canvasScaleRatio} uiTransform={{
+                {((wearable?.description) !== "") ? <Label value={`<b>DESCRIPTION</b>`}  fontSize={26 * canvasScaleRatio} uiTransform={{
                     alignSelf:"flex-start",
                     margin:{top:10*canvasScaleRatio}
-                }} />
+                }} /> : null}
                 <UiEntity uiTransform={{
                     flexDirection: "row",
                     width:canvasScaleRatio * (600 - 80),
