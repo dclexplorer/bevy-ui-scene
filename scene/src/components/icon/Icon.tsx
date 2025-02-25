@@ -6,7 +6,6 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import {getCanvasScaleRatio} from "../../service/canvas-ratio";
 
 type IconProps = {
   icon: AtlasIcon
@@ -17,7 +16,6 @@ type IconProps = {
 
 const defaultIconProps: IconProps = {
   icon: { atlasName: 'icons', spriteName: 'icon.png' },
-  iconSize: 60 * getCanvasScaleRatio(),
     uiTransform:{
         flexDirection: 'row',
         alignItems: 'center'
@@ -27,12 +25,12 @@ const defaultIconProps: IconProps = {
 function Icon(
   props: IconProps = defaultIconProps
 ): ReactEcs.JSX.Element | null {
-  const _props = { ...defaultIconProps, ...props }
+  const _props = { ...defaultIconProps, ...props};
   return (
     <UiEntity
       uiTransform={{
-        width:_props.iconSize,
-        height: _props.iconSize,
+        width:_props.iconSize ?? 30,
+        height: _props.iconSize ?? 30,
         ..._props.uiTransform
       }}
       uiBackground={{

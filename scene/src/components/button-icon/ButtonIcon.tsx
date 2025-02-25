@@ -40,30 +40,30 @@ function ButtonIcon(props: {
   if (props.side === 'top') position = { top: '100%' }
 
   return (
-    <UiEntity
-      uiTransform={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        ...props.uiTransform
-      }}
-      uiBackground={{
-        color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
-        textureMode: 'nine-slices',
-        texture: {
-          src: 'assets/images/backgrounds/rounded.png'
-        },
-        textureSlices: {
-          top: 0.5,
-          bottom: 0.5,
-          left: 0.5,
-          right: 0.5
-        }
-      }}
-      onMouseDown={props.onMouseDown}
-      onMouseEnter={props.onMouseEnter}
-      onMouseLeave={props.onMouseLeave}
-    >
-      {/* ICON */}
+      <UiEntity
+          uiTransform={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            ...props.uiTransform
+          }}
+          uiBackground={{
+            color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
+            textureMode: 'nine-slices',
+            texture: {
+              src: 'assets/images/backgrounds/rounded.png'
+            },
+            textureSlices: {
+              top: 0.5,
+              bottom: 0.5,
+              left: 0.5,
+              right: 0.5
+            }
+          }}
+          onMouseDown={props.onMouseDown}
+          onMouseEnter={props.onMouseEnter}
+          onMouseLeave={props.onMouseLeave}
+      >
+        {/* ICON */}
 
       <Icon icon={props.icon} iconColor={props.iconColor ?? Color4.White()} iconSize={props.iconSize} />
       <UiEntity
