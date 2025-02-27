@@ -24,7 +24,7 @@ import {EMPTY_OUTFIT, getOutfitSetupFromWearables, getWearablesFromOutfit} from 
 import {Pagination} from "../../../components/pagination";
 import {InfoPanel} from "../../../components/backpack/InfoPanel";
 import {BevyApi} from "../../../bevy-api";
-import { getAvatarCamera, createAvatarPreview } from '../../../components/backpack/AvatarPreview'
+import {getAvatarCamera, createAvatarPreview, updateAvatarPreview} from '../../../components/backpack/AvatarPreview'
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -58,7 +58,6 @@ export default class BackpackPage {
       // TODO throttle
         if(getAvatarCamera() === engine.RootEntity){
             createAvatarPreview();
-            CameraLayers.create(engine.RootEntity, { layers: [0,1]})
         }
         this.state.loadingPage = true;
         const player = getPlayer();
@@ -90,11 +89,18 @@ export default class BackpackPage {
         }
         this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
         console.log("this.state.equippedWearables",this.state.equippedWearables);
+    }
 
+    async saveAvatar(): Promise<void> {
         try {
-            await BevyApi.setAvatar({ equip: {wearableUrns:this.state.equippedWearables, emoteUrns:[]} }) // TODO load emote URNS from profile
-        }catch (error){
-            console.log("setAvatar error",error)
+            if(this.state.equippedWearables.sort(sortAbc).join(",") === getPlayer()?.wearables.sort(sortAbc).join(",")) return; // TODO review if both are equal/order body_shape change
+            await BevyApi.setAvatar({equip: {wearableUrns: this.state.equippedWearables, emoteUrns: []}})
+        } catch (error) {
+            console.log("setAvatar error", error)
+        }
+
+        function sortAbc (a:string,b:string):number{
+            return a.localeCompare(b);
         }
     }
 
@@ -269,11 +275,14 @@ export default class BackpackPage {
                     }}
 
                     onEquipWearable={async (wearable:CatalogWearableElement):Promise<void>=>{
+                        // TODO should get the appropriate model male/female
                         await this.updateEquippedWearable(wearable.category, wearable.individualData[0].id);
+                        updateAvatarPreview(this.state.equippedWearables);
                     }}
 
                     onUnequipWearable={async(wearable:CatalogWearableElement):Promise<void>=>{
                         await this.updateEquippedWearable(wearable.category, null);
+                        updateAvatarPreview(this.state.equippedWearables);
                     }}
                 />
                 <Pagination

@@ -1,17 +1,18 @@
 import {
     CameraLayers,
+    CameraLayer,
     engine,
     TextureCamera,
     Transform,
     AvatarShape,
     type Entity
 } from '@dcl/sdk/ecs';
-import {Color4, Color3, Quaternion} from "@dcl/sdk/math";
+import {Color4,Color3, Quaternion} from "@dcl/sdk/math";
 import {getPlayer} from '@dcl/sdk/src/players'
 import {getCanvasScaleRatio} from "../../service/canvas-ratio";
 import {type URNWithoutTokenId} from "../../utils/definitions";
 
-// TODO apply correct PBAvatarBase from GetPlayerDataRes.avatar into AvatarShape.skinColor,etc.
+// TODO apply different camera positions for each selected category
 
 type AvatarPreview = {
     avatarEntity: Entity
@@ -31,9 +32,9 @@ export function updateAvatarPreview(wearables: URNWithoutTokenId[]): void {
 
 export function createAvatarPreview(): void {
     const avatarEntity: Entity = avatarPreview.avatarEntity = engine.addEntity();
-    const camera = avatarPreview.cameraEntity = engine.addEntity();
+    const cameraEntity = avatarPreview.cameraEntity = engine.addEntity();
     const playerData = getPlayer();
-console.log("playerData?.avatar?.skinColor", playerData?.avatar?.skinColor)
+
     AvatarShape.create(avatarEntity, {
         bodyShape: playerData?.avatar?.bodyShapeUrn,
         emotes: [], // TODO review
@@ -51,8 +52,17 @@ console.log("playerData?.avatar?.skinColor", playerData?.avatar?.skinColor)
     CameraLayers.create(avatarEntity, {
         layers: [1]
     })
+    CameraLayer.create(cameraEntity, {
+        layer: 1,
+        directionalLight: false,
+        showAvatars: false,
+        showSkybox: false,
+        showFog: false,
+         ambientColorOverride: Color3.White(),
+         ambientBrightnessOverride: 3
+    });
 
-    TextureCamera.create(camera, {
+    TextureCamera.create(cameraEntity, {
         width: 850 * getCanvasScaleRatio(),
         height: 2000 * getCanvasScaleRatio(),
         layer: 1,
@@ -69,7 +79,7 @@ console.log("playerData?.avatar?.skinColor", playerData?.avatar?.skinColor)
         scale: {x: 2, y: 2, z: 2}
     });
 
-    Transform.create(camera, {
+    Transform.create(cameraEntity, {
         position: {x: 8, y: 2.5, z: 8 - 6},
         rotation: Quaternion.fromEulerDegrees(4, 0, 0),
     });
