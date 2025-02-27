@@ -163,7 +163,7 @@ export default class BackpackPage {
                         bottom: this.fontSize,
                         right: this.fontSize
                     },
-                    width: 800 * canvasScaleRatio,
+                    width: 1000 * canvasScaleRatio,
                     height: '100%',
                     padding: this.fontSize,
                     pointerFilter: 'block'
