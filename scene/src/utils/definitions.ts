@@ -16,7 +16,7 @@ export type AtlasData = {
 
 type CollectionName = string;
 type ContractAddress = string;
-type Network = 'eth' | 'matic' | 'polygon' | 'sepolia';
+type Network = 'ethereum' | 'matic' | 'polygon' | 'sepolia';
 
 // https://github.com/decentraland/urn-resolver
 type URN_VALUE = `decentraland:off-chain:base-avatars:${string}`
