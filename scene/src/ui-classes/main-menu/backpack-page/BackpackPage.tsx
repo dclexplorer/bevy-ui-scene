@@ -1,6 +1,6 @@
 import ReactEcs, {type ReactElement, UiEntity} from '@dcl/react-ecs'
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import { Color4 } from '@dcl/sdk/math'
+import {UiCanvasInformation, engine, CameraLayers} from '@dcl/sdk/ecs'
+import {Color4} from '@dcl/sdk/math'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../../service/wearable-categories'
@@ -24,6 +24,7 @@ import {EMPTY_OUTFIT, getOutfitSetupFromWearables, getWearablesFromOutfit} from 
 import {Pagination} from "../../../components/pagination";
 import {InfoPanel} from "../../../components/backpack/InfoPanel";
 import {BevyApi} from "../../../bevy-api";
+import { getAvatarCamera, createAvatarPreview } from '../../../components/backpack/AvatarPreview'
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -55,6 +56,10 @@ export default class BackpackPage {
 
     async initWearablePage(): Promise<void> {
       // TODO throttle
+        if(getAvatarCamera() === engine.RootEntity){
+            createAvatarPreview();
+            CameraLayers.create(engine.RootEntity, { layers: [0,1]})
+        }
         this.state.loadingPage = true;
         const player = getPlayer();
         this.state.equippedWearables = player?.wearables as URN[]
@@ -158,7 +163,7 @@ export default class BackpackPage {
                         bottom: this.fontSize,
                         right: this.fontSize
                     },
-                    width: 580 * canvasScaleRatio,
+                    width: 800 * canvasScaleRatio,
                     height: '100%',
                     padding: this.fontSize,
                     pointerFilter: 'block'
@@ -166,7 +171,17 @@ export default class BackpackPage {
                 uiBackground={{
                     color:Color4.create(1,0,0,0.5)
                 }}
-            ></UiEntity>
+            >
+                {getAvatarCamera() === engine.RootEntity ? null :  <UiEntity
+                    uiTransform={{
+                        width: "100%",
+                        height: "100%"
+                    }}
+                    uiBackground={{
+                        videoTexture: { videoPlayerEntity: getAvatarCamera() },
+                    }}
+                />}
+            </UiEntity>
           <UiEntity
             uiTransform={{
               flexDirection: 'row',
