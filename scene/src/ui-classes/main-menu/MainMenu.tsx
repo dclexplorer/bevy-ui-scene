@@ -72,6 +72,7 @@ export default class MainMenu {
   }
 
   hide(): void {
+    void this.uiController.backpackPage.saveAvatar()
     this.uiController.isMainMenuVisible = false
     this.closeButtonColor = ALMOST_BLACK
   }

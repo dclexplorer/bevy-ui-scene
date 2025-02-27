@@ -7,7 +7,7 @@ import {
     AvatarShape,
     type Entity
 } from '@dcl/sdk/ecs';
-import {Color4,Color3, Quaternion} from "@dcl/sdk/math";
+import {Color4, Quaternion} from "@dcl/sdk/math";
 import {getPlayer} from '@dcl/sdk/src/players'
 import {getCanvasScaleRatio} from "../../service/canvas-ratio";
 import {type URNWithoutTokenId} from "../../utils/definitions";
@@ -36,7 +36,7 @@ export function createAvatarPreview(): void {
     const playerData = getPlayer();
 
     AvatarShape.create(avatarEntity, {
-        bodyShape: playerData?.avatar?.bodyShapeUrn,
+        bodyShape: "urn:decentraland:off-chain:base-avatars:BaseMale",
         emotes: [], // TODO review
         expressionTriggerId: undefined,
         expressionTriggerTimestamp: undefined,
@@ -44,7 +44,7 @@ export function createAvatarPreview(): void {
         hairColor:  playerData?.avatar?.hairColor,
         id: playerData?.userId ?? "", // TODO review if this is ok
         name: undefined,
-        skinColor:  playerData?.avatar?.skinColor, // Color3.create(0,0,0)
+        skinColor:  playerData?.avatar?.skinColor,
         talking: false,
         wearables: playerData?.wearables ?? []
     })
@@ -58,8 +58,7 @@ export function createAvatarPreview(): void {
         showAvatars: false,
         showSkybox: false,
         showFog: false,
-         ambientColorOverride: Color3.White(),
-         ambientBrightnessOverride: 3
+        ambientBrightnessOverride: 5
     });
 
     TextureCamera.create(cameraEntity, {

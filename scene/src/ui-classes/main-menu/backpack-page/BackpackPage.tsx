@@ -1,5 +1,5 @@
 import ReactEcs, {type ReactElement, UiEntity} from '@dcl/react-ecs'
-import {UiCanvasInformation, engine, CameraLayers} from '@dcl/sdk/ecs'
+import {UiCanvasInformation, engine} from '@dcl/sdk/ecs'
 import {Color4} from '@dcl/sdk/math'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
@@ -93,7 +93,8 @@ export default class BackpackPage {
 
     async saveAvatar(): Promise<void> {
         try {
-            if(this.state.equippedWearables.sort(sortAbc).join(",") === getPlayer()?.wearables.sort(sortAbc).join(",")) return; // TODO review if both are equal/order body_shape change
+            // TODO review if both are equal/order body_shape change; or we can add state.hasChanged
+            if(this.state.equippedWearables.sort(sortAbc).join(",") === getPlayer()?.wearables.sort(sortAbc).join(",")) return;
             await BevyApi.setAvatar({equip: {wearableUrns: this.state.equippedWearables, emoteUrns: []}})
         } catch (error) {
             console.log("setAvatar error", error)
