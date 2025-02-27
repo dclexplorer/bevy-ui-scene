@@ -36,7 +36,7 @@ export function createAvatarPreview(): void {
     const playerData = getPlayer();
 
     AvatarShape.create(avatarEntity, {
-        bodyShape: "urn:decentraland:off-chain:base-avatars:BaseMale",
+        bodyShape: playerData?.avatar?.bodyShapeUrn,
         emotes: [], // TODO review
         expressionTriggerId: undefined,
         expressionTriggerTimestamp: undefined,

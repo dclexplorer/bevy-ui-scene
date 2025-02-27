@@ -93,6 +93,7 @@ export default class BackpackPage {
 
     async saveAvatar(): Promise<void> {
         try {
+            console.log("setAvatar")
             // TODO review if both are equal/order body_shape change; or we can add state.hasChanged
             if(this.state.equippedWearables.sort(sortAbc).join(",") === getPlayer()?.wearables.sort(sortAbc).join(",")) return;
             await BevyApi.setAvatar({equip: {wearableUrns: this.state.equippedWearables, emoteUrns: []}})
