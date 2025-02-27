@@ -32,23 +32,24 @@ export function updateAvatarPreview(wearables: URNWithoutTokenId[]): void {
 export function createAvatarPreview(): void {
     const avatarEntity: Entity = avatarPreview.avatarEntity = engine.addEntity();
     const camera = avatarPreview.cameraEntity = engine.addEntity();
-
+    const playerData = getPlayer();
+console.log("playerData?.avatar?.skinColor", playerData?.avatar?.skinColor)
     AvatarShape.create(avatarEntity, {
-        bodyShape: undefined,
-        emotes: [],
+        bodyShape: playerData?.avatar?.bodyShapeUrn,
+        emotes: [], // TODO review
         expressionTriggerId: undefined,
         expressionTriggerTimestamp: undefined,
-        eyeColor: undefined,
-        hairColor: undefined,
-        id: "",
+        eyeColor: playerData?.avatar?.eyesColor,
+        hairColor:  playerData?.avatar?.hairColor,
+        id: playerData?.userId ?? "", // TODO review if this is ok
         name: undefined,
-        skinColor: undefined, // Color3.create(0,0,0)
-        talking: undefined,
-        wearables: getPlayer()?.wearables ?? []
+        skinColor:  playerData?.avatar?.skinColor, // Color3.create(0,0,0)
+        talking: false,
+        wearables: playerData?.wearables ?? []
     })
 
     CameraLayers.create(avatarEntity, {
-        layers: [1],
+        layers: [1]
     })
 
     TextureCamera.create(camera, {
