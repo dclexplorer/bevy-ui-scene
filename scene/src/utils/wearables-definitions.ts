@@ -38,7 +38,7 @@ type Representation = {
     overrideReplaces: string[];
 };
 
-type CatalystWearableData = {
+type WearableEntityData = {
     replaces: string[];
     hides: string[];
     removesDefaultHiding: string[];
@@ -62,14 +62,14 @@ export type FileContent = {
 }
 
 // TODO refactor: maybe rename it to WearableEntity ?
-export type CatalystWearable = {
+export type WearableEntity = {
     id: URN;
     name: string;
     description: string;
     collectionAddress: string;
     rarity: string;
     i18n: I18n[];
-    data: CatalystWearableData;
+    data: WearableEntityData;
     image: string;
     thumbnail: string;
     metrics: Metrics;
@@ -78,7 +78,7 @@ export type CatalystWearable = {
 export type CatalogWearableEntity = {
     content: FileContent[]
     id: string
-    metadata: CatalystWearable
+    metadata: WearableEntity
     pointers: URN[]
     timestamp: number
     type:string
@@ -105,5 +105,5 @@ export type CatalogWearableElement = {
     urn:URN
 }
 export type CatalystWearableMap = {
-    [K in URNWithoutTokenId]: CatalystWearable
+    [K in URNWithoutTokenId]: WearableEntity
 }

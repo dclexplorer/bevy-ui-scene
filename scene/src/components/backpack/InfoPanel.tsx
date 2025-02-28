@@ -1,6 +1,6 @@
 import {getBackgroundFromAtlas} from "../../utils/ui-utils";
 import ReactEcs, {type ReactElement, UiEntity} from "@dcl/react-ecs";
-import {CatalystWearable, RarityName} from "../../utils/wearables-definitions";
+import type {WearableEntity, RarityName} from "../../utils/wearables-definitions";
 import Icon from "../icon/Icon";
 import {Label} from "@dcl/sdk/react-ecs";
 
@@ -9,7 +9,7 @@ import {ROUNDED_TEXTURE_BACKGROUND} from "../../utils/constants";
 
 export type InfoPanelProps = {
     canvasScaleRatio: number,
-    wearable: CatalystWearable | null
+    wearable: WearableEntity | null
 }
 
 export function InfoPanel({canvasScaleRatio, wearable}: InfoPanelProps): ReactElement {

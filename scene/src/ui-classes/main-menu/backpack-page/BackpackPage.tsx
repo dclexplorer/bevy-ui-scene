@@ -17,7 +17,7 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import type {URN, URNWithoutTokenId} from "../../../utils/definitions";
 import type {
     CatalogWearableElement,
-    CatalystWearable,
+    WearableEntity,
     OutfitSetup
 } from "../../../utils/wearables-definitions";
 import {EMPTY_OUTFIT, getOutfitSetupFromWearables, getWearablesFromOutfit} from "../../../service/outfit";
@@ -68,7 +68,7 @@ export default class BackpackPage {
         this.state.loadingPage = true;
         const player = getPlayer();
         this.state.equippedWearables = player?.wearables as URN[]
-        const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...(this.state.equippedWearables??[]).map(i=> getURNWithoutTokenId(i) as URNWithoutTokenId));
+        const equippedWearablesData:WearableEntity[] = await fetchWearablesData(...(this.state.equippedWearables??[]).map(i=> getURNWithoutTokenId(i) as URNWithoutTokenId));
         this.state.outfitSetup.wearables = getOutfitSetupFromWearables(this.state.equippedWearables, equippedWearablesData);
         this.state.outfitSetup.base = {
             name:player?.name ?? "",
