@@ -11,7 +11,6 @@ import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
 import {type PBAvatarBase} from "@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen";
 import {WEARABLE_CATEGORY_DEFINITIONS} from "../../service/wearable-categories";
 import {EMPTY_OUTFIT} from "../../service/outfit";
-// TODO when  loading, don't let change any filter : category
 
 export type WearableCatalogGridProps = {
     wearables: CatalogWearableElement[] // TODO review what is the definition we will use

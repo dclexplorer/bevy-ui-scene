@@ -2,7 +2,7 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { WearableCategoryButton } from './WearableCategoryButton'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-import {WEARABLE_CATEGORY_DEFINITIONS, WearableCategory} from '../../service/wearable-categories'
+import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../service/wearable-categories'
 import { type OutfitSetup } from '../../utils/wearables-definitions'
 import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
 import {type URNWithoutTokenId} from "../../utils/definitions";

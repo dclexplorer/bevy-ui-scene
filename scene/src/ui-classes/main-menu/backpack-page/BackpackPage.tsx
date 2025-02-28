@@ -238,7 +238,9 @@ export default class BackpackPage {
               <WearableCategoryList
                   outfitSetup={this.state.outfitSetup}
                   activeCategory={this.state.activeWearableCategory}
-                  onSelectCategory={changeCategory}
+                  onSelectCategory={(category:WearableCategory):void=>{
+                      if(!this.state.loadingPage) changeCategory(category)
+                  }}
               />
             {/* CATALOG COLUMN */}
             <UiEntity
