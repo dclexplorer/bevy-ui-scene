@@ -190,14 +190,14 @@ export default class BackpackPage {
                 uiTransform={{
                     margin: {
                         bottom: this.fontSize,
-                        right: this.fontSize
+                        right: this.fontSize,
                     },
                     positionType:"absolute",
                     width: 1000 * canvasScaleRatio,
                     height: '100%',
                     padding: this.fontSize,
                     pointerFilter: 'block',
-                    position:{left:0}
+                    position:{left:"2%"}
                 }}
             >
                 {getAvatarCamera() === engine.RootEntity ? null :  <UiEntity
@@ -401,7 +401,7 @@ function Content({children}:any):ReactElement{
     return <UiEntity
         uiTransform={{
             flexDirection: 'row',
-            justifyContent: 'center',
+            justifyContent: "flex-end",
             alignItems: 'flex-start',
             width: '100%',
             height: 'auto',
