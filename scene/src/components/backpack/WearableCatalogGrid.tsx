@@ -13,7 +13,7 @@ import {WEARABLE_CATEGORY_DEFINITIONS} from "../../service/wearable-categories";
 import {EMPTY_OUTFIT} from "../../service/outfit";
 
 export type WearableCatalogGridProps = {
-    wearables: CatalogWearableElement[] // TODO review what is the definition we will use
+    wearables: CatalogWearableElement[]
     equippedWearables: URN[],
     baseBody:PBAvatarBase,
     uiTransform:UiTransformProps,

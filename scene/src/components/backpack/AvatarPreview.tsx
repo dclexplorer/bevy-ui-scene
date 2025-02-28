@@ -14,8 +14,6 @@ import {type URNWithoutTokenId} from "../../utils/definitions";
 import {type PBAvatarBase} from "@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen";
 import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from "../../service/wearable-categories";
 
-// TODO apply different camera positions for each selected category
-
 type AvatarPreview = {
     avatarEntity: Entity
     cameraEntity: Entity
@@ -71,7 +69,7 @@ export function createAvatarPreview(): void {
 
     AvatarShape.create(avatarEntity, {
         bodyShape: playerData?.avatar?.bodyShapeUrn,
-        emotes: [], // TODO review
+        emotes: [],
         expressionTriggerId: undefined,
         expressionTriggerTimestamp: undefined,
         eyeColor: playerData?.avatar?.eyesColor,

@@ -38,7 +38,7 @@ type BackpackPageState = {
     activeWearableCategory: WearableCategory | null,
     currentPage: number,
     loadingPage: boolean,
-    shownWearables: any[] // TODO remove any type
+    shownWearables: CatalogWearableElement[]
     totalPages: number
     equippedWearables: URN[]
     outfitSetup: OutfitSetup,
@@ -299,7 +299,6 @@ export default class BackpackPage {
                     }}
 
                     onEquipWearable={async (wearable:CatalogWearableElement):Promise<void>=>{
-                        // TODO should get the appropriate model male/female
                         await this.updateEquippedWearable(wearable.category, wearable.individualData[0].id);
                         updateAvatarPreview(this.state.equippedWearables, this.state.outfitSetup.base);
                     }}
