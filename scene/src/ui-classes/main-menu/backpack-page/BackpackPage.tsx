@@ -181,20 +181,16 @@ export default class BackpackPage {
             {/* AVATAR */}
             <UiEntity
                 uiTransform={{
-                    flexShrink:0,
-                    flexGrow:0,
-                    flexWrap: "wrap",
                     margin: {
                         bottom: this.fontSize,
                         right: this.fontSize
                     },
+                    positionType:"absolute",
                     width: 1000 * canvasScaleRatio,
                     height: '100%',
                     padding: this.fontSize,
-                    pointerFilter: 'block'
-                }}
-                uiBackground={{
-                    color:Color4.create(1,0,0,0.5)
+                    pointerFilter: 'block',
+                    position:{left:0}
                 }}
             >
                 {getAvatarCamera() === engine.RootEntity ? null :  <UiEntity
