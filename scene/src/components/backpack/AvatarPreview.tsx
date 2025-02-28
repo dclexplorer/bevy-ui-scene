@@ -74,7 +74,7 @@ export function createAvatarPreview(): void {
         expressionTriggerTimestamp: undefined,
         eyeColor: playerData?.avatar?.eyesColor,
         hairColor: playerData?.avatar?.hairColor,
-        id: playerData?.userId ?? "", // TODO review if this is ok
+        id: playerData?.userId ?? "",
         name: undefined,
         skinColor: playerData?.avatar?.skinColor,
         talking: false,
