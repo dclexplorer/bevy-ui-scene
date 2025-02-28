@@ -36,5 +36,5 @@ export const WEARABLE_CATEGORY_DEFINITIONS:{[k in WearableCategory]:{id:string, 
   tiara: { id: 'tiara', label: 'Tiara' },
   mouth: { id: 'mouth', label: 'Mouth' },
   eyebrows: { id: 'eyebrows', label: 'Eyebrows' },
-  body: { id: 'body', label: 'Body' },
+  body: { id: 'body_shape', label: 'Body' },
 }

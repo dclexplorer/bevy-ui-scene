@@ -5,6 +5,7 @@ import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import type { WearableCategory } from '../../service/wearable-categories'
 import { type OutfitSetup } from '../../utils/wearables-definitions'
 import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
+import {type URNWithoutTokenId} from "../../utils/definitions";
 
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null
@@ -34,7 +35,7 @@ export function WearableCategoryList({
           onClick={() =>
             onSelectCategory(activeCategory === 'body' ? null : 'body')
           }
-          selectedURN={getURNWithoutTokenId(outfitSetup.wearables.body)}
+          selectedURN={outfitSetup?.base?.bodyShapeUrn as URNWithoutTokenId}
         />
         <WearableCategoryButton
           category={'eyebrows'}

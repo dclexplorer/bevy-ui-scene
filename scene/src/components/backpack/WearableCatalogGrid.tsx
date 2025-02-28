@@ -8,11 +8,15 @@ import type {CatalogWearableElement} from "../../utils/wearables-definitions";
 import {COLOR} from "../color-palette";
 import {noop} from "../../utils/function-utils";
 import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
+import {type PBAvatarBase} from "@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen";
+import {WEARABLE_CATEGORY_DEFINITIONS} from "../../service/wearable-categories";
+import {EMPTY_OUTFIT} from "../../service/outfit";
 // TODO when  loading, don't let change any filter : category
 
 export type WearableCatalogGridProps = {
     wearables: CatalogWearableElement[] // TODO review what is the definition we will use
     equippedWearables: URN[],
+    baseBody:PBAvatarBase,
     uiTransform:UiTransformProps,
     loading: boolean,
     onChangeSelection?: (wearableURN:URNWithoutTokenId|null)=>void
@@ -39,7 +43,7 @@ const SELECTED_BACKGROUND = {
     })
 }
 
-export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, loading, onChangeSelection = noop, onEquipWearable = noop, onUnequipWearable = noop}: WearableCatalogGridProps): ReactElement {
+export function WearableCatalogGrid({wearables, equippedWearables, baseBody, uiTransform, loading, onChangeSelection = noop, onEquipWearable = noop, onUnequipWearable = noop}: WearableCatalogGridProps): ReactElement {
     const canvasScaleRatio = getCanvasScaleRatio();
 
     return <UiEntity uiTransform={{
@@ -58,7 +62,7 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                 }
                 }
                 key={index}
-                uiBackground={((!loading && isEquipped(_,equippedWearables) && !isSelected(_?.urn))?{
+                uiBackground={((!loading && isEquipped(_,equippedWearables,baseBody) && !isSelected(_?.urn))?{
                     textureMode:"nine-slices",
                     texture: {
                         // TODO improve image border
@@ -99,6 +103,7 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                     }}
                                 uiBackground={SELECTED_BACKGROUND} >
                         <WearableCellThumbnail catalystWearable={_} canvasScaleRatio={canvasScaleRatio} loading={loading} />
+                        {isEquipped(_, equippedWearables, baseBody) && _.category === WEARABLE_CATEGORY_DEFINITIONS.body.id ? null :
                         <RoundedButton
                             uiTransform={{
                                 margin:{top:10*canvasScaleRatio},
@@ -106,16 +111,16 @@ export function WearableCatalogGrid({wearables, equippedWearables, uiTransform, 
                                 height:60*canvasScaleRatio
                             }}
                             fontSize={26*canvasScaleRatio}
-                            text={isEquipped(_, equippedWearables)?"UNEQUIP":"EQUIP"}
-                            isSecondary={isEquipped(_, equippedWearables)}
+                            text={isEquipped(_, equippedWearables, baseBody)?"UNEQUIP":"EQUIP"}
+                            isSecondary={isEquipped(_, equippedWearables, baseBody)}
                             onClick={()=>{
-                                if(isEquipped(_, equippedWearables)) {
+                                if(isEquipped(_, equippedWearables, baseBody)) {
                                     void onUnequipWearable(_);
                                 }else {
                                     void onEquipWearable(_);
                                 }
                             }}
-                        />
+                        />}
                     </UiEntity>
                     : null}
             </UiEntity>;
@@ -133,20 +138,28 @@ function select(wearableURNWithoutTokenId: null | URNWithoutTokenId):void {
 
 const isEquippedMemo:{
     equippedWearables:URN[]
+    baseBody:PBAvatarBase,
     memo:Record<URN, boolean> // TODO consider using Map if possible for performance improvement because long keys
 } = {
     equippedWearables:[],
-    memo:{}
+    memo:{},
+    baseBody:{...EMPTY_OUTFIT.base},
 };
 
-function isEquipped(wearable:CatalogWearableElement, equippedWearables:URN[] = []):boolean {
+function isEquipped(wearable:CatalogWearableElement, equippedWearables:URN[] = [], baseBody:PBAvatarBase):boolean {
     if(wearable === null) return false;
-    if(equippedWearables !== isEquippedMemo.equippedWearables){
+    if(equippedWearables !== isEquippedMemo.equippedWearables || isEquippedMemo.baseBody !== baseBody){
         isEquippedMemo.equippedWearables = equippedWearables;
+        isEquippedMemo.baseBody = baseBody;
         isEquippedMemo.memo = {};
     }
     if(isEquippedMemo.memo[wearable.urn] !== undefined) return isEquippedMemo.memo[wearable.urn];
-    isEquippedMemo.memo[wearable.urn] = equippedWearables.map(i=> getURNWithoutTokenId(i)).includes(wearable.urn)
+    if(wearable.category === WEARABLE_CATEGORY_DEFINITIONS.body.id){
+        isEquippedMemo.memo[wearable.urn] = baseBody.bodyShapeUrn === wearable.urn;
+    }else{
+        isEquippedMemo.memo[wearable.urn] = equippedWearables.map(i=> getURNWithoutTokenId(i)).includes(wearable.urn)
+    }
+
     return isEquippedMemo.memo[wearable.urn];
 }
 

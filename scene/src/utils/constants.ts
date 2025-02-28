@@ -522,7 +522,8 @@ export const EMPTY_PLACE: PlaceFromApi = {
   user_count: 0,
   user_visits: 298
 }
-
+export const BASE_MALE_URN = "urn:decentraland:off-chain:base-avatars:BaseMale";
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
   id: '00000000-0000-0000-0000-000000000000',
   url: 'https://example.com/default-image.jpg',
@@ -530,7 +531,7 @@ export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
   isPublic: false,
   metadata: {
     userName: 'Anonymous',
-    userAddress: '0x0000000000000000000000000000000000000000',
+    userAddress: ZERO_ADDRESS,
     dateTime: '0',
     realm: 'unknown',
     scene: {

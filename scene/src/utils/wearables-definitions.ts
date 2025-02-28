@@ -1,16 +1,13 @@
 import type {WearableCategory} from "../service/wearable-categories";
 import type { URN, URNWithoutTokenId} from "./definitions";
+import {PBAvatarBase} from "@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen";
 
 export type OutfitSetupWearables = {
     [K in WearableCategory]: URN | null
 }
 export type OutfitSetup = {
     wearables: OutfitSetupWearables
-    color: {
-        eyes: number[]
-        skin: number[]
-        hair: number[]
-    }
+    base:PBAvatarBase
 }
 export type RarityName =
     | 'base'

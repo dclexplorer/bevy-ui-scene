@@ -25,6 +25,7 @@ import {Pagination} from "../../../components/pagination";
 import {InfoPanel} from "../../../components/backpack/InfoPanel";
 import {BevyApi} from "../../../bevy-api";
 import {getAvatarCamera, createAvatarPreview, updateAvatarPreview} from '../../../components/backpack/AvatarPreview'
+import {BASE_MALE_URN, ZERO_ADDRESS} from "../../../utils/constants";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -64,39 +65,55 @@ export default class BackpackPage {
         this.state.equippedWearables = player?.wearables as URN[]
         const equippedWearablesData:CatalystWearable[] = await fetchWearablesData(...(this.state.equippedWearables??[]).map(i=> getURNWithoutTokenId(i) as URNWithoutTokenId));
         this.state.outfitSetup.wearables = getOutfitSetupFromWearables(this.state.equippedWearables, equippedWearablesData);
-
+        this.state.outfitSetup.base = {
+            name:player?.name ?? "",
+            eyesColor:player?.avatar?.eyesColor,
+            hairColor:player?.avatar?.hairColor,
+            skinColor:player?.avatar?.skinColor,
+            bodyShapeUrn:player?.avatar?.bodyShapeUrn ?? BASE_MALE_URN
+        };
         // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
         const wearablesPage = await fetchWearablesPage({
             pageSize: WEARABLE_CATALOG_PAGE_SIZE,
             pageNum: this.state.currentPage,
-            address: player?.userId ?? "0x0000000000000000000000000000000000000000",
+            address: player?.userId ?? ZERO_ADDRESS,
             wearableCategory:this.state.activeWearableCategory,
         });
 
         this.state.totalPages = Math.ceil(wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE)
         this.state.loadingPage = false;
         this.state.shownWearables = wearablesPage.elements;
+
     }
 
     async updateEquippedWearable(category: WearableCategory, wearableURN: URN|null): Promise<void> {
-      // TODO handle base_body change
-        this.state.outfitSetup = {
-            ...this.state.outfitSetup,
-            wearables:{
-                ...this.state.outfitSetup.wearables,
-                [category]:wearableURN
+        if(category === WEARABLE_CATEGORY_DEFINITIONS.body.id){
+            this.state.outfitSetup = {
+                ...this.state.outfitSetup,
+                base:{
+                    ...this.state.outfitSetup.base,
+                    bodyShapeUrn:wearableURN as URN
+                }
             }
+        } else {
+            this.state.outfitSetup = {
+                ...this.state.outfitSetup,
+                wearables:{
+                    ...this.state.outfitSetup.wearables,
+                    [category]:wearableURN
+                }
+            }
+            this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
         }
-        this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
-        console.log("this.state.equippedWearables",this.state.equippedWearables);
     }
 
     async saveAvatar(): Promise<void> {
         try {
-            console.log("setAvatar")
-            // TODO review if both are equal/order body_shape change; or we can add state.hasChanged
             if(this.state.equippedWearables.sort(sortAbc).join(",") === getPlayer()?.wearables.sort(sortAbc).join(",")) return;
-            await BevyApi.setAvatar({equip: {wearableUrns: this.state.equippedWearables, emoteUrns: []}})
+            await BevyApi.setAvatar({
+                base: this.state.outfitSetup.base,
+                equip: {wearableUrns: this.state.equippedWearables, emoteUrns: []}
+            })
         } catch (error) {
             console.log("setAvatar error", error)
         }
@@ -271,7 +288,7 @@ export default class BackpackPage {
                     loading={this.state.loadingPage}
                     wearables={this.state.shownWearables}
                     equippedWearables={this.state.equippedWearables}
-
+                    baseBody={this.state.outfitSetup.base}
                     onChangeSelection={(selectedURN:URNWithoutTokenId|null):void=>{
                         this.state.selectedURN =selectedURN
                     }}
@@ -279,12 +296,12 @@ export default class BackpackPage {
                     onEquipWearable={async (wearable:CatalogWearableElement):Promise<void>=>{
                         // TODO should get the appropriate model male/female
                         await this.updateEquippedWearable(wearable.category, wearable.individualData[0].id);
-                        updateAvatarPreview(this.state.equippedWearables);
+                        updateAvatarPreview(this.state.equippedWearables, this.state.outfitSetup.base);
                     }}
 
                     onUnequipWearable={async(wearable:CatalogWearableElement):Promise<void>=>{
                         await this.updateEquippedWearable(wearable.category, null);
-                        updateAvatarPreview(this.state.equippedWearables);
+                        updateAvatarPreview(this.state.equippedWearables, this.state.outfitSetup.base);
                     }}
                 />
                 <Pagination

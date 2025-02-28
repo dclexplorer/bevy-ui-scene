@@ -11,6 +11,7 @@ import {Color4, Quaternion} from "@dcl/sdk/math";
 import {getPlayer} from '@dcl/sdk/src/players'
 import {getCanvasScaleRatio} from "../../service/canvas-ratio";
 import {type URNWithoutTokenId} from "../../utils/definitions";
+import {type PBAvatarBase} from "@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen";
 
 // TODO apply different camera positions for each selected category
 
@@ -26,8 +27,12 @@ const avatarPreview: AvatarPreview = {
 
 export const getAvatarCamera: () => Entity = () => avatarPreview.cameraEntity;
 
-export function updateAvatarPreview(wearables: URNWithoutTokenId[]): void {
+export function updateAvatarPreview(wearables: URNWithoutTokenId[], avatarBase:PBAvatarBase): void {
     AvatarShape.getMutable(avatarPreview.avatarEntity).wearables = wearables
+    AvatarShape.getMutable(avatarPreview.avatarEntity).bodyShape = avatarBase.bodyShapeUrn;
+    AvatarShape.getMutable(avatarPreview.avatarEntity).hairColor = avatarBase.hairColor;
+    AvatarShape.getMutable(avatarPreview.avatarEntity).eyeColor = avatarBase.eyesColor;
+    AvatarShape.getMutable(avatarPreview.avatarEntity).skinColor = avatarBase.skinColor;
 }
 
 export function createAvatarPreview(): void {
