@@ -9,6 +9,7 @@ import { type AtlasIcon, type URN } from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import {catalystWearableMap} from "../../utils/wearables-promise-utils";
+import {ROUNDED_TEXTURE_BACKGROUND} from "../../utils/constants";
 
 type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps
@@ -63,20 +64,11 @@ export function WearableCategoryButton({
         padding: 2 * canvasScaleRatio * 2
       }}
       uiBackground={{
+          ...ROUNDED_TEXTURE_BACKGROUND,
         color:
           active === true
             ? COLOR.ACTIVE_BACKGROUND_COLOR
-            : Color4.create(0, 0, 0, 0.1),
-        textureSlices: {
-          top: 0.5,
-          bottom: 0.5,
-          left: 0.5,
-          right: 0.5
-        },
-        textureMode: 'nine-slices',
-        texture: {
-          src: 'assets/images/backgrounds/rounded.png'
-        }
+            : Color4.create(0, 0, 0, 0.1)
       }}
       onMouseDown={() => callbacks.onClick()}
     >
@@ -91,18 +83,7 @@ export function WearableCategoryButton({
             left: 54 * canvasScaleRatio * 2
           }
         }}
-        uiBackground={{
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          },
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          }
-        }}
+        uiBackground={ROUNDED_TEXTURE_BACKGROUND}
       />
       <UiEntity
         uiTransform={{

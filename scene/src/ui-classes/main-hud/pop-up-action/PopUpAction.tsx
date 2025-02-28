@@ -6,11 +6,11 @@ import { ButtonText } from '../../../components/button-text'
 import Canvas from '../../../components/canvas/Canvas'
 import { type UIController } from '../../../controllers/ui.controller'
 import {
-  RUBY,
-  LEFT_PANEL_WIDTH_FACTOR,
-  LEFT_PANEL_MIN_WIDTH,
-  ALMOST_WHITE,
-  ALMOST_BLACK
+    RUBY,
+    LEFT_PANEL_WIDTH_FACTOR,
+    LEFT_PANEL_MIN_WIDTH,
+    ALMOST_WHITE,
+    ALMOST_BLACK, ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 
@@ -136,17 +136,8 @@ export default class PopUpAction {
               justifyContent: 'space-between'
             }}
             uiBackground={{
-              color: { ...ALMOST_WHITE, a: 0.9 },
-              textureMode: 'nine-slices',
-              texture: {
-                src: 'assets/images/backgrounds/rounded.png'
-              },
-              textureSlices: {
-                top: 0.5,
-                bottom: 0.5,
-                left: 0.5,
-                right: 0.5
-              }
+                ...ROUNDED_TEXTURE_BACKGROUND,
+              color: { ...ALMOST_WHITE, a: 0.9 }
             }}
           >
             {/* ERROR AREA */}

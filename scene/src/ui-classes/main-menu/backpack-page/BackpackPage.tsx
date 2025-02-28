@@ -30,7 +30,7 @@ import {
     updateAvatarPreview,
     setAvatarPreviewCameraToWearableCategory
 } from '../../../components/backpack/AvatarPreview'
-import {BASE_MALE_URN, ZERO_ADDRESS} from "../../../utils/constants";
+import {BASE_MALE_URN, ROUNDED_TEXTURE_BACKGROUND, ZERO_ADDRESS} from "../../../utils/constants";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 
@@ -221,17 +221,8 @@ export default class BackpackPage {
               pointerFilter: 'block'
             }}
             uiBackground={{
-              color: { ...Color4.Black(), a: 0.35 },
-              textureMode: 'nine-slices',
-              texture: {
-                src: 'assets/images/backgrounds/rounded.png'
-              },
-              textureSlices: {
-                top: 0.5,
-                bottom: 0.5,
-                left: 0.5,
-                right: 0.5
-              }
+                ...ROUNDED_TEXTURE_BACKGROUND,
+              color: { ...Color4.Black(), a: 0.35 }
             }}
           >
             {/* CATEGORY SELECTORS COLUMN */}

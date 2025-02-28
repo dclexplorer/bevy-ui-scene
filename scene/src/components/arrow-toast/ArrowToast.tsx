@@ -5,7 +5,7 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { ALMOST_WHITE } from '../../utils/constants'
+import {ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND} from '../../utils/constants'
 
 function ArrowToast(props: {
   uiTransform: UiTransformProps
@@ -63,17 +63,8 @@ function ArrowToast(props: {
           alignItems: 'center'
         }}
         uiBackground={{
-          color: Color4.Black(),
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
+          ...ROUNDED_TEXTURE_BACKGROUND,
+         color: Color4.Black()
         }}
       >
         {/* TEXT */}

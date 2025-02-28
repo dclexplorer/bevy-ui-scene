@@ -7,7 +7,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { type AtlasIcon } from '../../utils/definitions'
 import Icon from '../icon/Icon'
-import { TRANSPARENT } from '../../utils/constants'
+import {ROUNDED_TEXTURE_BACKGROUND, TRANSPARENT} from '../../utils/constants'
 
 function ButtonTextIcon(props: {
   // Events
@@ -34,17 +34,8 @@ function ButtonTextIcon(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor ?? TRANSPARENT,
-        textureMode: 'nine-slices',
-        texture: {
-          src: 'assets/images/backgrounds/rounded.png'
-        },
-        textureSlices: {
-          top: 0.5,
-          bottom: 0.5,
-          left: 0.5,
-          right: 0.5
-        }
+          ...ROUNDED_TEXTURE_BACKGROUND,
+        color: props.backgroundColor ?? TRANSPARENT
       }}
       onMouseDown={props.onMouseDown}
       onMouseEnter={props.onMouseEnter}

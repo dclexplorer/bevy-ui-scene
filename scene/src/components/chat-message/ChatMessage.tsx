@@ -8,7 +8,7 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { LAVANDER, ALMOST_WHITE } from '../../utils/constants'
+import {LAVANDER, ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND} from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { type Message } from './ChatMessage.types'
 
@@ -70,17 +70,8 @@ function ChatMessage(props: {
           flexDirection: 'column'
         }}
         uiBackground={{
-          color: { ...Color4.Black(), a: 0.4 },
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
+            ...ROUNDED_TEXTURE_BACKGROUND,
+          color: { ...Color4.Black(), a: 0.4 }
         }}
       >
         <Label

@@ -3,6 +3,7 @@ import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
 import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
 import type { PlaceFromApi } from '../ui-classes/scene-info-card/SceneInfoCard.types'
 import type { PhotoMetadataResponse } from 'src/ui-classes/photos/Photos.types'
+import {type TextureMode} from "@dcl/react-ecs";
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)
@@ -521,6 +522,19 @@ export const EMPTY_PLACE: PlaceFromApi = {
   user_dislike: false,
   user_count: 0,
   user_visits: 298
+}
+export const TEXTURE_SLICES_05 = {
+  top: 0.5,
+  bottom: 0.5,
+  left: 0.5,
+  right: 0.5
+}
+export const ROUNDED_TEXTURE_BACKGROUND = {
+  textureMode:"nine-slices" as TextureMode,
+  texture: {
+    src:'assets/images/backgrounds/rounded.png',
+  },
+  textureSlices:TEXTURE_SLICES_05
 }
 export const BASE_MALE_URN = "urn:decentraland:off-chain:base-avatars:BaseMale";
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"

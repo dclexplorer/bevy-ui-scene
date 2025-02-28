@@ -5,6 +5,7 @@ import Icon from "../icon/Icon";
 import {Label} from "@dcl/sdk/react-ecs";
 
 import {RARITY_COLORS} from "../color-palette";
+import {ROUNDED_TEXTURE_BACKGROUND} from "../../utils/constants";
 
 export type InfoPanelProps = {
     canvasScaleRatio: number,
@@ -87,16 +88,7 @@ export function InfoPanel({canvasScaleRatio, wearable}: InfoPanelProps): ReactEl
                             padding:{left:6*canvasScaleRatio, right:6*canvasScaleRatio}
                         }}
                         uiBackground={{
-                        textureMode:"nine-slices",
-                        texture: {
-                            src:'assets/images/backgrounds/rounded.png',
-                        },
-                        textureSlices:{ // TODO refactor move to constant TEXTURE_SLICES_05
-                            top: 0.5,
-                            bottom: 0.5,
-                            left: 0.5,
-                            right: 0.5
-                        },
+                        ...ROUNDED_TEXTURE_BACKGROUND,
                         color:rarityColor
                     }}>
                         <Label value={wearable?.rarity?.toUpperCase()??""} fontSize={26 * canvasScaleRatio}/>

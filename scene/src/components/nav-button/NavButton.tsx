@@ -6,6 +6,7 @@ import { COLOR } from '../color-palette'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import {noop} from "../../utils/function-utils";
 import {type Color4} from "@dcl/sdk/math";
+import {ROUNDED_TEXTURE_BACKGROUND} from "../../utils/constants";
 
 export type NavButtonProps = {
   icon?: AtlasIcon
@@ -43,19 +44,10 @@ export function NavButton({
         ...uiTransform
       }}
       uiBackground={{
+        ...ROUNDED_TEXTURE_BACKGROUND,
         color: backgroundColor ?? (active
           ? COLOR.NAV_BUTTON_ACTIVE_BACKGROUND
-          : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND),
-        textureMode: 'nine-slices',
-        texture: {
-          src: 'assets/images/backgrounds/rounded.png'
-        },
-        textureSlices: {
-          top: 0.5,
-          bottom: 0.5,
-          left: 0.5,
-          right: 0.5
-        }
+          : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND)
       }}
       onMouseDown={()=> {callbacks.onClick()}}
     >

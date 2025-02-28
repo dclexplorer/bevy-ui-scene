@@ -14,7 +14,7 @@ import {
   LINK_CHIP_HOVERED,
   ORANGE,
   PRONOUNS,
-  RELATIONSHIP_STATUS,
+  RELATIONSHIP_STATUS, ROUNDED_TEXTURE_BACKGROUND,
   RUBY,
   SEXUAL_ORIENTATIONS
 } from '../../utils/constants'
@@ -284,17 +284,8 @@ export default class Profile {
                 height: 3 * this.fontSize
               }}
               uiBackground={{
-                color: RUBY,
-                textureMode: 'nine-slices',
-                texture: {
-                  src: 'assets/images/backgrounds/rounded.png'
-                },
-                textureSlices: {
-                  top: 0.5,
-                  bottom: 0.5,
-                  left: 0.5,
-                  right: 0.5
-                }
+                ...ROUNDED_TEXTURE_BACKGROUND,
+                color: RUBY
               }}
             />
             <UiEntity
@@ -759,17 +750,8 @@ export default class Profile {
                         pointerFilter: 'block'
                       }}
                       uiBackground={{
-                        color: { ...Color4.Black(), a: 0.35 },
-                        textureMode: 'nine-slices',
-                        texture: {
-                          src: 'assets/images/backgrounds/rounded.png'
-                        },
-                        textureSlices: {
-                          top: 0.5,
-                          bottom: 0.5,
-                          left: 0.5,
-                          right: 0.5
-                        }
+                        ...ROUNDED_TEXTURE_BACKGROUND,
+                        color: { ...Color4.Black(), a: 0.35 }
                       }}
                     >
                       {/* INFO */}
@@ -1510,17 +1492,8 @@ export default class Profile {
                         pointerFilter: 'block'
                       }}
                       uiBackground={{
-                        color: { ...Color4.Black(), a: 0.35 },
-                        textureMode: 'nine-slices',
-                        texture: {
-                          src: 'assets/images/backgrounds/rounded.png'
-                        },
-                        textureSlices: {
-                          top: 0.5,
-                          bottom: 0.5,
-                          left: 0.5,
-                          right: 0.5
-                        }
+                        ...ROUNDED_TEXTURE_BACKGROUND,
+                        color: { ...Color4.Black(), a: 0.35 }
                       }}
                     >
                       <Label

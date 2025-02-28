@@ -7,7 +7,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { ButtonIcon } from 'src/components/button-icon'
 import { store } from 'src/state/store'
-import { DCL_SHADOW, DCL_SNOW, GRAY_TEXT, RUBY } from 'src/utils/constants'
+import {DCL_SHADOW, DCL_SNOW, GRAY_TEXT, ROUNDED_TEXTURE_BACKGROUND, RUBY} from 'src/utils/constants'
 import Canvas from '../../components/canvas/Canvas'
 import { type UIController } from '../../controllers/ui.controller'
 import type {
@@ -588,17 +588,8 @@ export default class Photos {
         }}
         key={key}
         uiBackground={{
-          color: { ...Color4.White(), a: 0.05 },
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
+            ...ROUNDED_TEXTURE_BACKGROUND,
+          color: { ...Color4.White(), a: 0.05 }
         }}
       >
         <UiEntity

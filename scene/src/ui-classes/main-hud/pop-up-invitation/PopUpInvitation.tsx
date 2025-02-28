@@ -6,12 +6,12 @@ import { ButtonIcon } from '../../../components/button-icon'
 import { ButtonText } from '../../../components/button-text'
 import { type UIController } from '../../../controllers/ui.controller'
 import {
-  RUBY,
-  SELECTED_BUTTON_COLOR,
-  LEFT_PANEL_WIDTH_FACTOR,
-  LEFT_PANEL_MIN_WIDTH,
-  ALPHA_BLACK_PANEL,
-  ALMOST_BLACK
+    RUBY,
+    SELECTED_BUTTON_COLOR,
+    LEFT_PANEL_WIDTH_FACTOR,
+    LEFT_PANEL_MIN_WIDTH,
+    ALPHA_BLACK_PANEL,
+    ALMOST_BLACK, ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { type Invitation } from '../../../components/friend-invitation/FriendInvitation.types'
@@ -116,17 +116,8 @@ export default class PopUpInvitation {
           alignItems: 'center'
         }}
         uiBackground={{
-          color: ALPHA_BLACK_PANEL,
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
+            ...ROUNDED_TEXTURE_BACKGROUND,
+          color: ALPHA_BLACK_PANEL
         }}
       >
         <UiEntity
@@ -246,17 +237,8 @@ export default class PopUpInvitation {
             overflow: 'scroll'
           }}
           uiBackground={{
-            color: { ...Color4.White(), a: 0.01 },
-            textureMode: 'nine-slices',
-            texture: {
-              src: 'assets/images/backgrounds/rounded.png'
-            },
-            textureSlices: {
-              top: 0.5,
-              bottom: 0.5,
-              left: 0.5,
-              right: 0.5
-            }
+              ...ROUNDED_TEXTURE_BACKGROUND,
+            color: { ...Color4.White(), a: 0.01 }
           }}
         >
           <Label

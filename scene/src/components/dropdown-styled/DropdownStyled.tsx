@@ -7,10 +7,10 @@ import ReactEcs, {
 
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import {
-  ALMOST_WHITE,
-  ALMOST_BLACK,
-  CLICKED_PRIMARY_COLOR,
-  ORANGE
+    ALMOST_WHITE,
+    ALMOST_BLACK,
+    CLICKED_PRIMARY_COLOR,
+    ORANGE, ROUNDED_TEXTURE_BACKGROUND
 } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
@@ -76,17 +76,8 @@ function DropdownStyled(props: {
           ...props.uiTransform
         }}
         uiBackground={{
-          color: ALMOST_WHITE,
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
+            ...ROUNDED_TEXTURE_BACKGROUND,
+          color: ALMOST_WHITE
         }}
         onMouseDown={props.onMouseDown}
       >
@@ -133,17 +124,8 @@ function DropdownStyled(props: {
             zIndex: 2
           }}
           uiBackground={{
-            color: ALMOST_WHITE,
-            textureMode: 'nine-slices',
-            texture: {
-              src: 'assets/images/backgrounds/rounded.png'
-            },
-            textureSlices: {
-              top: 0.5,
-              bottom: 0.5,
-              left: 0.5,
-              right: 0.5
-            }
+              ...ROUNDED_TEXTURE_BACKGROUND,
+            color: ALMOST_WHITE
           }}
         >
           <UiEntity

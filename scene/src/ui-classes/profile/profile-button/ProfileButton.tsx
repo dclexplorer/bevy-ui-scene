@@ -1,6 +1,6 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-import { ALMOST_WHITE, RUBY } from '../../../utils/constants'
+import {ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND, RUBY} from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { type UIController } from '../../../controllers/ui.controller'
 
@@ -45,17 +45,8 @@ export default class ProfileButton {
             this.showProfileCard()
           }}
           uiBackground={{
-            color: { ...ALMOST_WHITE, a: 0.5 },
-            textureMode: 'nine-slices',
-            texture: {
-              src: 'assets/images/backgrounds/rounded.png'
-            },
-            textureSlices: {
-              top: 0.5,
-              bottom: 0.5,
-              left: 0.5,
-              right: 0.5
-            }
+              ...ROUNDED_TEXTURE_BACKGROUND,
+            color: { ...ALMOST_WHITE, a: 0.5 }
           }}
           onMouseEnter={() => {}}
           onMouseLeave={() => {}}

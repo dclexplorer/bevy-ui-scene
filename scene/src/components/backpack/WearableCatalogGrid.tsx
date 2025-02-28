@@ -11,6 +11,7 @@ import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
 import {type PBAvatarBase} from "@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen";
 import {WEARABLE_CATEGORY_DEFINITIONS} from "../../service/wearable-categories";
 import {EMPTY_OUTFIT} from "../../service/outfit";
+import {ROUNDED_TEXTURE_BACKGROUND} from "../../utils/constants";
 
 export type WearableCatalogGridProps = {
     wearables: CatalogWearableElement[]
@@ -62,16 +63,10 @@ export function WearableCatalogGrid({wearables, equippedWearables, baseBody, uiT
                 }
                 key={index}
                 uiBackground={((!loading && isEquipped(_,equippedWearables,baseBody) && !isSelected(_?.urn))?{
-                    textureMode:"nine-slices",
+                    ...ROUNDED_TEXTURE_BACKGROUND,
                     texture: {
                         // TODO improve image border
                         src:'assets/images/backgrounds/rounded-border.png',
-                    },
-                    textureSlices:{ // TODO refactor move to constant TEXTURE_SLICES_05
-                        top: 0.5,
-                        bottom: 0.5,
-                        left: 0.5,
-                        right: 0.5
                     },
                     color:COLOR.ACTIVE_BACKGROUND_COLOR
                 }:{})}
@@ -183,19 +178,13 @@ function RoundedButton({isSecondary, text, onClick = noop, uiTransform, fontSize
             justifyContent: 'center',
             ...uiTransform
         }}
-        onMouseDown={()=>{onClick()}} uiBackground={{
-        textureMode: 'nine-slices',
-        texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-        },
-        textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-        },
-        color:(isSecondary === true)?Color4.Black(): Color4.Red()
-    }}>
+        onMouseDown={() => {
+            onClick()
+        }}
+        uiBackground={{
+            ...ROUNDED_TEXTURE_BACKGROUND,
+            color: (isSecondary === true) ? Color4.Black() : Color4.Red()
+        }}>
         <Label value={text} fontSize={fontSize}/>
     </UiEntity>
 }
