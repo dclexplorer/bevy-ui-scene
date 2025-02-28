@@ -1,6 +1,6 @@
-import {type WearableCategory, type WearableCategoryURIParam} from "../service/wearable-categories";
 import type {CatalogWearableElement, CatalystWearable, CatalystWearableMap} from "./wearables-definitions";
 import type {URN, URNWithoutTokenId} from "./definitions";
+import {type WearableCategory} from "../service/wearable-categories";
 
 export type WearablesPageResponse = {
     elements:CatalogWearableElement[],
@@ -13,7 +13,7 @@ export type WearableCatalogPageParams = {
     pageNum: number
     pageSize: number
     address: string
-    wearableCategory: WearableCategoryURIParam | null
+    wearableCategory: WearableCategory | null
     includeBase: boolean
     includeOnChain: boolean
 }
@@ -27,7 +27,7 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
             pageNum,
             pageSize,
             address,
-            wearableCategory:fixBodyCategoryURIParam(wearableCategory),
+            wearableCategory,
             includeBase: true,
             includeOnChain: true
         });
@@ -60,11 +60,6 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
             str += `&collectionType=on-chain`
         }
         return str;
-    }
-
-    function fixBodyCategoryURIParam(category:WearableCategory):WearableCategoryURIParam {
-        if(category === "body") return "body_shape"
-        return category;
     }
 }
 

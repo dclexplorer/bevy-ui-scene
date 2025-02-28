@@ -23,7 +23,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 120, h: 120 },
       sourceSize: { w: 120, h: 120 }
     },
-    'body.png': {
+    'body_shape.png': {
       frame: { x: 52, y: 94, w: 80, h: 81 },
       rotated: false,
       trimmed: false,

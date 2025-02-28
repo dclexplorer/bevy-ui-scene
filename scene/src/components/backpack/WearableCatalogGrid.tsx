@@ -103,7 +103,7 @@ export function WearableCatalogGrid({wearables, equippedWearables, baseBody, uiT
                     }}
                                 uiBackground={SELECTED_BACKGROUND} >
                         <WearableCellThumbnail catalystWearable={_} canvasScaleRatio={canvasScaleRatio} loading={loading} />
-                        {isEquipped(_, equippedWearables, baseBody) && _.category === WEARABLE_CATEGORY_DEFINITIONS.body.id ? null :
+                        {isEquipped(_, equippedWearables, baseBody) && _.category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id ? null :
                         <RoundedButton
                             uiTransform={{
                                 margin:{top:10*canvasScaleRatio},
@@ -154,7 +154,7 @@ function isEquipped(wearable:CatalogWearableElement, equippedWearables:URN[] = [
         isEquippedMemo.memo = {};
     }
     if(isEquippedMemo.memo[wearable.urn] !== undefined) return isEquippedMemo.memo[wearable.urn];
-    if(wearable.category === WEARABLE_CATEGORY_DEFINITIONS.body.id){
+    if(wearable.category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id){
         isEquippedMemo.memo[wearable.urn] = baseBody.bodyShapeUrn === wearable.urn;
     }else{
         isEquippedMemo.memo[wearable.urn] = equippedWearables.map(i=> getURNWithoutTokenId(i)).includes(wearable.urn)

@@ -7,11 +7,12 @@ import {
     AvatarShape,
     type Entity
 } from '@dcl/sdk/ecs';
-import {Color4, Quaternion} from "@dcl/sdk/math";
+import {Color4, Quaternion, Vector3} from "@dcl/sdk/math";
 import {getPlayer} from '@dcl/sdk/src/players'
 import {getCanvasScaleRatio} from "../../service/canvas-ratio";
 import {type URNWithoutTokenId} from "../../utils/definitions";
 import {type PBAvatarBase} from "@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen";
+import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from "../../service/wearable-categories";
 
 // TODO apply different camera positions for each selected category
 
@@ -27,7 +28,35 @@ const avatarPreview: AvatarPreview = {
 
 export const getAvatarCamera: () => Entity = () => avatarPreview.cameraEntity;
 
-export function updateAvatarPreview(wearables: URNWithoutTokenId[], avatarBase:PBAvatarBase): void {
+const AVATAR_CAMERA_POSITION = {
+    BODY: Vector3.create(8, 2.5, 8 - 6),
+    TOP: Vector3.create(8, 3.5, 8 - 3),
+}
+const TOP_CAMERA_CATEGORIES: WearableCategory[] = [
+    WEARABLE_CATEGORY_DEFINITIONS.hair.id,
+    WEARABLE_CATEGORY_DEFINITIONS.eyebrows.id,
+    WEARABLE_CATEGORY_DEFINITIONS.eyes.id,
+    WEARABLE_CATEGORY_DEFINITIONS.mouth.id,
+    WEARABLE_CATEGORY_DEFINITIONS.facial_hair.id,
+    WEARABLE_CATEGORY_DEFINITIONS.hat.id,
+    WEARABLE_CATEGORY_DEFINITIONS.eyewear.id,
+    WEARABLE_CATEGORY_DEFINITIONS.earring.id,
+    WEARABLE_CATEGORY_DEFINITIONS.mask.id,
+    WEARABLE_CATEGORY_DEFINITIONS.tiara.id,
+    WEARABLE_CATEGORY_DEFINITIONS.top_head.id,
+    WEARABLE_CATEGORY_DEFINITIONS.helmet.id,
+]
+
+export const setAvatarPreviewCameraToWearableCategory = (category: WearableCategory | null):void => {
+    console.log("setAvatarPreviewCameraToWearableCategory", category)
+    if (category !== null && TOP_CAMERA_CATEGORIES.includes(category)) {
+        Transform.getMutable(avatarPreview.cameraEntity).position = AVATAR_CAMERA_POSITION.TOP;
+    } else {
+        Transform.getMutable(avatarPreview.cameraEntity).position = AVATAR_CAMERA_POSITION.BODY;
+    }
+}
+
+export function updateAvatarPreview(wearables: URNWithoutTokenId[], avatarBase: PBAvatarBase): void {
     AvatarShape.getMutable(avatarPreview.avatarEntity).wearables = wearables
     AvatarShape.getMutable(avatarPreview.avatarEntity).bodyShape = avatarBase.bodyShapeUrn;
     AvatarShape.getMutable(avatarPreview.avatarEntity).hairColor = avatarBase.hairColor;
@@ -46,10 +75,10 @@ export function createAvatarPreview(): void {
         expressionTriggerId: undefined,
         expressionTriggerTimestamp: undefined,
         eyeColor: playerData?.avatar?.eyesColor,
-        hairColor:  playerData?.avatar?.hairColor,
+        hairColor: playerData?.avatar?.hairColor,
         id: playerData?.userId ?? "", // TODO review if this is ok
         name: undefined,
-        skinColor:  playerData?.avatar?.skinColor,
+        skinColor: playerData?.avatar?.skinColor,
         talking: false,
         wearables: playerData?.wearables ?? []
     })
@@ -84,7 +113,7 @@ export function createAvatarPreview(): void {
     });
 
     Transform.create(cameraEntity, {
-        position: {x: 8, y: 2.5, z: 8 - 6},
+        position: AVATAR_CAMERA_POSITION.BODY,
         rotation: Quaternion.fromEulerDegrees(4, 0, 0),
     });
 }

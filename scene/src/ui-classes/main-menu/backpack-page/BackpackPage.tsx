@@ -24,7 +24,12 @@ import {EMPTY_OUTFIT, getOutfitSetupFromWearables, getWearablesFromOutfit} from 
 import {Pagination} from "../../../components/pagination";
 import {InfoPanel} from "../../../components/backpack/InfoPanel";
 import {BevyApi} from "../../../bevy-api";
-import {getAvatarCamera, createAvatarPreview, updateAvatarPreview} from '../../../components/backpack/AvatarPreview'
+import {
+    getAvatarCamera,
+    createAvatarPreview,
+    updateAvatarPreview,
+    setAvatarPreviewCameraToWearableCategory
+} from '../../../components/backpack/AvatarPreview'
 import {BASE_MALE_URN, ZERO_ADDRESS} from "../../../utils/constants";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
@@ -87,7 +92,8 @@ export default class BackpackPage {
     }
 
     async updateEquippedWearable(category: WearableCategory, wearableURN: URN|null): Promise<void> {
-        if(category === WEARABLE_CATEGORY_DEFINITIONS.body.id){
+      console.log("updateEquippedWearable",category)
+        if(category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id){
             this.state.outfitSetup = {
                 ...this.state.outfitSetup,
                 base:{
@@ -145,6 +151,7 @@ export default class BackpackPage {
 
     const changeCategory = (category:WearableCategory|null):void => {
         this.state.activeWearableCategory = category
+        setAvatarPreviewCameraToWearableCategory(category)
         this.state.currentPage = 1
         void updatePage()
     }

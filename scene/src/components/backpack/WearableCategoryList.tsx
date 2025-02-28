@@ -2,7 +2,7 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { WearableCategoryButton } from './WearableCategoryButton'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-import type { WearableCategory } from '../../service/wearable-categories'
+import {WEARABLE_CATEGORY_DEFINITIONS, WearableCategory} from '../../service/wearable-categories'
 import { type OutfitSetup } from '../../utils/wearables-definitions'
 import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
 import {type URNWithoutTokenId} from "../../utils/definitions";
@@ -30,10 +30,10 @@ export function WearableCategoryList({
         }}
       >
         <WearableCategoryButton
-          category={'body'}
-          active={isWearableCategoryActive('body')}
+          category={WEARABLE_CATEGORY_DEFINITIONS.body_shape.id}
+          active={isWearableCategoryActive(WEARABLE_CATEGORY_DEFINITIONS.body_shape.id)}
           onClick={() =>
-            onSelectCategory(activeCategory === 'body' ? null : 'body')
+            onSelectCategory(activeCategory === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id ? null : WEARABLE_CATEGORY_DEFINITIONS.body_shape.id)
           }
           selectedURN={outfitSetup?.base?.bodyShapeUrn as URNWithoutTokenId}
         />
