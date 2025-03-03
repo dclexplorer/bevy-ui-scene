@@ -4,7 +4,7 @@ import { WearableCategoryButton } from './WearableCategoryButton'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../service/wearable-categories'
 import { type OutfitSetup } from '../../utils/wearables-definitions'
-import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
+import {getURNWithoutTokenId} from "../../utils/URN-utils";
 import {type URNWithoutTokenId} from "../../utils/definitions";
 
 type WearableCategoryListProps = {

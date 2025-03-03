@@ -1,7 +1,7 @@
 import type {URN, URNWithoutTokenId} from '../utils/definitions'
 import type {WearableEntity, OutfitSetup, OutfitSetupWearables} from "../utils/wearables-definitions";
 import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from "./wearable-categories";
-import {getURNWithoutTokenId} from "../utils/wearables-promise-utils";
+import {getURNWithoutTokenId} from "../utils/URN-utils";
 import {BASE_MALE_URN} from "../utils/constants";
 
 export const EMPTY_OUTFIT: OutfitSetup = {

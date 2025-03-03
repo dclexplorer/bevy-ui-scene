@@ -7,7 +7,7 @@ import {getBackgroundFromAtlas} from "../../utils/ui-utils";
 import type {CatalogWearableElement} from "../../utils/wearables-definitions";
 import {COLOR} from "../color-palette";
 import {noop} from "../../utils/function-utils";
-import {getURNWithoutTokenId} from "../../utils/wearables-promise-utils";
+import {getURNWithoutTokenId} from "../../utils/URN-utils";
 import {type PBAvatarBase} from "@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen";
 import {WEARABLE_CATEGORY_DEFINITIONS} from "../../service/wearable-categories";
 import {EMPTY_OUTFIT} from "../../service/outfit";
