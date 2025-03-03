@@ -30,8 +30,8 @@ import {
     updateAvatarPreview,
     setAvatarPreviewCameraToWearableCategory
 } from '../../../components/backpack/AvatarPreview'
-import {BASE_MALE_URN, ROUNDED_TEXTURE_BACKGROUND, ZERO_ADDRESS} from "../../../utils/constants";
-import {getURNWithoutTokenId} from "../../../utils/URN-utils";
+import {ROUNDED_TEXTURE_BACKGROUND, ZERO_ADDRESS} from "../../../utils/constants";
+import {BASE_MALE_URN, getURNWithoutTokenId} from "../../../utils/URN-utils";
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16;
 

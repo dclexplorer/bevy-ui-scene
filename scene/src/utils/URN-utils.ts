@@ -1,4 +1,5 @@
 import type {URN, URNWithoutTokenId} from "./definitions";
+export const BASE_MALE_URN = "urn:decentraland:off-chain:base-avatars:BaseMale";
 
 const urnWithoutTokenIdMemo: Record<URN, URNWithoutTokenId> = {} // TODO consider using Map if possible for performance improvement because long keys
 

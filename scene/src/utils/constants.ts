@@ -536,7 +536,7 @@ export const ROUNDED_TEXTURE_BACKGROUND = {
   },
   textureSlices:TEXTURE_SLICES_05
 }
-export const BASE_MALE_URN = "urn:decentraland:off-chain:base-avatars:BaseMale";
+
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
   id: '00000000-0000-0000-0000-000000000000',
