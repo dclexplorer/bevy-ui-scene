@@ -44,9 +44,6 @@ describe("getWearablesFromOutfit", () => {
         expect(wearables).to.include("urn:decentraland:ethereum:collections-v1:0x1234:item");
         expect(wearables).to.include("urn:decentraland:ethereum:collections-v1:0x5678:item");
 
-        //TODO fix maybe getOutfitSetupFromWearables is mutating EMPTY_OUTFIT
-        console.log("EMPTY_OUTFIT.wearables", EMPTY_OUTFIT.wearables)
-
         expect(wearables.length).to.equal(2);
     });
 

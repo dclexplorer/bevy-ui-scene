@@ -2,9 +2,9 @@ import type {URN, URNWithoutTokenId} from '../utils/definitions'
 import type {WearableEntity, OutfitSetup, OutfitSetupWearables} from "../utils/wearables-definitions";
 import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from "./wearable-categories";
 import {BASE_MALE_URN, getURNWithoutTokenId} from "../utils/URN-utils";
+import {deepFreeze} from "../utils/object-utils";
 
-
-export const EMPTY_OUTFIT: OutfitSetup = {
+export const EMPTY_OUTFIT: OutfitSetup = deepFreeze({
     wearables: {
         body_shape: fromBaseToURN('BaseMale'),
         hair: null,
@@ -32,14 +32,14 @@ export const EMPTY_OUTFIT: OutfitSetup = {
         eyesColor:{r:1,g:1,b:1},
         bodyShapeUrn:BASE_MALE_URN
     }
-}
+})
 
 export function getOutfitSetupFromWearables(equippedWearables:URN[] = [], catalystWearables: WearableEntity[]): OutfitSetupWearables {
     // TODO unit test candidate
     return catalystWearables.reduce((acc: OutfitSetupWearables, catalystWearable: WearableEntity) => {
         acc[catalystWearable.data.category] = equippedWearables.find(e=> getURNWithoutTokenId(e) === catalystWearable.id) as URN;
         return acc;
-    }, EMPTY_OUTFIT.wearables)
+    }, {...EMPTY_OUTFIT.wearables})
 }
 
 export function getWearablesFromOutfit(outfit:OutfitSetup):URNWithoutTokenId[]{

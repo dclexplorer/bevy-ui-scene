@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "test": "mocha -r ts-node/register unit/**/*.ts",
-    "test:watch": "npm run test && chokidar 'unit/**/*.ts' -c './node_modules/.bin/mocha -r ts-node/register unit/**/*.ts'"
+    "test:watch": "npm run test; chokidar 'unit/**/*.ts' '../scene/src/**/*.ts' -c './node_modules/.bin/mocha -r ts-node/register unit/**/*.ts'"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",
