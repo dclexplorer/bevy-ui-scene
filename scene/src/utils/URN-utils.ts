@@ -1,4 +1,4 @@
-import type {URN, URNWithoutTokenId} from "../utils/definitions";
+import type {URN, URNWithoutTokenId} from "./definitions";
 
 const urnWithoutTokenIdMemo:Record<URN, URNWithoutTokenId> = {} // TODO consider using Map if possible for performance improvement because long keys
 
