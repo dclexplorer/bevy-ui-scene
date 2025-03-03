@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "baseUrl": "../src",
+    "paths": {
+      "*": ["*"]
+    },
+    "types": ["node", "jest"]
+  },
+  "include": ["unit/**/*.ts"]
+}
