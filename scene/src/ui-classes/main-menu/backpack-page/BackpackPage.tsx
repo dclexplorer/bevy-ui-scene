@@ -55,7 +55,7 @@ export default class BackpackPage {
     loadingPage:false,
     shownWearables:new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
     totalPages:0,
-    equippedWearables:getPlayer()?.wearables as URN[],
+    equippedWearables:getPlayer()?.wearables as URN[] ?? [],
     outfitSetup:EMPTY_OUTFIT,
       selectedURN:null
   }
@@ -67,7 +67,7 @@ export default class BackpackPage {
         }
         this.state.loadingPage = true;
         const player = getPlayer();
-        this.state.equippedWearables = player?.wearables as URN[]
+        this.state.equippedWearables = player?.wearables as URN[] ?? []
         const equippedWearablesData:WearableEntity[] = await fetchWearablesData(...(this.state.equippedWearables??[]).map(i=> getURNWithoutTokenId(i) as URNWithoutTokenId));
         this.state.outfitSetup.wearables = getOutfitSetupFromWearables(this.state.equippedWearables, equippedWearablesData);
         this.state.outfitSetup.base = {
@@ -109,7 +109,7 @@ export default class BackpackPage {
                     [category]:wearableURN
                 }
             }
-            this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup);
+            this.state.equippedWearables = getWearablesFromOutfit(this.state.outfitSetup) ?? [];
         }
     }
 
@@ -321,6 +321,7 @@ export default class BackpackPage {
 
 function MainContent({children}:any):ReactElement{
     return <UiEntity
+        onMouseEnter={()=>{}}
         uiTransform={{
             flexDirection: 'column',
             justifyContent: 'flex-start',
@@ -333,6 +334,7 @@ function MainContent({children}:any):ReactElement{
             texture: { src: 'assets/images/menu/background.png' },
             textureMode: 'stretch'
         }}
+
     >{children}</UiEntity>
 }
 
