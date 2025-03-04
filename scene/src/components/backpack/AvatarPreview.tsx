@@ -51,7 +51,6 @@ const TOP_CAMERA_CATEGORIES: WearableCategory[] = [
 export const setAvatarPreviewCameraToWearableCategory = (
   category: WearableCategory | null
 ): void => {
-  console.log('setAvatarPreviewCameraToWearableCategory', category)
   if (category !== null && TOP_CAMERA_CATEGORIES.includes(category)) {
     Transform.getMutable(avatarPreview.cameraEntity).position =
       AVATAR_CAMERA_POSITION.TOP

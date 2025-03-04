@@ -126,7 +126,6 @@ export default class BackpackPage {
     category: WearableCategory,
     wearableURN: URNWithoutTokenId | null
   ): Promise<void> {
-    console.log('updateEquippedWearable', category)
     if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) {
       this.state.outfitSetup = {
         ...this.state.outfitSetup,
