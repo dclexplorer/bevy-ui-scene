@@ -1,5 +1,5 @@
 import type {CatalogWearableElement, WearableEntity, CatalystWearableMap} from "./wearables-definitions";
-import type {URN, URNWithoutTokenId} from "./definitions";
+import type {URNWithoutTokenId} from "./definitions";
 import {type WearableCategory} from "../service/wearable-categories";
 
 export type WearablesPageResponse = {
@@ -70,8 +70,7 @@ export async function fetchWearablesData(...wearableURNs:URNWithoutTokenId[]):Pr
     try {
         const baseURL = `https://peer.decentraland.org/lambdas/collections/wearables`;
         const url = `${baseURL}?${wearableURNs.map((urn:URNWithoutTokenId) => {
-            const urnWithoutTokenId = urn
-            return `wearableId=${urnWithoutTokenId}`;
+            return `wearableId=${urn}`;
         }).join('&')}`;
         const response = await fetch(url);
         const wearables = (await response.json()).wearables;

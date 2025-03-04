@@ -62,21 +62,29 @@ export default class BackpackPage {
   }
 
     async initWearablePage(): Promise<void> {
-      // TODO throttle
         if(getAvatarCamera() === engine.RootEntity){
             createAvatarPreview();
         }
         this.state.loadingPage = true;
         const player = getPlayer();
-        this.state.equippedWearables = player?.wearables as URN[] ?? []
+        this.state.equippedWearables = player?.wearables as URN[] ?? [];
         const equippedWearablesData:WearableEntity[] = await fetchWearablesData(...(this.state.equippedWearables??[]).map(i=> getURNWithoutTokenId(i) as URNWithoutTokenId));
-        this.state.outfitSetup.wearables = getOutfitSetupFromWearables(this.state.equippedWearables, equippedWearablesData);
-        this.state.outfitSetup.base = {
-            name:player?.name ?? "",
-            eyesColor:player?.avatar?.eyesColor,
-            hairColor:player?.avatar?.hairColor,
-            skinColor:player?.avatar?.skinColor,
-            bodyShapeUrn:player?.avatar?.bodyShapeUrn ?? BASE_MALE_URN
+        this.state.outfitSetup = {
+            ...this.state.outfitSetup,
+            wearables:{
+                ...this.state.outfitSetup.wearables,
+                ...getOutfitSetupFromWearables(this.state.equippedWearables, equippedWearablesData)
+            },
+            base:{
+                ...this.state.outfitSetup.base,
+                ...{
+                    name:player?.name ?? "",
+                    eyesColor:player?.avatar?.eyesColor,
+                    hairColor:player?.avatar?.hairColor,
+                    skinColor:player?.avatar?.skinColor,
+                    bodyShapeUrn:player?.avatar?.bodyShapeUrn ?? BASE_MALE_URN
+                }
+            }
         };
         // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
         const wearablesPage = await fetchWearablesPage({
