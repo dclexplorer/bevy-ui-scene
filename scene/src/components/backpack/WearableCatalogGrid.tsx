@@ -83,7 +83,6 @@ export function WearableCatalogGrid({
                 ? {
                     ...ROUNDED_TEXTURE_BACKGROUND,
                     texture: {
-                      // TODO improve image border
                       src: 'assets/images/backgrounds/rounded-border.png'
                     },
                     color: COLOR.ACTIVE_BACKGROUND_COLOR
