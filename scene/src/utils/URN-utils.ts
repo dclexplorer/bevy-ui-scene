@@ -4,6 +4,10 @@ export const BASE_MALE_URN:URNWithoutTokenId = "urn:decentraland:off-chain:base-
 const urnWithoutTokenIdMemo: Record<URN, URNWithoutTokenId> = {} // TODO consider using Map if possible for performance improvement because long keys
 export const urnWithTokenIdMemo: Record<URNWithoutTokenId, URN> = {}
 
+export function getWearablesWithTokenId(wearables: URNWithoutTokenId[]):URN[] {
+    return wearables.map((wearableURN) => urnWithTokenIdMemo[wearableURN])
+}
+
 export function getURNWithoutTokenId(urn: URN | null | URNWithoutTokenId, avoidCache: boolean = false): URNWithoutTokenId | null {
     if (urn === null) return null;
 

@@ -44,6 +44,7 @@ import {
 import {
   BASE_MALE_URN,
   getURNWithoutTokenId,
+  getWearablesWithTokenId,
   urnWithTokenIdMemo
 } from '../../../utils/URN-utils'
 
@@ -295,9 +296,7 @@ export default class BackpackPage {
       await BevyApi.setAvatar({
         base: this.state.outfitSetup.base,
         equip: {
-          wearableUrns: this.state.equippedWearables.map(
-            (urnWithTokenId) => urnWithTokenIdMemo[urnWithTokenId]
-          ),
+          wearableUrns: getWearablesWithTokenId(this.state.equippedWearables),
           emoteUrns: []
         }
       })

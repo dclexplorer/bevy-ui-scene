@@ -16,6 +16,7 @@ import {
   type WearableCategory
 } from '../../service/wearable-categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
+import { getWearablesWithTokenId } from '../../utils/URN-utils'
 
 type AvatarPreview = {
   avatarEntity: Entity
@@ -64,7 +65,8 @@ export function updateAvatarPreview(
   wearables: URNWithoutTokenId[],
   avatarBase: PBAvatarBase
 ): void {
-  AvatarShape.getMutable(avatarPreview.avatarEntity).wearables = wearables
+  AvatarShape.getMutable(avatarPreview.avatarEntity).wearables =
+    getWearablesWithTokenId(wearables)
   AvatarShape.getMutable(avatarPreview.avatarEntity).bodyShape =
     avatarBase.bodyShapeUrn
   AvatarShape.getMutable(avatarPreview.avatarEntity).hairColor =
