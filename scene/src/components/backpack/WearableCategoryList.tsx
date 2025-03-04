@@ -7,8 +7,6 @@ import {
   type WearableCategory
 } from '../../service/wearable-categories'
 import { type OutfitSetup } from '../../utils/wearables-definitions'
-import { getURNWithoutTokenId } from '../../utils/URN-utils'
-import { type URNWithoutTokenId } from '../../utils/definitions'
 
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null
@@ -44,7 +42,7 @@ export function WearableCategoryList({
                 : WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
             )
           }
-          selectedURN={outfitSetup?.base?.bodyShapeUrn as URNWithoutTokenId}
+          selectedURN={outfitSetup?.base?.bodyShapeUrn}
         />
         <WearableCategoryButton
           category={'eyebrows'}

@@ -35,7 +35,6 @@ export const EMPTY_OUTFIT: OutfitSetup = deepFreeze({
 })
 
 export function getOutfitSetupFromWearables(equippedWearables:URNWithoutTokenId[] = [], catalystWearables: WearableEntityMetadata[]): OutfitSetupWearables {
-    // TODO unit test candidate
     return catalystWearables.reduce((acc: OutfitSetupWearables, catalystWearable: WearableEntityMetadata) => {
         acc[catalystWearable.data.category] = equippedWearables.find(e=> e === catalystWearable.id) ?? null;
         return acc;

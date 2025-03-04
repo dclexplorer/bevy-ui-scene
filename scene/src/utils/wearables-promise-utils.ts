@@ -72,7 +72,9 @@ export async function fetchWearablesData(...wearableURNs:URNWithoutTokenId[]):Pr
         return wearableURNs.map(wearableURN => (catalystWearableMap[wearableURN]))
     }
     try {
-        const baseURL = `https://peer.decentraland.org/lambdas/collections/wearables`;
+        const realm = await getRealm({})
+        const realmBaseURL = realm.realmInfo?.baseUrl ?? 'https://peer.decentraland.org'
+        const baseURL = `${realmBaseURL}/lambdas/collections/wearables`;
         const url = `${baseURL}?${wearableURNs.map((urn:URNWithoutTokenId) => {
             return `wearableId=${urn}`;
         }).join('&')}`;
