@@ -9,6 +9,7 @@ import { Label } from '@dcl/sdk/react-ecs'
 
 import { RARITY_COLORS } from '../color-palette'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
+import { type Color4 } from "@dcl/sdk/math"
 
 export type InfoPanelProps = {
   canvasScaleRatio: number
@@ -95,33 +96,7 @@ export function InfoPanel({
               }}
             />
           </UiEntity>
-          {/* rarity tag // TODO create component <Tag /> */}
-          <UiEntity
-            uiTransform={{
-              flexDirection: 'row',
-              flexShrink: 0,
-              flexGrow: 0,
-              flexBasis: 0
-            }}
-          >
-            <UiEntity
-              uiTransform={{
-                padding: {
-                  left: 6 * canvasScaleRatio,
-                  right: 6 * canvasScaleRatio
-                }
-              }}
-              uiBackground={{
-                ...ROUNDED_TEXTURE_BACKGROUND,
-                color: rarityColor
-              }}
-            >
-              <Label
-                value={wearable?.rarity?.toUpperCase() ?? ''}
-                fontSize={26 * canvasScaleRatio}
-              />
-            </UiEntity>
-          </UiEntity>
+          <Tag text={wearable?.rarity?.toUpperCase() ?? ''} backgroundColor={rarityColor} canvasScaleRatio={canvasScaleRatio} />
           {wearable?.description !== '' ? (
             <Label
               value={`<b>DESCRIPTION</b>`}
@@ -150,4 +125,34 @@ export function InfoPanel({
       ) : null}
     </UiEntity>
   )
+}
+
+
+function Tag({text, canvasScaleRatio, backgroundColor}:{text:string, canvasScaleRatio:number, backgroundColor:Color4}):ReactElement{
+    return <UiEntity
+        uiTransform={{
+            flexDirection: 'row',
+            flexShrink: 0,
+            flexGrow: 0,
+            flexBasis: 0
+        }}
+    >
+        <UiEntity
+            uiTransform={{
+                padding: {
+                    left: 6 * canvasScaleRatio,
+                    right: 6 * canvasScaleRatio
+                }
+            }}
+            uiBackground={{
+                ...ROUNDED_TEXTURE_BACKGROUND,
+                color: backgroundColor
+            }}
+        >
+            <Label
+                value={text}
+                fontSize={26 * canvasScaleRatio}
+            />
+        </UiEntity>
+    </UiEntity>
 }
