@@ -1,6 +1,7 @@
 import type {CatalogWearableElement, WearableEntityMetadata, CatalystWearableMap} from "./wearables-definitions";
 import type {URNWithoutTokenId} from "./definitions";
 import {type WearableCategory} from "../service/wearable-categories";
+import {getRealm} from "~system/Runtime";
 
 export type WearablesPageResponse = {
     elements:CatalogWearableElement[],
@@ -16,6 +17,7 @@ export type WearableCatalogPageParams = {
     wearableCategory: WearableCategory | null
     includeBase: boolean
     includeOnChain: boolean
+    catalystBaseUrl: string
 }
 
 // cache
@@ -23,14 +25,17 @@ export const catalystWearableMap:CatalystWearableMap = {};
 
 export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, address}:any):Promise<WearablesPageResponse>{
     try {
+        const realm = await getRealm({});
         const wearableCatalogPageURL = getWearableCatalogPageURL({
             pageNum,
             pageSize,
             address,
             wearableCategory,
             includeBase: true,
-            includeOnChain: true
+            includeOnChain: true,
+            catalystBaseUrl:realm.realmInfo?.baseUrl ?? 'https://peer.decentraland.org'
         });
+
         const wearablesPageResponse:any = await fetch(wearableCatalogPageURL);
         const result:WearablesPageResponse = await wearablesPageResponse.json();
 
@@ -47,9 +52,8 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
         throw error
     }
 
-    function getWearableCatalogPageURL({pageNum, pageSize, address, wearableCategory, includeBase, includeOnChain}:WearableCatalogPageParams):string {
-        // TODO use realm BaseURL ?
-        let str:string = `https://peer.decentraland.org/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`;
+    function getWearableCatalogPageURL({pageNum, pageSize, address, wearableCategory, includeBase, includeOnChain, catalystBaseUrl}:WearableCatalogPageParams):string {
+        let str:string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`;
         if(wearableCategory !== null){
             str += `&category=${wearableCategory}`
         }
