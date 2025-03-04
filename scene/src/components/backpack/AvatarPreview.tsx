@@ -77,6 +77,7 @@ export function updateAvatarPreview(
 }
 
 export function createAvatarPreview(): void {
+  if (avatarPreview.cameraEntity !== engine.RootEntity) return
   const avatarEntity: Entity = (avatarPreview.avatarEntity = engine.addEntity())
   const cameraEntity = (avatarPreview.cameraEntity = engine.addEntity())
   const playerData = getPlayer()

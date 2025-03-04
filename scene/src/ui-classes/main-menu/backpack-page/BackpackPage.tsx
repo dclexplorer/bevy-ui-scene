@@ -78,9 +78,7 @@ export default class BackpackPage {
   }
 
   async initWearablePage(): Promise<void> {
-    if (getAvatarCamera() === engine.RootEntity) {
-      createAvatarPreview()
-    }
+    createAvatarPreview()
     this.state.loadingPage = true
     const player = getPlayer()
     this.state.equippedWearables = (getPlayer()?.wearables ?? []).map((urn) =>
