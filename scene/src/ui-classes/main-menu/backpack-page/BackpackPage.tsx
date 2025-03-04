@@ -41,7 +41,7 @@ import {
   ROUNDED_TEXTURE_BACKGROUND,
   ZERO_ADDRESS
 } from '../../../utils/constants'
-import { BASE_MALE_URN, getURNWithoutTokenId } from '../../../utils/URN-utils'
+import {BASE_MALE_URN, getURNWithoutTokenId, urnWithTokenIdMemo} from '../../../utils/URN-utils'
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16
 
@@ -152,7 +152,9 @@ export default class BackpackPage {
         return
       await BevyApi.setAvatar({
         base: this.state.outfitSetup.base,
-        equip: { wearableUrns: this.state.equippedWearables, emoteUrns: [] }
+        equip: {
+            wearableUrns: this.state.equippedWearables.map(urnWithTokenId=> urnWithTokenIdMemo[urnWithTokenId]),
+            emoteUrns: [] }
       })
     } catch (error) {
       console.log('setAvatar error', error)
@@ -352,6 +354,7 @@ export default class BackpackPage {
                 onEquipWearable={async (
                   wearable: CatalogWearableElement
                 ): Promise<void> => {
+                    urnWithTokenIdMemo[wearable.entity.metadata.id] = wearable.individualData[0].id;
                   await this.updateEquippedWearable(
                     wearable.category,
                     wearable.entity.metadata.id

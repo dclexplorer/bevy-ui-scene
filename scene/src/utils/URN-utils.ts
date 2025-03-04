@@ -2,6 +2,7 @@ import type {URN, URNWithoutTokenId} from "./definitions";
 export const BASE_MALE_URN:URNWithoutTokenId = "urn:decentraland:off-chain:base-avatars:BaseMale" as URNWithoutTokenId;
 
 const urnWithoutTokenIdMemo: Record<URN, URNWithoutTokenId> = {} // TODO consider using Map if possible for performance improvement because long keys
+export const urnWithTokenIdMemo: Record<URNWithoutTokenId, URN> = {}
 
 export function getURNWithoutTokenId(urn: URN | null | URNWithoutTokenId, avoidCache: boolean = false): URNWithoutTokenId | null {
     if (urn === null) return null;
@@ -27,7 +28,8 @@ export function getURNWithoutTokenId(urn: URN | null | URNWithoutTokenId, avoidC
             urnWithoutTokenIdMemo[urn as URN] = urn as URNWithoutTokenId;
         }
     }
-
+    const result:URNWithoutTokenId = urnWithoutTokenIdMemo[urn as URN]
     // Return the URN without the tokenId part
-    return urnWithoutTokenIdMemo[urn as URN];
+    urnWithTokenIdMemo[result] = urn as URN
+    return result
 }

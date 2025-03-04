@@ -28,8 +28,8 @@ export type KernelFetchRespose = {
 }
 
 type PBAvatarEquippedData = {
-  wearableUrns: URNWithoutTokenId[];
-  emoteUrns: URNWithoutTokenId[];
+  wearableUrns: URN[];
+  emoteUrns: URN[];
 };
 type RGBColor = { r: number, g: number, b: number }
 export type PBAvatarBase = {
