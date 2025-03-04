@@ -77,6 +77,239 @@ export default class BackpackPage {
     selectedURN: null
   }
 
+  render(): ReactEcs.JSX.Element | null {
+    const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
+    if (canvasInfo === null) return null
+    const canvasScaleRatio = getCanvasScaleRatio()
+
+    return (
+      <MainContent>
+        {/* NAVBAR */}
+        <BackpackNavBar canvasScaleRatio={canvasScaleRatio} />
+        <Content>
+          {/* AVATAR */}
+          <UiEntity
+            uiTransform={{
+              margin: {
+                bottom: this.fontSize,
+                right: this.fontSize
+              },
+              positionType: 'absolute',
+              width: 1000 * canvasScaleRatio,
+              height: '100%',
+              padding: this.fontSize,
+              pointerFilter: 'block',
+              position: { left: '2%' }
+            }}
+          >
+            {getAvatarCamera() === engine.RootEntity ? null : (
+              <UiEntity
+                uiTransform={{
+                  width: '100%',
+                  height: '100%'
+                }}
+                uiBackground={{
+                  videoTexture: { videoPlayerEntity: getAvatarCamera() }
+                }}
+              />
+            )}
+          </UiEntity>
+          <UiEntity
+            uiTransform={{
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              alignSelf: 'flex-start',
+              margin: 40 * canvasScaleRatio,
+              padding: this.fontSize,
+              pointerFilter: 'block'
+            }}
+            uiBackground={{
+              ...ROUNDED_TEXTURE_BACKGROUND,
+              color: { ...Color4.Black(), a: 0.35 }
+            }}
+          >
+            {/* CATEGORY SELECTORS COLUMN */}
+            <WearableCategoryList
+              outfitSetup={this.state.outfitSetup}
+              activeCategory={this.state.activeWearableCategory}
+              onSelectCategory={(category: WearableCategory): void => {
+                if (!this.state.loadingPage) this.changeCategory(category)
+              }}
+            />
+            {/* CATALOG COLUMN */}
+            <UiEntity
+              uiTransform={{
+                flexDirection: 'column',
+                padding: 14 * canvasScaleRatio,
+                margin: { left: 30 * canvasScaleRatio }
+              }}
+              uiBackground={{
+                color: Color4.create(0, 1, 0, 0)
+              }}
+            >
+              {/* CATALOG NAV_BAR */}
+              <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
+                <NavButton
+                  active={this.state.activeWearableCategory === null}
+                  icon={{ spriteName: 'all', atlasName: 'backpack' }}
+                  text={'ALL'}
+                  uiTransform={{ padding: 40 * canvasScaleRatio }}
+                  onClick={() => {
+                    if (this.state.activeWearableCategory === null) return
+                    this.changeCategory(null)
+                  }}
+                />
+                <Icon
+                  iconSize={40 * canvasScaleRatio}
+                  uiTransform={{
+                    alignSelf: 'center',
+                    margin: {
+                      left: 16 * canvasScaleRatio,
+                      right: 16 * canvasScaleRatio
+                    },
+                    display:
+                      this.state.activeWearableCategory === null
+                        ? 'none'
+                        : 'flex'
+                  }}
+                  icon={{
+                    spriteName: 'RightArrow',
+                    atlasName: 'icons'
+                  }}
+                />
+                {this.state.activeWearableCategory === null ? null : (
+                  <NavButton
+                    active={true}
+                    showDeleteButton={true}
+                    onDelete={() => {
+                      this.changeCategory(null)
+                    }}
+                    icon={{
+                      spriteName: this.state.activeWearableCategory,
+                      atlasName: 'backpack'
+                    }}
+                    text={
+                      WEARABLE_CATEGORY_DEFINITIONS[
+                        this.state.activeWearableCategory
+                      ].label
+                    }
+                    uiTransform={{ padding: 20 * canvasScaleRatio }}
+                  />
+                )}
+              </UiEntity>
+              <WearableCatalogGrid
+                uiTransform={{
+                  margin: { top: 20 * canvasScaleRatio }
+                }}
+                loading={this.state.loadingPage}
+                wearables={this.state.shownWearables}
+                equippedWearables={this.state.equippedWearables}
+                baseBody={this.state.outfitSetup.base}
+                onChangeSelection={(
+                  selectedURN: URNWithoutTokenId | null
+                ): void => {
+                  this.state.selectedURN = selectedURN
+                }}
+                onEquipWearable={async (
+                  wearable: CatalogWearableElement
+                ): Promise<void> => {
+                  urnWithTokenIdMemo[wearable.entity.metadata.id] =
+                    wearable.individualData[0].id
+                  await this.updateEquippedWearable(
+                    wearable.category,
+                    wearable.entity.metadata.id
+                  )
+                  updateAvatarPreview(
+                    this.state.equippedWearables,
+                    this.state.outfitSetup.base
+                  )
+                }}
+                onUnequipWearable={async (
+                  wearable: CatalogWearableElement
+                ): Promise<void> => {
+                  await this.updateEquippedWearable(wearable.category, null)
+                  updateAvatarPreview(
+                    this.state.equippedWearables,
+                    this.state.outfitSetup.base
+                  )
+                }}
+              />
+              <Pagination
+                disabled={this.state.loadingPage}
+                onChange={(page: number) => {
+                  this.state.currentPage = page
+                  void this.updatePage()
+                }}
+                pages={this.state.totalPages}
+                currentPage={this.state.currentPage}
+              />
+            </UiEntity>
+            {/* SELECTED ITEM COLUMN */}
+            <InfoPanel
+              canvasScaleRatio={canvasScaleRatio}
+              wearable={
+                this.state.selectedURN === null
+                  ? null
+                  : catalystWearableMap[this.state.selectedURN]
+              }
+            />
+          </UiEntity>
+        </Content>
+      </MainContent>
+    )
+  }
+
+  changeCategory(category: WearableCategory | null): void {
+    this.state.activeWearableCategory = category
+    setAvatarPreviewCameraToWearableCategory(category)
+    this.state.currentPage = 1
+    void this.updatePage()
+  }
+
+  async updatePage(): Promise<void> {
+    this.state.loadingPage = true
+    // TODO improve with throttle and remove disabled prop
+    const wearablesPage = await fetchWearablesPage({
+      pageNum: this.state.currentPage,
+      pageSize: WEARABLE_CATALOG_PAGE_SIZE,
+      address:
+        getPlayer()?.userId ?? '0x0000000000000000000000000000000000000000',
+      wearableCategory: this.state.activeWearableCategory
+    })
+
+    this.state.totalPages = Math.ceil(
+      wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE
+    )
+    this.state.loadingPage = false
+    this.state.shownWearables = wearablesPage.elements
+  }
+
+  async saveAvatar(): Promise<void> {
+    try {
+      if (
+        this.state.equippedWearables.sort(sortAbc).join(',') ===
+        getPlayer()?.wearables.sort(sortAbc).join(',')
+      )
+        return
+      await BevyApi.setAvatar({
+        base: this.state.outfitSetup.base,
+        equip: {
+          wearableUrns: this.state.equippedWearables.map(
+            (urnWithTokenId) => urnWithTokenIdMemo[urnWithTokenId]
+          ),
+          emoteUrns: []
+        }
+      })
+    } catch (error) {
+      console.log('setAvatar error', error)
+    }
+
+    function sortAbc(a: string, b: string): number {
+      return a.localeCompare(b)
+    }
+  }
+
   async initWearablePage(): Promise<void> {
     createAvatarPreview()
     this.state.loadingPage = true
@@ -145,266 +378,6 @@ export default class BackpackPage {
       this.state.equippedWearables =
         getWearablesFromOutfit(this.state.outfitSetup) ?? []
     }
-  }
-
-  async saveAvatar(): Promise<void> {
-    try {
-      if (
-        this.state.equippedWearables.sort(sortAbc).join(',') ===
-        getPlayer()?.wearables.sort(sortAbc).join(',')
-      )
-        return
-      await BevyApi.setAvatar({
-        base: this.state.outfitSetup.base,
-        equip: {
-          wearableUrns: this.state.equippedWearables.map(
-            (urnWithTokenId) => urnWithTokenIdMemo[urnWithTokenId]
-          ),
-          emoteUrns: []
-        }
-      })
-    } catch (error) {
-      console.log('setAvatar error', error)
-    }
-
-    function sortAbc(a: string, b: string): number {
-      return a.localeCompare(b)
-    }
-  }
-
-  mainUi(): ReactEcs.JSX.Element | null {
-    const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-    if (canvasInfo === null) return null
-    const canvasScaleRatio = getCanvasScaleRatio()
-
-    const updatePage = async (): Promise<void> => {
-      this.state.loadingPage = true
-      // TODO improve with throttle and remove disabled prop
-      const wearablesPage = await fetchWearablesPage({
-        pageNum: this.state.currentPage,
-        pageSize: WEARABLE_CATALOG_PAGE_SIZE,
-        address:
-          getPlayer()?.userId ?? '0x0000000000000000000000000000000000000000',
-        wearableCategory: this.state.activeWearableCategory
-      })
-
-      this.state.totalPages = Math.ceil(
-        wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE
-      )
-      this.state.loadingPage = false
-      this.state.shownWearables = wearablesPage.elements
-    }
-
-    const changeCategory = (category: WearableCategory | null): void => {
-      this.state.activeWearableCategory = category
-      setAvatarPreviewCameraToWearableCategory(category)
-      this.state.currentPage = 1
-      void updatePage()
-    }
-
-    return (
-      <MainContent>
-        {/* NAVBAR */}
-        <NavBar canvasScaleRatio={canvasScaleRatio}>
-          {/* LEFT SECTION */}
-          <LeftSection>
-            <NavBarTitle
-              text={'<b>Backpack</b>'}
-              canvasScaleRatio={canvasScaleRatio}
-            />
-            {/* NAV-BUTTON-BAR */}
-            <NavButtonBar canvasScaleRatio={canvasScaleRatio}>
-              <NavButton
-                icon={{
-                  spriteName: 'Wearables',
-                  atlasName: 'icons'
-                }}
-                active={true}
-                text={'Wearables'}
-              />
-              <NavButton
-                icon={{
-                  spriteName: 'Emotes',
-                  atlasName: 'icons'
-                }}
-                text={'Emotes'}
-                uiTransform={{ margin: { left: 12 } }}
-              />
-            </NavButtonBar>
-          </LeftSection>
-        </NavBar>
-        <Content>
-          {/* AVATAR */}
-          <UiEntity
-            uiTransform={{
-              margin: {
-                bottom: this.fontSize,
-                right: this.fontSize
-              },
-              positionType: 'absolute',
-              width: 1000 * canvasScaleRatio,
-              height: '100%',
-              padding: this.fontSize,
-              pointerFilter: 'block',
-              position: { left: '2%' }
-            }}
-          >
-            {getAvatarCamera() === engine.RootEntity ? null : (
-              <UiEntity
-                uiTransform={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                uiBackground={{
-                  videoTexture: { videoPlayerEntity: getAvatarCamera() }
-                }}
-              />
-            )}
-          </UiEntity>
-          <UiEntity
-            uiTransform={{
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              alignSelf: 'flex-start',
-              margin: 40 * canvasScaleRatio,
-              padding: this.fontSize,
-              pointerFilter: 'block'
-            }}
-            uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
-              color: { ...Color4.Black(), a: 0.35 }
-            }}
-          >
-            {/* CATEGORY SELECTORS COLUMN */}
-            <WearableCategoryList
-              outfitSetup={this.state.outfitSetup}
-              activeCategory={this.state.activeWearableCategory}
-              onSelectCategory={(category: WearableCategory): void => {
-                if (!this.state.loadingPage) changeCategory(category)
-              }}
-            />
-            {/* CATALOG COLUMN */}
-            <UiEntity
-              uiTransform={{
-                flexDirection: 'column',
-                padding: 14 * canvasScaleRatio,
-                margin: { left: 30 * canvasScaleRatio }
-              }}
-              uiBackground={{
-                color: Color4.create(0, 1, 0, 0)
-              }}
-            >
-              {/* CATALOG NAV_BAR */}
-              <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
-                <NavButton
-                  active={this.state.activeWearableCategory === null}
-                  icon={{ spriteName: 'all', atlasName: 'backpack' }}
-                  text={'ALL'}
-                  uiTransform={{ padding: 40 * canvasScaleRatio }}
-                  onClick={() => {
-                    if (this.state.activeWearableCategory === null) return
-                    changeCategory(null)
-                  }}
-                />
-                <Icon
-                  iconSize={40 * canvasScaleRatio}
-                  uiTransform={{
-                    alignSelf: 'center',
-                    margin: {
-                      left: 16 * canvasScaleRatio,
-                      right: 16 * canvasScaleRatio
-                    },
-                    display:
-                      this.state.activeWearableCategory === null
-                        ? 'none'
-                        : 'flex'
-                  }}
-                  icon={{
-                    spriteName: 'RightArrow',
-                    atlasName: 'icons'
-                  }}
-                />
-                {this.state.activeWearableCategory === null ? null : (
-                  <NavButton
-                    active={true}
-                    showDeleteButton={true}
-                    onDelete={() => {
-                      changeCategory(null)
-                    }}
-                    icon={{
-                      spriteName: this.state.activeWearableCategory,
-                      atlasName: 'backpack'
-                    }}
-                    text={
-                      WEARABLE_CATEGORY_DEFINITIONS[
-                        this.state.activeWearableCategory
-                      ].label
-                    }
-                    uiTransform={{ padding: 20 * canvasScaleRatio }}
-                  />
-                )}
-              </UiEntity>
-              <WearableCatalogGrid
-                uiTransform={{
-                  margin: { top: 20 * canvasScaleRatio }
-                }}
-                loading={this.state.loadingPage}
-                wearables={this.state.shownWearables}
-                equippedWearables={this.state.equippedWearables}
-                baseBody={this.state.outfitSetup.base}
-                onChangeSelection={(
-                  selectedURN: URNWithoutTokenId | null
-                ): void => {
-                  this.state.selectedURN = selectedURN
-                }}
-                onEquipWearable={async (
-                  wearable: CatalogWearableElement
-                ): Promise<void> => {
-                  urnWithTokenIdMemo[wearable.entity.metadata.id] =
-                    wearable.individualData[0].id
-                  await this.updateEquippedWearable(
-                    wearable.category,
-                    wearable.entity.metadata.id
-                  )
-                  updateAvatarPreview(
-                    this.state.equippedWearables,
-                    this.state.outfitSetup.base
-                  )
-                }}
-                onUnequipWearable={async (
-                  wearable: CatalogWearableElement
-                ): Promise<void> => {
-                  await this.updateEquippedWearable(wearable.category, null)
-                  updateAvatarPreview(
-                    this.state.equippedWearables,
-                    this.state.outfitSetup.base
-                  )
-                }}
-              />
-              <Pagination
-                disabled={this.state.loadingPage}
-                onChange={(page: number) => {
-                  this.state.currentPage = page
-                  void updatePage()
-                }}
-                pages={this.state.totalPages}
-                currentPage={this.state.currentPage}
-              />
-            </UiEntity>
-            {/* SELECTED ITEM COLUMN */}
-            <InfoPanel
-              canvasScaleRatio={canvasScaleRatio}
-              wearable={
-                this.state.selectedURN === null
-                  ? null
-                  : catalystWearableMap[this.state.selectedURN]
-              }
-            />
-          </UiEntity>
-        </Content>
-      </MainContent>
-    )
   }
 }
 
@@ -518,5 +491,42 @@ function Content({ children }: any): ReactElement {
     >
       {children}
     </UiEntity>
+  )
+}
+
+function BackpackNavBar({
+  canvasScaleRatio
+}: {
+  canvasScaleRatio: number
+}): ReactElement {
+  return (
+    <NavBar canvasScaleRatio={canvasScaleRatio}>
+      {/* LEFT SECTION */}
+      <LeftSection>
+        <NavBarTitle
+          text={'<b>Backpack</b>'}
+          canvasScaleRatio={canvasScaleRatio}
+        />
+        {/* NAV-BUTTON-BAR */}
+        <NavButtonBar canvasScaleRatio={canvasScaleRatio}>
+          <NavButton
+            icon={{
+              spriteName: 'Wearables',
+              atlasName: 'icons'
+            }}
+            active={true}
+            text={'Wearables'}
+          />
+          <NavButton
+            icon={{
+              spriteName: 'Emotes',
+              atlasName: 'icons'
+            }}
+            text={'Emotes'}
+            uiTransform={{ margin: { left: 12 } }}
+          />
+        </NavButtonBar>
+      </LeftSection>
+    </NavBar>
   )
 }

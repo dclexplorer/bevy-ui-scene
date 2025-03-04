@@ -315,7 +315,7 @@ export default class MainMenu {
             {this.activePage === 'explore' &&
               this.uiController.explorePage.mainUi()}
             {this.activePage === 'backpack' &&
-              this.uiController.backpackPage.mainUi()}
+              this.uiController.backpackPage.render()}
             {this.activePage === 'settings' &&
               this.uiController.settingsPage.mainUi()}
           </UiEntity>
