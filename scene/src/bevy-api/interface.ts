@@ -1,4 +1,4 @@
-import {type URN, URNWithoutTokenId} from "../utils/definitions";
+import type { URN, URNWithoutTokenId } from "../utils/definitions";
 
 export type ExplorerSetting = {
   name: string

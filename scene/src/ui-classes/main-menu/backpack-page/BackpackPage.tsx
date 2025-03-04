@@ -41,7 +41,11 @@ import {
   ROUNDED_TEXTURE_BACKGROUND,
   ZERO_ADDRESS
 } from '../../../utils/constants'
-import {BASE_MALE_URN, getURNWithoutTokenId, urnWithTokenIdMemo} from '../../../utils/URN-utils'
+import {
+  BASE_MALE_URN,
+  getURNWithoutTokenId,
+  urnWithTokenIdMemo
+} from '../../../utils/URN-utils'
 
 const WEARABLE_CATALOG_PAGE_SIZE = 16
 
@@ -66,7 +70,9 @@ export default class BackpackPage {
     loadingPage: false,
     shownWearables: new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
     totalPages: 0,
-    equippedWearables: (getPlayer()?.wearables ?? []).map((urn)=>getURNWithoutTokenId(urn as URN)) as URNWithoutTokenId[],
+    equippedWearables: (getPlayer()?.wearables ?? []).map((urn) =>
+      getURNWithoutTokenId(urn as URN)
+    ) as URNWithoutTokenId[],
     outfitSetup: EMPTY_OUTFIT,
     selectedURN: null
   }
@@ -77,11 +83,11 @@ export default class BackpackPage {
     }
     this.state.loadingPage = true
     const player = getPlayer()
-    this.state.equippedWearables = (getPlayer()?.wearables ?? [])
-        .map((urn)=>getURNWithoutTokenId(urn as URN)) as URNWithoutTokenId[]
-    const equippedWearablesData: WearableEntityMetadata[] = await fetchWearablesData(
-      ...(this.state.equippedWearables ?? [])
-    )
+    this.state.equippedWearables = (getPlayer()?.wearables ?? []).map((urn) =>
+      getURNWithoutTokenId(urn as URN)
+    ) as URNWithoutTokenId[]
+    const equippedWearablesData: WearableEntityMetadata[] =
+      await fetchWearablesData(...(this.state.equippedWearables ?? []))
     this.state.outfitSetup = {
       ...this.state.outfitSetup,
       wearables: {
@@ -98,7 +104,8 @@ export default class BackpackPage {
           eyesColor: player?.avatar?.eyesColor,
           hairColor: player?.avatar?.hairColor,
           skinColor: player?.avatar?.skinColor,
-          bodyShapeUrn: (player?.avatar?.bodyShapeUrn as URNWithoutTokenId ?? BASE_MALE_URN)
+          bodyShapeUrn:
+            (player?.avatar?.bodyShapeUrn as URNWithoutTokenId) ?? BASE_MALE_URN
         }
       }
     }
@@ -153,8 +160,11 @@ export default class BackpackPage {
       await BevyApi.setAvatar({
         base: this.state.outfitSetup.base,
         equip: {
-            wearableUrns: this.state.equippedWearables.map(urnWithTokenId=> urnWithTokenIdMemo[urnWithTokenId]),
-            emoteUrns: [] }
+          wearableUrns: this.state.equippedWearables.map(
+            (urnWithTokenId) => urnWithTokenIdMemo[urnWithTokenId]
+          ),
+          emoteUrns: []
+        }
       })
     } catch (error) {
       console.log('setAvatar error', error)
@@ -354,7 +364,8 @@ export default class BackpackPage {
                 onEquipWearable={async (
                   wearable: CatalogWearableElement
                 ): Promise<void> => {
-                    urnWithTokenIdMemo[wearable.entity.metadata.id] = wearable.individualData[0].id;
+                  urnWithTokenIdMemo[wearable.entity.metadata.id] =
+                    wearable.individualData[0].id
                   await this.updateEquippedWearable(
                     wearable.category,
                     wearable.entity.metadata.id

@@ -15,7 +15,7 @@ import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
 } from '../../service/wearable-categories'
-import {PBAvatarBase} from "../../bevy-api/interface";
+import { type PBAvatarBase } from '../../bevy-api/interface'
 
 type AvatarPreview = {
   avatarEntity: Entity

@@ -1,17 +1,16 @@
 import { Label, UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
-import { type URN, type URNWithoutTokenId } from '../../utils/definitions'
+import type { URNWithoutTokenId } from '../../utils/definitions'
 import { Color4 } from '@dcl/sdk/math'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import type { CatalogWearableElement } from '../../utils/wearables-definitions'
 import { COLOR } from '../color-palette'
 import { noop } from '../../utils/function-utils'
-import { getURNWithoutTokenId } from '../../utils/URN-utils'
 import { WEARABLE_CATEGORY_DEFINITIONS } from '../../service/wearable-categories'
 import { EMPTY_OUTFIT } from '../../service/outfit'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
-import {type PBAvatarBase} from "../../bevy-api/interface";
+import { type PBAvatarBase } from '../../bevy-api/interface'
 
 export type WearableCatalogGridProps = {
   wearables: CatalogWearableElement[]
@@ -82,31 +81,33 @@ export function WearableCatalogGrid({
             }}
           >
             {!loading &&
-                isEquipped(_, equippedWearables, baseBody) &&
-                !isSelected(_?.urn) ? <UiEntity
+            isEquipped(_, equippedWearables, baseBody) &&
+            !isSelected(_?.urn) ? (
+              <UiEntity
                 uiTransform={{
-                  positionType:'absolute',
-                    width: 180 * canvasScaleRatio,
-                    height: 200 * canvasScaleRatio,
-                    position:{
-                        top:0,
-                        left:0
-                    }
+                  positionType: 'absolute',
+                  width: 180 * canvasScaleRatio,
+                  height: 200 * canvasScaleRatio,
+                  position: {
+                    top: 0,
+                    left: 0
+                  }
                 }}
                 uiBackground={
                   !loading &&
                   isEquipped(_, equippedWearables, baseBody) &&
                   !isSelected(_?.urn)
-                      ? {
+                    ? {
                         ...ROUNDED_TEXTURE_BACKGROUND,
                         texture: {
                           src: 'assets/images/backgrounds/rounded-border.png'
                         },
                         color: COLOR.ACTIVE_BACKGROUND_COLOR
                       }
-                      : {}
+                    : {}
                 }
-              /> : null}
+              />
+            ) : null}
             {state.selectedWearableURN !== _?.urn ? (
               <WearableCellThumbnail
                 catalystWearable={_}

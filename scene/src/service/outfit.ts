@@ -1,8 +1,8 @@
-import type {URN, URNWithoutTokenId} from '../utils/definitions'
-import type {WearableEntityMetadata, OutfitSetup, OutfitSetupWearables} from "../utils/wearables-definitions";
-import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from "./wearable-categories";
-import {BASE_MALE_URN} from "../utils/URN-utils";
-import {deepFreeze} from "../utils/object-utils";
+import type { URNWithoutTokenId } from '../utils/definitions'
+import type { WearableEntityMetadata, OutfitSetup, OutfitSetupWearables } from "../utils/wearables-definitions"
+import { WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory } from "./wearable-categories"
+import { BASE_MALE_URN } from "../utils/URN-utils"
+import { deepFreeze } from "../utils/object-utils"
 
 export const EMPTY_OUTFIT: OutfitSetup = deepFreeze({
     wearables: {

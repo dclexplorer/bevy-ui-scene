@@ -8,7 +8,7 @@ import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
 import Icon from '../icon/Icon'
-import {type AtlasIcon, type URN, type URNWithoutTokenId} from '../../utils/definitions'
+import type { AtlasIcon, URNWithoutTokenId } from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { catalystWearableMap } from '../../utils/wearables-promise-utils'
@@ -47,7 +47,7 @@ export function WearableCategoryButton({
         })
       : {
           texture: {
-            src:`https://peer.decentraland.org/lambdas/collections/contents/${selectedURN}/thumbnail`
+            src: `https://peer.decentraland.org/lambdas/collections/contents/${selectedURN}/thumbnail`
           },
           textureMode: 'stretch'
         }
@@ -101,7 +101,9 @@ export function WearableCategoryButton({
         }}
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
-          spriteName: catalystWearableMap[selectedURN as URNWithoutTokenId]?.rarity ?? 'base'
+          spriteName:
+            catalystWearableMap[selectedURN as URNWithoutTokenId]?.rarity ??
+            'base'
         })}
       />
       <UiEntity
