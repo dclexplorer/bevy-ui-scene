@@ -20,7 +20,7 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
 import type {
   CatalogWearableElement,
-  WearableEntity,
+  WearableEntityMetadata,
   OutfitSetup
 } from '../../../utils/wearables-definitions'
 import {
@@ -51,7 +51,7 @@ type BackpackPageState = {
   loadingPage: boolean
   shownWearables: CatalogWearableElement[]
   totalPages: number
-  equippedWearables: URN[]
+  equippedWearables: URNWithoutTokenId[]
   outfitSetup: OutfitSetup
   selectedURN: URNWithoutTokenId | null
 }
@@ -66,7 +66,7 @@ export default class BackpackPage {
     loadingPage: false,
     shownWearables: new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
     totalPages: 0,
-    equippedWearables: (getPlayer()?.wearables as URN[]) ?? [],
+    equippedWearables: (getPlayer()?.wearables ?? []).map((urn)=>getURNWithoutTokenId(urn as URN)) as URNWithoutTokenId[],
     outfitSetup: EMPTY_OUTFIT,
     selectedURN: null
   }
@@ -77,11 +77,10 @@ export default class BackpackPage {
     }
     this.state.loadingPage = true
     const player = getPlayer()
-    this.state.equippedWearables = (player?.wearables as URN[]) ?? []
-    const equippedWearablesData: WearableEntity[] = await fetchWearablesData(
-      ...(this.state.equippedWearables ?? []).map(
-        (i) => getURNWithoutTokenId(i) as URNWithoutTokenId
-      )
+    this.state.equippedWearables = (getPlayer()?.wearables ?? [])
+        .map((urn)=>getURNWithoutTokenId(urn as URN)) as URNWithoutTokenId[]
+    const equippedWearablesData: WearableEntityMetadata[] = await fetchWearablesData(
+      ...(this.state.equippedWearables ?? [])
     )
     this.state.outfitSetup = {
       ...this.state.outfitSetup,
@@ -99,7 +98,7 @@ export default class BackpackPage {
           eyesColor: player?.avatar?.eyesColor,
           hairColor: player?.avatar?.hairColor,
           skinColor: player?.avatar?.skinColor,
-          bodyShapeUrn: player?.avatar?.bodyShapeUrn ?? BASE_MALE_URN
+          bodyShapeUrn: (player?.avatar?.bodyShapeUrn as URNWithoutTokenId ?? BASE_MALE_URN)
         }
       }
     }
@@ -120,7 +119,7 @@ export default class BackpackPage {
 
   async updateEquippedWearable(
     category: WearableCategory,
-    wearableURN: URN | null
+    wearableURN: URNWithoutTokenId | null
   ): Promise<void> {
     console.log('updateEquippedWearable', category)
     if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) {
@@ -128,7 +127,7 @@ export default class BackpackPage {
         ...this.state.outfitSetup,
         base: {
           ...this.state.outfitSetup.base,
-          bodyShapeUrn: wearableURN as URN
+          bodyShapeUrn: wearableURN as URNWithoutTokenId
         }
       }
     } else {
@@ -355,7 +354,7 @@ export default class BackpackPage {
                 ): Promise<void> => {
                   await this.updateEquippedWearable(
                     wearable.category,
-                    wearable.individualData[0].id
+                    wearable.entity.metadata.id
                   )
                   updateAvatarPreview(
                     this.state.equippedWearables,

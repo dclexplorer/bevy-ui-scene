@@ -1,7 +1,7 @@
 import type {URN, URNWithoutTokenId} from '../utils/definitions'
-import type {WearableEntity, OutfitSetup, OutfitSetupWearables} from "../utils/wearables-definitions";
+import type {WearableEntityMetadata, OutfitSetup, OutfitSetupWearables} from "../utils/wearables-definitions";
 import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from "./wearable-categories";
-import {BASE_MALE_URN, getURNWithoutTokenId} from "../utils/URN-utils";
+import {BASE_MALE_URN} from "../utils/URN-utils";
 import {deepFreeze} from "../utils/object-utils";
 
 export const EMPTY_OUTFIT: OutfitSetup = deepFreeze({
@@ -34,10 +34,10 @@ export const EMPTY_OUTFIT: OutfitSetup = deepFreeze({
     }
 })
 
-export function getOutfitSetupFromWearables(equippedWearables:URN[] = [], catalystWearables: WearableEntity[]): OutfitSetupWearables {
+export function getOutfitSetupFromWearables(equippedWearables:URNWithoutTokenId[] = [], catalystWearables: WearableEntityMetadata[]): OutfitSetupWearables {
     // TODO unit test candidate
-    return catalystWearables.reduce((acc: OutfitSetupWearables, catalystWearable: WearableEntity) => {
-        acc[catalystWearable.data.category] = equippedWearables.find(e=> getURNWithoutTokenId(e) === catalystWearable.id) as URN;
+    return catalystWearables.reduce((acc: OutfitSetupWearables, catalystWearable: WearableEntityMetadata) => {
+        acc[catalystWearable.data.category] = equippedWearables.find(e=> e === catalystWearable.id) ?? null;
         return acc;
     }, {...EMPTY_OUTFIT.wearables})
 }
@@ -53,6 +53,6 @@ export function getWearablesFromOutfit(outfit:OutfitSetup):URNWithoutTokenId[]{
     return result;
 }
 
-function fromBaseToURN(baseKey: string): URN {
-    return `urn:decentraland:off-chain:base-avatars:${baseKey}`
+function fromBaseToURN(baseKey: string): URNWithoutTokenId {
+    return `urn:decentraland:off-chain:base-avatars:${baseKey}` as URNWithoutTokenId
 }

@@ -1,7 +1,7 @@
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import type {
-  WearableEntity,
+  WearableEntityMetadata,
   RarityName
 } from '../../utils/wearables-definitions'
 import Icon from '../icon/Icon'
@@ -13,7 +13,7 @@ import { type Color4 } from "@dcl/sdk/math"
 
 export type InfoPanelProps = {
   canvasScaleRatio: number
-  wearable: WearableEntity | null
+  wearable: WearableEntityMetadata | null
 }
 
 export function InfoPanel({

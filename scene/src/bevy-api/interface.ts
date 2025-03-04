@@ -1,4 +1,4 @@
-import {type URN} from "../utils/definitions";
+import {type URN, URNWithoutTokenId} from "../utils/definitions";
 
 export type ExplorerSetting = {
   name: string
@@ -28,20 +28,20 @@ export type KernelFetchRespose = {
 }
 
 type PBAvatarEquippedData = {
-  wearableUrns: URN[];
-  emoteUrns: URN[];
+  wearableUrns: URNWithoutTokenId[];
+  emoteUrns: URNWithoutTokenId[];
 };
 type RGBColor = { r: number, g: number, b: number }
-type PbAvatarBase = {
+export type PBAvatarBase = {
   name: string;
   skinColor?: RGBColor;
   eyesColor?: RGBColor;
   hairColor?: RGBColor;
-  bodyShapeUrn: string;
+  bodyShapeUrn: URNWithoutTokenId;
 };
 
 type SetAvatarData = {
-  base?: PbAvatarBase;
+  base?: PBAvatarBase;
   equip?: PBAvatarEquippedData;
 };
 export type BevyApiInterface = {

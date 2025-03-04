@@ -8,7 +8,7 @@ import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
 import Icon from '../icon/Icon'
-import { type AtlasIcon, type URN } from '../../utils/definitions'
+import {type AtlasIcon, type URN, type URNWithoutTokenId} from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { catalystWearableMap } from '../../utils/wearables-promise-utils'
@@ -20,7 +20,7 @@ type WearableCategoryButtonProps = {
   active?: boolean
   // eslint-disable-next-line @typescript-eslint/ban-types
   onClick?: Function
-  selectedURN: URN | null
+  selectedURN: URNWithoutTokenId | null
 }
 export function WearableCategoryButton({
   category,
@@ -101,7 +101,7 @@ export function WearableCategoryButton({
         }}
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
-          spriteName: catalystWearableMap[selectedURN as URN]?.rarity ?? 'base'
+          spriteName: catalystWearableMap[selectedURN as URNWithoutTokenId]?.rarity ?? 'base'
         })}
       />
       <UiEntity

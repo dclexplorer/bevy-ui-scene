@@ -8,14 +8,14 @@ import type { CatalogWearableElement } from '../../utils/wearables-definitions'
 import { COLOR } from '../color-palette'
 import { noop } from '../../utils/function-utils'
 import { getURNWithoutTokenId } from '../../utils/URN-utils'
-import { type PBAvatarBase } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen'
 import { WEARABLE_CATEGORY_DEFINITIONS } from '../../service/wearable-categories'
 import { EMPTY_OUTFIT } from '../../service/outfit'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
+import {type PBAvatarBase} from "../../bevy-api/interface";
 
 export type WearableCatalogGridProps = {
   wearables: CatalogWearableElement[]
-  equippedWearables: URN[]
+  equippedWearables: URNWithoutTokenId[]
   baseBody: PBAvatarBase
   uiTransform: UiTransformProps
   loading: boolean
@@ -182,9 +182,9 @@ function select(wearableURNWithoutTokenId: null | URNWithoutTokenId): void {
 }
 
 const isEquippedMemo: {
-  equippedWearables: URN[]
+  equippedWearables: URNWithoutTokenId[]
   baseBody: PBAvatarBase
-  memo: Record<URN, boolean> // TODO consider using Map if possible for performance improvement because long keys
+  memo: Record<URNWithoutTokenId, boolean> // TODO consider using Map if possible for performance improvement because long keys
 } = {
   equippedWearables: [],
   memo: {},
@@ -193,7 +193,7 @@ const isEquippedMemo: {
 
 function isEquipped(
   wearable: CatalogWearableElement,
-  equippedWearables: URN[] = [],
+  equippedWearables: URNWithoutTokenId[] = [],
   baseBody: PBAvatarBase
 ): boolean {
   if (wearable === null) return false

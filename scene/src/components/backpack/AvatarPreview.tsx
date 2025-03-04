@@ -11,11 +11,11 @@ import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { type URNWithoutTokenId } from '../../utils/definitions'
-import { type PBAvatarBase } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
 } from '../../service/wearable-categories'
+import {PBAvatarBase} from "../../bevy-api/interface";
 
 type AvatarPreview = {
   avatarEntity: Entity

@@ -1,4 +1,4 @@
-import type {CatalogWearableElement, WearableEntity, CatalystWearableMap} from "./wearables-definitions";
+import type {CatalogWearableElement, WearableEntityMetadata, CatalystWearableMap} from "./wearables-definitions";
 import type {URNWithoutTokenId} from "./definitions";
 import {type WearableCategory} from "../service/wearable-categories";
 
@@ -63,7 +63,7 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
     }
 }
 
-export async function fetchWearablesData(...wearableURNs:URNWithoutTokenId[]):Promise<WearableEntity[]>{
+export async function fetchWearablesData(...wearableURNs:URNWithoutTokenId[]):Promise<WearableEntityMetadata[]>{
     if(wearableURNs.every((wearableURN)=>catalystWearableMap[wearableURN])){
         return wearableURNs.map(wearableURN => (catalystWearableMap[wearableURN]))
     }
@@ -74,7 +74,7 @@ export async function fetchWearablesData(...wearableURNs:URNWithoutTokenId[]):Pr
         }).join('&')}`;
         const response = await fetch(url);
         const wearables = (await response.json()).wearables;
-        wearables.forEach((wearable:WearableEntity) => {
+        wearables.forEach((wearable:WearableEntityMetadata) => {
             catalystWearableMap[wearable.id] = wearable;
         })
         return wearables;

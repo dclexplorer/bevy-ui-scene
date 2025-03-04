@@ -14,7 +14,7 @@ describe("getURNWithoutTokenId1", () => {
 
     it("should return the URN without the tokenId if it's on-chain", () => {
         const urn: URN = "urn:decentraland:ethereum:collections-v1:0x1234:item:56";
-        const expected: URNWithoutTokenId = "urn:decentraland:ethereum:collections-v1:0x1234:item";
+        const expected: URNWithoutTokenId = "urn:decentraland:ethereum:collections-v1:0x1234:item" as URNWithoutTokenId;
         expect(getURNWithoutTokenId(urn)).to.equal(expected);
     });
 

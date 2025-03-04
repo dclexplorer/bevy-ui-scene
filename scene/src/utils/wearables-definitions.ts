@@ -1,15 +1,16 @@
 import type {WearableCategory} from "../service/wearable-categories";
 import type { URN, URNWithoutTokenId} from "./definitions";
-import {type PBAvatarBase} from "@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_base.gen";
+import type {PBAvatarBase} from "../bevy-api/interface";
 
 export type OutfitSetupWearables = {
-    [K in WearableCategory]: URN | null
+    [K in WearableCategory]: URNWithoutTokenId | null
 }
 
 export type OutfitSetup = {
     wearables: OutfitSetupWearables
     base:PBAvatarBase
 }
+
 export type RarityName =
     | 'base'
     | 'common'
@@ -62,8 +63,8 @@ export type FileContent = {
 }
 
 // TODO refactor: maybe rename it to WearableEntity ?
-export type WearableEntity = {
-    id: URN;
+export type WearableEntityMetadata = {
+    id: URNWithoutTokenId;
     name: string;
     description: string;
     collectionAddress: string;
@@ -78,7 +79,7 @@ export type WearableEntity = {
 export type CatalogWearableEntity = {
     content: FileContent[]
     id: string
-    metadata: WearableEntity
+    metadata: WearableEntityMetadata
     pointers: URN[]
     timestamp: number
     type:string
@@ -102,8 +103,8 @@ export type CatalogWearableElement = {
     name:string
     rarity:WearableRarity
     type:'on-chain' | 'off-chain' | 'base' // TODO review possible values
-    urn:URN
+    urn:URNWithoutTokenId
 }
 export type CatalystWearableMap = {
-    [K in URNWithoutTokenId]: WearableEntity
+    [K in URNWithoutTokenId]: WearableEntityMetadata
 }
