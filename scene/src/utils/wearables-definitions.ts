@@ -62,7 +62,6 @@ export type FileContent = {
     hash: string;
 }
 
-// TODO refactor: maybe rename it to WearableEntity ?
 export type WearableEntityMetadata = {
     id: URNWithoutTokenId;
     name: string;
@@ -92,8 +91,7 @@ export type WearableIndividualData = {
     transferredAt:string
 }
 
-// TODO review rarities ids
-export type WearableRarity = 'base' | 'common' | 'rare' | 'epic' | 'exotic' | 'legendary' | 'unique';
+export type WearableRarity = 'base' | 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'exotic' | 'mythic' | 'unique';
 
 export type CatalogWearableElement = {
     amount: number

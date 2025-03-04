@@ -42,7 +42,6 @@ export function getOutfitSetupFromWearables(equippedWearables:URNWithoutTokenId[
 }
 
 export function getWearablesFromOutfit(outfit:OutfitSetup):URNWithoutTokenId[]{
-    // TODO unit test candidate
     const result:URNWithoutTokenId[] = []
     Object.keys(WEARABLE_CATEGORY_DEFINITIONS).forEach((category):void => {
         if(outfit.wearables[category as WearableCategory] !== null && category !== WEARABLE_CATEGORY_DEFINITIONS.body_shape.id){

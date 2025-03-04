@@ -41,7 +41,7 @@ export async function fetchWearablesPage({pageNum, pageSize, wearableCategory, a
 
         result.elements?.forEach((wearableElement:CatalogWearableElement) => {
             if(wearableElement.urn.includes(":collections-v1:") || wearableElement.urn.includes(":off-chain:")){
-                // TODO review if we can use CatalogWearableElement instead of CatalystWearable
+                // TODO review if we can use CatalogWearableElement instead of WearableEntityMetadata
                 wearableElement.entity.metadata.name = wearableElement.entity.metadata.i18n[0].text;
             }
             catalystWearableMap[wearableElement.urn] = wearableElement.entity.metadata;
