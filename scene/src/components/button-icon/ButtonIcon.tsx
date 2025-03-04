@@ -10,7 +10,7 @@ import ReactEcs, {
 import { type AtlasIcon } from '../../utils/definitions'
 import { ArrowToast } from '../arrow-toast'
 import Icon from '../icon/Icon'
-import {ROUNDED_TEXTURE_BACKGROUND} from "../../utils/constants";
+import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 
 function ButtonIcon(props: {
   // Events
@@ -41,23 +41,27 @@ function ButtonIcon(props: {
   if (props.side === 'top') position = { top: '100%' }
 
   return (
-      <UiEntity
-          uiTransform={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            ...props.uiTransform
-          }}
-          uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
-            color: props.backgroundColor ?? { ...Color4.White(), a: 0 }
-          }}
-          onMouseDown={props.onMouseDown}
-          onMouseEnter={props.onMouseEnter}
-          onMouseLeave={props.onMouseLeave}
-      >
-        {/* ICON */}
+    <UiEntity
+      uiTransform={{
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...props.uiTransform
+      }}
+      uiBackground={{
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color: props.backgroundColor ?? { ...Color4.White(), a: 0 }
+      }}
+      onMouseDown={props.onMouseDown}
+      onMouseEnter={props.onMouseEnter}
+      onMouseLeave={props.onMouseLeave}
+    >
+      {/* ICON */}
 
-      <Icon icon={props.icon} iconColor={props.iconColor ?? Color4.White()} iconSize={props.iconSize} />
+      <Icon
+        icon={props.icon}
+        iconColor={props.iconColor ?? Color4.White()}
+        iconSize={props.iconSize}
+      />
       <UiEntity
         uiTransform={{
           width: '40%',
@@ -72,7 +76,7 @@ function ButtonIcon(props: {
               : 'none'
         }}
         uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
+          ...ROUNDED_TEXTURE_BACKGROUND,
           color: { ...Color4.Red() }
         }}
       >

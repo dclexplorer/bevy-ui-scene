@@ -4,9 +4,9 @@ import Icon from '../icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { COLOR } from '../color-palette'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-import {noop} from "../../utils/function-utils";
-import {type Color4} from "@dcl/sdk/math";
-import {ROUNDED_TEXTURE_BACKGROUND} from "../../utils/constants";
+import { noop } from '../../utils/function-utils'
+import { type Color4 } from '@dcl/sdk/math'
+import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 
 export type NavButtonProps = {
   icon?: AtlasIcon
@@ -14,10 +14,10 @@ export type NavButtonProps = {
   active?: boolean
   uiTransform?: UiTransformProps
   showDeleteButton?: boolean
-  onDelete?:()=>void
-  onClick?:()=>void
-  backgroundColor?:Color4|null
-  color?:Color4|null
+  onDelete?: () => void
+  onClick?: () => void
+  backgroundColor?: Color4 | null
+  color?: Color4 | null
 }
 
 export function NavButton({
@@ -28,12 +28,13 @@ export function NavButton({
   showDeleteButton = false,
   onDelete = noop,
   onClick = noop,
-    backgroundColor = null,
-    color = null
+  backgroundColor = null,
+  color = null
 }: NavButtonProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const callbacks = {
-    onClick, onDelete
+    onClick,
+    onDelete
   }
   return (
     <UiEntity
@@ -45,18 +46,23 @@ export function NavButton({
       }}
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
-        color: backgroundColor ?? (active
-          ? COLOR.NAV_BUTTON_ACTIVE_BACKGROUND
-          : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND)
+        color:
+          backgroundColor ??
+          (active
+            ? COLOR.NAV_BUTTON_ACTIVE_BACKGROUND
+            : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND)
       }}
-      onMouseDown={()=> {callbacks.onClick()}}
+      onMouseDown={() => {
+        callbacks.onClick()
+      }}
     >
       {icon != null ? (
         <Icon
           icon={icon}
           iconSize={24 * canvasScaleRatio * 2}
           iconColor={
-            color ?? (active
+            color ??
+            (active
               ? COLOR.NAV_BUTTON_ACTIVE_COLOR
               : COLOR.NAV_BUTTON_INACTIVE_COLOR)
           }
@@ -66,17 +72,25 @@ export function NavButton({
         fontSize={16 * canvasScaleRatio * 2}
         value={`<b>${text}</b>`}
         color={
-          color ?? (active
+          color ??
+          (active
             ? COLOR.NAV_BUTTON_ACTIVE_COLOR
             : COLOR.NAV_BUTTON_INACTIVE_COLOR)
         }
       />
-      {showDeleteButton ? <UiEntity
-        onMouseDown={()=> {callbacks.onDelete()}}
-      >
-        { /* // TODO look for better icon on spritesheets */ }
-        <Icon icon={{atlasName:"context", spriteName:"Unpublish"}} iconSize={40*canvasScaleRatio} />
-      </UiEntity> :null}
+      {showDeleteButton ? (
+        <UiEntity
+          onMouseDown={() => {
+            callbacks.onDelete()
+          }}
+        >
+          {/* // TODO look for better icon on spritesheets */}
+          <Icon
+            icon={{ atlasName: 'context', spriteName: 'Unpublish' }}
+            iconSize={40 * canvasScaleRatio}
+          />
+        </UiEntity>
+      ) : null}
     </UiEntity>
   )
 }

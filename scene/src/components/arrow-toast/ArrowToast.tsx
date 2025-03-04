@@ -5,7 +5,7 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import {ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND} from '../../utils/constants'
+import { ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 
 function ArrowToast(props: {
   uiTransform: UiTransformProps
@@ -64,7 +64,7 @@ function ArrowToast(props: {
         }}
         uiBackground={{
           ...ROUNDED_TEXTURE_BACKGROUND,
-         color: Color4.Black()
+          color: Color4.Black()
         }}
       >
         {/* TEXT */}

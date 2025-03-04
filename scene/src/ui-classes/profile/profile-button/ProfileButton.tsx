@@ -1,13 +1,16 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-import {ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND, RUBY} from '../../../utils/constants'
+import {
+  ALMOST_WHITE,
+  ROUNDED_TEXTURE_BACKGROUND,
+  RUBY
+} from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { type UIController } from '../../../controllers/ui.controller'
 
 export default class ProfileButton {
   private readonly name: string = 'BevyUser'
   private readonly verified: boolean = true
-  private readonly wallet: string = '0x10e...a7a92'
   public fontSize: number = 16
   private readonly uiController: UIController
 
@@ -45,7 +48,7 @@ export default class ProfileButton {
             this.showProfileCard()
           }}
           uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
+            ...ROUNDED_TEXTURE_BACKGROUND,
             color: { ...ALMOST_WHITE, a: 0.5 }
           }}
           onMouseEnter={() => {}}

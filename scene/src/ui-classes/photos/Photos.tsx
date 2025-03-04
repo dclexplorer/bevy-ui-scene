@@ -7,7 +7,13 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { ButtonIcon } from 'src/components/button-icon'
 import { store } from 'src/state/store'
-import {DCL_SHADOW, DCL_SNOW, GRAY_TEXT, ROUNDED_TEXTURE_BACKGROUND, RUBY} from 'src/utils/constants'
+import {
+  DCL_SHADOW,
+  DCL_SNOW,
+  GRAY_TEXT,
+  ROUNDED_TEXTURE_BACKGROUND,
+  RUBY
+} from 'src/utils/constants'
 import Canvas from '../../components/canvas/Canvas'
 import { type UIController } from '../../controllers/ui.controller'
 import type {
@@ -588,7 +594,7 @@ export default class Photos {
         }}
         key={key}
         uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
+          ...ROUNDED_TEXTURE_BACKGROUND,
           color: { ...Color4.White(), a: 0.05 }
         }}
       >

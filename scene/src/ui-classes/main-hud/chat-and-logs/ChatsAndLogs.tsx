@@ -8,10 +8,11 @@ import { ChatMessage } from '../../../components/chat-message'
 import { type Message } from '../../../components/chat-message/ChatMessage.types'
 import { type UIController } from '../../../controllers/ui.controller'
 import {
-    LEFT_PANEL_WIDTH_FACTOR,
-    LEFT_PANEL_MIN_WIDTH,
-    ALPHA_BLACK_PANEL,
-    ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND
+  LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALPHA_BLACK_PANEL,
+  ALMOST_WHITE,
+  ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 
 export default class ChatAndLogs {
@@ -70,8 +71,8 @@ export default class ChatAndLogs {
             canvasInfo.width * 0.005 > 2.5 ? canvasInfo.width * 0.005 : 2.5
         }}
         uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
-          color: ALPHA_BLACK_PANEL,
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: ALPHA_BLACK_PANEL
         }}
       >
         {/* INPUT AREA */}
@@ -86,7 +87,7 @@ export default class ChatAndLogs {
             padding: 5
           }}
           uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
+            ...ROUNDED_TEXTURE_BACKGROUND,
             color: { ...Color4.Black(), a: 0.4 }
           }}
         >

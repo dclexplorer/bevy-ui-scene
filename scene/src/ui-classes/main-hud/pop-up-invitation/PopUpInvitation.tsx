@@ -6,12 +6,13 @@ import { ButtonIcon } from '../../../components/button-icon'
 import { ButtonText } from '../../../components/button-text'
 import { type UIController } from '../../../controllers/ui.controller'
 import {
-    RUBY,
-    SELECTED_BUTTON_COLOR,
-    LEFT_PANEL_WIDTH_FACTOR,
-    LEFT_PANEL_MIN_WIDTH,
-    ALPHA_BLACK_PANEL,
-    ALMOST_BLACK, ROUNDED_TEXTURE_BACKGROUND
+  RUBY,
+  SELECTED_BUTTON_COLOR,
+  LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALPHA_BLACK_PANEL,
+  ALMOST_BLACK,
+  ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { type Invitation } from '../../../components/friend-invitation/FriendInvitation.types'
@@ -116,7 +117,7 @@ export default class PopUpInvitation {
           alignItems: 'center'
         }}
         uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
+          ...ROUNDED_TEXTURE_BACKGROUND,
           color: ALPHA_BLACK_PANEL
         }}
       >
@@ -237,7 +238,7 @@ export default class PopUpInvitation {
             overflow: 'scroll'
           }}
           uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
+            ...ROUNDED_TEXTURE_BACKGROUND,
             color: { ...Color4.White(), a: 0.01 }
           }}
         >

@@ -3,7 +3,7 @@ import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Input, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import ButtonText from '../../components/button-text/ButtonText'
 import { type UIController } from '../../controllers/ui.controller'
-import {ROUNDED_TEXTURE_BACKGROUND, RUBY} from '../../utils/constants'
+import { ROUNDED_TEXTURE_BACKGROUND, RUBY } from '../../utils/constants'
 import { isValidURL } from '../../utils/ui-utils'
 
 export default class AddLink {
@@ -97,7 +97,7 @@ export default class AddLink {
           onMouseDown={() => {}}
           uiBackground={{
             color: Color4.Purple(),
-            ...ROUNDED_TEXTURE_BACKGROUND,
+            ...ROUNDED_TEXTURE_BACKGROUND
           }}
         >
           <Label

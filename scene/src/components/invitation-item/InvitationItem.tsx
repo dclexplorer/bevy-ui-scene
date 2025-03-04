@@ -6,7 +6,7 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
-import {ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND} from '../../utils/constants'
+import { ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import {
   getBackgroundFromAtlas,
   truncateWithoutBreakingWords
@@ -39,7 +39,7 @@ function InvitationItem(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-          ...ROUNDED_TEXTURE_BACKGROUND,
+        ...ROUNDED_TEXTURE_BACKGROUND,
         color: props.backgroundColor ?? { ...Color4.White(), a: 0.01 }
       }}
       onMouseDown={props.onMouseDown}

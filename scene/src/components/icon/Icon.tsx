@@ -9,27 +9,27 @@ import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
 type IconProps = {
   icon: AtlasIcon
-  uiTransform?:UiTransformProps
+  uiTransform?: UiTransformProps
   iconSize?: PositionUnit
   iconColor?: Color4
 }
 
 const defaultIconProps: IconProps = {
   icon: { atlasName: 'icons', spriteName: 'icon.png' },
-    uiTransform:{
-        flexDirection: 'row',
-        alignItems: 'center'
-    }
+  uiTransform: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  }
 }
 
 function Icon(
   props: IconProps = defaultIconProps
 ): ReactEcs.JSX.Element | null {
-  const _props = { ...defaultIconProps, ...props};
+  const _props = { ...defaultIconProps, ...props }
   return (
     <UiEntity
       uiTransform={{
-        width:_props.iconSize ?? 30,
+        width: _props.iconSize ?? 30,
         height: _props.iconSize ?? 30,
         ..._props.uiTransform
       }}

@@ -2,20 +2,23 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { WearableCategoryButton } from './WearableCategoryButton'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-import {WEARABLE_CATEGORY_DEFINITIONS, type WearableCategory} from '../../service/wearable-categories'
+import {
+  WEARABLE_CATEGORY_DEFINITIONS,
+  type WearableCategory
+} from '../../service/wearable-categories'
 import { type OutfitSetup } from '../../utils/wearables-definitions'
-import {getURNWithoutTokenId} from "../../utils/URN-utils";
-import {type URNWithoutTokenId} from "../../utils/definitions";
+import { getURNWithoutTokenId } from '../../utils/URN-utils'
+import { type URNWithoutTokenId } from '../../utils/definitions'
 
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null
-  outfitSetup:OutfitSetup
+  outfitSetup: OutfitSetup
   // eslint-disable-next-line @typescript-eslint/ban-types
   onSelectCategory: Function
 }
 export function WearableCategoryList({
   activeCategory,
-    outfitSetup,
+  outfitSetup,
   onSelectCategory
 }: WearableCategoryListProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -31,9 +34,15 @@ export function WearableCategoryList({
       >
         <WearableCategoryButton
           category={WEARABLE_CATEGORY_DEFINITIONS.body_shape.id}
-          active={isWearableCategoryActive(WEARABLE_CATEGORY_DEFINITIONS.body_shape.id)}
+          active={isWearableCategoryActive(
+            WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
+          )}
           onClick={() =>
-            onSelectCategory(activeCategory === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id ? null : WEARABLE_CATEGORY_DEFINITIONS.body_shape.id)
+            onSelectCategory(
+              activeCategory === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
+                ? null
+                : WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
+            )
           }
           selectedURN={outfitSetup?.base?.bodyShapeUrn as URNWithoutTokenId}
         />

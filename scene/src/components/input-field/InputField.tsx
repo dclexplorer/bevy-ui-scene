@@ -3,7 +3,7 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
-import {ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND} from '../../utils/constants'
+import { ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { type Color4 } from '@dcl/sdk/math'
@@ -108,7 +108,7 @@ function InputField(props: {
           ...props.uiTransform
         }}
         uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
+          ...ROUNDED_TEXTURE_BACKGROUND,
           color: ALMOST_WHITE
         }}
         onChange={($) => {

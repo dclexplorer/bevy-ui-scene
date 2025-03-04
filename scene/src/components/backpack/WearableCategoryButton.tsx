@@ -1,6 +1,9 @@
 import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { type WearableCategory } from '../../service/wearable-categories'
-import ReactEcs, {type ReactElement, type UiBackgroundProps} from '@dcl/react-ecs'
+import ReactEcs, {
+  type ReactElement,
+  type UiBackgroundProps
+} from '@dcl/react-ecs'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
@@ -8,8 +11,8 @@ import Icon from '../icon/Icon'
 import { type AtlasIcon, type URN } from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import {catalystWearableMap} from "../../utils/wearables-promise-utils";
-import {ROUNDED_TEXTURE_BACKGROUND} from "../../utils/constants";
+import { catalystWearableMap } from '../../utils/wearables-promise-utils'
+import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 
 type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps
@@ -35,23 +38,24 @@ export function WearableCategoryButton({
     spriteName: category,
     atlasName: 'backpack'
   }
-  const iconSize = 34 * canvasScaleRatio * 2;
-  const textureProps:UiBackgroundProps = selectedURN === null ? getBackgroundFromAtlas({
-      atlasName:"backpack",
-      spriteName:"nft-empty"
-  }):{
-      texture: {
-          src:
-              selectedURN === null
-                  ? 'assets/images/nft-empty.png'
-                  : `https://peer.decentraland.org/lambdas/collections/contents/${selectedURN}/thumbnail`
-      },
-      textureMode: 'stretch'
-  }
+  const iconSize = 34 * canvasScaleRatio * 2
+  const textureProps: UiBackgroundProps =
+    selectedURN === null
+      ? getBackgroundFromAtlas({
+          atlasName: 'backpack',
+          spriteName: 'nft-empty'
+        })
+      : {
+          texture: {
+            src:`https://peer.decentraland.org/lambdas/collections/contents/${selectedURN}/thumbnail`
+          },
+          textureMode: 'stretch'
+        }
 
   return (
     <UiEntity
       uiTransform={{
+        ...uiTransform,
         width: 124 * canvasScaleRatio * 2,
         height: 70 * canvasScaleRatio * 2,
         margin: {
@@ -64,7 +68,7 @@ export function WearableCategoryButton({
         padding: 2 * canvasScaleRatio * 2
       }}
       uiBackground={{
-          ...ROUNDED_TEXTURE_BACKGROUND,
+        ...ROUNDED_TEXTURE_BACKGROUND,
         color:
           active === true
             ? COLOR.ACTIVE_BACKGROUND_COLOR
@@ -97,7 +101,7 @@ export function WearableCategoryButton({
         }}
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
-          spriteName:  catalystWearableMap[selectedURN as URN]?.rarity ?? 'base'
+          spriteName: catalystWearableMap[selectedURN as URN]?.rarity ?? 'base'
         })}
       />
       <UiEntity
@@ -106,7 +110,7 @@ export function WearableCategoryButton({
           height: 62 * canvasScaleRatio * 2
         }}
         uiBackground={{
-         ...textureProps
+          ...textureProps
         }}
       />
     </UiEntity>

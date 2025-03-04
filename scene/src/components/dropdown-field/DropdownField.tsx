@@ -5,7 +5,12 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import {ALMOST_WHITE, ALMOST_BLACK, ORANGE, ROUNDED_TEXTURE_BACKGROUND} from '../../utils/constants'
+import {
+  ALMOST_WHITE,
+  ALMOST_BLACK,
+  ORANGE,
+  ROUNDED_TEXTURE_BACKGROUND
+} from '../../utils/constants'
 import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 
@@ -101,7 +106,7 @@ function DropdownField(props: {
           ...props.uiTransform
         }}
         uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
+          ...ROUNDED_TEXTURE_BACKGROUND,
           color: ALMOST_WHITE
         }}
         onMouseDown={props.onMouseDown}
@@ -162,7 +167,7 @@ function DropdownField(props: {
             zIndex: 1
           }}
           uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
+            ...ROUNDED_TEXTURE_BACKGROUND,
             color: ALMOST_WHITE
           }}
         >

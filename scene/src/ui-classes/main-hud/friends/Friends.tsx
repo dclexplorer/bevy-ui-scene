@@ -7,14 +7,15 @@ import { FriendItem } from '../../../components/friend-item'
 import { InvitationItem } from '../../../components/invitation-item'
 import { type UIController } from '../../../controllers/ui.controller'
 import {
-    ALMOST_WHITE,
-    UNSELECTED_TEXT_WHITE,
-    TEST_FRIENDS,
-    TEST_INVITATIONS,
-    SELECTED_BUTTON_COLOR,
-    LEFT_PANEL_WIDTH_FACTOR,
-    LEFT_PANEL_MIN_WIDTH,
-    ALPHA_BLACK_PANEL, ROUNDED_TEXTURE_BACKGROUND
+  ALMOST_WHITE,
+  UNSELECTED_TEXT_WHITE,
+  TEST_FRIENDS,
+  TEST_INVITATIONS,
+  SELECTED_BUTTON_COLOR,
+  LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALPHA_BLACK_PANEL,
+  ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 import { getName, getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { PopUpInvitation } from '../pop-up-invitation'
@@ -182,7 +183,7 @@ export default class Friends {
           flexDirection: 'column'
         }}
         uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
+          ...ROUNDED_TEXTURE_BACKGROUND,
           color: ALPHA_BLACK_PANEL
         }}
       >
@@ -226,7 +227,7 @@ export default class Friends {
                   display: this.incomingFriendsMessages > 0 ? 'flex' : 'none'
                 }}
                 uiBackground={{
-                    ...ROUNDED_TEXTURE_BACKGROUND,
+                  ...ROUNDED_TEXTURE_BACKGROUND,
                   color: { ...Color4.Red(), a: 1 }
                 }}
               >
@@ -271,7 +272,7 @@ export default class Friends {
                 display: this.requestsNumber > 0 ? 'flex' : 'none'
               }}
               uiBackground={{
-                  ...ROUNDED_TEXTURE_BACKGROUND,
+                ...ROUNDED_TEXTURE_BACKGROUND,
                 color: { ...Color4.Red(), a: 1 }
               }}
             >
@@ -613,10 +614,10 @@ export default class Friends {
             alignItems: 'center'
           }}
           uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
-              texture: {
-                  src: 'assets/images/backgrounds/rounded-right.png'
-              },
+            ...ROUNDED_TEXTURE_BACKGROUND,
+            texture: {
+              src: 'assets/images/backgrounds/rounded-right.png'
+            },
             color: ALPHA_BLACK_PANEL
           }}
         >

@@ -81,9 +81,9 @@ export default class MainMenu {
     this.uiController.settingsPage.updateButtons()
     this.activePage = page
     this.uiController.isMainMenuVisible = true
-    this.updateButtons();
+    this.updateButtons()
 
-    this.uiController.show(page);
+    this.uiController.show(page)
   }
 
   updateButtons(): void {
@@ -124,7 +124,7 @@ export default class MainMenu {
       height: 100 * canvasScaleRatio,
       margin: { left: 10 * canvasScaleRatio },
       padding: { left: 20 * canvasScaleRatio, right: 20 * canvasScaleRatio },
-      flexDirection:"column"
+      flexDirection: 'column'
     }
     const LOGO_WIDTH = 165 * canvasScaleRatio * 2.1
     const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1

@@ -7,7 +7,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import {ROUNDED_TEXTURE_BACKGROUND} from "../../utils/constants";
+import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 
 function FriendItem(props: {
   // Events
@@ -35,7 +35,7 @@ function FriendItem(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-          ...ROUNDED_TEXTURE_BACKGROUND,
+        ...ROUNDED_TEXTURE_BACKGROUND,
         color: props.backgroundColor ?? { ...Color4.White(), a: 0.01 }
       }}
       onMouseDown={props.onMouseDown}

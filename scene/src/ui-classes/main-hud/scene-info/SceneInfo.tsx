@@ -10,7 +10,8 @@ import {
   LEFT_PANEL_MIN_WIDTH,
   ALPHA_BLACK_PANEL,
   SELECTED_BUTTON_COLOR,
-  ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND
+  ALMOST_WHITE,
+  ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { type AtlasIcon } from '../../../utils/definitions'

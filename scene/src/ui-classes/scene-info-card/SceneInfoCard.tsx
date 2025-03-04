@@ -7,14 +7,15 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { type UIController } from '../../controllers/ui.controller'
 import {
-    ALMOST_BLACK,
-    BLACK_TEXT,
-    DCL_SNOW,
-    EVENT_BACKGROUND_COLOR,
-    GRAY_TEXT,
-    PANEL_BACKGROUND_COLOR, ROUNDED_TEXTURE_BACKGROUND,
-    RUBY,
-    SELECTED_BUTTON_COLOR
+  ALMOST_BLACK,
+  BLACK_TEXT,
+  DCL_SNOW,
+  EVENT_BACKGROUND_COLOR,
+  GRAY_TEXT,
+  PANEL_BACKGROUND_COLOR,
+  ROUNDED_TEXTURE_BACKGROUND,
+  RUBY,
+  SELECTED_BUTTON_COLOR
 } from '../../utils/constants'
 import type { AtlasIcon } from '../../utils/definitions'
 import Canvas from '../../components/canvas/Canvas'
@@ -757,7 +758,7 @@ export default class SceneInfoCard {
           }
         }}
         uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
+          ...ROUNDED_TEXTURE_BACKGROUND,
           color: DCL_SNOW
         }}
       >
@@ -898,7 +899,7 @@ export default class SceneInfoCard {
           margin: { bottom: this.fontSize }
         }}
         uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
+          ...ROUNDED_TEXTURE_BACKGROUND,
           color: EVENT_BACKGROUND_COLOR
         }}
       >
