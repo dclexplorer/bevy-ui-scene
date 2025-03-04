@@ -210,9 +210,7 @@ function isEquipped(
   if (wearable.category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) {
     isEquippedMemo.memo[wearable.urn] = baseBody.bodyShapeUrn === wearable.urn
   } else {
-    isEquippedMemo.memo[wearable.urn] = equippedWearables
-      .map((i) => getURNWithoutTokenId(i))
-      .includes(wearable.urn)
+    isEquippedMemo.memo[wearable.urn] = equippedWearables.includes(wearable.urn)
   }
 
   return isEquippedMemo.memo[wearable.urn]
