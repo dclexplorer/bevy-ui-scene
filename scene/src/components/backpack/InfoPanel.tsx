@@ -16,6 +16,7 @@ export type InfoPanelProps = {
   wearable: WearableEntityMetadata | null
 }
 
+// TODO Add hide information
 export function InfoPanel({
   canvasScaleRatio,
   wearable
