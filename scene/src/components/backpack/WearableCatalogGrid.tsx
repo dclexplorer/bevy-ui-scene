@@ -76,24 +76,37 @@ export function WearableCatalogGrid({
               margin: 10 * canvasScaleRatio
             }}
             key={index}
-            uiBackground={
-              !loading &&
-              isEquipped(_, equippedWearables, baseBody) &&
-              !isSelected(_?.urn)
-                ? {
-                    ...ROUNDED_TEXTURE_BACKGROUND,
-                    texture: {
-                      src: 'assets/images/backgrounds/rounded-border.png'
-                    },
-                    color: COLOR.ACTIVE_BACKGROUND_COLOR
-                  }
-                : {}
-            }
             onMouseDown={() => {
               select(isSelected(_.urn) ? null : _.urn)
               onChangeSelection(state.selectedWearableURN)
             }}
           >
+            {!loading &&
+                isEquipped(_, equippedWearables, baseBody) &&
+                !isSelected(_?.urn) ? <UiEntity
+                uiTransform={{
+                  positionType:'absolute',
+                    width: 180 * canvasScaleRatio,
+                    height: 200 * canvasScaleRatio,
+                    position:{
+                        top:0,
+                        left:0
+                    }
+                }}
+                uiBackground={
+                  !loading &&
+                  isEquipped(_, equippedWearables, baseBody) &&
+                  !isSelected(_?.urn)
+                      ? {
+                        ...ROUNDED_TEXTURE_BACKGROUND,
+                        texture: {
+                          src: 'assets/images/backgrounds/rounded-border.png'
+                        },
+                        color: COLOR.ACTIVE_BACKGROUND_COLOR
+                      }
+                      : {}
+                }
+              /> : null}
             {state.selectedWearableURN !== _?.urn ? (
               <WearableCellThumbnail
                 catalystWearable={_}
