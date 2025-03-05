@@ -5,7 +5,7 @@ import type {
   RarityName
 } from '../../utils/wearables-definitions'
 import Icon from '../icon/Icon'
-import { Label } from '@dcl/sdk/react-ecs'
+import {Label, type UiTransformProps} from '@dcl/sdk/react-ecs'
 
 import { RARITY_COLORS } from '../color-palette'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
@@ -14,12 +14,14 @@ import { type Color4 } from '@dcl/sdk/math'
 export type InfoPanelProps = {
   canvasScaleRatio: number
   wearable: WearableEntityMetadata | null
+  uiTransform?: UiTransformProps
 }
 
 // TODO Add hide information
 export function InfoPanel({
   canvasScaleRatio,
-  wearable
+  wearable,
+  uiTransform
 }: InfoPanelProps): ReactElement {
   const rarityColor = RARITY_COLORS[wearable?.rarity as RarityName]
   return (
@@ -28,7 +30,8 @@ export function InfoPanel({
         margin: { left: 20 * canvasScaleRatio },
         width: 600 * canvasScaleRatio,
         height: 1400 * canvasScaleRatio,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        ...uiTransform
       }}
       uiBackground={{
         ...getBackgroundFromAtlas({

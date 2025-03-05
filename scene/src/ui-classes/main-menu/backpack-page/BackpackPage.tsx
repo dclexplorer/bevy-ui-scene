@@ -225,6 +225,12 @@ export default class BackpackPage {
             </UiEntity>
             {/* SELECTED ITEM COLUMN */}
             <InfoPanel
+              uiTransform={{
+                position:{
+                    top: -50 * canvasScaleRatio,
+                    left: -20 * canvasScaleRatio
+                }
+              }}
               canvasScaleRatio={canvasScaleRatio}
               wearable={
                 this.state.selectedURN === null
