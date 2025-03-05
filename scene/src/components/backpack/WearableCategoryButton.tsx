@@ -39,6 +39,8 @@ export function WearableCategoryButton({
     atlasName: 'backpack'
   }
   const iconSize = 34 * canvasScaleRatio * 2
+  const thumbnailSize = iconSize * 1.7;
+
   const textureProps: UiBackgroundProps =
     selectedURN === null
       ? getBackgroundFromAtlas({
@@ -109,8 +111,11 @@ export function WearableCategoryButton({
       />
       <UiEntity
         uiTransform={{
-          width: 62 * canvasScaleRatio * 2,
-          height: 62 * canvasScaleRatio * 2
+          width: thumbnailSize,
+          height: thumbnailSize,
+          position:{
+              left :6 * canvasScaleRatio
+          }
         }}
         uiBackground={{
           ...textureProps
