@@ -25,7 +25,7 @@ export function InfoPanel({
   return (
     <UiEntity
       uiTransform={{
-        margin: { left: 40 * canvasScaleRatio },
+        margin: { left: 20 * canvasScaleRatio },
         width: 600 * canvasScaleRatio,
         height: 1400 * canvasScaleRatio,
         flexDirection: 'column'

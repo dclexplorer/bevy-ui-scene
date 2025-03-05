@@ -42,7 +42,7 @@ export class UIController {
 
   show(page: string): void {
     if (page === 'backpack') {
-      void this.backpackPage.initWearablePage()
+      void this.backpackPage.init()
     }
   }
 

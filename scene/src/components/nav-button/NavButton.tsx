@@ -31,7 +31,7 @@ export function NavButton({
   backgroundColor = null,
   color = null
 }: NavButtonProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getCanvasScaleRatio() * 0.9
   const callbacks = {
     onClick,
     onDelete

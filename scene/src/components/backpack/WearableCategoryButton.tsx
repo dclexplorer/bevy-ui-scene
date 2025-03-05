@@ -56,10 +56,11 @@ export function WearableCategoryButton({
     <UiEntity
       uiTransform={{
         ...uiTransform,
-        width: 124 * canvasScaleRatio * 2,
-        height: 70 * canvasScaleRatio * 2,
+        width: 124 * canvasScaleRatio * 1.9,
+        height: 70 * canvasScaleRatio * 1.9,
         margin: {
-          left: 20 * canvasScaleRatio * 2,
+
+          left: 10 * canvasScaleRatio * 2,
           bottom: 6 * canvasScaleRatio * 2
         },
         flexDirection: 'row',
@@ -72,7 +73,7 @@ export function WearableCategoryButton({
         color:
           active === true
             ? COLOR.ACTIVE_BACKGROUND_COLOR
-            : Color4.create(0, 0, 0, 0.1)
+            : Color4.create(0, 0, 0, 0.2)
       }}
       onMouseDown={() => callbacks.onClick()}
     >

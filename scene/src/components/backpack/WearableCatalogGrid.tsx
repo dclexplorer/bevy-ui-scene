@@ -59,20 +59,19 @@ export function WearableCatalogGrid({
     <UiEntity
       uiTransform={{
         padding: 10 * canvasScaleRatio,
-        width: 840 * canvasScaleRatio,
+        width: 950 * canvasScaleRatio,
         flexWrap: 'wrap',
         ...uiTransform
       }}
-      uiBackground={{ color: Color4.create(1, 0, 0, 0) }}
     >
       {wearables.map((_, index) => {
         return (
           <UiEntity
             uiTransform={{
-              width: 180 * canvasScaleRatio,
-              height: 180 * canvasScaleRatio,
-              padding: 8 * canvasScaleRatio,
-              margin: 10 * canvasScaleRatio
+              width: 210 * canvasScaleRatio,
+              height: 210 * canvasScaleRatio,
+              margin: 10 * canvasScaleRatio,
+              padding: 8 * canvasScaleRatio
             }}
             key={index}
             onMouseDown={() => {
@@ -86,8 +85,8 @@ export function WearableCatalogGrid({
               <UiEntity
                 uiTransform={{
                   positionType: 'absolute',
-                  width: 180 * canvasScaleRatio,
-                  height: 200 * canvasScaleRatio,
+                  width: "100%",
+                  height: "100%",
                   position: {
                     top: 0,
                     left: 0
@@ -95,8 +94,7 @@ export function WearableCatalogGrid({
                 }}
                 uiBackground={
                   !loading &&
-                  isEquipped(_, equippedWearables, baseBody) &&
-                  !isSelected(_?.urn)
+                  isEquipped(_, equippedWearables, baseBody)
                     ? {
                         ...ROUNDED_TEXTURE_BACKGROUND,
                         texture: {
@@ -110,6 +108,10 @@ export function WearableCatalogGrid({
             ) : null}
             {state.selectedWearableURN !== _?.urn ? (
               <WearableCellThumbnail
+                  uiTransform={{
+                    width:"100%",
+                    height:"100%"
+                  }}
                 catalystWearable={_}
                 canvasScaleRatio={canvasScaleRatio}
                 loading={loading}
@@ -118,16 +120,16 @@ export function WearableCatalogGrid({
             {state.selectedWearableURN === _?.urn && !loading ? (
               <UiEntity
                 uiTransform={{
-                  width: canvasScaleRatio * 220,
-                  height: canvasScaleRatio * 300,
+                  width: canvasScaleRatio * 240,
+                  height: canvasScaleRatio * 320,
                   positionType: 'absolute',
                   position: {
-                    top: -6 * canvasScaleRatio,
-                    left: -16 * canvasScaleRatio
+                    top: -16 * canvasScaleRatio,
+                    left: -12 * canvasScaleRatio
                   },
                   padding: {
-                    top: 24 * canvasScaleRatio,
-                    left: 16 * canvasScaleRatio
+                    top: 18 * canvasScaleRatio,
+                    left: 13 * canvasScaleRatio
                   },
                   zIndex: 2,
                   flexDirection: 'column',
@@ -136,6 +138,10 @@ export function WearableCatalogGrid({
                 uiBackground={SELECTED_BACKGROUND}
               >
                 <WearableCellThumbnail
+                  uiTransform={{
+                      width: canvasScaleRatio * 210,
+                      height: canvasScaleRatio * 210,
+                  }}
                   catalystWearable={_}
                   canvasScaleRatio={canvasScaleRatio}
                   loading={loading}
@@ -145,8 +151,11 @@ export function WearableCatalogGrid({
                   WEARABLE_CATEGORY_DEFINITIONS.body_shape.id ? null : (
                   <RoundedButton
                     uiTransform={{
-                      margin: { top: 10 * canvasScaleRatio },
-                      width: 180 * canvasScaleRatio,
+                      margin: {
+                          top: 9 * canvasScaleRatio,
+                          left: 1
+                      },
+                      width: 206 * canvasScaleRatio,
                       height: 60 * canvasScaleRatio
                     }}
                     fontSize={26 * canvasScaleRatio}
@@ -221,6 +230,7 @@ export type WearableCellProps = {
   canvasScaleRatio: number
   loading: boolean
   catalystWearable: CatalogWearableElement
+  uiTransform?: UiTransformProps
 }
 type RoundedButtonProps = {
   uiTransform?: UiTransformProps
@@ -261,13 +271,15 @@ function RoundedButton({
 function WearableCellThumbnail({
   canvasScaleRatio,
   loading,
-  catalystWearable
+  catalystWearable,
+  uiTransform
 }: WearableCellProps): ReactElement {
   return (
     <UiEntity
       uiTransform={{
         width: canvasScaleRatio * 180,
-        height: canvasScaleRatio * 180
+        height: canvasScaleRatio * 180,
+        ...uiTransform
       }}
       uiBackground={{
         ...(loading

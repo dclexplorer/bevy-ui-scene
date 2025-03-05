@@ -2,7 +2,11 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { NavButton } from '../../../components/nav-button/NavButton'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import {
+  getCanvasScaleRatio,
+  getContentHeight,
+  getContentWidth
+} from '../../../service/canvas-ratio'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
@@ -89,32 +93,7 @@ export default class BackpackPage {
         <BackpackNavBar canvasScaleRatio={canvasScaleRatio} />
         <Content>
           {/* AVATAR */}
-          <UiEntity
-            uiTransform={{
-              margin: {
-                bottom: this.fontSize,
-                right: this.fontSize
-              },
-              positionType: 'absolute',
-              width: 1000 * canvasScaleRatio,
-              height: '100%',
-              padding: this.fontSize,
-              pointerFilter: 'block',
-              position: { left: '2%' }
-            }}
-          >
-            {getAvatarCamera() === engine.RootEntity ? null : (
-              <UiEntity
-                uiTransform={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                uiBackground={{
-                  videoTexture: { videoPlayerEntity: getAvatarCamera() }
-                }}
-              />
-            )}
-          </UiEntity>
+          <AvatarPreviewElement />
           <UiEntity
             uiTransform={{
               flexDirection: 'row',
@@ -122,9 +101,12 @@ export default class BackpackPage {
               alignItems: 'flex-start',
               alignSelf: 'flex-start',
               margin: 40 * canvasScaleRatio,
-              padding: this.fontSize,
+              padding: {
+                  top:80 * canvasScaleRatio
+              },
               pointerFilter: 'block'
             }}
+            
             uiBackground={{
               ...ROUNDED_TEXTURE_BACKGROUND,
               color: { ...Color4.Black(), a: 0.35 }
@@ -139,16 +121,11 @@ export default class BackpackPage {
               }}
             />
             {/* CATALOG COLUMN */}
-            <UiEntity
-              uiTransform={{
+            <UiEntity uiTransform={{
                 flexDirection: 'column',
                 padding: 14 * canvasScaleRatio,
                 margin: { left: 30 * canvasScaleRatio }
-              }}
-              uiBackground={{
-                color: Color4.create(0, 1, 0, 0)
-              }}
-            >
+              }} >
               {/* CATALOG NAV_BAR */}
               <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
                 <NavButton
@@ -309,7 +286,7 @@ export default class BackpackPage {
     }
   }
 
-  async initWearablePage(): Promise<void> {
+  async init(): Promise<void> {
     createAvatarPreview()
     this.state.loadingPage = true
     const player = getPlayer()
@@ -457,14 +434,14 @@ function NavBarTitle({
   )
 }
 
-function NavButtonBar({ children, canvasScaleRatio }: any): ReactElement {
+function NavButtonBar({ children }: any): ReactElement {
   return (
     <UiEntity
       uiTransform={{
         height: '100%',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        padding: { left: 10 * canvasScaleRatio * 2 }
+        padding: { left: 10 * getCanvasScaleRatio() * 2 }
       }}
       uiBackground={{
         color: { ...Color4.Blue(), a: 0.0 }
@@ -480,11 +457,10 @@ function Content({ children }: any): ReactElement {
     <UiEntity
       uiTransform={{
         flexDirection: 'row',
-        justifyContent: 'flex-end',
+        justifyContent: 'center',
         alignItems: 'flex-start',
-        width: '100%',
-        height: 'auto',
-        flexGrow: 1,
+        width: getContentWidth(),
+        height: getContentHeight(),
         pointerFilter: 'block'
       }}
     >
@@ -492,6 +468,7 @@ function Content({ children }: any): ReactElement {
     </UiEntity>
   )
 }
+
 
 function BackpackNavBar({
   canvasScaleRatio
@@ -507,7 +484,7 @@ function BackpackNavBar({
           canvasScaleRatio={canvasScaleRatio}
         />
         {/* NAV-BUTTON-BAR */}
-        <NavButtonBar canvasScaleRatio={canvasScaleRatio}>
+        <NavButtonBar>
           <NavButton
             icon={{
               spriteName: 'Wearables',
@@ -527,5 +504,33 @@ function BackpackNavBar({
         </NavButtonBar>
       </LeftSection>
     </NavBar>
+  )
+}
+
+function AvatarPreviewElement( ): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        height:getContentHeight(),
+        width:540/1920 * getContentWidth() * 0.85
+      }}
+      uiBackground={{
+
+      }}
+      uiText={{value:"1"}}
+    >
+        {getAvatarCamera() === engine.RootEntity ? null : (
+            <UiEntity
+                uiTransform={{
+                    positionType: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                }}
+                uiBackground={{
+                    videoTexture: { videoPlayerEntity: getAvatarCamera() }
+                }}
+            />
+        )}
+    </UiEntity>
   )
 }
