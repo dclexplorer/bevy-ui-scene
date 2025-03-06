@@ -24,14 +24,8 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
 import type {
   CatalogWearableElement,
-  WearableEntityMetadata,
-  OutfitSetup
 } from '../../../utils/wearables-definitions'
-import {
-  EMPTY_OUTFIT,
-  getOutfitSetupFromWearables,
-  getWearablesFromOutfit
-} from '../../../service/outfit'
+
 import { Pagination } from '../../../components/pagination'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { BevyApi } from '../../../bevy-api'
@@ -42,8 +36,8 @@ import {
   setAvatarPreviewCameraToWearableCategory
 } from '../../../components/backpack/AvatarPreview'
 import {
-  ROUNDED_TEXTURE_BACKGROUND,
-  ZERO_ADDRESS
+    ROUNDED_TEXTURE_BACKGROUND, WEARABLE_CATALOG_PAGE_SIZE,
+    ZERO_ADDRESS
 } from '../../../utils/constants'
 import {
   BASE_MALE_URN,
@@ -51,48 +45,26 @@ import {
   getWearablesWithTokenId,
   urnWithTokenIdMemo
 } from '../../../utils/URN-utils'
-
-const WEARABLE_CATALOG_PAGE_SIZE = 16
-
-type BackpackPageState = {
-  activeWearableCategory: WearableCategory | null
-  currentPage: number
-  loadingPage: boolean
-  shownWearables: CatalogWearableElement[]
-  totalPages: number
-  equippedWearables: URNWithoutTokenId[]
-  outfitSetup: OutfitSetup
-  selectedURN: URNWithoutTokenId | null
-}
+import {store} from "../../../state/store";
+import {
+    updateActiveWearableCategory, updateAvatarBase,
+    updateCurrentPage, updateEquippedWearables, updateLoadedPage, updateLoadingPage,
+    updateSelectedWearableURN
+} from "../../../state/backpack/actions";
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
-
-  // TODO consider redux
-  private readonly state: BackpackPageState = {
-    activeWearableCategory: null,
-    currentPage: 1,
-    loadingPage: false,
-    shownWearables: new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
-    totalPages: 0,
-    equippedWearables: (getPlayer()?.wearables ?? []).map((urn) =>
-      getURNWithoutTokenId(urn as URN)
-    ) as URNWithoutTokenId[],
-    outfitSetup: EMPTY_OUTFIT,
-    selectedURN: null
-  }
 
   render(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
     const canvasScaleRatio = getCanvasScaleRatio()
+    const backpackState = store.getState().backpack;
 
     return (
       <MainContent>
-        {/* NAVBAR */}
         <BackpackNavBar canvasScaleRatio={canvasScaleRatio} />
         <Content>
-          {/* AVATAR */}
           <AvatarPreviewElement />
           <UiEntity
             uiTransform={{
@@ -106,7 +78,7 @@ export default class BackpackPage {
               },
               pointerFilter: 'block'
             }}
-            
+
             uiBackground={{
               ...ROUNDED_TEXTURE_BACKGROUND,
               color: { ...Color4.Black(), a: 0.35 }
@@ -114,10 +86,10 @@ export default class BackpackPage {
           >
             {/* CATEGORY SELECTORS COLUMN */}
             <WearableCategoryList
-              outfitSetup={this.state.outfitSetup}
-              activeCategory={this.state.activeWearableCategory}
+              outfitSetup={backpackState.outfitSetup}
+              activeCategory={backpackState.activeWearableCategory}
               onSelectCategory={(category: WearableCategory): void => {
-                if (!this.state.loadingPage) this.changeCategory(category)
+                if (!backpackState.loadingPage) this.changeCategory(category)
               }}
             />
             {/* CATALOG COLUMN */}
@@ -129,12 +101,12 @@ export default class BackpackPage {
               {/* CATALOG NAV_BAR */}
               <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
                 <NavButton
-                  active={this.state.activeWearableCategory === null}
+                  active={backpackState.activeWearableCategory === null}
                   icon={{ spriteName: 'all', atlasName: 'backpack' }}
                   text={'ALL'}
                   uiTransform={{ padding: 40 * canvasScaleRatio }}
                   onClick={() => {
-                    if (this.state.activeWearableCategory === null) return
+                    if (backpackState.activeWearableCategory === null) return
                     this.changeCategory(null)
                   }}
                 />
@@ -147,7 +119,7 @@ export default class BackpackPage {
                       right: 16 * canvasScaleRatio
                     },
                     display:
-                      this.state.activeWearableCategory === null
+                      backpackState.activeWearableCategory === null
                         ? 'none'
                         : 'flex'
                   }}
@@ -156,7 +128,7 @@ export default class BackpackPage {
                     atlasName: 'icons'
                   }}
                 />
-                {this.state.activeWearableCategory === null ? null : (
+                {backpackState.activeWearableCategory === null ? null : (
                   <NavButton
                     active={true}
                     showDeleteButton={true}
@@ -164,12 +136,12 @@ export default class BackpackPage {
                       this.changeCategory(null)
                     }}
                     icon={{
-                      spriteName: this.state.activeWearableCategory,
+                      spriteName: backpackState.activeWearableCategory,
                       atlasName: 'backpack'
                     }}
                     text={
                       WEARABLE_CATEGORY_DEFINITIONS[
-                        this.state.activeWearableCategory
+                        backpackState.activeWearableCategory
                       ].label
                     }
                     uiTransform={{ padding: 20 * canvasScaleRatio }}
@@ -180,14 +152,14 @@ export default class BackpackPage {
                 uiTransform={{
                   margin: { top: 20 * canvasScaleRatio }
                 }}
-                loading={this.state.loadingPage}
-                wearables={this.state.shownWearables}
-                equippedWearables={this.state.equippedWearables}
-                baseBody={this.state.outfitSetup.base}
+                loading={backpackState.loadingPage}
+                wearables={backpackState.shownWearables}
+                equippedWearables={backpackState.equippedWearables}
+                baseBody={backpackState.outfitSetup.base}
                 onChangeSelection={(
                   selectedURN: URNWithoutTokenId | null
                 ): void => {
-                  this.state.selectedURN = selectedURN
+                    store.dispatch(updateSelectedWearableURN(selectedURN))
                 }}
                 onEquipWearable={async (
                   wearable: CatalogWearableElement
@@ -198,29 +170,21 @@ export default class BackpackPage {
                     wearable.category,
                     wearable.entity.metadata.id
                   )
-                  updateAvatarPreview(
-                    this.state.equippedWearables,
-                    this.state.outfitSetup.base
-                  )
                 }}
                 onUnequipWearable={async (
                   wearable: CatalogWearableElement
                 ): Promise<void> => {
                   await this.updateEquippedWearable(wearable.category, null)
-                  updateAvatarPreview(
-                    this.state.equippedWearables,
-                    this.state.outfitSetup.base
-                  )
                 }}
               />
               <Pagination
-                disabled={this.state.loadingPage}
+                disabled={backpackState.loadingPage}
                 onChange={(page: number) => {
-                  this.state.currentPage = page
+                  store.dispatch(updateCurrentPage(page))
                   void this.updatePage()
                 }}
-                pages={this.state.totalPages}
-                currentPage={this.state.currentPage}
+                pages={backpackState.totalPages}
+                currentPage={backpackState.currentPage}
               />
             </UiEntity>
             {/* SELECTED ITEM COLUMN */}
@@ -233,9 +197,9 @@ export default class BackpackPage {
               }}
               canvasScaleRatio={canvasScaleRatio}
               wearable={
-                this.state.selectedURN === null
+                backpackState.selectedURN === null
                   ? null
-                  : catalystWearableMap[this.state.selectedURN]
+                  : catalystWearableMap[backpackState.selectedURN]
               }
             />
           </UiEntity>
@@ -245,41 +209,43 @@ export default class BackpackPage {
   }
 
   changeCategory(category: WearableCategory | null): void {
-    this.state.activeWearableCategory = category
-    setAvatarPreviewCameraToWearableCategory(category)
-    this.state.currentPage = 1
+    store.dispatch(updateActiveWearableCategory(category))
+      setAvatarPreviewCameraToWearableCategory(category)
+
     void this.updatePage()
+
   }
 
   async updatePage(): Promise<void> {
-    this.state.loadingPage = true
+    const backpackState = store.getState().backpack;
+    store.dispatch(updateLoadingPage(true))
     // TODO improve with throttle and remove disabled prop
     const wearablesPage = await fetchWearablesPage({
-      pageNum: this.state.currentPage,
+      pageNum: backpackState.currentPage,
       pageSize: WEARABLE_CATALOG_PAGE_SIZE,
       address:
-        getPlayer()?.userId ?? '0x0000000000000000000000000000000000000000',
-      wearableCategory: this.state.activeWearableCategory
+        getPlayer()?.userId ?? ZERO_ADDRESS,
+      wearableCategory: backpackState.activeWearableCategory
     })
 
-    this.state.totalPages = Math.ceil(
-      wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE
-    )
-    this.state.loadingPage = false
-    this.state.shownWearables = wearablesPage.elements
+    store.dispatch(updateLoadedPage({
+        totalPages:Math.ceil(wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE),
+        shownWearables:wearablesPage.elements
+    }))
   }
 
   async saveAvatar(): Promise<void> {
     try {
+      const backpackState = store.getState().backpack;
       if (
-        this.state.equippedWearables.sort(sortAbc).join(',') ===
+        backpackState.equippedWearables.sort(sortAbc).join(',') ===
         getPlayer()?.wearables.sort(sortAbc).join(',')
       )
         return
       await BevyApi.setAvatar({
-        base: this.state.outfitSetup.base,
+        base: backpackState.outfitSetup.base,
         equip: {
-          wearableUrns: getWearablesWithTokenId(this.state.equippedWearables),
+          wearableUrns: getWearablesWithTokenId(backpackState.equippedWearables),
           emoteUrns: []
         }
       })
@@ -294,72 +260,52 @@ export default class BackpackPage {
 
   async init(): Promise<void> {
     createAvatarPreview()
-    this.state.loadingPage = true
+    store.dispatch(updateLoadingPage(true))
     const player = getPlayer()
-    this.state.equippedWearables = (getPlayer()?.wearables ?? []).map((urn) =>
-      getURNWithoutTokenId(urn as URN)
-    ) as URNWithoutTokenId[]
-    const equippedWearablesData: WearableEntityMetadata[] =
-      await fetchWearablesData(...(this.state.equippedWearables ?? []))
-    this.state.outfitSetup = {
-      ...this.state.outfitSetup,
-      wearables: {
-        ...this.state.outfitSetup.wearables,
-        ...getOutfitSetupFromWearables(
-          this.state.equippedWearables,
-          equippedWearablesData
-        )
-      },
-      base: {
-        ...this.state.outfitSetup.base,
-        ...{
+      const wearables:URNWithoutTokenId[] =  (getPlayer()?.wearables ?? []).map((urn) =>
+          getURNWithoutTokenId(urn as URN)
+      ) as URNWithoutTokenId[]
+      store.dispatch(updateEquippedWearables({
+          wearables,
+          wearablesData: await fetchWearablesData(...(wearables ?? []))
+      }))
+      store.dispatch(updateAvatarBase({
           name: player?.name ?? '',
           eyesColor: player?.avatar?.eyesColor,
           hairColor: player?.avatar?.hairColor,
           skinColor: player?.avatar?.skinColor,
-          bodyShapeUrn:
-            (player?.avatar?.bodyShapeUrn as URNWithoutTokenId) ?? BASE_MALE_URN
-        }
-      }
-    }
-    // TODO use cache for pages/category? but clean cache when backpack is hidden/shown
-    const wearablesPage = await fetchWearablesPage({
-      pageSize: WEARABLE_CATALOG_PAGE_SIZE,
-      pageNum: this.state.currentPage,
-      address: player?.userId ?? ZERO_ADDRESS,
-      wearableCategory: this.state.activeWearableCategory
-    })
+          bodyShapeUrn: (player?.avatar?.bodyShapeUrn as URNWithoutTokenId) ?? BASE_MALE_URN
+      }))
 
-    this.state.totalPages = Math.ceil(
-      wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE
-    )
-    this.state.loadingPage = false
-    this.state.shownWearables = wearablesPage.elements
+      await this.updatePage();
   }
 
   async updateEquippedWearable(
     category: WearableCategory,
     wearableURN: URNWithoutTokenId | null
   ): Promise<void> {
+    const backpackState = store.getState().backpack;
     if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) {
-      this.state.outfitSetup = {
-        ...this.state.outfitSetup,
-        base: {
-          ...this.state.outfitSetup.base,
-          bodyShapeUrn: wearableURN as URNWithoutTokenId
-        }
-      }
+        store.dispatch(updateAvatarBase({
+            ...backpackState.outfitSetup.base,
+            bodyShapeUrn: wearableURN as URNWithoutTokenId
+        }))
     } else {
-      this.state.outfitSetup = {
-        ...this.state.outfitSetup,
-        wearables: {
-          ...this.state.outfitSetup.wearables,
-          [category]: wearableURN
-        }
-      }
-      this.state.equippedWearables =
-        getWearablesFromOutfit(this.state.outfitSetup) ?? []
+        const equippedWearablesWithoutPrevious = backpackState.equippedWearables
+            .filter((wearableURN)=> wearableURN !== backpackState.outfitSetup.wearables[category]);
+        const wearables = wearableURN === null
+            ? equippedWearablesWithoutPrevious
+            : [...equippedWearablesWithoutPrevious, wearableURN]
+        store.dispatch(updateEquippedWearables({
+            wearables,
+            wearablesData: await fetchWearablesData(...(wearables ?? []))
+        }))
     }
+
+    updateAvatarPreview(
+        store.getState().backpack.equippedWearables,
+        store.getState().backpack.outfitSetup.base
+    )
   }
 }
 

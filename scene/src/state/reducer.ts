@@ -3,7 +3,9 @@ import {reducer as settingsReducer} from './settings/reducers'
 import {reducer as eventsReducer} from './sceneInfo/reducers'
 import {reducer as photoReducer} from './photoInfo/reducers'
 import {reducer as viewportReducer} from './viewport/reducers'
+import {reducer as backpackReducer} from './backpack/reducers'
 import {VIEWPORT_STORE_ID} from "./viewport/state";
+import {deepFreeze} from "../utils/object-utils";
 
 export function reducer(state: AppState, action: Action): AppState {
   const newState = { ...state }
@@ -18,7 +20,10 @@ export function reducer(state: AppState, action: Action): AppState {
     newState.photo = photoReducer(state.photo, action)
   }
   if (action.__reducer === VIEWPORT_STORE_ID) {
-    newState.viewport = viewportReducer(state.viewport, action)
+    newState.viewport = deepFreeze(viewportReducer(state.viewport, action))
+  }
+  if(action.__reducer === 'backpack') {
+    newState.backpack = deepFreeze(backpackReducer(state.backpack, action))
   }
 
   return newState

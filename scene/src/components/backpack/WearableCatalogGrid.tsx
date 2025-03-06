@@ -64,7 +64,7 @@ export function WearableCatalogGrid({
         ...uiTransform
       }}
     >
-      {wearables.map((_, index) => {
+      {wearables.map((wearableElement, index) => {
         return (
           <UiEntity
             uiTransform={{
@@ -75,13 +75,13 @@ export function WearableCatalogGrid({
             }}
             key={index}
             onMouseDown={() => {
-              select(isSelected(_.urn) ? null : _.urn)
+              select(isSelected(wearableElement.urn) ? null : wearableElement.urn)
               onChangeSelection(state.selectedWearableURN)
             }}
           >
             {!loading &&
-            isEquipped(_, equippedWearables, baseBody) &&
-            !isSelected(_?.urn) ? (
+            isEquipped(wearableElement, equippedWearables, baseBody) &&
+            !isSelected(wearableElement?.urn) ? (
               <UiEntity
                 uiTransform={{
                   positionType: 'absolute',
@@ -94,7 +94,7 @@ export function WearableCatalogGrid({
                 }}
                 uiBackground={
                   !loading &&
-                  isEquipped(_, equippedWearables, baseBody)
+                  isEquipped(wearableElement, equippedWearables, baseBody)
                     ? {
                         ...ROUNDED_TEXTURE_BACKGROUND,
                         texture: {
@@ -106,18 +106,18 @@ export function WearableCatalogGrid({
                 }
               />
             ) : null}
-            {state.selectedWearableURN !== _?.urn ? (
+            {state.selectedWearableURN !== wearableElement?.urn ? (
               <WearableCellThumbnail
                   uiTransform={{
                     width:"100%",
                     height:"100%"
                   }}
-                catalystWearable={_}
+                catalystWearable={wearableElement}
                 canvasScaleRatio={canvasScaleRatio}
                 loading={loading}
               />
             ) : null}
-            {state.selectedWearableURN === _?.urn && !loading ? (
+            {state.selectedWearableURN === wearableElement?.urn && !loading ? (
               <UiEntity
                 uiTransform={{
                   width: canvasScaleRatio * 240,
@@ -142,12 +142,12 @@ export function WearableCatalogGrid({
                       width: canvasScaleRatio * 210,
                       height: canvasScaleRatio * 210,
                   }}
-                  catalystWearable={_}
+                  catalystWearable={wearableElement}
                   canvasScaleRatio={canvasScaleRatio}
                   loading={loading}
                 />
-                {isEquipped(_, equippedWearables, baseBody) &&
-                _.category ===
+                {isEquipped(wearableElement, equippedWearables, baseBody) &&
+                wearableElement.category ===
                   WEARABLE_CATEGORY_DEFINITIONS.body_shape.id ? null : (
                   <RoundedButton
                     uiTransform={{
@@ -160,16 +160,16 @@ export function WearableCatalogGrid({
                     }}
                     fontSize={26 * canvasScaleRatio}
                     text={
-                      isEquipped(_, equippedWearables, baseBody)
+                      isEquipped(wearableElement, equippedWearables, baseBody)
                         ? 'UNEQUIP'
                         : 'EQUIP'
                     }
-                    isSecondary={isEquipped(_, equippedWearables, baseBody)}
+                    isSecondary={isEquipped(wearableElement, equippedWearables, baseBody)}
                     onClick={() => {
-                      if (isEquipped(_, equippedWearables, baseBody)) {
-                        void onUnequipWearable(_)
+                      if (isEquipped(wearableElement, equippedWearables, baseBody)) {
+                        void onUnequipWearable(wearableElement)
                       } else {
-                        void onEquipWearable(_)
+                        void onEquipWearable(wearableElement)
                       }
                     }}
                   />

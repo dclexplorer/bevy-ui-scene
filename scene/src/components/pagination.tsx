@@ -24,6 +24,7 @@ export function Pagination({
   disabled = false
 }: PaginationProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
+    // TODO memoize [currentPage , totalPage] -> pageElements
   const offset =
     currentPage > 3 ? Math.min(currentPage - 3, pages - PAGE_BUTTONS) : 0
   const pageElements = new Array(Math.min(PAGE_BUTTONS, pages))
