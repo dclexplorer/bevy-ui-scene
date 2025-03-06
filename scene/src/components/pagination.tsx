@@ -10,7 +10,7 @@ import { noop } from '../utils/function-utils'
 export type PaginationProps = {
   pages: number
   currentPage: number
-  onChange: (pageElement:number)=>void
+  onChange: (pageElement: number) => void
   disabled?: boolean
 }
 
@@ -23,7 +23,7 @@ export function Pagination({
   disabled = false
 }: PaginationProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
-    // TODO memoize [currentPage , totalPage] -> pageElements
+  // TODO memoize [currentPage , totalPage] -> pageElements
   const offset =
     currentPage > 3 ? Math.min(currentPage - 3, pages - PAGE_BUTTONS) : 0
   const pageElements = new Array(Math.min(PAGE_BUTTONS, pages))

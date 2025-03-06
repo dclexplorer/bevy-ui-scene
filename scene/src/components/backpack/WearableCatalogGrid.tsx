@@ -75,7 +75,9 @@ export function WearableCatalogGrid({
             }}
             key={index}
             onMouseDown={() => {
-              select(isSelected(wearableElement.urn) ? null : wearableElement.urn)
+              select(
+                isSelected(wearableElement.urn) ? null : wearableElement.urn
+              )
               onChangeSelection(state.selectedWearableURN)
             }}
           >
@@ -85,8 +87,8 @@ export function WearableCatalogGrid({
               <UiEntity
                 uiTransform={{
                   positionType: 'absolute',
-                  width: "100%",
-                  height: "100%",
+                  width: '100%',
+                  height: '100%',
                   position: {
                     top: 0,
                     left: 0
@@ -108,10 +110,10 @@ export function WearableCatalogGrid({
             ) : null}
             {state.selectedWearableURN !== wearableElement?.urn ? (
               <WearableCellThumbnail
-                  uiTransform={{
-                    width:"100%",
-                    height:"100%"
-                  }}
+                uiTransform={{
+                  width: '100%',
+                  height: '100%'
+                }}
                 catalystWearable={wearableElement}
                 canvasScaleRatio={canvasScaleRatio}
                 loading={loading}
@@ -139,8 +141,8 @@ export function WearableCatalogGrid({
               >
                 <WearableCellThumbnail
                   uiTransform={{
-                      width: canvasScaleRatio * 210,
-                      height: canvasScaleRatio * 210,
+                    width: canvasScaleRatio * 210,
+                    height: canvasScaleRatio * 210
                   }}
                   catalystWearable={wearableElement}
                   canvasScaleRatio={canvasScaleRatio}
@@ -152,8 +154,8 @@ export function WearableCatalogGrid({
                   <RoundedButton
                     uiTransform={{
                       margin: {
-                          top: 9 * canvasScaleRatio,
-                          left: 1
+                        top: 9 * canvasScaleRatio,
+                        left: 1
                       },
                       width: 206 * canvasScaleRatio,
                       height: 60 * canvasScaleRatio
@@ -164,9 +166,15 @@ export function WearableCatalogGrid({
                         ? 'UNEQUIP'
                         : 'EQUIP'
                     }
-                    isSecondary={isEquipped(wearableElement, equippedWearables, baseBody)}
+                    isSecondary={isEquipped(
+                      wearableElement,
+                      equippedWearables,
+                      baseBody
+                    )}
                     onClick={() => {
-                      if (isEquipped(wearableElement, equippedWearables, baseBody)) {
+                      if (
+                        isEquipped(wearableElement, equippedWearables, baseBody)
+                      ) {
                         void onUnequipWearable(wearableElement)
                       } else {
                         void onEquipWearable(wearableElement)

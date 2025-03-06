@@ -5,7 +5,7 @@ import type {
   RarityName
 } from '../../utils/wearables-definitions'
 import Icon from '../icon/Icon'
-import {Label, type UiTransformProps} from '@dcl/sdk/react-ecs'
+import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 
 import { RARITY_COLORS } from '../color-palette'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'

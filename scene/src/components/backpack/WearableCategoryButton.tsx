@@ -18,7 +18,7 @@ type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps
   category: WearableCategory
   active?: boolean
-  onClick?: ()=>void
+  onClick?: () => void
   selectedURN: URNWithoutTokenId | null
 }
 export function WearableCategoryButton({
@@ -28,7 +28,7 @@ export function WearableCategoryButton({
   onClick,
   selectedURN
 }: WearableCategoryButtonProps): ReactElement {
-  const callbacks: { onClick: ()=>void } = {
+  const callbacks: { onClick: () => void } = {
     onClick: onClick ?? noop
   }
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -37,7 +37,7 @@ export function WearableCategoryButton({
     atlasName: 'backpack'
   }
   const iconSize = 34 * canvasScaleRatio * 2
-  const thumbnailSize = iconSize * 1.7;
+  const thumbnailSize = iconSize * 1.7
 
   const textureProps: UiBackgroundProps =
     selectedURN === null
@@ -59,7 +59,6 @@ export function WearableCategoryButton({
         width: 124 * canvasScaleRatio * 1.9,
         height: 70 * canvasScaleRatio * 1.9,
         margin: {
-
           left: 10 * canvasScaleRatio * 2,
           bottom: 6 * canvasScaleRatio * 2
         },
@@ -76,7 +75,7 @@ export function WearableCategoryButton({
             : Color4.create(0, 0, 0, 0.2)
       }}
       onMouseDown={() => {
-          callbacks.onClick()
+        callbacks.onClick()
       }}
     >
       <Icon icon={categoryIcon} iconSize={iconSize} />
@@ -113,8 +112,8 @@ export function WearableCategoryButton({
         uiTransform={{
           width: thumbnailSize,
           height: thumbnailSize,
-          position:{
-              left :6 * canvasScaleRatio
+          position: {
+            left: 6 * canvasScaleRatio
           }
         }}
         uiBackground={{
