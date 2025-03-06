@@ -34,6 +34,8 @@ const AVATAR_CAMERA_POSITION = {
   BODY: Vector3.create(8, 2.5, 8 - 6),
   TOP: Vector3.create(8, 3.5, 8 - 3)
 }
+
+// TODO add other camera positions as unity explorer has
 const TOP_CAMERA_CATEGORIES: WearableCategory[] = [
   WEARABLE_CATEGORY_DEFINITIONS.hair.id,
   WEARABLE_CATEGORY_DEFINITIONS.eyebrows.id,
