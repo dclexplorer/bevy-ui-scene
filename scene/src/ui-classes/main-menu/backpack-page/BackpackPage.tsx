@@ -88,7 +88,7 @@ export default class BackpackPage {
             <WearableCategoryList
               outfitSetup={backpackState.outfitSetup}
               activeCategory={backpackState.activeWearableCategory}
-              onSelectCategory={(category: WearableCategory): void => {
+              onSelectCategory={(category: WearableCategory | null): void => {
                 if (!backpackState.loadingPage) this.changeCategory(category)
               }}
             />
@@ -164,6 +164,7 @@ export default class BackpackPage {
                 onEquipWearable={async (
                   wearable: CatalogWearableElement
                 ): Promise<void> => {
+                    console.log("onEquiWearable",  wearable.entity.metadata.id)
                   urnWithTokenIdMemo[wearable.entity.metadata.id] =
                     wearable.individualData[0].id
                   await this.updateEquippedWearable(
@@ -237,18 +238,18 @@ export default class BackpackPage {
   async saveAvatar(): Promise<void> {
     try {
       const backpackState = store.getState().backpack;
+
       if (
-        backpackState.equippedWearables.sort(sortAbc).join(',') ===
-        getPlayer()?.wearables.sort(sortAbc).join(',')
-      )
-        return
-      await BevyApi.setAvatar({
-        base: backpackState.outfitSetup.base,
-        equip: {
-          wearableUrns: getWearablesWithTokenId(backpackState.equippedWearables),
-          emoteUrns: []
-        }
-      })
+        [...backpackState.equippedWearables].sort(sortAbc).join(',') !== [...getPlayer()?.wearables ?? []].sort(sortAbc).join(',')
+      ){
+          await BevyApi.setAvatar({
+              base: backpackState.outfitSetup.base,
+              equip: {
+                  wearableUrns:getWearablesWithTokenId(backpackState.equippedWearables),
+                  emoteUrns: [] // TODO implements emotes
+              }
+          })
+      }
     } catch (error) {
       console.log('setAvatar error', error)
     }
