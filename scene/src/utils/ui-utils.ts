@@ -11,7 +11,7 @@ import { voiceChatJson } from '../json/voice-chat-data'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { mapJson } from '../json/map-data'
 import { socialJson } from 'src/json/social-data'
-import infoPanelJson from "../../assets/images/atlas/info-panel.json";
+import infoPanelJson from '../../assets/images/atlas/info-panel.json'
 
 export function getUvs(icon: AtlasIcon): number[] {
   let parsedJson: AtlasData | undefined

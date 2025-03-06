@@ -1,4 +1,4 @@
-import type { URN, URNWithoutTokenId } from "../utils/definitions";
+import type { URN, URNWithoutTokenId } from '../utils/definitions'
 
 export type ExplorerSetting = {
   name: string
@@ -28,24 +28,24 @@ export type KernelFetchRespose = {
 }
 
 type PBAvatarEquippedData = {
-  wearableUrns: URN[];
-  emoteUrns: URN[];
-};
-type RGBColor = { r: number, g: number, b: number }
+  wearableUrns: URN[]
+  emoteUrns: URN[]
+}
+type RGBColor = { r: number; g: number; b: number }
 export type PBAvatarBase = {
-  name: string;
-  skinColor?: RGBColor;
-  eyesColor?: RGBColor;
-  hairColor?: RGBColor;
-  bodyShapeUrn: URNWithoutTokenId;
-};
+  name: string
+  skinColor?: RGBColor
+  eyesColor?: RGBColor
+  hairColor?: RGBColor
+  bodyShapeUrn: URNWithoutTokenId
+}
 
 type SetAvatarData = {
-  base?: PBAvatarBase;
-  equip?: PBAvatarEquippedData;
-};
+  base?: PBAvatarBase
+  equip?: PBAvatarEquippedData
+}
 export type BevyApiInterface = {
-  setAvatar: (avatarData:SetAvatarData) => Promise<any> // TODO set profile type
+  setAvatar: (avatarData: SetAvatarData) => Promise<any> // TODO set profile type
   openSceneLogger: () => Promise<void>
   checkForUpdate: () => Promise<{ description: string; url: string }>
   messageOfTheDay: () => Promise<{ message: string }>

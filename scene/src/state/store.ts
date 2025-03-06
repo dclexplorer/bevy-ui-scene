@@ -3,8 +3,8 @@ import { settingsInitialState } from './settings/state'
 import { photoInitialState } from './photoInfo/state'
 import { reducer } from './reducer'
 import { type AppState, type Action } from './types'
-import {viewportInitialState} from "./viewport/state";
-import {backpackInitialState} from "./backpack/state";
+import { viewportInitialState } from './viewport/state'
+import { backpackInitialState } from './backpack/state'
 
 export class Store {
   private state: AppState

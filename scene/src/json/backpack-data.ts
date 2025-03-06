@@ -331,21 +331,21 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'nft-empty.png':{
+    'nft-empty.png': {
       frame: { x: 50, y: 1423, w: 70, h: 70 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 70, h: 70 },
       sourceSize: { w: 70, h: 70 }
     },
-    'loading-wearable.png':{
+    'loading-wearable.png': {
       frame: { x: 121, y: 1423, w: 120, h: 120 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 120, h: 120 },
       sourceSize: { w: 120, h: 120 }
     },
-    'selection.png':{
+    'selection.png': {
       frame: { x: 0, y: 1543, w: 160, h: 206 },
       rotated: false,
       trimmed: false,

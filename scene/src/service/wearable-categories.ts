@@ -17,7 +17,9 @@ export type WearableCategory =
   | 'mouth'
   | 'eyebrows'
   | 'body_shape'
-export const WEARABLE_CATEGORY_DEFINITIONS:{[k in WearableCategory]:{id:WearableCategory, label:string}} = {
+export const WEARABLE_CATEGORY_DEFINITIONS: {
+  [k in WearableCategory]: { id: WearableCategory; label: string }
+} = {
   helmet: { id: 'helmet', label: 'Helmet' },
   eyewear: { id: 'eyewear', label: 'Eyewear' },
   earring: { id: 'earring', label: 'earring' },
@@ -35,5 +37,5 @@ export const WEARABLE_CATEGORY_DEFINITIONS:{[k in WearableCategory]:{id:Wearable
   tiara: { id: 'tiara', label: 'Tiara' },
   mouth: { id: 'mouth', label: 'Mouth' },
   eyebrows: { id: 'eyebrows', label: 'Eyebrows' },
-  body_shape: { id: 'body_shape', label: 'Body Shape' },
+  body_shape: { id: 'body_shape', label: 'Body Shape' }
 }
