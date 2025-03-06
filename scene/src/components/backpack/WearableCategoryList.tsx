@@ -11,8 +11,7 @@ import { type OutfitSetup } from '../../utils/wearables-definitions'
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null
   outfitSetup: OutfitSetup
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  onSelectCategory: Function
+  onSelectCategory: (w:WearableCategory | null) => void
 }
 export function WearableCategoryList({
   activeCategory,

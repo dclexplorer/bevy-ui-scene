@@ -10,8 +10,7 @@ import { noop } from '../utils/function-utils'
 export type PaginationProps = {
   pages: number
   currentPage: number
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  onChange: Function
+  onChange: (pageElement:number)=>void
   disabled?: boolean
 }
 

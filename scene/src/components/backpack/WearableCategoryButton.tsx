@@ -18,8 +18,7 @@ type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps
   category: WearableCategory
   active?: boolean
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  onClick?: Function
+  onClick?: ()=>void
   selectedURN: URNWithoutTokenId | null
 }
 export function WearableCategoryButton({
@@ -29,8 +28,7 @@ export function WearableCategoryButton({
   onClick,
   selectedURN
 }: WearableCategoryButtonProps): ReactElement {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  const callbacks: { onClick: Function } = {
+  const callbacks: { onClick: ()=>void } = {
     onClick: onClick ?? noop
   }
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -77,7 +75,9 @@ export function WearableCategoryButton({
             ? COLOR.ACTIVE_BACKGROUND_COLOR
             : Color4.create(0, 0, 0, 0.2)
       }}
-      onMouseDown={() => callbacks.onClick()}
+      onMouseDown={() => {
+          callbacks.onClick()
+      }}
     >
       <Icon icon={categoryIcon} iconSize={iconSize} />
       <UiEntity
