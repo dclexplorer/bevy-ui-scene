@@ -16,6 +16,7 @@ export type PaginationProps = {
 }
 
 const PAGE_BUTTONS = 5
+const getPageElements = memoize2(_getPageElements);
 
 export function Pagination({
   pages,
@@ -25,17 +26,9 @@ export function Pagination({
   uiTransform
 }: PaginationProps): ReactElement | null {
   const canvasScaleRatio = getCanvasScaleRatio()
-  // TODO memoize [currentPage , totalPage] -> pageElements
-  const offset =
-    currentPage > 3 ? Math.min(currentPage - 3, pages - PAGE_BUTTONS) : 0
+  const pageElements = getPageElements(pages, currentPage)
 
-  // TODO memoize?
-  const pageElements = new Array(Math.min(PAGE_BUTTONS, pages))
-    .fill(null)
-    .map((_, index) => {
-      return offset + index + 1
-    })
-  if (pages <= 1) return null
+  if(pages <= 1) return null;
 
   return (
     <UiEntity
@@ -101,4 +94,30 @@ export function Pagination({
       />
     </UiEntity>
   )
+}
+function _getPageElements(pages:number, currentPage:number):number[]{
+  const offset =
+    currentPage > 3 ? Math.min(currentPage - 3, pages - PAGE_BUTTONS) : 0
+
+  return new Array(Math.min(PAGE_BUTTONS, pages))
+    .fill(null)
+    .map((_, index) => {
+      return offset + index + 1
+    })
+}
+function memoize2(fn: (a: number, b: number) => number[]): (a: number, b: number) => number[] {
+  const cache = new Map<number, Map<number, number[]>>();
+
+  return (a: number, b: number): number[] => {
+    if (cache.has(a) && ((cache.get(a)?.has(b)) === true)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return cache.get(a)!.get(b)!;
+    }
+    const result = fn(a, b);
+    if (!cache.has(a)) {
+      cache.set(a, new Map());
+    }
+    cache.get(a)?.set(b, result);
+    return result;
+  };
 }
