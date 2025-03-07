@@ -22,20 +22,20 @@ export type WearableCatalogPageParams = {
   includeBase: boolean
   includeOnChain: boolean
   catalystBaseUrl: string
-  orderBy:string
-  orderDirection:string
+  orderBy: string
+  orderDirection: string
 }
 
 // cache
 export const catalystWearableMap: CatalystWearableMap = {}
 const WEARABLES_ORDER_BY = {
-  DATE:"date",
-  RARITY:"rarity",
-  NAME:"name"
+  DATE: 'date',
+  RARITY: 'rarity',
+  NAME: 'name'
 }
-const  WEARABLES_ORDER_DIRECTION = {
-  DESC:"DESC",
-  ASC:"ASC"
+const WEARABLES_ORDER_DIRECTION = {
+  DESC: 'DESC',
+  ASC: 'ASC'
 }
 
 const pageCache = new Map<string, WearablesPageResponse>()
@@ -62,7 +62,7 @@ export async function fetchWearablesPage({
       catalystBaseUrl:
         realm.realmInfo?.baseUrl ?? 'https://peer.decentraland.org'
     })
-    if(pageCache.has(wearableCatalogPageURL)) {
+    if (pageCache.has(wearableCatalogPageURL)) {
       return pageCache.get(wearableCatalogPageURL) as WearablesPageResponse
     }
 
