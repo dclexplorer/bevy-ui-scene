@@ -493,15 +493,18 @@ function AvatarPreviewElement(): ReactElement {
         height: getContentHeight(),
         width: (540 / 1920) * getContentWidth() * 0.85
       }}
-      uiBackground={{}}
       uiText={{ value: '1' }}
     >
       {getAvatarCamera() === engine.RootEntity ? null : (
         <UiEntity
           uiTransform={{
             positionType: 'absolute',
-            width: '100%',
-            height: '100%'
+            position:{
+              left:"-75%",
+              top:"-5%"
+            },
+            width: '250%',
+            height: '125%'
           }}
           uiBackground={{
             videoTexture: { videoPlayerEntity: getAvatarCamera() }

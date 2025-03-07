@@ -112,13 +112,13 @@ export function createAvatarPreview(): void {
   })
 
   TextureCamera.create(cameraEntity, {
-    width: 850 * getCanvasScaleRatio(),
-    height: 2000 * getCanvasScaleRatio(),
+    width: 1700 * getCanvasScaleRatio(),
+    height: 1800 * getCanvasScaleRatio(),
     layer: 1,
     clearColor: Color4.create(0.4, 0.4, 1.0, 0),
     mode: {
       $case: 'perspective',
-      perspective: { fieldOfView: 0.75 }
+      perspective: { fieldOfView: 1 }
     }
   })
 
