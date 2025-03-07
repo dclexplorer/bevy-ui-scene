@@ -9,7 +9,6 @@ import {
 } from '@dcl/sdk/ecs'
 import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { type URNWithoutTokenId } from '../../utils/definitions'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
@@ -17,15 +16,18 @@ import {
 } from '../../service/wearable-categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { getWearablesWithTokenId } from '../../utils/URN-utils'
+import { type Perspective } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/texture_camera.gen'
 
 type AvatarPreview = {
   avatarEntity: Entity
   cameraEntity: Entity
 }
 
+const CAMERA_SIZE = {WIDTH:1600, HEIGHT:1800};
+
 const avatarPreview: AvatarPreview = {
   avatarEntity: engine.RootEntity,
-  cameraEntity: engine.RootEntity
+  cameraEntity: engine.RootEntity,
 }
 
 export const getAvatarCamera: () => Entity = () => avatarPreview.cameraEntity
@@ -33,11 +35,20 @@ export const getAvatarCamera: () => Entity = () => avatarPreview.cameraEntity
 export const setAvatarPreviewRotation = (rotation:Quaternion):void=>{
   Transform.getMutable(avatarPreview.avatarEntity).rotation = rotation
 }
+type PerspectiveMode = {
+  $case: "perspective";
+  perspective: Perspective;
+}
+export const setAvatarPreviewZoomFactor = (zoomFactor:number):void=> {
+  const mode = TextureCamera.getMutable(avatarPreview.cameraEntity)?.mode as PerspectiveMode
+  mode.perspective.fieldOfView = zoomFactor
+}
 
 export const getAvatarPreviewQuaternion = ():Quaternion => {
   return Transform.get(avatarPreview.avatarEntity).rotation;
 }
-const AVATAR_CAMERA_POSITION = {
+
+const AVATAR_CAMERA_POSITION:Record<string, Vector3> = {
   BODY: Vector3.create(8, 2.5, 8 - 6),
   TOP: Vector3.create(8, 3.5, 8 - 3)
 }
@@ -61,13 +72,7 @@ const TOP_CAMERA_CATEGORIES: WearableCategory[] = [
 export const setAvatarPreviewCameraToWearableCategory = (
   category: WearableCategory | null
 ): void => {
-  if (category !== null && TOP_CAMERA_CATEGORIES.includes(category)) {
-    Transform.getMutable(avatarPreview.cameraEntity).position =
-      AVATAR_CAMERA_POSITION.TOP
-  } else {
-    Transform.getMutable(avatarPreview.cameraEntity).position =
-      AVATAR_CAMERA_POSITION.BODY
-  }
+  Transform.getMutable(avatarPreview.cameraEntity).position = getCameraPositionPerCategory(category)
 }
 
 export function updateAvatarPreview(
@@ -119,8 +124,8 @@ export function createAvatarPreview(): void {
   })
 
   TextureCamera.create(cameraEntity, {
-    width: 1700 * getCanvasScaleRatio(),
-    height: 1800 * getCanvasScaleRatio(),
+    width: CAMERA_SIZE.WIDTH ,
+    height: CAMERA_SIZE.HEIGHT,
     layer: 1,
     clearColor: Color4.create(0.4, 0.4, 1.0, 0),
     mode: {
@@ -139,4 +144,12 @@ export function createAvatarPreview(): void {
     position: AVATAR_CAMERA_POSITION.BODY,
     rotation: Quaternion.fromEulerDegrees(4, 0, 0)
   })
+}
+
+function getCameraPositionPerCategory(category:WearableCategory|null):Vector3{
+  if (category !== null && TOP_CAMERA_CATEGORIES.includes(category)) {
+      return  AVATAR_CAMERA_POSITION.TOP;
+  } else {
+    return  AVATAR_CAMERA_POSITION.BODY;
+  }
 }
