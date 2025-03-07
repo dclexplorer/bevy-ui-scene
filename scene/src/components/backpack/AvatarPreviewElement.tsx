@@ -1,20 +1,10 @@
-import { Quaternion, Vector2 } from '@dcl/sdk/math'
+import { Quaternion } from '@dcl/sdk/math'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { getContentHeight, getContentWidth } from '../../service/canvas-ratio'
 import { getAvatarCamera, getAvatarPreviewQuaternion, setAvatarPreviewRotation } from './AvatarPreview'
 import { engine, PrimaryPointerInfo } from '@dcl/sdk/ecs'
 
-type AvatarPreviewState = {
-  dragStartPoint:Vector2
-  initialQuaternion:Quaternion
-};
-
-const avatarPreviewState:AvatarPreviewState = {
-  dragStartPoint:Vector2.create(0,0),
-  initialQuaternion:Quaternion.Zero()
-}
-
-const ROTATION_FACTOR = 0.2;
+const ROTATION_FACTOR = 0.5;
 
 export function AvatarPreviewElement(): ReactElement {
   return (
@@ -36,27 +26,17 @@ export function AvatarPreviewElement(): ReactElement {
             width: '250%',
             height: '125%'
           }}
-          onMouseDown={()=>{
-            const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity);
-            avatarPreviewState.dragStartPoint = pointerInfo.screenCoordinates as Vector2;
-            const {x,y,z,w} = getAvatarPreviewQuaternion()
-            avatarPreviewState.initialQuaternion = Quaternion.create(x,y,z,w);
-          }}
 
-          onMouseDrag={()=>{
+          onMouseDragLocked={()=>{
             const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity);
-            const currentMouseCoords = pointerInfo.screenCoordinates as Vector2
-            if(currentMouseCoords === undefined) return
-            const { x } = currentMouseCoords;
-
-            const deltaX = (x - avatarPreviewState.dragStartPoint.x) * ROTATION_FACTOR;
-            const qY = Quaternion.fromAngleAxis(deltaX, { x: 0, y: 1, z: 0 }); // Rotate around Y
+            const deltaX:number = pointerInfo?.screenDelta?.x ?? 0
+            const qY = Quaternion.fromAngleAxis(deltaX * ROTATION_FACTOR, { x: 0, y: 1, z: 0 })
+            const avatarRotation = getAvatarPreviewQuaternion();
             const initialQuaternionCopy = Quaternion.create(
-              avatarPreviewState.initialQuaternion.x,
-              avatarPreviewState.initialQuaternion.y,
-              avatarPreviewState.initialQuaternion.z,
-              avatarPreviewState.initialQuaternion.w)
-
+              avatarRotation.x,
+              avatarRotation.y,
+              avatarRotation.z,
+              avatarRotation.w)
             setAvatarPreviewRotation(Quaternion.multiply(initialQuaternionCopy, qY))
           }}
           uiBackground={{
