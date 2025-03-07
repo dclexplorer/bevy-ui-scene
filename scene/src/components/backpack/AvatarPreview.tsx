@@ -30,6 +30,13 @@ const avatarPreview: AvatarPreview = {
 
 export const getAvatarCamera: () => Entity = () => avatarPreview.cameraEntity
 
+export const setAvatarPreviewRotation = (rotation:Quaternion):void=>{
+  Transform.getMutable(avatarPreview.avatarEntity).rotation = rotation
+}
+
+export const getAvatarPreviewQuaternion = ():Quaternion => {
+  return Transform.get(avatarPreview.avatarEntity).rotation;
+}
 const AVATAR_CAMERA_POSITION = {
   BODY: Vector3.create(8, 2.5, 8 - 6),
   TOP: Vector3.create(8, 3.5, 8 - 3)

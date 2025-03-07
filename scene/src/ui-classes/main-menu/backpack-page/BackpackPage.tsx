@@ -28,10 +28,9 @@ import { Pagination } from '../../../components/pagination'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { BevyApi } from '../../../bevy-api'
 import {
-  getAvatarCamera,
   createAvatarPreview,
   updateAvatarPreview,
-  setAvatarPreviewCameraToWearableCategory
+  setAvatarPreviewCameraToWearableCategory,
 } from '../../../components/backpack/AvatarPreview'
 import {
   ROUNDED_TEXTURE_BACKGROUND,
@@ -54,6 +53,7 @@ import {
   updateLoadingPage,
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
+import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -483,34 +483,5 @@ function BackpackNavBar({
         </NavButtonBar>
       </LeftSection>
     </NavBar>
-  )
-}
-
-function AvatarPreviewElement(): ReactElement {
-  return (
-    <UiEntity
-      uiTransform={{
-        height: getContentHeight(),
-        width: (540 / 1920) * getContentWidth() * 0.85
-      }}
-      uiText={{ value: '1' }}
-    >
-      {getAvatarCamera() === engine.RootEntity ? null : (
-        <UiEntity
-          uiTransform={{
-            positionType: 'absolute',
-            position:{
-              left:"-75%",
-              top:"-5%"
-            },
-            width: '250%',
-            height: '125%'
-          }}
-          uiBackground={{
-            videoTexture: { videoPlayerEntity: getAvatarCamera() }
-          }}
-        />
-      )}
-    </UiEntity>
   )
 }
