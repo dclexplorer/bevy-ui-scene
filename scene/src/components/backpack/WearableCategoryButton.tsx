@@ -89,7 +89,7 @@ export function WearableCategoryButton({
             left: 54 * canvasScaleRatio * 2
           }
         }}
-        uiBackground={ROUNDED_TEXTURE_BACKGROUND}
+
       />
       <UiEntity
         uiTransform={{

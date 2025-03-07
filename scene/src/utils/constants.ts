@@ -4,6 +4,7 @@ import { type Invitation } from '../components/friend-invitation/FriendInvitatio
 import type { PlaceFromApi } from '../ui-classes/scene-info-card/SceneInfoCard.types'
 import type { PhotoMetadataResponse } from 'src/ui-classes/photos/Photos.types'
 import { type TextureMode } from '@dcl/react-ecs'
+import { COLOR } from '../components/color-palette'
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)
@@ -534,7 +535,8 @@ export const ROUNDED_TEXTURE_BACKGROUND = {
   texture: {
     src: 'assets/images/backgrounds/rounded.png'
   },
-  textureSlices: TEXTURE_SLICES_05
+  textureSlices: TEXTURE_SLICES_05,
+  color: COLOR.ACTIVE_BACKGROUND_COLOR
 }
 export const WEARABLE_CATALOG_PAGE_SIZE = 16
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

@@ -99,7 +99,8 @@ export default class BackpackPage {
               uiTransform={{
                 flexDirection: 'column',
                 padding: 14 * canvasScaleRatio,
-                margin: { left: 30 * canvasScaleRatio }
+                margin: { left: 30 * canvasScaleRatio },
+                height:"100%"
               }}
             >
               {/* CATALOG NAV_BAR */}
@@ -183,6 +184,10 @@ export default class BackpackPage {
                 }}
               />
               <Pagination
+                uiTransform={{
+                  positionType:"absolute",
+                  position:{bottom:130 * canvasScaleRatio}
+                }}
                 disabled={backpackState.loadingPage}
                 onChange={(page: number) => {
                   store.dispatch(updateCurrentPage(page))

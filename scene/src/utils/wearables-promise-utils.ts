@@ -22,16 +22,31 @@ export type WearableCatalogPageParams = {
   includeBase: boolean
   includeOnChain: boolean
   catalystBaseUrl: string
+  orderBy:string
+  orderDirection:string
 }
 
 // cache
 export const catalystWearableMap: CatalystWearableMap = {}
+const WEARABLES_ORDER_BY = {
+  DATE:"date",
+  RARITY:"rarity",
+  NAME:"name"
+}
+const  WEARABLES_ORDER_DIRECTION = {
+  DESC:"DESC",
+  ASC:"ASC"
+}
+
+const pageCache = new Map<string, WearablesPageResponse>()
 
 export async function fetchWearablesPage({
   pageNum,
   pageSize,
   wearableCategory,
-  address
+  address,
+  orderBy = WEARABLES_ORDER_BY.DATE,
+  orderDirection = WEARABLES_ORDER_DIRECTION.DESC
 }: any): Promise<WearablesPageResponse> {
   try {
     const realm = await getRealm({})
@@ -40,11 +55,16 @@ export async function fetchWearablesPage({
       pageSize,
       address,
       wearableCategory,
+      orderBy,
+      orderDirection,
       includeBase: true,
       includeOnChain: true,
       catalystBaseUrl:
         realm.realmInfo?.baseUrl ?? 'https://peer.decentraland.org'
     })
+    if(pageCache.has(wearableCatalogPageURL)) {
+      return pageCache.get(wearableCatalogPageURL) as WearablesPageResponse
+    }
 
     const wearablesPageResponse: any = await fetch(wearableCatalogPageURL)
     const result: WearablesPageResponse = await wearablesPageResponse.json()
@@ -60,6 +80,7 @@ export async function fetchWearablesPage({
       }
       catalystWearableMap[wearableElement.urn] = wearableElement.entity.metadata
     })
+    pageCache.set(wearableCatalogPageURL, result)
     return result
   } catch (error) {
     console.error('wearablesPage Error fetching:', error)
@@ -71,11 +92,14 @@ export async function fetchWearablesPage({
     pageSize,
     address,
     wearableCategory,
+    orderBy,
+    orderDirection,
     includeBase,
     includeOnChain,
     catalystBaseUrl
   }: WearableCatalogPageParams): string {
     let str: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
+    str += `&orderBy=${orderBy}&direction=${orderDirection}`
     if (wearableCategory !== null) {
       str += `&category=${wearableCategory}`
     }
