@@ -24,7 +24,7 @@ export function getURNWithoutTokenId(
 
   let urnWithoutTokenId: URNWithoutTokenId
 
-  if (urn.includes(':off-chain:') || urn.split(':').length < 6) {
+  if (isOffChainOrIncomplete(urn)) {
     urnWithoutTokenId = urn as URNWithoutTokenId
   } else {
     const parts = urn.split(':')
@@ -41,4 +41,8 @@ export function getURNWithoutTokenId(
   urnWithTokenIdMemo.set(urnWithoutTokenId, urn as URN)
 
   return urnWithoutTokenId
+}
+
+function isOffChainOrIncomplete(urn: string): boolean {
+  return urn.includes(':off-chain:') || urn.split(':').length < 6
 }
