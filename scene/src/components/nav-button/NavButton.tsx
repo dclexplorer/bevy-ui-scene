@@ -52,17 +52,18 @@ export function NavButton({
         onClick()
       }}
     >
-      {icon && <Icon
-        icon={icon}
-        iconSize={48 * canvasScaleRatio}
-        iconColor={
-          color ??
-          (active
-            ? COLOR.NAV_BUTTON_ACTIVE_COLOR
-            : COLOR.NAV_BUTTON_INACTIVE_COLOR)
-        }
-      />
-      }
+      {icon && (
+        <Icon
+          icon={icon}
+          iconSize={48 * canvasScaleRatio}
+          iconColor={
+            color ??
+            (active
+              ? COLOR.NAV_BUTTON_ACTIVE_COLOR
+              : COLOR.NAV_BUTTON_INACTIVE_COLOR)
+          }
+        />
+      )}
       <Label
         fontSize={32 * canvasScaleRatio}
         value={`<b>${text}</b>`}

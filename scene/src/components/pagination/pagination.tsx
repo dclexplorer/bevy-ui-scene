@@ -15,7 +15,6 @@ export type PaginationProps = {
   disabled?: boolean
 }
 
-
 export function Pagination({
   pages,
   currentPage,
@@ -24,7 +23,7 @@ export function Pagination({
 }: PaginationProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   // TODO memoize [currentPage , totalPage] -> pageElements
-  const pageElements = getPaginationItems({currentPage, total:pages})
+  const pageElements = getPaginationItems({ currentPage, total: pages })
   return (
     <UiEntity
       uiTransform={{

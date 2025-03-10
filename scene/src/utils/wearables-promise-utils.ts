@@ -13,12 +13,13 @@ export type WearablesPageResponse = {
   pageSize: number
   totalAmount: number
 }
-
-export type WearableCatalogPageParams = {
+export type WearableCatalogRequest = {
   pageNum: number
   pageSize: number
   address: string
   wearableCategory: WearableCategory | null
+}
+export type WearableCatalogPageParams = WearableCatalogRequest & {
   includeBase: boolean
   includeOnChain: boolean
   catalystBaseUrl: string
@@ -32,7 +33,7 @@ export async function fetchWearablesPage({
   pageSize,
   wearableCategory,
   address
-}: any): Promise<WearablesPageResponse> {
+}: WearableCatalogRequest): Promise<WearablesPageResponse> {
   try {
     const realm = await getRealm({})
     const wearableCatalogPageURL = getWearableCatalogPageURL({

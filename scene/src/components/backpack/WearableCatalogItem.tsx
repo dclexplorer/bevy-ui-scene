@@ -9,19 +9,17 @@ import { WEARABLE_CATEGORY_DEFINITIONS } from '../../service/wearable-categories
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { Color4 } from '@dcl/sdk/math'
 
-
-type WearableCatalogItemProps ={
-  uiTransform?:UiTransformProps
-  key:number
+type WearableCatalogItemProps = {
+  uiTransform?: UiTransformProps
+  key: number
   isEquipped: boolean
   isSelected: boolean
   loading: boolean
-  wearableElement:CatalogWearableElement
-  onUnequipWearable:(wearableElement:CatalogWearableElement)=>void
-  onEquipWearable:(wearableElement:CatalogWearableElement)=>void
-  onSelect:()=>void
+  wearableElement: CatalogWearableElement
+  onUnequipWearable: (wearableElement: CatalogWearableElement) => void
+  onEquipWearable: (wearableElement: CatalogWearableElement) => void
+  onSelect: () => void
 }
-
 
 const SELECTED_BACKGROUND = {
   ...getBackgroundFromAtlas({
@@ -35,7 +33,9 @@ const LOADING_TEXTURE_PROPS = getBackgroundFromAtlas({
   spriteName: 'loading-wearable'
 })
 
-export function WearableCatalogItem(props: WearableCatalogItemProps): ReactElement {
+export function WearableCatalogItem(
+  props: WearableCatalogItemProps
+): ReactElement {
   const {
     isEquipped,
     isSelected,
@@ -45,7 +45,7 @@ export function WearableCatalogItem(props: WearableCatalogItemProps): ReactEleme
     onUnequipWearable = noop,
     onEquipWearable = noop,
     uiTransform
-  } = props;
+  } = props
   const canvasScaleRatio = getCanvasScaleRatio()
 
   return (
@@ -73,12 +73,12 @@ export function WearableCatalogItem(props: WearableCatalogItemProps): ReactEleme
           uiBackground={
             !loading && isEquipped
               ? {
-                ...ROUNDED_TEXTURE_BACKGROUND,
-                texture: {
-                  src: 'assets/images/backgrounds/rounded-border.png'
-                },
-                color: COLOR.ACTIVE_BACKGROUND_COLOR
-              }
+                  ...ROUNDED_TEXTURE_BACKGROUND,
+                  texture: {
+                    src: 'assets/images/backgrounds/rounded-border.png'
+                  },
+                  color: COLOR.ACTIVE_BACKGROUND_COLOR
+                }
               : {}
           }
         />
@@ -123,7 +123,7 @@ export function WearableCatalogItem(props: WearableCatalogItemProps): ReactEleme
           />
           {isEquipped &&
           wearableElement.category ===
-          WEARABLE_CATEGORY_DEFINITIONS.body_shape.id ? null : (
+            WEARABLE_CATEGORY_DEFINITIONS.body_shape.id ? null : (
             <RoundedButton
               uiTransform={{
                 margin: {
@@ -134,8 +134,8 @@ export function WearableCatalogItem(props: WearableCatalogItemProps): ReactEleme
                 height: 60 * canvasScaleRatio
               }}
               fontSize={26 * canvasScaleRatio}
-              text={ isEquipped ? 'UNEQUIP' : 'EQUIP' }
-              isSecondary={ isEquipped }
+              text={isEquipped ? 'UNEQUIP' : 'EQUIP'}
+              isSecondary={isEquipped}
               onClick={() => {
                 if (isEquipped) {
                   onUnequipWearable(wearableElement)
@@ -157,12 +157,11 @@ type WearableCellProps = {
   uiTransform?: UiTransformProps
 }
 
-
 function WearableCellThumbnail({
-                                 loading,
-                                 wearableElement,
-                                 uiTransform
-                               }: WearableCellProps): ReactElement {
+  loading,
+  wearableElement,
+  uiTransform
+}: WearableCellProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
 
   return (
@@ -176,9 +175,9 @@ function WearableCellThumbnail({
         ...(loading
           ? LOADING_TEXTURE_PROPS
           : getBackgroundFromAtlas({
-            spriteName: wearableElement?.rarity ?? 'base',
-            atlasName: 'backpack'
-          }))
+              spriteName: wearableElement?.rarity ?? 'base',
+              atlasName: 'backpack'
+            }))
       }}
     >
       {!loading && Boolean(wearableElement?.urn) ? (
@@ -207,12 +206,12 @@ type RoundedButtonProps = {
   fontSize?: number
 }
 function RoundedButton({
-                         isSecondary,
-                         text,
-                         onClick = noop,
-                         uiTransform,
-                         fontSize = 20
-                       }: RoundedButtonProps): ReactElement {
+  isSecondary,
+  text,
+  onClick = noop,
+  uiTransform,
+  fontSize = 20
+}: RoundedButtonProps): ReactElement {
   return (
     <UiEntity
       uiTransform={{

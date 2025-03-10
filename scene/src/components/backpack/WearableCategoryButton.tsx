@@ -38,16 +38,16 @@ export function WearableCategoryButton({
   const textureProps: UiBackgroundProps = selectedURN
     ? getWearableThumbnailBackground(selectedURN)
     : getBackgroundFromAtlas({
-      atlasName: 'backpack',
-      spriteName: 'nft-empty'
-    })
+        atlasName: 'backpack',
+        spriteName: 'nft-empty'
+      })
 
   return (
     <UiEntity
       uiTransform={{
         ...uiTransform,
         width: 239 * canvasScaleRatio,
-        height:  133 * canvasScaleRatio,
+        height: 133 * canvasScaleRatio,
         margin: {
           left: 20 * canvasScaleRatio,
           bottom: 12 * canvasScaleRatio
@@ -114,7 +114,9 @@ export function WearableCategoryButton({
   )
 }
 
-function getWearableThumbnailBackground(selectedURN:URNWithoutTokenId):UiBackgroundProps{
+function getWearableThumbnailBackground(
+  selectedURN: URNWithoutTokenId
+): UiBackgroundProps {
   return {
     texture: {
       src: `https://peer.decentraland.org/lambdas/collections/contents/${selectedURN}/thumbnail`

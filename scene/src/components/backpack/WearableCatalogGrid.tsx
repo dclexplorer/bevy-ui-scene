@@ -59,23 +59,33 @@ export function WearableCatalogGrid({
         ...uiTransform
       }}
     >
-      {wearables.map((wearableElement:CatalogWearableElement, index:number) => <WearableCatalogItem
-        key={index}
-        wearableElement={wearableElement}
-        onEquipWearable={(wearableElement:CatalogWearableElement) => {
-          void onEquipWearable(wearableElement)
-        }}
-        onUnequipWearable={(wearableElement:CatalogWearableElement) => {
-          void onUnequipWearable(wearableElement)
-        }}
-        onSelect={()=>{
-          select(isSelected(wearableElement.urn) ? null : wearableElement.urn)
-          onChangeSelection(state.selectedWearableURN)
-        }}
-        isSelected={isSelected(wearableElement?.urn)}
-        isEquipped={isEquipped(wearableElement, equippedWearables, baseBody)}
-        loading={loading}
-      />)}
+      {wearables.map(
+        (wearableElement: CatalogWearableElement, index: number) => (
+          <WearableCatalogItem
+            key={index}
+            wearableElement={wearableElement}
+            onEquipWearable={(wearableElement: CatalogWearableElement) => {
+              void onEquipWearable(wearableElement)
+            }}
+            onUnequipWearable={(wearableElement: CatalogWearableElement) => {
+              void onUnequipWearable(wearableElement)
+            }}
+            onSelect={() => {
+              select(
+                isSelected(wearableElement.urn) ? null : wearableElement.urn
+              )
+              onChangeSelection(state.selectedWearableURN)
+            }}
+            isSelected={isSelected(wearableElement?.urn)}
+            isEquipped={isEquipped(
+              wearableElement,
+              equippedWearables,
+              baseBody
+            )}
+            loading={loading}
+          />
+        )
+      )}
     </UiEntity>
   )
 }
@@ -118,5 +128,3 @@ function isEquipped(
 function isBodyCategory(wearable: CatalogWearableElement): boolean {
   return wearable.category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
 }
-
-

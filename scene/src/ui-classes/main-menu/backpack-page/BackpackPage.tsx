@@ -168,7 +168,10 @@ export default class BackpackPage {
                 onEquipWearable={async (
                   wearable: CatalogWearableElement
                 ): Promise<void> => {
-                  urnWithTokenIdMemo.set(wearable.entity.metadata.id,wearable.individualData[0].id)
+                  urnWithTokenIdMemo.set(
+                    wearable.entity.metadata.id,
+                    wearable.individualData[0].id
+                  )
                   await this.updateEquippedWearable(
                     wearable.category,
                     wearable.entity.metadata.id
