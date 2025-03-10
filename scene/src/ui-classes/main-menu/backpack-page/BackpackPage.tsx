@@ -176,8 +176,9 @@ export default class BackpackPage {
                   ).catch(console.error)
                 }}
                 onUnequipWearable={(wearable: CatalogWearableElement): void => {
-                  this.updateEquippedWearable(wearable.category, null)
-                    .catch(console.error)
+                  this.updateEquippedWearable(wearable.category, null).catch(
+                    console.error
+                  )
                 }}
               />
               <Pagination
