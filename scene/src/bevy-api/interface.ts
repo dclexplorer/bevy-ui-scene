@@ -45,7 +45,7 @@ type SetAvatarData = {
   equip?: PBAvatarEquippedData
 }
 export type BevyApiInterface = {
-  setAvatar: (avatarData: SetAvatarData) => Promise<any> // TODO set profile type
+  setAvatar: (avatarData: SetAvatarData) => Promise<number>
   openSceneLogger: () => Promise<void>
   checkForUpdate: () => Promise<{ description: string; url: string }>
   messageOfTheDay: () => Promise<{ message: string }>
