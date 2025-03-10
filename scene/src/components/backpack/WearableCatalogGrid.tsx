@@ -202,10 +202,10 @@ function select(wearableURNWithoutTokenId: null | URNWithoutTokenId): void {
 const isEquippedMemo: {
   equippedWearables: URNWithoutTokenId[]
   baseBody: PBAvatarBase
-  memo: Record<URNWithoutTokenId, boolean> // TODO consider using Map if possible for performance improvement because long keys
+  memo: Map<URNWithoutTokenId, boolean>
 } = {
   equippedWearables: [],
-  memo: {},
+  memo: new Map(),
   baseBody: { ...EMPTY_OUTFIT.base }
 }
 
@@ -221,18 +221,24 @@ function isEquipped(
   ) {
     isEquippedMemo.equippedWearables = equippedWearables
     isEquippedMemo.baseBody = baseBody
-    isEquippedMemo.memo = {}
-  }
-  if (isEquippedMemo.memo[wearable.urn] !== undefined)
-    return isEquippedMemo.memo[wearable.urn]
-  if (wearable.category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) {
-    isEquippedMemo.memo[wearable.urn] = baseBody.bodyShapeUrn === wearable.urn
-  } else {
-    isEquippedMemo.memo[wearable.urn] = equippedWearables.includes(wearable.urn)
+    isEquippedMemo.memo.clear()
   }
 
-  return isEquippedMemo.memo[wearable.urn]
+  if (isEquippedMemo.memo.has(wearable.urn)) {
+    return isEquippedMemo.memo.get(wearable.urn) as boolean
+  }
+
+  let equipped = false;
+  if (wearable.category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) {
+    equipped = baseBody.bodyShapeUrn === wearable.urn
+  } else {
+    equipped = equippedWearables.includes(wearable.urn)
+  }
+
+  isEquippedMemo.memo.set(wearable.urn, equipped)
+  return equipped
 }
+
 
 export type WearableCellProps = {
   canvasScaleRatio: number
