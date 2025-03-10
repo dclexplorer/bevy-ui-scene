@@ -16,7 +16,7 @@ import {
   type WearableCategory
 } from '../../service/wearable-categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
-import { getWearablesWithTokenId } from '../../utils/URN-utils'
+import { getWearablesWithTokenId } from '../../utils/urn-utils'
 
 type AvatarPreview = {
   avatarEntity: Entity

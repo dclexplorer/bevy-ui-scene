@@ -1,12 +1,13 @@
 import type { URN, URNWithoutTokenId } from './definitions'
+
 export const BASE_MALE_URN: URNWithoutTokenId =
   'urn:decentraland:off-chain:base-avatars:BaseMale' as URNWithoutTokenId
 
-const urnWithoutTokenIdMemo: Record<URN, URNWithoutTokenId> = {} // TODO consider using Map if possible for performance improvement because long keys
-export const urnWithTokenIdMemo: Record<URNWithoutTokenId, URN> = {}
+const urnWithoutTokenIdMemo = new Map<URN, URNWithoutTokenId>()
+export const urnWithTokenIdMemo = new Map<URNWithoutTokenId, URN>()
 
 export function getWearablesWithTokenId(wearables: URNWithoutTokenId[]): URN[] {
-  return wearables.map((wearableURN) => urnWithTokenIdMemo[wearableURN])
+  return wearables.map((wearableURN) => urnWithTokenIdMemo.get(wearableURN) as URN)
 }
 
 export function getURNWithoutTokenId(
@@ -15,32 +16,27 @@ export function getURNWithoutTokenId(
 ): URNWithoutTokenId | null {
   if (urn === null) return null
 
-  // Check if the value is already cached and avoid cache flag is false
-  if (urnWithoutTokenIdMemo[urn as URN] !== undefined && !avoidCache) {
-    return urnWithoutTokenIdMemo[urn as URN]
+  if (!avoidCache && urnWithoutTokenIdMemo.has(urn as URN)) {
+    return urnWithoutTokenIdMemo.get(urn as URN) as URNWithoutTokenId
   }
 
-  // Check if it's an off-chain URN or has less than 6 parts
+  let urnWithoutTokenId: URNWithoutTokenId
+
   if (urn.includes(':off-chain:') || urn.split(':').length < 6) {
-    urnWithoutTokenIdMemo[urn as URN] = urn as URNWithoutTokenId
+    urnWithoutTokenId = urn as URNWithoutTokenId
   } else {
-    // Split URN by ":" and check if the last part is a tokenId (numeric or alphanumeric, which can be removed)
     const parts = urn.split(':')
     const lastPart = parts[parts.length - 1]
 
-    // Check if the last part is a number (tokenId), if so remove it
     if (/^\d+$/.test(lastPart)) {
-      urnWithoutTokenIdMemo[urn as URN] = urn.replace(
-        /^(.*):[^:]+$/,
-        '$1'
-      ) as URNWithoutTokenId
+      urnWithoutTokenId = urn.replace(/^(.*):[^:]+$/, '$1') as URNWithoutTokenId
     } else {
-      // If it's not a tokenId (e.g., 'item' or other non-numeric part), don't remove it
-      urnWithoutTokenIdMemo[urn as URN] = urn as URNWithoutTokenId
+      urnWithoutTokenId = urn as URNWithoutTokenId
     }
   }
-  const result: URNWithoutTokenId = urnWithoutTokenIdMemo[urn as URN]
-  // Return the URN without the tokenId part
-  urnWithTokenIdMemo[result] = urn as URN
-  return result
+
+  urnWithoutTokenIdMemo.set(urn as URN, urnWithoutTokenId)
+  urnWithTokenIdMemo.set(urnWithoutTokenId, urn as URN)
+
+  return urnWithoutTokenId
 }

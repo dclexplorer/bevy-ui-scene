@@ -43,7 +43,7 @@ import {
   getURNWithoutTokenId,
   getWearablesWithTokenId,
   urnWithTokenIdMemo
-} from '../../../utils/URN-utils'
+} from '../../../utils/urn-utils'
 import { store } from '../../../state/store'
 import {
   updateActiveWearableCategory,
@@ -168,9 +168,7 @@ export default class BackpackPage {
                 onEquipWearable={async (
                   wearable: CatalogWearableElement
                 ): Promise<void> => {
-                  console.log('onEquiWearable', wearable.entity.metadata.id)
-                  urnWithTokenIdMemo[wearable.entity.metadata.id] =
-                    wearable.individualData[0].id
+                  urnWithTokenIdMemo.set(wearable.entity.metadata.id,wearable.individualData[0].id)
                   await this.updateEquippedWearable(
                     wearable.category,
                     wearable.entity.metadata.id
