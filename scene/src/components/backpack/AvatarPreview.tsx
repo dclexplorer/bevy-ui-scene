@@ -67,16 +67,12 @@ export function updateAvatarPreview(
   wearables: URNWithoutTokenId[],
   avatarBase: PBAvatarBase
 ): void {
-  AvatarShape.getMutable(avatarPreview.avatarEntity).wearables =
-    getWearablesWithTokenId(wearables)
-  AvatarShape.getMutable(avatarPreview.avatarEntity).bodyShape =
-    avatarBase.bodyShapeUrn
-  AvatarShape.getMutable(avatarPreview.avatarEntity).hairColor =
-    avatarBase.hairColor
-  AvatarShape.getMutable(avatarPreview.avatarEntity).eyeColor =
-    avatarBase.eyesColor
-  AvatarShape.getMutable(avatarPreview.avatarEntity).skinColor =
-    avatarBase.skinColor
+  const mutableAvatarShape = AvatarShape.getMutable(avatarPreview.avatarEntity)
+  mutableAvatarShape.wearables = getWearablesWithTokenId(wearables)
+  mutableAvatarShape.bodyShape = avatarBase.bodyShapeUrn
+  mutableAvatarShape.hairColor = avatarBase.hairColor
+  mutableAvatarShape.eyeColor = avatarBase.eyesColor
+  mutableAvatarShape.skinColor = avatarBase.skinColor
 }
 
 export function createAvatarPreview(): void {
