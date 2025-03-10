@@ -79,11 +79,11 @@ export async function fetchWearablesPage({
       includeOnChain,
       catalystBaseUrl
     } = params
-    let str: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
-    if (wearableCategory) str += `&category=${wearableCategory}`
-    if (includeBase) str += `&collectionType=base-wearable`
-    if (includeOnChain) str += `&collectionType=on-chain`
-    return str
+    let url: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
+    if (wearableCategory) url += `&category=${wearableCategory}`
+    if (includeBase) url += `&collectionType=base-wearable`
+    if (includeOnChain) url += `&collectionType=on-chain`
+    return url
   }
 }
 
