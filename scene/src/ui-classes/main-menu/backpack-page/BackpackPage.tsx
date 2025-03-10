@@ -24,13 +24,13 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
 import type { CatalogWearableElement } from '../../../utils/wearables-definitions'
 
-import { Pagination } from '../../../components/pagination'
+import { Pagination } from '../../../components/pagination/pagination'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { BevyApi } from '../../../bevy-api'
 import {
   createAvatarPreview,
   updateAvatarPreview,
-  setAvatarPreviewCameraToWearableCategory,
+  setAvatarPreviewCameraToWearableCategory
 } from '../../../components/backpack/AvatarPreview'
 import {
   ROUNDED_TEXTURE_BACKGROUND,
@@ -42,7 +42,7 @@ import {
   getURNWithoutTokenId,
   getWearablesWithTokenId,
   urnWithTokenIdMemo
-} from '../../../utils/URN-utils'
+} from '../../../utils/urn-utils'
 import { store } from '../../../state/store'
 import {
   updateActiveWearableCategory,
@@ -100,7 +100,7 @@ export default class BackpackPage {
                 flexDirection: 'column',
                 padding: 14 * canvasScaleRatio,
                 margin: { left: 30 * canvasScaleRatio },
-                height:"100%"
+                height: '100%'
               }}
             >
               {/* CATALOG NAV_BAR */}
@@ -166,27 +166,26 @@ export default class BackpackPage {
                 ): void => {
                   store.dispatch(updateSelectedWearableURN(selectedURN))
                 }}
-                onEquipWearable={async (
-                  wearable: CatalogWearableElement
-                ): Promise<void> => {
-                  console.log('onEquiWearable', wearable.entity.metadata.id)
-                  urnWithTokenIdMemo[wearable.entity.metadata.id] =
+                onEquipWearable={(wearable: CatalogWearableElement): void => {
+                  urnWithTokenIdMemo.set(
+                    wearable.entity.metadata.id,
                     wearable.individualData[0].id
-                  await this.updateEquippedWearable(
+                  )
+                  this.updateEquippedWearable(
                     wearable.category,
                     wearable.entity.metadata.id
-                  )
+                  ).catch(console.error)
                 }}
-                onUnequipWearable={async (
-                  wearable: CatalogWearableElement
-                ): Promise<void> => {
-                  await this.updateEquippedWearable(wearable.category, null)
+                onUnequipWearable={(wearable: CatalogWearableElement): void => {
+                  this.updateEquippedWearable(wearable.category, null).catch(
+                    console.error
+                  )
                 }}
               />
               <Pagination
                 uiTransform={{
-                  positionType:"absolute",
-                  position:{bottom:130 * canvasScaleRatio}
+                  positionType: 'absolute',
+                  position: { bottom: 130 * canvasScaleRatio }
                 }}
                 disabled={backpackState.loadingPage}
                 onChange={(page: number) => {

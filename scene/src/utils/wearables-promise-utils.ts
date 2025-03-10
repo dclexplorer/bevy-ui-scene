@@ -13,17 +13,18 @@ export type WearablesPageResponse = {
   pageSize: number
   totalAmount: number
 }
-
-export type WearableCatalogPageParams = {
+export type WearableCatalogRequest = {
   pageNum: number
   pageSize: number
   address: string
+  orderBy: string
+  orderDirection: string
   wearableCategory: WearableCategory | null
+}
+export type WearableCatalogPageParams = WearableCatalogRequest & {
   includeBase: boolean
   includeOnChain: boolean
   catalystBaseUrl: string
-  orderBy: string
-  orderDirection: string
 }
 
 // cache
@@ -47,7 +48,7 @@ export async function fetchWearablesPage({
   address,
   orderBy = WEARABLES_ORDER_BY.DATE,
   orderDirection = WEARABLES_ORDER_DIRECTION.DESC
-}: any): Promise<WearablesPageResponse> {
+}: WearableCatalogRequest): Promise<WearablesPageResponse> {
   try {
     const realm = await getRealm({})
     const wearableCatalogPageURL = getWearableCatalogPageURL({
@@ -87,29 +88,26 @@ export async function fetchWearablesPage({
     throw error
   }
 
-  function getWearableCatalogPageURL({
-    pageNum,
-    pageSize,
-    address,
-    wearableCategory,
-    orderBy,
-    orderDirection,
-    includeBase,
-    includeOnChain,
-    catalystBaseUrl
-  }: WearableCatalogPageParams): string {
-    let str: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
-    str += `&orderBy=${orderBy}&direction=${orderDirection}`
-    if (wearableCategory !== null) {
-      str += `&category=${wearableCategory}`
-    }
-    if (includeBase) {
-      str += `&collectionType=base-wearable`
-    }
-    if (includeOnChain) {
-      str += `&collectionType=on-chain`
-    }
-    return str
+  function getWearableCatalogPageURL(
+    params: WearableCatalogPageParams
+  ): string {
+    const {
+      pageNum,
+      pageSize,
+      address,
+      wearableCategory,
+      orderBy,
+      orderDirection,
+      includeBase,
+      includeOnChain,
+      catalystBaseUrl
+    } = params
+    let url: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
+    url += `&orderBy=${orderBy}&direction=${orderDirection}`
+    if (wearableCategory) url += `&category=${wearableCategory}`
+    if (includeBase) url += `&collectionType=base-wearable`
+    if (includeOnChain) url += `&collectionType=on-chain`
+    return url
   }
 }
 

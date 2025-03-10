@@ -24,6 +24,7 @@ export function InfoPanel({
   uiTransform
 }: InfoPanelProps): ReactElement {
   const rarityColor = RARITY_COLORS[wearable?.rarity as RarityName]
+
   return (
     <UiEntity
       uiTransform={{
@@ -45,7 +46,7 @@ export function InfoPanel({
         })
       }}
     >
-      {wearable !== null ? (
+      {wearable && (
         <UiEntity
           uiTransform={{ alignSelf: 'center', flexDirection: 'column' }}
         >
@@ -130,7 +131,7 @@ export function InfoPanel({
             />
           </UiEntity>
         </UiEntity>
-      ) : null}
+      )}
     </UiEntity>
   )
 }

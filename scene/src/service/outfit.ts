@@ -8,7 +8,7 @@ import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
 } from './wearable-categories'
-import { BASE_MALE_URN } from '../utils/URN-utils'
+import { BASE_MALE_URN } from '../utils/urn-utils'
 import { deepFreeze } from '../utils/object-utils'
 
 export const EMPTY_OUTFIT: OutfitSetup = deepFreeze({

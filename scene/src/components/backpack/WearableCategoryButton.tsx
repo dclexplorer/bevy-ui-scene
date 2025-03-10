@@ -25,47 +25,37 @@ export function WearableCategoryButton({
   category,
   uiTransform,
   active,
-  onClick,
+  onClick = noop,
   selectedURN
 }: WearableCategoryButtonProps): ReactElement {
-  const callbacks: { onClick: () => void } = {
-    onClick: onClick ?? noop
-  }
   const canvasScaleRatio = getCanvasScaleRatio()
   const categoryIcon: AtlasIcon = {
     spriteName: category,
     atlasName: 'backpack'
   }
-  const iconSize = 34 * canvasScaleRatio * 2
+  const iconSize = 68 * canvasScaleRatio
   const thumbnailSize = iconSize * 1.7
-
-  const textureProps: UiBackgroundProps =
-    selectedURN === null
-      ? getBackgroundFromAtlas({
-          atlasName: 'backpack',
-          spriteName: 'nft-empty'
-        })
-      : {
-          texture: {
-            src: `https://peer.decentraland.org/lambdas/collections/contents/${selectedURN}/thumbnail`
-          },
-          textureMode: 'stretch'
-        }
+  const textureProps: UiBackgroundProps = selectedURN
+    ? getWearableThumbnailBackground(selectedURN)
+    : getBackgroundFromAtlas({
+        atlasName: 'backpack',
+        spriteName: 'nft-empty'
+      })
 
   return (
     <UiEntity
       uiTransform={{
         ...uiTransform,
-        width: 124 * canvasScaleRatio * 1.9,
-        height: 70 * canvasScaleRatio * 1.9,
+        width: 239 * canvasScaleRatio,
+        height: 133 * canvasScaleRatio,
         margin: {
-          left: 10 * canvasScaleRatio * 2,
-          bottom: 6 * canvasScaleRatio * 2
+          left: 20 * canvasScaleRatio,
+          bottom: 12 * canvasScaleRatio
         },
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
-        padding: 2 * canvasScaleRatio * 2
+        padding: 4 * canvasScaleRatio
       }}
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
@@ -75,30 +65,29 @@ export function WearableCategoryButton({
             : Color4.create(0, 0, 0, 0.2)
       }}
       onMouseDown={() => {
-        callbacks.onClick()
+        onClick()
       }}
     >
       <Icon icon={categoryIcon} iconSize={iconSize} />
       <UiEntity
         uiTransform={{
-          width: 62 * canvasScaleRatio * 2,
-          height: 62 * canvasScaleRatio * 2,
+          width: 124 * canvasScaleRatio,
+          height: 124 * canvasScaleRatio,
           display: selectedURN === null ? 'none' : 'flex',
           positionType: 'absolute',
           position: {
             left: 54 * canvasScaleRatio * 2
           }
         }}
-
       />
       <UiEntity
         uiTransform={{
-          width: 58 * canvasScaleRatio * 2,
-          height: 58 * canvasScaleRatio * 2,
+          width: 116 * canvasScaleRatio,
+          height: 116 * canvasScaleRatio,
           display: selectedURN === null ? 'none' : 'flex',
           positionType: 'absolute',
           position: {
-            left: 56 * canvasScaleRatio * 2
+            left: 112 * canvasScaleRatio
           }
         }}
         uiBackground={getBackgroundFromAtlas({
@@ -122,4 +111,15 @@ export function WearableCategoryButton({
       />
     </UiEntity>
   )
+}
+
+function getWearableThumbnailBackground(
+  selectedURN: URNWithoutTokenId
+): UiBackgroundProps {
+  return {
+    texture: {
+      src: `https://peer.decentraland.org/lambdas/collections/contents/${selectedURN}/thumbnail`
+    },
+    textureMode: 'stretch'
+  }
 }

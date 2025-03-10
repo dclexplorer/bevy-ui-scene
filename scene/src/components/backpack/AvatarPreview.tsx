@@ -15,7 +15,7 @@ import {
   type WearableCategory
 } from '../../service/wearable-categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
-import { getWearablesWithTokenId } from '../../utils/URN-utils'
+import { getWearablesWithTokenId } from '../../utils/urn-utils'
 import { type Perspective } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/texture_camera.gen'
 
 type AvatarPreview = {
@@ -23,49 +23,50 @@ type AvatarPreview = {
   cameraEntity: Entity
 }
 
-const CAMERA_SIZE = {WIDTH:1600, HEIGHT:1800};
+const CAMERA_SIZE = { WIDTH: 1600, HEIGHT: 1800 }
 
 const avatarPreview: AvatarPreview = {
   avatarEntity: engine.RootEntity,
-  cameraEntity: engine.RootEntity,
+  cameraEntity: engine.RootEntity
 }
 
 export const getAvatarCamera: () => Entity = () => avatarPreview.cameraEntity
 
-export const setAvatarPreviewRotation = (rotation:Quaternion):void=>{
+export const setAvatarPreviewRotation = (rotation: Quaternion): void => {
   Transform.getMutable(avatarPreview.avatarEntity).rotation = rotation
 }
 type PerspectiveMode = {
-  $case: "perspective";
-  perspective: Perspective;
+  $case: 'perspective'
+  perspective: Perspective
 }
-export const setAvatarPreviewZoomFactor = (zoomFactor:number):void=> {
-  const mode = TextureCamera.getMutable(avatarPreview.cameraEntity)?.mode as PerspectiveMode
+export const setAvatarPreviewZoomFactor = (zoomFactor: number): void => {
+  const mode = TextureCamera.getMutable(avatarPreview.cameraEntity)
+    ?.mode as PerspectiveMode
   mode.perspective.fieldOfView = zoomFactor
 }
 
-export const getAvatarPreviewQuaternion = ():Quaternion => {
-  return Transform.get(avatarPreview.avatarEntity).rotation;
+export const getAvatarPreviewQuaternion = (): Quaternion => {
+  return Transform.get(avatarPreview.avatarEntity).rotation
 }
 
-const AVATAR_CAMERA_POSITION:Record<string, Vector3> = {
+const AVATAR_CAMERA_POSITION: Record<string, Vector3> = {
   BODY: Vector3.create(8, 2.5, 8 - 6),
   TOP: Vector3.create(8, 3.5, 8 - 3),
   FEET: Vector3.create(8, 1, 8 - 4),
-  UPPER_BODY:Vector3.create(8, 2.75, 8 - 3.5),
-  PANTS:Vector3.create(8, 1.75, 8 - 3.5)
+  UPPER_BODY: Vector3.create(8, 2.75, 8 - 3.5),
+  PANTS: Vector3.create(8, 1.75, 8 - 3.5)
 }
 
-
-const CATEGORY_CAMERA:Record<string, Vector3> = {
-  [WEARABLE_CATEGORY_DEFINITIONS.body_shape.id]:AVATAR_CAMERA_POSITION.BODY,
+const CATEGORY_CAMERA: Record<string, Vector3> = {
+  [WEARABLE_CATEGORY_DEFINITIONS.body_shape.id]: AVATAR_CAMERA_POSITION.BODY,
   [WEARABLE_CATEGORY_DEFINITIONS.hair.id]: AVATAR_CAMERA_POSITION.TOP,
   [WEARABLE_CATEGORY_DEFINITIONS.eyebrows.id]: AVATAR_CAMERA_POSITION.TOP,
   [WEARABLE_CATEGORY_DEFINITIONS.eyes.id]: AVATAR_CAMERA_POSITION.TOP,
   [WEARABLE_CATEGORY_DEFINITIONS.mouth.id]: AVATAR_CAMERA_POSITION.TOP,
   [WEARABLE_CATEGORY_DEFINITIONS.facial_hair.id]: AVATAR_CAMERA_POSITION.TOP,
 
-  [WEARABLE_CATEGORY_DEFINITIONS.upper_body.id]: AVATAR_CAMERA_POSITION.UPPER_BODY,
+  [WEARABLE_CATEGORY_DEFINITIONS.upper_body.id]:
+    AVATAR_CAMERA_POSITION.UPPER_BODY,
   [WEARABLE_CATEGORY_DEFINITIONS.hands_wear.id]: AVATAR_CAMERA_POSITION.PANTS,
   [WEARABLE_CATEGORY_DEFINITIONS.lower_body.id]: AVATAR_CAMERA_POSITION.PANTS,
   [WEARABLE_CATEGORY_DEFINITIONS.feet.id]: AVATAR_CAMERA_POSITION.FEET,
@@ -77,31 +78,26 @@ const CATEGORY_CAMERA:Record<string, Vector3> = {
   [WEARABLE_CATEGORY_DEFINITIONS.tiara.id]: AVATAR_CAMERA_POSITION.TOP,
   [WEARABLE_CATEGORY_DEFINITIONS.top_head.id]: AVATAR_CAMERA_POSITION.TOP,
   [WEARABLE_CATEGORY_DEFINITIONS.helmet.id]: AVATAR_CAMERA_POSITION.TOP,
-  [WEARABLE_CATEGORY_DEFINITIONS.skin.id]: AVATAR_CAMERA_POSITION.BODY,
-
+  [WEARABLE_CATEGORY_DEFINITIONS.skin.id]: AVATAR_CAMERA_POSITION.BODY
 }
-
 
 export const setAvatarPreviewCameraToWearableCategory = (
   category: WearableCategory | null
 ): void => {
-  Transform.getMutable(avatarPreview.cameraEntity).position = getCameraPositionPerCategory(category)
+  Transform.getMutable(avatarPreview.cameraEntity).position =
+    getCameraPositionPerCategory(category)
 }
 
 export function updateAvatarPreview(
   wearables: URNWithoutTokenId[],
   avatarBase: PBAvatarBase
 ): void {
-  AvatarShape.getMutable(avatarPreview.avatarEntity).wearables =
-    getWearablesWithTokenId(wearables)
-  AvatarShape.getMutable(avatarPreview.avatarEntity).bodyShape =
-    avatarBase.bodyShapeUrn
-  AvatarShape.getMutable(avatarPreview.avatarEntity).hairColor =
-    avatarBase.hairColor
-  AvatarShape.getMutable(avatarPreview.avatarEntity).eyeColor =
-    avatarBase.eyesColor
-  AvatarShape.getMutable(avatarPreview.avatarEntity).skinColor =
-    avatarBase.skinColor
+  const mutableAvatarShape = AvatarShape.getMutable(avatarPreview.avatarEntity)
+  mutableAvatarShape.wearables = getWearablesWithTokenId(wearables)
+  mutableAvatarShape.bodyShape = avatarBase.bodyShapeUrn
+  mutableAvatarShape.hairColor = avatarBase.hairColor
+  mutableAvatarShape.eyeColor = avatarBase.eyesColor
+  mutableAvatarShape.skinColor = avatarBase.skinColor
 }
 
 export function createAvatarPreview(): void {
@@ -137,7 +133,7 @@ export function createAvatarPreview(): void {
   })
 
   TextureCamera.create(cameraEntity, {
-    width: CAMERA_SIZE.WIDTH ,
+    width: CAMERA_SIZE.WIDTH,
     height: CAMERA_SIZE.HEIGHT,
     layer: 1,
     clearColor: Color4.create(0.4, 0.4, 1.0, 0),
@@ -159,7 +155,9 @@ export function createAvatarPreview(): void {
   })
 }
 
-function getCameraPositionPerCategory(category:WearableCategory|null):Vector3{
-  if(category === null) return AVATAR_CAMERA_POSITION.BODY
+function getCameraPositionPerCategory(
+  category: WearableCategory | null
+): Vector3 {
+  if (category === null) return AVATAR_CAMERA_POSITION.BODY
   return CATEGORY_CAMERA[category]
 }

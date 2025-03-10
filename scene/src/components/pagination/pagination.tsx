@@ -1,11 +1,12 @@
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { getCanvasScaleRatio } from '../service/canvas-ratio'
-import { ButtonIcon } from './button-icon'
-import { NavButton } from './nav-button/NavButton'
-import { ROUNDED_TEXTURE_BACKGROUND, TRANSPARENT } from '../utils/constants'
-import { noop } from '../utils/function-utils'
+import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { ButtonIcon } from '../button-icon'
+import { NavButton } from '../nav-button/NavButton'
+import { getPaginationItems } from './pagination-util'
+import { ROUNDED_TEXTURE_BACKGROUND, TRANSPARENT } from '../../utils/constants'
+import { noop } from '../../utils/function-utils'
 
 export type PaginationProps = {
   pages: number
@@ -15,8 +16,7 @@ export type PaginationProps = {
   uiTransform?: UiTransformProps
 }
 
-const PAGE_BUTTONS = 5
-const getPageElements = memoize2(_getPageElements)
+const getCachedItems = memoize2(getPaginationItems)
 
 export function Pagination({
   pages,
@@ -26,7 +26,7 @@ export function Pagination({
   uiTransform
 }: PaginationProps): ReactElement | null {
   const canvasScaleRatio = getCanvasScaleRatio()
-  const pageElements = getPageElements(pages, currentPage)
+  const pageElements = getCachedItems( currentPage, pages )
 
   if (pages <= 1) return null
 
@@ -95,14 +95,7 @@ export function Pagination({
     </UiEntity>
   )
 }
-function _getPageElements(pages: number, currentPage: number): number[] {
-  const offset =
-    currentPage > 3 ? Math.min(currentPage - 3, pages - PAGE_BUTTONS) : 0
 
-  return new Array(Math.min(PAGE_BUTTONS, pages)).fill(null).map((_, index) => {
-    return offset + index + 1
-  })
-}
 function memoize2(
   fn: (a: number, b: number) => number[]
 ): (a: number, b: number) => number[] {
