@@ -25,12 +25,9 @@ export function WearableCategoryButton({
   category,
   uiTransform,
   active,
-  onClick,
+  onClick = noop,
   selectedURN
 }: WearableCategoryButtonProps): ReactElement {
-  const callbacks: { onClick: () => void } = {
-    onClick: onClick ?? noop
-  }
   const canvasScaleRatio = getCanvasScaleRatio()
   const categoryIcon: AtlasIcon = {
     spriteName: category,
@@ -75,7 +72,7 @@ export function WearableCategoryButton({
             : Color4.create(0, 0, 0, 0.2)
       }}
       onMouseDown={() => {
-        callbacks.onClick()
+        onClick()
       }}
     >
       <Icon icon={categoryIcon} iconSize={iconSize} />
