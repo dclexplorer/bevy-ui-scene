@@ -24,7 +24,7 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
 import type { CatalogWearableElement } from '../../../utils/wearables-definitions'
 
-import { Pagination } from '../../../components/pagination'
+import { Pagination } from '../../../components/pagination/pagination'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { BevyApi } from '../../../bevy-api'
 import {
