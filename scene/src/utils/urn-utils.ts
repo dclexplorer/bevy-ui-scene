@@ -7,7 +7,9 @@ const urnWithoutTokenIdMemo = new Map<URN, URNWithoutTokenId>()
 export const urnWithTokenIdMemo = new Map<URNWithoutTokenId, URN>()
 
 export function getWearablesWithTokenId(wearables: URNWithoutTokenId[]): URN[] {
-  return wearables.map((wearableURN) => urnWithTokenIdMemo.get(wearableURN) as URN)
+  return wearables.map(
+    (wearableURN) => urnWithTokenIdMemo.get(wearableURN) as URN
+  )
 }
 
 export function getURNWithoutTokenId(
