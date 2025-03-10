@@ -32,15 +32,11 @@ export function NavButton({
   color = null
 }: NavButtonProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio() * 0.9
-  const callbacks = {
-    onClick,
-    onDelete
-  }
   return (
     <UiEntity
       uiTransform={{
         padding: 16 * canvasScaleRatio,
-        height: 40 * canvasScaleRatio * 2,
+        height: 80 * canvasScaleRatio,
         alignItems: 'center',
         ...uiTransform
       }}
@@ -53,13 +49,13 @@ export function NavButton({
             : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND)
       }}
       onMouseDown={() => {
-        callbacks.onClick()
+        onClick()
       }}
     >
       {icon != null ? (
         <Icon
           icon={icon}
-          iconSize={24 * canvasScaleRatio * 2}
+          iconSize={48 * canvasScaleRatio}
           iconColor={
             color ??
             (active
@@ -69,7 +65,7 @@ export function NavButton({
         />
       ) : null}
       <Label
-        fontSize={16 * canvasScaleRatio * 2}
+        fontSize={32 * canvasScaleRatio}
         value={`<b>${text}</b>`}
         color={
           color ??
@@ -81,7 +77,7 @@ export function NavButton({
       {showDeleteButton ? (
         <UiEntity
           onMouseDown={() => {
-            callbacks.onDelete()
+            onDelete()
           }}
         >
           {/* // TODO look for better icon on spritesheets */}
