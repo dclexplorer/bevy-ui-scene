@@ -1,8 +1,9 @@
 const PAGE_BUTTONS = 5
 
 export function getPaginationItems(
-  currentPage:number,
-  total:number): number[] {
+  currentPage: number,
+  total: number
+): number[] {
   const offset =
     currentPage > 3
       ? Math.min(

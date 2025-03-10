@@ -26,7 +26,7 @@ export function Pagination({
   uiTransform
 }: PaginationProps): ReactElement | null {
   const canvasScaleRatio = getCanvasScaleRatio()
-  const pageElements = getCachedItems( currentPage, pages )
+  const pageElements = getCachedItems(currentPage, pages)
 
   if (pages <= 1) return null
 
