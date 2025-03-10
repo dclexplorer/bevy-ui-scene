@@ -33,7 +33,7 @@ export function WearableCategoryButton({
     spriteName: category,
     atlasName: 'backpack'
   }
-  const iconSize = 34 * canvasScaleRatio * 2
+  const iconSize = 68 * canvasScaleRatio
   const thumbnailSize = iconSize * 1.7
 
   const textureProps: UiBackgroundProps =
@@ -53,16 +53,16 @@ export function WearableCategoryButton({
     <UiEntity
       uiTransform={{
         ...uiTransform,
-        width: 124 * canvasScaleRatio * 1.9,
-        height: 70 * canvasScaleRatio * 1.9,
+        width: 239 * canvasScaleRatio,
+        height:  133 * canvasScaleRatio,
         margin: {
-          left: 10 * canvasScaleRatio * 2,
-          bottom: 6 * canvasScaleRatio * 2
+          left: 20 * canvasScaleRatio,
+          bottom: 12 * canvasScaleRatio
         },
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
-        padding: 2 * canvasScaleRatio * 2
+        padding: 4 * canvasScaleRatio
       }}
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
@@ -78,8 +78,8 @@ export function WearableCategoryButton({
       <Icon icon={categoryIcon} iconSize={iconSize} />
       <UiEntity
         uiTransform={{
-          width: 62 * canvasScaleRatio * 2,
-          height: 62 * canvasScaleRatio * 2,
+          width: 124 * canvasScaleRatio,
+          height: 124 * canvasScaleRatio,
           display: selectedURN === null ? 'none' : 'flex',
           positionType: 'absolute',
           position: {
@@ -90,12 +90,12 @@ export function WearableCategoryButton({
       />
       <UiEntity
         uiTransform={{
-          width: 58 * canvasScaleRatio * 2,
-          height: 58 * canvasScaleRatio * 2,
+          width: 116 * canvasScaleRatio,
+          height: 116 * canvasScaleRatio,
           display: selectedURN === null ? 'none' : 'flex',
           positionType: 'absolute',
           position: {
-            left: 56 * canvasScaleRatio * 2
+            left: 112 * canvasScaleRatio
           }
         }}
         uiBackground={getBackgroundFromAtlas({
