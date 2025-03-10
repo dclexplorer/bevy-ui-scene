@@ -165,22 +165,19 @@ export default class BackpackPage {
                 ): void => {
                   store.dispatch(updateSelectedWearableURN(selectedURN))
                 }}
-                onEquipWearable={async (
-                  wearable: CatalogWearableElement
-                ): Promise<void> => {
+                onEquipWearable={(wearable: CatalogWearableElement): void => {
                   urnWithTokenIdMemo.set(
                     wearable.entity.metadata.id,
                     wearable.individualData[0].id
                   )
-                  await this.updateEquippedWearable(
+                  this.updateEquippedWearable(
                     wearable.category,
                     wearable.entity.metadata.id
-                  )
+                  ).catch(console.error)
                 }}
-                onUnequipWearable={async (
-                  wearable: CatalogWearableElement
-                ): Promise<void> => {
-                  await this.updateEquippedWearable(wearable.category, null)
+                onUnequipWearable={(wearable: CatalogWearableElement): void => {
+                  this.updateEquippedWearable(wearable.category, null)
+                    .catch(console.error)
                 }}
               />
               <Pagination

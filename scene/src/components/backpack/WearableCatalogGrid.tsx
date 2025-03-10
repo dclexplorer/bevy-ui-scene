@@ -16,8 +16,8 @@ export type WearableCatalogGridProps = {
   uiTransform: UiTransformProps
   loading: boolean
   onChangeSelection?: (wearableURN: URNWithoutTokenId | null) => void
-  onEquipWearable: (wearable: CatalogWearableElement) => Promise<void> | void
-  onUnequipWearable: (wearable: CatalogWearableElement) => Promise<void> | void
+  onEquipWearable: (wearable: CatalogWearableElement) => void
+  onUnequipWearable: (wearable: CatalogWearableElement) => void
 }
 
 type WearableCatalogGridState = {
@@ -65,10 +65,10 @@ export function WearableCatalogGrid({
             key={index}
             wearableElement={wearableElement}
             onEquipWearable={(wearableElement: CatalogWearableElement) => {
-              void onEquipWearable(wearableElement)
+              onEquipWearable(wearableElement)
             }}
             onUnequipWearable={(wearableElement: CatalogWearableElement) => {
-              void onUnequipWearable(wearableElement)
+              onUnequipWearable(wearableElement)
             }}
             onSelect={() => {
               select(
