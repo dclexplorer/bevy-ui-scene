@@ -20,22 +20,22 @@ export type WearableCategory =
 export const WEARABLE_CATEGORY_DEFINITIONS: {
   [k in WearableCategory]: { id: WearableCategory; label: string }
 } = {
-  helmet: { id: 'helmet', label: 'Helmet' },
+  body_shape: { id: 'body_shape', label: 'Body Shape' },
+  hair: { id: 'hair', label: 'Hair' },
+  eyebrows: { id: 'eyebrows', label: 'Eyebrows' },
+  eyes: { id: 'eyes', label: 'Eye' },
+  mouth: { id: 'mouth', label: 'Mouth' },
+  facial_hair: { id: 'facial_hair', label: 'Facial' },
+  upper_body: { id: 'upper_body', label: 'Upper Body' },
+  hands_wear: { id: 'hands_wear', label: 'Hands Wear' },
+  lower_body: { id: 'lower_body', label: 'Lower Body' },
+  feet: { id: 'feet', label: 'Feet' },
+  hat: { id: 'hat', label: 'Hat' },
   eyewear: { id: 'eyewear', label: 'Eyewear' },
   earring: { id: 'earring', label: 'earring' },
-  feet: { id: 'feet', label: 'Feet' },
-  lower_body: { id: 'lower_body', label: 'Lower Body' },
-  hat: { id: 'hat', label: 'Hat' },
-  upper_body: { id: 'upper_body', label: 'Upper Body' },
-  hair: { id: 'hair', label: 'Hair' },
-  top_head: { id: 'top_head', label: 'Top Head' },
-  skin: { id: 'skin', label: 'Skin' },
-  hands_wear: { id: 'hands_wear', label: 'Hands Wear' },
   mask: { id: 'mask', label: 'Mask' },
-  eyes: { id: 'eyes', label: 'Eye' },
-  facial_hair: { id: 'facial_hair', label: 'Facial' },
   tiara: { id: 'tiara', label: 'Tiara' },
-  mouth: { id: 'mouth', label: 'Mouth' },
-  eyebrows: { id: 'eyebrows', label: 'Eyebrows' },
-  body_shape: { id: 'body_shape', label: 'Body Shape' }
+  top_head: { id: 'top_head', label: 'Top Head' },
+  helmet: { id: 'helmet', label: 'Helmet' },
+  skin: { id: 'skin', label: 'Skin' }
 }
