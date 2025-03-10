@@ -67,15 +67,18 @@ export async function fetchWearablesPage({
     throw error
   }
 
-  function getWearableCatalogPageURL({
-    pageNum,
-    pageSize,
-    address,
-    wearableCategory,
-    includeBase,
-    includeOnChain,
-    catalystBaseUrl
-  }: WearableCatalogPageParams): string {
+  function getWearableCatalogPageURL(
+    params: WearableCatalogPageParams
+  ): string {
+    const {
+      pageNum,
+      pageSize,
+      address,
+      wearableCategory,
+      includeBase,
+      includeOnChain,
+      catalystBaseUrl
+    } = params
     let str: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
     if (wearableCategory !== null) {
       str += `&category=${wearableCategory}`
