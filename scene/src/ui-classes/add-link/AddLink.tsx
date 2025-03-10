@@ -3,7 +3,7 @@ import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Input, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import ButtonText from '../../components/button-text/ButtonText'
 import { type UIController } from '../../controllers/ui.controller'
-import { RUBY } from '../../utils/constants'
+import { ROUNDED_TEXTURE_BACKGROUND, RUBY } from '../../utils/constants'
 import { isValidURL } from '../../utils/ui-utils'
 
 export default class AddLink {
@@ -97,14 +97,7 @@ export default class AddLink {
           onMouseDown={() => {}}
           uiBackground={{
             color: Color4.Purple(),
-            texture: { src: 'assets/images/backgrounds/rounded.png' },
-            textureMode: 'nine-slices',
-            textureSlices: {
-              top: 0.5,
-              bottom: 0.5,
-              left: 0.5,
-              right: 0.5
-            }
+            ...ROUNDED_TEXTURE_BACKGROUND
           }}
         >
           <Label
@@ -124,16 +117,7 @@ export default class AddLink {
               alignContent: 'center'
             }}
             fontSize={this.fontSize}
-            uiBackground={{
-              texture: { src: 'assets/images/backgrounds/rounded.png' },
-              textureMode: 'nine-slices',
-              textureSlices: {
-                top: 0.5,
-                bottom: 0.5,
-                left: 0.5,
-                right: 0.5
-              }
-            }}
+            uiBackground={ROUNDED_TEXTURE_BACKGROUND}
             onChange={($) => {
               this.name = $
               this.updateSaveButton()
@@ -152,16 +136,7 @@ export default class AddLink {
               this.url = $
               this.updateSaveButton()
             }}
-            uiBackground={{
-              texture: { src: 'assets/images/backgrounds/rounded.png' },
-              textureMode: 'nine-slices',
-              textureSlices: {
-                top: 0.5,
-                bottom: 0.5,
-                left: 0.5,
-                right: 0.5
-              }
-            }}
+            uiBackground={ROUNDED_TEXTURE_BACKGROUND}
             placeholder="Enter URL"
           />
           <UiEntity

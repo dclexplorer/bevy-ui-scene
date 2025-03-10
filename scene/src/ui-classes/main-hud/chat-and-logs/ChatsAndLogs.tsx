@@ -11,7 +11,8 @@ import {
   LEFT_PANEL_WIDTH_FACTOR,
   LEFT_PANEL_MIN_WIDTH,
   ALPHA_BLACK_PANEL,
-  ALMOST_WHITE
+  ALMOST_WHITE,
+  ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 
 export default class ChatAndLogs {
@@ -70,17 +71,8 @@ export default class ChatAndLogs {
             canvasInfo.width * 0.005 > 2.5 ? canvasInfo.width * 0.005 : 2.5
         }}
         uiBackground={{
-          color: ALPHA_BLACK_PANEL,
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: ALPHA_BLACK_PANEL
         }}
       >
         {/* INPUT AREA */}
@@ -95,17 +87,8 @@ export default class ChatAndLogs {
             padding: 5
           }}
           uiBackground={{
-            color: { ...Color4.Black(), a: 0.4 },
-            textureMode: 'nine-slices',
-            texture: {
-              src: 'assets/images/backgrounds/rounded.png'
-            },
-            textureSlices: {
-              top: 0.5,
-              bottom: 0.5,
-              left: 0.5,
-              right: 0.5
-            }
+            ...ROUNDED_TEXTURE_BACKGROUND,
+            color: { ...Color4.Black(), a: 0.4 }
           }}
         >
           <Input

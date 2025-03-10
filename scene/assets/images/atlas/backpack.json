@@ -8,7 +8,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":51},
 	"sourceSize": {"w":52,"h":51}
 },
-"base-category.png":
+"base-rarity-corner.png":
 {
 	"frame": {"x":0,"y":0,"w":46,"h":45},
 	"rotated": false,
@@ -32,7 +32,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":81},
 	"sourceSize": {"w":80,"h":81}
 },
-"common-category.png":
+"common-rarity-corner.png":
 {
 	"frame": {"x":46,"y":0,"w":47,"h":45},
 	"rotated": false,
@@ -72,7 +72,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":81},
 	"sourceSize": {"w":80,"h":81}
 },
-"epic-category.png":
+"epic-rarity-corner.png":
 {
 	"frame": {"x":93,"y":0,"w":46,"h":45},
 	"rotated": false,
@@ -88,7 +88,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":120,"h":120},
 	"sourceSize": {"w":120,"h":120}
 },
-"exotic-category.png":
+"exotic-rarity-corner.png":
 {
 	"frame": {"x":139,"y":0,"w":46,"h":45},
 	"rotated": false,
@@ -200,7 +200,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":81},
 	"sourceSize": {"w":80,"h":81}
 },
-"legendary-category.png":
+"legendary-rarity-corner.png":
 {
 	"frame": {"x":185,"y":0,"w":46,"h":45},
 	"rotated": false,
@@ -248,7 +248,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":81},
 	"sourceSize": {"w":80,"h":81}
 },
-"mythic-category.png":
+"mythic-rarity-corner.png":
 {
 	"frame": {"x":0,"y":45,"w":46,"h":45},
 	"rotated": false,
@@ -280,7 +280,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":49},
 	"sourceSize": {"w":48,"h":49}
 },
-"rare-category.png":
+"rare-rarity-corner.png":
 {
 	"frame": {"x":46,"y":45,"w":46,"h":45},
 	"rotated": false,
@@ -296,7 +296,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":120,"h":120},
 	"sourceSize": {"w":120,"h":120}
 },
-"skins.png":
+"skin.png":
 {
 	"frame": {"x":80,"y":661,"w":80,"h":81},
 	"rotated": false,
@@ -320,7 +320,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":81},
 	"sourceSize": {"w":80,"h":81}
 },
-"uncommon-category.png":
+"uncommon-rarity-corner.png":
 {
 	"frame": {"x":92,"y":45,"w":46,"h":45},
 	"rotated": false,
@@ -336,7 +336,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":120,"h":120},
 	"sourceSize": {"w":120,"h":120}
 },
-"unique-category.png":
+"unique-rarity-corner.png":
 {
 	"frame": {"x":138,"y":45,"w":46,"h":45},
 	"rotated": false,

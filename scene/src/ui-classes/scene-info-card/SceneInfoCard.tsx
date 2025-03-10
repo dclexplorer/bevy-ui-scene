@@ -13,6 +13,7 @@ import {
   EVENT_BACKGROUND_COLOR,
   GRAY_TEXT,
   PANEL_BACKGROUND_COLOR,
+  ROUNDED_TEXTURE_BACKGROUND,
   RUBY,
   SELECTED_BUTTON_COLOR
 } from '../../utils/constants'
@@ -757,17 +758,8 @@ export default class SceneInfoCard {
           }
         }}
         uiBackground={{
-          color: DCL_SNOW,
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: DCL_SNOW
         }}
       >
         <UiEntity
@@ -907,17 +899,8 @@ export default class SceneInfoCard {
           margin: { bottom: this.fontSize }
         }}
         uiBackground={{
-          color: EVENT_BACKGROUND_COLOR,
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded-right.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: EVENT_BACKGROUND_COLOR
         }}
       >
         <UiEntity

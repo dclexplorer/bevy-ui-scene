@@ -7,10 +7,10 @@
     "deploy": "sdk-commands deploy",
     "build": "sdk-commands build",
     "export-static": "sdk-commands export-static --destination static/ --realmName BevyUiScene --baseUrl https://dclexplorer.github.io/bevy-ui-scene/ --commsAdapter ws-room:ws-room-service.decentraland.org/rooms/bevy-ui-scene",
-    "lint": "eslint ./**/*.{ts,tsx}",
-    "lint:fix": "eslint --fix ./**/*.{ts,tsx}",
-    "format": "prettier --config .prettierrc -c ./**/*.{ts,tsx}",
-    "format:fix": "prettier -w --config .prettierrc -c ./**/*.{ts,tsx}",
+    "lint": "eslint \"./src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"./src/**/*.{ts,tsx}\"",
+    "format": "prettier --config .prettierrc -c \"./src/**/*.{ts,tsx}\"",
+    "format:fix": "prettier -w --config .prettierrc \"./src/**/*.{ts,tsx}\"",
     "upgrade-sdk": "npm install @dcl/sdk@protocol-squad @dcl/js-runtime@protocol-squad @dcl/react-ecs@protocol-squad @dcl/sdk-commands@protocol-squad --save-exact"
   },
   "devDependencies": {

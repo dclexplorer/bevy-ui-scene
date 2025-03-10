@@ -14,6 +14,31 @@ export type AtlasData = {
   }
 }
 
+type CollectionName = string
+type ContractAddress = string
+type Network = 'ethereum' | 'matic' | 'polygon' | 'sepolia'
+
+// https://github.com/decentraland/urn-resolver
+type URN_VALUE =
+  | `decentraland:off-chain:base-avatars:${string}`
+  | `decentraland:${Network}:collections-v1:${ContractAddress}:${string}:${number}`
+  | `decentraland:${Network}:collections-v1:${ContractAddress}:${string}`
+  | `decentraland:${Network}:collections-v1:${CollectionName}:${string}:${number}`
+  | `decentraland:${Network}:collections-v1:${CollectionName}:${string}`
+  | `decentraland:${Network}:collections-v2:${CollectionName}:${string}:${number}`
+  | `decentraland:${Network}:LAND:${number},${number}`
+  | `decentraland:${Network}:LAND:${number}`
+  | `decentraland:${Network}:collections-thirdparty:${string}`
+  | `decentraland:${Network}:collections-thirdparty:${string}:${string}`
+  | `decentraland:${Network}:collections-thirdparty:${string}:${string}:${string}`
+  | `decentraland:${Network}:collections-thirdparty:${string}:${string}:${string}:${string}:${string}:${string}`
+
+export type URN = `urn:${URN_VALUE}`
+export type URNWithoutTokenId =
+  | `decentraland:off-chain:base-avatars:${string}`
+  | `decentraland:${Network}:collections-v1:${ContractAddress}:${string}`
+  | `decentraland:${Network}:collections-v1:${CollectionName}:${string}`
+
 export type Sprite = {
   frame: { x: number; y: number; w: number; h: number }
   rotated: false
@@ -89,6 +114,7 @@ export type Atlas =
   | 'toggles'
   | 'voice-chat'
   | 'social'
+  | 'info-panel'
 
 export type FormattedURN = {
   version: string

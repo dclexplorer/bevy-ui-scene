@@ -9,7 +9,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 52, h: 51 },
       sourceSize: { w: 52, h: 51 }
     },
-    'base-category.png': {
+    'base-rarity-corner.png': {
       frame: { x: 0, y: 0, w: 46, h: 45 },
       rotated: false,
       trimmed: false,
@@ -23,14 +23,14 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 120, h: 120 },
       sourceSize: { w: 120, h: 120 }
     },
-    'body.png': {
+    'body_shape.png': {
       frame: { x: 52, y: 94, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'common-category.png': {
+    'common-rarity-corner.png': {
       frame: { x: 46, y: 0, w: 47, h: 45 },
       rotated: false,
       trimmed: false,
@@ -65,7 +65,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'epic-category.png': {
+    'epic-rarity-corner.png': {
       frame: { x: 93, y: 0, w: 46, h: 45 },
       rotated: false,
       trimmed: false,
@@ -79,7 +79,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 120, h: 120 },
       sourceSize: { w: 120, h: 120 }
     },
-    'exotic-category.png': {
+    'exotic-rarity-corner.png': {
       frame: { x: 139, y: 0, w: 46, h: 45 },
       rotated: false,
       trimmed: false,
@@ -177,7 +177,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'legendary-category.png': {
+    'legendary-rarity-corner.png': {
       frame: { x: 185, y: 0, w: 46, h: 45 },
       rotated: false,
       trimmed: false,
@@ -219,7 +219,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'mythic-category.png': {
+    'mythic-rarity-corner.png': {
       frame: { x: 0, y: 45, w: 46, h: 45 },
       rotated: false,
       trimmed: false,
@@ -247,7 +247,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 48, h: 49 },
       sourceSize: { w: 48, h: 49 }
     },
-    'rare-category.png': {
+    'rare-rarity-corner.png': {
       frame: { x: 46, y: 45, w: 46, h: 45 },
       rotated: false,
       trimmed: false,
@@ -261,7 +261,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 120, h: 120 },
       sourceSize: { w: 120, h: 120 }
     },
-    'skins.png': {
+    'skin.png': {
       frame: { x: 80, y: 661, w: 80, h: 81 },
       rotated: false,
       trimmed: false,
@@ -282,7 +282,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
     },
-    'uncommon-category.png': {
+    'uncommon-rarity-corner.png': {
       frame: { x: 92, y: 45, w: 46, h: 45 },
       rotated: false,
       trimmed: false,
@@ -296,7 +296,7 @@ export const backpackJson: AtlasData = {
       spriteSourceSize: { x: 0, y: 0, w: 120, h: 120 },
       sourceSize: { w: 120, h: 120 }
     },
-    'unique-category.png': {
+    'unique-rarity-corner.png': {
       frame: { x: 138, y: 45, w: 46, h: 45 },
       rotated: false,
       trimmed: false,
@@ -330,6 +330,27 @@ export const backpackJson: AtlasData = {
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w: 80, h: 81 },
       sourceSize: { w: 80, h: 81 }
+    },
+    'nft-empty.png': {
+      frame: { x: 50, y: 1423, w: 70, h: 70 },
+      rotated: false,
+      trimmed: false,
+      spriteSourceSize: { x: 0, y: 0, w: 70, h: 70 },
+      sourceSize: { w: 70, h: 70 }
+    },
+    'loading-wearable.png': {
+      frame: { x: 121, y: 1423, w: 120, h: 120 },
+      rotated: false,
+      trimmed: false,
+      spriteSourceSize: { x: 0, y: 0, w: 120, h: 120 },
+      sourceSize: { w: 120, h: 120 }
+    },
+    'selection.png': {
+      frame: { x: 0, y: 1543, w: 160, h: 206 },
+      rotated: false,
+      trimmed: false,
+      spriteSourceSize: { x: 0, y: 0, w: 160, h: 206 },
+      sourceSize: { w: 160, h: 206 }
     }
   },
   meta: {
@@ -337,7 +358,7 @@ export const backpackJson: AtlasData = {
     version: '1.0',
     image: 'backpack.png',
     format: 'RGBA8888',
-    size: { w: 241, h: 1423 },
+    size: { w: 241, h: 1800 },
     scale: '1',
     smartupdate:
       '$TexturePacker:SmartUpdate:c40da2566ce2ddc9ab6b8eed023a50ff:170ed190918a91690fb9dfa612aca69b:b5887609397a0877247b6252841cd8c2$'

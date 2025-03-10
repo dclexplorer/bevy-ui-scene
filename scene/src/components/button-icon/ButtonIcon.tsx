@@ -8,8 +8,9 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { type AtlasIcon } from '../../utils/definitions'
-import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { ArrowToast } from '../arrow-toast'
+import Icon from '../icon/Icon'
+import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 
 function ButtonIcon(props: {
   // Events
@@ -17,7 +18,7 @@ function ButtonIcon(props: {
   onMouseLeave?: Callback
   onMouseDown?: Callback
   // Shape
-  uiTransform: UiTransformProps
+  uiTransform?: UiTransformProps
   backgroundColor?: Color4
   icon: AtlasIcon
   iconSize?: number
@@ -47,17 +48,8 @@ function ButtonIcon(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
-        textureMode: 'nine-slices',
-        texture: {
-          src: 'assets/images/backgrounds/rounded.png'
-        },
-        textureSlices: {
-          top: 0.5,
-          bottom: 0.5,
-          left: 0.5,
-          right: 0.5
-        }
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color: props.backgroundColor ?? { ...Color4.White(), a: 0 }
       }}
       onMouseDown={props.onMouseDown}
       onMouseEnter={props.onMouseEnter}
@@ -65,17 +57,10 @@ function ButtonIcon(props: {
     >
       {/* ICON */}
 
-      <UiEntity
-        uiTransform={{
-          width: props.iconSize ?? '70%',
-          height: props.iconSize ?? '70%',
-          flexDirection: 'row',
-          alignItems: 'center'
-        }}
-        uiBackground={{
-          ...getBackgroundFromAtlas(props.icon),
-          color: props.iconColor ?? Color4.White()
-        }}
+      <Icon
+        icon={props.icon}
+        iconColor={props.iconColor ?? Color4.White()}
+        iconSize={props.iconSize}
       />
       <UiEntity
         uiTransform={{
@@ -91,17 +76,8 @@ function ButtonIcon(props: {
               : 'none'
         }}
         uiBackground={{
-          color: { ...Color4.Red() },
-          textureMode: 'nine-slices',
-          texture: {
-            src: 'assets/images/backgrounds/rounded.png'
-          },
-          textureSlices: {
-            top: 0.5,
-            bottom: 0.5,
-            left: 0.5,
-            right: 0.5
-          }
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: { ...Color4.Red() }
         }}
       >
         <Label

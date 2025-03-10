@@ -1,12 +1,13 @@
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, {
   type Callback,
+  type PositionUnit,
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { type AtlasIcon } from '../../utils/definitions'
-import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { TRANSPARENT } from 'src/utils/constants'
+import Icon from '../icon/Icon'
+import { ROUNDED_TEXTURE_BACKGROUND, TRANSPARENT } from '../../utils/constants'
 
 function ButtonTextIcon(props: {
   // Events
@@ -20,7 +21,7 @@ function ButtonTextIcon(props: {
   value: string
   fontSize: number
   icon: AtlasIcon
-  iconSize?: number
+  iconSize?: PositionUnit
   fontColor?: Color4
   iconColor?: Color4
 }): ReactEcs.JSX.Element | null {
@@ -29,20 +30,12 @@ function ButtonTextIcon(props: {
       uiTransform={{
         justifyContent: 'center',
         alignItems: 'center',
+        flexDirection: 'row',
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor ?? TRANSPARENT,
-        textureMode: 'nine-slices',
-        texture: {
-          src: 'assets/images/backgrounds/rounded.png'
-        },
-        textureSlices: {
-          top: 0.5,
-          bottom: 0.5,
-          left: 0.5,
-          right: 0.5
-        }
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color: props.backgroundColor ?? TRANSPARENT
       }}
       onMouseDown={props.onMouseDown}
       onMouseEnter={props.onMouseEnter}
@@ -50,22 +43,13 @@ function ButtonTextIcon(props: {
     >
       {/* ICON */}
 
-      <UiEntity
-        uiTransform={{
-          width: props.iconSize ?? 2 * props.fontSize,
-          height: props.iconSize ?? 2 * props.fontSize
-        }}
-        uiBackground={{
-          ...getBackgroundFromAtlas(props.icon),
-          color: props.iconColor
-        }}
+      <Icon
+        iconSize={props.iconSize}
+        icon={props.icon}
+        iconColor={props.iconColor}
       />
       {/* TEXT */}
       <UiEntity
-        uiTransform={{
-          width: 'auto',
-          height: 'auto'
-        }}
         uiText={{
           value: props.value,
           fontSize: props.fontSize,

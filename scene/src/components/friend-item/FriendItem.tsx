@@ -7,6 +7,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 
 function FriendItem(props: {
   // Events
@@ -34,17 +35,8 @@ function FriendItem(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor ?? { ...Color4.White(), a: 0.01 },
-        textureMode: 'nine-slices',
-        texture: {
-          src: 'assets/images/backgrounds/rounded.png'
-        },
-        textureSlices: {
-          top: 0.5,
-          bottom: 0.5,
-          left: 0.5,
-          right: 0.5
-        }
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color: props.backgroundColor ?? { ...Color4.White(), a: 0.01 }
       }}
       onMouseDown={props.onMouseDown}
     >

@@ -7,6 +7,7 @@ import ReactEcs, {
 import { type AtlasIcon } from '../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import ButtonIcon from '../button-icon/ButtonIcon'
+import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 
 function ButtonChip(props: {
   // Events
@@ -36,24 +37,14 @@ function ButtonChip(props: {
         ...props.uiTransform
       }}
       uiBackground={{
-        color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
-        textureMode: 'nine-slices',
-        texture: {
-          src: 'assets/images/backgrounds/rounded.png'
-        },
-        textureSlices: {
-          top: 0.5,
-          bottom: 0.5,
-          left: 0.5,
-          right: 0.5
-        }
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color: props.backgroundColor ?? { ...Color4.White(), a: 0 }
       }}
       onMouseDown={props.onMouseDown}
       onMouseEnter={props.onMouseEnter}
       onMouseLeave={props.onMouseLeave}
     >
       {/* ICON */}
-
       <UiEntity
         uiTransform={{
           width: props.fontSize,

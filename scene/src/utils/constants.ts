@@ -3,6 +3,7 @@ import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
 import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
 import type { PlaceFromApi } from '../ui-classes/scene-info-card/SceneInfoCard.types'
 import type { PhotoMetadataResponse } from 'src/ui-classes/photos/Photos.types'
+import { type TextureMode } from '@dcl/react-ecs'
 
 // PRIMARY COLORS
 export const RUBY: Color4 = Color4.create(1, 45 / 255, 85 / 255, 1)
@@ -522,7 +523,21 @@ export const EMPTY_PLACE: PlaceFromApi = {
   user_count: 0,
   user_visits: 298
 }
-
+export const TEXTURE_SLICES_05 = {
+  top: 0.5,
+  bottom: 0.5,
+  left: 0.5,
+  right: 0.5
+}
+export const ROUNDED_TEXTURE_BACKGROUND = {
+  textureMode: 'nine-slices' as TextureMode,
+  texture: {
+    src: 'assets/images/backgrounds/rounded.png'
+  },
+  textureSlices: TEXTURE_SLICES_05
+}
+export const WEARABLE_CATALOG_PAGE_SIZE = 16
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
   id: '00000000-0000-0000-0000-000000000000',
   url: 'https://example.com/default-image.jpg',
@@ -530,7 +545,7 @@ export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
   isPublic: false,
   metadata: {
     userName: 'Anonymous',
-    userAddress: '0x0000000000000000000000000000000000000000',
+    userAddress: ZERO_ADDRESS,
     dateTime: '0',
     realm: 'unknown',
     scene: {
