@@ -93,7 +93,7 @@ export function WearableCatalogItem(props: WearableCatalogItemProps): ReactEleme
           loading={loading}
         />
       ) : null}
-      {isSelected && !loading ? (
+      {isSelected && !loading && (
         <UiEntity
           uiTransform={{
             width: canvasScaleRatio * 240,
@@ -146,7 +146,7 @@ export function WearableCatalogItem(props: WearableCatalogItemProps): ReactEleme
             />
           )}
         </UiEntity>
-      ) : null}
+      )}
     </UiEntity>
   )
 }
