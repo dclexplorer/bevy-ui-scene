@@ -80,15 +80,9 @@ export async function fetchWearablesPage({
       catalystBaseUrl
     } = params
     let str: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
-    if (wearableCategory !== null) {
-      str += `&category=${wearableCategory}`
-    }
-    if (includeBase) {
-      str += `&collectionType=base-wearable`
-    }
-    if (includeOnChain) {
-      str += `&collectionType=on-chain`
-    }
+    if (wearableCategory) str += `&category=${wearableCategory}`
+    if (includeBase) str += `&collectionType=base-wearable`
+    if (includeOnChain) str += `&collectionType=on-chain`
     return str
   }
 }
