@@ -7,54 +7,36 @@ import {
   getContentHeight,
   getContentWidth
 } from '../../../service/canvas-ratio'
-import {
-  WEARABLE_CATEGORY_DEFINITIONS,
-  type WearableCategory
-} from '../../../service/wearable-categories'
+import { type WearableCategory } from '../../../service/wearable-categories'
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
-import Icon from '../../../components/icon/Icon'
-import { WearableCatalogGrid } from '../../../components/backpack/WearableCatalogGrid'
 import {
   catalystWearableMap,
-  fetchWearablesData,
-  fetchWearablesPage
+  fetchWearablesData
 } from '../../../utils/wearables-promise-utils'
-
 import { getPlayer } from '@dcl/sdk/src/players'
 import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
-import type { CatalogWearableElement } from '../../../utils/wearables-definitions'
-
-import { Pagination } from '../../../components/pagination/pagination'
-import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { BevyApi } from '../../../bevy-api'
 import {
   createAvatarPreview,
-  updateAvatarPreview,
   setAvatarPreviewCameraToWearableCategory
 } from '../../../components/backpack/AvatarPreview'
-import {
-  ROUNDED_TEXTURE_BACKGROUND,
-  WEARABLE_CATALOG_PAGE_SIZE,
-  ZERO_ADDRESS
-} from '../../../utils/constants'
+import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
 import {
   BASE_MALE_URN,
   getURNWithoutTokenId,
-  getWearablesWithTokenId,
-  urnWithTokenIdMemo
+  getWearablesWithTokenId
 } from '../../../utils/urn-utils'
 import { store } from '../../../state/store'
 import {
   updateActiveWearableCategory,
   updateAvatarBase,
-  updateCurrentPage,
+  updateCacheKey,
   updateEquippedWearables,
-  updateLoadedPage,
-  updateLoadingPage,
-  updateSelectedWearableURN
+  updateLoadingPage
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
-let cacheKey: string = Date.now().toString()
+import { updatePage, WearablesCatalog } from './WearableCatalog'
+import { InfoPanel } from '../../../components/backpack/InfoPanel'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -122,29 +104,7 @@ export default class BackpackPage {
     store.dispatch(updateActiveWearableCategory(category))
     setAvatarPreviewCameraToWearableCategory(category)
 
-    void this.updatePage()
-  }
-
-  async updatePage(): Promise<void> {
-    const backpackState = store.getState().backpack
-    store.dispatch(updateLoadingPage(true))
-    // TODO improve with throttle and remove disabled prop
-    const wearablesPage = await fetchWearablesPage({
-      pageNum: backpackState.currentPage,
-      pageSize: WEARABLE_CATALOG_PAGE_SIZE,
-      address: getPlayer()?.userId ?? ZERO_ADDRESS,
-      wearableCategory: backpackState.activeWearableCategory,
-      cacheKey
-    })
-
-    store.dispatch(
-      updateLoadedPage({
-        totalPages: Math.ceil(
-          wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE
-        ),
-        shownWearables: wearablesPage.elements
-      })
-    )
+    updatePage().catch(console.error)
   }
 
   async saveAvatar(): Promise<void> {
@@ -175,7 +135,8 @@ export default class BackpackPage {
   }
 
   async init(): Promise<void> {
-    cacheKey = Date.now().toString()
+    store.dispatch(updateCacheKey())
+
     createAvatarPreview()
     store.dispatch(updateLoadingPage(true))
     const player = getPlayer()
@@ -199,43 +160,7 @@ export default class BackpackPage {
       })
     )
 
-    await this.updatePage()
-  }
-
-  async updateEquippedWearable(
-    category: WearableCategory,
-    wearableURN: URNWithoutTokenId | null
-  ): Promise<void> {
-    const backpackState = store.getState().backpack
-    if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) {
-      store.dispatch(
-        updateAvatarBase({
-          ...backpackState.outfitSetup.base,
-          bodyShapeUrn: wearableURN as URNWithoutTokenId
-        })
-      )
-    } else {
-      const equippedWearablesWithoutPrevious =
-        backpackState.equippedWearables.filter(
-          (wearableURN) =>
-            wearableURN !== backpackState.outfitSetup.wearables[category]
-        )
-      const wearables =
-        wearableURN === null
-          ? equippedWearablesWithoutPrevious
-          : [...equippedWearablesWithoutPrevious, wearableURN]
-      store.dispatch(
-        updateEquippedWearables({
-          wearables,
-          wearablesData: await fetchWearablesData(...(wearables ?? []))
-        })
-      )
-    }
-
-    updateAvatarPreview(
-      store.getState().backpack.equippedWearables,
-      store.getState().backpack.outfitSetup.base
-    )
+    await updatePage()
   }
 }
 
@@ -385,110 +310,5 @@ function BackpackNavBar({
         </NavButtonBar>
       </LeftSection>
     </NavBar>
-  )
-}
-
-function WearablesCatalog(): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
-  const backpackState = store.getState().backpack
-
-  return (
-    <UiEntity
-      uiTransform={{
-        flexDirection: 'column',
-        padding: 14 * canvasScaleRatio,
-        margin: { left: 30 * canvasScaleRatio },
-        height: '100%'
-      }}
-    >
-      {/* CATALOG NAV_BAR */}
-      <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
-        <NavButton
-          active={backpackState.activeWearableCategory === null}
-          icon={{ spriteName: 'all', atlasName: 'backpack' }}
-          text={'ALL'}
-          uiTransform={{ padding: 40 * canvasScaleRatio }}
-          onClick={() => {
-            if (backpackState.activeWearableCategory === null) return null
-            // this.changeCategory(null)
-          }}
-        />
-        <Icon
-          iconSize={40 * canvasScaleRatio}
-          uiTransform={{
-            alignSelf: 'center',
-            margin: {
-              left: 16 * canvasScaleRatio,
-              right: 16 * canvasScaleRatio
-            },
-            display:
-              backpackState.activeWearableCategory === null ? 'none' : 'flex'
-          }}
-          icon={{
-            spriteName: 'RightArrow',
-            atlasName: 'icons'
-          }}
-        />
-        {backpackState.activeWearableCategory === null ? null : (
-          <NavButton
-            active={true}
-            showDeleteButton={true}
-            onDelete={() => {
-              // this.changeCategory(null)
-            }}
-            icon={{
-              spriteName: `category-${backpackState.activeWearableCategory}`,
-              atlasName: 'backpack'
-            }}
-            text={
-              WEARABLE_CATEGORY_DEFINITIONS[
-                backpackState.activeWearableCategory
-              ].label
-            }
-            uiTransform={{ padding: 20 * canvasScaleRatio }}
-          />
-        )}
-      </UiEntity>
-      <WearableCatalogGrid
-        uiTransform={{
-          margin: { top: 20 * canvasScaleRatio }
-        }}
-        loading={backpackState.loadingPage}
-        wearables={backpackState.shownWearables}
-        equippedWearables={backpackState.equippedWearables}
-        baseBody={backpackState.outfitSetup.base}
-        onChangeSelection={(selectedURN: URNWithoutTokenId | null): void => {
-          store.dispatch(updateSelectedWearableURN(selectedURN))
-        }}
-        onEquipWearable={(wearable: CatalogWearableElement): void => {
-          urnWithTokenIdMemo.set(
-            wearable.entity.metadata.id,
-            wearable.individualData[0].id
-          )
-          /*   this.updateEquippedWearable(
-          wearable.category,
-          wearable.entity.metadata.id
-        ).catch(console.error) */
-        }}
-        onUnequipWearable={(wearable: CatalogWearableElement): void => {
-          /*       this.updateEquippedWearable(wearable.category, null).catch(
-          console.error
-        ) */
-        }}
-      />
-      <Pagination
-        uiTransform={{
-          positionType: 'absolute',
-          position: { bottom: 130 * canvasScaleRatio }
-        }}
-        disabled={backpackState.loadingPage}
-        onChange={(page: number) => {
-          store.dispatch(updateCurrentPage(page))
-          // void this.updatePage()
-        }}
-        pages={backpackState.totalPages}
-        currentPage={backpackState.currentPage}
-      />
-    </UiEntity>
   )
 }

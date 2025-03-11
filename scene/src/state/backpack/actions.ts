@@ -16,7 +16,8 @@ export enum BACKPACK_ACTION {
   UPDATE_LOADING_PAGE,
   UPDATE_LOADED_PAGE,
   UPDATE_EQUIPPED_WEARABLES,
-  UPDATE_AVATAR_BASE
+  UPDATE_AVATAR_BASE,
+  UPDATE_CACHE_KEY
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -61,6 +62,9 @@ export type BackpackUpdateLoadedPageAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_LOADED_PAGE
   payload: BackpackUpdateLoadedPagePayload
 }
+export type BackpackUpdateCacheKeyAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_CACHE_KEY
+}
 
 export type BackpackActions =
   | BackpackSelectWearableURNAction
@@ -70,6 +74,7 @@ export type BackpackActions =
   | BackpackUpdateLoadedPageAction
   | BackpackUpdateEquippedWearablesAction
   | BackpackUpdateAvatarBaseAction
+  | BackpackUpdateCacheKeyAction
 
 export const updateSelectedWearableURN = (
   payload: URNWithoutTokenId | null
@@ -125,4 +130,9 @@ export const updateAvatarBase = (
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.UPDATE_AVATAR_BASE,
   payload
+})
+
+export const updateCacheKey = (): BackpackUpdateCacheKeyAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UPDATE_CACHE_KEY
 })

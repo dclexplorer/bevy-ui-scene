@@ -54,6 +54,11 @@ export function reducer(
           }
         }
       }
+    case BACKPACK_ACTION.UPDATE_CACHE_KEY:
+      return {
+        ...backpackPageState,
+        cacheKey: Date.now().toString()
+      }
     default:
       return backpackPageState
   }
