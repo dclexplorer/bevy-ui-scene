@@ -123,30 +123,26 @@ export function WearableCatalogItem(
             wearableElement={wearableElement}
             loading={loading}
           />
-          {isEquipped &&
-          wearableElement.category ===
-            WEARABLE_CATEGORY_DEFINITIONS.body_shape.id ? null : (
-            <RoundedButton
-              uiTransform={{
-                margin: {
-                  top: 9 * canvasScaleRatio,
-                  left: 1
-                },
-                width: 206 * canvasScaleRatio,
-                height: 60 * canvasScaleRatio
-              }}
-              fontSize={26 * canvasScaleRatio}
-              text={isEquipped ? 'UNEQUIP' : 'EQUIP'}
-              isSecondary={isEquipped}
-              onClick={() => {
-                if (isEquipped) {
-                  onUnequipWearable(wearableElement)
-                } else {
-                  onEquipWearable(wearableElement)
-                }
-              }}
-            />
-          )}
+          <RoundedButton
+            uiTransform={{
+              margin: {
+                top: 9 * canvasScaleRatio,
+                left: 1
+              },
+              width: 206 * canvasScaleRatio,
+              height: 60 * canvasScaleRatio
+            }}
+            fontSize={26 * canvasScaleRatio}
+            text={isEquipped ? 'UNEQUIP' : 'EQUIP'}
+            isSecondary={isEquipped}
+            onClick={() => {
+              if (isEquipped) {
+                onUnequipWearable(wearableElement)
+              } else {
+                onEquipWearable(wearableElement)
+              }
+            }}
+          />
         </UiEntity>
       )}
     </UiEntity>

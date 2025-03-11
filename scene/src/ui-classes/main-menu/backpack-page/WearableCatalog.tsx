@@ -18,7 +18,11 @@ import {
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
 import type { CatalogWearableElement } from '../../../utils/wearables-definitions'
-import { urnWithTokenIdMemo } from '../../../utils/urn-utils'
+import {
+  BASE_FEMALE_URN,
+  BASE_MALE_URN,
+  urnWithTokenIdMemo
+} from '../../../utils/urn-utils'
 import { Pagination } from '../../../components/pagination/pagination'
 import {
   fetchWearablesData,
@@ -140,12 +144,25 @@ async function updateEquippedWearable(
 ): Promise<void> {
   const backpackState = store.getState().backpack
   if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) {
-    store.dispatch(
-      updateAvatarBase({
-        ...backpackState.outfitSetup.base,
-        bodyShapeUrn: wearableURN as URNWithoutTokenId
-      })
-    )
+    if (wearableURN === null) {
+      store.dispatch(
+        updateAvatarBase({
+          ...backpackState.outfitSetup.base,
+          bodyShapeUrn:
+            store.getState().backpack.outfitSetup.base.bodyShapeUrn ===
+            BASE_MALE_URN
+              ? BASE_FEMALE_URN
+              : BASE_MALE_URN
+        })
+      )
+    } else {
+      store.dispatch(
+        updateAvatarBase({
+          ...backpackState.outfitSetup.base,
+          bodyShapeUrn: wearableURN
+        })
+      )
+    }
   } else {
     const equippedWearablesWithoutPrevious =
       backpackState.equippedWearables.filter(
