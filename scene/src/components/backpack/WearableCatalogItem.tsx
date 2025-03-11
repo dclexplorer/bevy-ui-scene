@@ -8,6 +8,7 @@ import { COLOR } from '../color-palette'
 import { WEARABLE_CATEGORY_DEFINITIONS } from '../../service/wearable-categories'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { Color4 } from '@dcl/sdk/math'
+import Icon from '../icon/Icon'
 
 type WearableCatalogItemProps = {
   uiTransform?: UiTransformProps
@@ -194,7 +195,28 @@ function WearableCellThumbnail({
             },
             textureMode: 'stretch'
           }}
-        ></UiEntity>
+        >
+          <UiEntity
+            uiTransform={{
+              width: '50%',
+              height: '50%',
+              positionType: 'absolute'
+            }}
+            uiBackground={getBackgroundFromAtlas({
+              atlasName: 'backpack',
+              spriteName: `rarity-corner-${wearableElement.rarity ?? 'base'}`
+            })}
+          >
+            <Icon
+              uiTransform={{ margin: { top: '5%', left: '8%' } }}
+              iconSize={'40%'}
+              icon={{
+                atlasName: 'backpack',
+                spriteName: `category-${wearableElement.category}`
+              }}
+            />
+          </UiEntity>
+        </UiEntity>
       ) : null}
     </UiEntity>
   )
