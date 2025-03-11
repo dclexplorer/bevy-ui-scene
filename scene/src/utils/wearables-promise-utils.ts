@@ -25,7 +25,7 @@ export type WearableCatalogRequest = {
     | typeof WEARABLES_ORDER_DIRECTION.ASC
     | typeof WEARABLES_ORDER_DIRECTION.DESC
   wearableCategory: WearableCategory | null
-  cacheKey:string
+  cacheKey: string
 }
 export type WearableCatalogPageParams = WearableCatalogRequest & {
   includeBase: boolean
@@ -71,7 +71,7 @@ export async function fetchWearablesPage({
         realm.realmInfo?.baseUrl ?? 'https://peer.decentraland.org',
       cacheKey
     })
-    console.log("wearableCatalogPageURL",wearableCatalogPageURL)
+    console.log('wearableCatalogPageURL', wearableCatalogPageURL)
     if (pageCache.has(wearableCatalogPageURL)) {
       return pageCache.get(wearableCatalogPageURL) as WearablesPageResponse
     }

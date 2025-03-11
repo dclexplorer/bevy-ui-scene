@@ -54,7 +54,7 @@ import {
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
-let cacheKey:string = Date.now().toString();
+let cacheKey: string = Date.now().toString()
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
