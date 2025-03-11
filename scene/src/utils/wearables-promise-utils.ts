@@ -25,6 +25,7 @@ export type WearableCatalogRequest = {
     | typeof WEARABLES_ORDER_DIRECTION.ASC
     | typeof WEARABLES_ORDER_DIRECTION.DESC
   wearableCategory: WearableCategory | null
+  cacheKey:string
 }
 export type WearableCatalogPageParams = WearableCatalogRequest & {
   includeBase: boolean
@@ -52,7 +53,8 @@ export async function fetchWearablesPage({
   wearableCategory,
   address,
   orderBy = WEARABLES_ORDER_BY.DATE,
-  orderDirection = WEARABLES_ORDER_DIRECTION.DESC
+  orderDirection = WEARABLES_ORDER_DIRECTION.DESC,
+  cacheKey = Date.now().toString()
 }: WearableCatalogRequest): Promise<WearablesPageResponse> {
   try {
     const realm = await getRealm({})
@@ -66,8 +68,10 @@ export async function fetchWearablesPage({
       includeBase: true,
       includeOnChain: true,
       catalystBaseUrl:
-        realm.realmInfo?.baseUrl ?? 'https://peer.decentraland.org'
+        realm.realmInfo?.baseUrl ?? 'https://peer.decentraland.org',
+      cacheKey
     })
+    console.log("wearableCatalogPageURL",wearableCatalogPageURL)
     if (pageCache.has(wearableCatalogPageURL)) {
       return pageCache.get(wearableCatalogPageURL) as WearablesPageResponse
     }
@@ -105,10 +109,11 @@ export async function fetchWearablesPage({
       orderDirection,
       includeBase,
       includeOnChain,
-      catalystBaseUrl
+      catalystBaseUrl,
+      cacheKey
     } = params
     let url: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
-    url += `&orderBy=${orderBy}&direction=${orderDirection}`
+    url += `&orderBy=${orderBy}&direction=${orderDirection}&cacheKey=${cacheKey}`
     if (wearableCategory) url += `&category=${wearableCategory}`
     if (includeBase) url += `&collectionType=base-wearable`
     if (includeOnChain) url += `&collectionType=on-chain`

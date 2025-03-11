@@ -54,6 +54,7 @@ import {
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
+let cacheKey:string = Date.now().toString();
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -232,7 +233,8 @@ export default class BackpackPage {
       pageNum: backpackState.currentPage,
       pageSize: WEARABLE_CATALOG_PAGE_SIZE,
       address: getPlayer()?.userId ?? ZERO_ADDRESS,
-      wearableCategory: backpackState.activeWearableCategory
+      wearableCategory: backpackState.activeWearableCategory,
+      cacheKey
     })
 
     store.dispatch(
@@ -273,6 +275,7 @@ export default class BackpackPage {
   }
 
   async init(): Promise<void> {
+    cacheKey = Date.now().toString()
     createAvatarPreview()
     store.dispatch(updateLoadingPage(true))
     const player = getPlayer()
