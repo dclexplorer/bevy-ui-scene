@@ -92,15 +92,16 @@ export type WearableIndividualData = {
 }
 
 export type WearableRarity = // TODO duplicated, remove this, and replace uses with RarityName
-  | 'base'
-  | 'common'
-  | 'uncommon'
-  | 'rare'
-  | 'epic'
-  | 'legendary'
-  | 'exotic'
-  | 'mythic'
-  | 'unique'
+
+    | 'base'
+    | 'common'
+    | 'uncommon'
+    | 'rare'
+    | 'epic'
+    | 'legendary'
+    | 'exotic'
+    | 'mythic'
+    | 'unique'
 
 export type CatalogWearableElement = {
   amount: number

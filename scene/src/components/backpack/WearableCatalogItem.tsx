@@ -175,7 +175,9 @@ function WearableCellThumbnail({
         ...(loading
           ? LOADING_TEXTURE_PROPS
           : getBackgroundFromAtlas({
-              spriteName: `rarity-background-${wearableElement?.rarity ?? 'base'}`,
+              spriteName: `rarity-background-${
+                wearableElement?.rarity ?? 'base'
+              }`,
               atlasName: 'backpack'
             }))
       }}

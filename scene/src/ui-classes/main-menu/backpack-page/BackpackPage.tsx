@@ -388,109 +388,107 @@ function BackpackNavBar({
   )
 }
 
-function WearablesCatalog():ReactElement{
+function WearablesCatalog(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
 
-  return <UiEntity
-    uiTransform={{
-      flexDirection: 'column',
-      padding: 14 * canvasScaleRatio,
-      margin: { left: 30 * canvasScaleRatio },
-      height: '100%'
-    }}
-  >
-    {/* CATALOG NAV_BAR */}
-    <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
-      <NavButton
-        active={backpackState.activeWearableCategory === null}
-        icon={{ spriteName: 'all', atlasName: 'backpack' }}
-        text={'ALL'}
-        uiTransform={{ padding: 40 * canvasScaleRatio }}
-        onClick={() => {
-          if (backpackState.activeWearableCategory === null) return null
-          // this.changeCategory(null)
-        }}
-      />
-      <Icon
-        iconSize={40 * canvasScaleRatio}
-        uiTransform={{
-          alignSelf: 'center',
-          margin: {
-            left: 16 * canvasScaleRatio,
-            right: 16 * canvasScaleRatio
-          },
-          display:
-            backpackState.activeWearableCategory === null
-              ? 'none'
-              : 'flex'
-        }}
-        icon={{
-          spriteName: 'RightArrow',
-          atlasName: 'icons'
-        }}
-      />
-      {backpackState.activeWearableCategory === null ? null : (
+  return (
+    <UiEntity
+      uiTransform={{
+        flexDirection: 'column',
+        padding: 14 * canvasScaleRatio,
+        margin: { left: 30 * canvasScaleRatio },
+        height: '100%'
+      }}
+    >
+      {/* CATALOG NAV_BAR */}
+      <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
         <NavButton
-          active={true}
-          showDeleteButton={true}
-          onDelete={() => {
+          active={backpackState.activeWearableCategory === null}
+          icon={{ spriteName: 'all', atlasName: 'backpack' }}
+          text={'ALL'}
+          uiTransform={{ padding: 40 * canvasScaleRatio }}
+          onClick={() => {
+            if (backpackState.activeWearableCategory === null) return null
             // this.changeCategory(null)
           }}
-          icon={{
-            spriteName: `category-${backpackState.activeWearableCategory}`,
-            atlasName: 'backpack'
-          }}
-          text={
-            WEARABLE_CATEGORY_DEFINITIONS[
-              backpackState.activeWearableCategory
-              ].label
-          }
-          uiTransform={{ padding: 20 * canvasScaleRatio }}
         />
-      )}
-    </UiEntity>
-    <WearableCatalogGrid
-      uiTransform={{
-        margin: { top: 20 * canvasScaleRatio }
-      }}
-      loading={backpackState.loadingPage}
-      wearables={backpackState.shownWearables}
-      equippedWearables={backpackState.equippedWearables}
-      baseBody={backpackState.outfitSetup.base}
-      onChangeSelection={(
-        selectedURN: URNWithoutTokenId | null
-      ): void => {
-        store.dispatch(updateSelectedWearableURN(selectedURN))
-      }}
-      onEquipWearable={(wearable: CatalogWearableElement): void => {
-        urnWithTokenIdMemo.set(
-          wearable.entity.metadata.id,
-          wearable.individualData[0].id
-        )
-     /*   this.updateEquippedWearable(
+        <Icon
+          iconSize={40 * canvasScaleRatio}
+          uiTransform={{
+            alignSelf: 'center',
+            margin: {
+              left: 16 * canvasScaleRatio,
+              right: 16 * canvasScaleRatio
+            },
+            display:
+              backpackState.activeWearableCategory === null ? 'none' : 'flex'
+          }}
+          icon={{
+            spriteName: 'RightArrow',
+            atlasName: 'icons'
+          }}
+        />
+        {backpackState.activeWearableCategory === null ? null : (
+          <NavButton
+            active={true}
+            showDeleteButton={true}
+            onDelete={() => {
+              // this.changeCategory(null)
+            }}
+            icon={{
+              spriteName: `category-${backpackState.activeWearableCategory}`,
+              atlasName: 'backpack'
+            }}
+            text={
+              WEARABLE_CATEGORY_DEFINITIONS[
+                backpackState.activeWearableCategory
+              ].label
+            }
+            uiTransform={{ padding: 20 * canvasScaleRatio }}
+          />
+        )}
+      </UiEntity>
+      <WearableCatalogGrid
+        uiTransform={{
+          margin: { top: 20 * canvasScaleRatio }
+        }}
+        loading={backpackState.loadingPage}
+        wearables={backpackState.shownWearables}
+        equippedWearables={backpackState.equippedWearables}
+        baseBody={backpackState.outfitSetup.base}
+        onChangeSelection={(selectedURN: URNWithoutTokenId | null): void => {
+          store.dispatch(updateSelectedWearableURN(selectedURN))
+        }}
+        onEquipWearable={(wearable: CatalogWearableElement): void => {
+          urnWithTokenIdMemo.set(
+            wearable.entity.metadata.id,
+            wearable.individualData[0].id
+          )
+          /*   this.updateEquippedWearable(
           wearable.category,
           wearable.entity.metadata.id
         ).catch(console.error) */
-      }}
-      onUnequipWearable={(wearable: CatalogWearableElement): void => {
- /*       this.updateEquippedWearable(wearable.category, null).catch(
+        }}
+        onUnequipWearable={(wearable: CatalogWearableElement): void => {
+          /*       this.updateEquippedWearable(wearable.category, null).catch(
           console.error
         ) */
-      }}
-    />
-    <Pagination
-      uiTransform={{
-        positionType: 'absolute',
-        position: { bottom: 130 * canvasScaleRatio }
-      }}
-      disabled={backpackState.loadingPage}
-      onChange={(page: number) => {
-        store.dispatch(updateCurrentPage(page))
-        // void this.updatePage()
-      }}
-      pages={backpackState.totalPages}
-      currentPage={backpackState.currentPage}
-    />
-  </UiEntity>
+        }}
+      />
+      <Pagination
+        uiTransform={{
+          positionType: 'absolute',
+          position: { bottom: 130 * canvasScaleRatio }
+        }}
+        disabled={backpackState.loadingPage}
+        onChange={(page: number) => {
+          store.dispatch(updateCurrentPage(page))
+          // void this.updatePage()
+        }}
+        pages={backpackState.totalPages}
+        currentPage={backpackState.currentPage}
+      />
+    </UiEntity>
+  )
 }

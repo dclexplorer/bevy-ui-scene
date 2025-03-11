@@ -92,7 +92,10 @@ export function WearableCategoryButton({
         }}
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
-          spriteName: `rarity-background-${catalystWearableMap[selectedURN as URNWithoutTokenId]?.rarity ?? 'base'}`
+          spriteName: `rarity-background-${
+            catalystWearableMap[selectedURN as URNWithoutTokenId]?.rarity ??
+            'base'
+          }`
         })}
       />
       <UiEntity
