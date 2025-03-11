@@ -46,7 +46,7 @@ export function InfoPanel({
         })
       }}
     >
-      {wearable && (
+      {wearable ? (
         <UiEntity
           uiTransform={{ alignSelf: 'center', flexDirection: 'column' }}
         >
@@ -131,6 +131,16 @@ export function InfoPanel({
             />
           </UiEntity>
         </UiEntity>
+      ) : (
+        <UiEntity
+          uiTransform={{
+            margin: { top: '100%' }
+          }}
+          uiText={{
+            value: 'No item selected',
+            fontSize: 26 * canvasScaleRatio
+          }}
+        />
       )}
     </UiEntity>
   )
