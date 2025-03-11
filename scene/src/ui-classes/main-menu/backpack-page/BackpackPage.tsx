@@ -232,7 +232,7 @@ export default class BackpackPage {
       pageNum: backpackState.currentPage,
       pageSize: WEARABLE_CATALOG_PAGE_SIZE,
       address: getPlayer()?.userId ?? ZERO_ADDRESS,
-      wearableCategory: backpackState.activeWearableCategory,
+      wearableCategory: backpackState.activeWearableCategory
     })
 
     store.dispatch(

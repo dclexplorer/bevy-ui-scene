@@ -17,8 +17,13 @@ export type WearableCatalogRequest = {
   pageNum: number
   pageSize: number
   address: string
-  orderBy?: typeof WEARABLES_ORDER_BY.DATE | typeof WEARABLES_ORDER_BY.RARITY | typeof WEARABLES_ORDER_BY.NAME
-  orderDirection?: typeof WEARABLES_ORDER_DIRECTION.ASC | typeof WEARABLES_ORDER_DIRECTION.DESC
+  orderBy?:
+    | typeof WEARABLES_ORDER_BY.DATE
+    | typeof WEARABLES_ORDER_BY.RARITY
+    | typeof WEARABLES_ORDER_BY.NAME
+  orderDirection?:
+    | typeof WEARABLES_ORDER_DIRECTION.ASC
+    | typeof WEARABLES_ORDER_DIRECTION.DESC
   wearableCategory: WearableCategory | null
 }
 export type WearableCatalogPageParams = WearableCatalogRequest & {
