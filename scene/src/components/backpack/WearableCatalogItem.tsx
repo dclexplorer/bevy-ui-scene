@@ -65,7 +65,7 @@ export function WearableCatalogItem(
           uiTransform={{
             positionType: 'absolute',
             width: '100%',
-            height: '100%',
+            height: '95%',
             position: {
               top: 0,
               left: 0
@@ -97,16 +97,17 @@ export function WearableCatalogItem(
       {isSelected && !loading && (
         <UiEntity
           uiTransform={{
-            width: canvasScaleRatio * 240,
+            width: canvasScaleRatio * 260,
             height: canvasScaleRatio * 320,
             positionType: 'absolute',
             position: {
               top: -16 * canvasScaleRatio,
-              left: -12 * canvasScaleRatio
+              left: -23 * canvasScaleRatio
             },
             padding: {
-              top: 18 * canvasScaleRatio,
-              left: 13 * canvasScaleRatio
+              top: 24 * canvasScaleRatio,
+              left: 24 * canvasScaleRatio,
+              bottom: 24 * canvasScaleRatio
             },
             zIndex: 2,
             flexDirection: 'column',
