@@ -30,7 +30,7 @@ export function WearableCategoryButton({
 }: WearableCategoryButtonProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const categoryIcon: AtlasIcon = {
-    spriteName: category,
+    spriteName: `category-${category}`,
     atlasName: 'backpack'
   }
   const iconSize = 68 * canvasScaleRatio
@@ -39,7 +39,7 @@ export function WearableCategoryButton({
     ? getWearableThumbnailBackground(selectedURN)
     : getBackgroundFromAtlas({
         atlasName: 'backpack',
-        spriteName: 'nft-empty'
+        spriteName: 'empty-wearable-field' // TODO change and fix file
       })
 
   return (
@@ -92,9 +92,7 @@ export function WearableCategoryButton({
         }}
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
-          spriteName:
-            catalystWearableMap[selectedURN as URNWithoutTokenId]?.rarity ??
-            'base'
+          spriteName: `rarity-background-${catalystWearableMap[selectedURN as URNWithoutTokenId]?.rarity ?? 'base'}`
         })}
       />
       <UiEntity

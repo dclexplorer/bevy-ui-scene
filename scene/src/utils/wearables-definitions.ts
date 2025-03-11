@@ -91,7 +91,7 @@ export type WearableIndividualData = {
   transferredAt: string
 }
 
-export type WearableRarity =
+export type WearableRarity = // TODO duplicated, remove this, and replace uses with RarityName
   | 'base'
   | 'common'
   | 'uncommon'

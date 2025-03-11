@@ -24,7 +24,7 @@ type WearableCatalogItemProps = {
 const SELECTED_BACKGROUND = {
   ...getBackgroundFromAtlas({
     atlasName: 'backpack',
-    spriteName: 'selection'
+    spriteName: 'catalog-selection-frame'
   })
 }
 
@@ -175,7 +175,7 @@ function WearableCellThumbnail({
         ...(loading
           ? LOADING_TEXTURE_PROPS
           : getBackgroundFromAtlas({
-              spriteName: wearableElement?.rarity ?? 'base',
+              spriteName: `rarity-background-${wearableElement?.rarity ?? 'base'}`,
               atlasName: 'backpack'
             }))
       }}
