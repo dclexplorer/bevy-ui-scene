@@ -84,7 +84,7 @@ export function InfoPanel({
                 height: canvasScaleRatio * 40
               }}
               icon={{
-                spriteName: wearable?.data.category,
+                spriteName: `category-${wearable?.data.category}`,
                 atlasName: 'backpack'
               }}
               iconSize={35 * canvasScaleRatio}
