@@ -3,9 +3,11 @@ import { type RarityName } from '../utils/wearables-definitions'
 
 const ACTIVE_BACKGROUND_COLOR = Color4.fromHexString('#FF7538')
 const ACTIVE_COLOR = Color4.fromHexString('#FFFFFF')
+const LINK_COLOR = Color4.fromHexString('#E9315BFF')
 
 export const COLOR = {
   ACTIVE_COLOR,
+  LINK_COLOR,
   ACTIVE_BACKGROUND_COLOR,
   MAIN_MENU_BACKGROUND: Color4.fromHexString('#161518'),
   NAV_BUTTON_ACTIVE_BACKGROUND: ACTIVE_BACKGROUND_COLOR,
