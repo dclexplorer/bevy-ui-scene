@@ -8,11 +8,15 @@ export function getPaginationItems(
     currentPage > 3
       ? Math.min(
           currentPage - Math.ceil(PAGE_BUTTONS / 2),
-          total - PAGE_BUTTONS + 1
+          total - PAGE_BUTTONS
         )
       : 0
-  console.log('ofset', offset)
+
   return new Array(Math.min(PAGE_BUTTONS, total)).fill(null).map((_, index) => {
-    return offset + index + 1
+    if (total < PAGE_BUTTONS) {
+      return index + 1
+    } else {
+      return offset + index + 1
+    }
   })
 }

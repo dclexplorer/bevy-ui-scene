@@ -16,5 +16,11 @@ describe('pagination', () => {
     it('when currentPage is 4 and pages are 4 , should return all items from 1 to 4', () => {
       expect(getPaginationItems(4, 4)).to.deep.equal([1, 2, 3, 4])
     })
+    it('when currentPage is 4 and pages are 4 , should return all items from 1 to 4', () => {
+      expect(getPaginationItems(4, 4)).to.deep.equal([1, 2, 3, 4])
+    })
+    it('when currentPage is 12 and pages are 12 , should return all items from 8 to 12', () => {
+      expect(getPaginationItems(12, 12)).to.deep.equal([8,9,10,11,12])
+    })
   })
 })
