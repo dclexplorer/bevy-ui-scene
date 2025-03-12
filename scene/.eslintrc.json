@@ -14,7 +14,8 @@
       {
         "allowNullableObject": true,
         "allowNullableString": true,
-        "allowNullableBoolean": true
+        "allowNullableBoolean": true,
+        "allowAny": true
       }
     ]
   },

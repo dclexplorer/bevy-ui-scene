@@ -18,14 +18,28 @@ export type WearableCategory =
   | 'eyebrows'
   | 'body_shape'
 export const WEARABLE_CATEGORY_DEFINITIONS: {
-  [k in WearableCategory]: { id: WearableCategory; label: string }
+  [k in WearableCategory]: {
+    id: WearableCategory
+    label: string
+    hasColor?: true
+    baseColorKey?: string
+  }
 } = {
-  body_shape: { id: 'body_shape', label: 'Body Shape' },
-  hair: { id: 'hair', label: 'Hair' },
+  body_shape: {
+    id: 'body_shape',
+    label: 'Body Shape',
+    hasColor: true,
+    baseColorKey: 'skinColor'
+  },
+  hair: { id: 'hair', label: 'Hair', baseColorKey: 'hairColor' },
   eyebrows: { id: 'eyebrows', label: 'Eyebrows' },
-  eyes: { id: 'eyes', label: 'Eye' },
+  eyes: { id: 'eyes', label: 'Eye', hasColor: true, baseColorKey: 'eyesColor' },
   mouth: { id: 'mouth', label: 'Mouth' },
-  facial_hair: { id: 'facial_hair', label: 'Facial' },
+  facial_hair: {
+    id: 'facial_hair',
+    label: 'Facial',
+    baseColorKey: 'hairColor'
+  },
   upper_body: { id: 'upper_body', label: 'Upper Body' },
   hands_wear: { id: 'hands_wear', label: 'Hands Wear' },
   lower_body: { id: 'lower_body', label: 'Lower Body' },
@@ -38,4 +52,9 @@ export const WEARABLE_CATEGORY_DEFINITIONS: {
   top_head: { id: 'top_head', label: 'Top Head' },
   helmet: { id: 'helmet', label: 'Helmet' },
   skin: { id: 'skin', label: 'Skin' }
+}
+
+export function categoryHasColor(category: WearableCategory | null): boolean {
+  if (!category) return false
+  return !!WEARABLE_CATEGORY_DEFINITIONS[category].baseColorKey ?? false
 }
