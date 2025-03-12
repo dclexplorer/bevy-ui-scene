@@ -17,6 +17,11 @@ export function reducer(
         activeWearableCategory: action.payload,
         currentPage: 1
       }
+    case BACKPACK_ACTION.UPDATE_LOADING_PAGE:
+      return {
+        ...backpackPageState,
+        loadingPage: true
+      }
     case BACKPACK_ACTION.UPDATE_LOADED_PAGE:
       return {
         ...backpackPageState,
