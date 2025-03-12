@@ -5,6 +5,9 @@ import type {
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { EMPTY_PLACE } from 'src/utils/constants'
 
+
+export const SCENE_INFO_STORE_ID: 'scene' = 'scene'
+
 export type SceneState = {
   explorerEvents: EventFromApi[]
   explorerPlace: PlaceFromApi

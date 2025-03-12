@@ -308,6 +308,7 @@ export default class SceneInfoCard {
           }}
           backgroundColor={this.closeBackground}
           icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+          iconSize={this.fontSize}
         />
         <Label
           value={place.title}
@@ -854,7 +855,7 @@ export default class SceneInfoCard {
             justifyContent: 'flex-start',
             alignItems: 'center',
             flexDirection: 'row',
-            margin: { top: this.fontSize }
+            margin: { top: this.fontSize, bottom: this.fontSize }
           }}
         >
           {this.infoDetail(

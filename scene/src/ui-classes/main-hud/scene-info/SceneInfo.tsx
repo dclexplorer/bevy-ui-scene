@@ -277,9 +277,7 @@ export default class SceneInfo {
                 this.expandBackgroundColor = SELECTED_BUTTON_COLOR
               }}
               onMouseLeave={() => {
-                this.expandBackgroundColor = this.isExpanded
-                  ? SELECTED_BUTTON_COLOR
-                  : undefined
+                this.expandBackgroundColor = undefined
               }}
               uiTransform={{
                 width: this.fontSize * 2,
@@ -366,6 +364,7 @@ export default class SceneInfo {
                     margin: { left: this.fontSize * 0.5 }
                   }}
                   icon={{ atlasName: 'icons', spriteName: 'WarningError' }}
+                  iconSize={this.fontSize}
                   onMouseEnter={() => {
                     this.isWarningHintVisible = true
                   }}
@@ -385,6 +384,7 @@ export default class SceneInfo {
                     margin: { left: this.fontSize * 0.5 }
                   }}
                   icon={{ atlasName: 'toggles', spriteName: this.flag ?? '' }}
+                  iconSize={this.fontSize}
                   onMouseEnter={() => {
                     this.isFlagHintVisible = true
                   }}
@@ -403,6 +403,7 @@ export default class SceneInfo {
                     margin: { left: this.fontSize * 0.5 }
                   }}
                   icon={this.loadingIcon}
+                  iconSize={this.fontSize}
                   onMouseEnter={() => {
                     this.isLoadingHintVisible = true
                   }}
@@ -424,9 +425,7 @@ export default class SceneInfo {
                 this.menuBackgroundColor = SELECTED_BUTTON_COLOR
               }}
               onMouseLeave={() => {
-                this.menuBackgroundColor = this.isMenuOpen
-                  ? SELECTED_BUTTON_COLOR
-                  : undefined
+                this.menuBackgroundColor = undefined
               }}
               uiTransform={{
                 width: this.fontSize * 2,
@@ -435,6 +434,7 @@ export default class SceneInfo {
               }}
               backgroundColor={this.menuBackgroundColor}
               icon={{ atlasName: 'icons', spriteName: 'Menu' }}
+              iconSize={this.fontSize * 1.5}
             />
           </UiEntity>
           <UiEntity
