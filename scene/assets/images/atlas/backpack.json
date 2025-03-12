@@ -480,6 +480,46 @@
 				"h": 70
 			}
 		},
+		"icon-hidden.png": {
+			"frame": {
+				"x": 697,
+				"y": 1,
+				"w": 20,
+				"h": 20
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 20
+			},
+			"sourceSize": {
+				"w": 20,
+				"h": 20
+			}
+		},
+		"icon-shown.png": {
+			"frame": {
+				"x": 697,
+				"y": 23,
+				"w": 20,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 20,
+				"h": 17
+			}
+		},
 		"loading-wearable.png": {
 			"frame": {
 				"x": 405,
@@ -562,7 +602,7 @@
 		},
 		"rarity-background-exotic.png": {
 			"frame": {
-				"x": 697,
+				"x": 719,
 				"y": 1,
 				"w": 120,
 				"h": 127
@@ -867,7 +907,7 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 819,
+			"w": 840,
 			"h": 774
 		},
 		"scale": "1"

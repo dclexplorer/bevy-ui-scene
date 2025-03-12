@@ -7,9 +7,13 @@ import type {
 import Icon from '../icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 
-import { RARITY_COLORS } from '../color-palette'
+import { COLOR, RARITY_COLORS } from '../color-palette'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { type Color4 } from '@dcl/sdk/math'
+import {
+  WEARABLE_CATEGORY_DEFINITIONS,
+  type WearableCategory
+} from '../../service/wearable-categories'
 
 export type InfoPanelProps = {
   canvasScaleRatio: number
@@ -48,14 +52,19 @@ export function InfoPanel({
     >
       {wearable ? (
         <UiEntity
-          uiTransform={{ alignSelf: 'center', flexDirection: 'column' }}
+          uiTransform={{
+            width: '100%',
+            padding: { left: '5%' },
+            alignSelf: 'center',
+            flexDirection: 'column'
+          }}
         >
           <UiEntity
             uiTransform={{
               width: canvasScaleRatio * 400,
               height: canvasScaleRatio * 400,
               alignSelf: 'center',
-              margin: { top: 80 * canvasScaleRatio }
+              margin: { top: '10%' }
             }}
             uiBackground={{
               texture: {
@@ -106,30 +115,123 @@ export function InfoPanel({
             backgroundColor={rarityColor}
             canvasScaleRatio={canvasScaleRatio}
           />
-          {wearable?.description !== '' ? (
-            <Label
-              value={`<b>DESCRIPTION</b>`}
-              fontSize={26 * canvasScaleRatio}
-              uiTransform={{
-                alignSelf: 'flex-start',
-                margin: { top: 10 * canvasScaleRatio }
-              }}
-            />
-          ) : null}
-          <UiEntity
-            uiTransform={{
-              flexDirection: 'row',
-              width: canvasScaleRatio * (600 - 80)
-            }}
-          >
+          {wearable?.description !== '' && (
             <UiEntity
-              uiText={{
-                value: `${wearable?.description}`,
-                textAlign: 'top-left',
-                fontSize: 26 * canvasScaleRatio
+              uiTransform={{
+                flexDirection: 'column',
+                position: { left: '-2%' }
               }}
-            />
-          </UiEntity>
+            >
+              <Label
+                value={`<b>DESCRIPTION</b>`}
+                fontSize={26 * canvasScaleRatio}
+                uiTransform={{
+                  alignSelf: 'flex-start',
+                  margin: { top: 10 * canvasScaleRatio }
+                }}
+              />
+
+              <UiEntity
+                uiTransform={{ width: '100%' }}
+                uiText={{
+                  value: `${wearable?.description}`,
+                  textAlign: 'top-left',
+                  fontSize: 26 * canvasScaleRatio
+                }}
+              />
+            </UiEntity>
+          )}
+          {wearable?.data.hides?.length > 0 && (
+            <UiEntity
+              uiTransform={{
+                flexDirection: 'column',
+                margin: { top: 30 * canvasScaleRatio }
+              }}
+            >
+              <UiEntity uiTransform={{ flexDirection: 'row' }}>
+                <Icon
+                  uiTransform={{
+                    alignSelf: 'flex-start',
+                    justifyContent: 'flex-start',
+                    flexShrink: 0,
+                    margin: { top: 20 * canvasScaleRatio },
+                    width: canvasScaleRatio * 40,
+                    height: canvasScaleRatio * 40
+                  }}
+                  iconSize={canvasScaleRatio * 40}
+                  icon={{ atlasName: 'backpack', spriteName: 'icon-hidden' }}
+                />
+                <Label
+                  value={`<b>HIDES</b>`}
+                  fontSize={26 * canvasScaleRatio}
+                  uiTransform={{
+                    alignSelf: 'flex-start',
+                    margin: { top: 10 * canvasScaleRatio }
+                  }}
+                />
+              </UiEntity>
+              <UiEntity
+                uiTransform={{
+                  flexWrap: 'wrap',
+                  width: '100%',
+                  flexDirection: 'row',
+                  margin: { top: '5%' }
+                }}
+              >
+                {wearable?.data.hides.map((hiddenCategory, index) => {
+                  return (
+                    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+                    <UiEntity
+                      uiBackground={{
+                        ...ROUNDED_TEXTURE_BACKGROUND,
+                        color: COLOR.SMALL_TAG_BACKGROUND
+                      }}
+                      uiTransform={{
+                        flexDirection: 'row',
+                        padding: {
+                          top: '1%',
+                          left: '14%',
+                          right: '14%'
+                        },
+                        alignContent: 'center',
+                        justifyContent: 'center',
+                        margin: {
+                          left: 12 * canvasScaleRatio,
+                          top: 12 * canvasScaleRatio
+                        }
+                      }}
+                    >
+                      {/* eslint-disable-next-line @typescript-eslint/strict-boolean-expressions */}
+                      {WEARABLE_CATEGORY_DEFINITIONS[
+                        hiddenCategory as WearableCategory
+                      ] && (
+                        <Icon
+                          iconSize={canvasScaleRatio * 40}
+                          uiTransform={{
+                            alignSelf: 'center',
+                            position: { top: '-4%' },
+                            flexShrink: 0
+                          }}
+                          icon={{
+                            atlasName: 'backpack',
+                            spriteName: `category-${hiddenCategory}`
+                          }}
+                        />
+                      )}
+                      <Label
+                        value={`<b>${
+                          WEARABLE_CATEGORY_DEFINITIONS[
+                            hiddenCategory as WearableCategory
+                          ]?.label.toUpperCase() ?? hiddenCategory.toUpperCase()
+                        }</b>`}
+                        fontSize={canvasScaleRatio * 20}
+                      />
+                    </UiEntity>
+                  )
+                })}
+              </UiEntity>
+            </UiEntity>
+          )}
         </UiEntity>
       ) : (
         <UiEntity
