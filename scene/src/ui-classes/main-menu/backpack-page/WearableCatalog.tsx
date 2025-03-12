@@ -31,26 +31,17 @@ import {
 } from '../../../utils/wearables-promise-utils'
 import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 import {
-  ROUNDED_TEXTURE_BACKGROUND,
   WEARABLE_CATALOG_PAGE_SIZE,
   ZERO_ADDRESS
 } from '../../../utils/constants'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { Color4 } from '@dcl/sdk/math'
-import { COLOR } from '../../../components/color-palette'
+import { WearableColorPicker } from './WearableColorPicker'
 
 export function WearablesCatalog(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
-  const categoryDefinition =
-    (backpackState.activeWearableCategory &&
-      WEARABLE_CATEGORY_DEFINITIONS[backpackState.activeWearableCategory]) ??
-    null
-  const categoryColorKey = categoryDefinition?.baseColorKey ?? null
   const mustShowColor = categoryHasColor(backpackState.activeWearableCategory)
-  const activeCategoryColor: Color4 = mustShowColor
-    ? (backpackState as any).outfitSetup.base[categoryColorKey as any] // TODO review any here
-    : Color4.White()
+
   return (
     <UiEntity
       uiTransform={{
@@ -107,36 +98,7 @@ export function WearablesCatalog(): ReactElement {
             uiTransform={{ padding: 20 * canvasScaleRatio }}
           />
         )}
-        {mustShowColor && (
-          <NavItem
-            active={true}
-            uiTransform={{ margin: { left: '2%' } }}
-            backgroundColor={Color4.White()}
-          >
-            <UiEntity
-              uiTransform={{}}
-              uiText={{
-                value: '<b>COLOR</b>',
-                color: COLOR.TEXT_COLOR,
-                fontSize: 26 * canvasScaleRatio
-              }}
-            />
-            <UiEntity
-              uiTransform={{
-                width: canvasScaleRatio * 50,
-                height: canvasScaleRatio * 50
-              }}
-              uiBackground={{
-                ...ROUNDED_TEXTURE_BACKGROUND,
-                color: Color4.create(
-                  activeCategoryColor.r,
-                  activeCategoryColor.g,
-                  activeCategoryColor.b
-                )
-              }}
-            />
-          </NavItem>
-        )}
+        {mustShowColor && <WearableColorPicker />}
       </UiEntity>
       <WearableCatalogGrid
         uiTransform={{
