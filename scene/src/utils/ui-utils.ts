@@ -266,3 +266,35 @@ export function formatURN(urn: string): FormattedURN | undefined {
     return undefined
   }
 }
+
+export function hueToRGB(hue: number): { r: number; g: number; b: number } {
+  const h = (hue % 360) / 60 // Divide el tono en sectores de 60° (0-6)
+  const c = 1 // Máxima saturación y luminosidad para obtener un color puro
+  const x = 1 - Math.abs((h % 2) - 1)
+
+  let r = 0
+  let g = 0
+  let b = 0
+
+  if (h >= 0 && h < 1) {
+    r = c
+    g = x
+  } else if (h >= 1 && h < 2) {
+    r = x
+    g = c
+  } else if (h >= 2 && h < 3) {
+    g = c
+    b = x
+  } else if (h >= 3 && h < 4) {
+    g = x
+    b = c
+  } else if (h >= 4 && h < 5) {
+    r = x
+    b = c
+  } else if (h >= 5 && h < 6) {
+    r = c
+    b = x
+  }
+
+  return { r, g, b } // Los valores ya están normalizados entre 0 y 1
+}

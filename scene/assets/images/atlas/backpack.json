@@ -420,9 +420,49 @@
 				"h": 81
 			}
 		},
-		"empty-category-result.png": {
+		"colo-slider.png": {
 			"frame": {
 				"x": 1,
+				"y": 416,
+				"w": 266,
+				"h": 45
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 266,
+				"h": 45
+			},
+			"sourceSize": {
+				"w": 266,
+				"h": 45
+			}
+		},
+		"color-slider.png": {
+			"frame": {
+				"x": 269,
+				"y": 416,
+				"w": 266,
+				"h": 31
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 266,
+				"h": 31
+			},
+			"sourceSize": {
+				"w": 266,
+				"h": 31
+			}
+		},
+		"empty-category-result.png": {
+			"frame": {
+				"x": 537,
 				"y": 416,
 				"w": 200,
 				"h": 200
@@ -442,8 +482,8 @@
 		},
 		"empty-search-result.png": {
 			"frame": {
-				"x": 203,
-				"y": 416,
+				"x": 697,
+				"y": 1,
 				"w": 200,
 				"h": 200
 			},
@@ -462,8 +502,8 @@
 		},
 		"empty-wearable-field.png": {
 			"frame": {
-				"x": 615,
-				"y": 333,
+				"x": 698,
+				"y": 203,
 				"w": 70,
 				"h": 70
 			},
@@ -482,7 +522,7 @@
 		},
 		"icon-hidden.png": {
 			"frame": {
-				"x": 697,
+				"x": 899,
 				"y": 1,
 				"w": 20,
 				"h": 20
@@ -502,7 +542,7 @@
 		},
 		"icon-shown.png": {
 			"frame": {
-				"x": 697,
+				"x": 899,
 				"y": 23,
 				"w": 20,
 				"h": 17
@@ -522,8 +562,8 @@
 		},
 		"loading-wearable.png": {
 			"frame": {
-				"x": 405,
-				"y": 416,
+				"x": 770,
+				"y": 203,
 				"w": 120,
 				"h": 120
 			},
@@ -542,8 +582,8 @@
 		},
 		"rarity-background-base.png": {
 			"frame": {
-				"x": 527,
-				"y": 416,
+				"x": 739,
+				"y": 325,
 				"w": 120,
 				"h": 127
 			},
@@ -562,8 +602,8 @@
 		},
 		"rarity-background-common.png": {
 			"frame": {
-				"x": 405,
-				"y": 545,
+				"x": 269,
+				"y": 454,
 				"w": 121,
 				"h": 127
 			},
@@ -582,8 +622,8 @@
 		},
 		"rarity-background-epic.png": {
 			"frame": {
-				"x": 528,
-				"y": 545,
+				"x": 392,
+				"y": 454,
 				"w": 120,
 				"h": 127
 			},
@@ -602,8 +642,8 @@
 		},
 		"rarity-background-exotic.png": {
 			"frame": {
-				"x": 719,
-				"y": 1,
+				"x": 739,
+				"y": 454,
 				"w": 120,
 				"h": 127
 			},
@@ -622,8 +662,8 @@
 		},
 		"rarity-background-legendary.png": {
 			"frame": {
-				"x": 698,
-				"y": 130,
+				"x": 1,
+				"y": 583,
 				"w": 120,
 				"h": 127
 			},
@@ -642,8 +682,8 @@
 		},
 		"rarity-background-mythic.png": {
 			"frame": {
-				"x": 698,
-				"y": 259,
+				"x": 123,
+				"y": 583,
 				"w": 120,
 				"h": 127
 			},
@@ -662,8 +702,8 @@
 		},
 		"rarity-background-rare.png": {
 			"frame": {
-				"x": 687,
-				"y": 388,
+				"x": 245,
+				"y": 583,
 				"w": 120,
 				"h": 127
 			},
@@ -682,8 +722,8 @@
 		},
 		"rarity-background-uncommon.png": {
 			"frame": {
-				"x": 650,
-				"y": 517,
+				"x": 367,
+				"y": 583,
 				"w": 120,
 				"h": 127
 			},
@@ -702,8 +742,8 @@
 		},
 		"rarity-background-unique.png": {
 			"frame": {
-				"x": 1,
-				"y": 646,
+				"x": 739,
+				"y": 583,
 				"w": 120,
 				"h": 127
 			},
@@ -723,7 +763,7 @@
 		"rarity-corner-base.png": {
 			"frame": {
 				"x": 1,
-				"y": 130,
+				"y": 203,
 				"w": 46,
 				"h": 45
 			},
@@ -742,8 +782,8 @@
 		},
 		"rarity-corner-common.png": {
 			"frame": {
-				"x": 1,
-				"y": 259,
+				"x": 892,
+				"y": 203,
 				"w": 47,
 				"h": 45
 			},
@@ -762,8 +802,8 @@
 		},
 		"rarity-corner-epic.png": {
 			"frame": {
-				"x": 772,
-				"y": 517,
+				"x": 1,
+				"y": 250,
 				"w": 46,
 				"h": 45
 			},
@@ -782,8 +822,8 @@
 		},
 		"rarity-corner-exotic.png": {
 			"frame": {
-				"x": 772,
-				"y": 564,
+				"x": 892,
+				"y": 250,
 				"w": 46,
 				"h": 45
 			},
@@ -802,8 +842,8 @@
 		},
 		"rarity-corner-legendary.png": {
 			"frame": {
-				"x": 772,
-				"y": 611,
+				"x": 1,
+				"y": 297,
 				"w": 46,
 				"h": 45
 			},
@@ -822,8 +862,8 @@
 		},
 		"rarity-corner-mythic.png": {
 			"frame": {
-				"x": 123,
-				"y": 658,
+				"x": 892,
+				"y": 297,
 				"w": 46,
 				"h": 45
 			},
@@ -842,8 +882,8 @@
 		},
 		"rarity-corner-rare.png": {
 			"frame": {
-				"x": 171,
-				"y": 658,
+				"x": 1,
+				"y": 344,
 				"w": 46,
 				"h": 45
 			},
@@ -862,8 +902,8 @@
 		},
 		"rarity-corner-uncommon.png": {
 			"frame": {
-				"x": 219,
-				"y": 658,
+				"x": 615,
+				"y": 344,
 				"w": 46,
 				"h": 45
 			},
@@ -882,8 +922,8 @@
 		},
 		"rarity-corner-unique.png": {
 			"frame": {
-				"x": 267,
-				"y": 658,
+				"x": 663,
+				"y": 344,
 				"w": 46,
 				"h": 45
 			},
@@ -907,8 +947,8 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 840,
-			"h": 774
+			"w": 940,
+			"h": 711
 		},
 		"scale": "1"
 	}

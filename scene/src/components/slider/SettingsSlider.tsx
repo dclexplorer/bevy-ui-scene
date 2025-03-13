@@ -8,7 +8,7 @@ import ReactEcs, {
 import { ALMOST_WHITE, RUBY } from '../../utils/constants'
 import { Vector2 } from '@dcl/sdk/math'
 
-function Slider(props: {
+function SettingsSlider(props: {
   uiTransform: UiTransformProps
   sliderSize: number
   title: string
@@ -67,7 +67,7 @@ function Slider(props: {
           height: props.fontSize * 2,
           // new properties
           overflow: 'scroll',
-          scrollVisible: 'hidden',
+          // scrollVisible: 'hidden',
           elementId: props.id,
           scrollPosition: Vector2.create(props.position, 0)
         }}
@@ -103,7 +103,7 @@ function Slider(props: {
               position: { left: props.sliderSize / 2 - grabberSize.x / 2 },
               width: grabberSize.x,
               height: grabberSize.y,
-              zIndex: 1
+              zIndex: 4
             }}
             key="first"
             uiBackground={{
@@ -117,4 +117,4 @@ function Slider(props: {
   )
 }
 
-export default Slider
+export default SettingsSlider

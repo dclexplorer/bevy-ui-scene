@@ -9,6 +9,13 @@ import {
   categoryHasColor,
   WEARABLE_CATEGORY_DEFINITIONS
 } from '../../../service/wearable-categories'
+import { Label } from '@dcl/sdk/react-ecs'
+import { noop } from '../../../utils/function-utils'
+import { BasicSlider } from '../../../components/slider/BasicSlider'
+import { updateAvatarBase } from '../../../state/backpack/actions'
+import { getBackgroundFromAtlas, hueToRGB } from '../../../utils/ui-utils'
+
+const state: { value: number } = { value: 360 / 3 }
 
 export function WearableColorPicker(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -17,10 +24,12 @@ export function WearableColorPicker(): ReactElement {
     (backpackState.activeWearableCategory &&
       WEARABLE_CATEGORY_DEFINITIONS[backpackState.activeWearableCategory]) ??
     null
-  const categoryColorKey = categoryDefinition?.baseColorKey ?? null
+  const categoryColorKey: string =
+    categoryDefinition?.baseColorKey ?? 'skinColor'
   const mustShowColor = categoryHasColor(backpackState.activeWearableCategory)
   const activeCategoryColor: Color4 = mustShowColor
-    ? (backpackState as any).outfitSetup.base[categoryColorKey as any] // TODO review any here
+    ? (backpackState as any).outfitSetup.base[categoryColorKey as any] ??
+      Color4.White() // TODO review any here
     : Color4.White()
 
   return (
@@ -51,6 +60,72 @@ export function WearableColorPicker(): ReactElement {
           )
         }}
       />
+      <UiEntity
+        uiTransform={{
+          width: 300,
+          height: 300,
+          zIndex: 3,
+          positionType: 'absolute',
+          pointerFilter: 'block',
+          position: {
+            top: canvasScaleRatio * 100,
+            left: 0
+          },
+          padding: canvasScaleRatio * 30,
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start'
+        }}
+        onMouseEnter={noop}
+        uiBackground={{
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: Color4.Gray()
+        }}
+      >
+        <Label
+          value={'<b>PRESETS</b>'}
+          color={COLOR.TEXT_COLOR}
+          fontSize={canvasScaleRatio * 26}
+        />
+        <Label
+          value={'<b>COLOR</b>'}
+          color={COLOR.TEXT_COLOR}
+          fontSize={canvasScaleRatio * 26}
+        />
+        <BasicSlider
+          value={state.value}
+          min={0}
+          max={360}
+          floatNumber={false}
+          uiTransform={{
+            width: '100%',
+            height: '8%'
+          }}
+          uiBackground={getBackgroundFromAtlas({
+            atlasName: 'backpack',
+            spriteName: 'color-slider'
+          })}
+          onChange={(newValue) => {
+            state.value = newValue
+            const avatarBase = store.getState().backpack.outfitSetup.base
+            const payload = {
+              ...avatarBase,
+              [categoryColorKey]: hueToRGB(newValue)
+            }
+            store.dispatch(updateAvatarBase(payload))
+          }}
+        />
+        <Label
+          value={'<b>SATURATION</b>'}
+          color={COLOR.TEXT_COLOR}
+          fontSize={canvasScaleRatio * 26}
+        />
+        <Label
+          value={'<b>BRIGHTNESS</b>'}
+          color={COLOR.TEXT_COLOR}
+          fontSize={canvasScaleRatio * 26}
+        />
+      </UiEntity>
     </NavItem>
   )
 }
