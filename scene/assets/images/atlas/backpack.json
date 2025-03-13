@@ -20,9 +20,29 @@
 				"h": 51
 			}
 		},
-		"catalog-selection-frame.png": {
+		"brightness-slider.png": {
 			"frame": {
 				"x": 55,
+				"y": 1,
+				"w": 266,
+				"h": 31
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 266,
+				"h": 31
+			},
+			"sourceSize": {
+				"w": 266,
+				"h": 31
+			}
+		},
+		"catalog-selection-frame.png": {
+			"frame": {
+				"x": 323,
 				"y": 1,
 				"w": 312,
 				"h": 396
@@ -42,7 +62,7 @@
 		},
 		"category-body_shape.png": {
 			"frame": {
-				"x": 369,
+				"x": 637,
 				"y": 1,
 				"w": 80,
 				"h": 81
@@ -62,8 +82,8 @@
 		},
 		"category-earring.png": {
 			"frame": {
-				"x": 451,
-				"y": 1,
+				"x": 1,
+				"y": 84,
 				"w": 80,
 				"h": 81
 			},
@@ -82,8 +102,8 @@
 		},
 		"category-eyebrows.png": {
 			"frame": {
-				"x": 533,
-				"y": 1,
+				"x": 83,
+				"y": 84,
 				"w": 80,
 				"h": 81
 			},
@@ -102,8 +122,8 @@
 		},
 		"category-eyes.png": {
 			"frame": {
-				"x": 615,
-				"y": 1,
+				"x": 165,
+				"y": 84,
 				"w": 80,
 				"h": 81
 			},
@@ -122,7 +142,7 @@
 		},
 		"category-eyewear.png": {
 			"frame": {
-				"x": 369,
+				"x": 637,
 				"y": 84,
 				"w": 80,
 				"h": 81
@@ -142,8 +162,8 @@
 		},
 		"category-facial_hair.png": {
 			"frame": {
-				"x": 451,
-				"y": 84,
+				"x": 1,
+				"y": 167,
 				"w": 80,
 				"h": 81
 			},
@@ -162,8 +182,8 @@
 		},
 		"category-feet.png": {
 			"frame": {
-				"x": 533,
-				"y": 84,
+				"x": 83,
+				"y": 167,
 				"w": 80,
 				"h": 81
 			},
@@ -182,8 +202,8 @@
 		},
 		"category-hair.png": {
 			"frame": {
-				"x": 615,
-				"y": 84,
+				"x": 165,
+				"y": 167,
 				"w": 80,
 				"h": 81
 			},
@@ -202,7 +222,7 @@
 		},
 		"category-hands_wear.png": {
 			"frame": {
-				"x": 369,
+				"x": 637,
 				"y": 167,
 				"w": 80,
 				"h": 81
@@ -222,8 +242,8 @@
 		},
 		"category-hat.png": {
 			"frame": {
-				"x": 451,
-				"y": 167,
+				"x": 1,
+				"y": 250,
 				"w": 80,
 				"h": 81
 			},
@@ -242,8 +262,8 @@
 		},
 		"category-helmet.png": {
 			"frame": {
-				"x": 533,
-				"y": 167,
+				"x": 83,
+				"y": 250,
 				"w": 80,
 				"h": 81
 			},
@@ -262,8 +282,8 @@
 		},
 		"category-lower_body.png": {
 			"frame": {
-				"x": 615,
-				"y": 167,
+				"x": 165,
+				"y": 250,
 				"w": 80,
 				"h": 81
 			},
@@ -282,7 +302,7 @@
 		},
 		"category-male.png": {
 			"frame": {
-				"x": 369,
+				"x": 637,
 				"y": 250,
 				"w": 81,
 				"h": 81
@@ -302,8 +322,8 @@
 		},
 		"category-mask.png": {
 			"frame": {
-				"x": 452,
-				"y": 250,
+				"x": 1,
+				"y": 333,
 				"w": 80,
 				"h": 81
 			},
@@ -322,8 +342,8 @@
 		},
 		"category-mouth.png": {
 			"frame": {
-				"x": 534,
-				"y": 250,
+				"x": 83,
+				"y": 333,
 				"w": 80,
 				"h": 81
 			},
@@ -342,8 +362,8 @@
 		},
 		"category-skin.png": {
 			"frame": {
-				"x": 616,
-				"y": 250,
+				"x": 165,
+				"y": 333,
 				"w": 80,
 				"h": 81
 			},
@@ -362,7 +382,7 @@
 		},
 		"category-tiara.png": {
 			"frame": {
-				"x": 369,
+				"x": 637,
 				"y": 333,
 				"w": 80,
 				"h": 81
@@ -382,8 +402,8 @@
 		},
 		"category-top_head.png": {
 			"frame": {
-				"x": 451,
-				"y": 333,
+				"x": 1,
+				"y": 416,
 				"w": 80,
 				"h": 81
 			},
@@ -402,8 +422,8 @@
 		},
 		"category-upper_body.png": {
 			"frame": {
-				"x": 533,
-				"y": 333,
+				"x": 83,
+				"y": 416,
 				"w": 80,
 				"h": 81
 			},
@@ -422,8 +442,8 @@
 		},
 		"colo-slider.png": {
 			"frame": {
-				"x": 1,
-				"y": 416,
+				"x": 247,
+				"y": 399,
 				"w": 266,
 				"h": 45
 			},
@@ -442,8 +462,8 @@
 		},
 		"color-slider.png": {
 			"frame": {
-				"x": 269,
-				"y": 416,
+				"x": 165,
+				"y": 446,
 				"w": 266,
 				"h": 31
 			},
@@ -462,7 +482,7 @@
 		},
 		"empty-category-result.png": {
 			"frame": {
-				"x": 537,
+				"x": 515,
 				"y": 416,
 				"w": 200,
 				"h": 200
@@ -482,7 +502,7 @@
 		},
 		"empty-search-result.png": {
 			"frame": {
-				"x": 697,
+				"x": 719,
 				"y": 1,
 				"w": 200,
 				"h": 200
@@ -502,7 +522,7 @@
 		},
 		"empty-wearable-field.png": {
 			"frame": {
-				"x": 698,
+				"x": 247,
 				"y": 203,
 				"w": 70,
 				"h": 70
@@ -522,7 +542,7 @@
 		},
 		"icon-hidden.png": {
 			"frame": {
-				"x": 899,
+				"x": 921,
 				"y": 1,
 				"w": 20,
 				"h": 20
@@ -542,7 +562,7 @@
 		},
 		"icon-shown.png": {
 			"frame": {
-				"x": 899,
+				"x": 921,
 				"y": 23,
 				"w": 20,
 				"h": 17
@@ -562,7 +582,7 @@
 		},
 		"loading-wearable.png": {
 			"frame": {
-				"x": 770,
+				"x": 720,
 				"y": 203,
 				"w": 120,
 				"h": 120
@@ -582,7 +602,7 @@
 		},
 		"rarity-background-base.png": {
 			"frame": {
-				"x": 739,
+				"x": 720,
 				"y": 325,
 				"w": 120,
 				"h": 127
@@ -602,7 +622,7 @@
 		},
 		"rarity-background-common.png": {
 			"frame": {
-				"x": 269,
+				"x": 717,
 				"y": 454,
 				"w": 121,
 				"h": 127
@@ -622,46 +642,6 @@
 		},
 		"rarity-background-epic.png": {
 			"frame": {
-				"x": 392,
-				"y": 454,
-				"w": 120,
-				"h": 127
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 120,
-				"h": 127
-			},
-			"sourceSize": {
-				"w": 120,
-				"h": 127
-			}
-		},
-		"rarity-background-exotic.png": {
-			"frame": {
-				"x": 739,
-				"y": 454,
-				"w": 120,
-				"h": 127
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 120,
-				"h": 127
-			},
-			"sourceSize": {
-				"w": 120,
-				"h": 127
-			}
-		},
-		"rarity-background-legendary.png": {
-			"frame": {
 				"x": 1,
 				"y": 583,
 				"w": 120,
@@ -680,7 +660,7 @@
 				"h": 127
 			}
 		},
-		"rarity-background-mythic.png": {
+		"rarity-background-exotic.png": {
 			"frame": {
 				"x": 123,
 				"y": 583,
@@ -700,7 +680,7 @@
 				"h": 127
 			}
 		},
-		"rarity-background-rare.png": {
+		"rarity-background-legendary.png": {
 			"frame": {
 				"x": 245,
 				"y": 583,
@@ -720,7 +700,7 @@
 				"h": 127
 			}
 		},
-		"rarity-background-uncommon.png": {
+		"rarity-background-mythic.png": {
 			"frame": {
 				"x": 367,
 				"y": 583,
@@ -740,10 +720,50 @@
 				"h": 127
 			}
 		},
+		"rarity-background-rare.png": {
+			"frame": {
+				"x": 717,
+				"y": 583,
+				"w": 120,
+				"h": 127
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 120,
+				"h": 127
+			},
+			"sourceSize": {
+				"w": 120,
+				"h": 127
+			}
+		},
+		"rarity-background-uncommon.png": {
+			"frame": {
+				"x": 1,
+				"y": 712,
+				"w": 120,
+				"h": 127
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 120,
+				"h": 127
+			},
+			"sourceSize": {
+				"w": 120,
+				"h": 127
+			}
+		},
 		"rarity-background-unique.png": {
 			"frame": {
-				"x": 739,
-				"y": 583,
+				"x": 123,
+				"y": 712,
 				"w": 120,
 				"h": 127
 			},
@@ -762,7 +782,7 @@
 		},
 		"rarity-corner-base.png": {
 			"frame": {
-				"x": 1,
+				"x": 842,
 				"y": 203,
 				"w": 46,
 				"h": 45
@@ -782,7 +802,7 @@
 		},
 		"rarity-corner-common.png": {
 			"frame": {
-				"x": 892,
+				"x": 890,
 				"y": 203,
 				"w": 47,
 				"h": 45
@@ -802,7 +822,7 @@
 		},
 		"rarity-corner-epic.png": {
 			"frame": {
-				"x": 1,
+				"x": 842,
 				"y": 250,
 				"w": 46,
 				"h": 45
@@ -822,7 +842,7 @@
 		},
 		"rarity-corner-exotic.png": {
 			"frame": {
-				"x": 892,
+				"x": 890,
 				"y": 250,
 				"w": 46,
 				"h": 45
@@ -842,7 +862,7 @@
 		},
 		"rarity-corner-legendary.png": {
 			"frame": {
-				"x": 1,
+				"x": 247,
 				"y": 297,
 				"w": 46,
 				"h": 45
@@ -862,7 +882,7 @@
 		},
 		"rarity-corner-mythic.png": {
 			"frame": {
-				"x": 892,
+				"x": 842,
 				"y": 297,
 				"w": 46,
 				"h": 45
@@ -882,8 +902,8 @@
 		},
 		"rarity-corner-rare.png": {
 			"frame": {
-				"x": 1,
-				"y": 344,
+				"x": 890,
+				"y": 297,
 				"w": 46,
 				"h": 45
 			},
@@ -902,7 +922,7 @@
 		},
 		"rarity-corner-uncommon.png": {
 			"frame": {
-				"x": 615,
+				"x": 247,
 				"y": 344,
 				"w": 46,
 				"h": 45
@@ -922,7 +942,7 @@
 		},
 		"rarity-corner-unique.png": {
 			"frame": {
-				"x": 663,
+				"x": 842,
 				"y": 344,
 				"w": 46,
 				"h": 45
@@ -939,6 +959,46 @@
 				"w": 46,
 				"h": 45
 			}
+		},
+		"saturation-slider.png": {
+			"frame": {
+				"x": 245,
+				"y": 712,
+				"w": 266,
+				"h": 31
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 266,
+				"h": 31
+			},
+			"sourceSize": {
+				"w": 266,
+				"h": 31
+			}
+		},
+		"vivid-slider.png": {
+			"frame": {
+				"x": 513,
+				"y": 712,
+				"w": 266,
+				"h": 31
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 266,
+				"h": 31
+			},
+			"sourceSize": {
+				"w": 266,
+				"h": 31
+			}
 		}
 	},
 	"meta": {
@@ -947,8 +1007,8 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 940,
-			"h": 711
+			"w": 942,
+			"h": 840
 		},
 		"scale": "1"
 	}

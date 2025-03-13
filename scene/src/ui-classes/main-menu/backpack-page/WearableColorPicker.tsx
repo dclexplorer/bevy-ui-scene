@@ -12,12 +12,16 @@ import {
 import { Label } from '@dcl/sdk/react-ecs'
 import { noop } from '../../../utils/function-utils'
 import { BasicSlider } from '../../../components/slider/BasicSlider'
-import { updateAvatarBase } from '../../../state/backpack/actions'
+import {
+  type BackpackUpdateAvatarBasePayload,
+  updateAvatarBase
+} from '../../../state/backpack/actions'
 import {
   getBackgroundFromAtlas,
-  hueToRGB,
-  rgbToHue
+  hsvToRgb,
+  rgbToHsv
 } from '../../../utils/ui-utils'
+import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 
 export function WearableColorPicker(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -33,10 +37,16 @@ export function WearableColorPicker(): ReactElement {
     ? (backpackState as any).outfitSetup.base[categoryColorKey as any] ??
       Color4.White() // TODO review any here
     : Color4.White()
-  const hue = rgbToHue(
+  const hsv = rgbToHsv(
     activeCategoryColor.r,
     activeCategoryColor.g,
     activeCategoryColor.b
+  )
+  const activeColor4 = Color4.create(
+    activeCategoryColor.r,
+    activeCategoryColor.g,
+    activeCategoryColor.b,
+    1
   )
   return (
     <NavItem
@@ -99,7 +109,7 @@ export function WearableColorPicker(): ReactElement {
           fontSize={canvasScaleRatio * 26}
         />
         <BasicSlider
-          value={hue}
+          value={hsv.h}
           min={1}
           max={359}
           floatNumber={false}
@@ -115,9 +125,9 @@ export function WearableColorPicker(): ReactElement {
             const avatarBase = store.getState().backpack.outfitSetup.base
             const payload = {
               ...avatarBase,
-              [categoryColorKey]: hueToRGB(newValue)
+              [categoryColorKey]: hsvToRgb(newValue, hsv.s, hsv.v)
             }
-            store.dispatch(updateAvatarBase(payload))
+            updateAvatar(payload)
           }}
         />
         <Label
@@ -125,12 +135,68 @@ export function WearableColorPicker(): ReactElement {
           color={COLOR.TEXT_COLOR}
           fontSize={canvasScaleRatio * 26}
         />
+        <BasicSlider
+          value={hsv.s}
+          min={1}
+          max={359}
+          uiTransform={{
+            width: '100%',
+            height: '8%'
+          }}
+          uiBackground={{
+            ...getBackgroundFromAtlas({
+              atlasName: 'backpack',
+              spriteName: 'saturation-slider'
+            }),
+            color: activeColor4
+          }}
+          onChange={(newValue) => {
+            const avatarBase = store.getState().backpack.outfitSetup.base
+            const payload = {
+              ...avatarBase,
+              [categoryColorKey]: hsvToRgb(hsv.h, newValue, hsv.v)
+            }
+            updateAvatar(payload)
+          }}
+        />
         <Label
           value={'<b>BRIGHTNESS</b>'}
           color={COLOR.TEXT_COLOR}
           fontSize={canvasScaleRatio * 26}
         />
+        <BasicSlider
+          value={hsv.v}
+          min={1}
+          max={359}
+          uiTransform={{
+            width: '100%',
+            height: '8%'
+          }}
+          uiBackground={{
+            ...getBackgroundFromAtlas({
+              atlasName: 'backpack',
+              spriteName: 'brightness-slider'
+            }),
+            color: activeColor4
+          }}
+          onChange={(newValue) => {
+            const avatarBase = store.getState().backpack.outfitSetup.base
+            const payload = {
+              ...avatarBase,
+              [categoryColorKey]: hsvToRgb(hsv.h, hsv.s, newValue)
+            }
+            updateAvatar(payload)
+          }}
+        />
       </UiEntity>
     </NavItem>
   )
+}
+
+function updateAvatar(payload: BackpackUpdateAvatarBasePayload): void {
+  updateAvatarPreview(
+    store.getState().backpack.equippedWearables,
+    store.getState().backpack.outfitSetup.base
+  )
+  store.dispatch(updateAvatarBase(payload))
 }

@@ -267,58 +267,70 @@ export function formatURN(urn: string): FormattedURN | undefined {
   }
 }
 
-export function hueToRGB(hue: number): { r: number; g: number; b: number } {
-  const invertedHue = 360 - (hue % 360)
-  const h = invertedHue / 60
-  const c = 1
-  const x = 1 - Math.abs((h % 2) - 1)
+export function rgbToHsv(
+  r: number,
+  g: number,
+  b: number
+): { h: number; s: number; v: number } {
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const delta = max - min
+
+  let h = 0
+  if (delta !== 0) {
+    if (max === r) {
+      h = ((g - b) / delta) % 6
+    } else if (max === g) {
+      h = (b - r) / delta + 2
+    } else {
+      h = (r - g) / delta + 4
+    }
+    h *= 60
+    if (h < 0) h += 360
+  }
+
+  const s = max === 0 ? 0 : (delta / max) * 360
+  const v = max * 360
+
+  return { h: 360 - h, s, v }
+}
+
+export function hsvToRgb(
+  h: number,
+  s: number,
+  v: number
+): { r: number; g: number; b: number } {
+  const invertedH = 360 - (h % 360)
+  const normS = s / 360
+  const normV = v / 360
+
+  const c = normV * normS
+  const x = c * (1 - Math.abs(((invertedH / 60) % 2) - 1))
+  const m = normV - c
 
   let r = 0
   let g = 0
   let b = 0
 
-  if (h >= 0 && h < 1) {
+  if (invertedH >= 0 && invertedH < 60) {
     r = c
     g = x
-  } else if (h >= 1 && h < 2) {
+  } else if (invertedH >= 60 && invertedH < 120) {
     r = x
     g = c
-  } else if (h >= 2 && h < 3) {
+  } else if (invertedH >= 120 && invertedH < 180) {
     g = c
     b = x
-  } else if (h >= 3 && h < 4) {
+  } else if (invertedH >= 180 && invertedH < 240) {
     g = x
     b = c
-  } else if (h >= 4 && h < 5) {
+  } else if (invertedH >= 240 && invertedH < 300) {
     r = x
     b = c
-  } else if (h >= 5 && h < 6) {
+  } else if (invertedH >= 300 && invertedH < 360) {
     r = c
     b = x
   }
 
-  return { r, g, b }
-}
-
-export function rgbToHue(r: number, g: number, b: number): number {
-  const max = Math.max(r, g, b)
-  const min = Math.min(r, g, b)
-  const delta = max - min
-
-  let hue = 0
-
-  if (delta === 0) {
-    hue = 0
-  } else if (max === r) {
-    hue = ((g - b) / delta) % 6
-  } else if (max === g) {
-    hue = (b - r) / delta + 2
-  } else if (max === b) {
-    hue = (r - g) / delta + 4
-  }
-
-  hue *= 60
-  if (hue < 0) hue += 360
-
-  return 360 - hue
+  return { r: r + m, g: g + m, b: b + m }
 }

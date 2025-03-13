@@ -15,15 +15,9 @@ type BasicSliderProps = {
   max?: number
   floatNumber?: boolean
   onChange?: (percentage: number) => void
-  mode?: SLIDER_TEXT_MODE
-  uiBackground: UiBackgroundProps
+  uiBackground?: UiBackgroundProps
 }
 const MOUSE_VELOCITY = 0.1
-export enum SLIDER_TEXT_MODE {
-  PERCENTAGE,
-  VALUE,
-  NONE
-}
 
 export function BasicSlider({
   min = 0,
@@ -32,16 +26,9 @@ export function BasicSlider({
   uiTransform,
   onChange = noop,
   floatNumber = true,
-  mode = SLIDER_TEXT_MODE.NONE,
   uiBackground = { color: Color4.Black() }
 }: BasicSliderProps): ReactElement {
   const percentage = Math.min(100, Math.max(0, (value * 100) / max))
-  const text: string =
-    mode === SLIDER_TEXT_MODE.NONE
-      ? ''
-      : mode === SLIDER_TEXT_MODE.VALUE
-      ? value.toString()
-      : `${percentage}%`
   return (
     <UiEntity uiTransform={uiTransform}>
       <UiEntity
@@ -52,7 +39,6 @@ export function BasicSlider({
         uiBackground={{
           ...uiBackground
         }}
-        uiText={{ value: text }}
       >
         <UiEntity
           uiTransform={{
