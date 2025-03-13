@@ -268,8 +268,9 @@ export function formatURN(urn: string): FormattedURN | undefined {
 }
 
 export function hueToRGB(hue: number): { r: number; g: number; b: number } {
-  const h = (hue % 360) / 60 // Divide el tono en sectores de 60° (0-6)
-  const c = 1 // Máxima saturación y luminosidad para obtener un color puro
+  const invertedHue = 360 - (hue % 360)
+  const h = invertedHue / 60
+  const c = 1
   const x = 1 - Math.abs((h % 2) - 1)
 
   let r = 0
@@ -296,5 +297,28 @@ export function hueToRGB(hue: number): { r: number; g: number; b: number } {
     b = x
   }
 
-  return { r, g, b } // Los valores ya están normalizados entre 0 y 1
+  return { r, g, b }
+}
+
+export function rgbToHue(r: number, g: number, b: number): number {
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const delta = max - min
+
+  let hue = 0
+
+  if (delta === 0) {
+    hue = 0
+  } else if (max === r) {
+    hue = ((g - b) / delta) % 6
+  } else if (max === g) {
+    hue = (b - r) / delta + 2
+  } else if (max === b) {
+    hue = (r - g) / delta + 4
+  }
+
+  hue *= 60
+  if (hue < 0) hue += 360
+
+  return 360 - hue
 }

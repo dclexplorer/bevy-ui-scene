@@ -13,9 +13,11 @@ import { Label } from '@dcl/sdk/react-ecs'
 import { noop } from '../../../utils/function-utils'
 import { BasicSlider } from '../../../components/slider/BasicSlider'
 import { updateAvatarBase } from '../../../state/backpack/actions'
-import { getBackgroundFromAtlas, hueToRGB } from '../../../utils/ui-utils'
-
-const state: { value: number } = { value: 360 / 3 }
+import {
+  getBackgroundFromAtlas,
+  hueToRGB,
+  rgbToHue
+} from '../../../utils/ui-utils'
 
 export function WearableColorPicker(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -31,7 +33,11 @@ export function WearableColorPicker(): ReactElement {
     ? (backpackState as any).outfitSetup.base[categoryColorKey as any] ??
       Color4.White() // TODO review any here
     : Color4.White()
-
+  const hue = rgbToHue(
+    activeCategoryColor.r,
+    activeCategoryColor.g,
+    activeCategoryColor.b
+  )
   return (
     <NavItem
       active={true}
@@ -93,9 +99,9 @@ export function WearableColorPicker(): ReactElement {
           fontSize={canvasScaleRatio * 26}
         />
         <BasicSlider
-          value={state.value}
-          min={0}
-          max={360}
+          value={hue}
+          min={1}
+          max={359}
           floatNumber={false}
           uiTransform={{
             width: '100%',
@@ -106,7 +112,6 @@ export function WearableColorPicker(): ReactElement {
             spriteName: 'color-slider'
           })}
           onChange={(newValue) => {
-            state.value = newValue
             const avatarBase = store.getState().backpack.outfitSetup.base
             const payload = {
               ...avatarBase,
