@@ -130,6 +130,7 @@ export function sliderValueToPercentage(
   continuos: boolean = false
 ): number {
   const percentage = 1 - (value - min) / (max - min)
+
   // to float32
   const float32Percentage = Float32Array.from([percentage])[0]
   return float32Percentage

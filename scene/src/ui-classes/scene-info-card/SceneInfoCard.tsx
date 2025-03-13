@@ -1,5 +1,5 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import { Color4, Vector2 } from '@dcl/sdk/math'
+import { Color4, Vector2, type Vector3 } from '@dcl/sdk/math'
 import ReactEcs, {
   Label,
   UiEntity,
@@ -48,7 +48,7 @@ import {
 import type { PhotoFromApi } from '../photos/Photos.types'
 
 export default class SceneInfoCard {
-  private sceneCoords: { x: number; y: number } = { x: 0, y: 0 }
+  private sceneCoords: Vector3 | undefined
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
   public fontSize: number = 16
@@ -84,45 +84,49 @@ export default class SceneInfoCard {
     this.uiController = uiController
   }
 
-  async changeSceneCoords(x: number, y: number): Promise<void> {
-    this.sceneCoords = { x, y }
+  async setCoords(coords: Vector3): Promise<void> {
+    this.sceneCoords = coords
     await this.updateSceneInfo()
   }
 
   async updateSceneInfo(): Promise<void> {
-    const place: PlaceFromApi = await fetchPlaceId(
-      this.sceneCoords.x,
-      this.sceneCoords.y
-    )
-    const photosQuantityInPlace: number = await fetchPhotosQuantity(place.id)
-    const photosArray: PhotoFromApi[] = await fetchPhotos(
-      place.id,
-      photosQuantityInPlace
-    )
-    const eventsArray: EventFromApi[] = await fetchEvents(place.positions)
+    if (this.sceneCoords === undefined) {
+      console.error('Scene coords are undefined')
+    } else {
+      const place: PlaceFromApi = await fetchPlaceId(
+        this.sceneCoords.x,
+        this.sceneCoords.z
+      )
+      const photosQuantityInPlace: number = await fetchPhotosQuantity(place.id)
+      const photosArray: PhotoFromApi[] = await fetchPhotos(
+        place.id,
+        photosQuantityInPlace
+      )
+      const eventsArray: EventFromApi[] = await fetchEvents(place.positions)
 
-    store.dispatch(loadEventsFromApi(eventsArray))
-    store.dispatch(loadPhotosFromApi(photosArray))
-    store.dispatch(loadPlaceFromApi(place))
+      store.dispatch(loadEventsFromApi(eventsArray))
+      store.dispatch(loadPhotosFromApi(photosArray))
+      store.dispatch(loadPlaceFromApi(place))
 
-    console.log('Is Favorite: ', place.user_favorite)
-    this.isFav = place.user_favorite
-    this.isLiked = place.user_like
-    this.isDisliked = place.user_dislike
-    this.updateIcons()
+      console.log('Is Favorite: ', place.user_favorite)
+      this.isFav = place.user_favorite
+      this.isLiked = place.user_like
+      this.isDisliked = place.user_dislike
+      this.updateIcons()
+    }
   }
 
   async show(): Promise<void> {
     this.uiController.sceneInfoCardVisible = true
-    await this.changeSceneCoords(-9, -9)
+    await this.updateSceneInfo()
   }
 
   hide(): void {
     this.uiController.sceneInfoCardVisible = false
-    this.updateBackgrounds()
+    this.resetBackgrounds()
   }
 
-  updateBackgrounds(): void {
+  resetBackgrounds(): void {
     this.closeBackground = undefined
     this.likeBackgroundColor = DCL_SNOW
     this.dislikeBackgroundColor = DCL_SNOW
@@ -301,7 +305,7 @@ export default class SceneInfoCard {
             this.closeBackground = { ...ALMOST_BLACK, a: 0.8 }
           }}
           onMouseLeave={() => {
-            this.updateBackgrounds()
+            this.resetBackgrounds()
           }}
           onMouseDown={() => {
             this.hide()
@@ -566,7 +570,7 @@ export default class SceneInfoCard {
               this.onLikeEnter()
             }}
             onMouseLeave={() => {
-              this.updateBackgrounds()
+              this.resetBackgrounds()
             }}
             onMouseDown={() => {
               this.setLike(!this.isLiked)
@@ -585,7 +589,7 @@ export default class SceneInfoCard {
               this.onDislikeEnter()
             }}
             onMouseLeave={() => {
-              this.updateBackgrounds()
+              this.resetBackgrounds()
             }}
             onMouseDown={() => {
               this.setDislike(!this.isDisliked)
@@ -604,7 +608,7 @@ export default class SceneInfoCard {
               this.onFavEnter()
             }}
             onMouseLeave={() => {
-              this.updateBackgrounds()
+              this.resetBackgrounds()
             }}
             onMouseDown={() => {
               void this.toggleFav()

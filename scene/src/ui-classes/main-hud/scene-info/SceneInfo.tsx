@@ -1,5 +1,5 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import type { Color4 } from '@dcl/sdk/math'
+import type { Color4, Vector3 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { ButtonIcon } from '../../../components/button-icon'
 import Canvas from '../../../components/canvas/Canvas'
@@ -15,14 +15,17 @@ import {
 } from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { type AtlasIcon } from '../../../utils/definitions'
-// import ButtonIcon from '../../components/ButtonIcon'
+import { store } from 'src/state/store'
+import type { PlaceFromApi } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 
 export default class SceneInfo {
   private readonly uiController: UIController
   public fontSize: number = 16
   private isWarningScene: boolean = true
   public sceneName: string = 'Scene Name ASD'
-  public sceneCoords: { x: number; y: number } = { x: -155, y: 123 }
+  public sceneCoords: Vector3 | undefined =
+    store.getState().scene.explorerPlayerPosition
+
   public isSdk6: boolean = true
   public isFav: boolean = true
   public isExpanded: boolean = false
@@ -75,7 +78,7 @@ export default class SceneInfo {
   public totalTextureCountValue: number = 0
   public totalTextureMemoryValue: number = 0
   public totalEntitiesValue: number = 0
-  public flag: 'adult' | 'restricted' | 'teen' | undefined = 'adult'
+  public flag: string | undefined
   private flagHint: string = 'This scene was rated as an adult scene.'
   private isFlagHintVisible: boolean = false
   private warningHint: string =
@@ -95,12 +98,26 @@ export default class SceneInfo {
     this.uiController = uiController
   }
 
+  updateContent(): void {
+    this.setFlag(store.getState().scene.explorerPlace.content_rating)
+    this.setFav(store.getState().scene.explorerPlace.user_favorite)
+  }
+
+  async updateCoords(): Promise<void> {
+    this.sceneCoords = store.getState().scene.explorerPlayerPosition
+    if (this.sceneCoords) {
+      await this.uiController.sceneCard.setCoords(this.sceneCoords)
+      const place: PlaceFromApi = store.getState().scene.explorerPlace
+      this.sceneName = place.title
+    }
+  }
+
   setWarning(status: boolean, message: string): void {
     this.isWarningScene = status
     this.warningHint = message
   }
 
-  setFlag(arg: 'adult' | 'restricted' | 'teen' | undefined): void {
+  setFlag(arg: string | undefined): void {
     this.flag = arg
     switch (arg) {
       case 'adult':
@@ -214,8 +231,11 @@ export default class SceneInfo {
     console.log('RELOAD SCENE')
   }
 
-  openSceneInfo(): void {
-    void this.uiController.sceneCard.show()
+  async openSceneInfo(): Promise<void> {
+    if (this.sceneCoords !== undefined) {
+      await this.uiController.sceneCard.setCoords(this.sceneCoords)
+      await this.uiController.sceneCard.show()
+    }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -332,9 +352,9 @@ export default class SceneInfo {
                 />
                 <Label
                   value={
-                    this.sceneCoords.x.toString() +
+                    this.sceneCoords?.x.toString() +
                     ',' +
-                    this.sceneCoords.y.toString()
+                    this.sceneCoords?.z.toString()
                   }
                   fontSize={this.fontSize}
                   uiTransform={{}}
@@ -842,7 +862,7 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                this.openSceneInfo()
+                void this.openSceneInfo()
               }}
               onMouseEnter={() => {
                 this.openInfoLabelColor = ALMOST_WHITE

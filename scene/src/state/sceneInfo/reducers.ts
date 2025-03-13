@@ -12,6 +12,8 @@ export function reducer(
       return { ...state, explorerPlace: action.payload }
     case SCENE_INFO_ACTION.GET_PHOTOS_FROM_API:
       return { ...state, explorerPhotos: action.payload }
+    case SCENE_INFO_ACTION.SAVE_PLAYER_POSITION:
+      return { ...state, explorerPlayerPosition: action.payload }
 
     default:
       return state
