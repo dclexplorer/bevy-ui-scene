@@ -78,8 +78,8 @@ export function WearableColorPicker(): ReactElement {
       />
       <UiEntity
         uiTransform={{
-          width: 300,
-          height: 300,
+          width: canvasScaleRatio * 800,
+          height: canvasScaleRatio * 800,
           zIndex: 3,
           positionType: 'absolute',
           pointerFilter: 'block',
