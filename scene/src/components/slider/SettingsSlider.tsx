@@ -67,7 +67,7 @@ function SettingsSlider(props: {
           height: props.fontSize * 2,
           // new properties
           overflow: 'scroll',
-          // scrollVisible: 'hidden',
+          scrollVisible: 'hidden',
           elementId: props.id,
           scrollPosition: Vector2.create(props.position, 0)
         }}

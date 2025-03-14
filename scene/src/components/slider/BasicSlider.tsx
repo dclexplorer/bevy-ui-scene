@@ -39,6 +39,18 @@ export function BasicSlider({
         uiBackground={{
           ...uiBackground
         }}
+        onMouseDragLocked={() => {
+          const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
+          const deltaX: number = pointerInfo?.screenDelta?.x ?? 0
+          const newPercentage = Math.min(
+            100,
+            Math.max(0, percentage + deltaX * MOUSE_VELOCITY)
+          )
+          const total = max - min
+          const newValue = min + (newPercentage / 100) * total
+
+          onChange(floatNumber ? newValue : Math.floor(newValue))
+        }}
       >
         <UiEntity
           uiTransform={{
@@ -51,18 +63,6 @@ export function BasicSlider({
           uiBackground={{
             textureMode: 'stretch',
             texture: { src: 'assets/images/menu/slider.png' }
-          }}
-          onMouseDragLocked={() => {
-            const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
-            const deltaX: number = pointerInfo?.screenDelta?.x ?? 0
-            const newPercentage = Math.min(
-              100,
-              Math.max(0, percentage + deltaX * MOUSE_VELOCITY)
-            )
-            const total = max - min
-            const newValue = min + (newPercentage / 100) * total
-
-            onChange(floatNumber ? newValue : Math.floor(newValue))
           }}
         />
       </UiEntity>
