@@ -5,6 +5,21 @@ const ACTIVE_BACKGROUND_COLOR = Color4.fromHexString('#FF7538')
 const ACTIVE_COLOR = Color4.fromHexString('#FFFFFF')
 const LINK_COLOR = Color4.fromHexString('#E9315BFF')
 
+export const COLOR_PRESETS = [
+  Color4.fromHexString('#D8D8D8FF'),
+  Color4.fromHexString('#2a221e'),
+  Color4.fromHexString('#5b4637'),
+  Color4.fromHexString('#964a2f'),
+  Color4.fromHexString('#d97c13'),
+  Color4.fromHexString('#eed07b'),
+  Color4.fromHexString('#f0870e'),
+  Color4.fromHexString('#fdd240'),
+  Color4.fromHexString('#78bd31'),
+  Color4.fromHexString('#59a2f7'),
+  Color4.fromHexString('#9878ed'),
+  Color4.fromHexString('#e875a9')
+]
+
 export const COLOR = {
   ACTIVE_COLOR,
   LINK_COLOR,

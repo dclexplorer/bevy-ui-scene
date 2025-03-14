@@ -268,9 +268,9 @@ export function formatURN(urn: string): FormattedURN | undefined {
 }
 
 export function rgbToHsv(
-  r: number,
-  g: number,
-  b: number
+  r: number = 0,
+  g: number = 0,
+  b: number = 0
 ): { h: number; s: number; v: number } {
   const max = Math.max(r, g, b)
   const min = Math.min(r, g, b)
@@ -296,9 +296,9 @@ export function rgbToHsv(
 }
 
 export function hsvToRgb(
-  h: number,
-  s: number,
-  v: number
+  h: number = 0,
+  s: number = 0,
+  v: number = 0
 ): { r: number; g: number; b: number } {
   const invertedH = 360 - (h % 360)
   const normS = s / 360
@@ -333,4 +333,10 @@ export function hsvToRgb(
   }
 
   return { r: r + m, g: g + m, b: b + m }
+}
+
+export function rgbToArray(
+  rgb: { r: number; g: number; b: number } = { r: 0, g: 0, b: 0 }
+): number[] {
+  return [rgb.r, rgb.g, rgb.b]
 }
