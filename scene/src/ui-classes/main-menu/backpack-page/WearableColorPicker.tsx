@@ -122,7 +122,12 @@ function ColorPickerDialog({
   const canvasScaleRatio = getCanvasScaleRatio()
   const hsv = rgbToHsv(...rgbToArray(color))
   const rawColor = Color4.create(...rgbToArray(hsvToRgb(hsv.h, 360, 360)))
-
+  const backpackState = store.getState().backpack
+  const baseColorKey: string = backpackState.activeWearableCategory
+    ? (WEARABLE_CATEGORY_DEFINITIONS[backpackState.activeWearableCategory]
+        ?.baseColorKey as string)
+    : ''
+  const colorPreset: Color4[] = COLOR_PRESETS[baseColorKey] ?? []
   return (
     <UiEntity
       uiTransform={{
@@ -159,7 +164,7 @@ function ColorPickerDialog({
           margin: { bottom: '5%' }
         }}
       >
-        {COLOR_PRESETS.map((color, index) => (
+        {colorPreset.map((color: Color4, index: number) => (
           <ColorBox
             uiTransform={{
               margin: { right: '5%', bottom: '3%' },
