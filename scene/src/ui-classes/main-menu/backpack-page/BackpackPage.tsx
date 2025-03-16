@@ -37,6 +37,7 @@ import {
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
 import { updatePage, WearablesCatalog } from './WearableCatalog'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
+import { closeColorPicker } from './WearableColorPicker'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -103,7 +104,7 @@ export default class BackpackPage {
   changeCategory(category: WearableCategory | null): void {
     store.dispatch(updateActiveWearableCategory(category))
     setAvatarPreviewCameraToWearableCategory(category)
-
+    closeColorPicker()
     updatePage().catch(console.error)
   }
 
@@ -136,7 +137,7 @@ export default class BackpackPage {
 
   async init(): Promise<void> {
     store.dispatch(updateCacheKey())
-
+    closeColorPicker()
     createAvatarPreview()
     store.dispatch(updateLoadingPage(true))
     const player = getPlayer()

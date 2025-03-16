@@ -25,6 +25,11 @@ import {
 import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 
 const state = { open: false }
+
+export function closeColorPicker(): void {
+  state.open = false
+}
+
 export function WearableColorPicker(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
