@@ -17,6 +17,17 @@ export type WearableCategory =
   | 'mouth'
   | 'eyebrows'
   | 'body_shape'
+
+type CategoryColorDefiniton = { key: string; name: string }
+export const CATEGORY_COLOR_DEFINITIONS: Record<
+  string,
+  CategoryColorDefiniton
+> = {
+  hairColor: { key: 'hairColor', name: 'hair color' },
+  skinColor: { key: 'skinColor', name: 'skin color' },
+  eyesColor: { key: 'eyesColor', name: 'eyes color' }
+}
+
 export const WEARABLE_CATEGORY_DEFINITIONS: {
   [k in WearableCategory]: {
     id: WearableCategory

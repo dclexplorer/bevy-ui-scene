@@ -6,6 +6,7 @@ import { NavItem } from '../../../components/nav-button/NavButton'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { store } from '../../../state/store'
 import {
+  CATEGORY_COLOR_DEFINITIONS,
   categoryHasColor,
   WEARABLE_CATEGORY_DEFINITIONS
 } from '../../../service/wearable-categories'
@@ -45,7 +46,6 @@ export function WearableColorPicker(): ReactElement {
         ...rgbToArray((backpackState as any).outfitSetup.base[categoryColorKey])
       )
     : Color4.Black()
-
   return (
     <NavItem
       active={true}
@@ -55,7 +55,9 @@ export function WearableColorPicker(): ReactElement {
       <UiEntity
         uiTransform={{}}
         uiText={{
-          value: '<b>COLOR</b>',
+          value: `<b>${CATEGORY_COLOR_DEFINITIONS[
+            categoryColorKey
+          ]?.name.toUpperCase()}</b>`,
           color: COLOR.TEXT_COLOR,
           fontSize: 26 * canvasScaleRatio
         }}
