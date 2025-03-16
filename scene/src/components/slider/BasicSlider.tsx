@@ -9,6 +9,7 @@ import { noop } from '../../utils/function-utils'
 import { Color4 } from '@dcl/sdk/math'
 
 type BasicSliderProps = {
+  children?: ReactElement
   value: number
   uiTransform: UiTransformProps
   min?: number
@@ -20,6 +21,7 @@ type BasicSliderProps = {
 const MOUSE_VELOCITY = 0.1
 
 export function BasicSlider({
+  children,
   min = 0,
   max = 1,
   value,
@@ -31,6 +33,7 @@ export function BasicSlider({
   const percentage = Math.min(100, Math.max(0, (value * 100) / max))
   return (
     <UiEntity uiTransform={uiTransform}>
+      {children}
       <UiEntity
         uiTransform={{
           width: '100%',

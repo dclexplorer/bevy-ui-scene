@@ -206,6 +206,7 @@ function ColorPickerDialog({
         color={COLOR.TEXT_COLOR}
         fontSize={canvasScaleRatio * 26}
       />
+
       <BasicSlider
         value={hsv.s}
         min={1}
@@ -219,7 +220,7 @@ function ColorPickerDialog({
             atlasName: 'backpack',
             spriteName: 'saturation-slider'
           }),
-          color: rawColor
+          color: Color4.create(...rgbToArray(hsvToRgb(hsv.h, 0, hsv.v)))
         }}
         onChange={(newValue) => {
           const avatarBase = store.getState().backpack.outfitSetup.base
@@ -229,8 +230,22 @@ function ColorPickerDialog({
           }
           updateAvatar(payload)
         }}
-      />
-
+      >
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: '100%',
+            positionType: 'absolute'
+          }}
+          uiBackground={{
+            ...getBackgroundFromAtlas({
+              atlasName: 'backpack',
+              spriteName: 'mask-slider'
+            }),
+            color: rawColor
+          }}
+        />
+      </BasicSlider>
       <Label
         value={'<b>BRIGHTNESS</b>'}
         color={COLOR.TEXT_COLOR}
