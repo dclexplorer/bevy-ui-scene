@@ -131,6 +131,20 @@ function WearableCellThumbnail({
       {!loading && wearableElement?.urn && (
         <WearableImage wearableElement={wearableElement} />
       )}
+      {wearableElement?.individualData?.length > 1 && (
+        <UiEntity
+          uiTransform={{
+            alignSelf: 'flex-end',
+            margin: { right: '2%', bottom: '8%' }
+          }}
+          uiBackground={{
+            ...ROUNDED_TEXTURE_BACKGROUND,
+            color: COLOR.SMALL_TAG_BACKGROUND
+          }}
+        >
+          <Label value={`${wearableElement.individualData.length}X`} />
+        </UiEntity>
+      )}
     </UiEntity>
   )
 }
