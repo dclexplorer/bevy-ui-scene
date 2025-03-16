@@ -32,7 +32,7 @@ export const WEARABLE_CATEGORY_DEFINITIONS: {
     baseColorKey: 'skinColor'
   },
   hair: { id: 'hair', label: 'Hair', baseColorKey: 'hairColor' },
-  eyebrows: { id: 'eyebrows', label: 'Eyebrows' },
+  eyebrows: { id: 'eyebrows', label: 'Eyebrows', baseColorKey: 'hairColor' },
   eyes: { id: 'eyes', label: 'Eye', hasColor: true, baseColorKey: 'eyesColor' },
   mouth: { id: 'mouth', label: 'Mouth' },
   facial_hair: {
