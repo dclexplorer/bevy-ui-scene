@@ -1,4 +1,4 @@
-import { Color4, Quaternion, Vector2 } from '@dcl/sdk/math'
+import { Quaternion, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import {
   getCanvasScaleRatio,

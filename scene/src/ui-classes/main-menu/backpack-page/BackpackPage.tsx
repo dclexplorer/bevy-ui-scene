@@ -35,7 +35,11 @@ import {
   updateLoadingPage
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
-import { updatePage, WearablesCatalog } from './WearableCatalog'
+import {
+  saveResetOutfit,
+  updatePage,
+  WearablesCatalog
+} from './WearableCatalog'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { closeColorPicker } from './WearableColorPicker'
 
@@ -160,6 +164,7 @@ export default class BackpackPage {
           (player?.avatar?.bodyShapeUrn as URNWithoutTokenId) ?? BASE_MALE_URN
       })
     )
+    saveResetOutfit()
 
     await updatePage()
   }
