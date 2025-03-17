@@ -3,13 +3,27 @@ import { UIController } from './ui.controller'
 import { getPlayerPosition } from '@dcl-sdk/utils'
 import { type Vector3 } from '@dcl/sdk/math'
 import { store } from 'src/state/store'
-import { savePlayerPosition } from 'src/state/sceneInfo/actions'
+import {
+  loadFavoritesFromApi,
+  savePlayerPosition
+} from 'src/state/sceneInfo/actions'
+import { getFavoritesFromApi } from 'src/utils/promise-utils'
 
 export class GameController {
   uiController: UIController
   constructor() {
     this.uiController = new UIController(this)
     engine.addSystem(this.positionSystem.bind(this))
+    if (store.getState().scene.explorerFavorites === undefined) {
+      void this.getFavorites()
+    }
+  }
+
+  public async getFavorites(): Promise<void> {
+    const favoritePlaces = await getFavoritesFromApi()
+    store.dispatch(loadFavoritesFromApi(favoritePlaces))
+    void this.uiController.mainHud.sceneInfo.updateFavs()
+    void this.uiController.sceneCard.updateFavs()
   }
 
   positionSystem(): void {
@@ -36,7 +50,6 @@ export class GameController {
   }
 
   changeParcel(): void {
-    console.log(store.getState().scene.explorerPlayerPosition)
     void this.uiController.mainHud.sceneInfo.updateCoords()
   }
 }

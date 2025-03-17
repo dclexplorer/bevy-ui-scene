@@ -12,7 +12,8 @@ export enum SCENE_INFO_ACTION {
   GET_EVENTS_FROM_API,
   GET_PHOTOS_FROM_API,
   GET_PLACE_FROM_API,
-  SAVE_PLAYER_POSITION
+  SAVE_PLAYER_POSITION,
+  GET_FAVS_FROM_API
 }
 
 export type GetEvents = SceneActionId & {
@@ -27,12 +28,21 @@ export type GetPlace = SceneActionId & {
   type: SCENE_INFO_ACTION.GET_PLACE_FROM_API
   payload: PlaceFromApi
 }
+export type GetFavorites = SceneActionId & {
+  type: SCENE_INFO_ACTION.GET_FAVS_FROM_API
+  payload: PlaceFromApi[]
+}
 export type SavePlayerPosition = SceneActionId & {
   type: SCENE_INFO_ACTION.SAVE_PLAYER_POSITION
   payload: Vector3
 }
 
-export type SceneActions = GetEvents | GetPlace | GetPhotos | SavePlayerPosition
+export type SceneActions =
+  | GetEvents
+  | GetPlace
+  | GetPhotos
+  | SavePlayerPosition
+  | GetFavorites
 
 export const loadEventsFromApi = (events: EventFromApi[]): GetEvents => ({
   __reducer: SCENE_INFO_STORE_ID,
@@ -50,6 +60,14 @@ export const loadPhotosFromApi = (photos: PhotoFromApi[]): GetPhotos => ({
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_PHOTOS_FROM_API,
   payload: photos
+})
+
+export const loadFavoritesFromApi = (
+  favorites: PlaceFromApi[]
+): GetFavorites => ({
+  __reducer: SCENE_INFO_STORE_ID,
+  type: SCENE_INFO_ACTION.GET_FAVS_FROM_API,
+  payload: favorites
 })
 
 export const savePlayerPosition = (position: Vector3): SavePlayerPosition => ({

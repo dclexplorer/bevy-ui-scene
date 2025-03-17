@@ -13,11 +13,13 @@ export type SceneState = {
   explorerPlace: PlaceFromApi
   explorerPhotos: PhotoFromApi[]
   explorerPlayerPosition: Vector3 | undefined
+  explorerFavorites: PlaceFromApi[] | undefined
 }
 
 export const sceneInitialState: SceneState = {
   explorerEvents: [],
   explorerPlace: EMPTY_PLACE,
   explorerPhotos: [],
-  explorerPlayerPosition: undefined
+  explorerPlayerPosition: undefined,
+  explorerFavorites: undefined
 }

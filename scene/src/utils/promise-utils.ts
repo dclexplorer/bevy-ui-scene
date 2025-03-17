@@ -189,3 +189,14 @@ export async function updateFavoriteStatus(
     throw new Error('Failed to update favorite status')
   }
 }
+
+export async function getFavoritesFromApi(): Promise<PlaceFromApi[]> {
+  const responseFavs: KernelFetchRespose = await BevyApi.kernelFetch({
+    url: `https://places.decentraland.org/api/places?only_favorites=true&with_realms_detail=true`
+  })
+  if (!responseFavs.ok) {
+    throw new Error(`HTTP error! Status: ${responseFavs.status}`)
+  }
+  const favs = JSON.parse(responseFavs.body)
+  return favs.data
+}

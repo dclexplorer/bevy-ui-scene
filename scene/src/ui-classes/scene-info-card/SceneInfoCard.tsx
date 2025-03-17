@@ -48,6 +48,8 @@ import {
 import type { PhotoFromApi } from '../photos/Photos.types'
 
 export default class SceneInfoCard {
+  private place: PlaceFromApi = store.getState().scene.explorerPlace
+  public favoritesList: PlaceFromApi[] = []
   private sceneCoords: Vector3 | undefined
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
@@ -93,27 +95,45 @@ export default class SceneInfoCard {
     if (this.sceneCoords === undefined) {
       console.error('Scene coords are undefined')
     } else {
-      const place: PlaceFromApi = await fetchPlaceId(
-        this.sceneCoords.x,
-        this.sceneCoords.z
+      this.place = await fetchPlaceId(this.sceneCoords.x, this.sceneCoords.z)
+      const photosQuantityInPlace: number = await fetchPhotosQuantity(
+        this.place.id
       )
-      const photosQuantityInPlace: number = await fetchPhotosQuantity(place.id)
       const photosArray: PhotoFromApi[] = await fetchPhotos(
-        place.id,
+        this.place.id,
         photosQuantityInPlace
       )
-      const eventsArray: EventFromApi[] = await fetchEvents(place.positions)
+      const eventsArray: EventFromApi[] = await fetchEvents(
+        this.place.positions
+      )
 
       store.dispatch(loadEventsFromApi(eventsArray))
       store.dispatch(loadPhotosFromApi(photosArray))
-      store.dispatch(loadPlaceFromApi(place))
+      store.dispatch(loadPlaceFromApi(this.place))
 
-      console.log('Is Favorite: ', place.user_favorite)
-      this.isFav = place.user_favorite
-      this.isLiked = place.user_like
-      this.isDisliked = place.user_dislike
+      this.favoritesList = store.getState().scene.explorerFavorites ?? []
+      const found = this.favoritesList.find((item) => item.id === this.place.id)
+      this.isFav = found?.user_favorite ?? false
+      this.isLiked = found?.user_like ?? false
+      this.isDisliked = found?.user_dislike ?? false
       this.updateIcons()
     }
+  }
+
+  async updateFavs(): Promise<void> {
+    const favs: PlaceFromApi[] = store.getState().scene.explorerFavorites ?? []
+    const found = favs.find((item) => item.id === this.place.id)
+    if (found?.user_favorite === true) {
+      this.isFav = true
+    } else {
+      this.isFav = false
+    }
+    this.updateIcons()
+  }
+
+  async setFav(arg: boolean): Promise<void> {
+    await updateFavoriteStatus(this.place.id, arg)
+    await this.uiController.gameController.getFavorites()
   }
 
   async show(): Promise<void> {
@@ -150,37 +170,6 @@ export default class SceneInfoCard {
     } else {
       this.dislikeIcon.spriteName = 'Dislike'
     }
-  }
-
-  async toggleFav(): Promise<void> {
-    // There are some extra lines for avoid eslint issues (maybe I've got a bad config)
-
-    const sceneId: string = store.getState().scene.explorerPlace.id
-    const userFavorite: boolean =
-      store.getState().scene.explorerPlace.user_favorite
-    const arg: boolean = !userFavorite
-    console.log({ arg })
-    const favData = await updateFavoriteStatus(sceneId, arg)
-    const favDataOk: boolean = favData.ok
-    if (favDataOk) {
-      await this.updateSceneInfo()
-    }
-  }
-
-  setLike(arg: boolean): void {
-    if (arg) {
-      this.isDisliked = false
-    }
-    this.isLiked = arg
-    this.updateIcons()
-  }
-
-  setDislike(arg: boolean): void {
-    if (arg) {
-      this.isLiked = false
-    }
-    this.isDisliked = arg
-    this.updateIcons()
   }
 
   setTab(tab: 'overview' | 'photos' | 'events'): void {
@@ -573,7 +562,7 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
-              this.setLike(!this.isLiked)
+              // this.setLike(!this.isLiked)
             }}
           />
           <ButtonIcon
@@ -592,7 +581,7 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
-              this.setDislike(!this.isDisliked)
+              // this.setDislike(!this.isDisliked)
             }}
           />
           <ButtonIcon
@@ -611,7 +600,7 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
-              void this.toggleFav()
+              void this.setFav(!this.isFav)
             }}
           />
           <ButtonIcon

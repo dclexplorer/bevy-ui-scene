@@ -1,22 +1,23 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import type { Color4, Vector3 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
+import { store } from 'src/state/store'
+import type { PlaceFromApi } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { ButtonIcon } from '../../../components/button-icon'
 import Canvas from '../../../components/canvas/Canvas'
 import { type UIController } from '../../../controllers/ui.controller'
 import {
-  UNSELECTED_TEXT_WHITE,
-  LEFT_PANEL_WIDTH_FACTOR,
-  LEFT_PANEL_MIN_WIDTH,
-  ALPHA_BLACK_PANEL,
-  SELECTED_BUTTON_COLOR,
   ALMOST_WHITE,
-  ROUNDED_TEXTURE_BACKGROUND
+  ALPHA_BLACK_PANEL,
+  LEFT_PANEL_MIN_WIDTH,
+  LEFT_PANEL_WIDTH_FACTOR,
+  ROUNDED_TEXTURE_BACKGROUND,
+  SELECTED_BUTTON_COLOR,
+  UNSELECTED_TEXT_WHITE
 } from '../../../utils/constants'
-import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { type AtlasIcon } from '../../../utils/definitions'
-import { store } from 'src/state/store'
-import type { PlaceFromApi } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
+import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
+import { updateFavoriteStatus } from 'src/utils/promise-utils'
 
 export default class SceneInfo {
   private readonly uiController: UIController
@@ -35,6 +36,8 @@ export default class SceneInfo {
     atlasName: 'toggles',
     spriteName: 'HeartOnOutlined'
   }
+
+  public favText: string = ''
 
   public expandIcon: AtlasIcon = {
     atlasName: 'icons',
@@ -78,7 +81,7 @@ export default class SceneInfo {
   public totalTextureCountValue: number = 0
   public totalTextureMemoryValue: number = 0
   public totalEntitiesValue: number = 0
-  public flag: string | undefined
+  public flagIcon: string | undefined
   private flagHint: string = 'This scene was rated as an adult scene.'
   private isFlagHintVisible: boolean = false
   private warningHint: string =
@@ -98,10 +101,10 @@ export default class SceneInfo {
     this.uiController = uiController
   }
 
-  updateContent(): void {
-    this.setFlag(store.getState().scene.explorerPlace.content_rating)
-    this.setFav(store.getState().scene.explorerPlace.user_favorite)
-  }
+  // updateContent(): void {
+  //   this.setFlag(store.getState().scene.explorerPlace.content_rating)
+  //   this.setFav(store.getState().scene.explorerPlace.user_favorite)
+  // }
 
   async updateCoords(): Promise<void> {
     this.sceneCoords = store.getState().scene.explorerPlayerPosition
@@ -109,7 +112,22 @@ export default class SceneInfo {
       await this.uiController.sceneCard.setCoords(this.sceneCoords)
       const place: PlaceFromApi = store.getState().scene.explorerPlace
       this.sceneName = place.title
+      this.setFlag(place.content_rating)
+      await this.updateFavs()
     }
+  }
+
+  async updateFavs(): Promise<void> {
+    const place: PlaceFromApi = store.getState().scene.explorerPlace
+    const favs: PlaceFromApi[] = store.getState().scene.explorerFavorites ?? []
+    const found = favs.find((item) => item.id === place.id)
+    if (found?.user_favorite === true) {
+      console.log('scene title: ', found.title)
+      this.isFav = true
+    } else {
+      this.isFav = false
+    }
+    this.updateIcons()
   }
 
   setWarning(status: boolean, message: string): void {
@@ -118,17 +136,27 @@ export default class SceneInfo {
   }
 
   setFlag(arg: string | undefined): void {
-    this.flag = arg
     switch (arg) {
-      case 'adult':
-        this.flagHint = 'This scene was rated as an adult scene.'
+      case 'A':
+        this.flagHint = 'This scene was rated as an adult scene.  +18'
+        this.flagIcon = 'adult'
         break
-      case 'restricted':
+      // RP is for Rating Pending  ?
+      // case 'RP':
+      //   this.flagHint = 'This scene was rated as a restricted scene.'
+      //   this.flagIcon = 'restricted'
+      //   break
+      case 'R':
         this.flagHint = 'This scene was rated as a restricted scene.'
+        this.flagIcon = 'restricted'
         break
-      case 'teen':
-        this.flagHint = 'This scene was rated as a teen scene.'
+      case 'T':
+        this.flagHint = 'This scene was rated as a teen scene. +13'
+        this.flagIcon = 'teen'
         break
+      default:
+        this.flagHint = ''
+        this.flagIcon = undefined
     }
   }
 
@@ -193,8 +221,10 @@ export default class SceneInfo {
   updateIcons(): void {
     if (this.isFav) {
       this.favIcon.spriteName = 'HeartOnOutlined'
+      this.favText = 'Unmark as Favourite'
     } else {
       this.favIcon.spriteName = 'HeartOffOutlined'
+      this.favText = 'Mark as Favourite'
     }
     if (this.isExpanded) {
       this.expandIcon.spriteName = 'UpArrow'
@@ -208,16 +238,16 @@ export default class SceneInfo {
     }
   }
 
-  setFav(arg: boolean): void {
-    this.isFav = arg
-    this.updateIcons()
+  async setFav(arg: boolean): Promise<void> {
+    await updateFavoriteStatus(store.getState().scene.explorerPlace.id, arg)
+    await this.uiController.gameController.getFavorites()
   }
 
   setMenuOpen(arg: boolean): void {
     this.isMenuOpen = arg
   }
 
-  setExpanded(arg: boolean): void {
+  async setExpanded(arg: boolean): Promise<void> {
     this.isExpanded = arg
     this.updateIcons()
   }
@@ -290,7 +320,7 @@ export default class SceneInfo {
           >
             <ButtonIcon
               onMouseDown={() => {
-                this.setExpanded(!this.isExpanded)
+                void this.setExpanded(!this.isExpanded)
                 this.setLoading(!this.isExpanded)
               }}
               onMouseEnter={() => {
@@ -398,12 +428,15 @@ export default class SceneInfo {
 
                 <ButtonIcon
                   uiTransform={{
-                    display: this.flag !== undefined ? 'flex' : 'none',
+                    display: this.flagIcon !== undefined ? 'flex' : 'none',
                     width: this.fontSize * 1.2,
                     height: this.fontSize * 1.2,
                     margin: { left: this.fontSize * 0.5 }
                   }}
-                  icon={{ atlasName: 'toggles', spriteName: this.flag ?? '' }}
+                  icon={{
+                    atlasName: 'toggles',
+                    spriteName: this.flagIcon ?? ''
+                  }}
                   iconSize={this.fontSize}
                   onMouseEnter={() => {
                     this.isFlagHintVisible = true
@@ -736,7 +769,7 @@ export default class SceneInfo {
               uiTransform={{ width: '100%', height: 1 }}
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
-            <UiEntity
+            {/* <UiEntity
               uiTransform={{
                 width: '100%',
                 height: 'auto',
@@ -774,7 +807,7 @@ export default class SceneInfo {
             <UiEntity
               uiTransform={{ width: '100%', height: 1 }}
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
+            /> */}
             <UiEntity
               uiTransform={{
                 width: '100%',
@@ -784,7 +817,7 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                this.setFav(!this.isFav)
+                void this.setFav(!this.isFav)
               }}
               onMouseEnter={() => {
                 this.setFavLabelColor = ALMOST_WHITE
@@ -805,7 +838,7 @@ export default class SceneInfo {
                 }}
               />
               <Label
-                value={this.isFav ? 'Unmark as Favourite' : 'Mark as Favourite'}
+                value={this.favText}
                 fontSize={this.fontSize * 0.8}
                 color={this.setFavLabelColor}
               />
