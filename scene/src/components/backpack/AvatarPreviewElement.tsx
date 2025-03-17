@@ -17,6 +17,7 @@ import {
   UiScrollResult,
   UiTransform
 } from '@dcl/sdk/ecs'
+import Icon from '../icon/Icon'
 
 const ROTATION_FACTOR = 0.5
 const state = {
@@ -98,13 +99,80 @@ export function AvatarPreviewElement(): ReactElement {
                 height: 10000 * canvasScaleRatio,
                 width: '100%'
               }}
-              uiText={{
-                value: '1'
-              }}
             ></UiEntity>
           </UiEntity>
         </UiEntity>
       )}
+      <AvatarPreviewInstructions />
+    </UiEntity>
+  )
+}
+
+function AvatarPreviewInstructions(): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+
+  return (
+    <UiEntity
+      uiTransform={{
+        position: { top: '95%', left: '5%' },
+        flexDirection: 'column'
+      }}
+    >
+      <UiEntity
+        uiTransform={{
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          alignItems: 'flex-end'
+        }}
+      >
+        <Icon
+          icon={{ atlasName: 'icons', spriteName: 'LeftClick' }}
+          iconSize={canvasScaleRatio * 26}
+          uiTransform={{
+            alignSelf: 'flex-start',
+            justifyContent: 'center',
+            position: { top: canvasScaleRatio * 13 }
+          }}
+        />
+        <UiEntity
+          uiText={{
+            value: 'Drag avatar to rotate',
+            fontSize: canvasScaleRatio * 26
+          }}
+          uiTransform={{
+            alignSelf: 'flex-start',
+            justifyContent: 'center',
+            position: { top: 0 }
+          }}
+        />
+      </UiEntity>
+      <UiEntity
+        uiTransform={{
+          flexDirection: 'row',
+          justifyContent: 'flex-start'
+        }}
+      >
+        <Icon
+          icon={{ atlasName: 'icons', spriteName: 'Scroll' }}
+          iconSize={canvasScaleRatio * 26}
+          uiTransform={{
+            alignSelf: 'flex-start',
+            justifyContent: 'center',
+            position: { top: canvasScaleRatio * 13 }
+          }}
+        />
+        <UiEntity
+          uiText={{
+            value: 'Scroll to zoom in/out',
+            fontSize: canvasScaleRatio * 26
+          }}
+          uiTransform={{
+            alignSelf: 'flex-start',
+            justifyContent: 'center',
+            position: { top: 0 }
+          }}
+        />
+      </UiEntity>
     </UiEntity>
   )
 }
