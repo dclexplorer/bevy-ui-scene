@@ -17,6 +17,7 @@ export type BackpackPageState = {
   totalPages: number
   equippedWearables: URNWithoutTokenId[]
   outfitSetup: OutfitSetup
+  forceRender: WearableCategory[]
   selectedURN: URNWithoutTokenId | null
   cacheKey: string
 }
@@ -30,5 +31,6 @@ export const backpackInitialState: BackpackPageState = {
   equippedWearables: getWearablesFromOutfit(EMPTY_OUTFIT),
   outfitSetup: EMPTY_OUTFIT,
   selectedURN: null,
+  forceRender: [],
   cacheKey: ''
 }

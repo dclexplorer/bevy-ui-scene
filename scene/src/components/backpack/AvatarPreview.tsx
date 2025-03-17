@@ -90,7 +90,8 @@ export const setAvatarPreviewCameraToWearableCategory = (
 
 export function updateAvatarPreview(
   wearables: URNWithoutTokenId[],
-  avatarBase: PBAvatarBase
+  avatarBase: PBAvatarBase,
+  forceRender: WearableCategory[] = []
 ): void {
   const mutableAvatarShape = AvatarShape.getMutable(avatarPreview.avatarEntity)
   mutableAvatarShape.wearables = getWearablesWithTokenId(wearables)
@@ -98,6 +99,7 @@ export function updateAvatarPreview(
   mutableAvatarShape.hairColor = avatarBase.hairColor
   mutableAvatarShape.eyeColor = avatarBase.eyesColor
   mutableAvatarShape.skinColor = avatarBase.skinColor
+  mutableAvatarShape.forceRender = forceRender
 }
 
 export function createAvatarPreview(): void {

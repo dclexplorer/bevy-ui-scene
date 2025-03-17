@@ -58,7 +58,8 @@ export const COLOR = {
   NAV_BUTTON_INACTIVE_BACKGROUND: Color4.fromHexString('#FFFFFF'),
   NAV_BUTTON_INACTIVE_COLOR: Color4.fromHexString('#000000'),
   SMALL_TAG_BACKGROUND: Color4.fromHexString('#00000066'),
-  TEXT_COLOR: Color4.fromHexString('#2B272AFF')
+  TEXT_COLOR: Color4.fromHexString('#2B272AFF'),
+  INACTIVE: Color4.fromHexString('#d8d8d8')
 }
 export const RARITY_COLORS: Record<RarityName, Color4> = {
   base: Color4.fromHexString('#a09ba8'),

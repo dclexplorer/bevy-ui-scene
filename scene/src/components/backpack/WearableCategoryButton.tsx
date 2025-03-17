@@ -13,6 +13,9 @@ import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { catalystWearableMap } from '../../utils/wearables-promise-utils'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
+import { store } from '../../state/store'
+import { switchForceRenderCategory } from '../../state/backpack/actions'
+import { updateAvatarPreview } from './AvatarPreview'
 
 type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps
@@ -20,13 +23,17 @@ type WearableCategoryButtonProps = {
   active?: boolean
   onClick?: () => void
   selectedURN: URNWithoutTokenId | null
+  forceRender?: boolean
+  showForceRender?: boolean
 }
 export function WearableCategoryButton({
   category,
   uiTransform,
   active,
   onClick = noop,
-  selectedURN
+  selectedURN,
+  forceRender = false,
+  showForceRender = true
 }: WearableCategoryButtonProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const categoryIcon: AtlasIcon = {
@@ -109,7 +116,53 @@ export function WearableCategoryButton({
         uiBackground={{
           ...textureProps
         }}
-      />
+      >
+        {(forceRender || showForceRender) && (
+          <UiEntity
+            uiTransform={{
+              positionType: 'absolute',
+              height: '40%',
+              width: '40%',
+              position: {
+                right: '-14%',
+                bottom: '-14%'
+              }
+            }}
+            uiBackground={{
+              ...ROUNDED_TEXTURE_BACKGROUND,
+              color: Color4.fromHexString('#4E0E78')
+            }}
+            onMouseDown={() => {
+              store.dispatch(switchForceRenderCategory(category))
+              updateAvatarPreview(
+                store.getState().backpack.equippedWearables,
+                store.getState().backpack.outfitSetup.base,
+                store.getState().backpack.forceRender
+              )
+            }}
+          >
+            <UiEntity
+              uiTransform={{
+                width: '90%',
+                height: '90%',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+              uiBackground={{
+                ...ROUNDED_TEXTURE_BACKGROUND,
+                color: Color4.White()
+              }}
+            >
+              <Icon
+                icon={{ atlasName: 'icons', spriteName: 'PreviewIcon' }}
+                iconSize={32 * canvasScaleRatio}
+                iconColor={forceRender ? Color4.Green() : COLOR.INACTIVE}
+                uiTransform={{ flexShrink: 0 }}
+              />
+            </UiEntity>
+          </UiEntity>
+        )}
+      </UiEntity>
     </UiEntity>
   )
 }

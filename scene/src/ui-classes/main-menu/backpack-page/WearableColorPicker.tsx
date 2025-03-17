@@ -81,7 +81,8 @@ function updateAvatar(payload: BackpackUpdateAvatarBasePayload): void {
   store.dispatch(updateAvatarBase(payload))
   updateAvatarPreview(
     store.getState().backpack.equippedWearables,
-    store.getState().backpack.outfitSetup.base
+    store.getState().backpack.outfitSetup.base,
+    store.getState().backpack.forceRender
   )
 }
 

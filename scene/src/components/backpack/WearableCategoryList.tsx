@@ -42,6 +42,7 @@ export function WearableCategoryList({
                 ? outfitSetup?.base?.bodyShapeUrn
                 : outfitSetup.wearables[category]
             }
+            showForceRender={forceRenderHasEffect(category)}
           />
         ))}
       </UiEntity>
@@ -54,11 +55,20 @@ export function WearableCategoryList({
               onSelectCategory(activeCategory === category ? null : category)
             }}
             selectedURN={outfitSetup.wearables[category]}
+            showForceRender={forceRenderHasEffect(category)}
           />
         ))}
       </UiEntity>
     </UiEntity>
   )
+}
+
+function forceRenderHasEffect(category: WearableCategory): boolean {
+  if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) return false
+  // TODO add more cases:
+  //  - if no other wearable is hidding this category
+  //  - ...
+  return true
 }
 
 function categoryIsBody(category: WearableCategory): boolean {

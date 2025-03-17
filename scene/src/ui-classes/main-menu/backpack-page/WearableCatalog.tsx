@@ -201,7 +201,8 @@ async function resetOutfit(): Promise<void> {
 
   updateAvatarPreview(
     store.getState().backpack.equippedWearables,
-    store.getState().backpack.outfitSetup.base
+    store.getState().backpack.outfitSetup.base,
+    store.getState().backpack.forceRender
   )
 }
 
@@ -263,7 +264,8 @@ async function updateEquippedWearable(
 
   updateAvatarPreview(
     store.getState().backpack.equippedWearables,
-    store.getState().backpack.outfitSetup.base
+    store.getState().backpack.outfitSetup.base,
+    store.getState().backpack.forceRender
   )
   state.changed = true
 }

@@ -64,6 +64,13 @@ export function reducer(
         ...backpackPageState,
         cacheKey: Date.now().toString()
       }
+    case BACKPACK_ACTION.SWITCH_FORCE_RENDER_CATEGORY:
+      return {
+        ...backpackPageState,
+        forceRender: backpackPageState.forceRender.includes(action.payload)
+          ? backpackPageState.forceRender.filter((i) => i !== action.payload)
+          : [...backpackPageState.forceRender, action.payload]
+      }
     default:
       return backpackPageState
   }
