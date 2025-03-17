@@ -45,9 +45,11 @@ type BackpackPageState = {
     base: PBAvatarBase
     equippedWearables: URNWithoutTokenId[]
   } | null
+  changed: boolean
 }
 const state: BackpackPageState = {
-  savedResetOutfit: null
+  savedResetOutfit: null,
+  changed: false
 }
 
 export function WearablesCatalog(): ReactElement {
@@ -151,22 +153,24 @@ export function WearablesCatalog(): ReactElement {
         pages={backpackState.totalPages}
         currentPage={backpackState.currentPage}
       />
-      <Button
-        value={'RESET OUTFIT'}
-        uiTransform={{
-          positionType: 'absolute',
-          height: '5%',
-          padding: { left: '1%', right: '2%' },
-          position: { bottom: '1%', left: '-54%' }
-        }}
-        uiBackground={{
-          ...ROUNDED_TEXTURE_BACKGROUND,
-          color: COLOR.SMALL_TAG_BACKGROUND
-        }}
-        onMouseDown={() => {
-          resetOutfit().catch(console.error)
-        }}
-      />
+      {state.changed && (
+        <Button
+          value={'RESET OUTFIT'}
+          uiTransform={{
+            positionType: 'absolute',
+            height: '5%',
+            padding: { left: '1%', right: '2%' },
+            position: { bottom: '1%', left: '-54%' }
+          }}
+          uiBackground={{
+            ...ROUNDED_TEXTURE_BACKGROUND,
+            color: COLOR.SMALL_TAG_BACKGROUND
+          }}
+          onMouseDown={() => {
+            resetOutfit().catch(console.error)
+          }}
+        />
+      )}
     </UiEntity>
   )
 }
@@ -210,6 +214,7 @@ export function saveResetOutfit(): void {
       JSON.stringify(store.getState().backpack.equippedWearables)
     )
   }
+  state.changed = false
   console.log('saveResetOutfit', state.savedResetOutfit)
 }
 
@@ -260,6 +265,7 @@ async function updateEquippedWearable(
     store.getState().backpack.equippedWearables,
     store.getState().backpack.outfitSetup.base
   )
+  state.changed = true
 }
 
 export async function updatePage(): Promise<void> {
