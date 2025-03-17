@@ -42,7 +42,7 @@ type PerspectiveMode = {
 export const setAvatarPreviewZoomFactor = (zoomFactor: number): void => {
   const mode = TextureCamera.getMutable(avatarPreview.cameraEntity)
     ?.mode as PerspectiveMode
-  mode.perspective.fieldOfView = zoomFactor
+  mode.perspective.fieldOfView = zoomFactor * 1.5 + 0.3
 }
 
 export const getAvatarPreviewQuaternion = (): Quaternion => {
