@@ -7,7 +7,7 @@ import {
 import { type OutfitSetup } from '../../utils/wearables-definitions'
 import { store } from '../../state/store'
 import { catalystWearableMap } from '../../utils/wearables-promise-utils'
-import { type URNWithoutTokenId } from '../../utils/definitions'
+import { forceRenderHasEffect } from '../../service/force-render-service'
 
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null
@@ -29,6 +29,7 @@ export function WearableCategoryList({
     },
     [[], []]
   )
+  const backpackState = store.getState().backpack
 
   return (
     <UiEntity>
@@ -47,7 +48,9 @@ export function WearableCategoryList({
             }
             showForceRender={forceRenderHasEffect(
               category,
-              outfitSetup.wearables[category]
+              outfitSetup.wearables[category],
+              catalystWearableMap,
+              backpackState.equippedWearables
             )}
             forceRender={isCategoryInForceRender(category)}
           />
@@ -64,7 +67,9 @@ export function WearableCategoryList({
             selectedURN={outfitSetup.wearables[category]}
             showForceRender={forceRenderHasEffect(
               category,
-              outfitSetup.wearables[category]
+              outfitSetup.wearables[category],
+              catalystWearableMap,
+              backpackState.equippedWearables
             )}
             forceRender={isCategoryInForceRender(category)}
           />
@@ -77,35 +82,6 @@ export function WearableCategoryList({
 function isCategoryInForceRender(category: WearableCategory): boolean {
   return store.getState().backpack.forceRender.includes(category)
 }
-
-function forceRenderHasEffect(
-  category: WearableCategory,
-  currentWearableURN: URNWithoutTokenId | null
-): boolean {
-  // TODO unit test candidate
-  if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) return false
-  if (currentWearableURN === null) return false
-  const categoryIsHead = [
-    WEARABLE_CATEGORY_DEFINITIONS.hair.id,
-    WEARABLE_CATEGORY_DEFINITIONS.facial_hair.id,
-    WEARABLE_CATEGORY_DEFINITIONS.eyebrows.id,
-    WEARABLE_CATEGORY_DEFINITIONS.eyes.id,
-    WEARABLE_CATEGORY_DEFINITIONS.mouth.id
-  ].includes(category)
-
-  return store
-    .getState()
-    .backpack.equippedWearables.some((wearableURN: URNWithoutTokenId) => {
-      if (currentWearableURN === wearableURN) return false
-
-      return (
-        catalystWearableMap[wearableURN].data.hides.includes(category) ||
-        (categoryIsHead &&
-          catalystWearableMap[wearableURN].data.hides.includes('head'))
-      )
-    })
-}
-
 function categoryIsBody(category: WearableCategory): boolean {
   return category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
 }
