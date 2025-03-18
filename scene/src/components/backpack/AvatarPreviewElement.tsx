@@ -57,7 +57,6 @@ export function AvatarPreviewElement(): ReactElement {
             height: '140%'
           }}
           uiBackground={{
-            // color:Color4.Red(),
             videoTexture: { videoPlayerEntity: getAvatarCamera() }
           }}
         >

@@ -294,7 +294,7 @@ export default class MainMenu {
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: 3 // TODO depends on canvas size
+              height: 8 * canvasScaleRatio
             }}
             uiBackground={{
               texture: {

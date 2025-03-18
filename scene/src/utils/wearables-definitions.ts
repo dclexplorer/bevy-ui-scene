@@ -110,7 +110,7 @@ export type CatalogWearableElement = {
   individualData: WearableIndividualData[]
   name: string
   rarity: WearableRarity
-  type: 'on-chain' | 'off-chain' | 'base' // TODO review possible values
+  type: 'on-chain' | 'off-chain' | 'base'
   urn: URNWithoutTokenId
 }
 export type CatalystWearableMap = {

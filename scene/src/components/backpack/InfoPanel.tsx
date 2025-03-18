@@ -21,7 +21,6 @@ export type InfoPanelProps = {
   uiTransform?: UiTransformProps
 }
 
-// TODO Add hide information
 export function InfoPanel({
   canvasScaleRatio,
   wearable,
@@ -178,9 +177,8 @@ export function InfoPanel({
                   margin: { top: '5%' }
                 }}
               >
-                {wearable?.data.hides.map((hiddenCategory, index) => {
+                {wearable?.data.hides.map((hiddenCategory) => {
                   return (
-                    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
                     <UiEntity
                       uiBackground={{
                         ...ROUNDED_TEXTURE_BACKGROUND,
