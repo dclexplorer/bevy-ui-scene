@@ -1,0 +1,958 @@
+{
+  "urn:decentraland:off-chain:base-avatars:eyebrows_00": {
+    "id": "urn:decentraland:off-chain:base-avatars:eyebrows_00",
+    "name": "eyebrows_00",
+    "description": "",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafkreievkdgpgyvxtruhp76hho3ob5uyyqtnubqwnk2fzxu4zwtbmsr32a",
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "tags": [
+        "face",
+        "eyebrows",
+        "base-wearable"
+      ],
+      "category": "eyebrows",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "M_EyeBrows_00.png",
+          "overrideReplaces": [],
+          "overrideHides": [],
+          "contents": [
+            {
+              "key": "M_EyeBrows_00.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafkreiax475w7ueo4idkzy4i2mizzmfqynipyzb2v4kp5bqncujlqnhxky"
+            }
+          ]
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "M_EyeBrows_00.png",
+          "overrideReplaces": [],
+          "overrideHides": [],
+          "contents": [
+            {
+              "key": "M_EyeBrows_00.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafkreiax475w7ueo4idkzy4i2mizzmfqynipyzb2v4kp5bqncujlqnhxky"
+            }
+          ]
+        }
+      ]
+    },
+    "i18n": [
+      {
+        "code": "en",
+        "text": "EyeBrows_00"
+      },
+      {
+        "code": "es",
+        "text": "EyeBrows_00"
+      }
+    ],
+    "createdAt": 1699288904613,
+    "updatedAt": 1699288904613
+  },
+  "urn:decentraland:ethereum:collections-v1:halloween_2020:hwn_2020_pumpkin_mouth": {
+    "id": "urn:decentraland:ethereum:collections-v1:halloween_2020:hwn_2020_pumpkin_mouth",
+    "description": "Exclusive Halloween 2020 Collection. Awarded as Treasure Hunt prize.",
+    "image": "https://peer-eu1.decentraland.org/content/contents/QmdGubQuL1NxpJ8J8K4RUqAF4HnKtKM362zebyvFmTn3Zq",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/QmcCPdqU7sgkG2gzzWjaLZjFR4pgM531nB7yczoiyuv541",
+    "collectionAddress": "0xfeb52cbf71b9adac957c6f948a6cf9980ac8c907",
+    "rarity": "epic",
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "tags": [
+        "mouth",
+        "halloween",
+        "2020",
+        "decentraland",
+        "exclusive"
+      ],
+      "category": "mouth",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "pumpkin_mouth.png",
+          "overrideReplaces": [],
+          "overrideHides": [],
+          "contents": [
+            {
+              "key": "pumpkin_mouth.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmPQ8kCuMy28bPjaU9MxN8ZrQpjH7ZkU5uWVw1b4Vfokv5"
+            },
+            {
+              "key": "pumpkin_mouth_mask.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmcwGnPw4u99U2c2ged1EPa4JdGvLP5trbxPyauDdVdEwH"
+            }
+          ]
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "pumpkin_mouth.glb",
+          "overrideReplaces": [],
+          "overrideHides": [],
+          "contents": [
+            {
+              "key": "pumpkin_mouth.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmPQ8kCuMy28bPjaU9MxN8ZrQpjH7ZkU5uWVw1b4Vfokv5"
+            },
+            {
+              "key": "pumpkin_mouth_mask.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmcwGnPw4u99U2c2ged1EPa4JdGvLP5trbxPyauDdVdEwH"
+            }
+          ]
+        }
+      ]
+    },
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Pumpkin Mouth - Halloween 2020"
+      },
+      {
+        "code": "es",
+        "text": "Boca de Calabaza - Halloween 2020"
+      }
+    ],
+    "createdAt": 1637005789439,
+    "updatedAt": 1637005789439
+  },
+  "urn:decentraland:ethereum:collections-v1:mf_sammichgamer:mf_animehair": {
+    "id": "urn:decentraland:ethereum:collections-v1:mf_sammichgamer:mf_animehair",
+    "description": "Hair inspired by anime for best fans. By Mana-fever 2020 ©",
+    "image": "https://peer-eu1.decentraland.org/content/contents/QmZL22BDTGG4RRnfhr2TUwAxC4ycFA2Y9FFD3znSqLFKAJ",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/QmcdKLpYFjoCmFaM1UuRNW6Royee62bQjERUNwGBRZK8q1",
+    "collectionAddress": "0x30d3387ff3de2a21bef7032f82d00ff7739e403c",
+    "rarity": "legendary",
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "tags": [
+        "manafever",
+        "sammichgame",
+        "sammich",
+        "game",
+        "anime",
+        "manga",
+        "color",
+        "warrior",
+        "exclusive"
+      ],
+      "category": "hair",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "M_Hair.glb",
+          "overrideReplaces": [],
+          "overrideHides": [],
+          "contents": [
+            {
+              "key": "F_Hair.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmdhhNHbYJeeHSmJeE4yZmj37BhbCAgdhs9qDSWetWVK2B"
+            },
+            {
+              "key": "M_Hair.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmdhhNHbYJeeHSmJeE4yZmj37BhbCAgdhs9qDSWetWVK2B"
+            },
+            {
+              "key": "hair_texture.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmSXMNmUaL2yFKzEgSt5zTYnhhUAye29ieFEyusSjcCm8g"
+            }
+          ]
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "F_Hair.glb",
+          "overrideReplaces": [],
+          "overrideHides": [],
+          "contents": [
+            {
+              "key": "F_Hair.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmdhhNHbYJeeHSmJeE4yZmj37BhbCAgdhs9qDSWetWVK2B"
+            },
+            {
+              "key": "M_Hair.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmdhhNHbYJeeHSmJeE4yZmj37BhbCAgdhs9qDSWetWVK2B"
+            },
+            {
+              "key": "hair_texture.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/QmSXMNmUaL2yFKzEgSt5zTYnhhUAye29ieFEyusSjcCm8g"
+            }
+          ]
+        }
+      ]
+    },
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Anime warrior hair"
+      }
+    ],
+    "createdAt": 1637005745912,
+    "updatedAt": 1637005745912
+  },
+  "urn:decentraland:matic:collections-v2:0x2596aa76d20d911b591e8c5f24a55c3c5a5d75c0:0": {
+    "id": "urn:decentraland:matic:collections-v2:0x2596aa76d20d911b591e8c5f24a55c3c5a5d75c0:0",
+    "name": "MANA Vision",
+    "description": "The best vision",
+    "collectionAddress": "0x2596aa76d20d911b591e8c5f24a55c3c5a5d75c0",
+    "rarity": "uncommon",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "MANA Vision"
+      }
+    ],
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "tags": [
+        "mana",
+        "decentraland",
+        "eyes"
+      ],
+      "category": "eyes",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/mana eyes.png",
+          "contents": [
+            {
+              "key": "male/mana eyes.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafkreieigdeaecf74nhczfucvssmag5zkho7vfr4uguure2b5spdt74dfi"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/mana eyes.png",
+          "contents": [
+            {
+              "key": "female/mana eyes.png",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafkreieigdeaecf74nhczfucvssmag5zkho7vfr4uguure2b5spdt74dfi"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        }
+      ]
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafkreieqzkja2ondbi3anmkqr3qgxue47m5bfq27kr2gdxer3dry6jw6nq",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafkreic7cwvzwixh5b6c6k766drrqwyyja6bguplho6nmlvset2efiyg2u",
+    "metrics": {
+      "triangles": 100,
+      "materials": 1,
+      "textures": 1,
+      "meshes": 1,
+      "bodies": 1,
+      "entities": 1
+    }
+  },
+  "urn:decentraland:matic:collections-v2:0x75e8860281572b0f401c8821140123874d37ccbf:0": {
+    "id": "urn:decentraland:matic:collections-v2:0x75e8860281572b0f401c8821140123874d37ccbf:0",
+    "name": "Galactic Gauntlets",
+    "description": "Big? Yes. But who needs finesse when you wield the cosmos?",
+    "collectionAddress": "0x75e8860281572b0f401c8821140123874d37ccbf",
+    "rarity": "exotic",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Galactic Gauntlets"
+      }
+    ],
+    "data": {
+      "replaces": [],
+      "hides": [
+        "hands"
+      ],
+      "removesDefaultHiding": [],
+      "tags": [
+        "Game",
+        "Galatic",
+        "Gauntlet",
+        "Meteor",
+        "Strong",
+        "Punch",
+        "Gloves",
+        "Hand",
+        "Galaxy",
+        "Planet",
+        "DCLMF24"
+      ],
+      "category": "hands_wear",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/Space_Arms.glb",
+          "contents": [
+            {
+              "key": "male/Space_Arms.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeibqmywb57bwg4pjt7v7cpp4t4sntas57jo3x2e6gmzrvmswwonlb4"
+            }
+          ],
+          "overrideHides": [
+            "hands"
+          ],
+          "overrideReplaces": []
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/Space_Arms.glb",
+          "contents": [
+            {
+              "key": "female/Space_Arms.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeibqmywb57bwg4pjt7v7cpp4t4sntas57jo3x2e6gmzrvmswwonlb4"
+            }
+          ],
+          "overrideHides": [
+            "hands"
+          ],
+          "overrideReplaces": []
+        }
+      ],
+      "blockVrmExport": false
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafybeihbwf26qiwl2kknl6l2w4ztcahst5mbzkicxjy7pu7kc2xnxhksyi",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafybeib3caqk363eozegkg5kdnu76degpus4hi52okge6sgwkrkru2o6ui",
+    "metrics": {
+      "triangles": 1840,
+      "materials": 1,
+      "meshes": 3,
+      "textures": 2,
+      "bodies": 3,
+      "entities": 1
+    }
+  },
+  "urn:decentraland:matic:collections-v2:0x956b8d57066fc3d2562de22efd63624a1ba56e35:14": {
+    "id": "urn:decentraland:matic:collections-v2:0x956b8d57066fc3d2562de22efd63624a1ba56e35:14",
+    "name": "MVMF22 Indigo Cyber Coat",
+    "description": "",
+    "collectionAddress": "0x956b8d57066fc3d2562de22efd63624a1ba56e35",
+    "rarity": "uncommon",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "MVMF22 Indigo Cyber Coat"
+      }
+    ],
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "tags": [
+        "MVMF22"
+      ],
+      "category": "upper_body",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/MF2022_IndigoCyberCoat_female.glb",
+          "contents": [
+            {
+              "key": "female/MF2022_IndigoCyberCoat_female.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeibexktkfxhavrk4bcb5btf4enwljzmwhogff5w7nnfoo7mqqmgkou"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/MF2022_IndigoCyberCoat_male.glb",
+          "contents": [
+            {
+              "key": "male/MF2022_IndigoCyberCoat_male.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeifg7qa7u7bdzti2tgzfj3lvksxctyildnxkwkgfyg3i3blz2f4h24"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        }
+      ]
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafybeihpntiproe33ry62ndsigico3lyg65iv6vyejmlwcgbkhl47kmef4",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafybeih3u3f4pqhuifh7bx744tomrow44qx64rr26hnthzliuvr7hgxssy",
+    "metrics": {
+      "triangles": 2358,
+      "materials": 3,
+      "meshes": 5,
+      "textures": 2,
+      "bodies": 5,
+      "entities": 1
+    }
+  },
+  "urn:decentraland:matic:collections-v2:0x9941d02def105cfeca86739ec2da0be59d90c013:3": {
+    "id": "urn:decentraland:matic:collections-v2:0x9941d02def105cfeca86739ec2da0be59d90c013:3",
+    "name": "Golfcraft x COCOBAY Glasses",
+    "description": "",
+    "collectionAddress": "0x9941d02def105cfeca86739ec2da0be59d90c013",
+    "rarity": "epic",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Golfcraft x COCOBAY Glasses"
+      }
+    ],
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "removesDefaultHiding": [],
+      "tags": [],
+      "category": "eyewear",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/04. cocobay_glasses_X.glb",
+          "contents": [
+            {
+              "key": "male/04. cocobay_glasses_X.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeielatlgznqtrzriy2mu6xm2k3jv47msb4vcokwae67gyk75etxzz4"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/04. cocobay_glasses_X.glb",
+          "contents": [
+            {
+              "key": "female/04. cocobay_glasses_X.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeielatlgznqtrzriy2mu6xm2k3jv47msb4vcokwae67gyk75etxzz4"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        }
+      ],
+      "blockVrmExport": false
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafkreidxcnf3uhqrsa5uegoreaabwfc435xup44engz3l3w2lha45l5mz4",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafkreieywshfcolavkodzuwjtmcntg4er22egcxfe6dvxwwlslceeeqrye",
+    "metrics": {
+      "triangles": 1484,
+      "materials": 1,
+      "meshes": 3,
+      "textures": 1,
+      "bodies": 3,
+      "entities": 1
+    }
+  },
+  "urn:decentraland:matic:collections-v2:0x9941d02def105cfeca86739ec2da0be59d90c013:6": {
+    "id": "urn:decentraland:matic:collections-v2:0x9941d02def105cfeca86739ec2da0be59d90c013:6",
+    "name": "Golfcraft x COCOBAY Headphones",
+    "description": "",
+    "collectionAddress": "0x9941d02def105cfeca86739ec2da0be59d90c013",
+    "rarity": "mythic",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Golfcraft x COCOBAY Headphones"
+      }
+    ],
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "removesDefaultHiding": [],
+      "tags": [],
+      "category": "top_head",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/07. cocobay_headphones_X.glb",
+          "contents": [
+            {
+              "key": "male/07. cocobay_headphones_X.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeibsbuhzanpxv5di6srt22sbsjczgr47ulb7mnaaqois7cd2nlobka"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/07. cocobay_headphones_X.glb",
+          "contents": [
+            {
+              "key": "female/07. cocobay_headphones_X.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeibsbuhzanpxv5di6srt22sbsjczgr47ulb7mnaaqois7cd2nlobka"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        }
+      ],
+      "blockVrmExport": false
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafkreih56z5gacml2yijvbw3ggdreyheh4sjyjvge4vh4bmzr3fzequ4my",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafybeieda3zjngruexdlqihzeegerkntqqjvdfoc3x2vi7caoodberviju",
+    "metrics": {
+      "triangles": 1668,
+      "materials": 2,
+      "meshes": 4,
+      "textures": 3,
+      "bodies": 4,
+      "entities": 1
+    }
+  },
+  "urn:decentraland:matic:collections-v2:0xa42e166edac870aa5351b098ae6458d39ca0fca6:0": {
+    "id": "urn:decentraland:matic:collections-v2:0xa42e166edac870aa5351b098ae6458d39ca0fca6:0",
+    "name": "Roustan Super Space Shoes",
+    "description": "Big , bad, and outta this world! Perfect for flexing!",
+    "collectionAddress": "0xa42e166edac870aa5351b098ae6458d39ca0fca6",
+    "rarity": "exotic",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Roustan Super Space Shoes"
+      }
+    ],
+    "data": {
+      "replaces": [],
+      "hides": [
+        "feet"
+      ],
+      "removesDefaultHiding": [],
+      "tags": [
+        "roustan",
+        "exoticwearablecontest2024",
+        "big"
+      ],
+      "category": "feet",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/Shoe.glb",
+          "contents": [
+            {
+              "key": "male/Shoe.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeidi3tplpbbqwcjwhujip2dxokip5iyh6aki6mw5u53z6qryqgibbi"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/Shoe.glb",
+          "contents": [
+            {
+              "key": "female/Shoe.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeidi3tplpbbqwcjwhujip2dxokip5iyh6aki6mw5u53z6qryqgibbi"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        }
+      ],
+      "blockVrmExport": false
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafkreidnmx6ajn4pp2avvvsafpabjplzuskge6eoery7chsimg4uo3fd3i",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafybeied7v3ccc5mvoehakmwh4v6evjn6qxdjusd7rmfn7uqu4c5qjq6qm",
+    "metrics": {
+      "triangles": 1339,
+      "materials": 2,
+      "meshes": 4,
+      "textures": 1,
+      "bodies": 4,
+      "entities": 1
+    }
+  },
+  "urn:decentraland:matic:collections-v2:0xc9b29f6c8e918b54b447934758b8c65b6a865f6e:0": {
+    "id": "urn:decentraland:matic:collections-v2:0xc9b29f6c8e918b54b447934758b8c65b6a865f6e:0",
+    "name": "Cyberpunk Mask by DigiFun",
+    "description": "",
+    "collectionAddress": "0xc9b29f6c8e918b54b447934758b8c65b6a865f6e",
+    "rarity": "epic",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Cyberpunk Mask by DigiFun"
+      }
+    ],
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "tags": [],
+      "category": "mask",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/Mask_26.glb",
+          "contents": [
+            {
+              "key": "male/Mask_26.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeigc2f4jzof36cioubrtlv47qrjbbpwrrqlwk6ut2rtuhnjjutkvke"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/Mask_26.glb",
+          "contents": [
+            {
+              "key": "female/Mask_26.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeigc2f4jzof36cioubrtlv47qrjbbpwrrqlwk6ut2rtuhnjjutkvke"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        }
+      ]
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafkreigpxqtp3gnllvsbj7uh77rhi3ytmrd3oyh4n5a7lb5hkvldrlrvzu",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafybeifjjmkeyowyooi2w22esa4d2otwqagw3mi6ns2hflgdgrzgjh7hca",
+    "metrics": {
+      "triangles": 499,
+      "materials": 1,
+      "textures": 2,
+      "meshes": 1,
+      "bodies": 1,
+      "entities": 1
+    }
+  },
+  "urn:decentraland:matic:collections-v2:0xd99c0320d8d4d36a77740b13439059dbc7446835:3": {
+    "id": "urn:decentraland:matic:collections-v2:0xd99c0320d8d4d36a77740b13439059dbc7446835:3",
+    "name": "Chain Welder Trousers",
+    "description": "To good to be true",
+    "collectionAddress": "0xd99c0320d8d4d36a77740b13439059dbc7446835",
+    "rarity": "epic",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Chain Welder Trousers"
+      }
+    ],
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "tags": [
+        "dappcraft"
+      ],
+      "category": "lower_body",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/m_dapp_chain_lbody01.glb",
+          "contents": [
+            {
+              "key": "male/m_dapp_chain_lbody01.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeieeuljzq3u6oywb3umh5umbrdobnroet4qcqsikeltmtkbnzdtmxi"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/f_dapp_chain_lbody01.glb",
+          "contents": [
+            {
+              "key": "female/f_dapp_chain_lbody01.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeicdd4hg7uu5a6ivmg3zj3pmsp74wnvtcux6vtgoppei7yax7jxbwq"
+            }
+          ],
+          "overrideHides": [],
+          "overrideReplaces": []
+        }
+      ]
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafkreiemwjarv2blqqlnte4e7fqpkzlijruy5mnx2wxcpaevnht5wtbc44",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafkreih6jhxikuw3cibmohgus2a6o43uewv46hbvx33zzojlg3gfj67ski",
+    "metrics": {
+      "triangles": 884,
+      "materials": 1,
+      "textures": 2,
+      "meshes": 1,
+      "bodies": 1,
+      "entities": 1
+    }
+  },
+  "urn:decentraland:off-chain:base-avatars:BaseFemale": {
+    "id": "urn:decentraland:off-chain:base-avatars:BaseFemale",
+    "name": "Woman",
+    "description": "",
+    "thumbnail": "thumbnail.png",
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "tags": [
+        "body",
+        "male",
+        "man",
+        "base-wearable"
+      ],
+      "category": "body_shape",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "BaseFemale.glb",
+          "overrideReplaces": [],
+          "overrideHides": [],
+          "contents": [
+            "Avatar_FemaleSkinBase.png",
+            "BaseFemale.glb",
+            "F_Eyebrows_00.png",
+            "F_Eyes_00.png",
+            "F_Mouth_00.png"
+          ]
+        }
+      ]
+    },
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Woman"
+      },
+      {
+        "code": "es",
+        "text": "Mujer"
+      }
+    ],
+    "createdAt": 1699288904608,
+    "updatedAt": 1699288904608
+  },
+  "urn:decentraland:off-chain:base-avatars:BaseMale": {
+    "id": "urn:decentraland:off-chain:base-avatars:BaseMale",
+    "name": "Man",
+    "description": "",
+    "thumbnail": "thumbnail.png",
+    "data": {
+      "replaces": [],
+      "hides": [],
+      "tags": [
+        "body",
+        "male",
+        "man",
+        "base-wearable"
+      ],
+      "category": "body_shape",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "BaseMale.glb",
+          "overrideReplaces": [],
+          "overrideHides": [],
+          "contents": [
+            "Avatar_MaleSkinBase.png",
+            "BaseMale.glb",
+            "M_EyeBrows_00.png",
+            "M_Eyes_00.png",
+            "M_Mouth_00.png"
+          ]
+        }
+      ]
+    },
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Man"
+      },
+      {
+        "code": "es",
+        "text": "Hombre"
+      }
+    ],
+    "createdAt": 1699288904609,
+    "updatedAt": 1699288904609
+  },
+  "urn:decentraland:matic:collections-v2:0x07d03ca2c27f29ec3c4cf3afad857c5af13f61cd:0": {
+    "id": "urn:decentraland:matic:collections-v2:0x07d03ca2c27f29ec3c4cf3afad857c5af13f61cd:0",
+    "name": "WZ Venetian Red Cap",
+    "description": "Buongiorno!",
+    "collectionAddress": "0x07d03ca2c27f29ec3c4cf3afad857c5af13f61cd",
+    "rarity": "epic",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "WZ Venetian Red Cap"
+      }
+    ],
+    "data": {
+      "replaces": [
+        "hat"
+      ],
+      "hides": [
+        "hair"
+      ],
+      "tags": [
+        "Wonderzone"
+      ],
+      "category": "hat",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/venetianCapRedOptimized_GEO.glb",
+          "contents": [
+            {
+              "key": "male/venetianCapRedOptimized_GEO.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeihmmj3wiwbao774cy23v4iq2cf4hyg72qpubo42febz64u2rk52mq"
+            }
+          ],
+          "overrideHides": [
+            "hair"
+          ],
+          "overrideReplaces": [
+            "hat"
+          ]
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/venetianCapRedOptimized_GEO.glb",
+          "contents": [
+            {
+              "key": "female/venetianCapRedOptimized_GEO.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeihmmj3wiwbao774cy23v4iq2cf4hyg72qpubo42febz64u2rk52mq"
+            }
+          ],
+          "overrideHides": [
+            "hair"
+          ],
+          "overrideReplaces": [
+            "hat"
+          ]
+        }
+      ]
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafkreigpn55zjzhdkiugc4yszlkdeste74bm7niq4uhkeipigu7k4u6fzi",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafybeiarqrqqaa2uhxc37borlqzlxgpgafw5buzgcj4bzwpxm272vbf73m",
+    "metrics": {
+      "triangles": 2080,
+      "materials": 3,
+      "meshes": 5,
+      "textures": 2,
+      "bodies": 5,
+      "entities": 1
+    }
+  },
+  "urn:decentraland:matic:collections-v2:0x4fde0297c458e7a0bc35f07c015f322ca31b459e:0": {
+    "id": "urn:decentraland:matic:collections-v2:0x4fde0297c458e7a0bc35f07c015f322ca31b459e:0",
+    "name": "Catrines Make Up",
+    "description": "Viva la Calaca´s stunning Catrine´s Make Up",
+    "collectionAddress": "0x4fde0297c458e7a0bc35f07c015f322ca31b459e",
+    "rarity": "rare",
+    "i18n": [
+      {
+        "code": "en",
+        "text": "Catrines Make Up"
+      }
+    ],
+    "data": {
+      "replaces": [],
+      "hides": [
+        "head"
+      ],
+      "removesDefaultHiding": [],
+      "tags": [
+        "VIVALACALACA",
+        "VVLCLC24",
+        "FESTIVAL",
+        "DIADEMUERTOS",
+        "DAYOFTHEDEATH"
+      ],
+      "category": "mask",
+      "representations": [
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseFemale"
+          ],
+          "mainFile": "female/f-Calaca-MakeUp.glb",
+          "contents": [
+            {
+              "key": "female/f-Calaca-MakeUp.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeidccjxqfykqavq7tk2ipzsmmcacsqqk33htlhbigr5fznt2zhmfcm"
+            }
+          ],
+          "overrideHides": [
+            "head"
+          ],
+          "overrideReplaces": []
+        },
+        {
+          "bodyShapes": [
+            "urn:decentraland:off-chain:base-avatars:BaseMale"
+          ],
+          "mainFile": "male/m-Calaca-MakeUp.glb",
+          "contents": [
+            {
+              "key": "male/m-Calaca-MakeUp.glb",
+              "url": "https://peer-eu1.decentraland.org/content/contents/bafybeibulvfjzg6rfz2nbij4ospkxcctzj27xp4n4ee4kqghv6wknulcwu"
+            }
+          ],
+          "overrideHides": [
+            "head"
+          ],
+          "overrideReplaces": []
+        }
+      ],
+      "blockVrmExport": false
+    },
+    "image": "https://peer-eu1.decentraland.org/content/contents/bafkreiekxqbsw6mqnusra4mqsuqzgi5us6kdev3rnzowdybmen5mmkvo2a",
+    "thumbnail": "https://peer-eu1.decentraland.org/content/contents/bafybeifjmjcnxg2vzugl6tsua7as7p2bbqk2oemynlrciih727so4snhsu",
+    "metrics": {
+      "triangles": 1524,
+      "materials": 2,
+      "meshes": 4,
+      "textures": 3,
+      "bodies": 4,
+      "entities": 1
+    }
+  }
+}

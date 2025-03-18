@@ -11,7 +11,6 @@ export function forceRenderHasEffect(
   wearablesData: CatalystWearableMap,
   equippedWearables: URNWithoutTokenId[]
 ): boolean {
-  // TODO unit test candidate
   if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) return false
   if (currentWearableURN === null) return false
   const categoryIsHead = [
