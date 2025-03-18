@@ -126,7 +126,8 @@ export default class BackpackPage {
             wearableUrns: getWearablesWithTokenId(
               backpackState.equippedWearables
             ),
-            emoteUrns: [] // TODO implements emotes
+            emoteUrns: [], // TODO implement emotes
+            forceRender: backpackState.forceRender ?? []
           }
         })
       }
