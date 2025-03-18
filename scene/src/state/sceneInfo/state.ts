@@ -4,13 +4,13 @@ import type {
   PlaceFromApi,
   EventFromApi
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
-import { EMPTY_PLACE } from 'src/utils/constants'
 
 export const SCENE_INFO_STORE_ID: 'scene' = 'scene'
 
 export type SceneState = {
   explorerEvents: EventFromApi[]
-  explorerPlace: PlaceFromApi
+  explorerPlace: PlaceFromApi | undefined
+  sceneInfoCardPlace: PlaceFromApi | undefined
   explorerPhotos: PhotoFromApi[]
   explorerPlayerPosition: Vector3 | undefined
   explorerFavorites: PlaceFromApi[] | undefined
@@ -18,7 +18,8 @@ export type SceneState = {
 
 export const sceneInitialState: SceneState = {
   explorerEvents: [],
-  explorerPlace: EMPTY_PLACE,
+  explorerPlace: undefined,
+  sceneInfoCardPlace: undefined,
   explorerPhotos: [],
   explorerPlayerPosition: undefined,
   explorerFavorites: undefined

@@ -5,6 +5,22 @@ import ReactEcs, {
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
+import {
+  loadEventsFromApi,
+  loadPhotosFromApi,
+  loadSceneInfoPlaceFromApi
+} from 'src/state/sceneInfo/actions'
+import { store } from 'src/state/store'
+import {
+  fetchEvents,
+  fetchPhotos,
+  fetchPhotosQuantity,
+  updateFavoriteStatus,
+  updateLikeStatus
+} from 'src/utils/promise-utils'
+import { ButtonIcon } from '../../components/button-icon'
+import { ButtonTextIcon } from '../../components/button-text-icon'
+import Canvas from '../../components/canvas/Canvas'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
@@ -18,38 +34,23 @@ import {
   SELECTED_BUTTON_COLOR
 } from '../../utils/constants'
 import type { AtlasIcon } from '../../utils/definitions'
-import Canvas from '../../components/canvas/Canvas'
 import {
   formatEventTime,
   getBackgroundFromAtlas,
   getTimestamp,
   truncateWithoutBreakingWords
 } from '../../utils/ui-utils'
-import { ButtonIcon } from '../../components/button-icon'
-import { ButtonTextIcon } from '../../components/button-text-icon'
-import type {
-  PlaceFromApi,
-  EventFromApi,
-  CategoryFromApi
-} from './SceneInfoCard.types'
-import {
-  fetchEvents,
-  fetchPhotos,
-  fetchPhotosQuantity,
-  fetchPlaceId,
-  updateFavoriteStatus
-} from 'src/utils/promise-utils'
-import { store } from 'src/state/store'
-import {
-  loadEventsFromApi,
-  loadPhotosFromApi,
-  loadPlaceFromApi
-} from 'src/state/sceneInfo/actions'
 import type { PhotoFromApi } from '../photos/Photos.types'
+import type {
+  CategoryFromApi,
+  EventFromApi,
+  PlaceFromApi
+} from './SceneInfoCard.types'
 
 export default class SceneInfoCard {
-  private place: PlaceFromApi = store.getState().scene.explorerPlace
-  public favoritesList: PlaceFromApi[] = []
+  private place: PlaceFromApi | undefined =
+    store.getState().scene.sceneInfoCardPlace
+    
   private sceneCoords: Vector3 | undefined
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
@@ -86,59 +87,57 @@ export default class SceneInfoCard {
     this.uiController = uiController
   }
 
-  async setCoords(coords: Vector3): Promise<void> {
-    this.sceneCoords = coords
-    await this.updateSceneInfo()
-  }
-
   async updateSceneInfo(): Promise<void> {
-    if (this.sceneCoords === undefined) {
-      console.error('Scene coords are undefined')
-    } else {
-      this.place = await fetchPlaceId(this.sceneCoords.x, this.sceneCoords.z)
-      const photosQuantityInPlace: number = await fetchPhotosQuantity(
-        this.place.id
-      )
-      const photosArray: PhotoFromApi[] = await fetchPhotos(
-        this.place.id,
-        photosQuantityInPlace
-      )
-      const eventsArray: EventFromApi[] = await fetchEvents(
-        this.place.positions
-      )
+    this.place = store.getState().scene.sceneInfoCardPlace
 
-      store.dispatch(loadEventsFromApi(eventsArray))
-      store.dispatch(loadPhotosFromApi(photosArray))
-      store.dispatch(loadPlaceFromApi(this.place))
+    if (this.place === undefined) return
 
-      this.favoritesList = store.getState().scene.explorerFavorites ?? []
-      const found = this.favoritesList.find((item) => item.id === this.place.id)
-      this.isFav = found?.user_favorite ?? false
-      this.isLiked = found?.user_like ?? false
-      this.isDisliked = found?.user_dislike ?? false
-      this.updateIcons()
-    }
-  }
+    const photosQuantityInPlace: number = await fetchPhotosQuantity(
+      this.place.id
+    )
+    const photosArray: PhotoFromApi[] = await fetchPhotos(
+      this.place.id,
+      photosQuantityInPlace
+    )
+    const eventsArray: EventFromApi[] = await fetchEvents(this.place.positions)
 
-  async updateFavs(): Promise<void> {
-    const favs: PlaceFromApi[] = store.getState().scene.explorerFavorites ?? []
-    const found = favs.find((item) => item.id === this.place.id)
-    if (found?.user_favorite === true) {
-      this.isFav = true
-    } else {
-      this.isFav = false
-    }
+    store.dispatch(loadEventsFromApi(eventsArray))
+    store.dispatch(loadPhotosFromApi(photosArray))
+    store.dispatch(loadSceneInfoPlaceFromApi(this.place))
+
+    this.isFav = this.place.user_favorite ?? false
+    this.isLiked = this.place.user_like ?? false
+    this.isDisliked = this.place.user_dislike ?? false
     this.updateIcons()
   }
 
   async setFav(arg: boolean): Promise<void> {
+    if (this.place === undefined || this.sceneCoords === undefined) return
     await updateFavoriteStatus(this.place.id, arg)
-    await this.uiController.gameController.getFavorites()
+    await this.uiController.gameController.updateWidgetParcel()
+    await this.uiController.gameController.updateCardParcel(this.sceneCoords)
+    void this.updateSceneInfo()
   }
 
-  async show(): Promise<void> {
-    this.uiController.sceneInfoCardVisible = true
+  async setLikeStatus(arg: 'like' | 'dislike' | 'null'): Promise<void> {
+    if (this.place === undefined || this.sceneCoords === undefined) return
+    await updateLikeStatus(this.place.id, arg)
+    await this.uiController.gameController.updateCardParcel(this.sceneCoords)
+    void this.updateSceneInfo()
+  }
+
+  async show(position?: Vector3): Promise<void> {
+    if (position !== undefined) {
+      this.sceneCoords = position
+    } else {
+      this.sceneCoords = store.getState().scene.explorerPlayerPosition
+    }
+    if (this.sceneCoords === undefined) {
+      console.error('Scene coords are undefined')
+      return
+    }
     await this.updateSceneInfo()
+    this.uiController.sceneInfoCardVisible = true
   }
 
   hide(): void {
@@ -203,7 +202,8 @@ export default class SceneInfoCard {
       panelWidth = canvasInfo.width / 4
     }
 
-    const place: PlaceFromApi = store.getState().scene.explorerPlace
+    const place: PlaceFromApi | undefined = store.getState().scene.explorerPlace
+    if (place === undefined) return null
     return (
       <Canvas>
         <UiEntity
@@ -268,8 +268,8 @@ export default class SceneInfoCard {
     )
   }
 
-  topBar(): ReactEcs.JSX.Element {
-    const place: PlaceFromApi = store.getState().scene.explorerPlace
+  topBar(): ReactEcs.JSX.Element | null {
+    if (this.place === undefined) return null
     return (
       <UiEntity
         uiTransform={{
@@ -304,7 +304,7 @@ export default class SceneInfoCard {
           iconSize={this.fontSize}
         />
         <Label
-          value={place.title}
+          value={this.place.title}
           fontSize={this.fontSize}
           textAlign="middle-center"
           uiTransform={{ width: '100%' }}
@@ -438,9 +438,9 @@ export default class SceneInfoCard {
     )
   }
 
-  sceneInfo(): ReactEcs.JSX.Element {
-    const place: PlaceFromApi = store.getState().scene.explorerPlace
-    const likeRate: number = place.like_rate ?? 0
+  sceneInfo(): ReactEcs.JSX.Element | null {
+    if (this.place === undefined) return null
+    const likeRate: number = this.place.like_rate ?? 0
     return (
       <UiEntity
         uiTransform={{
@@ -454,7 +454,7 @@ export default class SceneInfoCard {
         // uiBackground={{color:Color4.Blue()}}
       >
         <Label
-          value={place.title}
+          value={this.place.title}
           fontSize={this.fontSize * 1.2}
           textAlign="middle-left"
           uiTransform={{
@@ -464,9 +464,9 @@ export default class SceneInfoCard {
           }}
           color={BLACK_TEXT}
         />
-        {place.contact_name !== null && (
+        {this.place.contact_name !== null && (
           <Label
-            value={'Created by ' + place.contact_name}
+            value={'Created by ' + this.place.contact_name}
             fontSize={this.fontSize * 0.8}
             textAlign="middle-left"
             uiTransform={{
@@ -486,7 +486,7 @@ export default class SceneInfoCard {
         >
           {/* Need to implement last visitors portrait */}
           {this.infoDetail(
-            place.user_count.toString(),
+            this.place.user_count.toString(),
             { atlasName: 'icons', spriteName: 'Members' },
             {
               width: 'auto',
@@ -498,7 +498,7 @@ export default class SceneInfoCard {
 
           {/* Need to implement number formating */}
           {this.infoDetail(
-            place.user_visits.toString() + 'k',
+            this.place.user_visits.toString() + 'k',
             { atlasName: 'icons', spriteName: 'PreviewIcon' },
             {
               width: 'auto',
@@ -562,7 +562,14 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
-              // this.setLike(!this.isLiked)
+              if (
+                store.getState().scene.sceneInfoCardPlace?.user_like ??
+                false
+              ) {
+                void this.setLikeStatus('null')
+              } else {
+                void this.setLikeStatus('like')
+              }
             }}
           />
           <ButtonIcon
@@ -581,7 +588,11 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
-              // this.setDislike(!this.isDisliked)
+              if (this.place?.user_dislike ?? false) {
+                void this.setLikeStatus('null')
+              } else {
+                void this.setLikeStatus('dislike')
+              }
             }}
           />
           <ButtonIcon
@@ -592,7 +603,7 @@ export default class SceneInfoCard {
             iconSize={this.fontSize * 1.5}
             icon={this.favIcon}
             backgroundColor={this.setFavBackgroundColor}
-            iconColor={place.user_favorite ? Color4.Red() : BLACK_TEXT}
+            iconColor={this.place.user_favorite ? Color4.Red() : BLACK_TEXT}
             onMouseEnter={() => {
               this.onFavEnter()
             }}
@@ -783,8 +794,9 @@ export default class SceneInfoCard {
     )
   }
 
-  overviewContent(): ReactEcs.JSX.Element {
-    const place: PlaceFromApi = store.getState().scene.explorerPlace
+  overviewContent(): ReactEcs.JSX.Element | null {
+    const place: PlaceFromApi | undefined = store.getState().scene.explorerPlace
+    if (place === undefined) return null
     return (
       <UiEntity
         uiTransform={{

@@ -13,7 +13,9 @@ export enum SCENE_INFO_ACTION {
   GET_PHOTOS_FROM_API,
   GET_PLACE_FROM_API,
   SAVE_PLAYER_POSITION,
-  GET_FAVS_FROM_API
+  GET_FAVS_FROM_API,
+  GET_LIKES_FROM_API,
+  GET_SCENE_INFO_CARD_PLACE_FROM_API
 }
 
 export type GetEvents = SceneActionId & {
@@ -28,18 +30,23 @@ export type GetPlace = SceneActionId & {
   type: SCENE_INFO_ACTION.GET_PLACE_FROM_API
   payload: PlaceFromApi
 }
-export type GetFavorites = SceneActionId & {
-  type: SCENE_INFO_ACTION.GET_FAVS_FROM_API
-  payload: PlaceFromApi[]
+export type GetSceneInfoPlace = SceneActionId & {
+  type: SCENE_INFO_ACTION.GET_SCENE_INFO_CARD_PLACE_FROM_API
+  payload: PlaceFromApi
 }
 export type SavePlayerPosition = SceneActionId & {
   type: SCENE_INFO_ACTION.SAVE_PLAYER_POSITION
   payload: Vector3
 }
+export type GetFavorites = SceneActionId & {
+  type: SCENE_INFO_ACTION.GET_FAVS_FROM_API
+  payload: PlaceFromApi[]
+}
 
 export type SceneActions =
   | GetEvents
   | GetPlace
+  | GetSceneInfoPlace
   | GetPhotos
   | SavePlayerPosition
   | GetFavorites
@@ -56,10 +63,24 @@ export const loadPlaceFromApi = (place: PlaceFromApi): GetPlace => ({
   payload: place
 })
 
+export const loadSceneInfoPlaceFromApi = (
+  place: PlaceFromApi
+): GetSceneInfoPlace => ({
+  __reducer: SCENE_INFO_STORE_ID,
+  type: SCENE_INFO_ACTION.GET_SCENE_INFO_CARD_PLACE_FROM_API,
+  payload: place
+})
+
 export const loadPhotosFromApi = (photos: PhotoFromApi[]): GetPhotos => ({
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_PHOTOS_FROM_API,
   payload: photos
+})
+
+export const savePlayerPosition = (position: Vector3): SavePlayerPosition => ({
+  __reducer: SCENE_INFO_STORE_ID,
+  type: SCENE_INFO_ACTION.SAVE_PLAYER_POSITION,
+  payload: position
 })
 
 export const loadFavoritesFromApi = (
@@ -68,10 +89,4 @@ export const loadFavoritesFromApi = (
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_FAVS_FROM_API,
   payload: favorites
-})
-
-export const savePlayerPosition = (position: Vector3): SavePlayerPosition => ({
-  __reducer: SCENE_INFO_STORE_ID,
-  type: SCENE_INFO_ACTION.SAVE_PLAYER_POSITION,
-  payload: position
 })

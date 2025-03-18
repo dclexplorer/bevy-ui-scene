@@ -183,10 +183,49 @@ export async function updateFavoriteStatus(
         body: JSON.stringify(patchData)
       }
     })
+    console.log(response.body)
     return response
   } catch (error) {
     console.error('Error updating favorite status:', error)
     throw new Error('Failed to update favorite status')
+  }
+}
+
+export async function updateLikeStatus(
+  placeId: string,
+  likeOrDislike: 'like' | 'dislike' | 'null'
+): Promise<KernelFetchRespose> {
+  const url = `https://places.decentraland.org/api/places/${placeId}/likes`
+
+  let arg: boolean | null
+  if (likeOrDislike === 'like') {
+    arg = true
+  } else if (likeOrDislike === 'dislike') {
+    arg = false
+  } else {
+    arg = null
+  }
+
+  const patchData = {
+    like: arg
+  }
+
+  try {
+    const response = await BevyApi.kernelFetch({
+      url,
+      init: {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(patchData)
+      }
+    })
+    console.log(response.body)
+    return response
+  } catch (error) {
+    console.error('Error updating like status:', error)
+    throw new Error('Failed to update like status')
   }
 }
 
@@ -199,4 +238,15 @@ export async function getFavoritesFromApi(): Promise<PlaceFromApi[]> {
   }
   const favs = JSON.parse(responseFavs.body)
   return favs.data
+}
+
+export async function getPlaceFromApi(id: string): Promise<PlaceFromApi> {
+  const responsePlace: KernelFetchRespose = await BevyApi.kernelFetch({
+    url: `https://places.decentraland.org/api/places/${id}`
+  })
+  if (!responsePlace.ok) {
+    throw new Error(`HTTP error! Status: ${responsePlace.status}`)
+  }
+  const place = JSON.parse(responsePlace.body)
+  return place.data
 }

@@ -1,29 +1,32 @@
-import { engine } from '@dcl/sdk/ecs'
-import { UIController } from './ui.controller'
 import { getPlayerPosition } from '@dcl-sdk/utils'
+import { engine } from '@dcl/sdk/ecs'
 import { type Vector3 } from '@dcl/sdk/math'
-import { store } from 'src/state/store'
 import {
   loadFavoritesFromApi,
+  loadPlaceFromApi,
+  loadSceneInfoPlaceFromApi,
   savePlayerPosition
 } from 'src/state/sceneInfo/actions'
-import { getFavoritesFromApi } from 'src/utils/promise-utils'
+import { store } from 'src/state/store'
+import {
+  fetchPlaceId,
+  getFavoritesFromApi,
+  getPlaceFromApi
+} from 'src/utils/promise-utils'
+import { type ReadOnlyVector3 } from '~system/EngineApi'
+import { UIController } from './ui.controller'
 
 export class GameController {
   uiController: UIController
   constructor() {
     this.uiController = new UIController(this)
     engine.addSystem(this.positionSystem.bind(this))
-    if (store.getState().scene.explorerFavorites === undefined) {
-      void this.getFavorites()
-    }
+    void this.getFavorites()
   }
 
   public async getFavorites(): Promise<void> {
     const favoritePlaces = await getFavoritesFromApi()
     store.dispatch(loadFavoritesFromApi(favoritePlaces))
-    void this.uiController.mainHud.sceneInfo.updateFavs()
-    void this.uiController.sceneCard.updateFavs()
   }
 
   positionSystem(): void {
@@ -44,13 +47,28 @@ export class GameController {
             z: Math.floor(newPosition.z / 16)
           })
         )
-        this.changeParcel()
+        void this.updateWidgetParcel()
       }
     }
   }
 
-  changeParcel(): void {
-    void this.uiController.mainHud.sceneInfo.updateCoords()
+  async updateWidgetParcel(): Promise<void> {
+    const coords: ReadOnlyVector3 | undefined =
+      store.getState().scene.explorerPlayerPosition
+    if (coords === undefined) {
+      return
+    }
+    const place = await fetchPlaceId(coords.x, coords.z)
+    const explorerPlace = await getPlaceFromApi(place.id)
+    store.dispatch(loadPlaceFromApi(explorerPlace))
+    void this.uiController.mainHud.sceneInfo.update()
+  }
+
+  async updateCardParcel(sceneCoords: Vector3): Promise<void> {
+    const infoCardPlace = await fetchPlaceId(sceneCoords.x, sceneCoords.z)
+    const sceneInfoCardPlace = await getPlaceFromApi(infoCardPlace.id)
+    store.dispatch(loadSceneInfoPlaceFromApi(sceneInfoCardPlace))
+    void this.uiController.sceneCard.updateSceneInfo()
   }
 }
 

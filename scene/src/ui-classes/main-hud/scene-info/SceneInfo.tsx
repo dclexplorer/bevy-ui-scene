@@ -1,8 +1,9 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import type { Color4, Vector3 } from '@dcl/sdk/math'
+import type { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { store } from 'src/state/store'
 import type { PlaceFromApi } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
+import { updateFavoriteStatus } from 'src/utils/promise-utils'
 import { ButtonIcon } from '../../../components/button-icon'
 import Canvas from '../../../components/canvas/Canvas'
 import { type UIController } from '../../../controllers/ui.controller'
@@ -17,18 +18,13 @@ import {
 } from '../../../utils/constants'
 import { type AtlasIcon } from '../../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
-import { updateFavoriteStatus } from 'src/utils/promise-utils'
 
 export default class SceneInfo {
   private readonly uiController: UIController
+  public place: PlaceFromApi | undefined
   public fontSize: number = 16
   private isWarningScene: boolean = true
-  public sceneName: string = 'Scene Name ASD'
-  public sceneCoords: Vector3 | undefined =
-    store.getState().scene.explorerPlayerPosition
-
   public isSdk6: boolean = true
-  public isFav: boolean = true
   public isExpanded: boolean = false
   public isMenuOpen: boolean = false
   public isHome: boolean = false
@@ -72,15 +68,15 @@ export default class SceneInfo {
   public sceneUiLabelColor: Color4 = UNSELECTED_TEXT_WHITE
   public setFavLabelColor: Color4 = UNSELECTED_TEXT_WHITE
 
-  public fpsValue: number = 0
-  public uniqueGltfMeshesValue: number = 0
-  public visibleMeshCountValue: number = 0
-  public visibleTriangleCountValue: number = 0
-  public uniqueGltfMaterialsValue: number = 0
-  public visibleMaterialCountValue: number = 0
-  public totalTextureCountValue: number = 0
-  public totalTextureMemoryValue: number = 0
-  public totalEntitiesValue: number = 0
+  // public fpsValue: number = 0
+  // public uniqueGltfMeshesValue: number = 0
+  // public visibleMeshCountValue: number = 0
+  // public visibleTriangleCountValue: number = 0
+  // public uniqueGltfMaterialsValue: number = 0
+  // public visibleMaterialCountValue: number = 0
+  // public totalTextureCountValue: number = 0
+  // public totalTextureMemoryValue: number = 0
+  // public totalEntitiesValue: number = 0
   public flagIcon: string | undefined
   private flagHint: string = 'This scene was rated as an adult scene.'
   private isFlagHintVisible: boolean = false
@@ -88,45 +84,23 @@ export default class SceneInfo {
     'This scene is restricting the use of some features: \n - The camera is locked'
 
   private isWarningHintVisible: boolean = false
-  private isLoadingHintVisible: boolean = false
-  private isSceneLoading: boolean = false
+  // private isLoadingHintVisible: boolean = false
+  // private isSceneLoading: boolean = false
   private readonly loadingIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'Graphics'
   }
 
-  private timer: number = 0
+  // private timer: number = 0
 
   constructor(uiController: UIController) {
     this.uiController = uiController
   }
 
-  // updateContent(): void {
-  //   this.setFlag(store.getState().scene.explorerPlace.content_rating)
-  //   this.setFav(store.getState().scene.explorerPlace.user_favorite)
-  // }
-
-  async updateCoords(): Promise<void> {
-    this.sceneCoords = store.getState().scene.explorerPlayerPosition
-    if (this.sceneCoords) {
-      await this.uiController.sceneCard.setCoords(this.sceneCoords)
-      const place: PlaceFromApi = store.getState().scene.explorerPlace
-      this.sceneName = place.title
-      this.setFlag(place.content_rating)
-      await this.updateFavs()
-    }
-  }
-
-  async updateFavs(): Promise<void> {
-    const place: PlaceFromApi = store.getState().scene.explorerPlace
-    const favs: PlaceFromApi[] = store.getState().scene.explorerFavorites ?? []
-    const found = favs.find((item) => item.id === place.id)
-    if (found?.user_favorite === true) {
-      console.log('scene title: ', found.title)
-      this.isFav = true
-    } else {
-      this.isFav = false
-    }
+  async update(): Promise<void> {
+    this.place = store.getState().scene.explorerPlace
+    if (this.place === undefined) return
+    this.setFlag(this.place.content_rating)
     this.updateIcons()
   }
 
@@ -160,66 +134,67 @@ export default class SceneInfo {
     }
   }
 
-  setFps(arg: number): void {
-    this.fpsValue = arg
-  }
+  // setFps(arg: number): void {
+  //   this.fpsValue = arg
+  // }
 
-  setUniqueGltfMeshes(arg: number): void {
-    this.uniqueGltfMeshesValue = arg
-  }
+  // setUniqueGltfMeshes(arg: number): void {
+  //   this.uniqueGltfMeshesValue = arg
+  // }
 
-  setVisibleMeshCount(arg: number): void {
-    this.visibleMeshCountValue = arg
-  }
+  // setVisibleMeshCount(arg: number): void {
+  //   this.visibleMeshCountValue = arg
+  // }
 
-  setVisibleTriangleCount(arg: number): void {
-    this.visibleTriangleCountValue = arg
-  }
+  // setVisibleTriangleCount(arg: number): void {
+  //   this.visibleTriangleCountValue = arg
+  // }
 
-  setUniqueGltfMaterials(arg: number): void {
-    this.uniqueGltfMaterialsValue = arg
-  }
+  // setUniqueGltfMaterials(arg: number): void {
+  //   this.uniqueGltfMaterialsValue = arg
+  // }
 
-  setVisibleMaterialCount(arg: number): void {
-    this.visibleMaterialCountValue = arg
-  }
+  // setVisibleMaterialCount(arg: number): void {
+  //   this.visibleMaterialCountValue = arg
+  // }
 
-  setTotalTextureCount(arg: number): void {
-    this.totalTextureCountValue = arg
-  }
+  // setTotalTextureCount(arg: number): void {
+  //   this.totalTextureCountValue = arg
+  // }
 
-  setTotalTextureMemory(arg: number): void {
-    this.totalTextureMemoryValue = arg
-  }
+  // setTotalTextureMemory(arg: number): void {
+  //   this.totalTextureMemoryValue = arg
+  // }
 
-  setTotalEntities(arg: number): void {
-    this.totalEntitiesValue = arg
-  }
+  // setTotalEntities(arg: number): void {
+  //   this.totalEntitiesValue = arg
+  // }
 
-  setLoading(loading: boolean): void {
-    this.isSceneLoading = loading
-    if (loading) {
-      engine.addSystem(this.loadingSystem.bind(this))
-    } else {
-      engine.removeSystem(this.loadingSystem.bind(this))
-    }
-  }
+  // setLoading(loading: boolean): void {
+  //   this.isSceneLoading = loading
+  //   if (loading) {
+  //     engine.addSystem(this.loadingSystem.bind(this))
+  //   } else {
+  //     engine.removeSystem(this.loadingSystem.bind(this))
+  //   }
+  // }
 
-  loadingSystem(): void {
-    if (this.timer > 500) {
-      this.timer = 0
-      if (this.loadingIcon.spriteName === 'Graphics') {
-        this.loadingIcon.spriteName = 'Download'
-      } else {
-        this.loadingIcon.spriteName = 'Graphics'
-      }
-    } else {
-      this.timer = this.timer + 5
-    }
-  }
+  // loadingSystem(): void {
+  //   if (this.timer > 500) {
+  //     this.timer = 0
+  //     if (this.loadingIcon.spriteName === 'Graphics') {
+  //       this.loadingIcon.spriteName = 'Download'
+  //     } else {
+  //       this.loadingIcon.spriteName = 'Graphics'
+  //     }
+  //   } else {
+  //     this.timer = this.timer + 5
+  //   }
+  // }
 
   updateIcons(): void {
-    if (this.isFav) {
+    if (this.place === undefined) return
+    if (this.place.user_favorite) {
       this.favIcon.spriteName = 'HeartOnOutlined'
       this.favText = 'Unmark as Favourite'
     } else {
@@ -239,8 +214,15 @@ export default class SceneInfo {
   }
 
   async setFav(arg: boolean): Promise<void> {
-    await updateFavoriteStatus(store.getState().scene.explorerPlace.id, arg)
-    await this.uiController.gameController.getFavorites()
+    if (this.place !== undefined) {
+      updateFavoriteStatus(this.place.id, arg)
+        .then(async () => {
+          await this.uiController.gameController.updateWidgetParcel()
+        })
+        .catch((error) => {
+          console.error('Failed to update favorite status:', error)
+        })
+    }
   }
 
   setMenuOpen(arg: boolean): void {
@@ -257,22 +239,26 @@ export default class SceneInfo {
     this.updateIcons()
   }
 
-  reloadScene(): void {
-    console.log('RELOAD SCENE')
-  }
+  async reloadScene(): Promise<void> {}
 
   async openSceneInfo(): Promise<void> {
-    if (this.sceneCoords !== undefined) {
-      await this.uiController.sceneCard.setCoords(this.sceneCoords)
-      await this.uiController.sceneCard.show()
+    const sceneCoords = store.getState().scene.explorerPlayerPosition
+    if (sceneCoords !== undefined) {
+      await this.uiController.sceneCard.show(sceneCoords)
+      await this.uiController.gameController.updateCardParcel(sceneCoords)
     }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
+    if (this.place === undefined) return null
+
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    let leftPosition: number
 
+    const sceneCoords = store.getState().scene.explorerPlayerPosition
+    if (sceneCoords === undefined) return null
+
+    let leftPosition: number
     if ((canvasInfo.width * 2.5) / 100 < 45) {
       leftPosition = 45 + (canvasInfo.width * 1) / 100
     } else {
@@ -318,7 +304,7 @@ export default class SceneInfo {
               flexDirection: 'row'
             }}
           >
-            <ButtonIcon
+            {/* <ButtonIcon
               onMouseDown={() => {
                 void this.setExpanded(!this.isExpanded)
                 this.setLoading(!this.isExpanded)
@@ -336,7 +322,7 @@ export default class SceneInfo {
               }}
               backgroundColor={this.expandBackgroundColor}
               icon={this.expandIcon}
-            />
+            /> */}
             <UiEntity
               uiTransform={{
                 width: 'auto',
@@ -349,7 +335,7 @@ export default class SceneInfo {
               }}
             >
               <Label
-                value={this.sceneName}
+                value={this.place.title}
                 fontSize={this.fontSize}
                 uiTransform={{ height: this.fontSize * 1.1 }}
                 textAlign="middle-left"
@@ -382,9 +368,7 @@ export default class SceneInfo {
                 />
                 <Label
                   value={
-                    this.sceneCoords?.x.toString() +
-                    ',' +
-                    this.sceneCoords?.z.toString()
+                    sceneCoords.x.toString() + ',' + sceneCoords.z.toString()
                   }
                   fontSize={this.fontSize}
                   uiTransform={{}}
@@ -448,7 +432,7 @@ export default class SceneInfo {
                   showHint={this.isFlagHintVisible}
                   hintFontSize={this.fontSize * 0.75}
                 />
-                <ButtonIcon
+                {/* <ButtonIcon
                   uiTransform={{
                     display: this.isSceneLoading ? 'flex' : 'none',
                     width: this.fontSize * 1.2,
@@ -466,7 +450,7 @@ export default class SceneInfo {
                   hintText="Scene is loading"
                   showHint={this.isLoadingHintVisible}
                   hintFontSize={this.fontSize * 0.75}
-                />
+                /> */}
               </UiEntity>
             </UiEntity>
 
@@ -490,228 +474,7 @@ export default class SceneInfo {
               iconSize={this.fontSize * 1.5}
             />
           </UiEntity>
-          <UiEntity
-            uiTransform={{
-              display: this.isExpanded ? 'flex' : 'none',
-              width: '95%',
-              height: 'auto',
-              flexDirection: 'column'
-            }}
-          >
-            {/* FPS */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-            >
-              <Label value="FPS" fontSize={this.fontSize * 0.7} />
-              <Label
-                value={this.fpsValue.toString()}
-                fontSize={this.fontSize * 0.7}
-              />
-            </UiEntity>
 
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
-
-            {/* UNIQUE GLTF MESHES */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-            >
-              <Label
-                value="Unique GLTF Meshes"
-                fontSize={this.fontSize * 0.7}
-              />
-              <Label
-                value={this.uniqueGltfMeshesValue.toString()}
-                fontSize={this.fontSize * 0.7}
-              />
-            </UiEntity>
-
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
-
-            {/* VISIBLE MESH COUNT */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-            >
-              <Label
-                value="Visible Mesh Count"
-                fontSize={this.fontSize * 0.7}
-              />
-              <Label
-                value={this.visibleMeshCountValue.toString()}
-                fontSize={this.fontSize * 0.7}
-              />
-            </UiEntity>
-
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
-
-            {/* VISIBLE TRIANGLE COUNT */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-            >
-              <Label
-                value="Visible Triangle Count"
-                fontSize={this.fontSize * 0.7}
-              />
-              <Label
-                value={this.visibleTriangleCountValue.toString()}
-                fontSize={this.fontSize * 0.7}
-              />
-            </UiEntity>
-
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
-
-            {/* UNIQUE GLTF MATERIALS */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-            >
-              <Label
-                value="Unique GLTF Materials"
-                fontSize={this.fontSize * 0.7}
-              />
-              <Label
-                value={this.uniqueGltfMaterialsValue.toString()}
-                fontSize={this.fontSize * 0.7}
-              />
-            </UiEntity>
-
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
-
-            {/* VISIBLE MATERIAL COUNT */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-            >
-              <Label
-                value="Visible Material Count"
-                fontSize={this.fontSize * 0.7}
-              />
-              <Label
-                value={this.visibleMaterialCountValue.toString()}
-                fontSize={this.fontSize * 0.7}
-              />
-            </UiEntity>
-
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
-
-            {/* TOTAL TEXTURE COUNT */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-            >
-              <Label
-                value="Total Texture Count"
-                fontSize={this.fontSize * 0.7}
-              />
-              <Label
-                value={this.totalTextureCountValue.toString()}
-                fontSize={this.fontSize * 0.7}
-              />
-            </UiEntity>
-
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
-
-            {/* TOTAL TEXTURE MEMORY */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-            >
-              <Label
-                value="Total Texture Memory"
-                fontSize={this.fontSize * 0.7}
-              />
-              <Label
-                value={this.totalTextureMemoryValue.toString() + 'mb'}
-                fontSize={this.fontSize * 0.7}
-              />
-            </UiEntity>
-
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
-
-            {/* TOTAL ENTITIES */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-            >
-              <Label value="Total Entities" fontSize={this.fontSize * 0.7} />
-              <Label
-                value={this.totalEntitiesValue.toString()}
-                fontSize={this.fontSize * 0.7}
-              />
-            </UiEntity>
-          </UiEntity>
           <UiEntity
             uiTransform={{
               display: this.isMenuOpen ? 'flex' : 'none',
@@ -817,7 +580,8 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                void this.setFav(!this.isFav)
+                if (this.place === undefined) return
+                void this.setFav(!this.place.user_favorite)
               }}
               onMouseEnter={() => {
                 this.setFavLabelColor = ALMOST_WHITE
@@ -856,7 +620,7 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                this.reloadScene()
+                void this.reloadScene()
               }}
               onMouseEnter={() => {
                 this.reloadLabelColor = ALMOST_WHITE
@@ -925,5 +689,233 @@ export default class SceneInfo {
         </UiEntity>
       </Canvas>
     )
+  }
+
+  debugPanel(): ReactEcs.JSX.Element | null {
+    return null
+    // return(
+    //   <UiEntity
+    //         uiTransform={{
+    //           display: this.isExpanded ? 'flex' : 'none',
+    //           width: '95%',
+    //           height: 'auto',
+    //           flexDirection: 'column'
+    //         }}
+    //       >
+    //         {/* FPS */}
+    //         <UiEntity
+    //           uiTransform={{
+    //             width: '100%',
+    //             height: 'auto',
+    //             justifyContent: 'space-between',
+    //             alignItems: 'center',
+    //             flexDirection: 'row'
+    //           }}
+    //         >
+    //           <Label value="FPS" fontSize={this.fontSize * 0.7} />
+    //           <Label
+    //             value={this.fpsValue.toString()}
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //         </UiEntity>
+
+    //         <UiEntity
+    //           uiTransform={{ width: '100%', height: 1 }}
+    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+    //         />
+
+    //         {/* UNIQUE GLTF MESHES */}
+    //         <UiEntity
+    //           uiTransform={{
+    //             width: '100%',
+    //             height: 'auto',
+    //             justifyContent: 'space-between',
+    //             alignItems: 'center',
+    //             flexDirection: 'row'
+    //           }}
+    //         >
+    //           <Label
+    //             value="Unique GLTF Meshes"
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //           <Label
+    //             value={this.uniqueGltfMeshesValue.toString()}
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //         </UiEntity>
+
+    //         <UiEntity
+    //           uiTransform={{ width: '100%', height: 1 }}
+    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+    //         />
+
+    //         {/* VISIBLE MESH COUNT */}
+    //         <UiEntity
+    //           uiTransform={{
+    //             width: '100%',
+    //             height: 'auto',
+    //             justifyContent: 'space-between',
+    //             alignItems: 'center',
+    //             flexDirection: 'row'
+    //           }}
+    //         >
+    //           <Label
+    //             value="Visible Mesh Count"
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //           <Label
+    //             value={this.visibleMeshCountValue.toString()}
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //         </UiEntity>
+
+    //         <UiEntity
+    //           uiTransform={{ width: '100%', height: 1 }}
+    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+    //         />
+
+    //         {/* VISIBLE TRIANGLE COUNT */}
+    //         <UiEntity
+    //           uiTransform={{
+    //             width: '100%',
+    //             height: 'auto',
+    //             justifyContent: 'space-between',
+    //             alignItems: 'center',
+    //             flexDirection: 'row'
+    //           }}
+    //         >
+    //           <Label
+    //             value="Visible Triangle Count"
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //           <Label
+    //             value={this.visibleTriangleCountValue.toString()}
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //         </UiEntity>
+
+    //         <UiEntity
+    //           uiTransform={{ width: '100%', height: 1 }}
+    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+    //         />
+
+    //         {/* UNIQUE GLTF MATERIALS */}
+    //         <UiEntity
+    //           uiTransform={{
+    //             width: '100%',
+    //             height: 'auto',
+    //             justifyContent: 'space-between',
+    //             alignItems: 'center',
+    //             flexDirection: 'row'
+    //           }}
+    //         >
+    //           <Label
+    //             value="Unique GLTF Materials"
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //           <Label
+    //             value={this.uniqueGltfMaterialsValue.toString()}
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //         </UiEntity>
+
+    //         <UiEntity
+    //           uiTransform={{ width: '100%', height: 1 }}
+    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+    //         />
+
+    //         {/* VISIBLE MATERIAL COUNT */}
+    //         <UiEntity
+    //           uiTransform={{
+    //             width: '100%',
+    //             height: 'auto',
+    //             justifyContent: 'space-between',
+    //             alignItems: 'center',
+    //             flexDirection: 'row'
+    //           }}
+    //         >
+    //           <Label
+    //             value="Visible Material Count"
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //           <Label
+    //             value={this.visibleMaterialCountValue.toString()}
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //         </UiEntity>
+
+    //         <UiEntity
+    //           uiTransform={{ width: '100%', height: 1 }}
+    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+    //         />
+
+    //         {/* TOTAL TEXTURE COUNT */}
+    //         <UiEntity
+    //           uiTransform={{
+    //             width: '100%',
+    //             height: 'auto',
+    //             justifyContent: 'space-between',
+    //             alignItems: 'center',
+    //             flexDirection: 'row'
+    //           }}
+    //         >
+    //           <Label
+    //             value="Total Texture Count"
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //           <Label
+    //             value={this.totalTextureCountValue.toString()}
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //         </UiEntity>
+
+    //         <UiEntity
+    //           uiTransform={{ width: '100%', height: 1 }}
+    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+    //         />
+
+    //         {/* TOTAL TEXTURE MEMORY */}
+    //         <UiEntity
+    //           uiTransform={{
+    //             width: '100%',
+    //             height: 'auto',
+    //             justifyContent: 'space-between',
+    //             alignItems: 'center',
+    //             flexDirection: 'row'
+    //           }}
+    //         >
+    //           <Label
+    //             value="Total Texture Memory"
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //           <Label
+    //             value={this.totalTextureMemoryValue.toString() + 'mb'}
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //         </UiEntity>
+
+    //         <UiEntity
+    //           uiTransform={{ width: '100%', height: 1 }}
+    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+    //         />
+
+    //         {/* TOTAL ENTITIES */}
+    //         <UiEntity
+    //           uiTransform={{
+    //             width: '100%',
+    //             height: 'auto',
+    //             justifyContent: 'space-between',
+    //             alignItems: 'center',
+    //             flexDirection: 'row'
+    //           }}
+    //         >
+    //           <Label value="Total Entities" fontSize={this.fontSize * 0.7} />
+    //           <Label
+    //             value={this.totalEntitiesValue.toString()}
+    //             fontSize={this.fontSize * 0.7}
+    //           />
+    //         </UiEntity>
+    //       </UiEntity>
+    // )
   }
 }
