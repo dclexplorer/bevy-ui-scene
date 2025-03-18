@@ -11,11 +11,13 @@ import {
 import { WearableCatalogGrid } from '../../../components/backpack/WearableCatalogGrid'
 import type { URNWithoutTokenId } from '../../../utils/definitions'
 import {
+  resetOutfitAction,
   updateAvatarBase,
   updateCurrentPage,
   updateEquippedWearables,
   updateLoadedPage,
   updateLoadingPage,
+  updateSavedResetVersion,
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
 import type { CatalogWearableElement } from '../../../utils/wearables-definitions'
@@ -38,19 +40,6 @@ import {
 import { getPlayer } from '@dcl/sdk/src/players'
 import { WearableColorPicker } from './WearableColorPicker'
 import { COLOR } from '../../../components/color-palette'
-import { type PBAvatarBase } from '../../../bevy-api/interface'
-
-type BackpackPageState = {
-  savedResetOutfit: {
-    base: PBAvatarBase
-    equippedWearables: URNWithoutTokenId[]
-  } | null
-  changed: boolean
-}
-const state: BackpackPageState = {
-  savedResetOutfit: null,
-  changed: false
-}
 
 export function WearablesCatalog(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -153,7 +142,7 @@ export function WearablesCatalog(): ReactElement {
         pages={backpackState.totalPages}
         currentPage={backpackState.currentPage}
       />
-      {state.changed && (
+      {backpackState.changedFromResetVersion && (
         <Button
           value={'RESET OUTFIT'}
           uiTransform={{
@@ -176,28 +165,7 @@ export function WearablesCatalog(): ReactElement {
 }
 
 async function resetOutfit(): Promise<void> {
-  const backpackState = store.getState().backpack
-  if (!state.savedResetOutfit) return
-
-  if (
-    JSON.stringify(state.savedResetOutfit.base) !==
-    JSON.stringify(backpackState.outfitSetup.base)
-  ) {
-    store.dispatch(updateAvatarBase(state.savedResetOutfit.base))
-  }
-  if (
-    JSON.stringify(state.savedResetOutfit.equippedWearables) !==
-    JSON.stringify(backpackState.equippedWearables)
-  ) {
-    store.dispatch(
-      updateEquippedWearables({
-        wearables: state.savedResetOutfit.equippedWearables,
-        wearablesData: await fetchWearablesData(
-          ...(state.savedResetOutfit.equippedWearables ?? [])
-        )
-      })
-    )
-  }
+  store.dispatch(resetOutfitAction())
 
   updateAvatarPreview(
     store.getState().backpack.equippedWearables,
@@ -207,16 +175,7 @@ async function resetOutfit(): Promise<void> {
 }
 
 export function saveResetOutfit(): void {
-  state.savedResetOutfit = {
-    base: JSON.parse(
-      JSON.stringify(store.getState().backpack.outfitSetup.base)
-    ),
-    equippedWearables: JSON.parse(
-      JSON.stringify(store.getState().backpack.equippedWearables)
-    )
-  }
-  state.changed = false
-  console.log('saveResetOutfit', state.savedResetOutfit)
+  store.dispatch(updateSavedResetVersion())
 }
 
 async function updateEquippedWearable(
@@ -267,7 +226,6 @@ async function updateEquippedWearable(
     store.getState().backpack.outfitSetup.base,
     store.getState().backpack.forceRender
   )
-  state.changed = true
 }
 
 export async function updatePage(): Promise<void> {

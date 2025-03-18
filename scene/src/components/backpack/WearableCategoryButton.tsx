@@ -154,9 +154,12 @@ export function WearableCategoryButton({
               }}
             >
               <Icon
-                icon={{ atlasName: 'icons', spriteName: 'PreviewIcon' }}
+                icon={{
+                  atlasName: 'icons',
+                  spriteName: forceRender ? 'PreviewIcon' : 'HideUIIcon'
+                }}
                 iconSize={32 * canvasScaleRatio}
-                iconColor={forceRender ? Color4.Green() : COLOR.INACTIVE}
+                iconColor={forceRender ? Color4.Green() : Color4.Red()}
                 uiTransform={{ flexShrink: 0 }}
               />
             </UiEntity>

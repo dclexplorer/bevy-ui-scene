@@ -6,6 +6,7 @@ import type {
 import type { URNWithoutTokenId } from '../../utils/definitions'
 import { EMPTY_OUTFIT, getWearablesFromOutfit } from '../../service/outfit'
 import { WEARABLE_CATALOG_PAGE_SIZE } from '../../utils/constants'
+import type { PBAvatarBase } from '../../bevy-api/interface'
 
 export const BACKPACK_STORE_ID: 'backpack' = 'backpack'
 
@@ -18,6 +19,12 @@ export type BackpackPageState = {
   equippedWearables: URNWithoutTokenId[]
   outfitSetup: OutfitSetup
   forceRender: WearableCategory[]
+  changedFromResetVersion: boolean // TODO we can remove it and replace it with a memoized function that compares savedResetOutfit with state
+  savedResetOutfit: {
+    base: PBAvatarBase
+    equippedWearables: URNWithoutTokenId[]
+    forceRender: WearableCategory[]
+  }
   selectedURN: URNWithoutTokenId | null
   cacheKey: string
 }
@@ -32,5 +39,11 @@ export const backpackInitialState: BackpackPageState = {
   outfitSetup: EMPTY_OUTFIT,
   selectedURN: null,
   forceRender: [],
-  cacheKey: ''
+  cacheKey: '',
+  changedFromResetVersion: false,
+  savedResetOutfit: {
+    base: EMPTY_OUTFIT.base,
+    equippedWearables: getWearablesFromOutfit(EMPTY_OUTFIT),
+    forceRender: []
+  }
 }

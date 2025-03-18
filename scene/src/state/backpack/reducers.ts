@@ -1,6 +1,8 @@
 import { type BackpackPageState } from './state'
 import { BACKPACK_ACTION, type BackpackActions } from './actions'
 import { getOutfitSetupFromWearables } from '../../service/outfit'
+import { store } from '../store'
+import { catalystWearableMap } from '../../utils/wearables-promise-utils'
 
 export function reducer(
   backpackPageState: BackpackPageState,
@@ -42,7 +44,8 @@ export function reducer(
               action.payload.wearablesData
             )
           }
-        }
+        },
+        changedFromResetVersion: true
       }
     case BACKPACK_ACTION.UPDATE_AVATAR_BASE:
       return {
@@ -57,7 +60,8 @@ export function reducer(
             skinColor: action.payload.skinColor,
             bodyShapeUrn: action.payload.bodyShapeUrn
           }
-        }
+        },
+        changedFromResetVersion: true
       }
     case BACKPACK_ACTION.UPDATE_CACHE_KEY:
       return {
@@ -69,7 +73,41 @@ export function reducer(
         ...backpackPageState,
         forceRender: backpackPageState.forceRender.includes(action.payload)
           ? backpackPageState.forceRender.filter((i) => i !== action.payload)
-          : [...backpackPageState.forceRender, action.payload]
+          : [...backpackPageState.forceRender, action.payload],
+        changedFromResetVersion: true
+      }
+    case BACKPACK_ACTION.UPDATE_SAVED_RESET_VERSION:
+      return {
+        ...backpackPageState,
+        savedResetOutfit: {
+          base: JSON.parse(
+            JSON.stringify(store.getState().backpack.outfitSetup.base)
+          ),
+          equippedWearables: JSON.parse(
+            JSON.stringify(store.getState().backpack.equippedWearables)
+          ),
+          forceRender: [...store.getState().backpack.forceRender]
+        },
+        changedFromResetVersion: false
+      }
+    case BACKPACK_ACTION.RESET_OUTFIT:
+      return {
+        ...backpackPageState,
+        outfitSetup: {
+          ...backpackPageState.outfitSetup,
+          base: JSON.parse(
+            JSON.stringify(backpackPageState.savedResetOutfit.base)
+          ),
+          wearables: getOutfitSetupFromWearables(
+            backpackPageState.savedResetOutfit.equippedWearables,
+            Object.values(catalystWearableMap)
+          )
+        },
+        forceRender: [...backpackPageState.savedResetOutfit.forceRender],
+        equippedWearables: [
+          ...backpackPageState.savedResetOutfit.equippedWearables
+        ],
+        changedFromResetVersion: false
       }
     default:
       return backpackPageState
