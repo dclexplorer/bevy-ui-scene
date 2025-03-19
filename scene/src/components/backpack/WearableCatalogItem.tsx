@@ -31,16 +31,19 @@ type WearableCatalogItemProps = {
   onSelect?: () => void
 }
 
-export function WearableCatalogItem({
-  isEquipped,
-  isSelected,
-  onSelect = noop,
-  loading = true,
-  wearableElement,
-  onUnequipWearable = noop,
-  onEquipWearable = noop,
-  uiTransform
-}: WearableCatalogItemProps): ReactElement {
+export function WearableCatalogItem(
+  props: WearableCatalogItemProps
+): ReactElement {
+  const {
+    isEquipped,
+    isSelected,
+    onSelect = noop,
+    loading = true,
+    wearableElement,
+    onUnequipWearable = noop,
+    onEquipWearable = noop,
+    uiTransform
+  } = props
   const canvasScaleRatio = getCanvasScaleRatio()
   const mustShowEquippedBorder = (): boolean =>
     !loading && isEquipped && !isSelected
