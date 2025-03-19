@@ -24,12 +24,17 @@ const state = {
   listenZoom: false,
   zoomFactor: 0.5
 }
-
+const AVATAR_PREVIEW_ELEMENT_ID = 'AP'
 function AvatarPreviewZoomSystem(): void {
   if (state.listenZoom) {
-    for (const [, pos] of engine.getEntitiesWith(UiScrollResult, UiTransform)) {
-      if (pos.value === undefined) continue
-      state.zoomFactor = pos.value.y
+    for (const [, scroll, transform] of engine.getEntitiesWith(
+      UiScrollResult,
+      UiTransform
+    )) {
+      if (transform.elementId !== AVATAR_PREVIEW_ELEMENT_ID) continue
+      if (scroll.value === undefined) continue
+      // TODO can we check key attribute or something?
+      state.zoomFactor = scroll.value.y
       setAvatarPreviewZoomFactor(state.zoomFactor)
     }
   }
@@ -84,6 +89,7 @@ export function AvatarPreviewElement(): ReactElement {
             uiTransform={{
               height: '100%',
               width: '100%',
+              elementId: AVATAR_PREVIEW_ELEMENT_ID,
               overflow: 'scroll',
               scrollPosition: state.listenZoom
                 ? undefined
