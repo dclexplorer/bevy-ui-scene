@@ -40,12 +40,7 @@ export function InfoPanel({
       uiBackground={{
         ...getBackgroundFromAtlas({
           atlasName: 'info-panel',
-          spriteName:
-            wearable === null
-              ? 'empty'
-              : wearable?.rarity !== undefined
-              ? wearable.rarity
-              : 'base'
+          spriteName: wearable ? wearable.rarity ?? 'base' : 'empty'
         })
       }}
     >

@@ -1,1 +1,1 @@
-export { default as SettingsSlider } from './SettingsSlider'
+export { default as Slider } from './Slider'

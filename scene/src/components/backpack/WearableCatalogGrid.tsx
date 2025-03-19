@@ -53,7 +53,7 @@ export function WearableCatalogGrid({
   onUnequipWearable = noop
 }: WearableCatalogGridProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
-  if (wearables?.length === 0) {
+  if (!wearables.length) {
     return (
       <UiEntity
         uiTransform={{
@@ -62,6 +62,7 @@ export function WearableCatalogGrid({
             right: 10 * canvasScaleRatio,
             top: 380 * canvasScaleRatio
           },
+          flexWrap: 'wrap',
           width: 950 * canvasScaleRatio,
           flexDirection: 'column',
           justifyContent: 'center',
@@ -114,6 +115,9 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
       {wearables.map(
         (wearableElement: CatalogWearableElement, index: number) => (
           <WearableCatalogItem
+            uiTransform={{
+              flexShrink: 0
+            }}
             key={index}
             wearableElement={wearableElement}
             onEquipWearable={(wearableElement: CatalogWearableElement) => {

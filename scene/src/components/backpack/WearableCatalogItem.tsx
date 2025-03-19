@@ -31,7 +31,6 @@ type WearableCatalogItemProps = {
   onSelect?: () => void
 }
 
-// TODO Review if we can remove loading prop from WearableCatalogItem and just use a loading background bellow the thumbnail
 export function WearableCatalogItem({
   isEquipped,
   isSelected,

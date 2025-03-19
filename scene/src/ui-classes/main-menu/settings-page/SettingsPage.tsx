@@ -21,7 +21,7 @@ import {
 } from '../../../utils/ui-utils'
 import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { DropdownStyled } from '../../../components/dropdown-styled'
-import { SettingsSlider } from '../../../components/slider'
+import { Slider } from '../../../components/slider'
 
 type SettingCategory =
   | 'general'
@@ -583,7 +583,7 @@ export default class SettingsPage {
                   )
                 } else {
                   return (
-                    <SettingsSlider
+                    <Slider
                       title={setting.name}
                       fontSize={fontSize}
                       value={`${

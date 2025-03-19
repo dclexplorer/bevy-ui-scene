@@ -8,7 +8,7 @@ import ReactEcs, {
 import { ALMOST_WHITE, RUBY } from '../../utils/constants'
 import { Vector2 } from '@dcl/sdk/math'
 
-function SettingsSlider(props: {
+function Slider(props: {
   uiTransform: UiTransformProps
   sliderSize: number
   title: string
@@ -103,7 +103,7 @@ function SettingsSlider(props: {
               position: { left: props.sliderSize / 2 - grabberSize.x / 2 },
               width: grabberSize.x,
               height: grabberSize.y,
-              zIndex: 4
+              zIndex: 1
             }}
             key="first"
             uiBackground={{
@@ -117,4 +117,4 @@ function SettingsSlider(props: {
   )
 }
 
-export default SettingsSlider
+export default Slider
