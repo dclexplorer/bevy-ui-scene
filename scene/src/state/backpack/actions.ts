@@ -3,8 +3,7 @@ import { type URNWithoutTokenId } from '../../utils/definitions'
 import { type WearableCategory } from '../../service/wearable-categories'
 import {
   type CatalogWearableElement,
-  type CatalystWearableMap,
-  type WearableEntityMetadata
+  type CatalystWearableMap
 } from '../../utils/wearables-definitions'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 
