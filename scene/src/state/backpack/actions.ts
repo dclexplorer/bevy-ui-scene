@@ -3,6 +3,7 @@ import { type URNWithoutTokenId } from '../../utils/definitions'
 import { type WearableCategory } from '../../service/wearable-categories'
 import {
   type CatalogWearableElement,
+  type CatalystWearableMap,
   type WearableEntityMetadata
 } from '../../utils/wearables-definitions'
 import { type PBAvatarBase } from '../../bevy-api/interface'
@@ -44,7 +45,7 @@ export type BackpackUpdateLoadingPageAction = BackpackActionId & {
 }
 export type BackpackUpdateEquippedWearablesPayload = {
   wearables: URNWithoutTokenId[]
-  wearablesData: WearableEntityMetadata[]
+  wearablesData: CatalystWearableMap
 }
 export type BackpackUpdateEquippedWearablesAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES

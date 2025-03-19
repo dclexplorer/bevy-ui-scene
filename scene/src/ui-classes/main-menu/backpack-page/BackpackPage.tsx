@@ -149,10 +149,11 @@ export default class BackpackPage {
     const wearables: URNWithoutTokenId[] = (getPlayer()?.wearables ?? []).map(
       (urn) => getURNWithoutTokenId(urn as URN)
     ) as URNWithoutTokenId[]
+    await fetchWearablesData(...(wearables ?? []))
     store.dispatch(
       updateEquippedWearables({
         wearables,
-        wearablesData: await fetchWearablesData(...(wearables ?? []))
+        wearablesData: catalystWearableMap
       })
     )
     store.dispatch(

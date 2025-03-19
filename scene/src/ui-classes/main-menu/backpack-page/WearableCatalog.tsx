@@ -28,6 +28,7 @@ import {
 } from '../../../utils/urn-utils'
 import { Pagination } from '../../../components/pagination/pagination'
 import {
+  catalystWearableMap,
   fetchWearablesData,
   fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
@@ -209,14 +210,16 @@ async function updateEquippedWearable(
         (wearableURN) =>
           wearableURN !== backpackState.outfitSetup.wearables[category]
       )
+
     const wearables =
       wearableURN === null
         ? equippedWearablesWithoutPrevious
         : [...equippedWearablesWithoutPrevious, wearableURN]
+    await fetchWearablesData(...(wearables ?? []))
     store.dispatch(
       updateEquippedWearables({
         wearables,
-        wearablesData: await fetchWearablesData(...(wearables ?? []))
+        wearablesData: catalystWearableMap
       })
     )
   }

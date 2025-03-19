@@ -100,7 +100,7 @@ export function reducer(
           ),
           wearables: getOutfitSetupFromWearables(
             backpackPageState.savedResetOutfit.equippedWearables,
-            Object.values(catalystWearableMap)
+            catalystWearableMap
           )
         },
         forceRender: [...backpackPageState.savedResetOutfit.forceRender],
