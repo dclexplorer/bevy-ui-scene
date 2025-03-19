@@ -176,7 +176,6 @@ function AvatarPreviewZoomSystem(): void {
     )) {
       if (transform.elementId !== AVATAR_PREVIEW_ELEMENT_ID) continue
       if (scroll.value === undefined) continue
-      // TODO can we check key attribute or something?
       state.zoomFactor = scroll.value.y
       setAvatarPreviewZoomFactor(state.zoomFactor)
     }
