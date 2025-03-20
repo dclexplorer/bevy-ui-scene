@@ -12,6 +12,7 @@ import { WearableCatalogGrid } from '../../../components/backpack/WearableCatalo
 import type { URNWithoutTokenId } from '../../../utils/definitions'
 import {
   resetOutfitAction,
+  updateActiveWearableCategory,
   updateAvatarBase,
   updateCurrentPage,
   updateEquippedWearables,
@@ -65,7 +66,7 @@ export function WearablesCatalog(): ReactElement {
           uiTransform={{ padding: 40 * canvasScaleRatio }}
           onClick={() => {
             if (backpackState.activeWearableCategory === null) return null
-            // this.changeCategory(null)
+            store.dispatch(updateActiveWearableCategory(null))
           }}
         />
         <Icon
@@ -89,7 +90,7 @@ export function WearablesCatalog(): ReactElement {
             active={true}
             showDeleteButton={true}
             onDelete={() => {
-              // this.changeCategory(null)
+              store.dispatch(updateActiveWearableCategory(null))
             }}
             icon={{
               spriteName: `category-${backpackState.activeWearableCategory}`,
@@ -100,7 +101,10 @@ export function WearablesCatalog(): ReactElement {
                 backpackState.activeWearableCategory
               ].label
             }
-            uiTransform={{ padding: 20 * canvasScaleRatio }}
+            uiTransform={{
+              padding: 20 * canvasScaleRatio,
+              height: 80 * canvasScaleRatio
+            }}
           />
         )}
         {mustShowColor && <WearableColorPicker />}
