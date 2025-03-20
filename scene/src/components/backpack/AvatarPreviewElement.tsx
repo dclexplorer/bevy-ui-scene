@@ -19,7 +19,7 @@ import {
 } from '@dcl/sdk/ecs'
 import Icon from '../icon/Icon'
 
-const ROTATION_FACTOR = 0.5
+const ROTATION_FACTOR = -0.5
 const state = {
   listenZoom: false,
   zoomFactor: 0.5
