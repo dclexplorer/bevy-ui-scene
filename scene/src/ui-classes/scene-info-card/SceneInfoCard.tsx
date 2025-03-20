@@ -112,6 +112,8 @@ export default class SceneInfoCard {
   }
 
   async setFav(arg: boolean): Promise<void> {
+    this.isFav = arg
+    this.updateIcons()
     if (this.place === undefined || this.sceneCoords === undefined) return
     await updateFavoriteStatus(this.place.id, arg)
     await this.uiController.gameController.updateWidgetParcel()
@@ -139,7 +141,7 @@ export default class SceneInfoCard {
     await this.updateSceneInfo()
     this.uiController.sceneInfoCardVisible = true
   }
-
+ 
   hide(): void {
     this.uiController.sceneInfoCardVisible = false
     this.resetBackgrounds()
@@ -202,8 +204,7 @@ export default class SceneInfoCard {
       panelWidth = canvasInfo.width / 4
     }
 
-    const place: PlaceFromApi | undefined = store.getState().scene.explorerPlace
-    if (place === undefined) return null
+    if (this.place === undefined) return null
     return (
       <Canvas>
         <UiEntity
@@ -228,7 +229,7 @@ export default class SceneInfoCard {
             uiBackground={{
               textureMode: 'stretch',
               texture: {
-                src: place.image.replace(
+                src: this.place.image.replace(
                   'https://camera-reel-service.decentraland.org/api/images/',
                   'https://camera-reel-s3-bucket.decentraland.org/'
                 )
@@ -446,7 +447,7 @@ export default class SceneInfoCard {
         uiTransform={{
           width: '100%',
           minHeight: this.fontSize * 9.5,
-          maxHeight: this.fontSize * 9.5,
+          // maxHeight: this.fontSize * 9.5,
           justifyContent: 'flex-start',
           alignItems: 'center',
           flexDirection: 'column'
@@ -459,9 +460,8 @@ export default class SceneInfoCard {
           textAlign="middle-left"
           uiTransform={{
             width: '100%',
-            height: this.fontSize * 1.5,
-            margin: { top: this.fontSize * 0.5 }
-          }}
+            height: 'auto'
+            }}
           color={BLACK_TEXT}
         />
         {this.place.contact_name !== null && (
@@ -471,8 +471,7 @@ export default class SceneInfoCard {
             textAlign="middle-left"
             uiTransform={{
               width: '100%',
-              height: this.fontSize,
-              margin: { left: this.fontSize * 0.5 }
+              height: 'auto',
             }}
             color={BLACK_TEXT}
           />
@@ -482,8 +481,18 @@ export default class SceneInfoCard {
             width: '100%',
             minHeight: this.fontSize * 2
           }}
-          // uiBackground={{color:Color4.Red()}}
-        >
+        > 
+          {likeRate > 0 &&
+            this.infoDetail(
+              Math.round(likeRate * 100).toString() + '%',
+              { atlasName: 'icons', spriteName: 'Like solid' },
+              {
+                width: 'auto',
+                height: this.fontSize,
+                margin: { right: this.fontSize }
+              },
+              BLACK_TEXT
+            )}
           {/* Need to implement last visitors portrait */}
           {this.infoDetail(
             this.place.user_count.toString(),
@@ -496,7 +505,7 @@ export default class SceneInfoCard {
             BLACK_TEXT
           )}
 
-          {/* Need to implement number formating */}
+          {/* Need to implement number formating
           {this.infoDetail(
             this.place.user_visits.toString() + 'k',
             { atlasName: 'icons', spriteName: 'PreviewIcon' },
@@ -506,19 +515,9 @@ export default class SceneInfoCard {
               margin: { right: this.fontSize }
             },
             BLACK_TEXT
-          )}
+          )} */}
 
-          {likeRate > 0 &&
-            this.infoDetail(
-              Math.round(likeRate * 100).toString() + '%',
-              { atlasName: 'icons', spriteName: 'Like solid' },
-              {
-                width: 'auto',
-                height: this.fontSize,
-                margin: { right: this.fontSize }
-              },
-              BLACK_TEXT
-            )}
+          
         </UiEntity>
 
         <ButtonTextIcon
@@ -563,8 +562,7 @@ export default class SceneInfoCard {
             }}
             onMouseDown={() => {
               if (
-                store.getState().scene.sceneInfoCardPlace?.user_like ??
-                false
+                this.place?.user_like ?? false
               ) {
                 void this.setLikeStatus('null')
               } else {
@@ -592,7 +590,7 @@ export default class SceneInfoCard {
                 void this.setLikeStatus('null')
               } else {
                 void this.setLikeStatus('dislike')
-              }
+              } 
             }}
           />
           <ButtonIcon
@@ -603,7 +601,7 @@ export default class SceneInfoCard {
             iconSize={this.fontSize * 1.5}
             icon={this.favIcon}
             backgroundColor={this.setFavBackgroundColor}
-            iconColor={this.place.user_favorite ? Color4.Red() : BLACK_TEXT}
+            iconColor={this.isFav ? undefined : BLACK_TEXT}
             onMouseEnter={() => {
               this.onFavEnter()
             }}
@@ -795,8 +793,7 @@ export default class SceneInfoCard {
   }
 
   overviewContent(): ReactEcs.JSX.Element | null {
-    const place: PlaceFromApi | undefined = store.getState().scene.explorerPlace
-    if (place === undefined) return null
+    if (this.place === undefined) return null
     return (
       <UiEntity
         uiTransform={{
@@ -807,7 +804,38 @@ export default class SceneInfoCard {
           flexDirection: 'column'
         }}
       >
-        {place.description !== null && (
+          <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            flexDirection: 'row',
+            margin: { top: this.fontSize, bottom: this.fontSize }
+          }}
+        >
+          {this.infoDetail(
+            this.place.base_position,
+            {
+              atlasName: 'icons',
+              spriteName: 'PinIcn'
+            },
+            { width: 'auto', height: 'auto', margin: { right: this.fontSize } },
+            undefined,
+            'LOCATION'
+          )}
+          {this.infoDetail(
+            this.place.positions.length.toString(),
+            {
+              atlasName: 'map',
+              spriteName: 'ParcelsIcn'
+            },
+            { width: 'auto', height: 'auto' },
+            undefined,
+            'PARCELS'
+          )}
+        </UiEntity>
+        
           <Label
             value={'DESCRIPTION'}
             fontSize={this.fontSize}
@@ -815,18 +843,18 @@ export default class SceneInfoCard {
             uiTransform={{ width: '100%' }}
             color={GRAY_TEXT}
           />
-        )}
+        
 
-        {place.description !== null && (
+        
           <Label
-            value={place.description}
+            value={this.place.description ?? 'No description'}
             fontSize={this.fontSize}
             textAlign="bottom-left"
             uiTransform={{ width: '100%' }}
             color={BLACK_TEXT}
           />
-        )}
-        {place.categories.length !== 0 && (
+       
+        {this.place.categories.length !== 0 && (
           <Label
             value={'APPEARS ON'}
             fontSize={this.fontSize}
@@ -839,7 +867,7 @@ export default class SceneInfoCard {
             color={GRAY_TEXT}
           />
         )}
-        {place.categories.length !== 0 && (
+        {this.place.categories.length !== 0 && (
           <UiEntity
             uiTransform={{
               width: '100%',
@@ -847,43 +875,14 @@ export default class SceneInfoCard {
               justifyContent: 'flex-start',
               alignItems: 'flex-start',
               flexDirection: 'row',
-              flexWrap: 'wrap'
+              flexWrap: 'wrap',
+              margin: { bottom: this.fontSize }
+
             }}
           >
-            {place.categories.map((tag, index) => this.filterChip(tag, index))}
+            {this.place.categories.map((tag, index) => this.filterChip(tag, index))}
           </UiEntity>
         )}
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: 'auto',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            flexDirection: 'row',
-            margin: { top: this.fontSize, bottom: this.fontSize }
-          }}
-        >
-          {this.infoDetail(
-            place.base_position,
-            {
-              atlasName: 'icons',
-              spriteName: 'PinIcn'
-            },
-            { width: 'auto', height: 'auto', margin: { right: this.fontSize } },
-            undefined,
-            'LOCATION'
-          )}
-          {this.infoDetail(
-            place.positions.length.toString(),
-            {
-              atlasName: 'map',
-              spriteName: 'ParcelsIcn'
-            },
-            { width: 'auto', height: 'auto' },
-            undefined,
-            'PARCELS'
-          )}
-        </UiEntity>
       </UiEntity>
     )
   }

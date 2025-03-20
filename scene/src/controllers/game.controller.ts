@@ -58,14 +58,18 @@ export class GameController {
     if (coords === undefined) {
       return
     }
-    const place = await fetchPlaceId(coords.x, coords.z)
+    const place = await fetchPlaceId(coords)
     const explorerPlace = await getPlaceFromApi(place.id)
     store.dispatch(loadPlaceFromApi(explorerPlace))
+    if (place.id === store.getState().scene.sceneInfoCardPlace?.id) {
+      await this.updateCardParcel(coords)  
+    }
     void this.uiController.mainHud.sceneInfo.update()
+
   }
 
   async updateCardParcel(sceneCoords: Vector3): Promise<void> {
-    const infoCardPlace = await fetchPlaceId(sceneCoords.x, sceneCoords.z)
+    const infoCardPlace = await fetchPlaceId(sceneCoords)
     const sceneInfoCardPlace = await getPlaceFromApi(infoCardPlace.id)
     store.dispatch(loadSceneInfoPlaceFromApi(sceneInfoCardPlace))
     void this.uiController.sceneCard.updateSceneInfo()

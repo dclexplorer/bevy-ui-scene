@@ -13,6 +13,7 @@ import { EMPTY_PHOTO_METADATA } from './constants'
 import type { FormattedURN } from './definitions'
 import { BevyApi } from 'src/bevy-api'
 import type { KernelFetchRespose } from 'src/bevy-api/interface'
+import { type Vector3 } from '@dcl/ecs-math'
 
 type EventsResponse = {
   ok: boolean
@@ -135,12 +136,11 @@ export async function fetchWearable(
 }
 
 export async function fetchPlaceId(
-  x: number,
-  y: number
+  coords:Vector3
 ): Promise<PlaceFromApi> {
   try {
     const response: Response = await fetch(
-      `https://places.decentraland.org/api/places/?positions=${x + ',' + y}`
+      `https://places.decentraland.org/api/places/?positions=${coords.x + ',' + coords.z}`
     )
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
@@ -193,7 +193,7 @@ export async function updateFavoriteStatus(
 
 export async function updateLikeStatus(
   placeId: string,
-  likeOrDislike: 'like' | 'dislike' | 'null'
+  likeOrDislike: 'like' | 'dislike' | 'null' 
 ): Promise<KernelFetchRespose> {
   const url = `https://places.decentraland.org/api/places/${placeId}/likes`
 
