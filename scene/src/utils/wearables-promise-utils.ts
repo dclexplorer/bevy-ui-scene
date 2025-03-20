@@ -46,7 +46,7 @@ const WEARABLES_ORDER_DIRECTION = {
 }
 
 const pageCache = new Map<string, WearablesPageResponse>()
-
+const CATALYST_BASE_URL_FALLBACK = 'https://peer.decentraland.org'
 export async function fetchWearablesPage({
   pageNum,
   pageSize,
@@ -67,31 +67,31 @@ export async function fetchWearablesPage({
       orderDirection,
       includeBase: true,
       includeOnChain: true,
-      catalystBaseUrl:
-        realm.realmInfo?.baseUrl ?? 'https://peer.decentraland.org',
+      catalystBaseUrl: realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK,
       cacheKey
     })
-    console.log('wearableCatalogPageURL', wearableCatalogPageURL)
     if (pageCache.has(wearableCatalogPageURL)) {
       return pageCache.get(wearableCatalogPageURL) as WearablesPageResponse
     }
 
-    const wearablesPageResponse: any = await fetch(wearableCatalogPageURL)
-    const result: WearablesPageResponse = await wearablesPageResponse.json()
+    const wearablesPageResponse: WearablesPageResponse =
+      await fetchJsonOrTryFallback(wearableCatalogPageURL)
 
-    result.elements?.forEach((wearableElement: CatalogWearableElement) => {
-      if (
-        wearableElement.urn.includes(':collections-v1:') ||
-        wearableElement.urn.includes(':off-chain:')
-      ) {
-        // TODO review if we can use CatalogWearableElement instead of WearableEntityMetadata
-        wearableElement.entity.metadata.name =
-          wearableElement.entity.metadata.i18n[0].text
+    wearablesPageResponse.elements?.forEach(
+      (wearableElement: CatalogWearableElement) => {
+        if (
+          wearableElement.urn.includes(':collections-v1:') ||
+          wearableElement.urn.includes(':off-chain:')
+        ) {
+          wearableElement.entity.metadata.name =
+            wearableElement.entity.metadata.i18n[0].text
+        }
+        catalystWearableMap[wearableElement.urn] =
+          wearableElement.entity.metadata
       }
-      catalystWearableMap[wearableElement.urn] = wearableElement.entity.metadata
-    })
-    pageCache.set(wearableCatalogPageURL, result)
-    return result
+    )
+    pageCache.set(wearableCatalogPageURL, wearablesPageResponse)
+    return wearablesPageResponse
   } catch (error) {
     console.error('wearablesPage Error fetching:', error)
     throw error
@@ -137,8 +137,7 @@ export async function fetchWearablesData(
         return `wearableId=${urn}`
       })
       .join('&')}`
-    const response = await fetch(url)
-    const wearables = (await response.json()).wearables
+    const wearables = (await fetchJsonOrTryFallback(url)).wearables
     wearables.forEach((wearable: WearableEntityMetadata) => {
       catalystWearableMap[wearable.id] = wearable
     })
@@ -146,5 +145,17 @@ export async function fetchWearablesData(
   } catch (error) {
     console.error('fetchWearablesData error', error)
     return []
+  }
+}
+
+export async function fetchJsonOrTryFallback(URL: string): Promise<any> {
+  const realmBaseURL =
+    (await getRealm({})).realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
+  try {
+    return await (await fetch(URL)).json()
+  } catch (error) {
+    return await (
+      await fetch(URL.replace(realmBaseURL, CATALYST_BASE_URL_FALLBACK))
+    ).json()
   }
 }
