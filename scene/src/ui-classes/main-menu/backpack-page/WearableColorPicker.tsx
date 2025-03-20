@@ -134,7 +134,7 @@ function ColorPickerDialog({
   return (
     <UiEntity
       uiTransform={{
-        width: canvasScaleRatio * 640,
+        width: canvasScaleRatio * 650,
         height: canvasScaleRatio * 700,
         zIndex: 3,
         positionType: 'absolute',
@@ -164,7 +164,8 @@ function ColorPickerDialog({
           flexDirection: 'row',
           maxWidth: '100%',
           flexWrap: 'wrap',
-          margin: { bottom: '5%' }
+          margin: { bottom: '5%' },
+          flexGrow: 1
         }}
       >
         {colorPreset.map((color: Color4, index: number) => (
