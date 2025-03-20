@@ -18,6 +18,10 @@ import {
   UiTransform
 } from '@dcl/sdk/ecs'
 import Icon from '../icon/Icon'
+import {
+  hideMouseCursor,
+  showMouseCursor
+} from '../../service/custom-cursor-service'
 
 const ROTATION_FACTOR = -0.5
 const state = {
@@ -54,6 +58,10 @@ export function AvatarPreviewElement(): ReactElement {
           <UiEntity
             key="avatar-preview-zoom"
             onMouseDragLocked={() => {
+              showMouseCursor({
+                atlasName: 'icons',
+                spriteName: 'RotateIcn'
+              })
               const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
               const deltaX: number = pointerInfo?.screenDelta?.x ?? 0
               const qY = Quaternion.fromAngleAxis(deltaX * ROTATION_FACTOR, {
@@ -84,6 +92,9 @@ export function AvatarPreviewElement(): ReactElement {
             }}
             onMouseEnter={() => (state.listenZoom = true)}
             onMouseLeave={() => (state.listenZoom = false)}
+            onMouseUp={() => {
+              hideMouseCursor()
+            }}
           >
             <UiEntity
               uiTransform={{

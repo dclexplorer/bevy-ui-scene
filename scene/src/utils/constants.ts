@@ -561,3 +561,5 @@ export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
     placeId: '00000000-0000-0000-0000-000000000000'
   }
 }
+
+export const MAX_ZINDEX = 98303

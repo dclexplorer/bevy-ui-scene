@@ -7,6 +7,10 @@ import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { engine, PrimaryPointerInfo } from '@dcl/sdk/ecs'
 import { noop } from '../../utils/function-utils'
 import { Color4 } from '@dcl/sdk/math'
+import {
+  hideMouseCursor,
+  showMouseCursor
+} from '../../service/custom-cursor-service'
 
 type BasicSliderProps = {
   children?: ReactElement
@@ -43,6 +47,10 @@ export function BasicSlider({
           ...uiBackground
         }}
         onMouseDragLocked={() => {
+          showMouseCursor({
+            atlasName: 'backpack',
+            spriteName: 'hand'
+          })
           const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
           const deltaX: number = pointerInfo?.screenDelta?.x ?? 0
           const newPercentage = Math.min(
@@ -53,6 +61,9 @@ export function BasicSlider({
           const newValue = min + (newPercentage / 100) * total
 
           onChange(floatNumber ? newValue : Math.floor(newValue))
+        }}
+        onMouseUp={() => {
+          hideMouseCursor()
         }}
       >
         <UiEntity
