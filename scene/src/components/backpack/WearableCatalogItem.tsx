@@ -30,6 +30,7 @@ type WearableCatalogItemProps = {
   onEquipWearable?: (wearableElement: CatalogWearableElement) => void
   onSelect?: () => void
 }
+const state: any = { hoveredURN: null }
 
 export function WearableCatalogItem(
   props: WearableCatalogItemProps
@@ -48,7 +49,7 @@ export function WearableCatalogItem(
   const mustShowEquippedBorder = (): boolean =>
     !loading && isEquipped && !isSelected
   const mustShowSelectedOverlay = (): boolean => isSelected && !loading
-
+  const isHovered = (): boolean => state.hoveredURN === wearableElement?.urn
   return (
     <UiEntity
       uiTransform={{
@@ -59,9 +60,13 @@ export function WearableCatalogItem(
         ...uiTransform
       }}
       onMouseDown={onSelect}
+      onMouseEnter={() => {
+        console.log('hoveredURN', wearableElement.urn)
+        state.hoveredURN = wearableElement.urn
+      }}
     >
       {mustShowEquippedBorder() && <EquippedBorder />}
-
+      {isHovered() && <HoverBorder />}
       {!isSelected && (
         <WearableCellThumbnail
           uiTransform={{ width: '100%', height: '100%' }}
@@ -69,7 +74,6 @@ export function WearableCatalogItem(
           loading={loading}
         />
       )}
-
       {mustShowSelectedOverlay() && (
         <SelectedWearableOverlay
           wearableElement={wearableElement}
@@ -79,6 +83,25 @@ export function WearableCatalogItem(
         />
       )}
     </UiEntity>
+  )
+}
+
+function HoverBorder(): ReactElement | null {
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        width: '100%',
+        height: '95%',
+        position: { top: 0, left: 0 }
+      }}
+      uiBackground={{
+        ...getBackgroundFromAtlas({
+          spriteName: 'hover-item',
+          atlasName: 'backpack'
+        })
+      }}
+    />
   )
 }
 

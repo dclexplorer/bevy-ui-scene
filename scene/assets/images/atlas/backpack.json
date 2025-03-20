@@ -1,28 +1,8 @@
 {
 	"frames": {
-		"CatalogSelection.png": {
-			"frame": {
-				"x": 1,
-				"y": 1,
-				"w": 312,
-				"h": 396
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 312,
-				"h": 396
-			},
-			"sourceSize": {
-				"w": 312,
-				"h": 396
-			}
-		},
 		"Loading.png": {
 			"frame": {
-				"x": 315,
+				"x": 1,
 				"y": 1,
 				"w": 120,
 				"h": 120
@@ -42,7 +22,7 @@
 		},
 		"all.png": {
 			"frame": {
-				"x": 437,
+				"x": 123,
 				"y": 1,
 				"w": 52,
 				"h": 51
@@ -62,7 +42,7 @@
 		},
 		"brightness-slider.png": {
 			"frame": {
-				"x": 491,
+				"x": 177,
 				"y": 1,
 				"w": 266,
 				"h": 31
@@ -82,8 +62,8 @@
 		},
 		"catalog-selection-frame.png": {
 			"frame": {
-				"x": 491,
-				"y": 34,
+				"x": 445,
+				"y": 1,
 				"w": 312,
 				"h": 396
 			},
@@ -103,7 +83,7 @@
 		"category-body_shape.png": {
 			"frame": {
 				"x": 1,
-				"y": 432,
+				"y": 399,
 				"w": 80,
 				"h": 81
 			},
@@ -123,7 +103,7 @@
 		"category-earring.png": {
 			"frame": {
 				"x": 83,
-				"y": 432,
+				"y": 399,
 				"w": 80,
 				"h": 81
 			},
@@ -143,7 +123,7 @@
 		"category-eyebrows.png": {
 			"frame": {
 				"x": 165,
-				"y": 432,
+				"y": 399,
 				"w": 80,
 				"h": 81
 			},
@@ -163,7 +143,7 @@
 		"category-eyes.png": {
 			"frame": {
 				"x": 247,
-				"y": 432,
+				"y": 399,
 				"w": 80,
 				"h": 81
 			},
@@ -183,7 +163,7 @@
 		"category-eyewear.png": {
 			"frame": {
 				"x": 329,
-				"y": 432,
+				"y": 399,
 				"w": 80,
 				"h": 81
 			},
@@ -203,7 +183,7 @@
 		"category-facial_hair.png": {
 			"frame": {
 				"x": 411,
-				"y": 432,
+				"y": 399,
 				"w": 80,
 				"h": 81
 			},
@@ -223,7 +203,7 @@
 		"category-feet.png": {
 			"frame": {
 				"x": 493,
-				"y": 432,
+				"y": 399,
 				"w": 80,
 				"h": 81
 			},
@@ -243,7 +223,7 @@
 		"category-hair.png": {
 			"frame": {
 				"x": 575,
-				"y": 432,
+				"y": 399,
 				"w": 80,
 				"h": 81
 			},
@@ -263,7 +243,7 @@
 		"category-hands_wear.png": {
 			"frame": {
 				"x": 657,
-				"y": 432,
+				"y": 399,
 				"w": 80,
 				"h": 81
 			},
@@ -282,8 +262,8 @@
 		},
 		"category-hat.png": {
 			"frame": {
-				"x": 739,
-				"y": 432,
+				"x": 1,
+				"y": 482,
 				"w": 80,
 				"h": 81
 			},
@@ -302,8 +282,8 @@
 		},
 		"category-helmet.png": {
 			"frame": {
-				"x": 1,
-				"y": 515,
+				"x": 83,
+				"y": 482,
 				"w": 80,
 				"h": 81
 			},
@@ -322,8 +302,8 @@
 		},
 		"category-lower_body.png": {
 			"frame": {
-				"x": 83,
-				"y": 515,
+				"x": 165,
+				"y": 482,
 				"w": 80,
 				"h": 81
 			},
@@ -342,8 +322,8 @@
 		},
 		"category-male.png": {
 			"frame": {
-				"x": 165,
-				"y": 515,
+				"x": 247,
+				"y": 482,
 				"w": 81,
 				"h": 81
 			},
@@ -362,8 +342,8 @@
 		},
 		"category-mask.png": {
 			"frame": {
-				"x": 248,
-				"y": 515,
+				"x": 330,
+				"y": 482,
 				"w": 80,
 				"h": 81
 			},
@@ -382,8 +362,8 @@
 		},
 		"category-mouth.png": {
 			"frame": {
-				"x": 330,
-				"y": 515,
+				"x": 412,
+				"y": 482,
 				"w": 80,
 				"h": 81
 			},
@@ -402,8 +382,8 @@
 		},
 		"category-skin.png": {
 			"frame": {
-				"x": 412,
-				"y": 515,
+				"x": 494,
+				"y": 482,
 				"w": 80,
 				"h": 81
 			},
@@ -422,8 +402,8 @@
 		},
 		"category-tiara.png": {
 			"frame": {
-				"x": 494,
-				"y": 515,
+				"x": 576,
+				"y": 482,
 				"w": 80,
 				"h": 81
 			},
@@ -442,8 +422,8 @@
 		},
 		"category-top_head.png": {
 			"frame": {
-				"x": 576,
-				"y": 515,
+				"x": 658,
+				"y": 482,
 				"w": 80,
 				"h": 81
 			},
@@ -462,8 +442,8 @@
 		},
 		"category-upper_body.png": {
 			"frame": {
-				"x": 658,
-				"y": 515,
+				"x": 1,
+				"y": 565,
 				"w": 80,
 				"h": 81
 			},
@@ -482,8 +462,8 @@
 		},
 		"colo-slider.png": {
 			"frame": {
-				"x": 1,
-				"y": 598,
+				"x": 83,
+				"y": 565,
 				"w": 266,
 				"h": 45
 			},
@@ -502,8 +482,8 @@
 		},
 		"color-slider.png": {
 			"frame": {
-				"x": 269,
-				"y": 598,
+				"x": 351,
+				"y": 565,
 				"w": 266,
 				"h": 31
 			},
@@ -522,8 +502,8 @@
 		},
 		"empty-category-result.png": {
 			"frame": {
-				"x": 537,
-				"y": 598,
+				"x": 759,
+				"y": 1,
 				"w": 200,
 				"h": 200
 			},
@@ -542,8 +522,8 @@
 		},
 		"empty-search-result.png": {
 			"frame": {
-				"x": 805,
-				"y": 1,
+				"x": 759,
+				"y": 203,
 				"w": 200,
 				"h": 200
 			},
@@ -562,7 +542,7 @@
 		},
 		"empty-wearable-field.png": {
 			"frame": {
-				"x": 315,
+				"x": 1,
 				"y": 203,
 				"w": 70,
 				"h": 70
@@ -582,7 +562,7 @@
 		},
 		"hand.png": {
 			"frame": {
-				"x": 387,
+				"x": 73,
 				"y": 203,
 				"w": 96,
 				"h": 96
@@ -600,9 +580,29 @@
 				"h": 96
 			}
 		},
+		"hover-item.png": {
+			"frame": {
+				"x": 171,
+				"y": 203,
+				"w": 138,
+				"h": 138
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 138,
+				"h": 138
+			},
+			"sourceSize": {
+				"w": 138,
+				"h": 138
+			}
+		},
 		"icon-hidden.png": {
 			"frame": {
-				"x": 759,
+				"x": 961,
 				"y": 1,
 				"w": 20,
 				"h": 20
@@ -622,8 +622,8 @@
 		},
 		"icon-shown.png": {
 			"frame": {
-				"x": 781,
-				"y": 1,
+				"x": 961,
+				"y": 23,
 				"w": 20,
 				"h": 17
 			},
@@ -642,7 +642,7 @@
 		},
 		"loading-wearable.png": {
 			"frame": {
-				"x": 805,
+				"x": 311,
 				"y": 203,
 				"w": 120,
 				"h": 120
@@ -662,8 +662,8 @@
 		},
 		"mask-slider.png": {
 			"frame": {
-				"x": 740,
-				"y": 515,
+				"x": 619,
+				"y": 565,
 				"w": 266,
 				"h": 31
 			},
@@ -682,8 +682,8 @@
 		},
 		"nft-empty.png": {
 			"frame": {
-				"x": 927,
-				"y": 203,
+				"x": 739,
+				"y": 405,
 				"w": 70,
 				"h": 70
 			},
@@ -702,8 +702,8 @@
 		},
 		"rarity-background-base.png": {
 			"frame": {
-				"x": 927,
-				"y": 275,
+				"x": 811,
+				"y": 405,
 				"w": 120,
 				"h": 127
 			},
@@ -722,8 +722,8 @@
 		},
 		"rarity-background-common.png": {
 			"frame": {
-				"x": 740,
-				"y": 548,
+				"x": 351,
+				"y": 598,
 				"w": 121,
 				"h": 127
 			},
@@ -742,8 +742,8 @@
 		},
 		"rarity-background-epic.png": {
 			"frame": {
-				"x": 863,
-				"y": 548,
+				"x": 474,
+				"y": 598,
 				"w": 120,
 				"h": 127
 			},
@@ -762,8 +762,8 @@
 		},
 		"rarity-background-exotic.png": {
 			"frame": {
-				"x": 1,
-				"y": 677,
+				"x": 596,
+				"y": 598,
 				"w": 120,
 				"h": 127
 			},
@@ -782,8 +782,8 @@
 		},
 		"rarity-background-legendary.png": {
 			"frame": {
-				"x": 123,
-				"y": 677,
+				"x": 718,
+				"y": 598,
 				"w": 120,
 				"h": 127
 			},
@@ -802,8 +802,8 @@
 		},
 		"rarity-background-mythic.png": {
 			"frame": {
-				"x": 245,
-				"y": 677,
+				"x": 840,
+				"y": 598,
 				"w": 120,
 				"h": 127
 			},
@@ -822,8 +822,8 @@
 		},
 		"rarity-background-rare.png": {
 			"frame": {
-				"x": 367,
-				"y": 677,
+				"x": 1,
+				"y": 727,
 				"w": 120,
 				"h": 127
 			},
@@ -842,8 +842,8 @@
 		},
 		"rarity-background-uncommon.png": {
 			"frame": {
-				"x": 739,
-				"y": 677,
+				"x": 123,
+				"y": 727,
 				"w": 120,
 				"h": 127
 			},
@@ -862,8 +862,8 @@
 		},
 		"rarity-background-unique.png": {
 			"frame": {
-				"x": 861,
-				"y": 677,
+				"x": 245,
+				"y": 727,
 				"w": 120,
 				"h": 127
 			},
@@ -882,8 +882,8 @@
 		},
 		"rarity-corner-base.png": {
 			"frame": {
-				"x": 1007,
-				"y": 1,
+				"x": 933,
+				"y": 405,
 				"w": 46,
 				"h": 45
 			},
@@ -902,8 +902,8 @@
 		},
 		"rarity-corner-common.png": {
 			"frame": {
-				"x": 1007,
-				"y": 48,
+				"x": 933,
+				"y": 452,
 				"w": 47,
 				"h": 45
 			},
@@ -922,8 +922,8 @@
 		},
 		"rarity-corner-epic.png": {
 			"frame": {
-				"x": 437,
-				"y": 95,
+				"x": 740,
+				"y": 499,
 				"w": 46,
 				"h": 45
 			},
@@ -942,8 +942,8 @@
 		},
 		"rarity-corner-exotic.png": {
 			"frame": {
-				"x": 1007,
-				"y": 95,
+				"x": 933,
+				"y": 499,
 				"w": 46,
 				"h": 45
 			},
@@ -962,8 +962,8 @@
 		},
 		"rarity-corner-legendary.png": {
 			"frame": {
-				"x": 315,
-				"y": 142,
+				"x": 887,
+				"y": 546,
 				"w": 46,
 				"h": 45
 			},
@@ -982,8 +982,8 @@
 		},
 		"rarity-corner-mythic.png": {
 			"frame": {
-				"x": 363,
-				"y": 142,
+				"x": 935,
+				"y": 546,
 				"w": 46,
 				"h": 45
 			},
@@ -1002,8 +1002,8 @@
 		},
 		"rarity-corner-rare.png": {
 			"frame": {
-				"x": 411,
-				"y": 142,
+				"x": 367,
+				"y": 727,
 				"w": 46,
 				"h": 45
 			},
@@ -1022,8 +1022,8 @@
 		},
 		"rarity-corner-uncommon.png": {
 			"frame": {
-				"x": 1007,
-				"y": 142,
+				"x": 415,
+				"y": 727,
 				"w": 46,
 				"h": 45
 			},
@@ -1042,8 +1042,8 @@
 		},
 		"rarity-corner-unique.png": {
 			"frame": {
-				"x": 1007,
-				"y": 189,
+				"x": 463,
+				"y": 727,
 				"w": 46,
 				"h": 45
 			},
@@ -1062,8 +1062,8 @@
 		},
 		"saturation-slider.png": {
 			"frame": {
-				"x": 1,
-				"y": 806,
+				"x": 511,
+				"y": 727,
 				"w": 266,
 				"h": 31
 			},
@@ -1082,8 +1082,8 @@
 		},
 		"value-slider.png": {
 			"frame": {
-				"x": 269,
-				"y": 806,
+				"x": 511,
+				"y": 760,
 				"w": 266,
 				"h": 31
 			},
@@ -1107,8 +1107,8 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 1055,
-			"h": 838
+			"w": 982,
+			"h": 855
 		},
 		"scale": "1"
 	}

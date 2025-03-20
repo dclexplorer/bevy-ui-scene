@@ -115,9 +115,7 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
       {wearables.map(
         (wearableElement: CatalogWearableElement, index: number) => (
           <WearableCatalogItem
-            uiTransform={{
-              flexShrink: 0
-            }}
+            uiTransform={{}}
             key={index}
             wearableElement={wearableElement}
             onEquipWearable={(wearableElement: CatalogWearableElement) => {
