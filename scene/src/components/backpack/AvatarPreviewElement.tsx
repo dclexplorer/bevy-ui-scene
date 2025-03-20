@@ -87,7 +87,7 @@ export function AvatarPreviewElement(): ReactElement {
           >
             <UiEntity
               uiTransform={{
-                height: 10000 * canvasScaleRatio,
+                height: 6000 * canvasScaleRatio,
                 width: '100%'
               }}
             ></UiEntity>
