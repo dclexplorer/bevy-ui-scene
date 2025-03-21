@@ -109,6 +109,22 @@ export function reducer(
         ],
         changedFromResetVersion: false
       }
+    case BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY:
+      return {
+        ...backpackPageState,
+        outfitSetup: {
+          ...backpackPageState.outfitSetup,
+          wearables: {
+            ...backpackPageState.outfitSetup.wearables,
+            [action.payload]: null
+          }
+        },
+        equippedWearables: backpackPageState.equippedWearables.filter(
+          (equippedWearable) =>
+            equippedWearable !==
+            backpackPageState.outfitSetup.wearables[action.payload]
+        )
+      }
     default:
       return backpackPageState
   }

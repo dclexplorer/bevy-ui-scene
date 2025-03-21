@@ -20,7 +20,8 @@ export enum BACKPACK_ACTION {
   UPDATE_CACHE_KEY,
   SWITCH_FORCE_RENDER_CATEGORY,
   UPDATE_SAVED_RESET_VERSION,
-  RESET_OUTFIT
+  RESET_OUTFIT,
+  UNEQUIP_WEARABLE_CATEGORY
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -79,6 +80,10 @@ export type BackpackUpdateSavedResetVersionAction = BackpackActionId & {
 export type BackpackResetOutfitAction = BackpackActionId & {
   type: BACKPACK_ACTION.RESET_OUTFIT
 }
+export type BackpackUnequipWearableCategoryAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY
+  payload: WearableCategory
+}
 export type BackpackActions =
   | BackpackSelectWearableURNAction
   | BackpackUpdateCurrentPageAction
@@ -91,6 +96,7 @@ export type BackpackActions =
   | BackpackSwitchForceRenderCategory
   | BackpackUpdateSavedResetVersionAction
   | BackpackResetOutfitAction
+  | BackpackUnequipWearableCategoryAction
 
 export const updateSelectedWearableURN = (
   payload: URNWithoutTokenId | null
@@ -170,4 +176,12 @@ export const updateSavedResetVersion =
 export const resetOutfitAction = (): BackpackResetOutfitAction => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.RESET_OUTFIT
+})
+
+export const unequipWearableCategory = (
+  payload: WearableCategory
+): BackpackUnequipWearableCategoryAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY,
+  payload
 })

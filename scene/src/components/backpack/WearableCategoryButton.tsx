@@ -1,5 +1,8 @@
 import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
-import { type WearableCategory } from '../../service/wearable-categories'
+import {
+  WEARABLE_CATEGORY_DEFINITIONS,
+  type WearableCategory
+} from '../../service/wearable-categories'
 import ReactEcs, {
   type ReactElement,
   type UiBackgroundProps
@@ -14,7 +17,10 @@ import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { catalystWearableMap } from '../../utils/wearables-promise-utils'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { store } from '../../state/store'
-import { switchForceRenderCategory } from '../../state/backpack/actions'
+import {
+  switchForceRenderCategory,
+  unequipWearableCategory
+} from '../../state/backpack/actions'
 import { updateAvatarPreview } from './AvatarPreview'
 
 type WearableCategoryButtonProps = {
@@ -88,17 +94,7 @@ export function WearableCategoryButton({
       }}
     >
       <Icon icon={categoryIcon} iconSize={iconSize} />
-      <UiEntity
-        uiTransform={{
-          width: 124 * canvasScaleRatio,
-          height: 124 * canvasScaleRatio,
-          display: selectedURN === null ? 'none' : 'flex',
-          positionType: 'absolute',
-          position: {
-            left: 54 * canvasScaleRatio * 2
-          }
-        }}
-      />
+
       <UiEntity
         uiTransform={{
           width: 116 * canvasScaleRatio,
@@ -129,55 +125,108 @@ export function WearableCategoryButton({
           ...textureProps
         }}
       >
-        {isHovered() && <HoveredSquare />}
-        {(forceRender || showForceRender) && (
-          <UiEntity
-            uiTransform={{
-              positionType: 'absolute',
-              height: '40%',
-              width: '40%',
-              position: {
-                right: '-14%',
-                bottom: '-14%'
-              }
-            }}
-            uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
-              color: Color4.fromHexString('#4E0E78')
-            }}
-            onMouseDown={() => {
-              store.dispatch(switchForceRenderCategory(category))
-              updateAvatarPreview(
-                store.getState().backpack.equippedWearables,
-                store.getState().backpack.outfitSetup.base,
-                store.getState().backpack.forceRender
-              )
-            }}
-          >
+        {selectedURN &&
+          category === state.hoveredCategory &&
+          category !== WEARABLE_CATEGORY_DEFINITIONS.body_shape.id && (
             <UiEntity
               uiTransform={{
-                width: '90%',
-                height: '90%',
+                width: canvasScaleRatio * 36,
+                height: canvasScaleRatio * 36,
+                flexShrink: 0,
+                positionType: 'absolute',
+                position: { right: 0, top: '1%' },
+                padding: '10%',
+                alignItems: 'center',
                 justifyContent: 'center',
-                alignItems: 'center'
+                pointerFilter: 'none'
               }}
               uiBackground={{
                 ...ROUNDED_TEXTURE_BACKGROUND,
-                color: Color4.White()
+                color: COLOR.TEXT_COLOR
+              }}
+              onMouseEnter={() => {
+                state.hoveredCategory = category
+              }}
+              onMouseDown={() => {
+                console.log('UNEQUIP ', category)
+                store.dispatch(unequipWearableCategory(category))
+                updateAvatarPreview(
+                  store.getState().backpack.equippedWearables,
+                  store.getState().backpack.outfitSetup.base,
+                  store.getState().backpack.forceRender
+                )
               }}
             >
               <Icon
-                icon={{
-                  atlasName: 'icons',
-                  spriteName: forceRender ? 'PreviewIcon' : 'HideUIIcon'
-                }}
-                iconSize={32 * canvasScaleRatio}
-                iconColor={forceRender ? Color4.Green() : Color4.Red()}
-                uiTransform={{ flexShrink: 0 }}
+                iconSize={canvasScaleRatio * 26}
+                uiTransform={{ alignSelf: 'center', flexShrink: 0 }}
+                icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
               />
             </UiEntity>
-          </UiEntity>
+          )}
+        {isHovered() && <HoveredSquare />}
+        {(forceRender || showForceRender) && (
+          <ForceRenderButton category={category} forceRender={forceRender} />
         )}
+        <UiEntity />
+      </UiEntity>
+    </UiEntity>
+  )
+}
+
+function ForceRenderButton({
+  category,
+  forceRender
+}: {
+  category: WearableCategory
+  forceRender: boolean
+}): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        height: '40%',
+        width: '40%',
+        position: {
+          right: '-14%',
+          bottom: '-14%'
+        }
+      }}
+      uiBackground={{
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color: Color4.fromHexString('#4E0E78')
+      }}
+      onMouseDown={() => {
+        store.dispatch(switchForceRenderCategory(category))
+        updateAvatarPreview(
+          store.getState().backpack.equippedWearables,
+          store.getState().backpack.outfitSetup.base,
+          store.getState().backpack.forceRender
+        )
+      }}
+    >
+      <UiEntity
+        uiTransform={{
+          width: '90%',
+          height: '90%',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+        uiBackground={{
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: Color4.White()
+        }}
+      >
+        <Icon
+          icon={{
+            atlasName: 'icons',
+            spriteName: forceRender ? 'PreviewIcon' : 'HideUIIcon'
+          }}
+          iconSize={32 * canvasScaleRatio}
+          iconColor={forceRender ? Color4.Green() : Color4.Red()}
+          uiTransform={{ flexShrink: 0 }}
+        />
       </UiEntity>
     </UiEntity>
   )
