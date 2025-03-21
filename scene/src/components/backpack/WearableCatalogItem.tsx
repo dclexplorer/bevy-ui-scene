@@ -18,6 +18,7 @@ const LOADING_TEXTURE_PROPS = getBackgroundFromAtlas({
   atlasName: 'backpack',
   spriteName: 'loading-wearable'
 })
+const DOUBLE_CLICK_DELAY = 400
 
 type WearableCatalogItemProps = {
   uiTransform?: UiTransformProps
@@ -30,7 +31,7 @@ type WearableCatalogItemProps = {
   onEquipWearable?: (wearableElement: CatalogWearableElement) => void
   onSelect?: () => void
 }
-const state: any = { hoveredURN: null }
+const state: any = { hoveredURN: null, lastTimeClick: 0 }
 
 export function WearableCatalogItem(
   props: WearableCatalogItemProps
@@ -59,7 +60,14 @@ export function WearableCatalogItem(
         padding: 8 * canvasScaleRatio,
         ...uiTransform
       }}
-      onMouseDown={onSelect}
+      onMouseDown={() => {
+        if (state.lastTimeClick + DOUBLE_CLICK_DELAY > Date.now()) {
+          onEquipWearable(wearableElement)
+        } else {
+          state.lastTimeClick = Date.now()
+          onSelect()
+        }
+      }}
       onMouseEnter={() => {
         console.log('hoveredURN', wearableElement.urn)
         state.hoveredURN = wearableElement.urn

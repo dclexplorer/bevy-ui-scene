@@ -35,13 +35,13 @@ import {
 } from '../../../utils/wearables-promise-utils'
 import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 import {
-  ROUNDED_TEXTURE_BACKGROUND,
   WEARABLE_CATALOG_PAGE_SIZE,
   ZERO_ADDRESS
 } from '../../../utils/constants'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { WearableColorPicker } from './WearableColorPicker'
 import { COLOR } from '../../../components/color-palette'
+import { Color4 } from '@dcl/sdk/math'
 
 export function WearablesCatalog(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -148,19 +148,18 @@ export function WearablesCatalog(): ReactElement {
         currentPage={backpackState.currentPage}
       />
       {backpackState.changedFromResetVersion && (
-        <Button
-          value={'RESET OUTFIT'}
+        <NavButton
+          icon={{ atlasName: 'icons', spriteName: 'BackStepIcon' }}
+          text={'RESET OUTFIT'}
+          color={Color4.White()}
+          backgroundColor={COLOR.SMALL_TAG_BACKGROUND}
           uiTransform={{
             positionType: 'absolute',
             height: '5%',
             padding: { left: '1%', right: '2%' },
             position: { bottom: '1%', left: '-54%' }
           }}
-          uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
-            color: COLOR.SMALL_TAG_BACKGROUND
-          }}
-          onMouseDown={() => {
+          onClick={() => {
             resetOutfit().catch(console.error)
           }}
         />
