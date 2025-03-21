@@ -115,7 +115,6 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
       {wearables.map(
         (wearableElement: CatalogWearableElement, index: number) => (
           <WearableCatalogItem
-            uiTransform={{}}
             key={index}
             wearableElement={wearableElement}
             onEquipWearable={(wearableElement: CatalogWearableElement) => {
@@ -125,9 +124,8 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
               onUnequipWearable(wearableElement)
             }}
             onSelect={() => {
-              select(
-                isSelected(wearableElement.urn) ? null : wearableElement.urn
-              )
+              if (isSelected(wearableElement.urn)) return
+              select(wearableElement.urn)
               onChangeSelection(state.selectedWearableURN)
             }}
             isSelected={isSelected(wearableElement?.urn)}
