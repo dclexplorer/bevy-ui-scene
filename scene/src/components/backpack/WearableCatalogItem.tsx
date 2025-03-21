@@ -91,9 +91,9 @@ function HoverBorder(): ReactElement | null {
     <UiEntity
       uiTransform={{
         positionType: 'absolute',
-        width: '100%',
-        height: '95%',
-        position: { top: 0, left: 0 }
+        width: '105%',
+        height: '100%',
+        position: { top: '-2%', left: '-2%' }
       }}
       uiBackground={{
         ...getBackgroundFromAtlas({
