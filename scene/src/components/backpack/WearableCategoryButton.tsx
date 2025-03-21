@@ -26,6 +26,10 @@ type WearableCategoryButtonProps = {
   forceRender?: boolean
   showForceRender?: boolean
 }
+const state: { hoveredCategory: null | WearableCategory } = {
+  hoveredCategory: null
+}
+
 export function WearableCategoryButton({
   category,
   uiTransform,
@@ -48,7 +52,7 @@ export function WearableCategoryButton({
         atlasName: 'backpack',
         spriteName: 'empty-wearable-field' // TODO change and fix file
       })
-
+  const isHovered = (): boolean => state.hoveredCategory === category
   return (
     <UiEntity
       uiTransform={{
@@ -73,6 +77,14 @@ export function WearableCategoryButton({
       }}
       onMouseDown={() => {
         onClick()
+      }}
+      onMouseEnter={() => {
+        state.hoveredCategory = category
+      }}
+      onMouseLeave={() => {
+        if (!(state.hoveredCategory && state.hoveredCategory !== category)) {
+          state.hoveredCategory = null
+        }
       }}
     >
       <Icon icon={categoryIcon} iconSize={iconSize} />
@@ -117,6 +129,7 @@ export function WearableCategoryButton({
           ...textureProps
         }}
       >
+        {isHovered() && <HoveredSquare />}
         {(forceRender || showForceRender) && (
           <UiEntity
             uiTransform={{
@@ -169,7 +182,26 @@ export function WearableCategoryButton({
     </UiEntity>
   )
 }
-
+function HoveredSquare(): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '102%',
+        height: '98%',
+        positionType: 'absolute',
+        position: {
+          left: '-2%',
+          top: '-1.5%'
+        }
+      }}
+      uiBackground={{
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        texture: { src: 'assets/images/backgrounds/rounded-border.png' },
+        color: COLOR.ACTIVE_BACKGROUND_COLOR
+      }}
+    />
+  )
+}
 function getWearableThumbnailBackground(
   selectedURN: URNWithoutTokenId
 ): UiBackgroundProps {
