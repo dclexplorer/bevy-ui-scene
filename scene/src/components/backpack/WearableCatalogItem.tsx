@@ -72,6 +72,11 @@ export function WearableCatalogItem(
         console.log('hoveredURN', wearableElement.urn)
         state.hoveredURN = wearableElement.urn
       }}
+      onMouseLeave={() => {
+        if (!(state.hoveredURN && state.hoveredURN !== wearableElement.urn)) {
+          state.hoveredURN = null
+        }
+      }}
     >
       {mustShowEquippedBorder() && <EquippedBorder />}
       {isHovered() && <HoverBorder />}
