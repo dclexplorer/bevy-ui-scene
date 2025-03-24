@@ -51,7 +51,7 @@ export function WearableCategoryButton({
     atlasName: 'backpack'
   }
   const iconSize = 68 * canvasScaleRatio
-  const thumbnailSize = iconSize * 1.7
+  const thumbnailSize = 108 * canvasScaleRatio
   const textureProps: UiBackgroundProps = selectedURN
     ? getWearableThumbnailBackground(selectedURN)
     : getBackgroundFromAtlas({
@@ -98,7 +98,7 @@ export function WearableCategoryButton({
       <UiEntity
         uiTransform={{
           width: 116 * canvasScaleRatio,
-          height: 116 * canvasScaleRatio,
+          height: 116 * canvasScaleRatio * (127 / 120),
           display: selectedURN === null ? 'none' : 'flex',
           positionType: 'absolute',
           position: {
@@ -113,6 +113,7 @@ export function WearableCategoryButton({
           }`
         })}
       />
+      {isHovered() && <HoveredSquare selectedURN={selectedURN} />}
       <UiEntity
         uiTransform={{
           width: thumbnailSize,
@@ -128,48 +129,59 @@ export function WearableCategoryButton({
         {selectedURN &&
           category === state.hoveredCategory &&
           category !== WEARABLE_CATEGORY_DEFINITIONS.body_shape.id && (
-            <UiEntity
-              uiTransform={{
-                width: canvasScaleRatio * 36,
-                height: canvasScaleRatio * 36,
-                flexShrink: 0,
-                positionType: 'absolute',
-                position: { right: 0, top: '1%' },
-                padding: '10%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                pointerFilter: 'none'
-              }}
-              uiBackground={{
-                ...ROUNDED_TEXTURE_BACKGROUND,
-                color: COLOR.TEXT_COLOR
-              }}
-              onMouseEnter={() => {
-                state.hoveredCategory = category
-              }}
-              onMouseDown={() => {
-                console.log('UNEQUIP ', category)
-                store.dispatch(unequipWearableCategory(category))
-                updateAvatarPreview(
-                  store.getState().backpack.equippedWearables,
-                  store.getState().backpack.outfitSetup.base,
-                  store.getState().backpack.forceRender
-                )
-              }}
-            >
-              <Icon
-                iconSize={canvasScaleRatio * 26}
-                uiTransform={{ alignSelf: 'center', flexShrink: 0 }}
-                icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
-              />
-            </UiEntity>
+            <UnequipButton category={category} />
           )}
-        {isHovered() && <HoveredSquare />}
+
         {(forceRender || showForceRender) && (
           <ForceRenderButton category={category} forceRender={forceRender} />
         )}
         <UiEntity />
       </UiEntity>
+    </UiEntity>
+  )
+}
+
+function UnequipButton({
+  category
+}: {
+  category: WearableCategory
+}): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  return (
+    <UiEntity
+      uiTransform={{
+        width: canvasScaleRatio * 36,
+        height: canvasScaleRatio * 36,
+        flexShrink: 0,
+        positionType: 'absolute',
+        position: { right: 0, top: '1%' },
+        padding: '10%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        pointerFilter: 'none'
+      }}
+      uiBackground={{
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color: COLOR.TEXT_COLOR
+      }}
+      onMouseEnter={() => {
+        state.hoveredCategory = category
+      }}
+      onMouseDown={() => {
+        console.log('UNEQUIP ', category)
+        store.dispatch(unequipWearableCategory(category))
+        updateAvatarPreview(
+          store.getState().backpack.equippedWearables,
+          store.getState().backpack.outfitSetup.base,
+          store.getState().backpack.forceRender
+        )
+      }}
+    >
+      <Icon
+        iconSize={canvasScaleRatio * 26}
+        uiTransform={{ alignSelf: 'center', flexShrink: 0 }}
+        icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+      />
     </UiEntity>
   )
 }
@@ -191,7 +203,8 @@ function ForceRenderButton({
         position: {
           right: '-14%',
           bottom: '-14%'
-        }
+        },
+        zIndex: 2
       }}
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
@@ -231,23 +244,40 @@ function ForceRenderButton({
     </UiEntity>
   )
 }
-function HoveredSquare(): ReactElement {
-  return (
-    <UiEntity
-      uiTransform={{
-        width: '102%',
-        height: '98%',
+
+function HoveredSquare({
+  selectedURN
+}: {
+  selectedURN: URNWithoutTokenId | null
+}): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  const transform: UiTransformProps = selectedURN
+    ? {
+        width: 126 * canvasScaleRatio,
+        height: 125 * canvasScaleRatio,
         positionType: 'absolute',
         position: {
-          left: '-2%',
-          top: '-1.5%'
-        }
-      }}
-      uiBackground={{
-        ...ROUNDED_TEXTURE_BACKGROUND,
-        texture: { src: 'assets/images/backgrounds/rounded-border.png' },
-        color: COLOR.ACTIVE_BACKGROUND_COLOR
-      }}
+          left: 108 * canvasScaleRatio,
+          top: 0 * canvasScaleRatio
+        },
+        zIndex: 1
+      }
+    : {
+        width: 117 * canvasScaleRatio,
+        height: 117 * canvasScaleRatio,
+        positionType: 'absolute',
+        position: {
+          left: 112 * canvasScaleRatio
+        },
+        zIndex: 1
+      }
+  return (
+    <UiEntity
+      uiTransform={transform}
+      uiBackground={getBackgroundFromAtlas({
+        atlasName: 'backpack',
+        spriteName: 'category-button-hover'
+      })}
     />
   )
 }
