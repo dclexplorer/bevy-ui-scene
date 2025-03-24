@@ -1,4 +1,4 @@
-import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { store } from '../../../state/store'
 import { NavButton } from '../../../components/nav-button/NavButton'
