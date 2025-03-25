@@ -3,15 +3,63 @@ import { type RarityName } from '../utils/wearables-definitions'
 
 const ACTIVE_BACKGROUND_COLOR = Color4.fromHexString('#FF7538')
 const ACTIVE_COLOR = Color4.fromHexString('#FFFFFF')
+const LINK_COLOR = Color4.fromHexString('#E9315BFF')
 
+export const SKIN_COLOR_PRESETS: Color4[] = [
+  Color4.fromHexString('#FFE4C6'),
+  Color4.fromHexString('#FFDDBC'),
+  Color4.fromHexString('#F2C2A5'),
+  Color4.fromHexString('#DDB18F'),
+  Color4.fromHexString('#CC9B77'),
+  Color4.fromHexString('#9A765C'),
+  Color4.fromHexString('#7D5D47'),
+  Color4.fromHexString('#704B38'),
+  Color4.fromHexString('#532A1C'),
+  Color4.fromHexString('#3D2216')
+]
+export const HAIR_COLOR_PRESETS: Color4[] = [
+  Color4.fromHexString('#D8D8D8FF'),
+  Color4.fromHexString('#2a221e'),
+  Color4.fromHexString('#5b4637'),
+  Color4.fromHexString('#964a2f'),
+  Color4.fromHexString('#d97c13'),
+  Color4.fromHexString('#eed07b'),
+  Color4.fromHexString('#f0870e'),
+  Color4.fromHexString('#fdd240'),
+  Color4.fromHexString('#78bd31'),
+  Color4.fromHexString('#59a2f7'),
+  Color4.fromHexString('#9878ed'),
+  Color4.fromHexString('#e875a9')
+]
+const EYE_COLOR_PRESETS: Color4[] = [
+  Color4.fromHexString('#3B9F4F'),
+  Color4.fromHexString('#49DC75'),
+  Color4.fromHexString('#387CB0'),
+  Color4.fromHexString('#22B3F6'),
+  Color4.fromHexString('#AFC5C7'),
+  Color4.fromHexString('#878078'),
+  Color4.fromHexString('#BF9E5A'),
+  Color4.fromHexString('#866042'),
+  Color4.fromHexString('#5F3831'),
+  Color4.fromHexString('#352626')
+]
+export const COLOR_PRESETS: Record<string, Color4[]> = {
+  skinColor: SKIN_COLOR_PRESETS,
+  hairColor: HAIR_COLOR_PRESETS,
+  eyesColor: EYE_COLOR_PRESETS
+}
 export const COLOR = {
   ACTIVE_COLOR,
+  LINK_COLOR,
   ACTIVE_BACKGROUND_COLOR,
   MAIN_MENU_BACKGROUND: Color4.fromHexString('#161518'),
   NAV_BUTTON_ACTIVE_BACKGROUND: ACTIVE_BACKGROUND_COLOR,
   NAV_BUTTON_ACTIVE_COLOR: ACTIVE_COLOR,
   NAV_BUTTON_INACTIVE_BACKGROUND: Color4.fromHexString('#FFFFFF'),
-  NAV_BUTTON_INACTIVE_COLOR: Color4.fromHexString('#000000')
+  NAV_BUTTON_INACTIVE_COLOR: Color4.fromHexString('#000000'),
+  SMALL_TAG_BACKGROUND: Color4.fromHexString('#00000066'),
+  TEXT_COLOR: Color4.fromHexString('#2B272AFF'),
+  INACTIVE: Color4.fromHexString('#d8d8d8')
 }
 export const RARITY_COLORS: Record<RarityName, Color4> = {
   base: Color4.fromHexString('#a09ba8'),

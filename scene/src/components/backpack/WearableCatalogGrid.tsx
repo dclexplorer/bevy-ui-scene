@@ -8,6 +8,10 @@ import { WEARABLE_CATEGORY_DEFINITIONS } from '../../service/wearable-categories
 import { EMPTY_OUTFIT } from '../../service/outfit'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { WearableCatalogItem } from './WearableCatalogItem'
+import { COLOR } from '../color-palette'
+import { Color4 } from '@dcl/sdk/math'
+import Icon from '../icon/Icon'
+import { openExternalUrl } from '~system/RestrictedActions'
 
 export type WearableCatalogGridProps = {
   wearables: CatalogWearableElement[]
@@ -49,7 +53,56 @@ export function WearableCatalogGrid({
   onUnequipWearable = noop
 }: WearableCatalogGridProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
-
+  if (!wearables.length) {
+    return (
+      <UiEntity
+        uiTransform={{
+          padding: {
+            left: 10 * canvasScaleRatio,
+            right: 10 * canvasScaleRatio,
+            top: 380 * canvasScaleRatio
+          },
+          flexWrap: 'wrap',
+          width: 950 * canvasScaleRatio,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          ...uiTransform
+        }}
+      >
+        <Icon
+          uiTransform={{ alignSelf: 'center' }}
+          iconSize={canvasScaleRatio * 100}
+          icon={{ atlasName: 'backpack', spriteName: 'empty-search-result' }}
+        />
+        <UiEntity
+          uiTransform={{
+            margin: { top: canvasScaleRatio * 20 }
+          }}
+          uiText={{
+            textAlign: 'middle-center',
+            value: `You do not have any wearable that meets this category or search criteria.
+If you want you can find the ideal one for you in the <color=${Color4.toHexString(
+              COLOR.LINK_COLOR
+            )}><u>Marketplace.</u></color>`,
+            fontSize: canvasScaleRatio * 25
+          }}
+        />
+        <UiEntity
+          uiTransform={{
+            positionType: 'absolute',
+            position: {
+              top: canvasScaleRatio * 530,
+              left: canvasScaleRatio * 640
+            },
+            height: 30,
+            width: 200 * canvasScaleRatio
+          }}
+          uiBackground={{ color: Color4.create(0, 0, 0, 0) }}
+          onMouseDown={linkToMarketPlace}
+        />
+      </UiEntity>
+    )
+  }
   return (
     <UiEntity
       uiTransform={{
@@ -71,9 +124,8 @@ export function WearableCatalogGrid({
               onUnequipWearable(wearableElement)
             }}
             onSelect={() => {
-              select(
-                isSelected(wearableElement.urn) ? null : wearableElement.urn
-              )
+              if (isSelected(wearableElement.urn)) return
+              select(wearableElement.urn)
               onChangeSelection(state.selectedWearableURN)
             }}
             isSelected={isSelected(wearableElement?.urn)}
@@ -127,4 +179,10 @@ function isEquipped(
 
 function isBodyCategory(wearable: CatalogWearableElement): boolean {
   return wearable.category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
+}
+
+function linkToMarketPlace(): void {
+  openExternalUrl({ url: 'https://decentraland.org/marketplace/' }).catch(
+    console.error
+  )
 }

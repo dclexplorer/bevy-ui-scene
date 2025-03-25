@@ -90,3 +90,36 @@ export function NavButton({
     </UiEntity>
   )
 }
+
+export function NavItem({
+  children,
+  active,
+  uiTransform,
+  backgroundColor,
+  onClick = noop
+}: any): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  return (
+    <UiEntity
+      uiTransform={{
+        padding: 16 * canvasScaleRatio,
+        height: 80 * canvasScaleRatio,
+        alignItems: 'center',
+        ...uiTransform
+      }}
+      uiBackground={{
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color:
+          backgroundColor ??
+          (active
+            ? COLOR.NAV_BUTTON_ACTIVE_BACKGROUND
+            : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND)
+      }}
+      onMouseDown={() => {
+        onClick()
+      }}
+    >
+      {children}
+    </UiEntity>
+  )
+}

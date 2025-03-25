@@ -1,4 +1,5 @@
 import { InputAction } from '@dcl/sdk/ecs'
+import { type Color4 } from '@dcl/sdk/math'
 
 export type SpriteFromAtlas = {
   sprite: string
@@ -46,7 +47,11 @@ export type Sprite = {
   spriteSourceSize: { x: number; y: number; w: number; h: number }
   sourceSize: { w: number; h: number }
 }
-
+export type ColorAtlasIcon = {
+  atlasName: Atlas
+  spriteName: string
+  color?: Color4
+}
 export type AtlasIcon = { atlasName: Atlas; spriteName: string }
 
 export type ToggleType =

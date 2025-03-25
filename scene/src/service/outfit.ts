@@ -1,8 +1,8 @@
 import type { URNWithoutTokenId } from '../utils/definitions'
 import type {
-  WearableEntityMetadata,
   OutfitSetup,
-  OutfitSetupWearables
+  OutfitSetupWearables,
+  CatalystWearableMap
 } from '../utils/wearables-definitions'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
@@ -43,12 +43,13 @@ export const EMPTY_OUTFIT: OutfitSetup = deepFreeze({
 
 export function getOutfitSetupFromWearables(
   equippedWearables: URNWithoutTokenId[] = [],
-  catalystWearables: WearableEntityMetadata[]
+  catalystWearables: CatalystWearableMap
 ): OutfitSetupWearables {
-  return catalystWearables.reduce(
-    (acc: OutfitSetupWearables, catalystWearable: WearableEntityMetadata) => {
-      acc[catalystWearable.data.category] =
-        equippedWearables.find((e) => e === catalystWearable.id) ?? null
+  return equippedWearables.reduce(
+    (acc: OutfitSetupWearables, wearableURN: URNWithoutTokenId) => {
+      const wearableEntityMetadatum = catalystWearables[wearableURN]
+      acc[wearableEntityMetadatum.data.category as WearableCategory] =
+        wearableURN
       return acc
     },
     { ...EMPTY_OUTFIT.wearables }

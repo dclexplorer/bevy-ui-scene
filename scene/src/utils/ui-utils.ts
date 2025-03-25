@@ -1,7 +1,7 @@
 import { type Coords } from '@dcl/sdk/ecs'
 import type { AtlasIcon, AtlasData, Sprite, FormattedURN } from './definitions'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
-import { backpackJson } from '../json/backpack-data'
+import backpackJson from '../../assets/images/atlas/backpack.json'
 import { navbarJson } from '../json/navbar-data'
 import { iconsJson } from '../json/icons-data'
 import { contextJson } from '../json/context-data'
@@ -23,7 +23,7 @@ export function getUvs(icon: AtlasIcon): number[] {
       parsedJson = mapJson
       break
     case 'backpack':
-      parsedJson = backpackJson
+      parsedJson = backpackJson as AtlasData
       break
     case 'navbar':
       parsedJson = navbarJson
@@ -265,4 +265,78 @@ export function formatURN(urn: string): FormattedURN | undefined {
     console.error('Invalid URN format')
     return undefined
   }
+}
+
+export function rgbToHsv(
+  r: number = 0,
+  g: number = 0,
+  b: number = 0
+): { h: number; s: number; v: number } {
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const delta = max - min
+
+  let h = 0
+  if (delta !== 0) {
+    if (max === r) {
+      h = ((g - b) / delta) % 6
+    } else if (max === g) {
+      h = (b - r) / delta + 2
+    } else {
+      h = (r - g) / delta + 4
+    }
+    h *= 60
+    if (h < 0) h += 360
+  }
+
+  const s = max === 0 ? 0 : (delta / max) * 360
+  const v = max * 360
+
+  return { h: 360 - h, s, v }
+}
+
+export function hsvToRgb(
+  h: number = 0,
+  s: number = 0,
+  v: number = 0
+): { r: number; g: number; b: number } {
+  const invertedH = 360 - (h % 360)
+  const normS = s / 360
+  const normV = v / 360
+
+  const c = normV * normS
+  const x = c * (1 - Math.abs(((invertedH / 60) % 2) - 1))
+  const m = normV - c
+
+  let r = 0
+  let g = 0
+  let b = 0
+
+  if (invertedH >= 0 && invertedH < 60) {
+    r = c
+    g = x
+  } else if (invertedH >= 60 && invertedH < 120) {
+    r = x
+    g = c
+  } else if (invertedH >= 120 && invertedH < 180) {
+    g = c
+    b = x
+  } else if (invertedH >= 180 && invertedH < 240) {
+    g = x
+    b = c
+  } else if (invertedH >= 240 && invertedH < 300) {
+    r = x
+    b = c
+  } else if (invertedH >= 300 && invertedH < 360) {
+    r = c
+    b = x
+  }
+
+  return { r: r + m, g: g + m, b: b + m }
+}
+
+export function rgbToArray(
+  rgb: { r: number; g: number; b: number } = { r: 0, g: 0, b: 0 }
+): number[] {
+  return [rgb.r, rgb.g, rgb.b]
 }

@@ -5,6 +5,9 @@ import {
   type WearableCategory
 } from '../../service/wearable-categories'
 import { type OutfitSetup } from '../../utils/wearables-definitions'
+import { store } from '../../state/store'
+import { catalystWearableMap } from '../../utils/wearables-promise-utils'
+import { forceRenderHasEffect } from '../../service/force-render-service'
 
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null
@@ -26,6 +29,7 @@ export function WearableCategoryList({
     },
     [[], []]
   )
+  const backpackState = store.getState().backpack
 
   return (
     <UiEntity>
@@ -42,6 +46,13 @@ export function WearableCategoryList({
                 ? outfitSetup?.base?.bodyShapeUrn
                 : outfitSetup.wearables[category]
             }
+            showForceRender={forceRenderHasEffect(
+              category,
+              outfitSetup.wearables[category],
+              catalystWearableMap,
+              backpackState.equippedWearables
+            )}
+            forceRender={isCategoryInForceRender(category)}
           />
         ))}
       </UiEntity>
@@ -54,6 +65,13 @@ export function WearableCategoryList({
               onSelectCategory(activeCategory === category ? null : category)
             }}
             selectedURN={outfitSetup.wearables[category]}
+            showForceRender={forceRenderHasEffect(
+              category,
+              outfitSetup.wearables[category],
+              catalystWearableMap,
+              backpackState.equippedWearables
+            )}
+            forceRender={isCategoryInForceRender(category)}
           />
         ))}
       </UiEntity>
@@ -61,6 +79,9 @@ export function WearableCategoryList({
   )
 }
 
+function isCategoryInForceRender(category: WearableCategory): boolean {
+  return store.getState().backpack.forceRender.includes(category)
+}
 function categoryIsBody(category: WearableCategory): boolean {
   return category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
 }

@@ -6,6 +6,7 @@ import { reducer as viewportReducer } from './viewport/reducers'
 import { reducer as backpackReducer } from './backpack/reducers'
 import { VIEWPORT_STORE_ID } from './viewport/state'
 import { deepFreeze } from '../utils/object-utils'
+import { BACKPACK_STORE_ID } from './backpack/state'
 
 export function reducer(state: AppState, action: Action): AppState {
   const newState = { ...state }
@@ -22,7 +23,7 @@ export function reducer(state: AppState, action: Action): AppState {
   if (action.__reducer === VIEWPORT_STORE_ID) {
     newState.viewport = deepFreeze(viewportReducer(state.viewport, action))
   }
-  if (action.__reducer === 'backpack') {
+  if (action.__reducer === BACKPACK_STORE_ID) {
     newState.backpack = deepFreeze(backpackReducer(state.backpack, action))
   }
 
