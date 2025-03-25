@@ -3,7 +3,6 @@ import type { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { store } from 'src/state/store'
 import type { PlaceFromApi } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
-import { updateFavoriteStatus } from 'src/utils/promise-utils'
 import { ButtonIcon } from '../../../components/button-icon'
 import Canvas from '../../../components/canvas/Canvas'
 import { type UIController } from '../../../controllers/ui.controller'
@@ -28,10 +27,6 @@ export default class SceneInfo {
   public isExpanded: boolean = false
   public isMenuOpen: boolean = false
   public isHome: boolean = false
-  public favIcon: AtlasIcon = {
-    atlasName: 'toggles',
-    spriteName: 'HeartOnOutlined'
-  }
 
   public favText: string = ''
 
@@ -193,14 +188,6 @@ export default class SceneInfo {
   // }
 
   updateIcons(): void {
-    if (this.place === undefined) return
-    if (this.place.user_favorite) {
-      this.favIcon.spriteName = 'HeartOnOutlined'
-      this.favText = 'Unmark as Favourite'
-    } else {
-      this.favIcon.spriteName = 'HeartOffOutlined'
-      this.favText = 'Mark as Favourite'
-    }
     if (this.isExpanded) {
       this.expandIcon.spriteName = 'UpArrow'
     } else {
@@ -210,18 +197,6 @@ export default class SceneInfo {
       this.setAtHomeIcon.spriteName = 'Home'
     } else {
       this.setAtHomeIcon.spriteName = 'HomeOutline'
-    }
-  }
-
-  async setFav(arg: boolean): Promise<void> {
-    if (this.place !== undefined) {
-      updateFavoriteStatus(this.place.id, arg)
-        .then(async () => {
-          await this.uiController.gameController.updateWidgetParcel()
-        })
-        .catch((error) => {
-          console.error('Failed to update favorite status:', error)
-        })
     }
   }
 
@@ -239,19 +214,24 @@ export default class SceneInfo {
     this.updateIcons()
   }
 
-  async reloadScene(): Promise<void> {}
+  async reloadScene(): Promise<void> {
+    console.log('Fav card: ', this.uiController.sceneCard.isFav)
+    console.log('Place widget like: ', this.place?.user_like)
+    console.log('Place widget dislike: ', this.place?.user_dislike)
+    console.log('Card like: ', this.uiController.sceneCard.isLiked)
+    console.log('Card dislike: ', this.uiController.sceneCard.isDisliked)
+  }
 
   async openSceneInfo(): Promise<void> {
     const sceneCoords = store.getState().scene.explorerPlayerPosition
     if (sceneCoords !== undefined) {
       await this.uiController.sceneCard.show(sceneCoords)
-      await this.uiController.gameController.updateCardParcel(sceneCoords)
     }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
     if (this.place === undefined) return null
-
+    // if (this.place === undefined) {this.place = EMPTY_PLACE}
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
@@ -571,42 +551,7 @@ export default class SceneInfo {
               uiTransform={{ width: '100%', height: 1 }}
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             /> */}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-              onMouseDown={() => {
-                if (this.place === undefined) return
-                void this.setFav(!this.place.user_favorite)
-              }}
-              onMouseEnter={() => {
-                this.setFavLabelColor = ALMOST_WHITE
-              }}
-              onMouseLeave={() => {
-                this.setFavLabelColor = UNSELECTED_TEXT_WHITE
-              }}
-            >
-              <UiEntity
-                uiTransform={{
-                  width: this.fontSize * 0.8,
-                  height: this.fontSize * 0.8,
-                  margin: this.fontSize * 0.5
-                }}
-                uiBackground={{
-                  ...getBackgroundFromAtlas(this.favIcon),
-                  color: this.setFavLabelColor
-                }}
-              />
-              <Label
-                value={this.favText}
-                fontSize={this.fontSize * 0.8}
-                color={this.setFavLabelColor}
-              />
-            </UiEntity>
+
             <UiEntity
               uiTransform={{ width: '100%', height: 1 }}
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}

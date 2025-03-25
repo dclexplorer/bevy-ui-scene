@@ -8,15 +8,17 @@ import ReactEcs, {
 import {
   loadEventsFromApi,
   loadPhotosFromApi,
-  loadSceneInfoPlaceFromApi
+  loadSceneInfoPlaceFromApi,
+  setFavToSend,
+  setLikeToSend
 } from 'src/state/sceneInfo/actions'
 import { store } from 'src/state/store'
 import {
   fetchEvents,
   fetchPhotos,
   fetchPhotosQuantity,
-  updateFavoriteStatus,
-  updateLikeStatus
+  fetchPlaceFromCoords,
+  getPlaceFromApi
 } from 'src/utils/promise-utils'
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
@@ -48,10 +50,9 @@ import type {
 } from './SceneInfoCard.types'
 
 export default class SceneInfoCard {
-  private place: PlaceFromApi | undefined =
+  public place: PlaceFromApi | undefined =
     store.getState().scene.sceneInfoCardPlace
-    
-  private sceneCoords: Vector3 | undefined
+
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
   public fontSize: number = 16
@@ -87,7 +88,7 @@ export default class SceneInfoCard {
     this.uiController = uiController
   }
 
-  async updateSceneInfo(): Promise<void> {
+  async update(): Promise<void> {
     this.place = store.getState().scene.sceneInfoCardPlace
 
     if (this.place === undefined) return
@@ -103,7 +104,6 @@ export default class SceneInfoCard {
 
     store.dispatch(loadEventsFromApi(eventsArray))
     store.dispatch(loadPhotosFromApi(photosArray))
-    store.dispatch(loadSceneInfoPlaceFromApi(this.place))
 
     this.isFav = this.place.user_favorite ?? false
     this.isLiked = this.place.user_like ?? false
@@ -112,36 +112,71 @@ export default class SceneInfoCard {
   }
 
   async setFav(arg: boolean): Promise<void> {
+    if (this.place?.id === undefined) return
+    engine.removeSystem('updatingStatusSystem')
+    store.dispatch(setFavToSend({ placeId: this.place.id, isFav: arg }))
     this.isFav = arg
     this.updateIcons()
-    if (this.place === undefined || this.sceneCoords === undefined) return
-    await updateFavoriteStatus(this.place.id, arg)
-    await this.uiController.gameController.updateWidgetParcel()
-    await this.uiController.gameController.updateCardParcel(this.sceneCoords)
-    void this.updateSceneInfo()
+    this.uiController.gameController.restartTimer()
+    engine.addSystem(
+      this.uiController.gameController.updatingStatusSystem.bind(
+        this.uiController.gameController
+      ),
+      1,
+      'updatingStatusSystem'
+    )
+    this.uiController.gameController.lastButtonClicked = 'fav'
   }
 
   async setLikeStatus(arg: 'like' | 'dislike' | 'null'): Promise<void> {
-    if (this.place === undefined || this.sceneCoords === undefined) return
-    await updateLikeStatus(this.place.id, arg)
-    await this.uiController.gameController.updateCardParcel(this.sceneCoords)
-    void this.updateSceneInfo()
+    if (this.place?.id === undefined) return
+    engine.removeSystem('updatingStatusSystem')
+    store.dispatch(setLikeToSend({ placeId: this.place.id, isLiked: arg }))
+    switch (arg) {
+      case 'like':
+        this.isLiked = true
+        this.isDisliked = false
+        break
+      case 'dislike':
+        this.isLiked = false
+        this.isDisliked = true
+        break
+      case 'null':
+        this.isLiked = false
+        this.isDisliked = false
+        break
+    }
+    this.updateIcons()
+    this.uiController.gameController.restartTimer()
+    engine.addSystem(
+      this.uiController.gameController.updatingStatusSystem.bind(
+        this.uiController.gameController
+      ),
+      1,
+      'updatingStatusSystem'
+    )
+    this.uiController.gameController.lastButtonClicked = 'like'
   }
 
-  async show(position?: Vector3): Promise<void> {
-    if (position !== undefined) {
-      this.sceneCoords = position
-    } else {
-      this.sceneCoords = store.getState().scene.explorerPlayerPosition
-    }
-    if (this.sceneCoords === undefined) {
-      console.error('Scene coords are undefined')
-      return
-    }
-    await this.updateSceneInfo()
+  async show(coords: Vector3): Promise<void> {
+    const auxPlace = await fetchPlaceFromCoords(coords)
+    await this.refreshPlaceFromApi(auxPlace.id)
     this.uiController.sceneInfoCardVisible = true
   }
- 
+
+  async refreshPlaceFromApi(id?: string): Promise<void> {
+    let refreshId: string
+    if (id === undefined) {
+      if (this.place === undefined) return
+      refreshId = this.place.id
+    } else {
+      refreshId = id
+    }
+    const place = await getPlaceFromApi(refreshId)
+    store.dispatch(loadSceneInfoPlaceFromApi(place))
+    await this.uiController.sceneCard.update()
+  }
+
   hide(): void {
     this.uiController.sceneInfoCardVisible = false
     this.resetBackgrounds()
@@ -461,7 +496,7 @@ export default class SceneInfoCard {
           uiTransform={{
             width: '100%',
             height: 'auto'
-            }}
+          }}
           color={BLACK_TEXT}
         />
         {this.place.contact_name !== null && (
@@ -471,7 +506,7 @@ export default class SceneInfoCard {
             textAlign="middle-left"
             uiTransform={{
               width: '100%',
-              height: 'auto',
+              height: 'auto'
             }}
             color={BLACK_TEXT}
           />
@@ -481,7 +516,7 @@ export default class SceneInfoCard {
             width: '100%',
             minHeight: this.fontSize * 2
           }}
-        > 
+        >
           {likeRate > 0 &&
             this.infoDetail(
               Math.round(likeRate * 100).toString() + '%',
@@ -516,8 +551,6 @@ export default class SceneInfoCard {
             },
             BLACK_TEXT
           )} */}
-
-          
         </UiEntity>
 
         <ButtonTextIcon
@@ -561,9 +594,7 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
-              if (
-                this.place?.user_like ?? false
-              ) {
+              if (this.isLiked) {
                 void this.setLikeStatus('null')
               } else {
                 void this.setLikeStatus('like')
@@ -586,11 +617,11 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
-              if (this.place?.user_dislike ?? false) {
+              if (this.isDisliked) {
                 void this.setLikeStatus('null')
               } else {
                 void this.setLikeStatus('dislike')
-              } 
+              }
             }}
           />
           <ButtonIcon
@@ -804,14 +835,14 @@ export default class SceneInfoCard {
           flexDirection: 'column'
         }}
       >
-          <UiEntity
+        <UiEntity
           uiTransform={{
             width: '100%',
             height: 'auto',
             justifyContent: 'flex-start',
             alignItems: 'center',
             flexDirection: 'row',
-            margin: { top: this.fontSize, bottom: this.fontSize }
+            margin: { bottom: this.fontSize }
           }}
         >
           {this.infoDetail(
@@ -835,25 +866,23 @@ export default class SceneInfoCard {
             'PARCELS'
           )}
         </UiEntity>
-        
-          <Label
-            value={'DESCRIPTION'}
-            fontSize={this.fontSize}
-            textAlign="bottom-left"
-            uiTransform={{ width: '100%' }}
-            color={GRAY_TEXT}
-          />
-        
 
-        
-          <Label
-            value={this.place.description ?? 'No description'}
-            fontSize={this.fontSize}
-            textAlign="bottom-left"
-            uiTransform={{ width: '100%' }}
-            color={BLACK_TEXT}
-          />
-       
+        <Label
+          value={'DESCRIPTION'}
+          fontSize={this.fontSize}
+          textAlign="bottom-left"
+          uiTransform={{ width: '100%' }}
+          color={GRAY_TEXT}
+        />
+
+        <Label
+          value={this.place.description ?? 'No description'}
+          fontSize={this.fontSize}
+          textAlign="bottom-left"
+          uiTransform={{ width: '100%' }}
+          color={BLACK_TEXT}
+        />
+
         {this.place.categories.length !== 0 && (
           <Label
             value={'APPEARS ON'}
@@ -877,10 +906,11 @@ export default class SceneInfoCard {
               flexDirection: 'row',
               flexWrap: 'wrap',
               margin: { bottom: this.fontSize }
-
             }}
           >
-            {this.place.categories.map((tag, index) => this.filterChip(tag, index))}
+            {this.place.categories.map((tag, index) =>
+              this.filterChip(tag, index)
+            )}
           </UiEntity>
         )}
       </UiEntity>

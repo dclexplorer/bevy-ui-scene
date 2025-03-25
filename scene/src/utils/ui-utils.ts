@@ -160,30 +160,30 @@ export function formatEventTime(
 
   if (eventStart > now) {
     // Format: MON, 24 JUL AT 02:00PM
-    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const months = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MAY',
-      'JUN',
-      'JUL',
-      'AUG',
-      'SEP',
-      'OCT',
-      'NOV',
-      'DEC'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ]
     const day = days[eventStart.getUTCDay()]
     const date = eventStart.getUTCDate()
     const month = months[eventStart.getUTCMonth()]
+    const year = eventStart.getUTCFullYear()
     const hours = eventStart.getUTCHours()
     const minutes = eventStart.getUTCMinutes()
-    const formattedTime = `${isNaN(hours % 12) ? 12 : hours % 12}:${minutes
-      .toString()
-      .padStart(2, '0')}${hours >= 12 ? 'PM' : 'AM'}`
-    return `${day}, ${date} ${month} AT ${formattedTime}`
+    const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}`
+
+    return `${day}, ${date} ${month} ${year} ${formattedTime} GMT`
   } else if (eventEnd > now) {
     // Calcular diferencia
     const diff = Math.abs(now.getTime() - eventStart.getTime()) // Diferencia en milisegundos

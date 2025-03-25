@@ -1,33 +1,35 @@
 import { getPlayerPosition } from '@dcl-sdk/utils'
 import { engine } from '@dcl/sdk/ecs'
-import { type Vector3 } from '@dcl/sdk/math'
+import type { Vector3 } from '@dcl/sdk/math'
 import {
-  loadFavoritesFromApi,
   loadPlaceFromApi,
-  loadSceneInfoPlaceFromApi,
   savePlayerPosition
 } from 'src/state/sceneInfo/actions'
 import { store } from 'src/state/store'
 import {
-  fetchPlaceId,
-  getFavoritesFromApi,
-  getPlaceFromApi
+  fetchPlaceFromCoords,
+  getPlaceFromApi,
+  updateFavoriteStatus,
+  updateLikeStatus
 } from 'src/utils/promise-utils'
 import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
 
 export class GameController {
+  public timer: number = 0
+  public lastButtonClicked: string = ''
   uiController: UIController
   constructor() {
     this.uiController = new UIController(this)
     engine.addSystem(this.positionSystem.bind(this))
-    void this.getFavorites()
+    this.restartTimer()
+    // void this.getFavorites()
   }
 
-  public async getFavorites(): Promise<void> {
-    const favoritePlaces = await getFavoritesFromApi()
-    store.dispatch(loadFavoritesFromApi(favoritePlaces))
-  }
+  // public async getFavorites(): Promise<void> {
+  //   const favoritePlaces = await getFavoritesFromApi()
+  //   store.dispatch(loadFavoritesFromApi(favoritePlaces))
+  // }
 
   positionSystem(): void {
     if (engine.PlayerEntity !== undefined) {
@@ -47,32 +49,54 @@ export class GameController {
             z: Math.floor(newPosition.z / 16)
           })
         )
-        void this.updateWidgetParcel()
+        void this.updateWidgetPlace()
       }
     }
   }
 
-  async updateWidgetParcel(): Promise<void> {
-    const coords: ReadOnlyVector3 | undefined =
-      store.getState().scene.explorerPlayerPosition
-    if (coords === undefined) {
-      return
-    }
-    const place = await fetchPlaceId(coords)
-    const explorerPlace = await getPlaceFromApi(place.id)
-    store.dispatch(loadPlaceFromApi(explorerPlace))
-    if (place.id === store.getState().scene.sceneInfoCardPlace?.id) {
-      await this.updateCardParcel(coords)  
-    }
-    void this.uiController.mainHud.sceneInfo.update()
+  updatingStatusSystem(dt: number): void {
+    console.log(this.lastButtonClicked, ' - timer: ', this.timer)
+    if (this.timer > 0) {
+      this.timer -= dt
+    } else {
+      console.log('timeout')
+      void this.updateStatus()
 
+      this.restartTimer()
+      void engine.removeSystem('updatingStatusSystem')
+    }
   }
 
-  async updateCardParcel(sceneCoords: Vector3): Promise<void> {
-    const infoCardPlace = await fetchPlaceId(sceneCoords)
-    const sceneInfoCardPlace = await getPlaceFromApi(infoCardPlace.id)
-    store.dispatch(loadSceneInfoPlaceFromApi(sceneInfoCardPlace))
-    void this.uiController.sceneCard.updateSceneInfo()
+  restartTimer(): void {
+    this.timer = 2
+  }
+
+  async updateWidgetPlace(): Promise<void> {
+    console.log('updateWidgetParcel')
+    const explorerCoords: ReadOnlyVector3 | undefined =
+      store.getState().scene.explorerPlayerPosition
+    if (explorerCoords === undefined) {
+      return
+    }
+    const place = await fetchPlaceFromCoords(explorerCoords)
+    const explorerPlace = await getPlaceFromApi(place.id)
+    store.dispatch(loadPlaceFromApi(explorerPlace))
+    void this.uiController.mainHud.sceneInfo.update()
+  }
+
+  async updateStatus(): Promise<void> {
+    // Update fav status:
+    const favToUpdate = store.getState().scene.sceneInfoCardFavToSend
+    if (favToUpdate !== undefined) {
+      await updateFavoriteStatus()
+    }
+    // Update like status:
+    const likeToUpdate = store.getState().scene.sceneInfoCardLikeToSend
+    if (likeToUpdate !== undefined) {
+      await updateLikeStatus()
+    }
+
+    await this.uiController.sceneCard.refreshPlaceFromApi()
   }
 }
 

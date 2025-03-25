@@ -14,6 +14,8 @@ import type { FormattedURN } from './definitions'
 import { BevyApi } from 'src/bevy-api'
 import type { KernelFetchRespose } from 'src/bevy-api/interface'
 import { type Vector3 } from '@dcl/ecs-math'
+import { store } from 'src/state/store'
+import { cleanFavToSend, cleanLikeToSend } from 'src/state/sceneInfo/actions'
 
 type EventsResponse = {
   ok: boolean
@@ -135,12 +137,14 @@ export async function fetchWearable(
   }
 }
 
-export async function fetchPlaceId(
-  coords:Vector3
+export async function fetchPlaceFromCoords(
+  coords: Vector3
 ): Promise<PlaceFromApi> {
   try {
     const response: Response = await fetch(
-      `https://places.decentraland.org/api/places/?positions=${coords.x + ',' + coords.z}`
+      `https://places.decentraland.org/api/places/?positions=${
+        coords.x + ',' + coords.z
+      }`
     )
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
@@ -162,18 +166,17 @@ export type PatchFavoritesResponse = {
   }
 }
 
-export async function updateFavoriteStatus(
-  placeId: string,
-  isFavorite: boolean
-): Promise<KernelFetchRespose> {
-  const url = `https://places.decentraland.org/api/places/${placeId}/favorites`
+export async function updateFavoriteStatus(): Promise<void> {
+  const favStatus = store.getState().scene.sceneInfoCardFavToSend
+  if (favStatus === undefined) return
 
+  const url = `https://places.decentraland.org/api/places/${favStatus.placeId}/favorites`
   const patchData = {
-    favorites: isFavorite
+    favorites: favStatus.isFav
   }
 
   try {
-    const response = await BevyApi.kernelFetch({
+    await BevyApi.kernelFetch({
       url,
       init: {
         method: 'PATCH',
@@ -183,35 +186,37 @@ export async function updateFavoriteStatus(
         body: JSON.stringify(patchData)
       }
     })
-    console.log(response.body)
-    return response
+    store.dispatch(cleanFavToSend(undefined))
   } catch (error) {
     console.error('Error updating favorite status:', error)
     throw new Error('Failed to update favorite status')
   }
 }
 
-export async function updateLikeStatus(
-  placeId: string,
-  likeOrDislike: 'like' | 'dislike' | 'null' 
-): Promise<KernelFetchRespose> {
-  const url = `https://places.decentraland.org/api/places/${placeId}/likes`
+export async function updateLikeStatus(): Promise<void> {
+  const likeStatus = store.getState().scene.sceneInfoCardLikeToSend
+  if (likeStatus === undefined) return
 
   let arg: boolean | null
-  if (likeOrDislike === 'like') {
-    arg = true
-  } else if (likeOrDislike === 'dislike') {
-    arg = false
-  } else {
-    arg = null
+  switch (likeStatus.isLiked) {
+    case 'like':
+      arg = true
+      break
+    case 'dislike':
+      arg = false
+      break
+    default:
+      arg = null
+      break
   }
 
+  const url = `https://places.decentraland.org/api/places/${likeStatus.placeId}/likes`
   const patchData = {
     like: arg
   }
 
   try {
-    const response = await BevyApi.kernelFetch({
+    await BevyApi.kernelFetch({
       url,
       init: {
         method: 'PATCH',
@@ -221,8 +226,7 @@ export async function updateLikeStatus(
         body: JSON.stringify(patchData)
       }
     })
-    console.log(response.body)
-    return response
+    store.dispatch(cleanLikeToSend(undefined))
   } catch (error) {
     console.error('Error updating like status:', error)
     throw new Error('Failed to update like status')
