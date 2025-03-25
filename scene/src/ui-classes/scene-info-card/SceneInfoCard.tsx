@@ -48,6 +48,7 @@ import type {
   EventFromApi,
   PlaceFromApi
 } from './SceneInfoCard.types'
+import { openExternalUrl } from '~system/RestrictedActions'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -83,6 +84,10 @@ export default class SceneInfoCard {
   public interestedEventsId: string[] = []
 
   public selectedTab: 'overview' | 'photos' | 'events' = 'overview'
+  public isShareMenuOpen: boolean = false
+  public eventShareMenuOpenIndex: number | undefined = undefined
+  public eventShareEnter: number | undefined = undefined
+  public eventInterestedEnter: number | undefined = undefined
 
   constructor(uiController: UIController) {
     this.uiController = uiController
@@ -186,8 +191,8 @@ export default class SceneInfoCard {
     this.closeBackground = undefined
     this.likeBackgroundColor = DCL_SNOW
     this.dislikeBackgroundColor = DCL_SNOW
-    this.shareBackgroundColor = DCL_SNOW
     this.setFavBackgroundColor = DCL_SNOW
+    if (!this.isShareMenuOpen) this.shareBackgroundColor = DCL_SNOW
   }
 
   updateIcons(): void {
@@ -225,7 +230,9 @@ export default class SceneInfoCard {
     this.setFavBackgroundColor = SELECTED_BUTTON_COLOR
   }
 
-  onShareEnter(): void {}
+  onShareEnter(): void {
+    this.shareBackgroundColor = SELECTED_BUTTON_COLOR
+  }
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
@@ -643,16 +650,90 @@ export default class SceneInfoCard {
               void this.setFav(!this.isFav)
             }}
           />
-          <ButtonIcon
+          <UiEntity
             uiTransform={{
               width: '23%',
               height: this.fontSize * 2
             }}
-            iconSize={this.fontSize * 1.5}
-            icon={this.shareIcon}
-            backgroundColor={this.shareBackgroundColor}
-            iconColor={GRAY_TEXT}
-          />
+          >
+            <ButtonIcon
+              uiTransform={{
+                minHeight: '100%',
+                minWidth: '100%'
+              }}
+              iconSize={this.fontSize * 1.5}
+              icon={{
+                atlasName: 'context',
+                spriteName: 'Share'
+              }}
+              backgroundColor={this.shareBackgroundColor}
+              iconColor={BLACK_TEXT}
+              onMouseEnter={() => {
+                this.onShareEnter()
+              }}
+              onMouseLeave={() => {
+                this.resetBackgrounds()
+              }}
+              onMouseDown={() => {
+                this.isShareMenuOpen = !this.isShareMenuOpen
+              }}
+            />
+            <UiEntity
+              uiTransform={{
+                display: this.isShareMenuOpen ? 'flex' : 'none',
+                padding: { left: this.fontSize, right: this.fontSize },
+                flexDirection: 'column',
+                positionType: 'absolute',
+                position: { right: 0, bottom: '110%' },
+                width: 'auto',
+                minWidth: '100%',
+                height: 'auto'
+              }}
+              uiBackground={{
+                texture: { src: 'assets/images/backgrounds/rounded.png' },
+                color: BLACK_TEXT,
+                textureMode: 'nine-slices',
+                textureSlices: {
+                  top: 0.42,
+                  bottom: 0.42,
+                  left: 0.42,
+                  right: 0.42
+                }
+              }}
+            >
+              <ButtonTextIcon
+                value={'Share on X'}
+                fontSize={(this.fontSize * 2) / 3}
+                icon={{
+                  atlasName: 'social',
+                  spriteName: 'Twitter'
+                }}
+                iconSize={this.fontSize}
+                onMouseDown={() => {
+                  void openExternalUrl({
+                    url: `https://twitter.com/intent/tweet?text=Check%20out%20${
+                      this.place?.title ?? ''
+                    },%20a%20cool%20place%20I%20found%20in%20Decentraland!&hashtags=DCLPlace&url=https://play.decentraland.org/?position=${this
+                      .place?.base_position}`
+                  })
+                }}
+              />
+              <ButtonTextIcon
+                onMouseDown={() => {
+                  void openExternalUrl({
+                    url: `https://decentraland.org/play/?position=${this.place?.base_position}`
+                  })
+                }}
+                value={'Copy Link'}
+                fontSize={(this.fontSize * 2) / 3}
+                icon={{
+                  atlasName: 'social',
+                  spriteName: 'Link'
+                }}
+                iconSize={this.fontSize}
+              />
+            </UiEntity>
+          </UiEntity>
         </UiEntity>
       </UiEntity>
     )
@@ -917,7 +998,7 @@ export default class SceneInfoCard {
     )
   }
 
-  eventCard(event: EventFromApi): ReactEcs.JSX.Element | null {
+  eventCard(event: EventFromApi, index: number): ReactEcs.JSX.Element | null {
     const BIG_TEXT = this.fontSize
     const SMALL_TEXT = BIG_TEXT * 0.8
 
@@ -1050,8 +1131,18 @@ export default class SceneInfoCard {
                     )
                   }
                 }}
+                onMouseEnter={() => {
+                  this.eventInterestedEnter = index
+                }}
+                onMouseLeave={() => {
+                  this.eventInterestedEnter = undefined
+                }}
                 value={'INTERESTED'}
-                backgroundColor={Color4.White()}
+                backgroundColor={
+                  this.eventInterestedEnter === index
+                    ? SELECTED_BUTTON_COLOR
+                    : DCL_SNOW
+                }
                 fontSize={BIG_TEXT}
                 iconSize={1.2 * BIG_TEXT}
                 fontColor={BLACK_TEXT}
@@ -1067,20 +1158,97 @@ export default class SceneInfoCard {
                 }}
               />
             )}
-            <ButtonIcon
+            <UiEntity
               uiTransform={{
                 minHeight: 2 * BIG_TEXT,
                 minWidth: 2 * BIG_TEXT,
                 margin: { left: BIG_TEXT / 2.5 }
               }}
-              iconSize={1.2 * BIG_TEXT}
-              icon={{
-                atlasName: 'context',
-                spriteName: 'Share'
-              }}
-              backgroundColor={DCL_SNOW}
-              iconColor={BLACK_TEXT}
-            />
+            >
+              <ButtonIcon
+                uiTransform={{
+                  minHeight: '100%',
+                  minWidth: '100%'
+                }}
+                iconSize={this.fontSize * 1.5}
+                icon={{
+                  atlasName: 'context',
+                  spriteName: 'Share'
+                }}
+                backgroundColor={
+                  this.eventShareEnter === index
+                    ? SELECTED_BUTTON_COLOR
+                    : DCL_SNOW
+                }
+                iconColor={BLACK_TEXT}
+                onMouseDown={() => {
+                  if (this.eventShareMenuOpenIndex === index) {
+                    this.eventShareMenuOpenIndex = undefined
+                  } else {
+                    this.eventShareMenuOpenIndex = index
+                  }
+                }}
+                onMouseEnter={() => {
+                  this.eventShareEnter = index
+                }}
+                onMouseLeave={() => {
+                  this.eventShareEnter = undefined
+                }}
+              />
+              <UiEntity
+                uiTransform={{
+                  display:
+                    this.eventShareMenuOpenIndex === index ? 'flex' : 'none',
+                  padding: { left: this.fontSize, right: this.fontSize },
+                  flexDirection: 'column',
+                  positionType: 'absolute',
+                  position: { right: 0, bottom: '110%' },
+                  width: 'auto',
+                  minWidth: '100%',
+                  height: 'auto'
+                }}
+                uiBackground={{
+                  texture: { src: 'assets/images/backgrounds/rounded.png' },
+                  color: BLACK_TEXT,
+                  textureMode: 'nine-slices',
+                  textureSlices: {
+                    top: 0.42,
+                    bottom: 0.42,
+                    left: 0.42,
+                    right: 0.42
+                  }
+                }}
+              >
+                <ButtonTextIcon
+                  onMouseDown={() => {
+                    void openExternalUrl({
+                      url: `https://x.com/intent/tweet?text=${event.name}&hashtags=DCLPlace&url=https://decentraland.org/events/event/?id=${event.id}`
+                    })
+                  }}
+                  value={'Share on X'}
+                  fontSize={(this.fontSize * 2) / 3}
+                  icon={{
+                    atlasName: 'social',
+                    spriteName: 'Twitter'
+                  }}
+                  iconSize={this.fontSize}
+                />
+                <ButtonTextIcon
+                  onMouseDown={() => {
+                    void openExternalUrl({
+                      url: `https://decentraland.org/events/event/?id=${event.id}`
+                    })
+                  }}
+                  value={'Copy Link'}
+                  fontSize={(this.fontSize * 2) / 3}
+                  icon={{
+                    atlasName: 'social',
+                    spriteName: 'Link'
+                  }}
+                  iconSize={this.fontSize}
+                />
+              </UiEntity>
+            </UiEntity>
           </UiEntity>
         </UiEntity>
       </UiEntity>
@@ -1100,7 +1268,7 @@ export default class SceneInfoCard {
         }}
       >
         {eventsArray.length > 0 &&
-          eventsArray.map((event) => this.eventCard(event))}
+          eventsArray.map((event, index) => this.eventCard(event, index))}
         {eventsArray.length === 0 &&
           this.noResults(
             { atlasName: 'icons', spriteName: 'Events' },
