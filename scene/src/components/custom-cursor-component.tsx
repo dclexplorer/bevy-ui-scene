@@ -17,8 +17,8 @@ export function CustomMouseCursorElement(): ReactElement | null {
         width: mouseCursorSize,
         positionType: 'absolute',
         position: {
-          top: customMouseCursorState.y,
-          left: customMouseCursorState.x
+          top: customMouseCursorState.y - mouseCursorSize / 2,
+          left: customMouseCursorState.x - mouseCursorSize / 2
         },
         zIndex: MAX_ZINDEX
       }}
