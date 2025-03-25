@@ -46,7 +46,6 @@ export function hideMouseCursor(): void {
 function MouseCursorSystem(): void {
   if (mouseState.showCustomCursor) {
     const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
-    console.log('pointerInfo', pointerInfo)
     mouseState.x = pointerInfo.screenCoordinates?.x ?? 0
     mouseState.y = pointerInfo.screenCoordinates?.y ?? 0
   }
