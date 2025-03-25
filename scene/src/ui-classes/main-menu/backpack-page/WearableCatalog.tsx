@@ -67,6 +67,7 @@ export function WearablesCatalog(): ReactElement {
           onClick={() => {
             if (backpackState.activeWearableCategory === null) return null
             store.dispatch(updateActiveWearableCategory(null))
+            updatePage().catch(console.error)
           }}
         />
         <Icon
@@ -91,6 +92,7 @@ export function WearablesCatalog(): ReactElement {
             showDeleteButton={true}
             onDelete={() => {
               store.dispatch(updateActiveWearableCategory(null))
+              updatePage().catch(console.error)
             }}
             icon={{
               spriteName: `category-${backpackState.activeWearableCategory}`,
