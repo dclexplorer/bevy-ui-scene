@@ -40,6 +40,7 @@ import {
   formatEventTime,
   getBackgroundFromAtlas,
   getTimestamp,
+  parseCoordinates,
   truncateWithoutBreakingWords
 } from '../../utils/ui-utils'
 import type { PhotoFromApi } from '../photos/Photos.types'
@@ -48,7 +49,7 @@ import type {
   EventFromApi,
   PlaceFromApi
 } from './SceneInfoCard.types'
-import { openExternalUrl } from '~system/RestrictedActions'
+import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -566,7 +567,12 @@ export default class SceneInfoCard {
             height: 2 * this.fontSize,
             flexDirection: 'row-reverse'
           }}
-          onMouseDown={() => {}}
+          onMouseDown={() => {
+            if (this.place === undefined) return
+            const coord = parseCoordinates(this.place.base_position)
+            if (coord !== null)
+              void teleportTo({ worldCoordinates: { x: coord.x, y: coord.y } })
+          }}
           value={'JUMP IN'}
           backgroundColor={RUBY}
           fontSize={this.fontSize}

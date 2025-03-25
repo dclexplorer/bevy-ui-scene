@@ -267,3 +267,15 @@ export function formatURN(urn: string): FormattedURN | undefined {
     return undefined
   }
 }
+
+export function parseCoordinates(
+  input: string
+): { x: number; y: number } | null {
+  const parts = input.split(',').map((part) => parseFloat(part.trim()))
+
+  if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+    return { x: parts[0], y: parts[1] }
+  }
+
+  return null // Retorna null si el formato no es válido
+}
