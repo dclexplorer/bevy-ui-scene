@@ -102,11 +102,10 @@ export default class MainHud {
   // private experiencesBackground: Color4 | undefined = undefined
 
   public readonly sceneName: string = 'Scene Name'
-  public readonly sceneCoords: { x: number; y: number } = { x: -5, y: 0 }
   public readonly isSdk6: boolean = true
   public readonly isFav: boolean = true
 
-  private readonly sceneInfo: SceneInfo
+  public sceneInfo: SceneInfo
   private readonly chatAndLogs: ChatsAndLogs
   public chatOpen: boolean = false
   public friendsOpen: boolean = false
@@ -170,6 +169,7 @@ export default class MainHud {
     this.helpIcon.spriteName = 'HelpIcon On'
     this.helpBackground = SELECTED_BUTTON_COLOR
     this.helpHint = true
+    console.log('HELP ENTERS')
   }
 
   emotesEnter(): void {

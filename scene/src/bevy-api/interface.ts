@@ -12,7 +12,7 @@ export type ExplorerSetting = {
 
 export type KernelFetch = {
   url: string
-  init: {
+  init?: {
     method: 'PATCH' | 'POST' | 'GET' | 'DELETE'
     headers: Record<string, string>
     body: string
