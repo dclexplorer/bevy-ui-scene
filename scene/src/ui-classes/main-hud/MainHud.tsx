@@ -169,7 +169,6 @@ export default class MainHud {
     this.helpIcon.spriteName = 'HelpIcon On'
     this.helpBackground = SELECTED_BUTTON_COLOR
     this.helpHint = true
-    console.log('HELP ENTERS')
   }
 
   emotesEnter(): void {

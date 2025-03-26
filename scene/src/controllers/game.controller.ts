@@ -55,11 +55,9 @@ export class GameController {
   }
 
   updatingStatusSystem(dt: number): void {
-    console.log(this.lastButtonClicked, ' - timer: ', this.timer)
     if (this.timer > 0) {
       this.timer -= dt
     } else {
-      console.log('timeout')
       void this.updateStatus()
 
       this.restartTimer()
@@ -72,7 +70,6 @@ export class GameController {
   }
 
   async updateWidgetPlace(): Promise<void> {
-    console.log('updateWidgetParcel')
     const explorerCoords: ReadOnlyVector3 | undefined =
       store.getState().scene.explorerPlayerPosition
     if (explorerCoords === undefined) {
