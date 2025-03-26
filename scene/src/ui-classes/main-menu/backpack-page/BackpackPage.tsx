@@ -16,10 +16,7 @@ import {
 import { getPlayer } from '@dcl/sdk/src/players'
 import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
-import {
-  createAvatarPreview,
-  setAvatarPreviewCameraToWearableCategory
-} from '../../../components/backpack/AvatarPreview'
+import { createAvatarPreview } from '../../../components/backpack/AvatarPreview'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
 import {
   BASE_MALE_URN,
@@ -28,7 +25,6 @@ import {
 } from '../../../utils/urn-utils'
 import { store } from '../../../state/store'
 import {
-  updateActiveWearableCategory,
   updateAvatarBase,
   updateCacheKey,
   updateEquippedWearables,
@@ -42,6 +38,7 @@ import {
 } from './WearableCatalog'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { closeColorPicker } from './WearableColorPicker'
+import { changeCategory } from '../../../service/wearable-category-service'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -79,7 +76,7 @@ export default class BackpackPage {
               outfitSetup={backpackState.outfitSetup}
               activeCategory={backpackState.activeWearableCategory}
               onSelectCategory={(category: WearableCategory | null): void => {
-                if (!backpackState.loadingPage) this.changeCategory(category)
+                if (!backpackState.loadingPage) changeCategory(category)
               }}
             />
             {/* CATALOG COLUMN */}
@@ -103,13 +100,6 @@ export default class BackpackPage {
         </Content>
       </MainContent>
     )
-  }
-
-  changeCategory(category: WearableCategory | null): void {
-    store.dispatch(updateActiveWearableCategory(category))
-    setAvatarPreviewCameraToWearableCategory(category)
-    closeColorPicker()
-    updatePage().catch(console.error)
   }
 
   async saveAvatar(): Promise<void> {

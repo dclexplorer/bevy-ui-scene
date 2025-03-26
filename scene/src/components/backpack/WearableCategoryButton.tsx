@@ -35,7 +35,9 @@ type WearableCategoryButtonProps = {
 const state: { hoveredCategory: null | WearableCategory } = {
   hoveredCategory: null
 }
-
+const BACKGROUND_AND_SHADOW_HEIGHT = 127
+const BACKGROUND_WIDTH = 120
+const THUMBNAIL_HEIGHT_RATIO = BACKGROUND_AND_SHADOW_HEIGHT / BACKGROUND_WIDTH
 export function WearableCategoryButton({
   category,
   uiTransform,
@@ -98,7 +100,7 @@ export function WearableCategoryButton({
       <UiEntity
         uiTransform={{
           width: 116 * canvasScaleRatio,
-          height: 116 * canvasScaleRatio * (127 / 120),
+          height: 116 * canvasScaleRatio * THUMBNAIL_HEIGHT_RATIO,
           display: selectedURN === null ? 'none' : 'flex',
           positionType: 'absolute',
           position: {

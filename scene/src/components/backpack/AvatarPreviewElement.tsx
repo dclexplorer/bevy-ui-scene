@@ -22,6 +22,7 @@ import {
   hideMouseCursor,
   showMouseCursor
 } from '../../service/custom-cursor-service'
+import { type AtlasIcon } from '../../utils/definitions'
 
 const ROTATION_FACTOR = -0.5
 const state = {
@@ -31,6 +32,10 @@ const state = {
 const AVATAR_PREVIEW_ELEMENT_ID = 'AP'
 
 engine.addSystem(AvatarPreviewZoomSystem)
+const ROTATE_ICON: AtlasIcon = {
+  atlasName: 'icons',
+  spriteName: 'RotateIcn'
+}
 
 export function AvatarPreviewElement(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -57,11 +62,11 @@ export function AvatarPreviewElement(): ReactElement {
         >
           <UiEntity
             key="avatar-preview-zoom"
+            onMouseDown={() => {
+              showMouseCursor(ROTATE_ICON)
+            }}
             onMouseDragLocked={() => {
-              showMouseCursor({
-                atlasName: 'icons',
-                spriteName: 'RotateIcn'
-              })
+              showMouseCursor(ROTATE_ICON)
               const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
               const deltaX: number = pointerInfo?.screenDelta?.x ?? 0
               const qY = Quaternion.fromAngleAxis(deltaX * ROTATION_FACTOR, {

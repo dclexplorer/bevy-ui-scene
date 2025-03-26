@@ -8,6 +8,7 @@ import { COLOR } from '../color-palette'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { Color4 } from '@dcl/sdk/math'
 import Icon from '../icon/Icon'
+import { type URNWithoutTokenId } from '../../utils/definitions'
 
 const SELECTED_BACKGROUND = getBackgroundFromAtlas({
   atlasName: 'backpack',
@@ -31,7 +32,11 @@ type WearableCatalogItemProps = {
   onEquipWearable?: (wearableElement: CatalogWearableElement) => void
   onSelect?: () => void
 }
-const state: any = { hoveredURN: null, lastTimeClick: 0 }
+const state: {
+  hoveredURN: URNWithoutTokenId | null
+  lastTimeClick: number
+  lastElementClick: CatalogWearableElement | null
+} = { hoveredURN: null, lastTimeClick: 0, lastElementClick: null }
 
 export function WearableCatalogItem(
   props: WearableCatalogItemProps
@@ -61,10 +66,14 @@ export function WearableCatalogItem(
         ...uiTransform
       }}
       onMouseDown={() => {
-        if (state.lastTimeClick + DOUBLE_CLICK_DELAY > Date.now()) {
+        if (
+          state.lastTimeClick + DOUBLE_CLICK_DELAY > Date.now() &&
+          state.lastElementClick === wearableElement
+        ) {
           onEquipWearable(wearableElement)
         } else {
           state.lastTimeClick = Date.now()
+          state.lastElementClick = wearableElement
           onSelect()
         }
       }}
