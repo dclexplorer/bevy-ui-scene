@@ -3,7 +3,7 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import type {
   WearableEntityMetadata,
   RarityName
-} from '../../utils/wearables-definitions'
+} from '../../utils/item-definitions'
 import Icon from '../icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 
@@ -13,7 +13,7 @@ import { type Color4 } from '@dcl/sdk/math'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from '../../service/wearable-categories'
+} from '../../service/categories'
 
 export type InfoPanelProps = {
   canvasScaleRatio: number

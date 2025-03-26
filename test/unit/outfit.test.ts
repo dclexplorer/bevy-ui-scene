@@ -5,7 +5,7 @@ import type {
     WearableEntityMetadata,
     OutfitSetup,
     CatalystWearableMap
-} from '../../scene/src/utils/wearables-definitions'
+} from '../../scene/src/utils/item-definitions'
 
 describe("getOutfitSetupFromWearables", () => {
     it("should return an outfit with wearables mapped correctly", () => {

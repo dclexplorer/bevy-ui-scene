@@ -1,4 +1,7 @@
-import type { WearableCategory } from '../service/wearable-categories'
+import {
+  type EmoteCategory,
+  type WearableCategory
+} from '../service/categories'
 import type { URN, URNWithoutTokenId } from './definitions'
 import type { PBAvatarBase } from '../bevy-api/interface'
 
@@ -84,7 +87,7 @@ export type CatalogWearableEntity = {
   type: string
   version: string
 }
-export type WearableIndividualData = {
+export type ItemIndividualData = {
   id: URN
   price: string
   tokenId: string
@@ -95,12 +98,21 @@ export type CatalogWearableElement = {
   amount: number
   category: WearableCategory
   entity: CatalogWearableEntity
-  individualData: WearableIndividualData[]
+  individualData: ItemIndividualData[]
   name: string
   rarity: RarityName
   type: 'on-chain' | 'off-chain' | 'base'
   urn: URNWithoutTokenId
 }
+export type CatalogEmoteElement = {
+  amount: number
+  category: EmoteCategory
+  individualData: ItemIndividualData[]
+  name: string
+  rarity: RarityName
+  urn: URNWithoutTokenId
+}
+export type ItemElement = CatalogWearableElement | CatalogEmoteElement
 export type CatalystWearableMap = {
   [K in URNWithoutTokenId]: WearableEntityMetadata
 }

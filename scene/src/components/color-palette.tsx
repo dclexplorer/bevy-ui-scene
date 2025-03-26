@@ -1,5 +1,5 @@
 import { Color4 } from '@dcl/sdk/math'
-import { type RarityName } from '../utils/wearables-definitions'
+import { type RarityName } from '../utils/item-definitions'
 
 const ACTIVE_BACKGROUND_COLOR = Color4.fromHexString('#FF7538')
 const ACTIVE_COLOR = Color4.fromHexString('#FFFFFF')

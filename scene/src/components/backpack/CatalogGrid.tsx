@@ -2,50 +2,47 @@ import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import type { URNWithoutTokenId } from '../../utils/definitions'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-import type { CatalogWearableElement } from '../../utils/wearables-definitions'
+import {
+  type ItemElement,
+  type CatalogEmoteElement,
+  type CatalogWearableElement
+} from '../../utils/item-definitions'
 import { noop } from '../../utils/function-utils'
-import { WEARABLE_CATEGORY_DEFINITIONS } from '../../service/wearable-categories'
-import { EMPTY_OUTFIT } from '../../service/outfit'
-import { type PBAvatarBase } from '../../bevy-api/interface'
-import { WearableCatalogItem } from './WearableCatalogItem'
+import { CatalogItem } from './CatalogItem'
 import { COLOR } from '../color-palette'
 import { Color4 } from '@dcl/sdk/math'
 import Icon from '../icon/Icon'
 import { openExternalUrl } from '~system/RestrictedActions'
 
 export type WearableCatalogGridProps = {
-  wearables: CatalogWearableElement[]
-  equippedWearables: URNWithoutTokenId[]
-  baseBody: PBAvatarBase
+  items: CatalogWearableElement[]
+  equippedItems: URNWithoutTokenId[]
   uiTransform: UiTransformProps
   loading: boolean
-  onChangeSelection?: (wearableURN: URNWithoutTokenId | null) => void
-  onEquipWearable: (wearable: CatalogWearableElement) => void
-  onUnequipWearable: (wearable: CatalogWearableElement) => void
+  onChangeSelection?: (itemURN: URNWithoutTokenId | null) => void
+  onEquipWearable: (itemElement: ItemElement) => void
+  onUnequipWearable: (itemElement: ItemElement) => void
 }
 
-type WearableCatalogGridState = {
-  selectedWearableURN: URNWithoutTokenId | null
+type CatalogGridState = {
+  selectedItemURN: URNWithoutTokenId | null
 }
 
-const state: WearableCatalogGridState = {
-  selectedWearableURN: null
+const state: CatalogGridState = {
+  selectedItemURN: null
 }
 
 const isEquippedMemo: {
-  equippedWearables: URNWithoutTokenId[]
-  baseBody: PBAvatarBase
+  equippedItems: URNWithoutTokenId[]
   memo: Map<URNWithoutTokenId, boolean>
 } = {
-  equippedWearables: [],
-  memo: new Map(),
-  baseBody: { ...EMPTY_OUTFIT.base }
+  equippedItems: [],
+  memo: new Map()
 }
 
-export function WearableCatalogGrid({
-  wearables,
-  equippedWearables,
-  baseBody,
+export function CatalogGrid({
+  items,
+  equippedItems,
   uiTransform,
   loading,
   onChangeSelection = noop,
@@ -53,7 +50,7 @@ export function WearableCatalogGrid({
   onUnequipWearable = noop
 }: WearableCatalogGridProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
-  if (!wearables.length) {
+  if (!items.length) {
     return (
       <UiEntity
         uiTransform={{
@@ -112,28 +109,27 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
         ...uiTransform
       }}
     >
-      {wearables.map(
-        (wearableElement: CatalogWearableElement, index: number) => (
-          <WearableCatalogItem
+      {items.map(
+        (
+          itemElement: CatalogWearableElement | CatalogEmoteElement,
+          index: number
+        ) => (
+          <CatalogItem
             key={index}
-            wearableElement={wearableElement}
-            onEquipWearable={(wearableElement: CatalogWearableElement) => {
-              onEquipWearable(wearableElement)
+            itemElement={itemElement}
+            onEquipItem={(itemElement: ItemElement) => {
+              onEquipWearable(itemElement)
             }}
-            onUnequipWearable={(wearableElement: CatalogWearableElement) => {
-              onUnequipWearable(wearableElement)
+            onUnequipItem={(itemElement: ItemElement) => {
+              onUnequipWearable(itemElement)
             }}
             onSelect={() => {
-              if (isSelected(wearableElement.urn)) return
-              select(wearableElement.urn)
-              onChangeSelection(state.selectedWearableURN)
+              if (isSelected(itemElement.urn)) return
+              select(itemElement.urn)
+              onChangeSelection(state.selectedItemURN)
             }}
-            isSelected={isSelected(wearableElement?.urn)}
-            isEquipped={isEquipped(
-              wearableElement,
-              equippedWearables,
-              baseBody
-            )}
+            isSelected={isSelected(itemElement?.urn)}
+            isEquipped={isEquipped(itemElement, equippedItems)}
             loading={loading}
           />
         )
@@ -143,42 +139,28 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
 }
 
 function isSelected(wearableURN: URNWithoutTokenId): boolean {
-  return state.selectedWearableURN === wearableURN
+  return state.selectedItemURN === wearableURN
 }
 
 function select(wearableURNWithoutTokenId: null | URNWithoutTokenId): void {
-  state.selectedWearableURN = wearableURNWithoutTokenId
+  state.selectedItemURN = wearableURNWithoutTokenId
 }
 
 function isEquipped(
-  wearable: CatalogWearableElement,
-  equippedWearables: URNWithoutTokenId[] = [],
-  baseBody: PBAvatarBase
+  itemElement: ItemElement,
+  equippedItems: URNWithoutTokenId[] = []
 ): boolean {
-  if (wearable === null) return false
-  if (
-    equippedWearables !== isEquippedMemo.equippedWearables ||
-    isEquippedMemo.baseBody !== baseBody
-  ) {
-    isEquippedMemo.equippedWearables = equippedWearables
-    isEquippedMemo.baseBody = baseBody
+  if (itemElement === null) return false
+  if (equippedItems !== isEquippedMemo.equippedItems) {
+    isEquippedMemo.equippedItems = equippedItems
     isEquippedMemo.memo.clear()
   }
-
-  if (isEquippedMemo.memo.has(wearable.urn)) {
-    return isEquippedMemo.memo.get(wearable.urn) as boolean
+  if (isEquippedMemo.memo.has(itemElement.urn)) {
+    return isEquippedMemo.memo.get(itemElement.urn) as boolean
   }
-
-  const equipped = isBodyCategory(wearable)
-    ? baseBody.bodyShapeUrn === wearable.urn
-    : equippedWearables.includes(wearable.urn)
-
-  isEquippedMemo.memo.set(wearable.urn, equipped)
+  const equipped = equippedItems.includes(itemElement.urn)
+  isEquippedMemo.memo.set(itemElement.urn, equipped)
   return equipped
-}
-
-function isBodyCategory(wearable: CatalogWearableElement): boolean {
-  return wearable.category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
 }
 
 function linkToMarketPlace(): void {

@@ -1,8 +1,8 @@
-import type { WearableCategory } from '../../service/wearable-categories'
+import type { WearableCategory } from '../../service/categories'
 import type {
   CatalogWearableElement,
   OutfitSetup
-} from '../../utils/wearables-definitions'
+} from '../../utils/item-definitions'
 import type { URNWithoutTokenId } from '../../utils/definitions'
 import { EMPTY_OUTFIT, getWearablesFromOutfit } from '../../service/outfit'
 import { WEARABLE_CATALOG_PAGE_SIZE } from '../../utils/constants'
@@ -16,6 +16,7 @@ export type BackpackPageState = {
   loadingPage: boolean
   shownWearables: CatalogWearableElement[]
   totalPages: number
+  equippedEmotes: URNWithoutTokenId[]
   equippedWearables: URNWithoutTokenId[]
   outfitSetup: OutfitSetup
   forceRender: WearableCategory[]
@@ -25,6 +26,7 @@ export type BackpackPageState = {
     equippedWearables: URNWithoutTokenId[]
     forceRender: WearableCategory[]
   }
+  equippedItems: URNWithoutTokenId[] // gather equippedWearables, baseBody.bodyShapeUrn & emotes
   selectedURN: URNWithoutTokenId | null
   cacheKey: string
 }
@@ -36,6 +38,11 @@ export const backpackInitialState: BackpackPageState = {
   shownWearables: new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
   totalPages: 0,
   equippedWearables: getWearablesFromOutfit(EMPTY_OUTFIT),
+  equippedEmotes: [],
+  equippedItems: [
+    EMPTY_OUTFIT.base.bodyShapeUrn,
+    ...getWearablesFromOutfit(EMPTY_OUTFIT)
+  ],
   outfitSetup: EMPTY_OUTFIT,
   selectedURN: null,
   forceRender: [],

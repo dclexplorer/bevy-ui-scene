@@ -2,9 +2,9 @@ import type {
   CatalogWearableElement,
   WearableEntityMetadata,
   CatalystWearableMap
-} from './wearables-definitions'
+} from './item-definitions'
 import type { URNWithoutTokenId } from './definitions'
-import { type WearableCategory } from '../service/wearable-categories'
+import { type WearableCategory } from '../service/categories'
 import { getRealm } from '~system/Runtime'
 
 export type WearablesPageResponse = {

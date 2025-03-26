@@ -7,7 +7,7 @@ import {
   getContentHeight,
   getContentWidth
 } from '../../../service/canvas-ratio'
-import { type WearableCategory } from '../../../service/wearable-categories'
+import { type WearableCategory } from '../../../service/categories'
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
 import {
   catalystWearableMap,
@@ -31,11 +31,7 @@ import {
   updateLoadingPage
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
-import {
-  saveResetOutfit,
-  updatePage,
-  WearablesCatalog
-} from './WearableCatalog'
+import { saveResetOutfit, updatePage, WearablesCatalog } from './ItemCatalog'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { closeColorPicker } from './WearableColorPicker'
 import { changeCategory } from '../../../service/wearable-category-service'

@@ -2,7 +2,7 @@ import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from '../../service/wearable-categories'
+} from '../../service/categories'
 import ReactEcs, {
   type ReactElement,
   type UiBackgroundProps

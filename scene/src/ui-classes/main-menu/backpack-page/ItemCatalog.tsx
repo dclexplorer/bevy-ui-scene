@@ -5,10 +5,11 @@ import { NavButton } from '../../../components/nav-button/NavButton'
 import Icon from '../../../components/icon/Icon'
 import {
   categoryHasColor,
+  type EmoteCategory,
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from '../../../service/wearable-categories'
-import { WearableCatalogGrid } from '../../../components/backpack/WearableCatalogGrid'
+} from '../../../service/categories'
+import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
 import type { URNWithoutTokenId } from '../../../utils/definitions'
 import {
   resetOutfitAction,
@@ -20,7 +21,10 @@ import {
   updateSavedResetVersion,
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
-import type { CatalogWearableElement } from '../../../utils/wearables-definitions'
+import type {
+  CatalogWearableElement,
+  ItemElement
+} from '../../../utils/item-definitions'
 import {
   BASE_FEMALE_URN,
   BASE_MALE_URN,
@@ -46,7 +50,6 @@ import { changeCategory } from '../../../service/wearable-category-service'
 export function WearablesCatalog(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
-  const mustShowColor = categoryHasColor(backpackState.activeWearableCategory)
 
   return (
     <UiEntity
@@ -58,78 +61,31 @@ export function WearablesCatalog(): ReactElement {
       }}
     >
       {/* CATALOG NAV_BAR */}
-      <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
-        <NavButton
-          active={backpackState.activeWearableCategory === null}
-          icon={{ spriteName: 'all', atlasName: 'backpack' }}
-          text={'ALL'}
-          uiTransform={{ padding: 40 * canvasScaleRatio }}
-          onClick={() => {
-            changeCategory(null)
-          }}
-        />
-        <Icon
-          iconSize={40 * canvasScaleRatio}
-          uiTransform={{
-            alignSelf: 'center',
-            margin: {
-              left: 16 * canvasScaleRatio,
-              right: 16 * canvasScaleRatio
-            },
-            display:
-              backpackState.activeWearableCategory === null ? 'none' : 'flex'
-          }}
-          icon={{
-            spriteName: 'RightArrow',
-            atlasName: 'icons'
-          }}
-        />
-        {backpackState.activeWearableCategory && (
-          <NavButton
-            active={true}
-            showDeleteButton={true}
-            onDelete={() => {
-              changeCategory(null)
-            }}
-            icon={{
-              spriteName: `category-${backpackState.activeWearableCategory}`,
-              atlasName: 'backpack'
-            }}
-            text={
-              WEARABLE_CATEGORY_DEFINITIONS[
-                backpackState.activeWearableCategory
-              ].label
-            }
-            uiTransform={{
-              padding: 20 * canvasScaleRatio,
-              height: 80 * canvasScaleRatio
-            }}
-          />
-        )}
-        {mustShowColor && <WearableColorPicker />}
-      </UiEntity>
-      <WearableCatalogGrid
+      <WearableCatalogNavBar />
+      <CatalogGrid
         uiTransform={{
           margin: { top: 20 * canvasScaleRatio }
         }}
         loading={backpackState.loadingPage}
-        wearables={backpackState.shownWearables}
-        equippedWearables={backpackState.equippedWearables}
-        baseBody={backpackState.outfitSetup.base}
+        items={backpackState.shownWearables}
+        equippedItems={backpackState.equippedItems}
         onChangeSelection={(selectedURN: URNWithoutTokenId | null): void => {
           store.dispatch(updateSelectedWearableURN(selectedURN))
         }}
-        onEquipWearable={(wearable: CatalogWearableElement): void => {
+        onEquipWearable={(itemElement: ItemElement): void => {
           urnWithTokenIdMemo.set(
-            wearable.entity.metadata.id,
-            wearable.individualData[0].id
+            itemElement.urn,
+            itemElement.individualData[0].id
           )
-          updateEquippedWearable(
-            wearable.category,
-            wearable.entity.metadata.id
-          ).catch(console.error)
+          if (isWearableElement(itemElement)) {
+            updateEquippedWearable(itemElement.category, itemElement.urn).catch(
+              console.error
+            )
+          } else {
+            // TODO equip emote
+          }
         }}
-        onUnequipWearable={(wearable: CatalogWearableElement): void => {
+        onUnequipWearable={(wearable: ItemElement): void => {
           updateEquippedWearable(wearable.category, null).catch(console.error)
         }}
       />
@@ -166,6 +122,64 @@ export function WearablesCatalog(): ReactElement {
     </UiEntity>
   )
 }
+function WearableCatalogNavBar(): ReactElement {
+  const backpackState = store.getState().backpack
+  const canvasScaleRatio = getCanvasScaleRatio()
+  const mustShowColor = categoryHasColor(backpackState.activeWearableCategory)
+
+  return (
+    <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
+      <NavButton
+        active={backpackState.activeWearableCategory === null}
+        icon={{ spriteName: 'all', atlasName: 'backpack' }}
+        text={'ALL'}
+        uiTransform={{ padding: 40 * canvasScaleRatio }}
+        onClick={() => {
+          if (backpackState.activeWearableCategory === null) return null
+          changeCategory(null)
+        }}
+      />
+      <Icon
+        iconSize={40 * canvasScaleRatio}
+        uiTransform={{
+          alignSelf: 'center',
+          margin: {
+            left: 16 * canvasScaleRatio,
+            right: 16 * canvasScaleRatio
+          },
+          display:
+            backpackState.activeWearableCategory === null ? 'none' : 'flex'
+        }}
+        icon={{
+          spriteName: 'RightArrow',
+          atlasName: 'icons'
+        }}
+      />
+      {backpackState.activeWearableCategory && (
+        <NavButton
+          active={true}
+          showDeleteButton={true}
+          onDelete={() => {
+            changeCategory(null)
+          }}
+          icon={{
+            spriteName: `category-${backpackState.activeWearableCategory}`,
+            atlasName: 'backpack'
+          }}
+          text={
+            WEARABLE_CATEGORY_DEFINITIONS[backpackState.activeWearableCategory]
+              .label
+          }
+          uiTransform={{
+            padding: 20 * canvasScaleRatio,
+            height: 80 * canvasScaleRatio
+          }}
+        />
+      )}
+      {mustShowColor && <WearableColorPicker />}
+    </UiEntity>
+  )
+}
 
 async function resetOutfit(): Promise<void> {
   store.dispatch(resetOutfitAction())
@@ -182,7 +196,7 @@ export function saveResetOutfit(): void {
 }
 
 async function updateEquippedWearable(
-  category: WearableCategory,
+  category: WearableCategory | EmoteCategory,
   wearableURN: URNWithoutTokenId | null
 ): Promise<void> {
   const backpackState = store.getState().backpack
@@ -210,7 +224,8 @@ async function updateEquippedWearable(
     const equippedWearablesWithoutPrevious =
       backpackState.equippedWearables.filter(
         (wearableURN) =>
-          wearableURN !== backpackState.outfitSetup.wearables[category]
+          wearableURN !==
+          backpackState.outfitSetup.wearables[category as WearableCategory]
       )
 
     const wearables =
@@ -253,4 +268,8 @@ export async function updatePage(): Promise<void> {
       shownWearables: wearablesPage.elements
     })
   )
+}
+
+function isWearableElement(itemElement: ItemElement): boolean {
+  return (itemElement as CatalogWearableElement).entity?.type === 'wearable'
 }

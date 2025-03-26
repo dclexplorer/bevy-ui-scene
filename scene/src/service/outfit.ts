@@ -3,11 +3,11 @@ import type {
   OutfitSetup,
   OutfitSetupWearables,
   CatalystWearableMap
-} from '../utils/wearables-definitions'
+} from '../utils/item-definitions'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from './wearable-categories'
+} from './categories'
 import { BASE_MALE_URN } from '../utils/urn-utils'
 import { deepFreeze } from '../utils/object-utils'
 

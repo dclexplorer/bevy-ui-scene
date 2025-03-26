@@ -3,6 +3,9 @@ import { BACKPACK_ACTION, type BackpackActions } from './actions'
 import { getOutfitSetupFromWearables } from '../../service/outfit'
 import { store } from '../store'
 import { catalystWearableMap } from '../../utils/wearables-promise-utils'
+import { type WearableCategory } from '../../service/categories'
+import { type PBAvatarBase } from '../../bevy-api/interface'
+import { type URNWithoutTokenId } from '../../utils/definitions'
 
 export function reducer(
   backpackPageState: BackpackPageState,
@@ -31,7 +34,12 @@ export function reducer(
         shownWearables: action.payload.shownWearables,
         loadingPage: false
       }
-    case BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES:
+    case BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES: {
+      const equippedItems = gatherEquippedItems({
+        base: backpackPageState.outfitSetup.base,
+        equippedWearables: action.payload.wearables,
+        equippedEmotes: backpackPageState.equippedEmotes
+      })
       return {
         ...backpackPageState,
         equippedWearables: action.payload.wearables,
@@ -45,24 +53,34 @@ export function reducer(
             )
           }
         },
-        changedFromResetVersion: true
+        changedFromResetVersion: true,
+        equippedItems
       }
-    case BACKPACK_ACTION.UPDATE_AVATAR_BASE:
+    }
+    case BACKPACK_ACTION.UPDATE_AVATAR_BASE: {
+      const base = {
+        ...backpackPageState.outfitSetup.base,
+        name: action.payload.name,
+        eyesColor: action.payload.eyesColor,
+        hairColor: action.payload.hairColor,
+        skinColor: action.payload.skinColor,
+        bodyShapeUrn: action.payload.bodyShapeUrn
+      }
+      const equippedItems = gatherEquippedItems({
+        base,
+        equippedWearables: backpackPageState.equippedWearables,
+        equippedEmotes: backpackPageState.equippedEmotes
+      })
       return {
         ...backpackPageState,
         outfitSetup: {
           ...backpackPageState.outfitSetup,
-          base: {
-            ...backpackPageState.outfitSetup.base,
-            name: action.payload.name,
-            eyesColor: action.payload.eyesColor,
-            hairColor: action.payload.hairColor,
-            skinColor: action.payload.skinColor,
-            bodyShapeUrn: action.payload.bodyShapeUrn
-          }
+          base
         },
-        changedFromResetVersion: true
+        changedFromResetVersion: true,
+        equippedItems
       }
+    }
     case BACKPACK_ACTION.UPDATE_CACHE_KEY:
       return {
         ...backpackPageState,
@@ -90,26 +108,42 @@ export function reducer(
         },
         changedFromResetVersion: false
       }
-    case BACKPACK_ACTION.RESET_OUTFIT:
+    case BACKPACK_ACTION.RESET_OUTFIT: {
+      const base = JSON.parse(
+        JSON.stringify(backpackPageState.savedResetOutfit.base)
+      )
+      const equippedWearables = [
+        ...backpackPageState.savedResetOutfit.equippedWearables
+      ]
+      const equippedItems = gatherEquippedItems({
+        base,
+        equippedWearables,
+        equippedEmotes: backpackPageState.equippedEmotes
+      })
       return {
         ...backpackPageState,
         outfitSetup: {
           ...backpackPageState.outfitSetup,
-          base: JSON.parse(
-            JSON.stringify(backpackPageState.savedResetOutfit.base)
-          ),
+          base,
           wearables: getOutfitSetupFromWearables(
             backpackPageState.savedResetOutfit.equippedWearables,
             catalystWearableMap
           )
         },
         forceRender: [...backpackPageState.savedResetOutfit.forceRender],
-        equippedWearables: [
-          ...backpackPageState.savedResetOutfit.equippedWearables
-        ],
-        changedFromResetVersion: false
+        equippedWearables,
+        changedFromResetVersion: false,
+        equippedItems
       }
-    case BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY:
+    }
+    case BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY: {
+      const equippedWearables = backpackPageState.equippedWearables.filter(
+        (equippedWearable) =>
+          equippedWearable !==
+          backpackPageState.outfitSetup.wearables[
+            action.payload as WearableCategory
+          ]
+      )
       return {
         ...backpackPageState,
         outfitSetup: {
@@ -119,13 +153,29 @@ export function reducer(
             [action.payload]: null
           }
         },
-        equippedWearables: backpackPageState.equippedWearables.filter(
-          (equippedWearable) =>
-            equippedWearable !==
-            backpackPageState.outfitSetup.wearables[action.payload]
-        )
+        equippedWearables,
+        equippedItems: gatherEquippedItems({
+          base: backpackPageState.outfitSetup.base,
+          equippedWearables,
+          equippedEmotes: backpackPageState.equippedEmotes
+        })
       }
+    }
     default:
       return backpackPageState
   }
+}
+
+function gatherEquippedItems({
+  base,
+  equippedWearables,
+  equippedEmotes
+}: {
+  base: PBAvatarBase
+  equippedWearables: URNWithoutTokenId[]
+  equippedEmotes: URNWithoutTokenId[]
+}): URNWithoutTokenId[] {
+  return [base.bodyShapeUrn, ...equippedWearables, ...equippedEmotes].filter(
+    (i) => i
+  )
 }

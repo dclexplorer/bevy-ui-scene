@@ -13,7 +13,7 @@ import { type URNWithoutTokenId } from '../../utils/definitions'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from '../../service/wearable-categories'
+} from '../../service/categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { getWearablesWithTokenId } from '../../utils/urn-utils'
 import { type Perspective } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/texture_camera.gen'

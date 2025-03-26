@@ -9,7 +9,7 @@ import {
   CATEGORY_COLOR_DEFINITIONS,
   categoryHasColor,
   WEARABLE_CATEGORY_DEFINITIONS
-} from '../../../service/wearable-categories'
+} from '../../../service/categories'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { noop } from '../../../utils/function-utils'
 import { BasicSlider } from '../../../components/slider/BasicSlider'

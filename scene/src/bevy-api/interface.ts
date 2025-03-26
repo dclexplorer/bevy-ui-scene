@@ -1,5 +1,5 @@
 import type { URN, URNWithoutTokenId } from '../utils/definitions'
-import { type WearableCategory } from '../service/wearable-categories'
+import { type WearableCategory } from '../service/categories'
 
 export type ExplorerSetting = {
   name: string

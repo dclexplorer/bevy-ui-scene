@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { forceRenderHasEffect } from '../../scene/src/service/force-render-service'
-import { WEARABLE_CATEGORY_DEFINITIONS } from '../../scene/src/service/wearable-categories'
+import { WEARABLE_CATEGORY_DEFINITIONS } from '../../scene/src/service/categories'
 import catalystWearableMapMock from './catalyst-wearable-map-mock.json'
-import { CatalystWearableMap } from '../../scene/src/utils/wearables-definitions'
+import { CatalystWearableMap } from '../../scene/src/utils/item-definitions'
 import { URNWithoutTokenId } from '../../scene/src/utils/definitions'
 
 const hairURN ="urn:decentraland:ethereum:collections-v1:mf_sammichgamer:mf_animehair" as URNWithoutTokenId

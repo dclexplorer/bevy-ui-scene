@@ -1,10 +1,10 @@
 import { BACKPACK_STORE_ID } from './state'
 import { type URNWithoutTokenId } from '../../utils/definitions'
-import { type WearableCategory } from '../../service/wearable-categories'
+import { type WearableCategory } from '../../service/categories'
 import {
   type CatalogWearableElement,
   type CatalystWearableMap
-} from '../../utils/wearables-definitions'
+} from '../../utils/item-definitions'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 
 type BackpackActionId = { __reducer: typeof BACKPACK_STORE_ID }

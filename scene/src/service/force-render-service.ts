@@ -1,9 +1,9 @@
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from './wearable-categories'
+} from './categories'
 import type { URNWithoutTokenId } from '../utils/definitions'
-import type { CatalystWearableMap } from '../utils/wearables-definitions'
+import type { CatalystWearableMap } from '../utils/item-definitions'
 
 export function forceRenderHasEffect(
   category: WearableCategory,
