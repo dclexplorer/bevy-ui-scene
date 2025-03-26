@@ -140,6 +140,26 @@
 				"h": 81
 			}
 		},
+		"category-emote.png": {
+			"frame": {
+				"x": 759,
+				"y": 1,
+				"w": 24,
+				"h": 19
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 24,
+				"h": 19
+			},
+			"sourceSize": {
+				"w": 24,
+				"h": 19
+			}
+		},
 		"category-eyebrows.png": {
 			"frame": {
 				"x": 245,
@@ -520,10 +540,210 @@
 				"h": 31
 			}
 		},
-		"empty-category-result.png": {
+		"emote-circle-0.png": {
 			"frame": {
 				"x": 759,
-				"y": 1,
+				"y": 22,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-1.png": {
+			"frame": {
+				"x": 123,
+				"y": 74,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-2.png": {
+			"frame": {
+				"x": 175,
+				"y": 74,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-3.png": {
+			"frame": {
+				"x": 227,
+				"y": 74,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-4.png": {
+			"frame": {
+				"x": 279,
+				"y": 74,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-5.png": {
+			"frame": {
+				"x": 331,
+				"y": 74,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-6.png": {
+			"frame": {
+				"x": 383,
+				"y": 74,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-7.png": {
+			"frame": {
+				"x": 759,
+				"y": 74,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-8.png": {
+			"frame": {
+				"x": 1,
+				"y": 126,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-9.png": {
+			"frame": {
+				"x": 53,
+				"y": 126,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"empty-category-result.png": {
+			"frame": {
+				"x": 433,
+				"y": 598,
 				"w": 200,
 				"h": 200
 			},
@@ -542,8 +762,8 @@
 		},
 		"empty-search-result.png": {
 			"frame": {
-				"x": 759,
-				"y": 203,
+				"x": 811,
+				"y": 1,
 				"w": 200,
 				"h": 200
 			},
@@ -622,8 +842,8 @@
 		},
 		"icon-hidden.png": {
 			"frame": {
-				"x": 961,
-				"y": 1,
+				"x": 311,
+				"y": 203,
 				"w": 20,
 				"h": 20
 			},
@@ -642,8 +862,8 @@
 		},
 		"icon-shown.png": {
 			"frame": {
-				"x": 961,
-				"y": 23,
+				"x": 785,
+				"y": 1,
 				"w": 20,
 				"h": 17
 			},
@@ -662,7 +882,7 @@
 		},
 		"loading-wearable.png": {
 			"frame": {
-				"x": 311,
+				"x": 759,
 				"y": 203,
 				"w": 120,
 				"h": 120
@@ -682,8 +902,8 @@
 		},
 		"mask-slider.png": {
 			"frame": {
-				"x": 701,
-				"y": 565,
+				"x": 737,
+				"y": 399,
 				"w": 266,
 				"h": 31
 			},
@@ -702,8 +922,8 @@
 		},
 		"nft-empty.png": {
 			"frame": {
-				"x": 737,
-				"y": 405,
+				"x": 333,
+				"y": 203,
 				"w": 70,
 				"h": 70
 			},
@@ -722,8 +942,8 @@
 		},
 		"rarity-background-base.png": {
 			"frame": {
-				"x": 809,
-				"y": 405,
+				"x": 881,
+				"y": 203,
 				"w": 120,
 				"h": 127
 			},
@@ -742,8 +962,8 @@
 		},
 		"rarity-background-common.png": {
 			"frame": {
-				"x": 433,
-				"y": 598,
+				"x": 740,
+				"y": 432,
 				"w": 121,
 				"h": 127
 			},
@@ -762,8 +982,8 @@
 		},
 		"rarity-background-epic.png": {
 			"frame": {
-				"x": 556,
-				"y": 598,
+				"x": 863,
+				"y": 432,
 				"w": 120,
 				"h": 127
 			},
@@ -782,8 +1002,8 @@
 		},
 		"rarity-background-exotic.png": {
 			"frame": {
-				"x": 678,
-				"y": 598,
+				"x": 740,
+				"y": 561,
 				"w": 120,
 				"h": 127
 			},
@@ -802,8 +1022,8 @@
 		},
 		"rarity-background-legendary.png": {
 			"frame": {
-				"x": 800,
-				"y": 598,
+				"x": 862,
+				"y": 561,
 				"w": 120,
 				"h": 127
 			},
@@ -823,7 +1043,7 @@
 		"rarity-background-mythic.png": {
 			"frame": {
 				"x": 1,
-				"y": 727,
+				"y": 690,
 				"w": 120,
 				"h": 127
 			},
@@ -843,7 +1063,7 @@
 		"rarity-background-rare.png": {
 			"frame": {
 				"x": 123,
-				"y": 727,
+				"y": 690,
 				"w": 120,
 				"h": 127
 			},
@@ -863,7 +1083,7 @@
 		"rarity-background-uncommon.png": {
 			"frame": {
 				"x": 245,
-				"y": 727,
+				"y": 690,
 				"w": 120,
 				"h": 127
 			},
@@ -882,8 +1102,8 @@
 		},
 		"rarity-background-unique.png": {
 			"frame": {
-				"x": 367,
-				"y": 727,
+				"x": 635,
+				"y": 690,
 				"w": 120,
 				"h": 127
 			},
@@ -902,8 +1122,8 @@
 		},
 		"rarity-corner-base.png": {
 			"frame": {
-				"x": 931,
-				"y": 405,
+				"x": 1,
+				"y": 332,
 				"w": 46,
 				"h": 45
 			},
@@ -922,8 +1142,8 @@
 		},
 		"rarity-corner-common.png": {
 			"frame": {
-				"x": 931,
-				"y": 452,
+				"x": 49,
+				"y": 332,
 				"w": 47,
 				"h": 45
 			},
@@ -942,8 +1162,8 @@
 		},
 		"rarity-corner-epic.png": {
 			"frame": {
-				"x": 740,
-				"y": 499,
+				"x": 98,
+				"y": 332,
 				"w": 46,
 				"h": 45
 			},
@@ -962,8 +1182,8 @@
 		},
 		"rarity-corner-exotic.png": {
 			"frame": {
-				"x": 931,
-				"y": 499,
+				"x": 311,
+				"y": 332,
 				"w": 46,
 				"h": 45
 			},
@@ -982,8 +1202,8 @@
 		},
 		"rarity-corner-legendary.png": {
 			"frame": {
-				"x": 922,
-				"y": 598,
+				"x": 359,
+				"y": 332,
 				"w": 46,
 				"h": 45
 			},
@@ -1002,8 +1222,8 @@
 		},
 		"rarity-corner-mythic.png": {
 			"frame": {
-				"x": 165,
-				"y": 645,
+				"x": 759,
+				"y": 332,
 				"w": 46,
 				"h": 45
 			},
@@ -1022,8 +1242,8 @@
 		},
 		"rarity-corner-rare.png": {
 			"frame": {
-				"x": 213,
-				"y": 645,
+				"x": 807,
+				"y": 332,
 				"w": 46,
 				"h": 45
 			},
@@ -1042,8 +1262,8 @@
 		},
 		"rarity-corner-uncommon.png": {
 			"frame": {
-				"x": 261,
-				"y": 645,
+				"x": 855,
+				"y": 332,
 				"w": 46,
 				"h": 45
 			},
@@ -1062,8 +1282,8 @@
 		},
 		"rarity-corner-unique.png": {
 			"frame": {
-				"x": 309,
-				"y": 645,
+				"x": 903,
+				"y": 332,
 				"w": 46,
 				"h": 45
 			},
@@ -1082,8 +1302,8 @@
 		},
 		"saturation-slider.png": {
 			"frame": {
-				"x": 489,
-				"y": 727,
+				"x": 1,
+				"y": 819,
 				"w": 266,
 				"h": 31
 			},
@@ -1102,8 +1322,8 @@
 		},
 		"value-slider.png": {
 			"frame": {
-				"x": 489,
-				"y": 760,
+				"x": 269,
+				"y": 819,
 				"w": 266,
 				"h": 31
 			},
@@ -1127,8 +1347,8 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 982,
-			"h": 855
+			"w": 1012,
+			"h": 851
 		},
 		"scale": "1"
 	}
