@@ -31,10 +31,11 @@ import {
   updateLoadingPage
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
-import { saveResetOutfit, updatePage, WearablesCatalog } from './ItemCatalog'
+import { saveResetOutfit, updatePage } from './ItemCatalog'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { closeColorPicker } from './WearableColorPicker'
 import { changeCategory } from '../../../service/wearable-category-service'
+import { WearablesCatalog } from './WearablesCatalog'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
