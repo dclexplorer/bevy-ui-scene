@@ -33,54 +33,80 @@ import {
 import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../../../components/color-palette'
+import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
+import { InfoPanel } from '../../../components/backpack/InfoPanel'
 
 export function WearablesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
   const canvasScaleRatio = getCanvasScaleRatio()
   return (
-    <ItemsCatalog>
-      <WearableCatalogNavBar />
-      <CatalogGrid
-        uiTransform={{
-          margin: { top: 20 * canvasScaleRatio }
-        }}
-        loading={backpackState.loadingPage}
-        items={backpackState.shownWearables}
-        equippedItems={backpackState.equippedItems}
-        onChangeSelection={(selectedURN: URNWithoutTokenId | null): void => {
-          store.dispatch(updateSelectedWearableURN(selectedURN))
-        }}
-        onEquipWearable={(itemElement: ItemElement): void => {
-          urnWithTokenIdMemo.set(
-            itemElement.urn,
-            itemElement.individualData[0].id
-          )
-          updateEquippedWearable(itemElement.category, itemElement.urn).catch(
-            console.error
-          )
-        }}
-        onUnequipWearable={(wearable: ItemElement): void => {
-          updateEquippedWearable(wearable.category, null).catch(console.error)
+    <UiEntity>
+      <WearableCategoryList
+        outfitSetup={backpackState.outfitSetup}
+        activeCategory={backpackState.activeWearableCategory}
+        onSelectCategory={(category: WearableCategory | null): void => {
+          if (!backpackState.loadingPage) changeCategory(category)
         }}
       />
-      {backpackState.changedFromResetVersion && (
-        <NavButton
-          icon={{ atlasName: 'icons', spriteName: 'BackStepIcon' }}
-          text={'RESET OUTFIT'}
-          color={Color4.White()}
-          backgroundColor={COLOR.SMALL_TAG_BACKGROUND}
+      <ItemsCatalog>
+        <WearableCatalogNavBar />
+        <CatalogGrid
           uiTransform={{
-            positionType: 'absolute',
-            height: '5%',
-            padding: { left: '1%', right: '2%' },
-            position: { bottom: '1%', left: '-54%' }
+            margin: { top: 20 * canvasScaleRatio }
           }}
-          onClick={() => {
-            resetOutfit().catch(console.error)
+          loading={backpackState.loadingPage}
+          items={backpackState.shownWearables}
+          equippedItems={backpackState.equippedItems}
+          onChangeSelection={(selectedURN: URNWithoutTokenId | null): void => {
+            store.dispatch(updateSelectedWearableURN(selectedURN))
+          }}
+          onEquipWearable={(itemElement: ItemElement): void => {
+            urnWithTokenIdMemo.set(
+              itemElement.urn,
+              itemElement.individualData[0].id
+            )
+            updateEquippedWearable(itemElement.category, itemElement.urn).catch(
+              console.error
+            )
+          }}
+          onUnequipWearable={(wearable: ItemElement): void => {
+            updateEquippedWearable(wearable.category, null).catch(console.error)
           }}
         />
-      )}
-    </ItemsCatalog>
+        {backpackState.changedFromResetVersion && (
+          <NavButton
+            icon={{ atlasName: 'icons', spriteName: 'BackStepIcon' }}
+            text={'RESET OUTFIT'}
+            color={Color4.White()}
+            backgroundColor={COLOR.SMALL_TAG_BACKGROUND}
+            uiTransform={{
+              positionType: 'absolute',
+              height: '5%',
+              padding: { left: '1%', right: '2%' },
+              position: { bottom: '1%', left: '-54%' }
+            }}
+            onClick={() => {
+              resetOutfit().catch(console.error)
+            }}
+          />
+        )}
+      </ItemsCatalog>
+      {/* // TODO Move InfoPanel inside ItemCatalog after its {children} */}
+      <InfoPanel
+        uiTransform={{
+          position: {
+            top: -50 * canvasScaleRatio,
+            left: -20 * canvasScaleRatio
+          }
+        }}
+        canvasScaleRatio={canvasScaleRatio}
+        wearable={
+          backpackState.selectedURN === null
+            ? null
+            : catalystWearableMap[backpackState.selectedURN]
+        }
+      />
+    </UiEntity>
   )
 }
 async function resetOutfit(): Promise<void> {

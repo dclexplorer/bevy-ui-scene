@@ -1,5 +1,5 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import {
@@ -7,8 +7,6 @@ import {
   getContentHeight,
   getContentWidth
 } from '../../../service/canvas-ratio'
-import { type WearableCategory } from '../../../service/categories'
-import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
 import {
   catalystWearableMap,
   fetchWearablesData
@@ -25,6 +23,7 @@ import {
 } from '../../../utils/urn-utils'
 import { store } from '../../../state/store'
 import {
+  changeSectionAction,
   updateAvatarBase,
   updateCacheKey,
   updateEquippedWearables,
@@ -32,10 +31,9 @@ import {
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
 import { saveResetOutfit, updatePage } from './ItemCatalog'
-import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { closeColorPicker } from './WearableColorPicker'
-import { changeCategory } from '../../../service/wearable-category-service'
 import { WearablesCatalog } from './WearablesCatalog'
+import { BACKPACK_SECTION } from '../../../state/backpack/state'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -68,31 +66,9 @@ export default class BackpackPage {
               color: { ...Color4.Black(), a: 0.35 }
             }}
           >
-            {/* CATEGORY SELECTORS COLUMN */}
-            <WearableCategoryList
-              outfitSetup={backpackState.outfitSetup}
-              activeCategory={backpackState.activeWearableCategory}
-              onSelectCategory={(category: WearableCategory | null): void => {
-                if (!backpackState.loadingPage) changeCategory(category)
-              }}
-            />
-            {/* CATALOG COLUMN */}
-            <WearablesCatalog />
-            {/* SELECTED ITEM COLUMN */}
-            <InfoPanel
-              uiTransform={{
-                position: {
-                  top: -50 * canvasScaleRatio,
-                  left: -20 * canvasScaleRatio
-                }
-              }}
-              canvasScaleRatio={canvasScaleRatio}
-              wearable={
-                backpackState.selectedURN === null
-                  ? null
-                  : catalystWearableMap[backpackState.selectedURN]
-              }
-            />
+            {backpackState.activeSection === BACKPACK_SECTION.WEARABLES && (
+              <WearablesCatalog />
+            )}
           </UiEntity>
         </Content>
       </MainContent>
@@ -293,6 +269,9 @@ function BackpackNavBar({
             }}
             active={true}
             text={'Wearables'}
+            onClick={() => {
+              store.dispatch(changeSectionAction(BACKPACK_SECTION.WEARABLES))
+            }}
           />
           <NavButton
             icon={{
@@ -301,6 +280,9 @@ function BackpackNavBar({
             }}
             text={'Emotes'}
             uiTransform={{ margin: { left: 12 } }}
+            onClick={() => {
+              store.dispatch(changeSectionAction(BACKPACK_SECTION.EMOTES))
+            }}
           />
         </NavButtonBar>
       </LeftSection>

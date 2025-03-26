@@ -9,8 +9,14 @@ import { WEARABLE_CATALOG_PAGE_SIZE } from '../../utils/constants'
 import type { PBAvatarBase } from '../../bevy-api/interface'
 
 export const BACKPACK_STORE_ID: 'backpack' = 'backpack'
+export enum BACKPACK_SECTION {
+  WEARABLES,
+  EMOTES,
+  OUTFITS
+}
 
 export type BackpackPageState = {
+  activeSection: BACKPACK_SECTION
   activeWearableCategory: WearableCategory | null
   currentPage: number
   loadingPage: boolean
@@ -32,6 +38,7 @@ export type BackpackPageState = {
 }
 
 export const backpackInitialState: BackpackPageState = {
+  activeSection: BACKPACK_SECTION.WEARABLES,
   activeWearableCategory: null,
   currentPage: 1,
   loadingPage: false,

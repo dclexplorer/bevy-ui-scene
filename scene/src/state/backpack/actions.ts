@@ -1,4 +1,4 @@
-import { BACKPACK_STORE_ID } from './state'
+import { type BACKPACK_SECTION, BACKPACK_STORE_ID } from './state'
 import { type URNWithoutTokenId } from '../../utils/definitions'
 import { type WearableCategory } from '../../service/categories'
 import {
@@ -21,7 +21,8 @@ export enum BACKPACK_ACTION {
   SWITCH_FORCE_RENDER_CATEGORY,
   UPDATE_SAVED_RESET_VERSION,
   RESET_OUTFIT,
-  UNEQUIP_WEARABLE_CATEGORY
+  UNEQUIP_WEARABLE_CATEGORY,
+  CHANGE_SECTION
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -84,6 +85,12 @@ export type BackpackUnequipWearableCategoryAction = BackpackActionId & {
   type: BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY
   payload: WearableCategory
 }
+
+export type BackpackChangeSectionAction = BackpackActionId & {
+  type: BACKPACK_ACTION.CHANGE_SECTION
+  payload: BACKPACK_SECTION
+}
+
 export type BackpackActions =
   | BackpackSelectWearableURNAction
   | BackpackUpdateCurrentPageAction
@@ -97,6 +104,7 @@ export type BackpackActions =
   | BackpackUpdateSavedResetVersionAction
   | BackpackResetOutfitAction
   | BackpackUnequipWearableCategoryAction
+  | BackpackChangeSectionAction
 
 export const updateSelectedWearableURN = (
   payload: URNWithoutTokenId | null
@@ -183,5 +191,13 @@ export const unequipWearableCategory = (
 ): BackpackUnequipWearableCategoryAction => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY,
+  payload
+})
+
+export const changeSectionAction = (
+  payload: BACKPACK_SECTION
+): BackpackChangeSectionAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.CHANGE_SECTION,
   payload
 })

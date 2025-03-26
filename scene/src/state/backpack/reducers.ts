@@ -161,6 +161,12 @@ export function reducer(
         })
       }
     }
+    case BACKPACK_ACTION.CHANGE_SECTION: {
+      return {
+        ...backpackPageState,
+        activeSection: action.payload
+      }
+    }
     default:
       return backpackPageState
   }
