@@ -10,8 +10,7 @@ import {
 import {
   catalystWearableMap,
   fetchWearablesData,
-  fetchWearablesPage,
-  type WearablesPageResponse
+  fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
 import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
@@ -126,6 +125,12 @@ export default class BackpackPage {
       (urn) => getURNWithoutTokenId(urn as URN)
     ) as URNWithoutTokenId[]
     await fetchWearablesData(...(wearables ?? []))
+
+    /* const emotes: URNWithoutTokenId[] = (getPlayer()?.emotes ?? []).map((urn) =>
+      getURNWithoutTokenId(urn as URN)
+    ) as URNWithoutTokenId[]
+    await fetchEmotedData(...(emotes ?? [])) */
+
     store.dispatch(
       updateEquippedWearables({
         wearables,
@@ -299,6 +304,20 @@ function BackpackNavBar({
             text={'Wearables'}
             onClick={() => {
               store.dispatch(changeSectionAction(BACKPACK_SECTION.WEARABLES))
+              const backpackState = store.getState().backpack
+              const pageParams = {
+                pageNum: backpackState.currentPage,
+                pageSize: ITEMS_CATALOG_PAGE_SIZE,
+                address: getPlayer()?.userId ?? ZERO_ADDRESS,
+                cacheKey: store.getState().backpack.cacheKey
+              }
+              updatePage(
+                async () =>
+                  await fetchWearablesPage({
+                    ...pageParams,
+                    wearableCategory: backpackState.activeWearableCategory
+                  })
+              ).catch(console.error)
             }}
           />
           <NavButton
@@ -311,6 +330,16 @@ function BackpackNavBar({
             uiTransform={{ margin: { left: 12 } }}
             onClick={() => {
               store.dispatch(changeSectionAction(BACKPACK_SECTION.EMOTES))
+              const backpackState = store.getState().backpack
+              const pageParams = {
+                pageNum: backpackState.currentPage,
+                pageSize: ITEMS_CATALOG_PAGE_SIZE,
+                address: getPlayer()?.userId ?? ZERO_ADDRESS,
+                cacheKey: store.getState().backpack.cacheKey
+              }
+              updatePage(async () => await fetchEmotesPage(pageParams)).catch(
+                console.error
+              )
             }}
           />
         </NavButtonBar>

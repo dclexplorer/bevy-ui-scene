@@ -18,6 +18,7 @@ import type { ItemElement } from '../../../utils/item-definitions'
 import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
 import { fetchWearablesPage } from '../../../utils/wearables-promise-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
+import { fetchEmotesPage } from '../../../utils/emotes-promise-utils'
 
 type offchainEmoteURNOrNull = offchainEmoteURN | null
 
@@ -38,11 +39,10 @@ export function EmotesCatalog(): ReactElement {
       <ItemsCatalog
         fetchItemsPage={async () => {
           const backpackState = store.getState().backpack
-          return await fetchWearablesPage({
+          return await fetchEmotesPage({
             pageNum: backpackState.currentPage,
             pageSize: ITEMS_CATALOG_PAGE_SIZE,
             address: getPlayer()?.userId ?? ZERO_ADDRESS,
-            wearableCategory: backpackState.activeWearableCategory,
             cacheKey: store.getState().backpack.cacheKey
           })
         }}

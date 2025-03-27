@@ -173,7 +173,8 @@ export function reducer(
     case BACKPACK_ACTION.CHANGE_SECTION: {
       return {
         ...backpackPageState,
-        activeSection: action.payload
+        activeSection: action.payload,
+        currentPage: 1
       }
     }
     default:
