@@ -60,7 +60,7 @@ export function WearablesCatalog(): ReactElement {
           onChangeSelection={(selectedURN: URNWithoutTokenId | null): void => {
             store.dispatch(updateSelectedWearableURN(selectedURN))
           }}
-          onEquipWearable={(itemElement: ItemElement): void => {
+          onEquipItem={(itemElement: ItemElement): void => {
             urnWithTokenIdMemo.set(
               itemElement.urn,
               itemElement.individualData[0].id
@@ -69,7 +69,7 @@ export function WearablesCatalog(): ReactElement {
               console.error
             )
           }}
-          onUnequipWearable={(wearable: ItemElement): void => {
+          onUnequipItem={(wearable: ItemElement): void => {
             updateEquippedWearable(wearable.category, null).catch(console.error)
           }}
         />

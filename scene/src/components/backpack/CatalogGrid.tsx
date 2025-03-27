@@ -20,8 +20,8 @@ export type WearableCatalogGridProps = {
   uiTransform: UiTransformProps
   loading: boolean
   onChangeSelection?: (itemURN: URNWithoutTokenId | null) => void
-  onEquipWearable: (itemElement: ItemElement) => void
-  onUnequipWearable: (itemElement: ItemElement) => void
+  onEquipItem: (itemElement: ItemElement) => void
+  onUnequipItem: (itemElement: ItemElement) => void
 }
 
 type CatalogGridState = {
@@ -46,8 +46,8 @@ export function CatalogGrid({
   uiTransform,
   loading,
   onChangeSelection = noop,
-  onEquipWearable = noop,
-  onUnequipWearable = noop
+  onEquipItem = noop,
+  onUnequipItem = noop
 }: WearableCatalogGridProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   if (!items.length) {
@@ -118,10 +118,10 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
             key={index}
             itemElement={itemElement}
             onEquipItem={(itemElement: ItemElement) => {
-              onEquipWearable(itemElement)
+              onEquipItem(itemElement)
             }}
             onUnequipItem={(itemElement: ItemElement) => {
-              onUnequipWearable(itemElement)
+              onUnequipItem(itemElement)
             }}
             onSelect={() => {
               if (isSelected(itemElement.urn)) return
@@ -138,12 +138,12 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
   )
 }
 
-function isSelected(wearableURN: URNWithoutTokenId): boolean {
-  return state.selectedItemURN === wearableURN
+function isSelected(itemURN: URNWithoutTokenId): boolean {
+  return state.selectedItemURN === itemURN
 }
 
-function select(wearableURNWithoutTokenId: null | URNWithoutTokenId): void {
-  state.selectedItemURN = wearableURNWithoutTokenId
+function select(itemURNWithoutTokenId: null | URNWithoutTokenId): void {
+  state.selectedItemURN = itemURNWithoutTokenId
 }
 
 function isEquipped(
