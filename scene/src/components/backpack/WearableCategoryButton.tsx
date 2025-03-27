@@ -170,7 +170,6 @@ function UnequipButton({
         state.hoveredCategory = category
       }}
       onMouseDown={() => {
-        console.log('UNEQUIP ', category)
         store.dispatch(unequipWearableCategory(category))
         updateAvatarPreview(
           store.getState().backpack.equippedWearables,

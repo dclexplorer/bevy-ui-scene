@@ -49,7 +49,7 @@ export type BackpackPageState = {
 }
 
 export const backpackInitialState: BackpackPageState = {
-  activeSection: BACKPACK_SECTION.WEARABLES,
+  activeSection: BACKPACK_SECTION.EMOTES,
   activeWearableCategory: null,
   currentPage: 1,
   loadingPage: false,

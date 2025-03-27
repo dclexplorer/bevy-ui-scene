@@ -1,12 +1,13 @@
 import type { CatalogEmoteElement } from './item-definitions'
 import {
   CATALYST_BASE_URL_FALLBACK,
+  ITEMS_CATALOG_PAGE_SIZE,
   ITEMS_ORDER_BY,
   ITEMS_ORDER_DIRECTION
 } from './constants'
 import { getRealm } from '~system/Runtime'
 import { fetchJsonOrTryFallback } from './promise-utils'
-import { DEFAULT_EMOTE_ELEMENTS } from '../service/emotes'
+import { DEFAULT_EMOTE_ELEMENTS, DEFAULT_EMOTES } from '../service/emotes'
 
 export type EmotesCatalogPageRequest = {
   pageNum: number
@@ -53,6 +54,33 @@ export async function fetchEmotesPage({
   }
   const emotesPageResponse: EmotesPageResponse =
     await fetchJsonOrTryFallback(emoteCatalogPageURL)
+  const originalTotalAmount = emotesPageResponse.totalAmount
+  emotesPageResponse.totalAmount += DEFAULT_EMOTES.length
+  const isExtraPage =
+    pageNum * pageSize >=
+    (Math.ceil(originalTotalAmount / pageSize) + 1) * pageSize
+  const isOriginalLastPage =
+    pageNum * pageSize >= originalTotalAmount && !isExtraPage
+  const lastPageEmptyCells =
+    Math.ceil(originalTotalAmount / pageSize) * pageSize - originalTotalAmount
+  // TODO Unit test candidate about elements decoration with DEFAULT_EMOTE_ELEMENTS
+  if (isOriginalLastPage && lastPageEmptyCells > 0) {
+    emotesPageResponse.elements = [
+      ...emotesPageResponse.elements,
+      ...DEFAULT_EMOTE_ELEMENTS.slice(0, lastPageEmptyCells)
+    ] as CatalogEmoteElement[]
+  } else if (
+    isExtraPage &&
+    lastPageEmptyCells < DEFAULT_EMOTE_ELEMENTS.length
+  ) {
+    emotesPageResponse.elements = [
+      ...emotesPageResponse.elements,
+      ...DEFAULT_EMOTE_ELEMENTS.slice(
+        lastPageEmptyCells,
+        DEFAULT_EMOTE_ELEMENTS.length
+      )
+    ] as CatalogEmoteElement[]
+  }
   pageCache.set(emoteCatalogPageURL, emotesPageResponse)
   return emotesPageResponse
 }

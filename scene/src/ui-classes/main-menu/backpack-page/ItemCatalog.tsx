@@ -40,9 +40,7 @@ export function ItemsCatalog({
         }}
         disabled={backpackState.loadingPage}
         onChange={(page: number) => {
-          console.log('backpackState.currentPage 1', backpackState.currentPage)
           store.dispatch(updateCurrentPage(page))
-          console.log('backpackState.currentPage 2', backpackState.currentPage)
           updatePage(fetchItemsPage).catch(console.error)
         }}
         pages={backpackState.totalPages}
