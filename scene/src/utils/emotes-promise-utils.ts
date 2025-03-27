@@ -60,7 +60,7 @@ function getEmoteCatalogPageURL(params: EmotesCatalogPageRequest): string {
   const { pageNum, pageSize, address, orderBy, orderDirection, cacheKey } =
     params
 
-  let url: string = `/lambdas/users/${address}/emotes?pageNum=${pageNum}&pageSize=${pageSize}`
+  let url: string = `/lambdas/users/${address}/emotes?includeEntities=true&pageNum=${pageNum}&pageSize=${pageSize}`
   url += `&orderBy=${orderBy}&direction=${orderDirection}&cacheKey=${cacheKey}`
   return url
 }

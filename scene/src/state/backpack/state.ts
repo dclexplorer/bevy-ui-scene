@@ -12,7 +12,11 @@ import type {
 import { EMPTY_OUTFIT, getWearablesFromOutfit } from '../../service/outfit'
 import { ITEMS_CATALOG_PAGE_SIZE } from '../../utils/constants'
 import type { PBAvatarBase } from '../../bevy-api/interface'
-import { DEFAULT_EMOTE_NAMES, DEFAULT_EMOTES } from '../../service/emotes'
+import {
+  DEFAULT_EMOTE_ELEMENTS,
+  DEFAULT_EMOTE_NAMES,
+  DEFAULT_EMOTES
+} from '../../service/emotes'
 
 export const BACKPACK_STORE_ID: 'backpack' = 'backpack'
 export enum BACKPACK_SECTION {
@@ -50,23 +54,7 @@ export const backpackInitialState: BackpackPageState = {
   currentPage: 1,
   loadingPage: false,
   shownWearables: new Array(ITEMS_CATALOG_PAGE_SIZE).fill(null),
-  shownEmotes: DEFAULT_EMOTES.slice(0, ITEMS_CATALOG_PAGE_SIZE).map(
-    (offchainEmoteURN: offchainEmoteURN) => ({
-      amount: 1,
-      category: 'dance',
-      individualData: [
-        {
-          id: offchainEmoteURN as URN,
-          tokenId: '0',
-          transferredAt: '0',
-          price: '0'
-        }
-      ],
-      name: DEFAULT_EMOTE_NAMES[offchainEmoteURN],
-      rarity: 'base',
-      urn: offchainEmoteURN
-    })
-  ),
+  shownEmotes: DEFAULT_EMOTE_ELEMENTS,
   totalPages: 0,
   equippedWearables: getWearablesFromOutfit(EMPTY_OUTFIT),
   equippedEmotes: DEFAULT_EMOTES,

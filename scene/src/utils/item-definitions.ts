@@ -77,14 +77,45 @@ export type WearableEntityMetadata = {
   thumbnail: string
   metrics: Metrics
 }
-
+export type EntityType = 'emote' | 'wearable'
 export type CatalogWearableEntity = {
   content: FileContent[]
   id: string
   metadata: WearableEntityMetadata
   pointers: URN[]
   timestamp: number
-  type: string
+  type: EntityType
+  version: string
+}
+export type EmoteEntityMetadata = {
+  collectionAddress: string
+  description: string
+  emoteDataADR74: {
+    category: string
+    loop: boolean
+    representations: Array<{
+      bodyShapes: string[]
+      contents: string[]
+      mainFile: string
+    }>
+    tags: string[]
+  }
+  i18n: I18n[]
+  id: offchainEmoteURN
+  image: string
+  metrics: Metrics
+  name: string
+  rarity: RarityName
+  thumbnail: string
+}
+
+export type CatalogEmoteEntity = {
+  content: FileContent[]
+  id: string
+  metadata: EmoteEntityMetadata
+  pointers: URN[]
+  timestamp: number
+  type: EntityType
   version: string
 }
 export type ItemIndividualData = {
@@ -107,6 +138,7 @@ export type CatalogWearableElement = {
 export type CatalogEmoteElement = {
   amount: number
   category: EmoteCategory
+  entity: CatalogEmoteEntity
   individualData: ItemIndividualData[]
   name: string
   rarity: RarityName

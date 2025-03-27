@@ -54,7 +54,9 @@ export function EmotesCatalog(): ReactElement {
           }}
           loading={backpackState.loadingPage}
           items={backpackState.shownEmotes}
-          equippedItems={backpackState.equippedItems}
+          equippedItems={[
+            backpackState.equippedEmotes[state.selectedEmoteSlot]
+          ]}
           onChangeSelection={(selectedURN): void => {}}
           onEquipItem={(itemElement: ItemElement): void => {}}
           onUnequipItem={(wearable: ItemElement): void => {}}
@@ -102,10 +104,6 @@ function EmoteNavBar(): ReactElement {
       />
       <NavButton
         active={true}
-        showDeleteButton={true}
-        onDelete={() => {
-          changeCategory(null)
-        }}
         text={getEmoteName(
           backpackState.equippedEmotes[state.selectedEmoteSlot]
         )?.toUpperCase()}
