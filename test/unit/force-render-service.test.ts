@@ -13,7 +13,7 @@ describe("forceRenderHasEffect", () => {
   it("it should return false for body_shape category", () => {
       expect(forceRenderHasEffect(
         WEARABLE_CATEGORY_DEFINITIONS.body_shape.id,
-        "decentraland:ethereum:collections-v1:contractAddress:0x1",
+        "decentraland:ethereum:collections-v1:contractAddress:0x1:0" as URNWithoutTokenId,
         {},
         []
       )).to.equal(false);

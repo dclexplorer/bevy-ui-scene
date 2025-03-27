@@ -200,7 +200,9 @@ function ItemImage({
       uiTransform={{ width: '95%', height: '95%' }}
       uiBackground={{
         texture: {
-          src: `https://peer.decentraland.org/lambdas/collections/contents/${itemElement.urn}/thumbnail`
+          src: `https://peer.decentraland.org/lambdas/collections/contents/${
+            itemElement.urn as string
+          }/thumbnail`
         },
         textureMode: 'stretch'
       }}

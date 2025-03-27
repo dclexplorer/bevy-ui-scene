@@ -12,7 +12,7 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import { mapJson } from '../json/map-data'
 import { socialJson } from 'src/json/social-data'
 import infoPanelJson from '../../assets/images/atlas/info-panel.json'
-
+import emotesJson from '../../assets/images/atlas/emotes.json'
 export function getUvs(icon: AtlasIcon): number[] {
   let parsedJson: AtlasData | undefined
   switch (icon.atlasName) {
@@ -45,6 +45,9 @@ export function getUvs(icon: AtlasIcon): number[] {
       break
     case 'info-panel':
       parsedJson = infoPanelJson as AtlasData
+      break
+    case 'emotes':
+      parsedJson = emotesJson as AtlasData
       break
   }
   if (parsedJson !== undefined) {

@@ -139,7 +139,8 @@ export async function fetchWearablesData(
       .join('&')}`
     const wearables = (await fetchJsonOrTryFallback(url)).wearables
     wearables.forEach((wearable: WearableEntityMetadata) => {
-      catalystWearableMap[wearable.id] = wearable
+      const wearableURN: URNWithoutTokenId = wearable.id
+      catalystWearableMap[wearableURN] = wearable
     })
     return wearables
   } catch (error) {

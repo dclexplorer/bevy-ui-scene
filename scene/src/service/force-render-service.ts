@@ -3,7 +3,10 @@ import {
   type WearableCategory
 } from './categories'
 import type { URNWithoutTokenId } from '../utils/definitions'
-import type { CatalystWearableMap } from '../utils/item-definitions'
+import {
+  type CatalystWearableMap,
+  type WearableEntityMetadata
+} from '../utils/item-definitions'
 
 export function forceRenderHasEffect(
   category: WearableCategory,
@@ -23,10 +26,10 @@ export function forceRenderHasEffect(
 
   return equippedWearables.some((wearableURN: URNWithoutTokenId) => {
     if (currentWearableURN === wearableURN) return false
-
+    const wearableMetadata: WearableEntityMetadata = wearablesData[wearableURN]
     return (
-      wearablesData[wearableURN].data.hides.includes(category) ||
-      (categoryIsHead && wearablesData[wearableURN].data.hides.includes('head'))
+      wearableMetadata.data.hides.includes(category) ||
+      (categoryIsHead && wearableMetadata.data.hides.includes('head'))
     )
   })
 }

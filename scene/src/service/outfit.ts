@@ -2,7 +2,8 @@ import type { URNWithoutTokenId } from '../utils/definitions'
 import type {
   OutfitSetup,
   OutfitSetupWearables,
-  CatalystWearableMap
+  CatalystWearableMap,
+  WearableEntityMetadata
 } from '../utils/item-definitions'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
@@ -47,7 +48,8 @@ export function getOutfitSetupFromWearables(
 ): OutfitSetupWearables {
   return equippedWearables.reduce(
     (acc: OutfitSetupWearables, wearableURN: URNWithoutTokenId) => {
-      const wearableEntityMetadatum = catalystWearables[wearableURN]
+      const wearableEntityMetadatum: WearableEntityMetadata =
+        catalystWearables[wearableURN]
       acc[wearableEntityMetadatum.data.category as WearableCategory] =
         wearableURN
       return acc

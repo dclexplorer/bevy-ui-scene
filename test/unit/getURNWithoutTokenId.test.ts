@@ -21,7 +21,7 @@ describe("getURNWithoutTokenId1", () => {
     it("should not break the URN when executed twice", () => {
         const urn: URN = "urn:decentraland:ethereum:collections-v1:0x1234:item:56";
         const result1 = getURNWithoutTokenId(urn, true);
-        const result2 = getURNWithoutTokenId(result1 as URN, true);
+        const result2 = getURNWithoutTokenId(result1, true);
         expect(result2).to.equal("urn:decentraland:ethereum:collections-v1:0x1234:item");
     });
 });

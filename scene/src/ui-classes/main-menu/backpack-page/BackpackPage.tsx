@@ -34,6 +34,7 @@ import { saveResetOutfit, updatePage } from './ItemCatalog'
 import { closeColorPicker } from './WearableColorPicker'
 import { WearablesCatalog } from './WearablesCatalog'
 import { BACKPACK_SECTION } from '../../../state/backpack/state'
+import { EmotesCatalog } from './EmotesCatalog'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -68,6 +69,9 @@ export default class BackpackPage {
           >
             {backpackState.activeSection === BACKPACK_SECTION.WEARABLES && (
               <WearablesCatalog />
+            )}
+            {backpackState.activeSection === BACKPACK_SECTION.EMOTES && (
+              <EmotesCatalog />
             )}
           </UiEntity>
         </Content>
@@ -252,6 +256,7 @@ function BackpackNavBar({
 }: {
   canvasScaleRatio: number
 }): ReactElement {
+  const backpackState = store.getState().backpack
   return (
     <NavBar canvasScaleRatio={canvasScaleRatio}>
       {/* LEFT SECTION */}
@@ -267,7 +272,7 @@ function BackpackNavBar({
               spriteName: 'Wearables',
               atlasName: 'icons'
             }}
-            active={true}
+            active={backpackState.activeSection === BACKPACK_SECTION.WEARABLES}
             text={'Wearables'}
             onClick={() => {
               store.dispatch(changeSectionAction(BACKPACK_SECTION.WEARABLES))
@@ -278,6 +283,7 @@ function BackpackNavBar({
               spriteName: 'Emotes',
               atlasName: 'icons'
             }}
+            active={backpackState.activeSection === BACKPACK_SECTION.EMOTES}
             text={'Emotes'}
             uiTransform={{ margin: { left: 12 } }}
             onClick={() => {
