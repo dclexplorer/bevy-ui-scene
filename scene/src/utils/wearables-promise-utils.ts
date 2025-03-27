@@ -6,6 +6,12 @@ import type {
 import type { URNWithoutTokenId } from './definitions'
 import { type WearableCategory } from '../service/categories'
 import { getRealm } from '~system/Runtime'
+import {
+  CATALYST_BASE_URL_FALLBACK,
+  ITEMS_ORDER_BY,
+  ITEMS_ORDER_DIRECTION
+} from './constants'
+import { fetchJsonOrTryFallback } from './promise-utils'
 
 export type WearablesPageResponse = {
   elements: CatalogWearableElement[]
@@ -18,12 +24,12 @@ export type WearableCatalogRequest = {
   pageSize: number
   address: string
   orderBy?:
-    | typeof WEARABLES_ORDER_BY.DATE
-    | typeof WEARABLES_ORDER_BY.RARITY
-    | typeof WEARABLES_ORDER_BY.NAME
+    | typeof ITEMS_ORDER_BY.DATE
+    | typeof ITEMS_ORDER_BY.RARITY
+    | typeof ITEMS_ORDER_BY.NAME
   orderDirection?:
-    | typeof WEARABLES_ORDER_DIRECTION.ASC
-    | typeof WEARABLES_ORDER_DIRECTION.DESC
+    | typeof ITEMS_ORDER_DIRECTION.ASC
+    | typeof ITEMS_ORDER_DIRECTION.DESC
   wearableCategory: WearableCategory | null
   cacheKey: string
 }
@@ -35,25 +41,15 @@ export type WearableCatalogPageParams = WearableCatalogRequest & {
 
 // cache
 export const catalystWearableMap: CatalystWearableMap = {}
-const WEARABLES_ORDER_BY = {
-  DATE: 'date',
-  RARITY: 'rarity',
-  NAME: 'name'
-}
-const WEARABLES_ORDER_DIRECTION = {
-  DESC: 'DESC',
-  ASC: 'ASC'
-}
 
 const pageCache = new Map<string, WearablesPageResponse>()
-const CATALYST_BASE_URL_FALLBACK = 'https://peer.decentraland.org'
 export async function fetchWearablesPage({
   pageNum,
   pageSize,
   wearableCategory,
   address,
-  orderBy = WEARABLES_ORDER_BY.DATE,
-  orderDirection = WEARABLES_ORDER_DIRECTION.DESC,
+  orderBy = ITEMS_ORDER_BY.DATE,
+  orderDirection = ITEMS_ORDER_DIRECTION.DESC,
   cacheKey = Date.now().toString()
 }: WearableCatalogRequest): Promise<WearablesPageResponse> {
   try {
@@ -146,17 +142,5 @@ export async function fetchWearablesData(
   } catch (error) {
     console.error('fetchWearablesData error', error)
     return []
-  }
-}
-
-export async function fetchJsonOrTryFallback(URL: string): Promise<any> {
-  const realmBaseURL =
-    (await getRealm({})).realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
-  try {
-    return await (await fetch(URL)).json()
-  } catch (error) {
-    return await (
-      await fetch(URL.replace(realmBaseURL, CATALYST_BASE_URL_FALLBACK))
-    ).json()
   }
 }

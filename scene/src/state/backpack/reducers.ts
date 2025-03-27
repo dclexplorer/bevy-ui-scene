@@ -1,11 +1,14 @@
-import { type BackpackPageState } from './state'
+import { BACKPACK_SECTION, type BackpackPageState } from './state'
 import { BACKPACK_ACTION, type BackpackActions } from './actions'
 import { getOutfitSetupFromWearables } from '../../service/outfit'
 import { store } from '../store'
 import { catalystWearableMap } from '../../utils/wearables-promise-utils'
 import { type WearableCategory } from '../../service/categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
-import { type URNWithoutTokenId } from '../../utils/definitions'
+import {
+  type offchainEmoteURN,
+  type URNWithoutTokenId
+} from '../../utils/definitions'
 
 export function reducer(
   backpackPageState: BackpackPageState,
@@ -27,13 +30,19 @@ export function reducer(
         ...backpackPageState,
         loadingPage: true
       }
-    case BACKPACK_ACTION.UPDATE_LOADED_PAGE:
+    case BACKPACK_ACTION.UPDATE_LOADED_PAGE: {
+      const key =
+        backpackPageState.activeSection === BACKPACK_SECTION.WEARABLES
+          ? 'shownWearables'
+          : 'shownEmotes'
       return {
         ...backpackPageState,
         totalPages: action.payload.totalPages,
-        shownWearables: action.payload.shownWearables,
+        [key]: action.payload.elements,
         loadingPage: false
       }
+    }
+
     case BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES: {
       const equippedItems = gatherEquippedItems({
         base: backpackPageState.outfitSetup.base,
@@ -179,8 +188,8 @@ function gatherEquippedItems({
 }: {
   base: PBAvatarBase
   equippedWearables: URNWithoutTokenId[]
-  equippedEmotes: URNWithoutTokenId[]
-}): URNWithoutTokenId[] {
+  equippedEmotes: offchainEmoteURN[]
+}): Array<URNWithoutTokenId | offchainEmoteURN> {
   return [base.bodyShapeUrn, ...equippedWearables, ...equippedEmotes].filter(
     (i) => i
   )

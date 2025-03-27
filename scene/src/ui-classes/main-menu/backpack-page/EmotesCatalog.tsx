@@ -3,13 +3,21 @@ import { type offchainEmoteURN } from '../../../utils/definitions'
 import { getEmoteName } from '../../../service/emotes'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
-import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
+import {
+  ITEMS_CATALOG_PAGE_SIZE,
+  ROUNDED_TEXTURE_BACKGROUND,
+  ZERO_ADDRESS
+} from '../../../utils/constants'
 import { COLOR } from '../../../components/color-palette'
 import { ItemsCatalog } from './ItemCatalog'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import { changeCategory } from '../../../service/wearable-category-service'
 import { store } from '../../../state/store'
 import Icon from '../../../components/icon/Icon'
+import type { ItemElement } from '../../../utils/item-definitions'
+import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
+import { fetchWearablesPage } from '../../../utils/wearables-promise-utils'
+import { getPlayer } from '@dcl/sdk/src/players'
 
 type offchainEmoteURNOrNull = offchainEmoteURN | null
 
@@ -19,6 +27,7 @@ const state = {
 
 export function EmotesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
+  const canvasScaleRatio = getCanvasScaleRatio()
 
   return (
     <UiEntity>
@@ -26,8 +35,30 @@ export function EmotesCatalog(): ReactElement {
         equippedEmotes={backpackState.equippedEmotes}
         onSelectSlot={(slot): void => {}}
       />
-      <ItemsCatalog>
+      <ItemsCatalog
+        fetchItemsPage={async () => {
+          const backpackState = store.getState().backpack
+          return await fetchWearablesPage({
+            pageNum: backpackState.currentPage,
+            pageSize: ITEMS_CATALOG_PAGE_SIZE,
+            address: getPlayer()?.userId ?? ZERO_ADDRESS,
+            wearableCategory: backpackState.activeWearableCategory,
+            cacheKey: store.getState().backpack.cacheKey
+          })
+        }}
+      >
         <EmoteNavBar />
+        <CatalogGrid
+          uiTransform={{
+            margin: { top: 20 * canvasScaleRatio }
+          }}
+          loading={backpackState.loadingPage}
+          items={backpackState.shownEmotes}
+          equippedItems={backpackState.equippedItems}
+          onChangeSelection={(selectedURN): void => {}}
+          onEquipItem={(itemElement: ItemElement): void => {}}
+          onUnequipItem={(wearable: ItemElement): void => {}}
+        />
       </ItemsCatalog>
     </UiEntity>
   )
@@ -75,13 +106,9 @@ function EmoteNavBar(): ReactElement {
         onDelete={() => {
           changeCategory(null)
         }}
-        icon={{
-          spriteName: backpackState.equippedEmotes[state.selectedEmoteSlot],
-          atlasName: 'emotes'
-        }}
         text={getEmoteName(
           backpackState.equippedEmotes[state.selectedEmoteSlot]
-        ).toUpperCase()}
+        )?.toUpperCase()}
         uiTransform={{
           padding: 20 * canvasScaleRatio,
           height: 80 * canvasScaleRatio

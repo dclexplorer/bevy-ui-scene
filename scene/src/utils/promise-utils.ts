@@ -9,10 +9,11 @@ import type {
   EventFromApi,
   PlaceFromApi
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
-import { EMPTY_PHOTO_METADATA } from './constants'
+import { CATALYST_BASE_URL_FALLBACK, EMPTY_PHOTO_METADATA } from './constants'
 import type { FormattedURN } from './definitions'
 import { BevyApi } from 'src/bevy-api'
 import type { KernelFetchRespose } from 'src/bevy-api/interface'
+import { getRealm } from '~system/Runtime'
 
 type EventsResponse = {
   ok: boolean
@@ -187,5 +188,17 @@ export async function updateFavoriteStatus(
   } catch (error) {
     console.error('Error updating favorite status:', error)
     throw new Error('Failed to update favorite status')
+  }
+}
+
+export async function fetchJsonOrTryFallback(URL: string): Promise<any> {
+  const realmBaseURL =
+    (await getRealm({})).realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
+  try {
+    return await (await fetch(URL)).json()
+  } catch (error) {
+    return await (
+      await fetch(URL.replace(realmBaseURL, CATALYST_BASE_URL_FALLBACK))
+    ).json()
   }
 }

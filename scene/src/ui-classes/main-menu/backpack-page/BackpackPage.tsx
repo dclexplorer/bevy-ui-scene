@@ -9,13 +9,19 @@ import {
 } from '../../../service/canvas-ratio'
 import {
   catalystWearableMap,
-  fetchWearablesData
+  fetchWearablesData,
+  fetchWearablesPage,
+  type WearablesPageResponse
 } from '../../../utils/wearables-promise-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
 import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
 import { createAvatarPreview } from '../../../components/backpack/AvatarPreview'
-import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
+import {
+  ITEMS_CATALOG_PAGE_SIZE,
+  ROUNDED_TEXTURE_BACKGROUND,
+  ZERO_ADDRESS
+} from '../../../utils/constants'
 import {
   BASE_MALE_URN,
   getURNWithoutTokenId,
@@ -36,6 +42,10 @@ import { WearablesCatalog } from './WearablesCatalog'
 import { BACKPACK_SECTION } from '../../../state/backpack/state'
 import { EmotesCatalog } from './EmotesCatalog'
 import { noop } from '../../../utils/function-utils'
+import {
+  type EmotesPageResponse,
+  fetchEmotesPage
+} from '../../../utils/emotes-promise-utils'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -136,8 +146,22 @@ export default class BackpackPage {
       })
     )
     saveResetOutfit()
-
-    await updatePage()
+    const backpackState = store.getState().backpack
+    const pageParams = {
+      pageNum: backpackState.currentPage,
+      pageSize: ITEMS_CATALOG_PAGE_SIZE,
+      address: getPlayer()?.userId ?? ZERO_ADDRESS,
+      cacheKey: store.getState().backpack.cacheKey
+    }
+    await updatePage(
+      backpackState.activeSection === BACKPACK_SECTION.WEARABLES
+        ? async () =>
+            await fetchWearablesPage({
+              ...pageParams,
+              wearableCategory: backpackState.activeWearableCategory
+            })
+        : async () => await fetchEmotesPage(pageParams)
+    )
   }
 }
 

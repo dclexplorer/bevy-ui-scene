@@ -2,7 +2,7 @@ import {
   type EmoteCategory,
   type WearableCategory
 } from '../service/categories'
-import type { URN, URNWithoutTokenId } from './definitions'
+import type { offchainEmoteURN, URN, URNWithoutTokenId } from './definitions'
 import type { PBAvatarBase } from '../bevy-api/interface'
 
 export type OutfitSetupWearables = {
@@ -110,7 +110,7 @@ export type CatalogEmoteElement = {
   individualData: ItemIndividualData[]
   name: string
   rarity: RarityName
-  urn: URNWithoutTokenId
+  urn: offchainEmoteURN
 }
 export type ItemElement = CatalogWearableElement | CatalogEmoteElement
 export type CatalystWearableMap = {

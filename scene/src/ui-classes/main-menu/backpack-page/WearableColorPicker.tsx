@@ -57,7 +57,7 @@ export function WearableColorPicker(): ReactElement {
         uiText={{
           value: `<b>${CATEGORY_COLOR_DEFINITIONS[
             categoryColorKey
-          ]?.name.toUpperCase()}</b>`,
+          ]?.name?.toUpperCase()}</b>`,
           color: COLOR.TEXT_COLOR,
           fontSize: 26 * canvasScaleRatio
         }}

@@ -1,6 +1,9 @@
 import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
-import type { URNWithoutTokenId } from '../../utils/definitions'
+import type {
+  offchainEmoteURN,
+  URNWithoutTokenId
+} from '../../utils/definitions'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import {
   type ItemElement,
@@ -15,17 +18,19 @@ import Icon from '../icon/Icon'
 import { openExternalUrl } from '~system/RestrictedActions'
 
 export type WearableCatalogGridProps = {
-  items: CatalogWearableElement[]
-  equippedItems: URNWithoutTokenId[]
+  items: CatalogWearableElement[] | CatalogEmoteElement[]
+  equippedItems: Array<URNWithoutTokenId | offchainEmoteURN>
   uiTransform: UiTransformProps
   loading: boolean
-  onChangeSelection?: (itemURN: URNWithoutTokenId | null) => void
+  onChangeSelection?: (
+    itemURN: URNWithoutTokenId | offchainEmoteURN | null
+  ) => void
   onEquipItem: (itemElement: ItemElement) => void
   onUnequipItem: (itemElement: ItemElement) => void
 }
 
 type CatalogGridState = {
-  selectedItemURN: URNWithoutTokenId | null
+  selectedItemURN: URNWithoutTokenId | offchainEmoteURN | null
 }
 
 const state: CatalogGridState = {
@@ -33,8 +38,8 @@ const state: CatalogGridState = {
 }
 
 const isEquippedMemo: {
-  equippedItems: URNWithoutTokenId[]
-  memo: Map<URNWithoutTokenId, boolean>
+  equippedItems: Array<URNWithoutTokenId | offchainEmoteURN | null>
+  memo: Map<URNWithoutTokenId | offchainEmoteURN, boolean>
 } = {
   equippedItems: [],
   memo: new Map()
@@ -138,17 +143,19 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
   )
 }
 
-function isSelected(itemURN: URNWithoutTokenId): boolean {
+function isSelected(itemURN: URNWithoutTokenId | offchainEmoteURN): boolean {
   return state.selectedItemURN === itemURN
 }
 
-function select(itemURNWithoutTokenId: null | URNWithoutTokenId): void {
+function select(
+  itemURNWithoutTokenId: null | URNWithoutTokenId | offchainEmoteURN
+): void {
   state.selectedItemURN = itemURNWithoutTokenId
 }
 
 function isEquipped(
   itemElement: ItemElement,
-  equippedItems: URNWithoutTokenId[] = []
+  equippedItems: Array<URNWithoutTokenId | offchainEmoteURN | null> = []
 ): boolean {
   if (itemElement === null) return false
   if (equippedItems !== isEquippedMemo.equippedItems) {
@@ -158,7 +165,8 @@ function isEquipped(
   if (isEquippedMemo.memo.has(itemElement.urn)) {
     return isEquippedMemo.memo.get(itemElement.urn) as boolean
   }
-  const equipped = equippedItems.includes(itemElement.urn)
+  const itemURN: URNWithoutTokenId | offchainEmoteURN = itemElement.urn
+  const equipped = equippedItems.includes(itemURN)
   isEquippedMemo.memo.set(itemElement.urn, equipped)
   return equipped
 }

@@ -28,13 +28,16 @@ import {
 import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
 import {
   catalystWearableMap,
-  fetchWearablesData
+  fetchWearablesData,
+  fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
 import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../../../components/color-palette'
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
+import { ITEMS_CATALOG_PAGE_SIZE, ZERO_ADDRESS } from '../../../utils/constants'
+import { getPlayer } from '@dcl/sdk/src/players'
 
 export function WearablesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
@@ -48,7 +51,18 @@ export function WearablesCatalog(): ReactElement {
           if (!backpackState.loadingPage) changeCategory(category)
         }}
       />
-      <ItemsCatalog>
+      <ItemsCatalog
+        fetchItemsPage={async () => {
+          const backpackState = store.getState().backpack
+          return await fetchWearablesPage({
+            pageNum: backpackState.currentPage,
+            pageSize: ITEMS_CATALOG_PAGE_SIZE,
+            address: getPlayer()?.userId ?? ZERO_ADDRESS,
+            wearableCategory: backpackState.activeWearableCategory,
+            cacheKey: store.getState().backpack.cacheKey
+          })
+        }}
+      >
         <WearableCatalogNavBar />
         <CatalogGrid
           uiTransform={{
@@ -57,17 +71,20 @@ export function WearablesCatalog(): ReactElement {
           loading={backpackState.loadingPage}
           items={backpackState.shownWearables}
           equippedItems={backpackState.equippedItems}
-          onChangeSelection={(selectedURN: URNWithoutTokenId | null): void => {
-            store.dispatch(updateSelectedWearableURN(selectedURN))
+          onChangeSelection={(selectedURN): void => {
+            store.dispatch(
+              updateSelectedWearableURN(selectedURN as URNWithoutTokenId)
+            )
           }}
           onEquipItem={(itemElement: ItemElement): void => {
             urnWithTokenIdMemo.set(
-              itemElement.urn,
+              itemElement.urn as URNWithoutTokenId,
               itemElement.individualData[0].id
             )
-            updateEquippedWearable(itemElement.category, itemElement.urn).catch(
-              console.error
-            )
+            updateEquippedWearable(
+              itemElement.category,
+              itemElement.urn as URNWithoutTokenId
+            ).catch(console.error)
           }}
           onUnequipItem={(wearable: ItemElement): void => {
             updateEquippedWearable(wearable.category, null).catch(console.error)

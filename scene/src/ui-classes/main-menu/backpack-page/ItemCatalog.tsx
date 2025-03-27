@@ -9,14 +9,17 @@ import {
 } from '../../../state/backpack/actions'
 
 import { Pagination } from '../../../components/pagination/pagination'
-import { fetchWearablesPage } from '../../../utils/wearables-promise-utils'
-import {
-  WEARABLE_CATALOG_PAGE_SIZE,
-  ZERO_ADDRESS
-} from '../../../utils/constants'
-import { getPlayer } from '@dcl/sdk/src/players'
-
-export function ItemsCatalog({ children }: any): ReactElement {
+import { type WearablesPageResponse } from '../../../utils/wearables-promise-utils'
+import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/constants'
+import { type EmotesPageResponse } from '../../../utils/emotes-promise-utils'
+export type ItemsCatalogProps = {
+  children?: ReactElement
+  fetchItemsPage: () => Promise<EmotesPageResponse | WearablesPageResponse>
+}
+export function ItemsCatalog({
+  children,
+  fetchItemsPage
+}: ItemsCatalogProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
 
@@ -37,8 +40,10 @@ export function ItemsCatalog({ children }: any): ReactElement {
         }}
         disabled={backpackState.loadingPage}
         onChange={(page: number) => {
+          console.log('backpackState.currentPage 1', backpackState.currentPage)
           store.dispatch(updateCurrentPage(page))
-          updatePage().catch(console.error)
+          console.log('backpackState.currentPage 2', backpackState.currentPage)
+          updatePage(fetchItemsPage).catch(console.error)
         }}
         pages={backpackState.totalPages}
         currentPage={backpackState.currentPage}
@@ -51,24 +56,16 @@ export function saveResetOutfit(): void {
   store.dispatch(updateSavedResetVersion())
 }
 
-export async function updatePage(): Promise<void> {
-  const backpackState = store.getState().backpack
+export async function updatePage(
+  fetchItemsPage: () => Promise<WearablesPageResponse | EmotesPageResponse>
+): Promise<void> {
   store.dispatch(updateLoadingPage(true))
   // TODO improve with throttle and remove disabled prop
-  const wearablesPage = await fetchWearablesPage({
-    pageNum: backpackState.currentPage,
-    pageSize: WEARABLE_CATALOG_PAGE_SIZE,
-    address: getPlayer()?.userId ?? ZERO_ADDRESS,
-    wearableCategory: backpackState.activeWearableCategory,
-    cacheKey: store.getState().backpack.cacheKey
-  })
-
+  const itemsPage = await fetchItemsPage()
   store.dispatch(
     updateLoadedPage({
-      totalPages: Math.ceil(
-        wearablesPage.totalAmount / WEARABLE_CATALOG_PAGE_SIZE
-      ),
-      shownWearables: wearablesPage.elements
+      totalPages: Math.ceil(itemsPage.totalAmount / ITEMS_CATALOG_PAGE_SIZE),
+      elements: itemsPage.elements
     })
   )
 }

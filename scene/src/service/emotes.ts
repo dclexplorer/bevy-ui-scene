@@ -28,7 +28,7 @@ export const DEFAULT_EMOTE_NAMES: Record<offchainEmoteURN, string> = {
 }
 
 export function getEmoteName(emoteURN: offchainEmoteURN): string {
-  return DEFAULT_EMOTE_NAMES[emoteURN]
+  return DEFAULT_EMOTE_NAMES[emoteURN] ?? ''
 }
 export function getEmoteThumbnail(urn: offchainEmoteURN): UiBackgroundProps {
   if (DEFAULT_EMOTES.includes(urn)) {

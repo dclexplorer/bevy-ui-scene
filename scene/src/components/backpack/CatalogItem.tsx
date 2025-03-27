@@ -8,7 +8,10 @@ import { COLOR } from '../color-palette'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { Color4 } from '@dcl/sdk/math'
 import Icon from '../icon/Icon'
-import { type URNWithoutTokenId } from '../../utils/definitions'
+import {
+  type offchainEmoteURN,
+  type URNWithoutTokenId
+} from '../../utils/definitions'
 
 const SELECTED_BACKGROUND = getBackgroundFromAtlas({
   atlasName: 'backpack',
@@ -33,7 +36,7 @@ type CatalogItemProps = {
   onSelect?: () => void
 }
 const state: {
-  hoveredURN: URNWithoutTokenId | null
+  hoveredURN: URNWithoutTokenId | offchainEmoteURN | null
   lastTimeClick: number
   lastElementClick: ItemElement | null
 } = { hoveredURN: null, lastTimeClick: 0, lastElementClick: null }
@@ -76,7 +79,6 @@ export function CatalogItem(props: CatalogItemProps): ReactElement {
         }
       }}
       onMouseEnter={() => {
-        console.log('hoveredURN', itemElement.urn)
         state.hoveredURN = itemElement.urn
       }}
       onMouseLeave={() => {

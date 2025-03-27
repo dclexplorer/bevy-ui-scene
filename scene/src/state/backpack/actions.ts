@@ -2,8 +2,10 @@ import { type BACKPACK_SECTION, BACKPACK_STORE_ID } from './state'
 import { type URNWithoutTokenId } from '../../utils/definitions'
 import { type WearableCategory } from '../../service/categories'
 import {
+  type CatalogEmoteElement,
   type CatalogWearableElement,
-  type CatalystWearableMap
+  type CatalystWearableMap,
+  type ItemElement
 } from '../../utils/item-definitions'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 
@@ -61,7 +63,7 @@ export type BackpackUpdateAvatarBaseAction = BackpackActionId & {
 
 export type BackpackUpdateLoadedPagePayload = {
   totalPages: number
-  shownWearables: CatalogWearableElement[]
+  elements: Array<CatalogWearableElement | CatalogEmoteElement>
 }
 export type BackpackUpdateLoadedPageAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_LOADED_PAGE
