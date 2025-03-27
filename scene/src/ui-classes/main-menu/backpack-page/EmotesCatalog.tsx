@@ -1,9 +1,14 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { type offchainEmoteURN } from '../../../utils/definitions'
 import { DEFAULT_EMOTES, getEmoteName } from '../../../service/emotes'
-import { Color4 } from '@dcl/sdk/math'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
+import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
+import { COLOR } from '../../../components/color-palette'
+
+const state = {
+  selectedEmoteSlot: 0
+}
 
 export function EmotesCatalog(): ReactElement {
   return (
@@ -18,8 +23,7 @@ export function EmotesCatalog(): ReactElement {
 type offchainEmoteURNOrNull = offchainEmoteURN | null
 
 function EquippedEmoteList({
-  equippedEmotes,
-  onSelectSlot
+  equippedEmotes
 }: {
   equippedEmotes: offchainEmoteURNOrNull[]
   onSelectSlot: (index: number) => void
@@ -42,13 +46,24 @@ function EquippedEmoteList({
               justifyContent: 'flex-start',
               alignItems: 'center'
             }}
+            uiBackground={{
+              ...ROUNDED_TEXTURE_BACKGROUND,
+              color:
+                state.selectedEmoteSlot === index
+                  ? COLOR.ACTIVE_BACKGROUND_COLOR
+                  : COLOR.SMALL_TAG_BACKGROUND
+            }}
+            onMouseDown={() => {
+              state.selectedEmoteSlot = index
+            }}
           >
             <UiEntity
               uiTransform={{
                 height: canvasScaleRatio * 100,
                 width: canvasScaleRatio * 100,
                 flexShrink: 0,
-                flexGrow: 0
+                flexGrow: 0,
+                margin: { left: '2%' }
               }}
               uiBackground={getBackgroundFromAtlas({
                 atlasName: 'backpack',

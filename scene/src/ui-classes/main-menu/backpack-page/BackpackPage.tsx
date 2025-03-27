@@ -35,6 +35,7 @@ import { closeColorPicker } from './WearableColorPicker'
 import { WearablesCatalog } from './WearablesCatalog'
 import { BACKPACK_SECTION } from '../../../state/backpack/state'
 import { EmotesCatalog } from './EmotesCatalog'
+import { noop } from '../../../utils/function-utils'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -66,6 +67,7 @@ export default class BackpackPage {
               ...ROUNDED_TEXTURE_BACKGROUND,
               color: { ...Color4.Black(), a: 0.35 }
             }}
+            onMouseDown={noop}
           >
             {backpackState.activeSection === BACKPACK_SECTION.WEARABLES && (
               <WearablesCatalog />
