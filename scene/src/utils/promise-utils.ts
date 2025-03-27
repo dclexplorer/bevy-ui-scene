@@ -15,7 +15,8 @@ import { BevyApi } from 'src/bevy-api'
 import type { KernelFetchRespose } from 'src/bevy-api/interface'
 import { type Vector3 } from '@dcl/ecs-math'
 import { store } from 'src/state/store'
-import { cleanFavToSend, cleanLikeToSend } from 'src/state/sceneInfo/actions'
+import { setFavToSend, setLikeToSend } from 'src/state/sceneInfo/actions'
+// import { cleanFavToSend, cleanLikeToSend } from 'src/state/sceneInfo/actions'
 
 type EventsResponse = {
   ok: boolean
@@ -36,20 +37,20 @@ type PhotosResponse = {
 export async function fetchEvents(coords: string[]): Promise<EventFromApi[]> {
   const param = coords.map((coord) => `positions[]=${coord}`).join('&')
   try {
-    const response: Response = await fetch(
-      `https://events.decentraland.org/api/events/?${param}`
-    )
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
+    const responseEvents: KernelFetchRespose = await BevyApi.kernelFetch({
+      url: `https://events.decentraland.org/api/events/?${param}`
+    })
+    if (!responseEvents.ok) {
+      throw new Error(`HTTP error! Status: ${responseEvents.status}`)
     }
-
-    const events: EventsResponse = (await response.json()) as EventsResponse
+    const events: EventsResponse = JSON.parse(responseEvents.body)
     return events.data
   } catch (error) {
     console.error('Error fetching events:', error)
     throw error
   }
 }
+
 
 export async function fetchPhotos(
   placeId: string,
@@ -186,7 +187,7 @@ export async function updateFavoriteStatus(): Promise<void> {
         body: JSON.stringify(patchData)
       }
     })
-    store.dispatch(cleanFavToSend(undefined))
+    store.dispatch(setFavToSend(undefined))
   } catch (error) {
     console.error('Error updating favorite status:', error)
     throw new Error('Failed to update favorite status')
@@ -226,10 +227,62 @@ export async function updateLikeStatus(): Promise<void> {
         body: JSON.stringify(patchData)
       }
     })
-    store.dispatch(cleanLikeToSend(undefined))
+    store.dispatch(setLikeToSend(undefined))
   } catch (error) {
     console.error('Error updating like status:', error)
     throw new Error('Failed to update like status')
+  }
+}
+export async function createAttendee(eventId: string): Promise<void> {
+  console.log(
+    ' eventId: ',
+    eventId
+  )
+  const url = `https://events.decentraland.org/api/events/${eventId}/attendees`
+
+  const responseCreateAttendee: KernelFetchRespose = await BevyApi.kernelFetch({
+    url,
+    init: {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  })
+  if (!responseCreateAttendee.ok) {
+    console.error(
+      'Error creating attendee intention: status code: ',
+      responseCreateAttendee.status
+    )
+    throw new Error(`HTTP error! Status: ${responseCreateAttendee.status}`)
+  } else {
+    // console.log(responseCreateAttendee.body)
+    console.log('SUCCESS CREATING ATTENDEE')
+
+  }
+}
+
+export async function removeAttendee(eventId: string): Promise<void> {
+  const url = `https://events.decentraland.org/api/events/${eventId}/attendees`
+  const responseRemoveAttendee: KernelFetchRespose = await BevyApi.kernelFetch({
+    url,
+    init: {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  })
+  if (!responseRemoveAttendee.ok) {
+    console.error(
+      'Error deleting attendee intention: status code: ',
+      responseRemoveAttendee.status
+    )
+    throw new Error(`HTTP error! Status: ${responseRemoveAttendee.status}`)
+  } else {
+    // console.log({responseRemoveAttendee})
+    console.log('SUCCESS REMOVING ATTENDEE')
+
   }
 }
 

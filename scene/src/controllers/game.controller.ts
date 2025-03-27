@@ -17,7 +17,6 @@ import { UIController } from './ui.controller'
 
 export class GameController {
   public timer: number = 0
-  public lastButtonClicked: string = ''
   uiController: UIController
   constructor() {
     this.uiController = new UIController(this)
@@ -69,6 +68,14 @@ export class GameController {
     this.timer = 2
   }
 
+  addUpdatingStatusSystem(): void {
+    engine.addSystem(
+      this.updatingStatusSystem.bind(this),
+      1,
+      'updatingStatusSystem'
+    )
+  }
+
   async updateWidgetPlace(): Promise<void> {
     const explorerCoords: ReadOnlyVector3 | undefined =
       store.getState().scene.explorerPlayerPosition
@@ -82,6 +89,7 @@ export class GameController {
   }
 
   async updateStatus(): Promise<void> {
+    console.log('Updating status')
     // Update fav status:
     const favToUpdate = store.getState().scene.sceneInfoCardFavToSend
     if (favToUpdate !== undefined) {

@@ -103,9 +103,11 @@ export type PlaceFromApi = {
   user_visits: number
 }
 
-export type FavPayload = { placeId: string; isFav: boolean }
+export type FavPayload = { placeId: string; isFav: boolean } | undefined
 
-export type LikePayload = {
-  placeId: string
-  isLiked: 'like' | 'dislike' | 'null'
-}
+export type LikePayload =
+  | {
+      placeId: string
+      isLiked: 'like' | 'dislike' | 'null'
+    }
+  | undefined

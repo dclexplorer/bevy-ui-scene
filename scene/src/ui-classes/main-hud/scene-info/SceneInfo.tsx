@@ -215,11 +215,10 @@ export default class SceneInfo {
   }
 
   async reloadScene(): Promise<void> {
-    console.log('Fav card: ', this.uiController.sceneCard.isFav)
-    console.log('Place widget like: ', this.place?.user_like)
-    console.log('Place widget dislike: ', this.place?.user_dislike)
-    console.log('Card like: ', this.uiController.sceneCard.isLiked)
-    console.log('Card dislike: ', this.uiController.sceneCard.isDisliked)
+    console.log(
+      'Events to attend: ',
+      store.getState().scene.explorerEventsToAttend.length
+    )
   }
 
   async openSceneInfo(): Promise<void> {

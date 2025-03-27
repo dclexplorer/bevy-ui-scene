@@ -7,6 +7,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import {
   loadEventsFromApi,
+  loadEventsToAttendFromApi,
   loadPhotosFromApi,
   loadSceneInfoPlaceFromApi,
   setFavToSend,
@@ -14,12 +15,15 @@ import {
 } from 'src/state/sceneInfo/actions'
 import { store } from 'src/state/store'
 import {
+  createAttendee,
   fetchEvents,
   fetchPhotos,
   fetchPhotosQuantity,
   fetchPlaceFromCoords,
-  getPlaceFromApi
+  getPlaceFromApi,
+  removeAttendee
 } from 'src/utils/promise-utils'
+import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
 import Canvas from '../../components/canvas/Canvas'
@@ -49,11 +53,13 @@ import type {
   EventFromApi,
   PlaceFromApi
 } from './SceneInfoCard.types'
-import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
     store.getState().scene.sceneInfoCardPlace
+
+  public interestedEvents: EventFromApi[] =
+    store.getState().scene.explorerEventsToAttend
 
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
@@ -82,9 +88,9 @@ export default class SceneInfoCard {
   public likeBackgroundColor: Color4 = DCL_SNOW
   public dislikeBackgroundColor: Color4 = DCL_SNOW
   public shareBackgroundColor: Color4 = DCL_SNOW
-  public interestedEventsId: string[] = []
 
   public selectedTab: 'overview' | 'photos' | 'events' = 'overview'
+  public areInterestedButtonsLocked: boolean = false
   public isShareMenuOpen: boolean = false
   public eventShareMenuOpenIndex: number | undefined = undefined
   public eventShareEnter: number | undefined = undefined
@@ -106,15 +112,36 @@ export default class SceneInfoCard {
       this.place.id,
       photosQuantityInPlace
     )
-    const eventsArray: EventFromApi[] = await fetchEvents(this.place.positions)
+    let eventsArray: EventFromApi[]
+    try {
+      eventsArray = await fetchEvents(this.place.positions)
+    } catch (error) {
+      console.error('Error fetching events:', error)
+      eventsArray = []
+    }
+
+    const interestedEvents = eventsArray.filter((event) => event.attending)
 
     store.dispatch(loadEventsFromApi(eventsArray))
+    store.dispatch(loadEventsToAttendFromApi(interestedEvents))
     store.dispatch(loadPhotosFromApi(photosArray))
 
     this.isFav = this.place.user_favorite ?? false
     this.isLiked = this.place.user_like ?? false
     this.isDisliked = this.place.user_dislike ?? false
+    this.interestedEvents = store.getState().scene.explorerEventsToAttend
     this.updateIcons()
+  }
+
+  async interestedOnMouseDown(event:EventFromApi): Promise<void> {
+    if(this.interestedEvents.some(interestedEvent => interestedEvent.id === event.id)){
+      this.interestedEvents = this.interestedEvents.filter(interestedEvents => interestedEvents.id !== event.id)
+      await removeAttendee(event.id)
+    } else {
+      this.interestedEvents.push(event)
+      await createAttendee(event.id)
+    }
+    await this.update()
   }
 
   async setFav(arg: boolean): Promise<void> {
@@ -124,14 +151,7 @@ export default class SceneInfoCard {
     this.isFav = arg
     this.updateIcons()
     this.uiController.gameController.restartTimer()
-    engine.addSystem(
-      this.uiController.gameController.updatingStatusSystem.bind(
-        this.uiController.gameController
-      ),
-      1,
-      'updatingStatusSystem'
-    )
-    this.uiController.gameController.lastButtonClicked = 'fav'
+    this.uiController.gameController.addUpdatingStatusSystem()
   }
 
   async setLikeStatus(arg: 'like' | 'dislike' | 'null'): Promise<void> {
@@ -154,14 +174,7 @@ export default class SceneInfoCard {
     }
     this.updateIcons()
     this.uiController.gameController.restartTimer()
-    engine.addSystem(
-      this.uiController.gameController.updatingStatusSystem.bind(
-        this.uiController.gameController
-      ),
-      1,
-      'updatingStatusSystem'
-    )
-    this.uiController.gameController.lastButtonClicked = 'like'
+    this.uiController.gameController.addUpdatingStatusSystem()
   }
 
   async show(coords: Vector3): Promise<void> {
@@ -1125,17 +1138,7 @@ export default class SceneInfoCard {
                   flexGrow: 1
                 }}
                 onMouseDown={() => {
-                  if (
-                    this.interestedEventsId.find(
-                      (eventId) => eventId === event.id
-                    ) === undefined
-                  ) {
-                    this.interestedEventsId.push(event.id)
-                  } else {
-                    this.interestedEventsId = this.interestedEventsId.filter(
-                      (eventId) => eventId !== event.id
-                    )
-                  }
+                  void this.interestedOnMouseDown(event)
                 }}
                 onMouseEnter={() => {
                   this.eventInterestedEnter = index
@@ -1143,7 +1146,7 @@ export default class SceneInfoCard {
                 onMouseLeave={() => {
                   this.eventInterestedEnter = undefined
                 }}
-                value={'INTERESTED'}
+                value={this.areInterestedButtonsLocked ? 'Loading...' : 'INTERESTED'}
                 backgroundColor={
                   this.eventInterestedEnter === index
                     ? SELECTED_BUTTON_COLOR
@@ -1156,8 +1159,8 @@ export default class SceneInfoCard {
                 icon={{
                   atlasName: 'icons',
                   spriteName:
-                    this.interestedEventsId.find(
-                      (eventId) => eventId === event.id
+                    this.interestedEvents.find(
+                      (interestEvent) => interestEvent.id === event.id
                     ) !== undefined
                       ? 'StarSolid'
                       : 'StarOutline'

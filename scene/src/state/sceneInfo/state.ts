@@ -11,10 +11,13 @@ export const SCENE_INFO_STORE_ID: 'scene' = 'scene'
 
 export type SceneState = {
   explorerEvents: EventFromApi[]
+  explorerEventsToAttend: EventFromApi[]
   explorerPlace: PlaceFromApi | undefined
   sceneInfoCardPlace: PlaceFromApi | undefined
   sceneInfoCardFavToSend: FavPayload | undefined
   sceneInfoCardLikeToSend: LikePayload | undefined
+  EventsAttendeeToCreate: string[]
+  EventsAttendeeToRemove: string[]
   explorerPhotos: PhotoFromApi[]
   explorerPlayerPosition: Vector3 | undefined
   explorerFavorites: PlaceFromApi[] | undefined
@@ -22,10 +25,13 @@ export type SceneState = {
 
 export const sceneInitialState: SceneState = {
   explorerEvents: [],
+  explorerEventsToAttend: [],
   explorerPlace: undefined,
   sceneInfoCardPlace: undefined,
   sceneInfoCardFavToSend: undefined,
   sceneInfoCardLikeToSend: undefined,
+  EventsAttendeeToCreate: [],
+  EventsAttendeeToRemove: [],
   explorerPhotos: [],
   explorerPlayerPosition: undefined,
   explorerFavorites: undefined

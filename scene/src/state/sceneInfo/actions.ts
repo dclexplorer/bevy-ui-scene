@@ -12,10 +12,13 @@ type SceneActionId = { __reducer: typeof SCENE_INFO_STORE_ID }
 
 export enum SCENE_INFO_ACTION {
   GET_EVENTS_FROM_API,
+  GET_EVENTS_TO_ATTEND,
   GET_PHOTOS_FROM_API,
   GET_PLACE_FROM_API,
   SET_FAV_TO_SEND,
   SET_LIKE_TO_SEND,
+  // SET_EVENTS_ID_TO_CREATE_ATTENDEE,
+  // SET_EVENTS_ID_TO_REMOVE_ATTENDEE,
   CLEAN_FAV_TO_SEND,
   CLEAN_LIKE_TO_SEND,
   SAVE_PLAYER_POSITION,
@@ -26,6 +29,10 @@ export enum SCENE_INFO_ACTION {
 
 export type GetEvents = SceneActionId & {
   type: SCENE_INFO_ACTION.GET_EVENTS_FROM_API
+  payload: EventFromApi[]
+}
+export type GetEventsToAttend = SceneActionId & {
+  type: SCENE_INFO_ACTION.GET_EVENTS_TO_ATTEND
   payload: EventFromApi[]
 }
 export type GetPhotos = SceneActionId & {
@@ -44,6 +51,14 @@ export type SetLike = SceneActionId & {
   type: SCENE_INFO_ACTION.SET_LIKE_TO_SEND
   payload: LikePayload
 }
+// export type CreateAttend = SceneActionId & {
+//   type: SCENE_INFO_ACTION.SET_EVENTS_ID_TO_CREATE_ATTENDEE
+//   payload: string[]
+// }
+// export type RemoveAttend = SceneActionId & {
+//   type: SCENE_INFO_ACTION.SET_EVENTS_ID_TO_REMOVE_ATTENDEE
+//   payload: string[]
+// }
 export type CleanFav = SceneActionId & {
   type: SCENE_INFO_ACTION.CLEAN_FAV_TO_SEND
   payload: undefined
@@ -67,6 +82,7 @@ export type GetFavorites = SceneActionId & {
 
 export type SceneActions =
   | GetEvents
+  | GetEventsToAttend
   | GetPlace
   | GetSceneInfoPlace
   | GetPhotos
@@ -76,10 +92,20 @@ export type SceneActions =
   | SetLike
   | CleanFav
   | CleanLike
+  // | CreateAttend
+  // | RemoveAttend
 
 export const loadEventsFromApi = (events: EventFromApi[]): GetEvents => ({
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_EVENTS_FROM_API,
+  payload: events
+})
+
+export const loadEventsToAttendFromApi = (
+  events: EventFromApi[]
+): GetEventsToAttend => ({
+  __reducer: SCENE_INFO_STORE_ID,
+  type: SCENE_INFO_ACTION.GET_EVENTS_TO_ATTEND,
   payload: events
 })
 
@@ -98,18 +124,6 @@ export const setFavToSend = (payload: FavPayload): SetFav => ({
 export const setLikeToSend = (payload: LikePayload): SetLike => ({
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.SET_LIKE_TO_SEND,
-  payload
-})
-
-export const cleanFavToSend = (payload: undefined): CleanFav => ({
-  __reducer: SCENE_INFO_STORE_ID,
-  type: SCENE_INFO_ACTION.CLEAN_FAV_TO_SEND,
-  payload
-})
-
-export const cleanLikeToSend = (payload: undefined): CleanLike => ({
-  __reducer: SCENE_INFO_STORE_ID,
-  type: SCENE_INFO_ACTION.CLEAN_LIKE_TO_SEND,
   payload
 })
 
@@ -140,3 +154,19 @@ export const loadFavoritesFromApi = (
   type: SCENE_INFO_ACTION.GET_FAVS_FROM_API,
   payload: favorites
 })
+
+// export const setCreateAttendToSend = (
+//   EventsToAddIntentionToAttend: string[]
+// ): CreateAttend => ({
+//   __reducer: SCENE_INFO_STORE_ID,
+//   type: SCENE_INFO_ACTION.SET_EVENTS_ID_TO_CREATE_ATTENDEE,
+//   payload: EventsToAddIntentionToAttend
+// })
+
+// export const setRemoveAttendToSend = (
+//   EventsToRemoveIntentionToAttend: string[]
+// ): RemoveAttend => ({
+//   __reducer: SCENE_INFO_STORE_ID,
+//   type: SCENE_INFO_ACTION.SET_EVENTS_ID_TO_REMOVE_ATTENDEE,
+//   payload: EventsToRemoveIntentionToAttend
+// })

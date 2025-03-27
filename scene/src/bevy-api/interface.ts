@@ -15,7 +15,7 @@ export type KernelFetch = {
   init?: {
     method: 'PATCH' | 'POST' | 'GET' | 'DELETE'
     headers: Record<string, string>
-    body: string
+    body?: string
   }
 }
 
