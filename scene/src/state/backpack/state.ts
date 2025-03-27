@@ -3,10 +3,14 @@ import type {
   CatalogWearableElement,
   OutfitSetup
 } from '../../utils/item-definitions'
-import type { URNWithoutTokenId } from '../../utils/definitions'
+import type {
+  offchainEmoteURN,
+  URNWithoutTokenId
+} from '../../utils/definitions'
 import { EMPTY_OUTFIT, getWearablesFromOutfit } from '../../service/outfit'
 import { WEARABLE_CATALOG_PAGE_SIZE } from '../../utils/constants'
 import type { PBAvatarBase } from '../../bevy-api/interface'
+import { DEFAULT_EMOTES } from '../../service/emotes'
 
 export const BACKPACK_STORE_ID: 'backpack' = 'backpack'
 export enum BACKPACK_SECTION {
@@ -22,7 +26,7 @@ export type BackpackPageState = {
   loadingPage: boolean
   shownWearables: CatalogWearableElement[]
   totalPages: number
-  equippedEmotes: URNWithoutTokenId[]
+  equippedEmotes: offchainEmoteURN[]
   equippedWearables: URNWithoutTokenId[]
   outfitSetup: OutfitSetup
   forceRender: WearableCategory[]
@@ -45,7 +49,7 @@ export const backpackInitialState: BackpackPageState = {
   shownWearables: new Array(WEARABLE_CATALOG_PAGE_SIZE).fill(null),
   totalPages: 0,
   equippedWearables: getWearablesFromOutfit(EMPTY_OUTFIT),
-  equippedEmotes: [],
+  equippedEmotes: DEFAULT_EMOTES,
   equippedItems: [
     EMPTY_OUTFIT.base.bodyShapeUrn,
     ...getWearablesFromOutfit(EMPTY_OUTFIT)

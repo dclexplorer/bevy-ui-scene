@@ -1,26 +1,95 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { type offchainEmoteURN } from '../../../utils/definitions'
-import { DEFAULT_EMOTES, getEmoteName } from '../../../service/emotes'
+import { getEmoteName } from '../../../service/emotes'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
 import { COLOR } from '../../../components/color-palette'
+import { ItemsCatalog } from './ItemCatalog'
+import { NavButton } from '../../../components/nav-button/NavButton'
+import { changeCategory } from '../../../service/wearable-category-service'
+import { store } from '../../../state/store'
+import Icon from '../../../components/icon/Icon'
+
+type offchainEmoteURNOrNull = offchainEmoteURN | null
 
 const state = {
   selectedEmoteSlot: 0
 }
 
 export function EmotesCatalog(): ReactElement {
+  const backpackState = store.getState().backpack
+
   return (
     <UiEntity>
       <EquippedEmoteList
-        equippedEmotes={DEFAULT_EMOTES}
+        equippedEmotes={backpackState.equippedEmotes}
         onSelectSlot={(slot): void => {}}
+      />
+      <ItemsCatalog>
+        <EmoteNavBar />
+      </ItemsCatalog>
+    </UiEntity>
+  )
+}
+
+function EmoteNavBar(): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  const backpackState = store.getState().backpack
+
+  return (
+    <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
+      <NavButton
+        active={!backpackState.equippedEmotes[state.selectedEmoteSlot]}
+        icon={{
+          spriteName: `emote-circle-${state.selectedEmoteSlot}`,
+          atlasName: 'backpack'
+        }}
+        text={'ALL'}
+        uiTransform={{ padding: 40 * canvasScaleRatio }}
+        onClick={() => {
+          if (backpackState.activeWearableCategory === null) return null
+          changeCategory(null)
+        }}
+      />
+      <Icon
+        iconSize={40 * canvasScaleRatio}
+        uiTransform={{
+          alignSelf: 'center',
+          margin: {
+            left: 16 * canvasScaleRatio,
+            right: 16 * canvasScaleRatio
+          },
+          display: backpackState.equippedEmotes[state.selectedEmoteSlot]
+            ? 'flex'
+            : 'none'
+        }}
+        icon={{
+          spriteName: 'RightArrow',
+          atlasName: 'icons'
+        }}
+      />
+      <NavButton
+        active={true}
+        showDeleteButton={true}
+        onDelete={() => {
+          changeCategory(null)
+        }}
+        icon={{
+          spriteName: backpackState.equippedEmotes[state.selectedEmoteSlot],
+          atlasName: 'emotes'
+        }}
+        text={getEmoteName(
+          backpackState.equippedEmotes[state.selectedEmoteSlot]
+        ).toUpperCase()}
+        uiTransform={{
+          padding: 20 * canvasScaleRatio,
+          height: 80 * canvasScaleRatio
+        }}
       />
     </UiEntity>
   )
 }
-type offchainEmoteURNOrNull = offchainEmoteURN | null
 
 function EquippedEmoteList({
   equippedEmotes
@@ -33,9 +102,6 @@ function EquippedEmoteList({
   return (
     <UiEntity uiTransform={{ flexDirection: 'column' }}>
       {equippedEmotes.map((equippedEmoteURN, index) => {
-        const circle = (index + 1).toString()
-        const circleStr = circle[circle.length - 1]
-
         return (
           <UiEntity
             uiTransform={{
@@ -67,7 +133,7 @@ function EquippedEmoteList({
               }}
               uiBackground={getBackgroundFromAtlas({
                 atlasName: 'backpack',
-                spriteName: `emote-circle-${circleStr}`
+                spriteName: `emote-circle-${index}`
               })}
             />
             {equippedEmoteURN && (
