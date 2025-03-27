@@ -42,10 +42,7 @@ import { WearablesCatalog } from './WearablesCatalog'
 import { BACKPACK_SECTION } from '../../../state/backpack/state'
 import { EmotesCatalog } from './EmotesCatalog'
 import { noop } from '../../../utils/function-utils'
-import {
-  type EmotesPageResponse,
-  fetchEmotesPage
-} from '../../../utils/emotes-promise-utils'
+import { fetchEmotesPage } from '../../../utils/emotes-promise-utils'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2

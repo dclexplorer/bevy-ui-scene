@@ -120,6 +120,26 @@
 				"h": 78
 			}
 		},
+		"category-dance.png": {
+			"frame": {
+				"x": 759,
+				"y": 1,
+				"w": 16,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 16,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 16,
+				"h": 17
+			}
+		},
 		"category-earring.png": {
 			"frame": {
 				"x": 163,
@@ -142,7 +162,7 @@
 		},
 		"category-emote.png": {
 			"frame": {
-				"x": 759,
+				"x": 777,
 				"y": 1,
 				"w": 24,
 				"h": 19
@@ -862,8 +882,8 @@
 		},
 		"icon-shown.png": {
 			"frame": {
-				"x": 785,
-				"y": 1,
+				"x": 333,
+				"y": 203,
 				"w": 20,
 				"h": 17
 			},
@@ -922,7 +942,7 @@
 		},
 		"nft-empty.png": {
 			"frame": {
-				"x": 333,
+				"x": 355,
 				"y": 203,
 				"w": 70,
 				"h": 70

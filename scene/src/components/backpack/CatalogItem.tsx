@@ -12,6 +12,7 @@ import {
   type offchainEmoteURN,
   type URNWithoutTokenId
 } from '../../utils/definitions'
+import { DEFAULT_EMOTES } from '../../service/emotes'
 
 const SELECTED_BACKGROUND = getBackgroundFromAtlas({
   atlasName: 'backpack',
@@ -200,14 +201,21 @@ function ItemImage({
   return (
     <UiEntity
       uiTransform={{ width: '95%', height: '95%' }}
-      uiBackground={{
-        texture: {
-          src: `https://peer.decentraland.org/lambdas/collections/contents/${
-            itemElement.urn as string
-          }/thumbnail`
-        },
-        textureMode: 'stretch'
-      }}
+      uiBackground={
+        DEFAULT_EMOTES.includes(itemElement.urn as offchainEmoteURN)
+          ? getBackgroundFromAtlas({
+              spriteName: itemElement.urn,
+              atlasName: 'emotes'
+            })
+          : {
+              texture: {
+                src: `https://peer.decentraland.org/lambdas/collections/contents/${
+                  itemElement.urn as string
+                }/thumbnail`
+              },
+              textureMode: 'stretch'
+            }
+      }
     >
       <UiEntity
         uiTransform={{ width: '50%', height: '50%', positionType: 'absolute' }}

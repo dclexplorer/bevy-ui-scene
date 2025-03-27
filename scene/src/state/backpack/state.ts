@@ -53,7 +53,7 @@ export const backpackInitialState: BackpackPageState = {
   shownEmotes: DEFAULT_EMOTES.slice(0, ITEMS_CATALOG_PAGE_SIZE).map(
     (offchainEmoteURN: offchainEmoteURN) => ({
       amount: 1,
-      category: 'miscellaneous',
+      category: 'dance',
       individualData: [
         {
           id: offchainEmoteURN as URN,

@@ -76,7 +76,7 @@ function EmoteNavBar(): ReactElement {
           spriteName: `emote-circle-${state.selectedEmoteSlot}`,
           atlasName: 'backpack'
         }}
-        text={'ALL'}
+        text={`EMOTE ${(state.selectedEmoteSlot + 1) % 10}`}
         uiTransform={{ padding: 40 * canvasScaleRatio }}
         onClick={() => {
           if (backpackState.activeWearableCategory === null) return null
