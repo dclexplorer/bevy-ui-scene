@@ -174,7 +174,8 @@ export function reducer(
       return {
         ...backpackPageState,
         activeSection: action.payload,
-        currentPage: 1
+        currentPage: 1,
+        selectedURN: null
       }
     }
     default:

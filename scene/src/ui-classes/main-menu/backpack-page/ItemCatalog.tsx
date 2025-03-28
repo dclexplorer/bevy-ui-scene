@@ -9,9 +9,13 @@ import {
 } from '../../../state/backpack/actions'
 
 import { Pagination } from '../../../components/pagination/pagination'
-import { type WearablesPageResponse } from '../../../utils/wearables-promise-utils'
+import {
+  catalystWearableMap,
+  type WearablesPageResponse
+} from '../../../utils/wearables-promise-utils'
 import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/constants'
 import { type EmotesPageResponse } from '../../../utils/emotes-promise-utils'
+import { InfoPanel } from '../../../components/backpack/InfoPanel'
 export type ItemsCatalogProps = {
   children?: ReactElement
   fetchItemsPage: () => Promise<EmotesPageResponse | WearablesPageResponse>
@@ -24,27 +28,43 @@ export function ItemsCatalog({
   const backpackState = store.getState().backpack
 
   return (
-    <UiEntity
-      uiTransform={{
-        flexDirection: 'column',
-        padding: 14 * canvasScaleRatio,
-        margin: { left: 30 * canvasScaleRatio },
-        height: '100%'
-      }}
-    >
-      {children}
-      <Pagination
+    <UiEntity>
+      <UiEntity
         uiTransform={{
-          positionType: 'absolute',
-          position: { bottom: 130 * canvasScaleRatio }
+          flexDirection: 'column',
+          padding: 14 * canvasScaleRatio,
+          margin: { left: 30 * canvasScaleRatio },
+          height: '100%'
         }}
-        disabled={backpackState.loadingPage}
-        onChange={(page: number) => {
-          store.dispatch(updateCurrentPage(page))
-          updatePage(fetchItemsPage).catch(console.error)
+      >
+        {children}
+        <Pagination
+          uiTransform={{
+            positionType: 'absolute',
+            position: { bottom: 130 * canvasScaleRatio }
+          }}
+          disabled={backpackState.loadingPage}
+          onChange={(page: number) => {
+            store.dispatch(updateCurrentPage(page))
+            updatePage(fetchItemsPage).catch(console.error)
+          }}
+          pages={backpackState.totalPages}
+          currentPage={backpackState.currentPage}
+        />
+      </UiEntity>
+      <InfoPanel
+        uiTransform={{
+          position: {
+            top: -50 * canvasScaleRatio,
+            left: -20 * canvasScaleRatio
+          }
         }}
-        pages={backpackState.totalPages}
-        currentPage={backpackState.currentPage}
+        canvasScaleRatio={canvasScaleRatio}
+        wearable={
+          backpackState.selectedURN === null
+            ? null
+            : catalystWearableMap[backpackState.selectedURN]
+        }
       />
     </UiEntity>
   )

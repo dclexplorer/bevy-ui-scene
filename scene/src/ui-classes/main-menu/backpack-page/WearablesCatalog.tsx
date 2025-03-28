@@ -35,7 +35,6 @@ import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../../../components/color-palette'
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
-import { InfoPanel } from '../../../components/backpack/InfoPanel'
 import { ITEMS_CATALOG_PAGE_SIZE, ZERO_ADDRESS } from '../../../utils/constants'
 import { getPlayer } from '@dcl/sdk/src/players'
 
@@ -108,21 +107,6 @@ export function WearablesCatalog(): ReactElement {
           />
         )}
       </ItemsCatalog>
-      {/* // TODO Move InfoPanel inside ItemCatalog after its {children} */}
-      <InfoPanel
-        uiTransform={{
-          position: {
-            top: -50 * canvasScaleRatio,
-            left: -20 * canvasScaleRatio
-          }
-        }}
-        canvasScaleRatio={canvasScaleRatio}
-        wearable={
-          backpackState.selectedURN === null
-            ? null
-            : catalystWearableMap[backpackState.selectedURN]
-        }
-      />
     </UiEntity>
   )
 }
