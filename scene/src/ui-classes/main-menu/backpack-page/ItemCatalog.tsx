@@ -10,7 +10,7 @@ import {
 
 import { Pagination } from '../../../components/pagination/pagination'
 import {
-  catalystWearableMap,
+  catalystEntityMap,
   type WearablesPageResponse
 } from '../../../utils/wearables-promise-utils'
 import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/constants'
@@ -60,10 +60,10 @@ export function ItemsCatalog({
           }
         }}
         canvasScaleRatio={canvasScaleRatio}
-        wearable={
+        entityMetadata={
           backpackState.selectedURN === null
             ? null
-            : catalystWearableMap[backpackState.selectedURN]
+            : catalystEntityMap[backpackState.selectedURN]
         }
       />
     </UiEntity>

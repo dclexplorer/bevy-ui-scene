@@ -1,4 +1,7 @@
-import type { CatalogEmoteElement } from './item-definitions'
+import type {
+  CatalogEmoteElement,
+  CatalogWearableElement
+} from './item-definitions'
 import {
   CATALYST_BASE_URL_FALLBACK,
   ITEMS_CATALOG_PAGE_SIZE,
@@ -8,6 +11,8 @@ import {
 import { getRealm } from '~system/Runtime'
 import { fetchJsonOrTryFallback } from './promise-utils'
 import { DEFAULT_EMOTE_ELEMENTS, DEFAULT_EMOTES } from '../service/emotes'
+import { catalystEntityMap } from './wearables-promise-utils'
+import { type URNWithoutTokenId } from './definitions'
 
 export type EmotesCatalogPageRequest = {
   pageNum: number
@@ -81,6 +86,12 @@ export async function fetchEmotesPage({
       )
     ] as CatalogEmoteElement[]
   }
+
+  emotesPageResponse.elements?.forEach((emoteElement: CatalogEmoteElement) => {
+    catalystEntityMap[emoteElement.urn as URNWithoutTokenId] =
+      emoteElement.entity.metadata
+  })
+
   pageCache.set(emoteCatalogPageURL, emotesPageResponse)
   return emotesPageResponse
 }

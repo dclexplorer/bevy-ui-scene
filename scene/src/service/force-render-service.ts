@@ -4,14 +4,14 @@ import {
 } from './categories'
 import type { URNWithoutTokenId } from '../utils/definitions'
 import {
-  type CatalystWearableMap,
+  type CatalystEntityMap,
   type WearableEntityMetadata
 } from '../utils/item-definitions'
 
 export function forceRenderHasEffect(
   category: WearableCategory,
   currentWearableURN: URNWithoutTokenId | null,
-  wearablesData: CatalystWearableMap,
+  wearablesData: CatalystEntityMap,
   equippedWearables: URNWithoutTokenId[]
 ): boolean {
   if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) return false

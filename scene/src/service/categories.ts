@@ -17,6 +17,7 @@ export type WearableCategory =
   | 'mouth'
   | 'eyebrows'
   | 'body_shape'
+
 export type EmoteCategory =
   | 'fun'
   | 'dance'

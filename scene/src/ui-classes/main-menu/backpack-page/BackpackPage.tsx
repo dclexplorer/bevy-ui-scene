@@ -8,7 +8,7 @@ import {
   getContentWidth
 } from '../../../service/canvas-ratio'
 import {
-  catalystWearableMap,
+  catalystEntityMap,
   fetchWearablesData,
   fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
@@ -134,7 +134,7 @@ export default class BackpackPage {
     store.dispatch(
       updateEquippedWearables({
         wearables,
-        wearablesData: catalystWearableMap
+        wearablesData: catalystEntityMap
       })
     )
     store.dispatch(

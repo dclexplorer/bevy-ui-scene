@@ -6,7 +6,7 @@ import {
 } from '../../service/categories'
 import { type OutfitSetup } from '../../utils/item-definitions'
 import { store } from '../../state/store'
-import { catalystWearableMap } from '../../utils/wearables-promise-utils'
+import { catalystEntityMap } from '../../utils/wearables-promise-utils'
 import { forceRenderHasEffect } from '../../service/force-render-service'
 
 type WearableCategoryListProps = {
@@ -49,7 +49,7 @@ export function WearableCategoryList({
             showForceRender={forceRenderHasEffect(
               category,
               outfitSetup.wearables[category],
-              catalystWearableMap,
+              catalystEntityMap,
               backpackState.equippedWearables
             )}
             forceRender={isCategoryInForceRender(category)}
@@ -68,7 +68,7 @@ export function WearableCategoryList({
             showForceRender={forceRenderHasEffect(
               category,
               outfitSetup.wearables[category],
-              catalystWearableMap,
+              catalystEntityMap,
               backpackState.equippedWearables
             )}
             forceRender={isCategoryInForceRender(category)}

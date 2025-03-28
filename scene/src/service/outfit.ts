@@ -2,7 +2,7 @@ import type { URNWithoutTokenId } from '../utils/definitions'
 import type {
   OutfitSetup,
   OutfitSetupWearables,
-  CatalystWearableMap,
+  CatalystEntityMap,
   WearableEntityMetadata
 } from '../utils/item-definitions'
 import {
@@ -44,7 +44,7 @@ export const EMPTY_OUTFIT: OutfitSetup = deepFreeze({
 
 export function getOutfitSetupFromWearables(
   equippedWearables: URNWithoutTokenId[] = [],
-  catalystWearables: CatalystWearableMap
+  catalystWearables: CatalystEntityMap
 ): OutfitSetupWearables {
   return equippedWearables.reduce(
     (acc: OutfitSetupWearables, wearableURN: URNWithoutTokenId) => {

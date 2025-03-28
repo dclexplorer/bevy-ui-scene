@@ -14,7 +14,7 @@ import Icon from '../icon/Icon'
 import type { AtlasIcon, URNWithoutTokenId } from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { catalystWearableMap } from '../../utils/wearables-promise-utils'
+import { catalystEntityMap } from '../../utils/wearables-promise-utils'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { store } from '../../state/store'
 import {
@@ -110,7 +110,7 @@ export function WearableCategoryButton({
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
           spriteName: `rarity-background-${
-            catalystWearableMap[selectedURN as URNWithoutTokenId]?.rarity ??
+            catalystEntityMap[selectedURN as URNWithoutTokenId]?.rarity ??
             'base'
           }`
         })}

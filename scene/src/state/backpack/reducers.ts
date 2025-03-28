@@ -2,7 +2,7 @@ import { BACKPACK_SECTION, type BackpackPageState } from './state'
 import { BACKPACK_ACTION, type BackpackActions } from './actions'
 import { getOutfitSetupFromWearables } from '../../service/outfit'
 import { store } from '../store'
-import { catalystWearableMap } from '../../utils/wearables-promise-utils'
+import { catalystEntityMap } from '../../utils/wearables-promise-utils'
 import { type WearableCategory } from '../../service/categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import {
@@ -136,7 +136,7 @@ export function reducer(
           base,
           wearables: getOutfitSetupFromWearables(
             backpackPageState.savedResetOutfit.equippedWearables,
-            catalystWearableMap
+            catalystEntityMap
           )
         },
         forceRender: [...backpackPageState.savedResetOutfit.forceRender],

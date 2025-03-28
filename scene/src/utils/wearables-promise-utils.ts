@@ -1,7 +1,8 @@
 import type {
   CatalogWearableElement,
   WearableEntityMetadata,
-  CatalystWearableMap
+  CatalystEntityMap,
+  EmoteEntityMetadata
 } from './item-definitions'
 import type { URNWithoutTokenId } from './definitions'
 import { type WearableCategory } from '../service/categories'
@@ -40,7 +41,7 @@ export type WearableCatalogPageParams = WearableCatalogRequest & {
 }
 
 // cache
-export const catalystWearableMap: CatalystWearableMap = {}
+export const catalystEntityMap: CatalystEntityMap = {}
 
 const pageCache = new Map<string, WearablesPageResponse>()
 export async function fetchWearablesPage({
@@ -82,8 +83,7 @@ export async function fetchWearablesPage({
           wearableElement.entity.metadata.name =
             wearableElement.entity.metadata.i18n[0].text
         }
-        catalystWearableMap[wearableElement.urn] =
-          wearableElement.entity.metadata
+        catalystEntityMap[wearableElement.urn] = wearableElement.entity.metadata
       }
     )
     pageCache.set(wearableCatalogPageURL, wearablesPageResponse)
@@ -118,17 +118,17 @@ export async function fetchWearablesPage({
 }
 
 export async function fetchWearablesData(
-  ...wearableURNs: URNWithoutTokenId[]
-): Promise<WearableEntityMetadata[]> {
-  if (wearableURNs.every((wearableURN) => catalystWearableMap[wearableURN])) {
-    return wearableURNs.map((wearableURN) => catalystWearableMap[wearableURN])
+  ...entityURNs: URNWithoutTokenId[]
+): Promise<Array<WearableEntityMetadata | EmoteEntityMetadata>> {
+  if (entityURNs.every((entityURN) => catalystEntityMap[entityURN])) {
+    return entityURNs.map((entityURN) => catalystEntityMap[entityURN])
   }
   try {
     const realm = await getRealm({})
     const realmBaseURL =
       realm.realmInfo?.baseUrl ?? 'https://peer.decentraland.org'
     const baseURL = `${realmBaseURL}/lambdas/collections/wearables`
-    const url = `${baseURL}?${wearableURNs
+    const url = `${baseURL}?${entityURNs
       .map((urn: URNWithoutTokenId) => {
         return `wearableId=${urn}`
       })
@@ -136,7 +136,7 @@ export async function fetchWearablesData(
     const wearables = (await fetchJsonOrTryFallback(url)).wearables
     wearables.forEach((wearable: WearableEntityMetadata) => {
       const wearableURN: URNWithoutTokenId = wearable.id
-      catalystWearableMap[wearableURN] = wearable
+      catalystEntityMap[wearableURN] = wearable
     })
     return wearables
   } catch (error) {

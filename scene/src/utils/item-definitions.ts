@@ -145,6 +145,6 @@ export type CatalogEmoteElement = {
   urn: offchainEmoteURN
 }
 export type ItemElement = CatalogWearableElement | CatalogEmoteElement
-export type CatalystWearableMap = {
-  [K in URNWithoutTokenId]: WearableEntityMetadata
+export type CatalystEntityMap = {
+  [K in URNWithoutTokenId]: WearableEntityMetadata | EmoteEntityMetadata
 }

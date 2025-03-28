@@ -1,5 +1,8 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { type offchainEmoteURN } from '../../../utils/definitions'
+import {
+  type offchainEmoteURN,
+  type URNWithoutTokenId
+} from '../../../utils/definitions'
 import { getEmoteName } from '../../../service/emotes'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
@@ -19,6 +22,7 @@ import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
 import { fetchWearablesPage } from '../../../utils/wearables-promise-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { fetchEmotesPage } from '../../../utils/emotes-promise-utils'
+import { updateSelectedWearableURN } from '../../../state/backpack/actions'
 
 type offchainEmoteURNOrNull = offchainEmoteURN | null
 
@@ -57,7 +61,12 @@ export function EmotesCatalog(): ReactElement {
           equippedItems={[
             backpackState.equippedEmotes[state.selectedEmoteSlot]
           ]}
-          onChangeSelection={(selectedURN): void => {}}
+          onChangeSelection={(selectedURN): void => {
+            console.log('selectedURN', selectedURN)
+            store.dispatch(
+              updateSelectedWearableURN(selectedURN as URNWithoutTokenId)
+            )
+          }}
           onEquipItem={(itemElement: ItemElement): void => {}}
           onUnequipItem={(wearable: ItemElement): void => {}}
         />

@@ -4,7 +4,7 @@ import { type WearableCategory } from '../../service/categories'
 import {
   type CatalogEmoteElement,
   type CatalogWearableElement,
-  type CatalystWearableMap,
+  type CatalystEntityMap,
   type ItemElement
 } from '../../utils/item-definitions'
 import { type PBAvatarBase } from '../../bevy-api/interface'
@@ -48,7 +48,7 @@ export type BackpackUpdateLoadingPageAction = BackpackActionId & {
 }
 export type BackpackUpdateEquippedWearablesPayload = {
   wearables: URNWithoutTokenId[]
-  wearablesData: CatalystWearableMap
+  wearablesData: CatalystEntityMap
 }
 export type BackpackUpdateEquippedWearablesAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES

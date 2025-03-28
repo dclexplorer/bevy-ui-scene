@@ -27,7 +27,7 @@ import {
 } from '../../../utils/urn-utils'
 import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
 import {
-  catalystWearableMap,
+  catalystEntityMap,
   fetchWearablesData,
   fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
@@ -219,7 +219,7 @@ async function updateEquippedWearable(
     store.dispatch(
       updateEquippedWearables({
         wearables,
-        wearablesData: catalystWearableMap
+        wearablesData: catalystEntityMap
       })
     )
   }
