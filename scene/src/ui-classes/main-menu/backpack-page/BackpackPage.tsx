@@ -8,7 +8,7 @@ import {
   getContentWidth
 } from '../../../service/canvas-ratio'
 import {
-  catalystEntityMap,
+  catalystMetadataMap,
   fetchWearablesData,
   fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
@@ -31,6 +31,7 @@ import {
   changeSectionAction,
   updateAvatarBase,
   updateCacheKey,
+  updateEquippedEmotesAction,
   updateEquippedWearables,
   updateLoadingPage
 } from '../../../state/backpack/actions'
@@ -41,7 +42,11 @@ import { WearablesCatalog } from './WearablesCatalog'
 import { BACKPACK_SECTION } from '../../../state/backpack/state'
 import { EmotesCatalog } from './EmotesCatalog'
 import { noop } from '../../../utils/function-utils'
-import { fetchEmotesPage } from '../../../utils/emotes-promise-utils'
+import {
+  fetchEmotesData,
+  fetchEmotesPage
+} from '../../../utils/emotes-promise-utils'
+import { fetchEquippedEmotes } from '../../../service/emotes'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -121,20 +126,24 @@ export default class BackpackPage {
     createAvatarPreview()
     store.dispatch(updateLoadingPage(true))
     const player = getPlayer()
+    console.log('player.emotes', player?.emotes)
     const wearables: URNWithoutTokenId[] = (getPlayer()?.wearables ?? []).map(
       (urn) => getURNWithoutTokenId(urn as URN)
     ) as URNWithoutTokenId[]
+    const emotes = await fetchEquippedEmotes(player?.userId ?? ZERO_ADDRESS)
+
     await fetchWearablesData(...(wearables ?? []))
+    await fetchEmotesData(...(emotes ?? []))
 
     /* const emotes: URNWithoutTokenId[] = (getPlayer()?.emotes ?? []).map((urn) =>
       getURNWithoutTokenId(urn as URN)
     ) as URNWithoutTokenId[]
     await fetchEmotedData(...(emotes ?? [])) */
-
+    store.dispatch(updateEquippedEmotesAction(emotes))
     store.dispatch(
       updateEquippedWearables({
         wearables,
-        wearablesData: catalystEntityMap
+        wearablesData: catalystMetadataMap
       })
     )
     store.dispatch(

@@ -1,7 +1,7 @@
 import type {
   CatalogWearableElement,
   WearableEntityMetadata,
-  CatalystEntityMap,
+  CatalystMetadataMap,
   EmoteEntityMetadata
 } from './item-definitions'
 import type { URNWithoutTokenId } from './definitions'
@@ -41,7 +41,7 @@ export type WearableCatalogPageParams = WearableCatalogRequest & {
 }
 
 // cache
-export const catalystEntityMap: CatalystEntityMap = {}
+export const catalystMetadataMap: CatalystMetadataMap = {}
 
 const pageCache = new Map<string, WearablesPageResponse>()
 export async function fetchWearablesPage({
@@ -83,7 +83,8 @@ export async function fetchWearablesPage({
           wearableElement.entity.metadata.name =
             wearableElement.entity.metadata.i18n[0].text
         }
-        catalystEntityMap[wearableElement.urn] = wearableElement.entity.metadata
+        catalystMetadataMap[wearableElement.urn] =
+          wearableElement.entity.metadata
       }
     )
     pageCache.set(wearableCatalogPageURL, wearablesPageResponse)
@@ -120,8 +121,8 @@ export async function fetchWearablesPage({
 export async function fetchWearablesData(
   ...entityURNs: URNWithoutTokenId[]
 ): Promise<Array<WearableEntityMetadata | EmoteEntityMetadata>> {
-  if (entityURNs.every((entityURN) => catalystEntityMap[entityURN])) {
-    return entityURNs.map((entityURN) => catalystEntityMap[entityURN])
+  if (entityURNs.every((entityURN) => catalystMetadataMap[entityURN])) {
+    return entityURNs.map((entityURN) => catalystMetadataMap[entityURN])
   }
   try {
     const realm = await getRealm({})
@@ -136,7 +137,7 @@ export async function fetchWearablesData(
     const wearables = (await fetchJsonOrTryFallback(url)).wearables
     wearables.forEach((wearable: WearableEntityMetadata) => {
       const wearableURN: URNWithoutTokenId = wearable.id
-      catalystEntityMap[wearableURN] = wearable
+      catalystMetadataMap[wearableURN] = wearable
     })
     return wearables
   } catch (error) {

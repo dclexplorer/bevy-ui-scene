@@ -1,6 +1,7 @@
 import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import type {
+  EquippedEmote,
   offchainEmoteURN,
   URNWithoutTokenId
 } from '../../utils/definitions'
@@ -19,7 +20,7 @@ import { openExternalUrl } from '~system/RestrictedActions'
 
 export type WearableCatalogGridProps = {
   items: CatalogWearableElement[] | CatalogEmoteElement[]
-  equippedItems: Array<URNWithoutTokenId | offchainEmoteURN>
+  equippedItems: Array<URNWithoutTokenId | EquippedEmote>
   uiTransform: UiTransformProps
   loading: boolean
   onChangeSelection?: (
@@ -38,7 +39,7 @@ const state: CatalogGridState = {
 }
 
 const isEquippedMemo: {
-  equippedItems: Array<URNWithoutTokenId | offchainEmoteURN | null>
+  equippedItems: Array<URNWithoutTokenId | EquippedEmote>
   memo: Map<URNWithoutTokenId | offchainEmoteURN, boolean>
 } = {
   equippedItems: [],
@@ -155,7 +156,7 @@ function select(
 
 function isEquipped(
   itemElement: ItemElement,
-  equippedItems: Array<URNWithoutTokenId | offchainEmoteURN | null> = []
+  equippedItems: Array<URNWithoutTokenId | EquippedEmote> = []
 ): boolean {
   if (itemElement === null) return false
   if (equippedItems !== isEquippedMemo.equippedItems) {

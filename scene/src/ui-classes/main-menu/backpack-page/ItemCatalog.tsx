@@ -10,7 +10,7 @@ import {
 
 import { Pagination } from '../../../components/pagination/pagination'
 import {
-  catalystEntityMap,
+  catalystMetadataMap,
   type WearablesPageResponse
 } from '../../../utils/wearables-promise-utils'
 import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/constants'
@@ -63,7 +63,7 @@ export function ItemsCatalog({
         entityMetadata={
           backpackState.selectedURN === null
             ? null
-            : catalystEntityMap[backpackState.selectedURN]
+            : catalystMetadataMap[backpackState.selectedURN]
         }
       />
     </UiEntity>

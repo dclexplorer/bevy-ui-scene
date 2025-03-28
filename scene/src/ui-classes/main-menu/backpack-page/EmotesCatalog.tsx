@@ -1,9 +1,9 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import {
-  type offchainEmoteURN,
+  type EquippedEmote,
   type URNWithoutTokenId
 } from '../../../utils/definitions'
-import { getEmoteName } from '../../../service/emotes'
+import { getEmoteName, getEmoteThumbnail } from '../../../service/emotes'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import {
@@ -19,12 +19,10 @@ import { store } from '../../../state/store'
 import Icon from '../../../components/icon/Icon'
 import type { ItemElement } from '../../../utils/item-definitions'
 import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
-import { fetchWearablesPage } from '../../../utils/wearables-promise-utils'
+import { catalystMetadataMap } from '../../../utils/wearables-promise-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { fetchEmotesPage } from '../../../utils/emotes-promise-utils'
 import { updateSelectedWearableURN } from '../../../state/backpack/actions'
-
-type offchainEmoteURNOrNull = offchainEmoteURN | null
 
 const state = {
   selectedEmoteSlot: 0
@@ -59,7 +57,9 @@ export function EmotesCatalog(): ReactElement {
           loading={backpackState.loadingPage}
           items={backpackState.shownEmotes}
           equippedItems={[
-            backpackState.equippedEmotes[state.selectedEmoteSlot]
+            backpackState.equippedEmotes[
+              state.selectedEmoteSlot
+            ] as EquippedEmote
           ]}
           onChangeSelection={(selectedURN): void => {
             console.log('selectedURN', selectedURN)
@@ -128,79 +128,92 @@ function EmoteNavBar(): ReactElement {
 function EquippedEmoteList({
   equippedEmotes
 }: {
-  equippedEmotes: offchainEmoteURNOrNull[]
+  equippedEmotes: EquippedEmote[]
   onSelectSlot: (index: number) => void
 }): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
 
   return (
     <UiEntity uiTransform={{ flexDirection: 'column' }}>
-      {equippedEmotes.map((equippedEmoteURN, index) => {
-        return (
-          <UiEntity
-            uiTransform={{
-              height: canvasScaleRatio * 120,
-              width: canvasScaleRatio * 440,
-              margin: canvasScaleRatio * 10,
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center'
-            }}
-            uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
-              color:
-                state.selectedEmoteSlot === index
-                  ? COLOR.ACTIVE_BACKGROUND_COLOR
-                  : COLOR.SMALL_TAG_BACKGROUND
-            }}
-            onMouseDown={() => {
-              state.selectedEmoteSlot = index
-            }}
-          >
+      {equippedEmotes.map(
+        (
+          equippedEmoteURN: EquippedEmote,
+          index: number,
+          arr: EquippedEmote[]
+        ) => {
+          return (
             <UiEntity
               uiTransform={{
-                height: canvasScaleRatio * 100,
-                width: canvasScaleRatio * 100,
-                flexShrink: 0,
-                flexGrow: 0,
-                margin: { left: '2%' }
+                height: canvasScaleRatio * 120,
+                width: canvasScaleRatio * 500,
+                margin: canvasScaleRatio * 10,
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                position: { left: '5%' }
               }}
-              uiBackground={getBackgroundFromAtlas({
-                atlasName: 'backpack',
-                spriteName: `emote-circle-${index}`
-              })}
-            />
-            {equippedEmoteURN && (
+              uiBackground={{
+                ...ROUNDED_TEXTURE_BACKGROUND,
+                color:
+                  state.selectedEmoteSlot === index
+                    ? COLOR.ACTIVE_BACKGROUND_COLOR
+                    : COLOR.SMALL_TAG_BACKGROUND
+              }}
+              onMouseDown={() => {
+                state.selectedEmoteSlot = index
+              }}
+            >
+              <UiEntity
+                uiTransform={{
+                  height: canvasScaleRatio * 100,
+                  width: canvasScaleRatio * 100,
+                  flexShrink: 0,
+                  flexGrow: 0,
+                  margin: { left: '2%' }
+                }}
+                uiBackground={getBackgroundFromAtlas({
+                  atlasName: 'backpack',
+                  spriteName: `emote-circle-${index}`
+                })}
+              />
               <UiEntity
                 uiText={{
                   value: getEmoteName(equippedEmoteURN),
                   fontSize: canvasScaleRatio * 30
                 }}
               />
-            )}
-            <UiEntity
-              uiTransform={{
-                height: canvasScaleRatio * 100,
-                width: canvasScaleRatio * 100,
-                positionType: 'absolute',
-                position: { right: canvasScaleRatio * 20 }
-              }}
-              uiBackground={getBackgroundFromAtlas({
-                atlasName: 'backpack',
-                spriteName: `rarity-background-base`
-              })}
-            >
               <UiEntity
-                uiTransform={{ height: '100%', width: '100%' }}
-                uiBackground={getBackgroundFromAtlas({
-                  atlasName: 'emotes',
-                  spriteName: equippedEmoteURN as string
-                })}
-              />
+                uiTransform={{
+                  height: canvasScaleRatio * 100,
+                  width: canvasScaleRatio * 100,
+                  positionType: 'absolute',
+                  position: { right: canvasScaleRatio * 20 }
+                }}
+                uiBackground={
+                  equippedEmoteURN
+                    ? getBackgroundFromAtlas({
+                        atlasName: 'backpack',
+                        spriteName: `rarity-background-${
+                          catalystMetadataMap[
+                            equippedEmoteURN as URNWithoutTokenId
+                          ]?.rarity ?? 'base'
+                        }`
+                      })
+                    : getBackgroundFromAtlas({
+                        atlasName: 'backpack',
+                        spriteName: 'empty-wearable-field'
+                      })
+                }
+              >
+                <UiEntity
+                  uiTransform={{ height: '100%', width: '100%' }}
+                  uiBackground={getEmoteThumbnail(equippedEmoteURN)}
+                />
+              </UiEntity>
             </UiEntity>
-          </UiEntity>
-        )
-      })}
+          )
+        }
+      )}
     </UiEntity>
   )
 }

@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { getOutfitSetupFromWearables, getWearablesFromOutfit, EMPTY_OUTFIT } from "../../scene/src/service/outfit";
-import type { URN, URNWithoutTokenId } from "../../scene/src/utils/definitions";
+import type { URNWithoutTokenId } from "../../scene/src/utils/definitions";
 import type {
     WearableEntityMetadata,
     OutfitSetup,
-    CatalystEntityMap
+    CatalystMetadataMap
 } from '../../scene/src/utils/item-definitions'
 
 describe("getOutfitSetupFromWearables", () => {
@@ -14,7 +14,7 @@ describe("getOutfitSetupFromWearables", () => {
             "urn:decentraland:ethereum:collections-v1:0x5678:item" as URNWithoutTokenId
         ];
 
-        const catalystWearables: CatalystEntityMap = {
+        const catalystWearables: CatalystMetadataMap = {
             [equippedWearables[0]]:{ id:equippedWearables[0], data: { category: "hat" } } as WearableEntityMetadata,
             [equippedWearables[1]]:{ id:equippedWearables[1], data: { category: "eyewear" } } as WearableEntityMetadata
         };

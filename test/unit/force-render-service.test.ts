@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { forceRenderHasEffect } from '../../scene/src/service/force-render-service'
 import { WEARABLE_CATEGORY_DEFINITIONS } from '../../scene/src/service/categories'
 import catalystWearableMapMock from './catalyst-wearable-map-mock.json'
-import { CatalystEntityMap } from '../../scene/src/utils/item-definitions'
+import { CatalystMetadataMap } from '../../scene/src/utils/item-definitions'
 import { URNWithoutTokenId } from '../../scene/src/utils/definitions'
 
 const hairURN ="urn:decentraland:ethereum:collections-v1:mf_sammichgamer:mf_animehair" as URNWithoutTokenId
@@ -36,7 +36,7 @@ describe("forceRenderHasEffect", () => {
     expect(forceRenderHasEffect(
       WEARABLE_CATEGORY_DEFINITIONS.hair.id,
       hairURN as URNWithoutTokenId,
-      catalystWearableMapMock as CatalystEntityMap,
+      catalystWearableMapMock as CatalystMetadataMap,
       equippedHairAndHatThatHidesHair
     )).to.eq(true);
   })
@@ -50,7 +50,7 @@ describe("forceRenderHasEffect", () => {
     expect(forceRenderHasEffect(
       WEARABLE_CATEGORY_DEFINITIONS.hair.id,
       hairURN as URNWithoutTokenId,
-      catalystWearableMapMock as CatalystEntityMap,
+      catalystWearableMapMock as CatalystMetadataMap,
       equippedMaskHidingHeadThenHair as URNWithoutTokenId[]
     )).to.eq(true);
 

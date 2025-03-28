@@ -14,7 +14,7 @@ import Icon from '../icon/Icon'
 import type { AtlasIcon, URNWithoutTokenId } from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { catalystEntityMap } from '../../utils/wearables-promise-utils'
+import { catalystMetadataMap } from '../../utils/wearables-promise-utils'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { store } from '../../state/store'
 import {
@@ -110,7 +110,7 @@ export function WearableCategoryButton({
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
           spriteName: `rarity-background-${
-            catalystEntityMap[selectedURN as URNWithoutTokenId]?.rarity ??
+            catalystMetadataMap[selectedURN as URNWithoutTokenId]?.rarity ??
             'base'
           }`
         })}
@@ -259,7 +259,7 @@ function HoveredSquare({
         positionType: 'absolute',
         position: {
           left: 108 * canvasScaleRatio,
-          top: 0 * canvasScaleRatio
+          top: 0
         },
         zIndex: 1
       }

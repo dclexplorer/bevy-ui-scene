@@ -138,3 +138,4 @@ export type FormattedURN = {
   contractAddress: string
   itemId: string
 }
+export type EquippedEmote = URNWithoutTokenId | offchainEmoteURN | ``

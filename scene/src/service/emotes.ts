@@ -1,7 +1,14 @@
-import { type offchainEmoteURN, type URN } from '../utils/definitions'
+import {
+  type EquippedEmote,
+  type offchainEmoteURN,
+  type URN,
+  type URNWithoutTokenId
+} from '../utils/definitions'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { type CatalogEmoteElement } from '../utils/item-definitions'
+import { getURNWithoutTokenId } from '../utils/urn-utils'
+import { catalystMetadataMap } from '../utils/wearables-promise-utils'
 
 export const DEFAULT_EMOTES: offchainEmoteURN[] = [
   'handsair',
@@ -83,11 +90,17 @@ export const DEFAULT_EMOTE_ELEMENTS: CatalogEmoteElement[] = DEFAULT_EMOTES.map(
   })
 )
 
-export function getEmoteName(emoteURN: offchainEmoteURN): string {
-  return DEFAULT_EMOTE_NAMES[emoteURN] ?? ''
+export function getEmoteName(
+  emoteURN: offchainEmoteURN | URNWithoutTokenId | ``
+): string {
+  return (
+    DEFAULT_EMOTE_NAMES[emoteURN as offchainEmoteURN] ??
+    catalystMetadataMap[emoteURN as URNWithoutTokenId]?.name ??
+    `<i><color=#ffffff66>none</color></i>`
+  )
 }
-export function getEmoteThumbnail(urn: offchainEmoteURN): UiBackgroundProps {
-  if (DEFAULT_EMOTES.includes(urn)) {
+export function getEmoteThumbnail(urn: EquippedEmote): UiBackgroundProps {
+  if (DEFAULT_EMOTES.includes(urn as offchainEmoteURN)) {
     return getBackgroundFromAtlas({ atlasName: 'emotes', spriteName: urn })
   } else {
     return {
@@ -99,4 +112,22 @@ export function getEmoteThumbnail(urn: offchainEmoteURN): UiBackgroundProps {
       textureMode: 'stretch'
     }
   }
+}
+
+export async function fetchEquippedEmotes(
+  address: string
+): Promise<EquippedEmote[]> {
+  const response = await fetch(
+    `https://peer.decentraland.org/lambdas/profiles/${address}`
+  )
+    .then(async (r) => await r.json())
+    .then((d) => d.avatars[0].avatar.emotes)
+  return new Array(10).fill(null).map((_, index: number) => {
+    const urn =
+      response.find(
+        (es: { slot: number; urn: URNWithoutTokenId | offchainEmoteURN }) =>
+          es.slot === (index + 1) % 10
+      )?.urn ?? ''
+    return getURNWithoutTokenId(urn) as EquippedEmote
+  })
 }

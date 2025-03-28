@@ -1,11 +1,13 @@
 import { type BACKPACK_SECTION, BACKPACK_STORE_ID } from './state'
-import { type URNWithoutTokenId } from '../../utils/definitions'
+import {
+  type EquippedEmote,
+  type URNWithoutTokenId
+} from '../../utils/definitions'
 import { type WearableCategory } from '../../service/categories'
 import {
   type CatalogEmoteElement,
   type CatalogWearableElement,
-  type CatalystEntityMap,
-  type ItemElement
+  type CatalystMetadataMap
 } from '../../utils/item-definitions'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 
@@ -24,7 +26,8 @@ export enum BACKPACK_ACTION {
   UPDATE_SAVED_RESET_VERSION,
   RESET_OUTFIT,
   UNEQUIP_WEARABLE_CATEGORY,
-  CHANGE_SECTION
+  CHANGE_SECTION,
+  UPDATE_EQUIPPED_EMOTES
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -48,11 +51,15 @@ export type BackpackUpdateLoadingPageAction = BackpackActionId & {
 }
 export type BackpackUpdateEquippedWearablesPayload = {
   wearables: URNWithoutTokenId[]
-  wearablesData: CatalystEntityMap
+  wearablesData: CatalystMetadataMap
 }
 export type BackpackUpdateEquippedWearablesAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES
   payload: BackpackUpdateEquippedWearablesPayload
+}
+export type BackpackUpdateEquippedEmotesAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTES
+  payload: EquippedEmote[]
 }
 
 export type BackpackUpdateAvatarBasePayload = PBAvatarBase
@@ -107,6 +114,7 @@ export type BackpackActions =
   | BackpackResetOutfitAction
   | BackpackUnequipWearableCategoryAction
   | BackpackChangeSectionAction
+  | BackpackUpdateEquippedEmotesAction
 
 export const updateSelectedWearableURN = (
   payload: URNWithoutTokenId | null
@@ -153,6 +161,14 @@ export const updateEquippedWearables = (
 ): BackpackUpdateEquippedWearablesAction => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES,
+  payload
+})
+
+export const updateEquippedEmotesAction = (
+  payload: EquippedEmote[]
+): BackpackUpdateEquippedEmotesAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTES,
   payload
 })
 
