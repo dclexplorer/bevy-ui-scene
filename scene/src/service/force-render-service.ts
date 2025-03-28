@@ -26,7 +26,9 @@ export function forceRenderHasEffect(
 
   return equippedWearables.some((wearableURN: URNWithoutTokenId) => {
     if (currentWearableURN === wearableURN) return false
-    const wearableMetadata: WearableEntityMetadata = wearablesData[wearableURN]
+    const wearableMetadata: WearableEntityMetadata = wearablesData[
+      wearableURN
+    ] as WearableEntityMetadata
     return (
       wearableMetadata.data.hides.includes(category) ||
       (categoryIsHead && wearableMetadata.data.hides.includes('head'))

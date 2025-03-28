@@ -3,7 +3,8 @@ import type {
   OutfitSetup,
   OutfitSetupWearables,
   CatalystEntityMap,
-  WearableEntityMetadata
+  WearableEntityMetadata,
+  EmoteEntityMetadata
 } from '../utils/item-definitions'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
@@ -48,10 +49,11 @@ export function getOutfitSetupFromWearables(
 ): OutfitSetupWearables {
   return equippedWearables.reduce(
     (acc: OutfitSetupWearables, wearableURN: URNWithoutTokenId) => {
-      const wearableEntityMetadatum: WearableEntityMetadata =
-        catalystWearables[wearableURN]
-      acc[wearableEntityMetadatum.data.category as WearableCategory] =
-        wearableURN
+      const entityMetadata = catalystWearables[wearableURN]
+      const data =
+        (entityMetadata as WearableEntityMetadata).data ??
+        (entityMetadata as EmoteEntityMetadata)?.emoteDataADR74
+      acc[data.category as WearableCategory] = wearableURN
       return acc
     },
     { ...EMPTY_OUTFIT.wearables }
