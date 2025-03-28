@@ -7,6 +7,7 @@ import type {
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { SCENE_INFO_STORE_ID } from 'src/state/sceneInfo/state'
 import type { Vector3 } from '@dcl/sdk/math'
+import type { LiveSceneInfo } from 'src/bevy-api/interface'
 
 type SceneActionId = { __reducer: typeof SCENE_INFO_STORE_ID }
 
@@ -15,6 +16,7 @@ export enum SCENE_INFO_ACTION {
   GET_EVENTS_TO_ATTEND,
   GET_PHOTOS_FROM_API,
   GET_PLACE_FROM_API,
+  GET_SCENE_FROM_BEVY_API,
   SET_FAV_TO_SEND,
   SET_LIKE_TO_SEND,
   // SET_EVENTS_ID_TO_CREATE_ATTENDEE,
@@ -42,6 +44,10 @@ export type GetPhotos = SceneActionId & {
 export type GetPlace = SceneActionId & {
   type: SCENE_INFO_ACTION.GET_PLACE_FROM_API
   payload: PlaceFromApi
+}
+export type GetScene = SceneActionId & {
+  type: SCENE_INFO_ACTION.GET_SCENE_FROM_BEVY_API
+  payload: LiveSceneInfo
 }
 export type SetFav = SceneActionId & {
   type: SCENE_INFO_ACTION.SET_FAV_TO_SEND
@@ -84,6 +90,7 @@ export type SceneActions =
   | GetEvents
   | GetEventsToAttend
   | GetPlace
+  | GetScene
   | GetSceneInfoPlace
   | GetPhotos
   | SavePlayerPosition
@@ -113,6 +120,12 @@ export const loadPlaceFromApi = (place: PlaceFromApi): GetPlace => ({
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_PLACE_FROM_API,
   payload: place
+})
+
+export const loadSceneFromBevyApi = (scene: LiveSceneInfo): GetScene => ({
+  __reducer: SCENE_INFO_STORE_ID,
+  type: SCENE_INFO_ACTION.GET_SCENE_FROM_BEVY_API,
+  payload: scene
 })
 
 export const setFavToSend = (payload: FavPayload): SetFav => ({

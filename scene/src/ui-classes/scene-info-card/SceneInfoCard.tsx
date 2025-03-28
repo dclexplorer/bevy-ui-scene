@@ -137,6 +137,7 @@ export default class SceneInfoCard {
     if(this.interestedEvents.some(interestedEvent => interestedEvent.id === event.id)){
       this.interestedEvents = this.interestedEvents.filter(interestedEvents => interestedEvents.id !== event.id)
       await removeAttendee(event.id)
+      
     } else {
       this.interestedEvents.push(event)
       await createAttendee(event.id)

@@ -3,6 +3,7 @@ import { engine } from '@dcl/sdk/ecs'
 import type { Vector3 } from '@dcl/sdk/math'
 import {
   loadPlaceFromApi,
+  loadSceneFromBevyApi,
   savePlayerPosition
 } from 'src/state/sceneInfo/actions'
 import { store } from 'src/state/store'
@@ -14,6 +15,8 @@ import {
 } from 'src/utils/promise-utils'
 import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
+import type { LiveSceneInfo } from 'src/bevy-api/interface'
+import { BevyApi } from 'src/bevy-api'
 
 export class GameController {
   public timer: number = 0
@@ -82,6 +85,13 @@ export class GameController {
     if (explorerCoords === undefined) {
       return
     }
+
+    const liveScenesInfo: LiveSceneInfo[] = await BevyApi.liveSceneInfo()
+    const currentScene = liveScenesInfo.find(scene => scene.parcels.some(parcel => parcel.x === explorerCoords.x && parcel.y === explorerCoords.z))
+    if (currentScene !== undefined) store.dispatch(loadSceneFromBevyApi(currentScene))
+
+
+    
     const place = await fetchPlaceFromCoords(explorerCoords)
     const explorerPlace = await getPlaceFromApi(place.id)
     store.dispatch(loadPlaceFromApi(explorerPlace))

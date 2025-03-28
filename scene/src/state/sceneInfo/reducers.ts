@@ -12,6 +12,8 @@ export function reducer(
       return { ...state, explorerEventsToAttend: action.payload }
     case SCENE_INFO_ACTION.GET_PLACE_FROM_API:
       return { ...state, explorerPlace: action.payload }
+    case SCENE_INFO_ACTION.GET_SCENE_FROM_BEVY_API:
+      return { ...state, explorerScene: action.payload }
     case SCENE_INFO_ACTION.GET_SCENE_INFO_CARD_PLACE_FROM_API:
       return { ...state, sceneInfoCardPlace: action.payload }
     case SCENE_INFO_ACTION.SET_FAV_TO_SEND:

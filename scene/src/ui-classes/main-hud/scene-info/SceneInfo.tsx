@@ -5,7 +5,7 @@ import { store } from 'src/state/store'
 import type { PlaceFromApi } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { ButtonIcon } from '../../../components/button-icon'
 import Canvas from '../../../components/canvas/Canvas'
-import { type UIController } from '../../../controllers/ui.controller'
+import type { UIController } from '../../../controllers/ui.controller'
 import {
   ALMOST_WHITE,
   ALPHA_BLACK_PANEL,
@@ -15,15 +15,17 @@ import {
   SELECTED_BUTTON_COLOR,
   UNSELECTED_TEXT_WHITE
 } from '../../../utils/constants'
-import { type AtlasIcon } from '../../../utils/definitions'
+import type {  AtlasIcon } from '../../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
+import type { LiveSceneInfo } from 'src/bevy-api/interface'
+import { BevyApi } from 'src/bevy-api'
 
 export default class SceneInfo {
   private readonly uiController: UIController
+  public liveSceneInfo: LiveSceneInfo | undefined
   public place: PlaceFromApi | undefined
   public fontSize: number = 16
   private isWarningScene: boolean = true
-  public isSdk6: boolean = true
   public isExpanded: boolean = false
   public isMenuOpen: boolean = false
   public isHome: boolean = false
@@ -92,11 +94,15 @@ export default class SceneInfo {
     this.uiController = uiController
   }
 
+ 
   async update(): Promise<void> {
-    this.place = store.getState().scene.explorerPlace
-    if (this.place === undefined) return
-    this.setFlag(this.place.content_rating)
-    this.updateIcons()
+      this.place = store.getState().scene.explorerPlace
+      this.liveSceneInfo = store.getState().scene.explorerScene
+
+      if (this.place === undefined || this.liveSceneInfo === undefined) return
+    
+      this.setFlag(this.place.content_rating)
+      this.updateIcons()
   }
 
   setWarning(status: boolean, message: string): void {
@@ -214,14 +220,15 @@ export default class SceneInfo {
     this.updateIcons()
   }
 
-  async reloadScene(): Promise<void> {
-    console.log(
-      'Events to attend: ',
-      store.getState().scene.explorerEventsToAttend.length
-    )
+  async reloadScene(hash?:string): Promise<void> {
+    if (hash) {
+      await BevyApi.reload(hash)
+    } else {
+      await BevyApi.reload(undefined)
+    }
   }
 
-  async openSceneInfo(): Promise<void> {
+  async openSceneInfo(): Promise<void> { 
     const sceneCoords = store.getState().scene.explorerPlayerPosition
     if (sceneCoords !== undefined) {
       await this.uiController.sceneCard.show(sceneCoords)
@@ -355,7 +362,7 @@ export default class SceneInfo {
 
                 <UiEntity
                   uiTransform={{
-                    display: this.isSdk6 ? 'flex' : 'none',
+                    display: this.liveSceneInfo?.sdkVersion === 'sdk6' ? 'flex' : 'none',
                     width: (this.fontSize * 0.875) / 0.41,
                     height: this.fontSize * 0.875,
                     margin: { left: this.fontSize * 0.5 }
@@ -371,7 +378,7 @@ export default class SceneInfo {
                 <ButtonIcon
                   uiTransform={{
                     display:
-                      this.isWarningScene !== undefined ? 'flex' : 'none',
+                      this.liveSceneInfo?.isBroken === true ? 'flex' : 'none',
                     width: this.fontSize * 1.2,
                     height: this.fontSize * 1.2,
                     margin: { left: this.fontSize * 0.5 }
@@ -384,8 +391,8 @@ export default class SceneInfo {
                   onMouseLeave={() => {
                     this.isWarningHintVisible = false
                   }}
-                  hintText={this.warningHint}
-                  showHint={this.isWarningHintVisible}
+                  hintText={'Scene is broken'}
+                  showHint={this.liveSceneInfo?.isBroken}
                   hintFontSize={this.fontSize * 0.75}
                 />
 
@@ -564,7 +571,7 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                void this.reloadScene()
+                void this.reloadScene(this.liveSceneInfo?.hash)
               }}
               onMouseEnter={() => {
                 this.reloadLabelColor = ALMOST_WHITE
