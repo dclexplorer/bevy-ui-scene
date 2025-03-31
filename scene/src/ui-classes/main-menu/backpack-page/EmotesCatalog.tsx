@@ -3,32 +3,25 @@ import {
   type EquippedEmote,
   type URNWithoutTokenId
 } from '../../../utils/definitions'
-import { getEmoteName, getEmoteThumbnail } from '../../../service/emotes'
+import { getEmoteName } from '../../../service/emotes'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
-import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
-import {
-  ITEMS_CATALOG_PAGE_SIZE,
-  ROUNDED_TEXTURE_BACKGROUND,
-  ZERO_ADDRESS
-} from '../../../utils/constants'
-import { COLOR } from '../../../components/color-palette'
+import { ITEMS_CATALOG_PAGE_SIZE, ZERO_ADDRESS } from '../../../utils/constants'
 import { ItemsCatalog } from './ItemCatalog'
-import { NavButton } from '../../../components/nav-button/NavButton'
 import { changeCategory } from '../../../service/wearable-category-service'
 import { store } from '../../../state/store'
 import Icon from '../../../components/icon/Icon'
 import type { ItemElement } from '../../../utils/item-definitions'
 import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
-import { catalystMetadataMap } from '../../../utils/wearables-promise-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { fetchEmotesPage } from '../../../utils/emotes-promise-utils'
 import {
-  selectEmoteSlotAction,
   updateEquippedEmoteAction,
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
 import { urnWithTokenIdMemo } from '../../../utils/urn-utils'
 import { playEmote } from '../../../components/backpack/AvatarPreview'
+import { EquippedEmoteList } from './EquippedEmoteList'
+import { NavButton } from '../../../components/nav-button/NavButton'
 
 export function EmotesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
@@ -144,116 +137,4 @@ function EmoteNavBar(): ReactElement {
       />
     </UiEntity>
   )
-}
-
-function EquippedEmoteList({
-  equippedEmotes
-}: {
-  equippedEmotes: EquippedEmote[]
-}): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
-  const visualOrderList = [
-    ...equippedEmotes.slice(1, equippedEmotes.length),
-    equippedEmotes[0]
-  ]
-
-  return (
-    <UiEntity uiTransform={{ flexDirection: 'column' }}>
-      {visualOrderList.map(
-        (
-          equippedEmoteURN: EquippedEmote,
-          index: number,
-          arr: EquippedEmote[]
-        ) => {
-          const backpackState = store.getState().backpack
-          return (
-            <UiEntity
-              uiTransform={{
-                height: canvasScaleRatio * 120,
-                width: canvasScaleRatio * 500,
-                margin: canvasScaleRatio * 10,
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                position: { left: '5%' }
-              }}
-              uiBackground={{
-                ...ROUNDED_TEXTURE_BACKGROUND,
-                color:
-                  backpackState.selectedEmoteSlot ===
-                  fromVisualIndexToRealIndex(index)
-                    ? COLOR.ACTIVE_BACKGROUND_COLOR
-                    : COLOR.SMALL_TAG_BACKGROUND
-              }}
-              onMouseDown={() => {
-                store.dispatch(
-                  selectEmoteSlotAction(fromVisualIndexToRealIndex(index))
-                )
-                const newBackpackState = store.getState().backpack
-                const selectedEmoteURN =
-                  newBackpackState.equippedEmotes[
-                    newBackpackState.selectedEmoteSlot
-                  ]
-
-                playEmote(selectedEmoteURN)
-              }}
-            >
-              <UiEntity
-                uiTransform={{
-                  height: canvasScaleRatio * 100,
-                  width: canvasScaleRatio * 100,
-                  flexShrink: 0,
-                  flexGrow: 0,
-                  margin: { left: '2%' }
-                }}
-                uiBackground={getBackgroundFromAtlas({
-                  atlasName: 'backpack',
-                  spriteName: `emote-circle-${fromVisualIndexToRealIndex(
-                    index
-                  )}`
-                })}
-              />
-              <UiEntity
-                uiText={{
-                  value: getEmoteName(equippedEmoteURN),
-                  fontSize: canvasScaleRatio * 30
-                }}
-              />
-              <UiEntity
-                uiTransform={{
-                  height: canvasScaleRatio * 100,
-                  width: canvasScaleRatio * 100,
-                  positionType: 'absolute',
-                  position: { right: canvasScaleRatio * 20 }
-                }}
-                uiBackground={
-                  equippedEmoteURN
-                    ? getBackgroundFromAtlas({
-                        atlasName: 'backpack',
-                        spriteName: `rarity-background-${
-                          catalystMetadataMap[
-                            equippedEmoteURN as URNWithoutTokenId
-                          ]?.rarity ?? 'base'
-                        }`
-                      })
-                    : getBackgroundFromAtlas({
-                        atlasName: 'backpack',
-                        spriteName: 'empty-wearable-field'
-                      })
-                }
-              >
-                <UiEntity
-                  uiTransform={{ height: '100%', width: '100%' }}
-                  uiBackground={getEmoteThumbnail(equippedEmoteURN)}
-                />
-              </UiEntity>
-            </UiEntity>
-          )
-        }
-      )}
-    </UiEntity>
-  )
-}
-function fromVisualIndexToRealIndex(index: number): number {
-  return (index + 1) % 10
 }
