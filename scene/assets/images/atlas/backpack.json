@@ -280,6 +280,46 @@
 				"h": 81
 			}
 		},
+		"category-fun.png": {
+			"frame": {
+				"x": 759,
+				"y": 22,
+				"w": 16,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 16,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 16,
+				"h": 17
+			}
+		},
+		"category-greetings.png": {
+			"frame": {
+				"x": 777,
+				"y": 22,
+				"w": 16,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 16,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 16,
+				"h": 17
+			}
+		},
 		"category-hair.png": {
 			"frame": {
 				"x": 655,
@@ -420,6 +460,26 @@
 				"h": 81
 			}
 		},
+		"category-miscellaneous.png": {
+			"frame": {
+				"x": 795,
+				"y": 22,
+				"w": 16,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 16,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 16,
+				"h": 17
+			}
+		},
 		"category-mouth.png": {
 			"frame": {
 				"x": 494,
@@ -440,6 +500,46 @@
 				"h": 81
 			}
 		},
+		"category-poses.png": {
+			"frame": {
+				"x": 177,
+				"y": 41,
+				"w": 16,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 16,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 16,
+				"h": 17
+			}
+		},
+		"category-reactions.png": {
+			"frame": {
+				"x": 195,
+				"y": 41,
+				"w": 16,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 16,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 16,
+				"h": 17
+			}
+		},
 		"category-skin.png": {
 			"frame": {
 				"x": 576,
@@ -458,6 +558,26 @@
 			"sourceSize": {
 				"w": 80,
 				"h": 81
+			}
+		},
+		"category-stunt.png": {
+			"frame": {
+				"x": 213,
+				"y": 41,
+				"w": 16,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 16,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 16,
+				"h": 17
 			}
 		},
 		"category-tiara.png": {
@@ -562,8 +682,8 @@
 		},
 		"emote-circle-0.png": {
 			"frame": {
-				"x": 759,
-				"y": 22,
+				"x": 231,
+				"y": 41,
 				"w": 50,
 				"h": 50
 			},
@@ -582,8 +702,8 @@
 		},
 		"emote-circle-1.png": {
 			"frame": {
-				"x": 123,
-				"y": 74,
+				"x": 283,
+				"y": 41,
 				"w": 50,
 				"h": 50
 			},
@@ -602,8 +722,8 @@
 		},
 		"emote-circle-2.png": {
 			"frame": {
-				"x": 175,
-				"y": 74,
+				"x": 335,
+				"y": 41,
 				"w": 50,
 				"h": 50
 			},
@@ -622,8 +742,8 @@
 		},
 		"emote-circle-3.png": {
 			"frame": {
-				"x": 227,
-				"y": 74,
+				"x": 387,
+				"y": 41,
 				"w": 50,
 				"h": 50
 			},
@@ -642,8 +762,8 @@
 		},
 		"emote-circle-4.png": {
 			"frame": {
-				"x": 279,
-				"y": 74,
+				"x": 759,
+				"y": 41,
 				"w": 50,
 				"h": 50
 			},
@@ -662,8 +782,8 @@
 		},
 		"emote-circle-5.png": {
 			"frame": {
-				"x": 331,
-				"y": 74,
+				"x": 123,
+				"y": 93,
 				"w": 50,
 				"h": 50
 			},
@@ -682,8 +802,8 @@
 		},
 		"emote-circle-6.png": {
 			"frame": {
-				"x": 383,
-				"y": 74,
+				"x": 175,
+				"y": 93,
 				"w": 50,
 				"h": 50
 			},
@@ -702,8 +822,8 @@
 		},
 		"emote-circle-7.png": {
 			"frame": {
-				"x": 759,
-				"y": 74,
+				"x": 227,
+				"y": 93,
 				"w": 50,
 				"h": 50
 			},
@@ -722,8 +842,8 @@
 		},
 		"emote-circle-8.png": {
 			"frame": {
-				"x": 1,
-				"y": 126,
+				"x": 279,
+				"y": 93,
 				"w": 50,
 				"h": 50
 			},
@@ -742,8 +862,8 @@
 		},
 		"emote-circle-9.png": {
 			"frame": {
-				"x": 53,
-				"y": 126,
+				"x": 331,
+				"y": 93,
 				"w": 50,
 				"h": 50
 			},
@@ -782,7 +902,7 @@
 		},
 		"empty-search-result.png": {
 			"frame": {
-				"x": 811,
+				"x": 813,
 				"y": 1,
 				"w": 200,
 				"h": 200
@@ -1367,7 +1487,7 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 1012,
+			"w": 1014,
 			"h": 851
 		},
 		"scale": "1"
