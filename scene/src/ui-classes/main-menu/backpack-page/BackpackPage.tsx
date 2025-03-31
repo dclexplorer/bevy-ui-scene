@@ -116,7 +116,6 @@ export default class BackpackPage {
             forceRender: backpackState.forceRender ?? []
           }
         }
-        console.log('saveAvatarPayload', saveAvatarPayload)
         await BevyApi.setAvatar(saveAvatarPayload)
       }
     } catch (error) {
@@ -134,7 +133,6 @@ export default class BackpackPage {
     createAvatarPreview()
     store.dispatch(updateLoadingPage(true))
     const player = getPlayer()
-    console.log('player.emotes', player?.emotes)
     const wearables: URNWithoutTokenId[] = (getPlayer()?.wearables ?? []).map(
       (urn) => getURNWithoutTokenId(urn as URN)
     ) as URNWithoutTokenId[]

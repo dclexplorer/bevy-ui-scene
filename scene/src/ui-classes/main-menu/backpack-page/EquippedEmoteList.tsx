@@ -12,7 +12,6 @@ import { playEmote } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getEmoteName, getEmoteThumbnail } from '../../../service/emotes'
 import { catalystMetadataMap } from '../../../utils/wearables-promise-utils'
-import { Color4 } from '@dcl/sdk/math'
 
 export function EquippedEmoteList({
   equippedEmotes
