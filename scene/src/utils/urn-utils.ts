@@ -21,7 +21,7 @@ export function getItemsWithTokenId(
 export function getURNWithoutTokenId(
   urn: URN | null | URNWithoutTokenId | EquippedEmote,
   avoidCache: boolean = false
-): URNWithoutTokenId | null {
+): URNWithoutTokenId | EquippedEmote | null | '' {
   if (urn === null) return null
 
   if (!avoidCache && urnWithoutTokenIdMemo.has(urn as URN)) {

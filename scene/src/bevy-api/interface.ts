@@ -42,7 +42,7 @@ export type PBAvatarBase = {
   bodyShapeUrn: URNWithoutTokenId
 }
 
-type SetAvatarData = {
+export type SetAvatarData = {
   base?: PBAvatarBase
   equip?: PBAvatarEquippedData
 }

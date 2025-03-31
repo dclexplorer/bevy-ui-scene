@@ -52,6 +52,9 @@ import {
 } from '../../../utils/emotes-promise-utils'
 import { fetchEquippedEmotes } from '../../../service/emotes'
 import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
+import { type SetAvatarData } from '../../../bevy-api/interface'
+
+let originalAvatarJSON: string
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -100,30 +103,25 @@ export default class BackpackPage {
   async saveAvatar(): Promise<void> {
     try {
       const backpackState = store.getState().backpack
-
-      // TODO review to include emotes algo in the condition to saveAvatar
-      if (
-        [...backpackState.equippedWearables].sort(sortAbc).join(',') !==
-        [...(getPlayer()?.wearables ?? [])].sort(sortAbc).join(',')
-      ) {
-        const saveAvatarPayload = {
-          base: backpackState.outfitSetup.base,
-          equip: {
-            wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
-            emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
-              (i) => (!i ? '' : i)
-            ) as URN[],
-            forceRender: backpackState.forceRender ?? []
-          }
+      const avatarPayload: SetAvatarData = {
+        base: backpackState.outfitSetup.base,
+        equip: {
+          wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
+          emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
+            nullAsEmptyString
+          ) as URN[],
+          forceRender: backpackState.forceRender ?? []
         }
-        await BevyApi.setAvatar(saveAvatarPayload)
+      }
+      if (avatarHasChanged(avatarPayload)) {
+        await BevyApi.setAvatar(avatarPayload)
       }
     } catch (error) {
       console.log('setAvatar error', error)
     }
 
-    function sortAbc(a: string, b: string): number {
-      return a.localeCompare(b)
+    function avatarHasChanged(avatarPayload: SetAvatarData): boolean {
+      return originalAvatarJSON !== JSON.stringify(avatarPayload)
     }
   }
 
@@ -141,10 +139,6 @@ export default class BackpackPage {
     await fetchWearablesData(...(wearables ?? []))
     await fetchEmotesData(...(emotes ?? []))
 
-    /* const emotes: URNWithoutTokenId[] = (getPlayer()?.emotes ?? []).map((urn) =>
-      getURNWithoutTokenId(urn as URN)
-    ) as URNWithoutTokenId[]
-    await fetchEmotedData(...(emotes ?? [])) */
     store.dispatch(updateEquippedEmotesAction(emotes))
     store.dispatch(
       updateEquippedWearables({
@@ -179,6 +173,17 @@ export default class BackpackPage {
             })
         : async () => await fetchEmotesPage(pageParams)
     )
+
+    originalAvatarJSON = JSON.stringify({
+      base: backpackState.outfitSetup.base,
+      equip: {
+        wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
+        emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
+          nullAsEmptyString
+        ) as URN[],
+        forceRender: backpackState.forceRender ?? []
+      }
+    } satisfies SetAvatarData)
   }
 }
 
@@ -369,4 +374,9 @@ function BackpackNavBar({
       </LeftSection>
     </NavBar>
   )
+}
+
+function nullAsEmptyString(v: any): any {
+  if (!v) return ''
+  return v
 }
