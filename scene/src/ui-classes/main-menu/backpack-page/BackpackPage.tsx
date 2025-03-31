@@ -187,7 +187,7 @@ export default class BackpackPage {
   }
 }
 
-function MainContent({ children }: any): ReactElement {
+function MainContent({ children }: { children?: ReactElement }): ReactElement {
   return (
     <UiEntity
       onMouseEnter={() => {}}
@@ -209,7 +209,8 @@ function MainContent({ children }: any): ReactElement {
   )
 }
 
-function NavBar({ children, canvasScaleRatio }: any): ReactElement {
+function NavBar({ children }: { children?: ReactElement }): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
   return (
     <UiEntity
       uiTransform={{
@@ -227,7 +228,7 @@ function NavBar({ children, canvasScaleRatio }: any): ReactElement {
   )
 }
 
-function LeftSection({ children }: any): ReactElement {
+function LeftSection({ children }: { children?: ReactElement }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -264,7 +265,7 @@ function NavBarTitle({
   )
 }
 
-function NavButtonBar({ children }: any): ReactElement {
+function NavButtonBar({ children }: { children?: ReactElement }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -282,7 +283,7 @@ function NavButtonBar({ children }: any): ReactElement {
   )
 }
 
-function Content({ children }: any): ReactElement {
+function Content({ children }: { children?: ReactElement }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -306,8 +307,7 @@ function BackpackNavBar({
 }): ReactElement {
   const backpackState = store.getState().backpack
   return (
-    <NavBar canvasScaleRatio={canvasScaleRatio}>
-      {/* LEFT SECTION */}
+    <NavBar>
       <LeftSection>
         <NavBarTitle
           text={'<b>Backpack</b>'}
