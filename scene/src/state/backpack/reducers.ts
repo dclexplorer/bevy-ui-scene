@@ -184,6 +184,12 @@ export function reducer(
         equippedEmotes: action.payload
       }
     }
+    case BACKPACK_ACTION.SELECT_EMOTE_SLOT: {
+      return {
+        ...backpackPageState,
+        selectedEmoteSlot: action.payload
+      }
+    }
     default:
       return backpackPageState
   }

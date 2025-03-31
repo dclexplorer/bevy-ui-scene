@@ -20,6 +20,7 @@ export enum BACKPACK_SECTION {
 export type BackpackPageState = {
   activeSection: BACKPACK_SECTION
   activeWearableCategory: WearableCategory | null
+  selectedEmoteSlot: number
   currentPage: number
   loadingPage: boolean
   shownWearables: CatalogWearableElement[]
@@ -42,6 +43,7 @@ export type BackpackPageState = {
 export const backpackInitialState: BackpackPageState = {
   activeSection: BACKPACK_SECTION.EMOTES,
   activeWearableCategory: null,
+  selectedEmoteSlot: 0,
   currentPage: 1,
   loadingPage: false,
   shownWearables: new Array(ITEMS_CATALOG_PAGE_SIZE).fill(null),

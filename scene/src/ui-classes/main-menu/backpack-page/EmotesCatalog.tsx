@@ -22,11 +22,12 @@ import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
 import { catalystMetadataMap } from '../../../utils/wearables-promise-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { fetchEmotesPage } from '../../../utils/emotes-promise-utils'
-import { updateSelectedWearableURN } from '../../../state/backpack/actions'
-
-const state = {
-  selectedEmoteSlot: 0
-}
+import {
+  selectEmoteSlotAction,
+  updateEquippedEmotesAction,
+  updateSelectedWearableURN
+} from '../../../state/backpack/actions'
+import { urnWithTokenIdMemo } from '../../../utils/urn-utils'
 
 export function EmotesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
@@ -34,10 +35,7 @@ export function EmotesCatalog(): ReactElement {
 
   return (
     <UiEntity>
-      <EquippedEmoteList
-        equippedEmotes={backpackState.equippedEmotes}
-        onSelectSlot={(slot): void => {}}
-      />
+      <EquippedEmoteList equippedEmotes={backpackState.equippedEmotes} />
       <ItemsCatalog
         fetchItemsPage={async () => {
           const backpackState = store.getState().backpack
@@ -58,17 +56,35 @@ export function EmotesCatalog(): ReactElement {
           items={backpackState.shownEmotes}
           equippedItems={[
             backpackState.equippedEmotes[
-              state.selectedEmoteSlot
+              backpackState.selectedEmoteSlot
             ] as EquippedEmote
           ]}
           onChangeSelection={(selectedURN): void => {
-            console.log('selectedURN', selectedURN)
             store.dispatch(
               updateSelectedWearableURN(selectedURN as URNWithoutTokenId)
             )
           }}
-          onEquipItem={(itemElement: ItemElement): void => {}}
-          onUnequipItem={(wearable: ItemElement): void => {}}
+          onEquipItem={(itemElement: ItemElement): void => {
+            urnWithTokenIdMemo.set(
+              itemElement.urn as URNWithoutTokenId,
+              itemElement.individualData[0].id
+            )
+
+            // TODO consider moving transform logic to redux with payload : { emoteURN, slotIndex }
+            const newEquippedEmotes: EquippedEmote[] = [
+              ...backpackState.equippedEmotes
+            ]
+            newEquippedEmotes[backpackState.selectedEmoteSlot] = itemElement.urn
+            store.dispatch(updateEquippedEmotesAction(newEquippedEmotes))
+          }}
+          onUnequipItem={(): void => {
+            // TODO consider moving transform logic to redux with payload : { emoteURN, slotIndex }
+            const newEquippedEmotes: EquippedEmote[] = [
+              ...backpackState.equippedEmotes
+            ]
+            newEquippedEmotes[backpackState.selectedEmoteSlot] = ''
+            store.dispatch(updateEquippedEmotesAction(newEquippedEmotes))
+          }}
         />
       </ItemsCatalog>
     </UiEntity>
@@ -82,12 +98,12 @@ function EmoteNavBar(): ReactElement {
   return (
     <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
       <NavButton
-        active={!backpackState.equippedEmotes[state.selectedEmoteSlot]}
+        active={!backpackState.equippedEmotes[backpackState.selectedEmoteSlot]}
         icon={{
-          spriteName: `emote-circle-${state.selectedEmoteSlot}`,
+          spriteName: `emote-circle-${backpackState.selectedEmoteSlot}`,
           atlasName: 'backpack'
         }}
-        text={`EMOTE ${(state.selectedEmoteSlot + 1) % 10}`}
+        text={`EMOTE ${(backpackState.selectedEmoteSlot + 1) % 10}`}
         uiTransform={{ padding: 40 * canvasScaleRatio }}
         onClick={() => {
           if (backpackState.activeWearableCategory === null) return null
@@ -102,7 +118,7 @@ function EmoteNavBar(): ReactElement {
             left: 16 * canvasScaleRatio,
             right: 16 * canvasScaleRatio
           },
-          display: backpackState.equippedEmotes[state.selectedEmoteSlot]
+          display: backpackState.equippedEmotes[backpackState.selectedEmoteSlot]
             ? 'flex'
             : 'none'
         }}
@@ -114,12 +130,12 @@ function EmoteNavBar(): ReactElement {
       <NavButton
         active={true}
         text={getEmoteName(
-          backpackState.equippedEmotes[state.selectedEmoteSlot]
+          backpackState.equippedEmotes[backpackState.selectedEmoteSlot]
         )?.toUpperCase()}
         uiTransform={{
           padding: 20 * canvasScaleRatio,
           height: 80 * canvasScaleRatio,
-          display: backpackState.equippedEmotes[state.selectedEmoteSlot]
+          display: backpackState.equippedEmotes[backpackState.selectedEmoteSlot]
             ? 'flex'
             : 'none'
         }}
@@ -132,7 +148,6 @@ function EquippedEmoteList({
   equippedEmotes
 }: {
   equippedEmotes: EquippedEmote[]
-  onSelectSlot: (index: number) => void
 }): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
 
@@ -144,6 +159,7 @@ function EquippedEmoteList({
           index: number,
           arr: EquippedEmote[]
         ) => {
+          const backpackState = store.getState().backpack
           return (
             <UiEntity
               uiTransform={{
@@ -158,12 +174,12 @@ function EquippedEmoteList({
               uiBackground={{
                 ...ROUNDED_TEXTURE_BACKGROUND,
                 color:
-                  state.selectedEmoteSlot === index
+                  backpackState.selectedEmoteSlot === index
                     ? COLOR.ACTIVE_BACKGROUND_COLOR
                     : COLOR.SMALL_TAG_BACKGROUND
               }}
               onMouseDown={() => {
-                state.selectedEmoteSlot = index
+                store.dispatch(selectEmoteSlotAction(index))
               }}
             >
               <UiEntity
