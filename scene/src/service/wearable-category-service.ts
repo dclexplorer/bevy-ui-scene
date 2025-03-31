@@ -9,8 +9,8 @@ import { ITEMS_CATALOG_PAGE_SIZE, ZERO_ADDRESS } from '../utils/constants'
 import { getPlayer } from '@dcl/sdk/src/players'
 
 export function changeCategory(category: WearableCategory | null): void {
-  const backpackState = store.getState().backpack
   store.dispatch(updateActiveWearableCategory(category))
+  const backpackState = store.getState().backpack
   setAvatarPreviewCameraToWearableCategory(category)
   closeColorPicker()
   updatePage(
