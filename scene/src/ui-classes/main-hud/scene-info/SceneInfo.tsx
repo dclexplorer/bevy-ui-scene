@@ -1,5 +1,5 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import type { Color4 } from '@dcl/sdk/math'
+import { Vector2, type Color4, type Vector3 } from '@dcl/sdk/math'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { store } from 'src/state/store'
 import type { PlaceFromApi } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
@@ -15,20 +15,25 @@ import {
   SELECTED_BUTTON_COLOR,
   UNSELECTED_TEXT_WHITE
 } from '../../../utils/constants'
-import type {  AtlasIcon } from '../../../utils/definitions'
+import type { AtlasIcon } from '../../../utils/definitions'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
-import type { LiveSceneInfo } from 'src/bevy-api/interface'
+import type { HomeScene, LiveSceneInfo } from 'src/bevy-api/interface'
 import { BevyApi } from 'src/bevy-api'
+import { setHome } from 'src/state/sceneInfo/actions'
 
 export default class SceneInfo {
   private readonly uiController: UIController
   public liveSceneInfo: LiveSceneInfo | undefined
+  private home: HomeScene | undefined
+  private realm: string | undefined
+  private sceneCoords: Vector3 | undefined
   public place: PlaceFromApi | undefined
   public fontSize: number = 16
   private isWarningScene: boolean = true
   public isExpanded: boolean = false
   public isMenuOpen: boolean = false
   public isHome: boolean = false
+  public hideSceneUi: boolean = false
 
   public favText: string = ''
 
@@ -94,20 +99,44 @@ export default class SceneInfo {
     this.uiController = uiController
   }
 
- 
   async update(): Promise<void> {
-      this.place = store.getState().scene.explorerPlace
-      this.liveSceneInfo = store.getState().scene.explorerScene
+    this.place = store.getState().scene.explorerPlace
+    this.liveSceneInfo = store.getState().scene.explorerScene
+    this.home = store.getState().scene.home
+    this.sceneCoords = store.getState().scene.explorerPlayerPosition
+    this.realm = await BevyApi.getRealmProvider()
+    if (this.home !== undefined && this.sceneCoords !== undefined) {
+      if (
+        this.home.parcel.x === this.sceneCoords.x &&
+        this.home.parcel.y === this.sceneCoords.z &&
+        this.realm === this.home.realm
+      ) {
+        this.isHome = true
+      } else {
+        this.isHome = false
+      }
+    } else {
+      this.isHome = false
+    }
 
-      if (this.place === undefined || this.liveSceneInfo === undefined) return
-    
-      this.setFlag(this.place.content_rating)
-      this.updateIcons()
+    if (this.place === undefined || this.liveSceneInfo === undefined) return
+
+    this.setFlag(this.place.content_rating)
+    this.updateIcons()
   }
 
   setWarning(status: boolean, message: string): void {
     this.isWarningScene = status
     this.warningHint = message
+  }
+
+  async toggleSceneUi(): Promise<void> {
+    const response = await BevyApi.showUi(
+      this.liveSceneInfo?.hash,
+      !this.hideSceneUi
+    )
+    this.hideSceneUi = !response
+    this.updateIcons()
   }
 
   setFlag(arg: string | undefined): void {
@@ -204,6 +233,11 @@ export default class SceneInfo {
     } else {
       this.setAtHomeIcon.spriteName = 'HomeOutline'
     }
+    if (this.hideSceneUi) {
+      this.sceneUiToggle.spriteName = 'SwitchOn'
+    } else {
+      this.sceneUiToggle.spriteName = 'SwitchOff'
+    }
   }
 
   setMenuOpen(arg: boolean): void {
@@ -215,12 +249,17 @@ export default class SceneInfo {
     this.updateIcons()
   }
 
-  setHome(arg: boolean): void {
-    this.isHome = arg
-    this.updateIcons()
+  async setHome(realm?: string, position?: Vector3 | undefined): Promise<void> {
+    const newRealm = realm ?? 'https://peer-ec1.decentraland.org/about'
+    const newParcel =
+      Vector2.create(position?.x, position?.z) ?? Vector2.create(0, 0)
+    this.home = { realm: newRealm, parcel: newParcel }
+    store.dispatch(setHome(this.home))
+    BevyApi.setHomeScene(this.home)
+    void this.update()
   }
 
-  async reloadScene(hash?:string): Promise<void> {
+  async reloadScene(hash?: string): Promise<void> {
     if (hash) {
       await BevyApi.reload(hash)
     } else {
@@ -228,7 +267,7 @@ export default class SceneInfo {
     }
   }
 
-  async openSceneInfo(): Promise<void> { 
+  async openSceneInfo(): Promise<void> {
     const sceneCoords = store.getState().scene.explorerPlayerPosition
     if (sceneCoords !== undefined) {
       await this.uiController.sceneCard.show(sceneCoords)
@@ -362,7 +401,10 @@ export default class SceneInfo {
 
                 <UiEntity
                   uiTransform={{
-                    display: this.liveSceneInfo?.sdkVersion === 'sdk6' ? 'flex' : 'none',
+                    display:
+                      this.liveSceneInfo?.sdkVersion === 'sdk6'
+                        ? 'flex'
+                        : 'none',
                     width: (this.fontSize * 0.875) / 0.41,
                     height: this.fontSize * 0.875,
                     margin: { left: this.fontSize * 0.5 }
@@ -489,16 +531,18 @@ export default class SceneInfo {
                 alignItems: 'center',
                 flexDirection: 'row'
               }}
-              onMouseDown={() => {}}
+              onMouseDown={() => {
+                void this.toggleSceneUi()
+              }}
               onMouseEnter={() => {
-                // this.sceneUiBackgroundColor = ALMOST_WHITE
+                this.sceneUiLabelColor = ALMOST_WHITE
               }}
               onMouseLeave={() => {
-                // this.sceneUiBackgroundColor = UNSELECTED_TEXT_WHITE
+                this.sceneUiLabelColor = UNSELECTED_TEXT_WHITE
               }}
             >
               <Label
-                value="Hide Scene UI"
+                value={'Hide Scene UI'}
                 fontSize={this.fontSize * 0.8}
                 color={this.sceneUiLabelColor}
               />
@@ -518,7 +562,7 @@ export default class SceneInfo {
               uiTransform={{ width: '100%', height: 1 }}
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
-            {/* <UiEntity
+            <UiEntity
               uiTransform={{
                 width: '100%',
                 height: 'auto',
@@ -527,7 +571,11 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                this.setHome(!this.isHome)
+                if (this.isHome) {
+                  void this.setHome()
+                } else {
+                  void this.setHome(this.realm, this.sceneCoords)
+                }
               }}
               onMouseEnter={() => {
                 this.setHomeLabelColor = ALMOST_WHITE
@@ -556,7 +604,7 @@ export default class SceneInfo {
             <UiEntity
               uiTransform={{ width: '100%', height: 1 }}
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            /> */}
+            />
 
             <UiEntity
               uiTransform={{ width: '100%', height: 1 }}

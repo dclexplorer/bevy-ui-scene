@@ -87,11 +87,15 @@ export class GameController {
     }
 
     const liveScenesInfo: LiveSceneInfo[] = await BevyApi.liveSceneInfo()
-    const currentScene = liveScenesInfo.find(scene => scene.parcels.some(parcel => parcel.x === explorerCoords.x && parcel.y === explorerCoords.z))
-    if (currentScene !== undefined) store.dispatch(loadSceneFromBevyApi(currentScene))
+    const currentScene = liveScenesInfo.find((scene) =>
+      scene.parcels.some(
+        (parcel) =>
+          parcel.x === explorerCoords.x && parcel.y === explorerCoords.z
+      )
+    )
+    if (currentScene !== undefined)
+      store.dispatch(loadSceneFromBevyApi(currentScene))
 
-
-    
     const place = await fetchPlaceFromCoords(explorerCoords)
     const explorerPlace = await getPlaceFromApi(place.id)
     store.dispatch(loadPlaceFromApi(explorerPlace))
@@ -99,7 +103,6 @@ export class GameController {
   }
 
   async updateStatus(): Promise<void> {
-    console.log('Updating status')
     // Update fav status:
     const favToUpdate = store.getState().scene.sceneInfoCardFavToSend
     if (favToUpdate !== undefined) {

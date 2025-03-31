@@ -133,11 +133,16 @@ export default class SceneInfoCard {
     this.updateIcons()
   }
 
-  async interestedOnMouseDown(event:EventFromApi): Promise<void> {
-    if(this.interestedEvents.some(interestedEvent => interestedEvent.id === event.id)){
-      this.interestedEvents = this.interestedEvents.filter(interestedEvents => interestedEvents.id !== event.id)
+  async interestedOnMouseDown(event: EventFromApi): Promise<void> {
+    if (
+      this.interestedEvents.some(
+        (interestedEvent) => interestedEvent.id === event.id
+      )
+    ) {
+      this.interestedEvents = this.interestedEvents.filter(
+        (interestedEvents) => interestedEvents.id !== event.id
+      )
       await removeAttendee(event.id)
-      
     } else {
       this.interestedEvents.push(event)
       await createAttendee(event.id)
@@ -1147,7 +1152,9 @@ export default class SceneInfoCard {
                 onMouseLeave={() => {
                   this.eventInterestedEnter = undefined
                 }}
-                value={this.areInterestedButtonsLocked ? 'Loading...' : 'INTERESTED'}
+                value={
+                  this.areInterestedButtonsLocked ? 'Loading...' : 'INTERESTED'
+                }
                 backgroundColor={
                   this.eventInterestedEnter === index
                     ? SELECTED_BUTTON_COLOR

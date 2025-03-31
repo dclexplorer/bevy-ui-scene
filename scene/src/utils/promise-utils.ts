@@ -51,7 +51,6 @@ export async function fetchEvents(coords: string[]): Promise<EventFromApi[]> {
   }
 }
 
-
 export async function fetchPhotos(
   placeId: string,
   limit: number
@@ -234,10 +233,6 @@ export async function updateLikeStatus(): Promise<void> {
   }
 }
 export async function createAttendee(eventId: string): Promise<void> {
-  console.log(
-    ' eventId: ',
-    eventId
-  )
   const url = `https://events.decentraland.org/api/events/${eventId}/attendees`
 
   const responseCreateAttendee: KernelFetchRespose = await BevyApi.kernelFetch({
@@ -255,10 +250,6 @@ export async function createAttendee(eventId: string): Promise<void> {
       responseCreateAttendee.status
     )
     throw new Error(`HTTP error! Status: ${responseCreateAttendee.status}`)
-  } else {
-    // console.log(responseCreateAttendee.body)
-    console.log('SUCCESS CREATING ATTENDEE')
-
   }
 }
 
@@ -279,10 +270,6 @@ export async function removeAttendee(eventId: string): Promise<void> {
       responseRemoveAttendee.status
     )
     throw new Error(`HTTP error! Status: ${responseRemoveAttendee.status}`)
-  } else {
-    // console.log({responseRemoveAttendee})
-    console.log('SUCCESS REMOVING ATTENDEE')
-
   }
 }
 

@@ -30,6 +30,8 @@ export function reducer(
       return { ...state, explorerPlayerPosition: action.payload }
     case SCENE_INFO_ACTION.GET_FAVS_FROM_API:
       return { ...state, explorerFavorites: action.payload }
+    case SCENE_INFO_ACTION.SET_HOME:
+      return { ...state, home: action.payload }
 
     default:
       return state

@@ -7,7 +7,7 @@ import type {
 } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { SCENE_INFO_STORE_ID } from 'src/state/sceneInfo/state'
 import type { Vector3 } from '@dcl/sdk/math'
-import type { LiveSceneInfo } from 'src/bevy-api/interface'
+import type { HomeScene, LiveSceneInfo } from 'src/bevy-api/interface'
 
 type SceneActionId = { __reducer: typeof SCENE_INFO_STORE_ID }
 
@@ -26,7 +26,8 @@ export enum SCENE_INFO_ACTION {
   SAVE_PLAYER_POSITION,
   GET_FAVS_FROM_API,
   GET_LIKES_FROM_API,
-  GET_SCENE_INFO_CARD_PLACE_FROM_API
+  GET_SCENE_INFO_CARD_PLACE_FROM_API,
+  SET_HOME
 }
 
 export type GetEvents = SceneActionId & {
@@ -85,6 +86,10 @@ export type GetFavorites = SceneActionId & {
   type: SCENE_INFO_ACTION.GET_FAVS_FROM_API
   payload: PlaceFromApi[]
 }
+export type SetHome = SceneActionId & {
+  type: SCENE_INFO_ACTION.SET_HOME
+  payload: HomeScene | undefined
+}
 
 export type SceneActions =
   | GetEvents
@@ -99,8 +104,9 @@ export type SceneActions =
   | SetLike
   | CleanFav
   | CleanLike
-  // | CreateAttend
-  // | RemoveAttend
+  | SetHome
+// | CreateAttend
+// | RemoveAttend
 
 export const loadEventsFromApi = (events: EventFromApi[]): GetEvents => ({
   __reducer: SCENE_INFO_STORE_ID,
@@ -166,6 +172,12 @@ export const loadFavoritesFromApi = (
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_FAVS_FROM_API,
   payload: favorites
+})
+
+export const setHome = (home: HomeScene | undefined): SetHome => ({
+  __reducer: SCENE_INFO_STORE_ID,
+  type: SCENE_INFO_ACTION.SET_HOME,
+  payload: home
 })
 
 // export const setCreateAttendToSend = (

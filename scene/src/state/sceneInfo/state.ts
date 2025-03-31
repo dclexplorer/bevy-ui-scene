@@ -1,5 +1,5 @@
 import type { Vector3 } from '@dcl/sdk/math'
-import type { LiveSceneInfo } from 'src/bevy-api/interface'
+import type { HomeScene, LiveSceneInfo } from 'src/bevy-api/interface'
 import type { PhotoFromApi } from 'src/ui-classes/photos/Photos.types'
 import type {
   PlaceFromApi,
@@ -23,6 +23,7 @@ export type SceneState = {
   explorerPhotos: PhotoFromApi[]
   explorerPlayerPosition: Vector3 | undefined
   explorerFavorites: PlaceFromApi[] | undefined
+  home: HomeScene | undefined
 }
 
 export const sceneInitialState: SceneState = {
@@ -37,5 +38,6 @@ export const sceneInitialState: SceneState = {
   EventsAttendeeToRemove: [],
   explorerPhotos: [],
   explorerPlayerPosition: undefined,
-  explorerFavorites: undefined
+  explorerFavorites: undefined,
+  home: undefined
 }
