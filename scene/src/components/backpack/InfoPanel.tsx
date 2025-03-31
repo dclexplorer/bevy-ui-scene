@@ -31,7 +31,7 @@ export function InfoPanel({
 }: InfoPanelProps): ReactElement {
   const rarityColor = RARITY_COLORS[entityMetadata?.rarity as RarityName]
   const data =
-    (entityMetadata as WearableEntityMetadata)?.data ||
+    (entityMetadata as WearableEntityMetadata)?.data ??
     (entityMetadata as EmoteEntityMetadata)?.emoteDataADR74
 
   return (
