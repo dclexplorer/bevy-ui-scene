@@ -118,7 +118,10 @@ function EmoteNavBar(): ReactElement {
         )?.toUpperCase()}
         uiTransform={{
           padding: 20 * canvasScaleRatio,
-          height: 80 * canvasScaleRatio
+          height: 80 * canvasScaleRatio,
+          display: backpackState.equippedEmotes[state.selectedEmoteSlot]
+            ? 'flex'
+            : 'none'
         }}
       />
     </UiEntity>

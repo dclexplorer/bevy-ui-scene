@@ -22,6 +22,18 @@ export const DEFAULT_EMOTES: offchainEmoteURN[] = [
   'headexplode',
   'shrug'
 ]
+export const EMPTY_EMOTES: EquippedEmote[] = [
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  ''
+]
 export const DEFAULT_EMOTE_NAMES: Record<offchainEmoteURN, string> = {
   handsair: 'Hands air',
   wave: 'Wave',

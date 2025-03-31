@@ -8,7 +8,7 @@ import type { EquippedEmote, URNWithoutTokenId } from '../../utils/definitions'
 import { EMPTY_OUTFIT, getWearablesFromOutfit } from '../../service/outfit'
 import { ITEMS_CATALOG_PAGE_SIZE } from '../../utils/constants'
 import type { PBAvatarBase } from '../../bevy-api/interface'
-import { DEFAULT_EMOTE_ELEMENTS, DEFAULT_EMOTES } from '../../service/emotes'
+import { DEFAULT_EMOTE_ELEMENTS, EMPTY_EMOTES } from '../../service/emotes'
 
 export const BACKPACK_STORE_ID: 'backpack' = 'backpack'
 export enum BACKPACK_SECTION {
@@ -39,7 +39,6 @@ export type BackpackPageState = {
   selectedURN: URNWithoutTokenId | null
   cacheKey: string
 }
-
 export const backpackInitialState: BackpackPageState = {
   activeSection: BACKPACK_SECTION.EMOTES,
   activeWearableCategory: null,
@@ -49,7 +48,7 @@ export const backpackInitialState: BackpackPageState = {
   shownEmotes: DEFAULT_EMOTE_ELEMENTS,
   totalPages: 0,
   equippedWearables: getWearablesFromOutfit(EMPTY_OUTFIT),
-  equippedEmotes: DEFAULT_EMOTES,
+  equippedEmotes: EMPTY_EMOTES,
   equippedItems: [
     EMPTY_OUTFIT.base.bodyShapeUrn,
     ...getWearablesFromOutfit(EMPTY_OUTFIT)
