@@ -9,7 +9,10 @@ import {
 } from '@dcl/sdk/ecs'
 import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { type URNWithoutTokenId } from '../../utils/definitions'
+import {
+  type EquippedEmote,
+  type URNWithoutTokenId
+} from '../../utils/definitions'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
@@ -47,6 +50,13 @@ export const setAvatarPreviewZoomFactor = (zoomFactor: number): void => {
 
 export const getAvatarPreviewQuaternion = (): Quaternion => {
   return Transform.get(avatarPreview.avatarEntity).rotation
+}
+
+export const playEmote = (emoteURN: EquippedEmote): void => {
+  // TODO remove console.log
+  console.log('playEmote', emoteURN)
+  AvatarShape.getMutable(avatarPreview.avatarEntity).expressionTriggerId =
+    emoteURN
 }
 
 const AVATAR_CAMERA_POSITION: Record<string, Vector3> = {

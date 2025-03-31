@@ -28,6 +28,7 @@ import {
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
 import { urnWithTokenIdMemo } from '../../../utils/urn-utils'
+import { playEmote } from '../../../components/backpack/AvatarPreview'
 
 export function EmotesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
@@ -63,6 +64,7 @@ export function EmotesCatalog(): ReactElement {
             store.dispatch(
               updateSelectedWearableURN(selectedURN as URNWithoutTokenId)
             )
+            playEmote(selectedURN as EquippedEmote)
           }}
           onEquipItem={(itemElement: ItemElement): void => {
             urnWithTokenIdMemo.set(
@@ -187,6 +189,13 @@ function EquippedEmoteList({
                 store.dispatch(
                   selectEmoteSlotAction(fromVisualIndexToRealIndex(index))
                 )
+                const newBackpackState = store.getState().backpack
+                const selectedEmoteURN =
+                  newBackpackState.equippedEmotes[
+                    newBackpackState.selectedEmoteSlot
+                  ]
+
+                playEmote(selectedEmoteURN)
               }}
             >
               <UiEntity
