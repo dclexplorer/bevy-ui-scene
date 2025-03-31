@@ -80,7 +80,6 @@ export function NavButton({
             onDelete()
           }}
         >
-          {/* // TODO look for better icon on spritesheets */}
           <Icon
             icon={{ atlasName: 'context', spriteName: 'Unpublish' }}
             iconSize={40 * canvasScaleRatio}

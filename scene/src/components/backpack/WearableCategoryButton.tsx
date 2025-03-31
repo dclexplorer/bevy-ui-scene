@@ -58,7 +58,7 @@ export function WearableCategoryButton({
     ? getWearableThumbnailBackground(selectedURN)
     : getBackgroundFromAtlas({
         atlasName: 'backpack',
-        spriteName: 'empty-wearable-field' // TODO change and fix file
+        spriteName: 'empty-wearable-field'
       })
   const isHovered = (): boolean => state.hoveredCategory === category
   return (
