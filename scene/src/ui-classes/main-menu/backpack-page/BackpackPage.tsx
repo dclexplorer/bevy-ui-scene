@@ -15,7 +15,11 @@ import {
 import { getPlayer } from '@dcl/sdk/src/players'
 import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
-import { createAvatarPreview } from '../../../components/backpack/AvatarPreview'
+import {
+  createAvatarPreview,
+  setAvatarPreviewCameraToWearableCategory,
+  setAvatarPreviewZoomFactor
+} from '../../../components/backpack/AvatarPreview'
 import {
   ITEMS_CATALOG_PAGE_SIZE,
   ROUNDED_TEXTURE_BACKGROUND,
@@ -47,6 +51,7 @@ import {
   fetchEmotesPage
 } from '../../../utils/emotes-promise-utils'
 import { fetchEquippedEmotes } from '../../../service/emotes'
+import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -330,6 +335,10 @@ function BackpackNavBar({
                     wearableCategory: backpackState.activeWearableCategory
                   })
               ).catch(console.error)
+              setAvatarPreviewCameraToWearableCategory(
+                backpackState.activeWearableCategory
+              )
+              setAvatarPreviewZoomFactor(0.5)
             }}
           />
           <NavButton
@@ -352,6 +361,10 @@ function BackpackNavBar({
               updatePage(async () => await fetchEmotesPage(pageParams)).catch(
                 console.error
               )
+              setAvatarPreviewCameraToWearableCategory(
+                WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
+              )
+              setAvatarPreviewZoomFactor(0.5)
             }}
           />
         </NavButtonBar>
