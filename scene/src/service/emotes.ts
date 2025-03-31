@@ -138,7 +138,7 @@ export async function fetchEquippedEmotes(
     const urn =
       response.find(
         (es: { slot: number; urn: URNWithoutTokenId | offchainEmoteURN }) =>
-          es.slot === (index + 1) % 10
+          es.slot === index
       )?.urn ?? ''
     return getURNWithoutTokenId(urn) as EquippedEmote
   })

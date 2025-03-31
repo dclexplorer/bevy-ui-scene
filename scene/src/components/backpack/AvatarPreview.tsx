@@ -15,7 +15,7 @@ import {
   type WearableCategory
 } from '../../service/categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
-import { getWearablesWithTokenId } from '../../utils/urn-utils'
+import { getItemsWithTokenId } from '../../utils/urn-utils'
 import { type Perspective } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/texture_camera.gen'
 
 type AvatarPreview = {
@@ -94,7 +94,7 @@ export function updateAvatarPreview(
   forceRender: WearableCategory[] = []
 ): void {
   const mutableAvatarShape = AvatarShape.getMutable(avatarPreview.avatarEntity)
-  mutableAvatarShape.wearables = getWearablesWithTokenId(wearables)
+  mutableAvatarShape.wearables = getItemsWithTokenId(wearables)
   mutableAvatarShape.bodyShape = avatarBase.bodyShapeUrn
   mutableAvatarShape.hairColor = avatarBase.hairColor
   mutableAvatarShape.eyeColor = avatarBase.eyesColor

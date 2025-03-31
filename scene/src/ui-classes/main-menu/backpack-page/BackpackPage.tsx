@@ -24,7 +24,7 @@ import {
 import {
   BASE_MALE_URN,
   getURNWithoutTokenId,
-  getWearablesWithTokenId
+  getItemsWithTokenId
 } from '../../../utils/urn-utils'
 import { store } from '../../../state/store'
 import {
@@ -96,20 +96,23 @@ export default class BackpackPage {
     try {
       const backpackState = store.getState().backpack
 
+      // TODO review to include emotes algo in the condition to saveAvatar
       if (
         [...backpackState.equippedWearables].sort(sortAbc).join(',') !==
         [...(getPlayer()?.wearables ?? [])].sort(sortAbc).join(',')
       ) {
-        await BevyApi.setAvatar({
+        const saveAvatarPayload = {
           base: backpackState.outfitSetup.base,
           equip: {
-            wearableUrns: getWearablesWithTokenId(
-              backpackState.equippedWearables
-            ),
-            emoteUrns: [], // TODO implement emotes
+            wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
+            emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
+              (i) => (!i ? '' : i)
+            ) as URN[],
             forceRender: backpackState.forceRender ?? []
           }
-        })
+        }
+        console.log('saveAvatarPayload', saveAvatarPayload)
+        await BevyApi.setAvatar(saveAvatarPayload)
       }
     } catch (error) {
       console.log('setAvatar error', error)

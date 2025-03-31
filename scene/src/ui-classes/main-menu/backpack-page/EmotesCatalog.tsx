@@ -150,10 +150,14 @@ function EquippedEmoteList({
   equippedEmotes: EquippedEmote[]
 }): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
+  const visualOrderList = [
+    ...equippedEmotes.slice(1, equippedEmotes.length),
+    equippedEmotes[0]
+  ]
 
   return (
     <UiEntity uiTransform={{ flexDirection: 'column' }}>
-      {equippedEmotes.map(
+      {visualOrderList.map(
         (
           equippedEmoteURN: EquippedEmote,
           index: number,
@@ -174,12 +178,15 @@ function EquippedEmoteList({
               uiBackground={{
                 ...ROUNDED_TEXTURE_BACKGROUND,
                 color:
-                  backpackState.selectedEmoteSlot === index
+                  backpackState.selectedEmoteSlot ===
+                  fromVisualIndexToRealIndex(index)
                     ? COLOR.ACTIVE_BACKGROUND_COLOR
                     : COLOR.SMALL_TAG_BACKGROUND
               }}
               onMouseDown={() => {
-                store.dispatch(selectEmoteSlotAction(index))
+                store.dispatch(
+                  selectEmoteSlotAction(fromVisualIndexToRealIndex(index))
+                )
               }}
             >
               <UiEntity
@@ -192,7 +199,9 @@ function EquippedEmoteList({
                 }}
                 uiBackground={getBackgroundFromAtlas({
                   atlasName: 'backpack',
-                  spriteName: `emote-circle-${index}`
+                  spriteName: `emote-circle-${fromVisualIndexToRealIndex(
+                    index
+                  )}`
                 })}
               />
               <UiEntity
@@ -235,4 +244,7 @@ function EquippedEmoteList({
       )}
     </UiEntity>
   )
+}
+function fromVisualIndexToRealIndex(index: number): number {
+  return (index + 1) % 10
 }
