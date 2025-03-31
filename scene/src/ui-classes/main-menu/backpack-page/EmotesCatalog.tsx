@@ -24,7 +24,7 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import { fetchEmotesPage } from '../../../utils/emotes-promise-utils'
 import {
   selectEmoteSlotAction,
-  updateEquippedEmotesAction,
+  updateEquippedEmoteAction,
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
 import { urnWithTokenIdMemo } from '../../../utils/urn-utils'
@@ -70,20 +70,20 @@ export function EmotesCatalog(): ReactElement {
               itemElement.individualData[0].id
             )
 
-            // TODO consider moving transform logic to redux with payload : { emoteURN, slotIndex }
-            const newEquippedEmotes: EquippedEmote[] = [
-              ...backpackState.equippedEmotes
-            ]
-            newEquippedEmotes[backpackState.selectedEmoteSlot] = itemElement.urn
-            store.dispatch(updateEquippedEmotesAction(newEquippedEmotes))
+            store.dispatch(
+              updateEquippedEmoteAction({
+                equippedEmote: itemElement.urn,
+                slot: backpackState.selectedEmoteSlot
+              })
+            )
           }}
           onUnequipItem={(): void => {
-            // TODO consider moving transform logic to redux with payload : { emoteURN, slotIndex }
-            const newEquippedEmotes: EquippedEmote[] = [
-              ...backpackState.equippedEmotes
-            ]
-            newEquippedEmotes[backpackState.selectedEmoteSlot] = ''
-            store.dispatch(updateEquippedEmotesAction(newEquippedEmotes))
+            store.dispatch(
+              updateEquippedEmoteAction({
+                equippedEmote: '',
+                slot: backpackState.selectedEmoteSlot
+              })
+            )
           }}
         />
       </ItemsCatalog>

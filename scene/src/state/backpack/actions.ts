@@ -28,6 +28,7 @@ export enum BACKPACK_ACTION {
   UNEQUIP_WEARABLE_CATEGORY,
   CHANGE_SECTION,
   UPDATE_EQUIPPED_EMOTES,
+  UPDATE_EQUIPPED_EMOTE,
   SELECT_EMOTE_SLOT
 }
 
@@ -62,7 +63,14 @@ export type BackpackUpdateEquippedEmotesAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTES
   payload: EquippedEmote[]
 }
-
+export type BackpackUpdateEquippedEmotePayload = {
+  equippedEmote: EquippedEmote
+  slot: number
+}
+export type BackpackUpdateEquippedEmoteAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTE
+  payload: BackpackUpdateEquippedEmotePayload
+}
 export type BackpackUpdateAvatarBasePayload = PBAvatarBase
 export type BackpackUpdateAvatarBaseAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_AVATAR_BASE
@@ -119,6 +127,7 @@ export type BackpackActions =
   | BackpackUnequipWearableCategoryAction
   | BackpackChangeSectionAction
   | BackpackUpdateEquippedEmotesAction
+  | BackpackUpdateEquippedEmoteAction
   | BackpackSelectEmoteSlotAction
 
 export const updateSelectedWearableURN = (
@@ -174,6 +183,14 @@ export const updateEquippedEmotesAction = (
 ): BackpackUpdateEquippedEmotesAction => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTES,
+  payload
+})
+
+export const updateEquippedEmoteAction = (
+  payload: BackpackUpdateEquippedEmotePayload
+): BackpackUpdateEquippedEmoteAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTE,
   payload
 })
 

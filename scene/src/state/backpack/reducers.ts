@@ -184,6 +184,14 @@ export function reducer(
         equippedEmotes: action.payload
       }
     }
+    case BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTE: {
+      const newEquippedEmotes = [...backpackPageState.equippedEmotes]
+      newEquippedEmotes[action.payload.slot] = action.payload.equippedEmote
+      return {
+        ...backpackPageState,
+        equippedEmotes: newEquippedEmotes
+      }
+    }
     case BACKPACK_ACTION.SELECT_EMOTE_SLOT: {
       return {
         ...backpackPageState,
