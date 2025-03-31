@@ -88,12 +88,11 @@ function updateAvatar(payload: BackpackUpdateAvatarBasePayload): void {
 
 function ColorBox({
   color,
-  key,
   onMouseDown,
   uiTransform
 }: {
   color: Color4
-  key?: any
+  key?: Color4
   onMouseDown?: () => void
   uiTransform?: UiTransformProps
 }): ReactElement {
@@ -176,7 +175,7 @@ function ColorPickerDialog({
               height: canvasScaleRatio * 60
             }}
             color={color}
-            key={index}
+            key={color}
             onMouseDown={() => {
               const avatarBase = store.getState().backpack.outfitSetup.base
               const payload = {
