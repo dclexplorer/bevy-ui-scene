@@ -16,6 +16,7 @@ import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getEmoteName, getEmoteThumbnail } from '../../../service/emotes'
 import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 import Icon from '../../../components/icon/Icon'
+import type { UiTransformProps } from '@dcl/sdk/react-ecs'
 const state: { hoveredIndex: number | null } = { hoveredIndex: null }
 export function EquippedEmoteList({
   equippedEmotes
@@ -106,12 +107,19 @@ export function EquippedEmoteList({
                   fontSize: canvasScaleRatio * 30
                 }}
               />
+              {isHovered() &&
+                fromVisualIndexToRealIndex(index) !==
+                  backpackState.selectedEmoteSlot && <EmoteHoveredSquare />}
               <UiEntity
                 uiTransform={{
-                  height: canvasScaleRatio * 100,
+                  height: canvasScaleRatio * (equippedEmoteURN ? 105 : 100),
                   width: canvasScaleRatio * 100,
+                  flexShrink: 0,
                   positionType: 'absolute',
-                  position: { right: canvasScaleRatio * 20 }
+                  position: {
+                    right: canvasScaleRatio * 20,
+                    top: canvasScaleRatio * 10
+                  }
                 }}
                 uiBackground={
                   equippedEmoteURN
@@ -129,17 +137,25 @@ export function EquippedEmoteList({
                       })
                 }
               >
-                {backpackState.equippedEmotes[
-                  fromVisualIndexToRealIndex(index)
-                ] && (
-                  <UnequipEmoteCross
-                    slot={fromVisualIndexToRealIndex(index)}
-                    index={index}
-                  />
-                )}
+                {isHovered() &&
+                  backpackState.equippedEmotes[
+                    fromVisualIndexToRealIndex(index)
+                  ] && (
+                    <UnequipEmoteCross
+                      slot={fromVisualIndexToRealIndex(index)}
+                      index={index}
+                    />
+                  )}
                 <UiEntity
-                  uiTransform={{ height: '100%', width: '100%' }}
-                  uiBackground={getEmoteThumbnail(equippedEmoteURN)}
+                  uiTransform={{
+                    height: canvasScaleRatio * 100,
+                    width: canvasScaleRatio * 100,
+                    flexShrink: 0
+                  }}
+                  uiBackground={{
+                    ...getEmoteThumbnail(equippedEmoteURN)
+                    // color: Color4.create(1, 0, 0, 0.4)
+                  }}
                 />
               </UiEntity>
             </UiEntity>
@@ -172,7 +188,8 @@ function UnequipEmoteCross({
         padding: '10%',
         alignItems: 'center',
         justifyContent: 'center',
-        pointerFilter: 'none'
+        pointerFilter: 'none',
+        zIndex: 1
       }}
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
@@ -191,5 +208,28 @@ function UnequipEmoteCross({
         icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
       />
     </UiEntity>
+  )
+}
+
+function EmoteHoveredSquare(): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  const transform: UiTransformProps = {
+    width: 108 * canvasScaleRatio,
+    height: 108 * canvasScaleRatio,
+    positionType: 'absolute',
+    position: {
+      right: 16 * canvasScaleRatio,
+      top: 6 * canvasScaleRatio
+    },
+    zIndex: 1
+  }
+  return (
+    <UiEntity
+      uiTransform={transform}
+      uiBackground={getBackgroundFromAtlas({
+        atlasName: 'backpack',
+        spriteName: 'category-button-hover'
+      })}
+    />
   )
 }
