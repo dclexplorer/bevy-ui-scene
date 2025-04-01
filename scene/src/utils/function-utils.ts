@@ -16,6 +16,6 @@ export function memoize<T, U>(fn: (arg: T) => U): (arg: T) => U {
   }
 }
 
-export function cloneDeep(obj: unknown): unknown {
+export function cloneDeep<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
 }

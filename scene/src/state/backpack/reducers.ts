@@ -9,6 +9,7 @@ import {
   type EquippedEmote,
   type URNWithoutTokenId
 } from '../../utils/definitions'
+import { cloneDeep } from '../../utils/function-utils'
 
 export function reducer(
   backpackPageState: BackpackPageState,
@@ -107,19 +108,17 @@ export function reducer(
       return {
         ...backpackPageState,
         savedResetOutfit: {
-          base: JSON.parse(
-            JSON.stringify(store.getState().backpack.outfitSetup.base)
-          ),
-          equippedWearables: JSON.parse(
-            JSON.stringify(store.getState().backpack.equippedWearables)
+          base: cloneDeep(store.getState().backpack.outfitSetup.base),
+          equippedWearables: cloneDeep(
+            store.getState().backpack.equippedWearables
           ),
           forceRender: [...store.getState().backpack.forceRender]
         },
         changedFromResetVersion: false
       }
     case BACKPACK_ACTION.RESET_OUTFIT: {
-      const base = JSON.parse(
-        JSON.stringify(backpackPageState.savedResetOutfit.base)
+      const base: PBAvatarBase = cloneDeep(
+        backpackPageState.savedResetOutfit.base
       )
       const equippedWearables = [
         ...backpackPageState.savedResetOutfit.equippedWearables
