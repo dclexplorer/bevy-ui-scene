@@ -1,24 +1,62 @@
 import { expect } from "chai";
 import { EmotesCatalogPageRequest, EmotesPageResponse } from '../../scene/src/utils/emotes-promise-utils'
-import { ITEMS_CATALOG_PAGE_SIZE } from '../../scene/src/utils/backpack-constants'
+import {
+  DEFAULT_EMOTE_ELEMENTS,
+  DEFAULT_EMOTES,
+  ITEMS_CATALOG_PAGE_SIZE
+} from '../../scene/src/utils/backpack-constants'
 import { decoratePageResultWithEmbededEmotes } from '../../scene/src/service/emote-catalog-decoration'
 
-
-describe.skip("emote-catalog-decoration", () => {
-  it("should fill last page with the necessary default emotes to complete the page", ()=>{
-    const params ={pageNum:1,
-      pageSize:ITEMS_CATALOG_PAGE_SIZE,}
+describe("emote-catalog-decoration", () => {
+  it("should incrememt totalAmount with DEFAULT_EMOTES length", ()=>{
+    const params ={
+      pageNum:1,
+      pageSize:ITEMS_CATALOG_PAGE_SIZE
+    }
+    const totalAmount = ITEMS_CATALOG_PAGE_SIZE + 1
     const responseResult:EmotesPageResponse = {
       ...params,
       elements:new Array(ITEMS_CATALOG_PAGE_SIZE).fill({}),
-      totalAmount:ITEMS_CATALOG_PAGE_SIZE + 1
+      totalAmount
     }
     const decoratedPageResult = decoratePageResultWithEmbededEmotes(params as EmotesCatalogPageRequest, responseResult)
 
-    expect(decoratedPageResult).to.equal(responseResult)
+    expect(decoratedPageResult.totalAmount).to.equal(totalAmount + DEFAULT_EMOTES.length)
   })
 
-  it("should add an extra page if we left default emotes to fill the last page from original results", ()=>{
+  it("should append DEFAULT_EMOTES to fill last page from original results", ()=>{
+    const params ={
+      pageNum:2,
+      pageSize:ITEMS_CATALOG_PAGE_SIZE
+    }
+    const totalAmount = ITEMS_CATALOG_PAGE_SIZE + 1
+    const responseResult:EmotesPageResponse = {
+      ...params,
+      elements:[{} as any],
+      totalAmount
+    }
+    const decoratedPageResult = decoratePageResultWithEmbededEmotes(params as EmotesCatalogPageRequest, responseResult)
+    const expectedPage = [{}, ...DEFAULT_EMOTE_ELEMENTS]
+    expect(decoratedPageResult.elements).to.deep.equal(expectedPage)
+  })
 
+  it("should append the necessary DEFAULT_EMOTES to fill last page from original results", ()=>{
+    const params ={
+      pageNum:2,
+      pageSize:ITEMS_CATALOG_PAGE_SIZE
+    }
+    const totalAmount = ITEMS_CATALOG_PAGE_SIZE*2-1
+    const responseResult:EmotesPageResponse = {
+      ...params,
+      elements:new Array(15).fill({}),
+      totalAmount
+    }
+    const decoratedPageResult = decoratePageResultWithEmbededEmotes(params as EmotesCatalogPageRequest, responseResult)
+    const expectedPage = [
+      ...new Array(ITEMS_CATALOG_PAGE_SIZE-1).fill({}),
+      DEFAULT_EMOTE_ELEMENTS[0]
+    ]
+    expect(decoratedPageResult.elements[15]).to.deep.equal(DEFAULT_EMOTE_ELEMENTS[0])
+    expect(decoratedPageResult.elements.length).to.eq(16)
   })
 })

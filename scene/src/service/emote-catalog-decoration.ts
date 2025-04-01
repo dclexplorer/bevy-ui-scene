@@ -31,7 +31,7 @@ export function decoratePageResultWithEmbededEmotes(
 
   if (isOriginalLastPage && lastPageEmptyCells > 0) {
     newEmotesPageResponse.elements = [
-      ...newEmotesPageResponse.elements,
+      ...emotesPageResponse.elements,
       ...DEFAULT_EMOTE_ELEMENTS.slice(0, lastPageEmptyCells)
     ] as CatalogEmoteElement[]
   } else if (
@@ -39,7 +39,7 @@ export function decoratePageResultWithEmbededEmotes(
     lastPageEmptyCells < DEFAULT_EMOTE_ELEMENTS.length
   ) {
     newEmotesPageResponse.elements = [
-      ...newEmotesPageResponse.elements,
+      ...emotesPageResponse.elements,
       ...DEFAULT_EMOTE_ELEMENTS.slice(
         lastPageEmptyCells,
         DEFAULT_EMOTE_ELEMENTS.length
@@ -50,7 +50,7 @@ export function decoratePageResultWithEmbededEmotes(
   newEmotesPageResponse.elements?.forEach(
     (emoteElement: CatalogEmoteElement) => {
       catalystMetadataMap[emoteElement.urn as URNWithoutTokenId] =
-        emoteElement.entity.metadata
+        emoteElement?.entity?.metadata
     }
   )
   return newEmotesPageResponse
