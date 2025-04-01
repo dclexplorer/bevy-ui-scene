@@ -7,12 +7,16 @@ import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { store } from '../../../state/store'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
 import { COLOR } from '../../../components/color-palette'
-import { selectEmoteSlotAction } from '../../../state/backpack/actions'
+import {
+  selectEmoteSlotAction,
+  updateEquippedEmoteAction
+} from '../../../state/backpack/actions'
 import { playEmote } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getEmoteName, getEmoteThumbnail } from '../../../service/emotes'
 import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
-
+import Icon from '../../../components/icon/Icon'
+const state: { hoveredIndex: number | null } = { hoveredIndex: null }
 export function EquippedEmoteList({
   equippedEmotes
 }: {
@@ -32,6 +36,7 @@ export function EquippedEmoteList({
           index: number,
           arr: EquippedEmote[]
         ) => {
+          const isHovered = (): boolean => state.hoveredIndex === index
           const backpackState = store.getState().backpack
           return (
             <UiEntity
@@ -63,6 +68,16 @@ export function EquippedEmoteList({
                   ]
 
                 playEmote(selectedEmoteURN)
+              }}
+              onMouseEnter={() => {
+                state.hoveredIndex = index
+              }}
+              onMouseLeave={() => {
+                if (
+                  !(state.hoveredIndex !== null && state.hoveredIndex !== index)
+                ) {
+                  state.hoveredIndex = null
+                }
               }}
             >
               <UiEntity
@@ -114,6 +129,14 @@ export function EquippedEmoteList({
                       })
                 }
               >
+                {backpackState.equippedEmotes[
+                  fromVisualIndexToRealIndex(index)
+                ] && (
+                  <UnequipEmoteCross
+                    slot={fromVisualIndexToRealIndex(index)}
+                    index={index}
+                  />
+                )}
                 <UiEntity
                   uiTransform={{ height: '100%', width: '100%' }}
                   uiBackground={getEmoteThumbnail(equippedEmoteURN)}
@@ -128,4 +151,45 @@ export function EquippedEmoteList({
 }
 function fromVisualIndexToRealIndex(index: number): number {
   return (index + 1) % 10
+}
+
+function UnequipEmoteCross({
+  slot,
+  index
+}: {
+  slot: number
+  index: number
+}): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  return (
+    <UiEntity
+      uiTransform={{
+        width: canvasScaleRatio * 36,
+        height: canvasScaleRatio * 36,
+        flexShrink: 0,
+        positionType: 'absolute',
+        position: { right: 0, top: '1%' },
+        padding: '10%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        pointerFilter: 'none'
+      }}
+      uiBackground={{
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color: COLOR.TEXT_COLOR
+      }}
+      onMouseEnter={() => {
+        state.hoveredIndex = index
+      }}
+      onMouseDown={() => {
+        store.dispatch(updateEquippedEmoteAction({ slot, equippedEmote: '' }))
+      }}
+    >
+      <Icon
+        iconSize={canvasScaleRatio * 26}
+        uiTransform={{ alignSelf: 'center', flexShrink: 0 }}
+        icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
+      />
+    </UiEntity>
+  )
 }
