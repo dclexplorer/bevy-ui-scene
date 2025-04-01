@@ -5,7 +5,7 @@ import {
 } from '../../../utils/definitions'
 import { getEmoteName } from '../../../service/emotes'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
-import { ITEMS_CATALOG_PAGE_SIZE, ZERO_ADDRESS } from '../../../utils/constants'
+import { ZERO_ADDRESS } from '../../../utils/constants'
 import { ItemsCatalog } from './ItemCatalog'
 import { changeCategory } from '../../../service/wearable-category-service'
 import { store } from '../../../state/store'
@@ -22,6 +22,7 @@ import { urnWithTokenIdMemo } from '../../../utils/urn-utils'
 import { playEmote } from '../../../components/backpack/AvatarPreview'
 import { EquippedEmoteList } from './EquippedEmoteList'
 import { NavButton } from '../../../components/nav-button/NavButton'
+import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
 
 export function EmotesCatalog(): ReactElement {
   const backpackState = store.getState().backpack

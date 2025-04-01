@@ -8,7 +8,6 @@ import {
   getContentWidth
 } from '../../../service/canvas-ratio'
 import {
-  catalystMetadataMap,
   fetchWearablesData,
   fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
@@ -21,7 +20,6 @@ import {
   setAvatarPreviewZoomFactor
 } from '../../../components/backpack/AvatarPreview'
 import {
-  ITEMS_CATALOG_PAGE_SIZE,
   ROUNDED_TEXTURE_BACKGROUND,
   ZERO_ADDRESS
 } from '../../../utils/constants'
@@ -53,6 +51,9 @@ import {
 import { fetchEquippedEmotes } from '../../../service/emotes'
 import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
 import { type SetAvatarData } from '../../../bevy-api/interface'
+import { getRealm } from '~system/Runtime'
+import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
+import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 
 let originalAvatarJSON: string
 
@@ -136,7 +137,10 @@ export default class BackpackPage {
     ) as URNWithoutTokenId[]
     const emotes = await fetchEquippedEmotes(player?.userId ?? ZERO_ADDRESS)
 
-    await fetchWearablesData(...(wearables ?? []))
+    await fetchWearablesData(
+      (await getRealm({}))?.realmInfo?.baseUrl ??
+        'https://peer.decentraland.org'
+    )(...(wearables ?? []))
     await fetchEmotesData(...(emotes ?? []))
 
     store.dispatch(updateEquippedEmotesAction(emotes))
@@ -167,7 +171,7 @@ export default class BackpackPage {
     await updatePage(
       backpackState.activeSection === BACKPACK_SECTION.WEARABLES
         ? async () =>
-            await fetchWearablesPage({
+            await fetchWearablesPage((await getRealm({}))?.realmInfo?.baseUrl)({
               ...pageParams,
               wearableCategory: backpackState.activeWearableCategory
             })
@@ -333,7 +337,9 @@ function BackpackNavBar({
               }
               updatePage(
                 async () =>
-                  await fetchWearablesPage({
+                  await fetchWearablesPage(
+                    (await getRealm({}))?.realmInfo?.baseUrl
+                  )({
                     ...pageParams,
                     wearableCategory: backpackState.activeWearableCategory
                   })

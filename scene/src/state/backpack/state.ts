@@ -6,9 +6,12 @@ import type {
 } from '../../utils/item-definitions'
 import type { EquippedEmote, URNWithoutTokenId } from '../../utils/definitions'
 import { EMPTY_OUTFIT, getWearablesFromOutfit } from '../../service/outfit'
-import { ITEMS_CATALOG_PAGE_SIZE } from '../../utils/constants'
 import type { PBAvatarBase } from '../../bevy-api/interface'
-import { DEFAULT_EMOTE_ELEMENTS, EMPTY_EMOTES } from '../../service/emotes'
+import {
+  DEFAULT_EMOTE_ELEMENTS,
+  EMPTY_EMOTES,
+  ITEMS_CATALOG_PAGE_SIZE
+} from '../../utils/backpack-constants'
 
 export const BACKPACK_STORE_ID: 'backpack' = 'backpack'
 export enum BACKPACK_SECTION {

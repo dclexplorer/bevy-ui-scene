@@ -2,7 +2,7 @@ import { BACKPACK_SECTION, type BackpackPageState } from './state'
 import { BACKPACK_ACTION, type BackpackActions } from './actions'
 import { getOutfitSetupFromWearables } from '../../service/outfit'
 import { store } from '../store'
-import { catalystMetadataMap } from '../../utils/wearables-promise-utils'
+
 import { type WearableCategory } from '../../service/categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import {
@@ -10,6 +10,7 @@ import {
   type URNWithoutTokenId
 } from '../../utils/definitions'
 import { cloneDeep } from '../../utils/function-utils'
+import { catalystMetadataMap } from '../../utils/catalyst-metadata-map'
 
 export function reducer(
   backpackPageState: BackpackPageState,

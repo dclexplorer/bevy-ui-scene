@@ -12,7 +12,7 @@ import {
   type offchainEmoteURN,
   type URNWithoutTokenId
 } from '../../utils/definitions'
-import { DEFAULT_EMOTES } from '../../service/emotes'
+import { DEFAULT_EMOTES } from '../../utils/backpack-constants'
 
 const SELECTED_BACKGROUND = getBackgroundFromAtlas({
   atlasName: 'backpack',

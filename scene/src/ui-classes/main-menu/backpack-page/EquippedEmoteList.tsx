@@ -11,7 +11,7 @@ import { selectEmoteSlotAction } from '../../../state/backpack/actions'
 import { playEmote } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getEmoteName, getEmoteThumbnail } from '../../../service/emotes'
-import { catalystMetadataMap } from '../../../utils/wearables-promise-utils'
+import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 
 export function EquippedEmoteList({
   equippedEmotes

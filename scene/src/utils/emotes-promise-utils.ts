@@ -10,9 +10,10 @@ import {
 } from './constants'
 import { getRealm } from '~system/Runtime'
 import { fetchJsonOrTryFallback } from './promise-utils'
-import { catalystMetadataMap } from './wearables-promise-utils'
+
 import { type EquippedEmote, type URNWithoutTokenId } from './definitions'
 import { decoratePageResultWithEmbededEmotes } from '../service/emote-catalog-decoration'
+import { catalystMetadataMap } from './catalyst-metadata-map'
 
 export type EmotesCatalogPageRequest = {
   pageNum: number

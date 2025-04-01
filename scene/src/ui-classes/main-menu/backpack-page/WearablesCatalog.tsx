@@ -27,7 +27,6 @@ import {
 } from '../../../utils/urn-utils'
 import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
 import {
-  catalystMetadataMap,
   fetchWearablesData,
   fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
@@ -35,8 +34,14 @@ import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../../../components/color-palette'
 import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
-import { ITEMS_CATALOG_PAGE_SIZE, ZERO_ADDRESS } from '../../../utils/constants'
+import {
+  CATALYST_BASE_URL_FALLBACK,
+  ZERO_ADDRESS
+} from '../../../utils/constants'
 import { getPlayer } from '@dcl/sdk/src/players'
+import { getRealm } from '~system/Runtime'
+import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
+import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 
 export function WearablesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
@@ -53,7 +58,10 @@ export function WearablesCatalog(): ReactElement {
       <ItemsCatalog
         fetchItemsPage={async () => {
           const backpackState = store.getState().backpack
-          return await fetchWearablesPage({
+          return await fetchWearablesPage(
+            (await getRealm({}))?.realmInfo?.baseUrl ??
+              CATALYST_BASE_URL_FALLBACK
+          )({
             pageNum: backpackState.currentPage,
             pageSize: ITEMS_CATALOG_PAGE_SIZE,
             address: getPlayer()?.userId ?? ZERO_ADDRESS,
@@ -215,7 +223,10 @@ async function updateEquippedWearable(
       wearableURN === null
         ? equippedWearablesWithoutPrevious
         : [...equippedWearablesWithoutPrevious, wearableURN]
-    await fetchWearablesData(...(wearables ?? []))
+    await fetchWearablesData(
+      (await getRealm({}))?.realmInfo?.baseUrl ??
+        'https://peer.decentraland.org'
+    )(...(wearables ?? []))
     store.dispatch(
       updateEquippedWearables({
         wearables,

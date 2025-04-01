@@ -6,8 +6,9 @@ import {
 } from '../../service/categories'
 import { type OutfitSetup } from '../../utils/item-definitions'
 import { store } from '../../state/store'
-import { catalystMetadataMap } from '../../utils/wearables-promise-utils'
+
 import { forceRenderHasEffect } from '../../service/force-render-service'
+import { catalystMetadataMap } from '../../utils/catalyst-metadata-map'
 
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null

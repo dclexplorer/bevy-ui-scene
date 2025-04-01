@@ -9,13 +9,11 @@ import {
 } from '../../../state/backpack/actions'
 
 import { Pagination } from '../../../components/pagination/pagination'
-import {
-  catalystMetadataMap,
-  type WearablesPageResponse
-} from '../../../utils/wearables-promise-utils'
-import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/constants'
+import { type WearablesPageResponse } from '../../../utils/wearables-promise-utils'
 import { type EmotesPageResponse } from '../../../utils/emotes-promise-utils'
 import { InfoPanel } from '../../../components/backpack/InfoPanel'
+import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
+import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 export type ItemsCatalogProps = {
   children?: ReactElement
   fetchItemsPage: () => Promise<EmotesPageResponse | WearablesPageResponse>

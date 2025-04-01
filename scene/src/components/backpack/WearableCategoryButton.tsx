@@ -14,7 +14,6 @@ import Icon from '../icon/Icon'
 import type { AtlasIcon, URNWithoutTokenId } from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { catalystMetadataMap } from '../../utils/wearables-promise-utils'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { store } from '../../state/store'
 import {
@@ -22,6 +21,7 @@ import {
   unequipWearableCategory
 } from '../../state/backpack/actions'
 import { updateAvatarPreview } from './AvatarPreview'
+import { catalystMetadataMap } from '../../utils/catalyst-metadata-map'
 
 type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps
