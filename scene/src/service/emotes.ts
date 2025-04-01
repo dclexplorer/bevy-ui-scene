@@ -133,7 +133,7 @@ export async function fetchEquippedEmotes(
     `https://peer.decentraland.org/lambdas/profiles/${address}`
   )
     .then(async (r) => await r.json())
-    .then((d) => d.avatars[0].avatar.emotes)
+    .then((d) => d?.avatars?.[0].avatar.emotes ?? [])
   return new Array(10).fill(null).map((_, index: number) => {
     const urn =
       response.find(

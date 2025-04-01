@@ -80,7 +80,7 @@ export function CatalogItem(props: CatalogItemProps): ReactElement {
         }
       }}
       onMouseEnter={() => {
-        state.hoveredURN = itemElement.urn
+        state.hoveredURN = itemElement?.urn ?? null
       }}
       onMouseLeave={() => {
         if (!(state.hoveredURN && state.hoveredURN !== itemElement.urn)) {
