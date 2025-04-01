@@ -10,9 +10,9 @@ import {
 } from './constants'
 import { getRealm } from '~system/Runtime'
 import { fetchJsonOrTryFallback } from './promise-utils'
-import { DEFAULT_EMOTE_ELEMENTS, DEFAULT_EMOTES } from '../service/emotes'
 import { catalystMetadataMap } from './wearables-promise-utils'
 import { type EquippedEmote, type URNWithoutTokenId } from './definitions'
+import { decoratePageResultWithEmbededEmotes } from '../service/emote-catalog-decoration'
 
 export type EmotesCatalogPageRequest = {
   pageNum: number
@@ -36,14 +36,17 @@ export type EmotesPageResponse = {
 
 const pageCache = new Map<string, EmotesPageResponse>()
 
-export async function fetchEmotesPage({
-  pageNum,
-  pageSize,
-  address,
-  orderBy = ITEMS_ORDER_BY.DATE,
-  orderDirection = ITEMS_ORDER_DIRECTION.DESC,
-  cacheKey = Date.now().toString()
-}: EmotesCatalogPageRequest): Promise<EmotesPageResponse> {
+export async function fetchEmotesPage(
+  emotesPageRequest: EmotesCatalogPageRequest
+): Promise<EmotesPageResponse> {
+  const {
+    pageNum,
+    pageSize,
+    address,
+    orderBy = ITEMS_ORDER_BY.DATE,
+    orderDirection = ITEMS_ORDER_DIRECTION.DESC,
+    cacheKey = Date.now().toString()
+  } = emotesPageRequest
   const realm = await getRealm({})
   const catalystBaseURl = realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
   const emoteCatalogPageURL = `${catalystBaseURl}${getEmoteCatalogPageURL({
@@ -59,41 +62,11 @@ export async function fetchEmotesPage({
   }
   const emotesPageResponse: EmotesPageResponse =
     await fetchJsonOrTryFallback(emoteCatalogPageURL)
-  const originalTotalAmount = emotesPageResponse.totalAmount
-  emotesPageResponse.totalAmount += DEFAULT_EMOTES.length
-  const isExtraPage =
-    pageNum * pageSize >=
-    (Math.ceil(originalTotalAmount / pageSize) + 1) * pageSize
-  const isOriginalLastPage =
-    pageNum * pageSize >= originalTotalAmount && !isExtraPage
-  const lastPageEmptyCells =
-    Math.ceil(originalTotalAmount / pageSize) * pageSize - originalTotalAmount
-  // TODO Unit test candidate about elements decoration with DEFAULT_EMOTE_ELEMENTS
-  if (isOriginalLastPage && lastPageEmptyCells > 0) {
-    emotesPageResponse.elements = [
-      ...emotesPageResponse.elements,
-      ...DEFAULT_EMOTE_ELEMENTS.slice(0, lastPageEmptyCells)
-    ] as CatalogEmoteElement[]
-  } else if (
-    isExtraPage &&
-    lastPageEmptyCells < DEFAULT_EMOTE_ELEMENTS.length
-  ) {
-    emotesPageResponse.elements = [
-      ...emotesPageResponse.elements,
-      ...DEFAULT_EMOTE_ELEMENTS.slice(
-        lastPageEmptyCells,
-        DEFAULT_EMOTE_ELEMENTS.length
-      )
-    ] as CatalogEmoteElement[]
-  }
+  const decoratedEmotesPageResponse: EmotesPageResponse =
+    decoratePageResultWithEmbededEmotes(emotesPageRequest, emotesPageResponse)
 
-  emotesPageResponse.elements?.forEach((emoteElement: CatalogEmoteElement) => {
-    catalystMetadataMap[emoteElement.urn as URNWithoutTokenId] =
-      emoteElement.entity.metadata
-  })
-
-  pageCache.set(emoteCatalogPageURL, emotesPageResponse)
-  return emotesPageResponse
+  pageCache.set(emoteCatalogPageURL, decoratedEmotesPageResponse)
+  return decoratedEmotesPageResponse
 }
 
 function getEmoteCatalogPageURL(params: EmotesCatalogPageRequest): string {
