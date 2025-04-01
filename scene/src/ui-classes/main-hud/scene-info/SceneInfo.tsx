@@ -16,84 +16,72 @@ import {
   UNSELECTED_TEXT_WHITE
 } from '../../../utils/constants'
 import type { AtlasIcon } from '../../../utils/definitions'
-import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
+import {
+  getBackgroundFromAtlas,
+  truncateWithoutBreakingWords
+} from '../../../utils/ui-utils'
 import type { HomeScene, LiveSceneInfo } from 'src/bevy-api/interface'
 import { BevyApi } from 'src/bevy-api'
 import { setHome } from 'src/state/sceneInfo/actions'
 
 export default class SceneInfo {
   private readonly uiController: UIController
-  public liveSceneInfo: LiveSceneInfo | undefined
+  private liveSceneInfo: LiveSceneInfo | undefined
   private home: HomeScene | undefined
   private realm: string | undefined
   private sceneCoords: Vector3 | undefined
-  public place: PlaceFromApi | undefined
+  private place: PlaceFromApi | undefined
   public fontSize: number = 16
-  private isWarningScene: boolean = true
-  public isExpanded: boolean = false
-  public isMenuOpen: boolean = false
-  public isHome: boolean = false
-  public hideSceneUi: boolean = false
+  private isExpanded: boolean = false
+  private isMenuOpen: boolean = false
+  private isHome: boolean = false
+  private hideSceneUi: boolean = false
+  private expandBackgroundColor: Color4 | undefined = undefined
+  private menuBackgroundColor: Color4 | undefined = undefined
+  private setHomeLabelColor: Color4 = UNSELECTED_TEXT_WHITE
+  private reloadLabelColor: Color4 = UNSELECTED_TEXT_WHITE
+  private openInfoLabelColor: Color4 = UNSELECTED_TEXT_WHITE
+  private sceneUiLabelColor: Color4 = UNSELECTED_TEXT_WHITE
+  private flagIcon: string | undefined
+  private flagHint: string = 'This scene was rated as an adult scene.'
+  private isFlagHintVisible: boolean = false
+  private isBrokenHintVisible: boolean = false
 
-  public favText: string = ''
-
-  public expandIcon: AtlasIcon = {
+  private readonly expandIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'DownArrow'
   }
 
-  public setAtHomeIcon: AtlasIcon = {
+  private readonly setAtHomeIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'HomeOutline'
   }
 
-  public reloadIcon: AtlasIcon = {
+  private readonly reloadIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'Reset'
   }
 
-  public infoIcon: AtlasIcon = {
+  private readonly infoIcon: AtlasIcon = {
     atlasName: 'icons',
     spriteName: 'InfoButton'
   }
 
-  public sceneUiToggle: AtlasIcon = {
+  private readonly sceneUiToggle: AtlasIcon = {
     atlasName: 'toggles',
     spriteName: 'SwitchOff'
   }
 
-  public expandBackgroundColor: Color4 | undefined = undefined
-  public menuBackgroundColor: Color4 | undefined = undefined
-  public setHomeLabelColor: Color4 = UNSELECTED_TEXT_WHITE
-  public reloadLabelColor: Color4 = UNSELECTED_TEXT_WHITE
-  public openInfoLabelColor: Color4 = UNSELECTED_TEXT_WHITE
-  public sceneUiLabelColor: Color4 = UNSELECTED_TEXT_WHITE
-  public setFavLabelColor: Color4 = UNSELECTED_TEXT_WHITE
-
-  // public fpsValue: number = 0
-  // public uniqueGltfMeshesValue: number = 0
-  // public visibleMeshCountValue: number = 0
-  // public visibleTriangleCountValue: number = 0
-  // public uniqueGltfMaterialsValue: number = 0
-  // public visibleMaterialCountValue: number = 0
-  // public totalTextureCountValue: number = 0
-  // public totalTextureMemoryValue: number = 0
-  // public totalEntitiesValue: number = 0
-  public flagIcon: string | undefined
-  private flagHint: string = 'This scene was rated as an adult scene.'
-  private isFlagHintVisible: boolean = false
-  private warningHint: string =
-    'This scene is restricting the use of some features: \n - The camera is locked'
-
-  private isWarningHintVisible: boolean = false
-  // private isLoadingHintVisible: boolean = false
-  // private isSceneLoading: boolean = false
-  private readonly loadingIcon: AtlasIcon = {
-    atlasName: 'icons',
-    spriteName: 'Graphics'
-  }
-
-  // private timer: number = 0
+  // DEBUG Values
+  public fpsValue: number = 0
+  public uniqueGltfMeshesValue: number = 0
+  public visibleMeshCountValue: number = 0
+  public visibleTriangleCountValue: number = 0
+  public uniqueGltfMaterialsValue: number = 0
+  public visibleMaterialCountValue: number = 0
+  public totalTextureCountValue: number = 0
+  public totalTextureMemoryValue: number = 0
+  public totalEntitiesValue: number = 0
 
   constructor(uiController: UIController) {
     this.uiController = uiController
@@ -125,10 +113,10 @@ export default class SceneInfo {
     this.updateIcons()
   }
 
-  setWarning(status: boolean, message: string): void {
-    this.isWarningScene = status
-    this.warningHint = message
-  }
+  // setWarning(status: boolean, message: string): void {
+  //   this.isWarningScene = status
+  //   this.warningHint = message
+  // }
 
   async toggleSceneUi(): Promise<void> {
     const response = await BevyApi.showUi(
@@ -200,28 +188,6 @@ export default class SceneInfo {
   //   this.totalEntitiesValue = arg
   // }
 
-  // setLoading(loading: boolean): void {
-  //   this.isSceneLoading = loading
-  //   if (loading) {
-  //     engine.addSystem(this.loadingSystem.bind(this))
-  //   } else {
-  //     engine.removeSystem(this.loadingSystem.bind(this))
-  //   }
-  // }
-
-  // loadingSystem(): void {
-  //   if (this.timer > 500) {
-  //     this.timer = 0
-  //     if (this.loadingIcon.spriteName === 'Graphics') {
-  //       this.loadingIcon.spriteName = 'Download'
-  //     } else {
-  //       this.loadingIcon.spriteName = 'Graphics'
-  //     }
-  //   } else {
-  //     this.timer = this.timer + 5
-  //   }
-  // }
-
   updateIcons(): void {
     if (this.isExpanded) {
       this.expandIcon.spriteName = 'UpArrow'
@@ -276,7 +242,6 @@ export default class SceneInfo {
 
   mainUi(): ReactEcs.JSX.Element | null {
     if (this.place === undefined) return null
-    // if (this.place === undefined) {this.place = EMPTY_PLACE}
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
@@ -329,10 +294,9 @@ export default class SceneInfo {
               flexDirection: 'row'
             }}
           >
-            {/* <ButtonIcon
+            <ButtonIcon
               onMouseDown={() => {
                 void this.setExpanded(!this.isExpanded)
-                this.setLoading(!this.isExpanded)
               }}
               onMouseEnter={() => {
                 this.expandBackgroundColor = SELECTED_BUTTON_COLOR
@@ -347,7 +311,7 @@ export default class SceneInfo {
               }}
               backgroundColor={this.expandBackgroundColor}
               icon={this.expandIcon}
-            /> */}
+            />
             <UiEntity
               uiTransform={{
                 width: 'auto',
@@ -360,7 +324,7 @@ export default class SceneInfo {
               }}
             >
               <Label
-                value={this.place.title}
+                value={truncateWithoutBreakingWords(this.place.title, 20)}
                 fontSize={this.fontSize}
                 uiTransform={{ height: this.fontSize * 1.1 }}
                 textAlign="middle-left"
@@ -419,27 +383,6 @@ export default class SceneInfo {
 
                 <ButtonIcon
                   uiTransform={{
-                    display:
-                      this.liveSceneInfo?.isBroken === true ? 'flex' : 'none',
-                    width: this.fontSize * 1.2,
-                    height: this.fontSize * 1.2,
-                    margin: { left: this.fontSize * 0.5 }
-                  }}
-                  icon={{ atlasName: 'icons', spriteName: 'WarningError' }}
-                  iconSize={this.fontSize}
-                  onMouseEnter={() => {
-                    this.isWarningHintVisible = true
-                  }}
-                  onMouseLeave={() => {
-                    this.isWarningHintVisible = false
-                  }}
-                  hintText={'Scene is broken'}
-                  showHint={this.liveSceneInfo?.isBroken}
-                  hintFontSize={this.fontSize * 0.75}
-                />
-
-                <ButtonIcon
-                  uiTransform={{
                     display: this.flagIcon !== undefined ? 'flex' : 'none',
                     width: this.fontSize * 1.2,
                     height: this.fontSize * 1.2,
@@ -460,25 +403,26 @@ export default class SceneInfo {
                   showHint={this.isFlagHintVisible}
                   hintFontSize={this.fontSize * 0.75}
                 />
-                {/* <ButtonIcon
+                <ButtonIcon
                   uiTransform={{
-                    display: this.isSceneLoading ? 'flex' : 'none',
+                    display:
+                      this.liveSceneInfo?.isBroken === true ? 'flex' : 'none',
                     width: this.fontSize * 1.2,
                     height: this.fontSize * 1.2,
                     margin: { left: this.fontSize * 0.5 }
                   }}
-                  icon={this.loadingIcon}
+                  icon={{ atlasName: 'icons', spriteName: 'WarningError' }}
                   iconSize={this.fontSize}
                   onMouseEnter={() => {
-                    this.isLoadingHintVisible = true
+                    this.isBrokenHintVisible = true
                   }}
                   onMouseLeave={() => {
-                    this.isLoadingHintVisible = false
+                    this.isBrokenHintVisible = false
                   }}
-                  hintText="Scene is loading"
-                  showHint={this.isLoadingHintVisible}
+                  hintText={'Scene is broken'}
+                  showHint={this.isBrokenHintVisible}
                   hintFontSize={this.fontSize * 0.75}
-                /> */}
+                />
               </UiEntity>
             </UiEntity>
 
@@ -506,8 +450,8 @@ export default class SceneInfo {
           <UiEntity
             uiTransform={{
               display: this.isMenuOpen ? 'flex' : 'none',
-              minWidth: 175,
-              width: canvasInfo.width * 0.1,
+              minWidth: 150,
+              width: 150,
               height: 'auto',
               justifyContent: 'center',
               alignItems: 'center',
@@ -545,6 +489,7 @@ export default class SceneInfo {
                 value={'Hide Scene UI'}
                 fontSize={this.fontSize * 0.8}
                 color={this.sceneUiLabelColor}
+                uiTransform={{ margin: { left: this.fontSize / 3 } }}
               />
               <UiEntity
                 uiTransform={{
@@ -691,230 +636,214 @@ export default class SceneInfo {
   }
 
   debugPanel(): ReactEcs.JSX.Element | null {
-    return null
-    // return(
-    //   <UiEntity
-    //         uiTransform={{
-    //           display: this.isExpanded ? 'flex' : 'none',
-    //           width: '95%',
-    //           height: 'auto',
-    //           flexDirection: 'column'
-    //         }}
-    //       >
-    //         {/* FPS */}
-    //         <UiEntity
-    //           uiTransform={{
-    //             width: '100%',
-    //             height: 'auto',
-    //             justifyContent: 'space-between',
-    //             alignItems: 'center',
-    //             flexDirection: 'row'
-    //           }}
-    //         >
-    //           <Label value="FPS" fontSize={this.fontSize * 0.7} />
-    //           <Label
-    //             value={this.fpsValue.toString()}
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //         </UiEntity>
+    return (
+      <UiEntity
+        uiTransform={{
+          display: this.isExpanded ? 'flex' : 'none',
+          width: '95%',
+          height: 'auto',
+          flexDirection: 'column'
+        }}
+      >
+        {/* FPS */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <Label value="FPS" fontSize={this.fontSize * 0.7} />
+          <Label
+            value={this.fpsValue.toString()}
+            fontSize={this.fontSize * 0.7}
+          />
+        </UiEntity>
 
-    //         <UiEntity
-    //           uiTransform={{ width: '100%', height: 1 }}
-    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-    //         />
+        <UiEntity
+          uiTransform={{ width: '100%', height: 1 }}
+          uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+        />
 
-    //         {/* UNIQUE GLTF MESHES */}
-    //         <UiEntity
-    //           uiTransform={{
-    //             width: '100%',
-    //             height: 'auto',
-    //             justifyContent: 'space-between',
-    //             alignItems: 'center',
-    //             flexDirection: 'row'
-    //           }}
-    //         >
-    //           <Label
-    //             value="Unique GLTF Meshes"
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //           <Label
-    //             value={this.uniqueGltfMeshesValue.toString()}
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //         </UiEntity>
+        {/* UNIQUE GLTF MESHES */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <Label value="Unique GLTF Meshes" fontSize={this.fontSize * 0.7} />
+          <Label
+            value={this.uniqueGltfMeshesValue.toString()}
+            fontSize={this.fontSize * 0.7}
+          />
+        </UiEntity>
 
-    //         <UiEntity
-    //           uiTransform={{ width: '100%', height: 1 }}
-    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-    //         />
+        <UiEntity
+          uiTransform={{ width: '100%', height: 1 }}
+          uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+        />
 
-    //         {/* VISIBLE MESH COUNT */}
-    //         <UiEntity
-    //           uiTransform={{
-    //             width: '100%',
-    //             height: 'auto',
-    //             justifyContent: 'space-between',
-    //             alignItems: 'center',
-    //             flexDirection: 'row'
-    //           }}
-    //         >
-    //           <Label
-    //             value="Visible Mesh Count"
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //           <Label
-    //             value={this.visibleMeshCountValue.toString()}
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //         </UiEntity>
+        {/* VISIBLE MESH COUNT */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <Label value="Visible Mesh Count" fontSize={this.fontSize * 0.7} />
+          <Label
+            value={this.visibleMeshCountValue.toString()}
+            fontSize={this.fontSize * 0.7}
+          />
+        </UiEntity>
 
-    //         <UiEntity
-    //           uiTransform={{ width: '100%', height: 1 }}
-    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-    //         />
+        <UiEntity
+          uiTransform={{ width: '100%', height: 1 }}
+          uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+        />
 
-    //         {/* VISIBLE TRIANGLE COUNT */}
-    //         <UiEntity
-    //           uiTransform={{
-    //             width: '100%',
-    //             height: 'auto',
-    //             justifyContent: 'space-between',
-    //             alignItems: 'center',
-    //             flexDirection: 'row'
-    //           }}
-    //         >
-    //           <Label
-    //             value="Visible Triangle Count"
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //           <Label
-    //             value={this.visibleTriangleCountValue.toString()}
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //         </UiEntity>
+        {/* VISIBLE TRIANGLE COUNT */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <Label
+            value="Visible Triangle Count"
+            fontSize={this.fontSize * 0.7}
+          />
+          <Label
+            value={this.visibleTriangleCountValue.toString()}
+            fontSize={this.fontSize * 0.7}
+          />
+        </UiEntity>
 
-    //         <UiEntity
-    //           uiTransform={{ width: '100%', height: 1 }}
-    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-    //         />
+        <UiEntity
+          uiTransform={{ width: '100%', height: 1 }}
+          uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+        />
 
-    //         {/* UNIQUE GLTF MATERIALS */}
-    //         <UiEntity
-    //           uiTransform={{
-    //             width: '100%',
-    //             height: 'auto',
-    //             justifyContent: 'space-between',
-    //             alignItems: 'center',
-    //             flexDirection: 'row'
-    //           }}
-    //         >
-    //           <Label
-    //             value="Unique GLTF Materials"
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //           <Label
-    //             value={this.uniqueGltfMaterialsValue.toString()}
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //         </UiEntity>
+        {/* UNIQUE GLTF MATERIALS */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <Label value="Unique GLTF Materials" fontSize={this.fontSize * 0.7} />
+          <Label
+            value={this.uniqueGltfMaterialsValue.toString()}
+            fontSize={this.fontSize * 0.7}
+          />
+        </UiEntity>
 
-    //         <UiEntity
-    //           uiTransform={{ width: '100%', height: 1 }}
-    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-    //         />
+        <UiEntity
+          uiTransform={{ width: '100%', height: 1 }}
+          uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+        />
 
-    //         {/* VISIBLE MATERIAL COUNT */}
-    //         <UiEntity
-    //           uiTransform={{
-    //             width: '100%',
-    //             height: 'auto',
-    //             justifyContent: 'space-between',
-    //             alignItems: 'center',
-    //             flexDirection: 'row'
-    //           }}
-    //         >
-    //           <Label
-    //             value="Visible Material Count"
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //           <Label
-    //             value={this.visibleMaterialCountValue.toString()}
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //         </UiEntity>
+        {/* VISIBLE MATERIAL COUNT */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <Label
+            value="Visible Material Count"
+            fontSize={this.fontSize * 0.7}
+          />
+          <Label
+            value={this.visibleMaterialCountValue.toString()}
+            fontSize={this.fontSize * 0.7}
+          />
+        </UiEntity>
 
-    //         <UiEntity
-    //           uiTransform={{ width: '100%', height: 1 }}
-    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-    //         />
+        <UiEntity
+          uiTransform={{ width: '100%', height: 1 }}
+          uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+        />
 
-    //         {/* TOTAL TEXTURE COUNT */}
-    //         <UiEntity
-    //           uiTransform={{
-    //             width: '100%',
-    //             height: 'auto',
-    //             justifyContent: 'space-between',
-    //             alignItems: 'center',
-    //             flexDirection: 'row'
-    //           }}
-    //         >
-    //           <Label
-    //             value="Total Texture Count"
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //           <Label
-    //             value={this.totalTextureCountValue.toString()}
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //         </UiEntity>
+        {/* TOTAL TEXTURE COUNT */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <Label value="Total Texture Count" fontSize={this.fontSize * 0.7} />
+          <Label
+            value={this.totalTextureCountValue.toString()}
+            fontSize={this.fontSize * 0.7}
+          />
+        </UiEntity>
 
-    //         <UiEntity
-    //           uiTransform={{ width: '100%', height: 1 }}
-    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-    //         />
+        <UiEntity
+          uiTransform={{ width: '100%', height: 1 }}
+          uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+        />
 
-    //         {/* TOTAL TEXTURE MEMORY */}
-    //         <UiEntity
-    //           uiTransform={{
-    //             width: '100%',
-    //             height: 'auto',
-    //             justifyContent: 'space-between',
-    //             alignItems: 'center',
-    //             flexDirection: 'row'
-    //           }}
-    //         >
-    //           <Label
-    //             value="Total Texture Memory"
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //           <Label
-    //             value={this.totalTextureMemoryValue.toString() + 'mb'}
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //         </UiEntity>
+        {/* TOTAL TEXTURE MEMORY */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <Label value="Total Texture Memory" fontSize={this.fontSize * 0.7} />
+          <Label
+            value={this.totalTextureMemoryValue.toString() + 'mb'}
+            fontSize={this.fontSize * 0.7}
+          />
+        </UiEntity>
 
-    //         <UiEntity
-    //           uiTransform={{ width: '100%', height: 1 }}
-    //           uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-    //         />
+        <UiEntity
+          uiTransform={{ width: '100%', height: 1 }}
+          uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+        />
 
-    //         {/* TOTAL ENTITIES */}
-    //         <UiEntity
-    //           uiTransform={{
-    //             width: '100%',
-    //             height: 'auto',
-    //             justifyContent: 'space-between',
-    //             alignItems: 'center',
-    //             flexDirection: 'row'
-    //           }}
-    //         >
-    //           <Label value="Total Entities" fontSize={this.fontSize * 0.7} />
-    //           <Label
-    //             value={this.totalEntitiesValue.toString()}
-    //             fontSize={this.fontSize * 0.7}
-    //           />
-    //         </UiEntity>
-    //       </UiEntity>
-    // )
+        {/* TOTAL ENTITIES */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <Label value="Total Entities" fontSize={this.fontSize * 0.7} />
+          <Label
+            value={this.totalEntitiesValue.toString()}
+            fontSize={this.fontSize * 0.7}
+          />
+        </UiEntity>
+      </UiEntity>
+    )
   }
 }

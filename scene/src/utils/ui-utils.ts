@@ -185,8 +185,7 @@ export function formatEventTime(
 
     return `${day}, ${date} ${month} ${year} ${formattedTime} GMT`
   } else if (eventEnd > now) {
-    // Calcular diferencia
-    const diff = Math.abs(now.getTime() - eventStart.getTime()) // Diferencia en milisegundos
+    const diff = Math.abs(now.getTime() - eventStart.getTime())
     const minutesDiff = Math.floor(diff / (1000 * 60))
     const hoursDiff = Math.floor(minutesDiff / 60)
     const daysDiff = Math.floor(hoursDiff / 24)
@@ -242,7 +241,6 @@ export function formatTimestamp(timestamp: string): string {
   const month = months[date.getMonth()]
   const year = date.getFullYear()
 
-  // Determinar el sufijo del día (st, nd, rd, th)
   const daySuffix = (() => {
     if (day % 10 === 1 && day !== 11) return 'st'
     if (day % 10 === 2 && day !== 12) return 'nd'
@@ -277,5 +275,5 @@ export function parseCoordinates(
     return { x: parts[0], y: parts[1] }
   }
 
-  return null // Retorna null si el formato no es válido
+  return null
 }
