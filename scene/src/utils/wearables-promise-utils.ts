@@ -42,15 +42,18 @@ export type WearableCatalogPageParams = WearableCatalogRequest & {
 const pageCache = new Map<string, WearablesPageResponse>()
 export const fetchWearablesPage =
   (catalystBaseUrl?: string) =>
-  async ({
-    pageNum,
-    pageSize,
-    wearableCategory,
-    address,
-    orderBy = ITEMS_ORDER_BY.DATE,
-    orderDirection = ITEMS_ORDER_DIRECTION.DESC,
-    cacheKey = Date.now().toString()
-  }: WearableCatalogRequest): Promise<WearablesPageResponse> => {
+  async (
+    requestParams: WearableCatalogRequest
+  ): Promise<WearablesPageResponse> => {
+    const {
+      pageNum,
+      pageSize,
+      wearableCategory,
+      address,
+      orderBy = ITEMS_ORDER_BY.DATE,
+      orderDirection = ITEMS_ORDER_DIRECTION.DESC,
+      cacheKey = Date.now().toString()
+    } = requestParams
     try {
       const wearableCatalogPageURL = getWearableCatalogPageURL({
         pageNum,
