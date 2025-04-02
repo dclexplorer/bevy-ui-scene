@@ -164,8 +164,11 @@ export type PatchFavoritesResponse = {
   }
 }
 
-export async function updateFavoriteStatus(placeId:string, fav:boolean): Promise<void> {
-    const url = `https://places.decentraland.org/api/places/${placeId}/favorites`
+export async function updateFavoriteStatus(
+  placeId: string,
+  fav: boolean
+): Promise<void> {
+  const url = `https://places.decentraland.org/api/places/${placeId}/favorites`
   const patchData = {
     favorites: fav
   }
@@ -187,7 +190,10 @@ export async function updateFavoriteStatus(placeId:string, fav:boolean): Promise
   }
 }
 
-export async function updateLikeStatus(placeId:string, liked:boolean|null): Promise<void> {
+export async function updateLikeStatus(
+  placeId: string,
+  liked: boolean | null
+): Promise<void> {
   const url = `https://places.decentraland.org/api/places/${placeId}/likes`
   const patchData = {
     like: liked

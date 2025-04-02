@@ -36,7 +36,7 @@ export default class SceneInfo {
   private isMenuOpen: boolean = false
   private isHome: boolean = false
   private hideSceneUi: boolean = false
-  private expandBackgroundColor: Color4 | undefined = undefined
+  // private expandBackgroundColor: Color4 | undefined = undefined
   private menuBackgroundColor: Color4 | undefined = undefined
   private setHomeLabelColor: Color4 = UNSELECTED_TEXT_WHITE
   private reloadLabelColor: Color4 = UNSELECTED_TEXT_WHITE
@@ -222,7 +222,9 @@ export default class SceneInfo {
     this.home = { realm: newRealm, parcel: newParcel }
     store.dispatch(setHome(this.home))
     BevyApi.setHomeScene(this.home)
-    void this.update()
+    this.update().catch((reason) => {
+      console.error(reason)
+    })
   }
 
   async reloadScene(hash?: string): Promise<void> {
@@ -238,7 +240,6 @@ export default class SceneInfo {
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
-    if (this.place === undefined) return null
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
@@ -291,9 +292,10 @@ export default class SceneInfo {
               flexDirection: 'row'
             }}
           >
-            <ButtonIcon
+            {/* FOR DEBUG INFO OR MINIMAP */}
+            {/* <ButtonIcon
               onMouseDown={() => {
-                void this.setExpanded(!this.isExpanded)
+                this.setExpanded(!this.isExpanded).catch((reason)=>{console.error(reason)})
               }}
               onMouseEnter={() => {
                 this.expandBackgroundColor = SELECTED_BUTTON_COLOR
@@ -308,7 +310,7 @@ export default class SceneInfo {
               }}
               backgroundColor={this.expandBackgroundColor}
               icon={this.expandIcon}
-            />
+            /> */}
             <UiEntity
               uiTransform={{
                 width: 'auto',
@@ -321,9 +323,15 @@ export default class SceneInfo {
               }}
             >
               <Label
-                value={truncateWithoutBreakingWords(this.place.title, 20)}
+                value={truncateWithoutBreakingWords(
+                  this.liveSceneInfo?.title ?? '',
+                  20
+                )}
                 fontSize={this.fontSize}
-                uiTransform={{ height: this.fontSize * 1.1 }}
+                uiTransform={{
+                  display: this.liveSceneInfo?.title ? 'flex' : 'none',
+                  height: this.fontSize * 1.1
+                }}
                 textAlign="middle-left"
               />
               <UiEntity
@@ -473,7 +481,9 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                void this.toggleSceneUi()
+                this.toggleSceneUi().catch((reason) => {
+                  console.error(reason)
+                })
               }}
               onMouseEnter={() => {
                 this.sceneUiLabelColor = ALMOST_WHITE
@@ -514,9 +524,13 @@ export default class SceneInfo {
               }}
               onMouseDown={() => {
                 if (this.isHome) {
-                  void this.setHome()
+                  this.setHome().catch((reason) => {
+                    console.error(reason)
+                  })
                 } else {
-                  void this.setHome(this.realm, this.sceneCoords)
+                  this.setHome(this.realm, this.sceneCoords).catch((reason) => {
+                    console.error(reason)
+                  })
                 }
               }}
               onMouseEnter={() => {
@@ -561,7 +575,9 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                void this.reloadScene(this.liveSceneInfo?.hash)
+                this.reloadScene(this.liveSceneInfo?.hash).catch((reason) => {
+                  console.error(reason)
+                })
               }}
               onMouseEnter={() => {
                 this.reloadLabelColor = ALMOST_WHITE
@@ -600,7 +616,9 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                void this.openSceneInfo()
+                this.openSceneInfo().catch((reason) => {
+                  console.error(reason)
+                })
               }}
               onMouseEnter={() => {
                 this.openInfoLabelColor = ALMOST_WHITE

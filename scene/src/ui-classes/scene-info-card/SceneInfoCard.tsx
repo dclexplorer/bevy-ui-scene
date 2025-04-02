@@ -9,7 +9,7 @@ import {
   loadEventsFromApi,
   loadEventsToAttendFromApi,
   loadPhotosFromApi,
-  loadSceneInfoPlaceFromApi,
+  loadSceneInfoPlaceFromApi
 } from 'src/state/sceneInfo/actions'
 import { store } from 'src/state/store'
 import {
@@ -54,14 +54,14 @@ import type {
 } from './SceneInfoCard.types'
 
 export default class SceneInfoCard {
-  public place: PlaceFromApi | undefined=
+  public place: PlaceFromApi | undefined =
     store.getState().scene.sceneInfoCardPlace
 
   public interestedEvents: EventFromApi[] =
     store.getState().scene.explorerEventsToAttend
 
-  private updating:boolean = false
-  private alpha:number = 1
+  private updating: boolean = false
+  private alpha: number = 1
   private photosQuantityInPlace: number = 0
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
@@ -107,8 +107,12 @@ export default class SceneInfoCard {
     if (this.place === undefined) return
 
     this.photosQuantityInPlace = 0
-    fetchPhotosQuantity(this.place.id).then((result)=> {this.photosQuantityInPlace = result}).catch(console.error)
-   
+    fetchPhotosQuantity(this.place.id)
+      .then((result) => {
+        this.photosQuantityInPlace = result
+      })
+      .catch(console.error)
+
     let eventsArray: EventFromApi[]
     try {
       eventsArray = await fetchEvents(this.place.positions)
@@ -150,21 +154,21 @@ export default class SceneInfoCard {
     if (this.updating) return
     if (this.place?.id === undefined) return
     this.setUpdating(true)
-    updateFavoriteStatus(this.place.id, !this.isFav).then(
-      async ()=>{
+    updateFavoriteStatus(this.place.id, !this.isFav)
+      .then(async () => {
         try {
           await this.refreshPlaceFromApi()
-        } catch(error){
+        } catch (error) {
           console.error(error)
         }
         this.updateIcons()
         this.setUpdating(false)
         this.resetBackgrounds()
-      }
-    ).catch((reason)=>{
-      this.setUpdating(false)
-      this.resetBackgrounds()
-    })  
+      })
+      .catch((reason) => {
+        this.setUpdating(false)
+        this.resetBackgrounds()
+      })
   }
 
   setLikeStatus(arg: 'like' | 'dislike' | 'null'): void {
@@ -183,21 +187,21 @@ export default class SceneInfoCard {
         updateArg = null
         break
     }
-    updateLikeStatus(this.place.id, updateArg).then(
-      async ()=>{
+    updateLikeStatus(this.place.id, updateArg)
+      .then(async () => {
         try {
           await this.refreshPlaceFromApi()
-        } catch(error){
+        } catch (error) {
           console.error(error)
         }
         this.updateIcons()
         this.setUpdating(false)
         this.resetBackgrounds()
-      }
-    ).catch((reason)=>{
-      this.setUpdating(false)
-      this.resetBackgrounds()
-    })      
+      })
+      .catch((reason) => {
+        this.setUpdating(false)
+        this.resetBackgrounds()
+      })
   }
 
   async showByCoords(coords: Vector3): Promise<void> {
@@ -208,7 +212,7 @@ export default class SceneInfoCard {
 
   async showByState(): Promise<void> {
     const place = store.getState().scene.explorerPlace
-    if (place){
+    if (place) {
       await this.setPlace(place)
       this.uiController.sceneInfoCardVisible = true
     } else {
@@ -219,7 +223,7 @@ export default class SceneInfoCard {
 
   async refreshPlaceFromApi(): Promise<void> {
     const place = store.getState().scene.explorerPlace
-    if (place===undefined)return
+    if (place === undefined) return
     const auxPlace = await fetchPlaceFromApi(place.id)
     await this.setPlace(auxPlace)
   }
@@ -236,15 +240,17 @@ export default class SceneInfoCard {
 
   resetBackgrounds(): void {
     this.closeBackground = undefined
-    if (!this.updating){this.likeBackgroundColor = DCL_SNOW
-    this.dislikeBackgroundColor = DCL_SNOW
-    this.setFavBackgroundColor = DCL_SNOW}
+    if (!this.updating) {
+      this.likeBackgroundColor = DCL_SNOW
+      this.dislikeBackgroundColor = DCL_SNOW
+      this.setFavBackgroundColor = DCL_SNOW
+    }
     if (!this.isShareMenuOpen) this.shareBackgroundColor = DCL_SNOW
   }
 
-  setUpdating(arg:boolean):void{
+  setUpdating(arg: boolean): void {
     this.updating = arg
-    if(this.updating){
+    if (this.updating) {
       this.alpha = 0.2
     } else {
       this.alpha = 1
@@ -270,13 +276,17 @@ export default class SceneInfoCard {
   }
 
   setTab(tab: 'overview' | 'photos' | 'events'): void {
-    if(this.place === undefined) return
-    if(tab==='photos'){
+    if (this.place === undefined) return
+    if (tab === 'photos') {
       // TODO: add Pagination
       fetchPhotos(
         this.place.id,
         20 //
-      ).then((photosArray)=>{store.dispatch(loadPhotosFromApi(photosArray))}).catch(console.error)
+      )
+        .then((photosArray) => {
+          store.dispatch(loadPhotosFromApi(photosArray))
+        })
+        .catch(console.error)
     }
     this.scrollPos = Vector2.create(0, 0)
     this.selectedTab = tab
@@ -486,11 +496,7 @@ export default class SceneInfoCard {
             }}
           >
             <Label
-              value={
-                'PHOTOS (' +
-                this.photosQuantityInPlace +
-                ')'
-              }
+              value={'PHOTOS (' + this.photosQuantityInPlace + ')'}
               color={BLACK_TEXT}
               fontSize={this.fontSize}
             />
@@ -661,8 +667,16 @@ export default class SceneInfoCard {
             }}
             iconSize={this.fontSize * 1.5}
             icon={this.likeIcon}
-            backgroundColor={this.updating? {...SELECTED_BUTTON_COLOR, a:this.alpha} :this.likeBackgroundColor}
-            iconColor={this.isLiked ? {...RUBY, a:this.alpha}:{...BLACK_TEXT,a:this.alpha}}
+            backgroundColor={
+              this.updating
+                ? { ...SELECTED_BUTTON_COLOR, a: this.alpha }
+                : this.likeBackgroundColor
+            }
+            iconColor={
+              this.isLiked
+                ? { ...RUBY, a: this.alpha }
+                : { ...BLACK_TEXT, a: this.alpha }
+            }
             onMouseEnter={() => {
               this.onLikeEnter()
             }}
@@ -684,8 +698,16 @@ export default class SceneInfoCard {
             }}
             iconSize={this.fontSize * 1.5}
             icon={this.dislikeIcon}
-            backgroundColor={this.updating? {...SELECTED_BUTTON_COLOR, a:this.alpha} : this.dislikeBackgroundColor}
-            iconColor={this.isDisliked ? {...RUBY, a:this.alpha}:{...BLACK_TEXT,a:this.alpha}}
+            backgroundColor={
+              this.updating
+                ? { ...SELECTED_BUTTON_COLOR, a: this.alpha }
+                : this.dislikeBackgroundColor
+            }
+            iconColor={
+              this.isDisliked
+                ? { ...RUBY, a: this.alpha }
+                : { ...BLACK_TEXT, a: this.alpha }
+            }
             onMouseEnter={() => {
               this.onDislikeEnter()
             }}
@@ -694,9 +716,9 @@ export default class SceneInfoCard {
             }}
             onMouseDown={() => {
               if (this.isDisliked) {
-                 this.setLikeStatus('null')
+                this.setLikeStatus('null')
               } else {
-                 this.setLikeStatus('dislike')
+                this.setLikeStatus('dislike')
               }
             }}
           />
@@ -707,8 +729,16 @@ export default class SceneInfoCard {
             }}
             iconSize={this.fontSize * 1.5}
             icon={this.favIcon}
-            backgroundColor={this.updating? {...SELECTED_BUTTON_COLOR, a:this.alpha} : this.setFavBackgroundColor}
-            iconColor={this.isFav? {...RUBY, a:this.alpha}:{...BLACK_TEXT,a:this.alpha}}
+            backgroundColor={
+              this.updating
+                ? { ...SELECTED_BUTTON_COLOR, a: this.alpha }
+                : this.setFavBackgroundColor
+            }
+            iconColor={
+              this.isFav
+                ? { ...RUBY, a: this.alpha }
+                : { ...BLACK_TEXT, a: this.alpha }
+            }
             onMouseEnter={() => {
               this.onFavEnter()
             }}
@@ -1188,7 +1218,9 @@ export default class SceneInfoCard {
                   flexGrow: 1
                 }}
                 onMouseDown={() => {
-                  void this.interestedOnMouseDown(event)
+                  this.interestedOnMouseDown(event).catch((reason) => {
+                    console.error(reason)
+                  })
                 }}
                 onMouseEnter={() => {
                   this.eventInterestedEnter = index

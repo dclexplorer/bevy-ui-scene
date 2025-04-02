@@ -22,9 +22,10 @@ export class GameController {
   constructor() {
     this.uiController = new UIController(this)
     engine.addSystem(this.positionSystem.bind(this))
-    // void this.getFavorites()
+    // this.getFavorites().catch((reason)=>console.error(reason))
   }
 
+  // TODO: This is to request all favorites places for a future tab in discover section
   // public async getFavorites(): Promise<void> {
   //   const favoritePlaces = await getFavoritesFromApi()
   //   store.dispatch(loadFavoritesFromApi(favoritePlaces))
@@ -48,12 +49,13 @@ export class GameController {
             z: Math.floor(newPosition.z / 16)
           })
         )
-        void this.updateWidgetPlace()
+        this.updateWidgetPlace().catch((reason) => {
+          console.error(reason)
+        })
       }
     }
   }
 
- 
   async updateWidgetPlace(): Promise<void> {
     const explorerCoords: ReadOnlyVector3 | undefined =
       store.getState().scene.explorerPlayerPosition
@@ -74,7 +76,9 @@ export class GameController {
     const place = await fetchPlaceFromCoords(explorerCoords)
     const explorerPlace = await fetchPlaceFromApi(place.id)
     store.dispatch(loadPlaceFromApi(explorerPlace))
-    void this.uiController.mainHud.sceneInfo.update()
+    this.uiController.mainHud.sceneInfo.update().catch((reason) => {
+      console.error(reason)
+    })
   }
 }
 
