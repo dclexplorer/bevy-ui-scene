@@ -10,8 +10,6 @@ import {
   loadEventsToAttendFromApi,
   loadPhotosFromApi,
   loadSceneInfoPlaceFromApi,
-  setFavToSend,
-  setLikeToSend
 } from 'src/state/sceneInfo/actions'
 import { store } from 'src/state/store'
 import {
@@ -22,7 +20,8 @@ import {
   fetchPlaceFromApi,
   fetchPlaceFromCoords,
   removeAttendee,
-  updateFavoriteStatus
+  updateFavoriteStatus,
+  updateLikeStatus
 } from 'src/utils/promise-utils'
 import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
 import { ButtonIcon } from '../../components/button-icon'
@@ -62,6 +61,7 @@ export default class SceneInfoCard {
     store.getState().scene.explorerEventsToAttend
 
   private updating:boolean = false
+  private alpha:number = 1
   private photosQuantityInPlace: number = 0
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
@@ -149,7 +149,7 @@ export default class SceneInfoCard {
   toggleFav(): void {
     if (this.updating) return
     if (this.place?.id === undefined) return
-    this.updating = true
+    this.setUpdating(true)
     updateFavoriteStatus(this.place.id, !this.isFav).then(
       async ()=>{
         try {
@@ -158,32 +158,46 @@ export default class SceneInfoCard {
           console.error(error)
         }
         this.updateIcons()
-        this.updating = false
+        this.setUpdating(false)
+        this.resetBackgrounds()
       }
     ).catch((reason)=>{
-      this.updating = false
+      this.setUpdating(false)
+      this.resetBackgrounds()
     })  
   }
 
-  async setLikeStatus(arg: 'like' | 'dislike' | 'null'): Promise<void> {
+  setLikeStatus(arg: 'like' | 'dislike' | 'null'): void {
     if (this.updating) return
     if (this.place?.id === undefined) return
-    store.dispatch(setLikeToSend({ placeId: this.place.id, isLiked: arg }))
+    this.setUpdating(true)
+    let updateArg: boolean | null
     switch (arg) {
       case 'like':
-        this.isLiked = true
-        this.isDisliked = false
+        updateArg = true
         break
       case 'dislike':
-        this.isLiked = false
-        this.isDisliked = true
+        updateArg = false
         break
       case 'null':
-        this.isLiked = false
-        this.isDisliked = false
+        updateArg = null
         break
     }
-    this.updateIcons()
+    updateLikeStatus(this.place.id, updateArg).then(
+      async ()=>{
+        try {
+          await this.refreshPlaceFromApi()
+        } catch(error){
+          console.error(error)
+        }
+        this.updateIcons()
+        this.setUpdating(false)
+        this.resetBackgrounds()
+      }
+    ).catch((reason)=>{
+      this.setUpdating(false)
+      this.resetBackgrounds()
+    })      
   }
 
   async showByCoords(coords: Vector3): Promise<void> {
@@ -212,7 +226,7 @@ export default class SceneInfoCard {
 
   async setPlace(place: PlaceFromApi): Promise<void> {
     store.dispatch(loadSceneInfoPlaceFromApi(place))
-    await this.uiController.sceneCard.update()
+    await this.update()
   }
 
   hide(): void {
@@ -222,10 +236,19 @@ export default class SceneInfoCard {
 
   resetBackgrounds(): void {
     this.closeBackground = undefined
-    this.likeBackgroundColor = DCL_SNOW
+    if (!this.updating){this.likeBackgroundColor = DCL_SNOW
     this.dislikeBackgroundColor = DCL_SNOW
-    this.setFavBackgroundColor = DCL_SNOW
+    this.setFavBackgroundColor = DCL_SNOW}
     if (!this.isShareMenuOpen) this.shareBackgroundColor = DCL_SNOW
+  }
+
+  setUpdating(arg:boolean):void{
+    this.updating = arg
+    if(this.updating){
+      this.alpha = 0.2
+    } else {
+      this.alpha = 1
+    }
   }
 
   updateIcons(): void {
@@ -638,8 +661,8 @@ export default class SceneInfoCard {
             }}
             iconSize={this.fontSize * 1.5}
             icon={this.likeIcon}
-            backgroundColor={this.likeBackgroundColor}
-            iconColor={this.isLiked ? RUBY : BLACK_TEXT}
+            backgroundColor={this.updating? {...SELECTED_BUTTON_COLOR, a:this.alpha} :this.likeBackgroundColor}
+            iconColor={this.isLiked ? {...RUBY, a:this.alpha}:{...BLACK_TEXT,a:this.alpha}}
             onMouseEnter={() => {
               this.onLikeEnter()
             }}
@@ -648,9 +671,9 @@ export default class SceneInfoCard {
             }}
             onMouseDown={() => {
               if (this.isLiked) {
-                void this.setLikeStatus('null')
+                this.setLikeStatus('null')
               } else {
-                void this.setLikeStatus('like')
+                this.setLikeStatus('like')
               }
             }}
           />
@@ -661,8 +684,8 @@ export default class SceneInfoCard {
             }}
             iconSize={this.fontSize * 1.5}
             icon={this.dislikeIcon}
-            backgroundColor={this.dislikeBackgroundColor}
-            iconColor={this.isDisliked ? RUBY : BLACK_TEXT}
+            backgroundColor={this.updating? {...SELECTED_BUTTON_COLOR, a:this.alpha} : this.dislikeBackgroundColor}
+            iconColor={this.isDisliked ? {...RUBY, a:this.alpha}:{...BLACK_TEXT,a:this.alpha}}
             onMouseEnter={() => {
               this.onDislikeEnter()
             }}
@@ -671,9 +694,9 @@ export default class SceneInfoCard {
             }}
             onMouseDown={() => {
               if (this.isDisliked) {
-                void this.setLikeStatus('null')
+                 this.setLikeStatus('null')
               } else {
-                void this.setLikeStatus('dislike')
+                 this.setLikeStatus('dislike')
               }
             }}
           />
@@ -684,8 +707,8 @@ export default class SceneInfoCard {
             }}
             iconSize={this.fontSize * 1.5}
             icon={this.favIcon}
-            backgroundColor={this.setFavBackgroundColor}
-            iconColor={this.isFav ? undefined : BLACK_TEXT}
+            backgroundColor={this.updating? {...SELECTED_BUTTON_COLOR, a:this.alpha} : this.setFavBackgroundColor}
+            iconColor={this.isFav? {...RUBY, a:this.alpha}:{...BLACK_TEXT,a:this.alpha}}
             onMouseEnter={() => {
               this.onFavEnter()
             }}
