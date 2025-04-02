@@ -19,9 +19,10 @@ import {
   fetchEvents,
   fetchPhotos,
   fetchPhotosQuantity,
+  fetchPlaceFromApi,
   fetchPlaceFromCoords,
-  getPlaceFromApi,
-  removeAttendee
+  removeAttendee,
+  updateFavoriteStatus
 } from 'src/utils/promise-utils'
 import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
 import { ButtonIcon } from '../../components/button-icon'
@@ -47,7 +48,6 @@ import {
   parseCoordinates,
   truncateWithoutBreakingWords
 } from '../../utils/ui-utils'
-import type { PhotoFromApi } from '../photos/Photos.types'
 import type {
   CategoryFromApi,
   EventFromApi,
@@ -55,12 +55,14 @@ import type {
 } from './SceneInfoCard.types'
 
 export default class SceneInfoCard {
-  public place: PlaceFromApi | undefined =
+  public place: PlaceFromApi | undefined=
     store.getState().scene.sceneInfoCardPlace
 
   public interestedEvents: EventFromApi[] =
     store.getState().scene.explorerEventsToAttend
 
+  private updating:boolean = false
+  private photosQuantityInPlace: number = 0
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
   public fontSize: number = 16
@@ -102,16 +104,11 @@ export default class SceneInfoCard {
 
   async update(): Promise<void> {
     this.place = store.getState().scene.sceneInfoCardPlace
-
     if (this.place === undefined) return
 
-    const photosQuantityInPlace: number = await fetchPhotosQuantity(
-      this.place.id
-    )
-    const photosArray: PhotoFromApi[] = await fetchPhotos(
-      this.place.id,
-      photosQuantityInPlace
-    )
+    this.photosQuantityInPlace = 0
+    fetchPhotosQuantity(this.place.id).then((result)=> {this.photosQuantityInPlace = result}).catch(console.error)
+   
     let eventsArray: EventFromApi[]
     try {
       eventsArray = await fetchEvents(this.place.positions)
@@ -124,7 +121,6 @@ export default class SceneInfoCard {
 
     store.dispatch(loadEventsFromApi(eventsArray))
     store.dispatch(loadEventsToAttendFromApi(interestedEvents))
-    store.dispatch(loadPhotosFromApi(photosArray))
 
     this.isFav = this.place.user_favorite ?? false
     this.isLiked = this.place.user_like ?? false
@@ -150,19 +146,28 @@ export default class SceneInfoCard {
     await this.update()
   }
 
-  async setFav(arg: boolean): Promise<void> {
+  toggleFav(): void {
+    if (this.updating) return
     if (this.place?.id === undefined) return
-    engine.removeSystem('updatingStatusSystem')
-    store.dispatch(setFavToSend({ placeId: this.place.id, isFav: arg }))
-    this.isFav = arg
-    this.updateIcons()
-    this.uiController.gameController.restartTimer()
-    this.uiController.gameController.addUpdatingStatusSystem()
+    this.updating = true
+    updateFavoriteStatus(this.place.id, !this.isFav).then(
+      async ()=>{
+        try {
+          await this.refreshPlaceFromApi()
+        } catch(error){
+          console.error(error)
+        }
+        this.updateIcons()
+        this.updating = false
+      }
+    ).catch((reason)=>{
+      this.updating = false
+    })  
   }
 
   async setLikeStatus(arg: 'like' | 'dislike' | 'null'): Promise<void> {
+    if (this.updating) return
     if (this.place?.id === undefined) return
-    engine.removeSystem('updatingStatusSystem')
     store.dispatch(setLikeToSend({ placeId: this.place.id, isLiked: arg }))
     switch (arg) {
       case 'like':
@@ -179,25 +184,33 @@ export default class SceneInfoCard {
         break
     }
     this.updateIcons()
-    this.uiController.gameController.restartTimer()
-    this.uiController.gameController.addUpdatingStatusSystem()
   }
 
-  async show(coords: Vector3): Promise<void> {
+  async showByCoords(coords: Vector3): Promise<void> {
     const auxPlace = await fetchPlaceFromCoords(coords)
-    await this.refreshPlaceFromApi(auxPlace.id)
+    await this.setPlace(auxPlace)
     this.uiController.sceneInfoCardVisible = true
   }
 
-  async refreshPlaceFromApi(id?: string): Promise<void> {
-    let refreshId: string
-    if (id === undefined) {
-      if (this.place === undefined) return
-      refreshId = this.place.id
+  async showByState(): Promise<void> {
+    const place = store.getState().scene.explorerPlace
+    if (place){
+      await this.setPlace(place)
+      this.uiController.sceneInfoCardVisible = true
     } else {
-      refreshId = id
+      // TODO: Handle empty parcel
+      console.error('Place is undefined')
     }
-    const place = await getPlaceFromApi(refreshId)
+  }
+
+  async refreshPlaceFromApi(): Promise<void> {
+    const place = store.getState().scene.explorerPlace
+    if (place===undefined)return
+    const auxPlace = await fetchPlaceFromApi(place.id)
+    await this.setPlace(auxPlace)
+  }
+
+  async setPlace(place: PlaceFromApi): Promise<void> {
     store.dispatch(loadSceneInfoPlaceFromApi(place))
     await this.uiController.sceneCard.update()
   }
@@ -234,6 +247,14 @@ export default class SceneInfoCard {
   }
 
   setTab(tab: 'overview' | 'photos' | 'events'): void {
+    if(this.place === undefined) return
+    if(tab==='photos'){
+      // TODO: add Pagination
+      fetchPhotos(
+        this.place.id,
+        20 //
+      ).then((photosArray)=>{store.dispatch(loadPhotosFromApi(photosArray))}).catch(console.error)
+    }
     this.scrollPos = Vector2.create(0, 0)
     this.selectedTab = tab
   }
@@ -444,7 +465,7 @@ export default class SceneInfoCard {
             <Label
               value={
                 'PHOTOS (' +
-                Object.values(store.getState().scene.explorerPhotos).length +
+                this.photosQuantityInPlace +
                 ')'
               }
               color={BLACK_TEXT}
@@ -672,7 +693,7 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
-              void this.setFav(!this.isFav)
+              this.toggleFav()
             }}
           />
           <UiEntity

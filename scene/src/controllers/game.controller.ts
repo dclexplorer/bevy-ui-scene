@@ -1,6 +1,8 @@
 import { getPlayerPosition } from '@dcl-sdk/utils'
 import { engine } from '@dcl/sdk/ecs'
 import type { Vector3 } from '@dcl/sdk/math'
+import { BevyApi } from 'src/bevy-api'
+import type { LiveSceneInfo } from 'src/bevy-api/interface'
 import {
   loadPlaceFromApi,
   loadSceneFromBevyApi,
@@ -9,14 +11,10 @@ import {
 import { store } from 'src/state/store'
 import {
   fetchPlaceFromCoords,
-  getPlaceFromApi,
-  updateFavoriteStatus,
-  updateLikeStatus
+  fetchPlaceFromApi
 } from 'src/utils/promise-utils'
 import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
-import type { LiveSceneInfo } from 'src/bevy-api/interface'
-import { BevyApi } from 'src/bevy-api'
 
 export class GameController {
   public timer: number = 0
@@ -24,7 +22,6 @@ export class GameController {
   constructor() {
     this.uiController = new UIController(this)
     engine.addSystem(this.positionSystem.bind(this))
-    this.restartTimer()
     // void this.getFavorites()
   }
 
@@ -56,29 +53,7 @@ export class GameController {
     }
   }
 
-  updatingStatusSystem(dt: number): void {
-    if (this.timer > 0) {
-      this.timer -= dt
-    } else {
-      void this.updateStatus()
-
-      this.restartTimer()
-      void engine.removeSystem('updatingStatusSystem')
-    }
-  }
-
-  restartTimer(): void {
-    this.timer = 2
-  }
-
-  addUpdatingStatusSystem(): void {
-    engine.addSystem(
-      this.updatingStatusSystem.bind(this),
-      1,
-      'updatingStatusSystem'
-    )
-  }
-
+ 
   async updateWidgetPlace(): Promise<void> {
     const explorerCoords: ReadOnlyVector3 | undefined =
       store.getState().scene.explorerPlayerPosition
@@ -97,24 +72,9 @@ export class GameController {
       store.dispatch(loadSceneFromBevyApi(currentScene))
 
     const place = await fetchPlaceFromCoords(explorerCoords)
-    const explorerPlace = await getPlaceFromApi(place.id)
+    const explorerPlace = await fetchPlaceFromApi(place.id)
     store.dispatch(loadPlaceFromApi(explorerPlace))
     void this.uiController.mainHud.sceneInfo.update()
-  }
-
-  async updateStatus(): Promise<void> {
-    // Update fav status:
-    const favToUpdate = store.getState().scene.sceneInfoCardFavToSend
-    if (favToUpdate !== undefined) {
-      await updateFavoriteStatus()
-    }
-    // Update like status:
-    const likeToUpdate = store.getState().scene.sceneInfoCardLikeToSend
-    if (likeToUpdate !== undefined) {
-      await updateLikeStatus()
-    }
-
-    await this.uiController.sceneCard.refreshPlaceFromApi()
   }
 }
 

@@ -234,10 +234,7 @@ export default class SceneInfo {
   }
 
   async openSceneInfo(): Promise<void> {
-    const sceneCoords = store.getState().scene.explorerPlayerPosition
-    if (sceneCoords !== undefined) {
-      await this.uiController.sceneCard.show(sceneCoords)
-    }
+    await this.uiController.sceneCard.showByState()
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
