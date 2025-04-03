@@ -130,6 +130,7 @@ export function sliderValueToPercentage(
   continuos: boolean = false
 ): number {
   const percentage = 1 - (value - min) / (max - min)
+
   // to float32
   const float32Percentage = Float32Array.from([percentage])[0]
   return float32Percentage
@@ -159,33 +160,32 @@ export function formatEventTime(
 
   if (eventStart > now) {
     // Format: MON, 24 JUL AT 02:00PM
-    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const months = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MAY',
-      'JUN',
-      'JUL',
-      'AUG',
-      'SEP',
-      'OCT',
-      'NOV',
-      'DEC'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ]
     const day = days[eventStart.getUTCDay()]
     const date = eventStart.getUTCDate()
     const month = months[eventStart.getUTCMonth()]
+    const year = eventStart.getUTCFullYear()
     const hours = eventStart.getUTCHours()
     const minutes = eventStart.getUTCMinutes()
-    const formattedTime = `${isNaN(hours % 12) ? 12 : hours % 12}:${minutes
-      .toString()
-      .padStart(2, '0')}${hours >= 12 ? 'PM' : 'AM'}`
-    return `${day}, ${date} ${month} AT ${formattedTime}`
+    const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}`
+
+    return `${day}, ${date} ${month} ${year} ${formattedTime} GMT`
   } else if (eventEnd > now) {
-    // Calcular diferencia
-    const diff = Math.abs(now.getTime() - eventStart.getTime()) // Diferencia en milisegundos
+    const diff = Math.abs(now.getTime() - eventStart.getTime())
     const minutesDiff = Math.floor(diff / (1000 * 60))
     const hoursDiff = Math.floor(minutesDiff / 60)
     const daysDiff = Math.floor(hoursDiff / 24)
@@ -241,7 +241,6 @@ export function formatTimestamp(timestamp: string): string {
   const month = months[date.getMonth()]
   const year = date.getFullYear()
 
-  // Determinar el sufijo del día (st, nd, rd, th)
   const daySuffix = (() => {
     if (day % 10 === 1 && day !== 11) return 'st'
     if (day % 10 === 2 && day !== 12) return 'nd'
@@ -339,4 +338,16 @@ export function rgbToArray(
   rgb: { r: number; g: number; b: number } = { r: 0, g: 0, b: 0 }
 ): number[] {
   return [rgb.r, rgb.g, rgb.b]
+}
+
+export function parseCoordinates(
+  input: string
+): { x: number; y: number } | null {
+  const parts = input.split(',').map((part) => parseFloat(part.trim()))
+
+  if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+    return { x: parts[0], y: parts[1] }
+  }
+
+  return null
 }

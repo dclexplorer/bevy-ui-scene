@@ -13,6 +13,8 @@ import { EMPTY_PHOTO_METADATA } from './constants'
 import type { FormattedURN } from './definitions'
 import { BevyApi } from 'src/bevy-api'
 import type { KernelFetchRespose } from 'src/bevy-api/interface'
+import { type Vector3 } from '@dcl/ecs-math'
+// import { cleanFavToSend, cleanLikeToSend } from 'src/state/sceneInfo/actions'
 
 type EventsResponse = {
   ok: boolean
@@ -33,14 +35,13 @@ type PhotosResponse = {
 export async function fetchEvents(coords: string[]): Promise<EventFromApi[]> {
   const param = coords.map((coord) => `positions[]=${coord}`).join('&')
   try {
-    const response: Response = await fetch(
-      `https://events.decentraland.org/api/events/?${param}`
-    )
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
+    const responseEvents: KernelFetchRespose = await BevyApi.kernelFetch({
+      url: `https://events.decentraland.org/api/events/?${param}`
+    })
+    if (!responseEvents.ok) {
+      throw new Error(`HTTP error! Status: ${responseEvents.status}`)
     }
-
-    const events: EventsResponse = (await response.json()) as EventsResponse
+    const events: EventsResponse = JSON.parse(responseEvents.body)
     return events.data
   } catch (error) {
     console.error('Error fetching events:', error)
@@ -134,13 +135,14 @@ export async function fetchWearable(
   }
 }
 
-export async function fetchPlaceId(
-  x: number,
-  y: number
+export async function fetchPlaceFromCoords(
+  coords: Vector3
 ): Promise<PlaceFromApi> {
   try {
     const response: Response = await fetch(
-      `https://places.decentraland.org/api/places/?positions=${x + ',' + y}`
+      `https://places.decentraland.org/api/places/?positions=${
+        coords.x + ',' + coords.z
+      }`
     )
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
@@ -164,16 +166,15 @@ export type PatchFavoritesResponse = {
 
 export async function updateFavoriteStatus(
   placeId: string,
-  isFavorite: boolean
-): Promise<KernelFetchRespose> {
+  fav: boolean
+): Promise<void> {
   const url = `https://places.decentraland.org/api/places/${placeId}/favorites`
-
   const patchData = {
-    favorites: isFavorite
+    favorites: fav
   }
 
   try {
-    const response = await BevyApi.kernelFetch({
+    await BevyApi.kernelFetch({
       url,
       init: {
         method: 'PATCH',
@@ -183,9 +184,96 @@ export async function updateFavoriteStatus(
         body: JSON.stringify(patchData)
       }
     })
-    return response
   } catch (error) {
     console.error('Error updating favorite status:', error)
     throw new Error('Failed to update favorite status')
   }
+}
+
+export async function updateLikeStatus(
+  placeId: string,
+  liked: boolean | null
+): Promise<void> {
+  const url = `https://places.decentraland.org/api/places/${placeId}/likes`
+  const patchData = {
+    like: liked
+  }
+
+  try {
+    await BevyApi.kernelFetch({
+      url,
+      init: {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(patchData)
+      }
+    })
+  } catch (error) {
+    console.error('Error updating like status:', error)
+    throw new Error('Failed to update like status')
+  }
+}
+export async function createAttendee(eventId: string): Promise<void> {
+  const url = `https://events.decentraland.org/api/events/${eventId}/attendees`
+
+  const responseCreateAttendee: KernelFetchRespose = await BevyApi.kernelFetch({
+    url,
+    init: {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  })
+  if (!responseCreateAttendee.ok) {
+    console.error(
+      'Error creating attendee intention: status code: ',
+      responseCreateAttendee.status
+    )
+    throw new Error(`HTTP error! Status: ${responseCreateAttendee.status}`)
+  }
+}
+
+export async function removeAttendee(eventId: string): Promise<void> {
+  const url = `https://events.decentraland.org/api/events/${eventId}/attendees`
+  const responseRemoveAttendee: KernelFetchRespose = await BevyApi.kernelFetch({
+    url,
+    init: {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  })
+  if (!responseRemoveAttendee.ok) {
+    console.error(
+      'Error deleting attendee intention: status code: ',
+      responseRemoveAttendee.status
+    )
+    throw new Error(`HTTP error! Status: ${responseRemoveAttendee.status}`)
+  }
+}
+
+export async function getFavoritesFromApi(): Promise<PlaceFromApi[]> {
+  const responseFavs: KernelFetchRespose = await BevyApi.kernelFetch({
+    url: `https://places.decentraland.org/api/places?only_favorites=true&with_realms_detail=true`
+  })
+  if (!responseFavs.ok) {
+    throw new Error(`HTTP error! Status: ${responseFavs.status}`)
+  }
+  const favs = JSON.parse(responseFavs.body)
+  return favs.data
+}
+
+export async function fetchPlaceFromApi(id: string): Promise<PlaceFromApi> {
+  const responsePlace: KernelFetchRespose = await BevyApi.kernelFetch({
+    url: `https://places.decentraland.org/api/places/${id}`
+  })
+  if (!responsePlace.ok) {
+    throw new Error(`HTTP error! Status: ${responsePlace.status}`)
+  }
+  const place = JSON.parse(responsePlace.body)
+  return place.data
 }

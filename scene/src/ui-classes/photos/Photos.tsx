@@ -59,9 +59,9 @@ export default class Photos {
   }
 
   showPhoto(index: number): void {
-    void this.getMetadataAndWearables(
+    this.getMetadataAndWearables(
       store.getState().scene.explorerPhotos[index].id
-    )
+    ).catch(console.error)
     this.index = index
     this.selectedPeople = -1
   }
