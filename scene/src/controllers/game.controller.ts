@@ -9,9 +9,7 @@ import {
   savePlayerParcelAction
 } from 'src/state/sceneInfo/actions'
 import { store } from 'src/state/store'
-import {
-  fetchPlaceFromCoords,
-} from 'src/utils/promise-utils'
+import { fetchPlaceFromCoords } from 'src/utils/promise-utils'
 import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
 
@@ -68,9 +66,11 @@ export class GameController {
     )
     store.dispatch(loadSceneFromBevyApi(currentScene))
     store.dispatch(loadPlaceFromApi(undefined))
-    fetchPlaceFromCoords(explorerCoords).then((place) => {
-      store.dispatch(loadPlaceFromApi(place))
-    }).catch(console.error)
+    fetchPlaceFromCoords(explorerCoords)
+      .then((place) => {
+        store.dispatch(loadPlaceFromApi(place))
+      })
+      .catch(console.error)
     this.uiController.mainHud.sceneInfo.update().catch(console.error)
   }
 }

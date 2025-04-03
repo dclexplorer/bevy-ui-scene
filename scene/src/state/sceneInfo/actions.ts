@@ -110,13 +110,17 @@ export const loadEventsToAttendFromApi = (
   payload: events
 })
 
-export const loadPlaceFromApi = (place: PlaceFromApi | undefined): GetPlace => ({
+export const loadPlaceFromApi = (
+  place: PlaceFromApi | undefined
+): GetPlace => ({
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_PLACE_FROM_API,
   payload: place
 })
 
-export const loadSceneFromBevyApi = (scene: LiveSceneInfo | undefined): GetScene => ({
+export const loadSceneFromBevyApi = (
+  scene: LiveSceneInfo | undefined
+): GetScene => ({
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_SCENE_FROM_BEVY_API,
   payload: scene
