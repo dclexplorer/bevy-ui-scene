@@ -1,46 +1,66 @@
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
-import { UiEntity } from '@dcl/sdk/react-ecs'
+import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { ButtonIcon } from '../button-icon'
 import { NavButton } from '../nav-button/NavButton'
-import { TRANSPARENT } from '../../utils/constants'
-import { noop } from '../../utils/function-utils'
 import { getPaginationItems } from './pagination-util'
+import { ROUNDED_TEXTURE_BACKGROUND, TRANSPARENT } from '../../utils/constants'
+import { noop } from '../../utils/function-utils'
 
 export type PaginationProps = {
   pages: number
   currentPage: number
   onChange: (pageElement: number) => void
   disabled?: boolean
+  uiTransform?: UiTransformProps
 }
+
+const getCachedItems = memoize2(getPaginationItems)
 
 export function Pagination({
   pages,
   currentPage,
   onChange = noop,
-  disabled = false
-}: PaginationProps): ReactElement {
+  disabled = false,
+  uiTransform
+}: PaginationProps): ReactElement | null {
   const canvasScaleRatio = getCanvasScaleRatio()
-  // TODO memoize [currentPage , totalPage] -> pageElements
-  const pageElements = getPaginationItems({ currentPage, total: pages })
+  const pageElements = getCachedItems(currentPage, pages)
+
+  if (pages <= 1) return null
+
   return (
     <UiEntity
       uiTransform={{
+        width: '100%',
         justifyContent: 'center',
-        positionType: 'relative',
-        margin: { top: 100 * canvasScaleRatio }
-      }}
-      uiBackground={{
-        color: Color4.create(1, 0, 0, 0.0)
+        alignItems: 'center',
+        alignSelf: 'center',
+        ...uiTransform
       }}
     >
       <ButtonIcon
         icon={{ spriteName: 'LeftArrow', atlasName: 'icons' }}
-        iconSize={60 * canvasScaleRatio}
+        iconSize={50 * canvasScaleRatio}
+        uiTransform={{
+          height: '60%'
+        }}
+        uiBackground={{
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: Color4.create(1, 1, 1, 0.04)
+        }}
+        onMouseDown={() => {
+          if (!disabled) {
+            onChange(currentPage === 1 ? pages : currentPage - 1)
+          }
+        }}
       />
       {pageElements.map((pageElement) => (
-        <UiEntity key={pageElement}>
+        <UiEntity
+          key={pageElement}
+          uiTransform={{ margin: canvasScaleRatio * 10 }}
+        >
           <NavButton
             active={currentPage === pageElement}
             text={pageElement.toString()}
@@ -57,9 +77,40 @@ export function Pagination({
         </UiEntity>
       ))}
       <ButtonIcon
+        uiTransform={{
+          height: '60%'
+        }}
+        uiBackground={{
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: Color4.create(1, 1, 1, 0.04)
+        }}
         icon={{ spriteName: 'RightArrow', atlasName: 'icons' }}
-        iconSize={60 * canvasScaleRatio}
+        iconSize={50 * canvasScaleRatio}
+        onMouseDown={() => {
+          if (!disabled) {
+            onChange(currentPage === pages ? 1 : currentPage + 1)
+          }
+        }}
       />
     </UiEntity>
   )
+}
+
+function memoize2(
+  fn: (a: number, b: number) => number[]
+): (a: number, b: number) => number[] {
+  const cache = new Map<number, Map<number, number[]>>()
+
+  return (a: number, b: number): number[] => {
+    if (cache.has(a) && cache.get(a)?.has(b) === true) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return cache.get(a)!.get(b)!
+    }
+    const result = fn(a, b)
+    if (!cache.has(a)) {
+      cache.set(a, new Map())
+    }
+    cache.get(a)?.set(b, result)
+    return result
+  }
 }

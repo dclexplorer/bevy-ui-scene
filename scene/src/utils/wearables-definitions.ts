@@ -14,12 +14,12 @@ export type OutfitSetup = {
 export type RarityName =
   | 'base'
   | 'common'
-  | 'epic'
-  | 'exotic'
-  | 'legendary'
-  | 'mythic'
-  | 'rare'
   | 'uncommon'
+  | 'rare'
+  | 'epic'
+  | 'legendary'
+  | 'exotic'
+  | 'mythic'
   | 'unique'
 type I18n = {
   code: string
@@ -91,25 +91,14 @@ export type WearableIndividualData = {
   transferredAt: string
 }
 
-export type WearableRarity =
-  | 'base'
-  | 'common'
-  | 'uncommon'
-  | 'rare'
-  | 'epic'
-  | 'legendary'
-  | 'exotic'
-  | 'mythic'
-  | 'unique'
-
 export type CatalogWearableElement = {
   amount: number
   category: WearableCategory
   entity: CatalogWearableEntity
   individualData: WearableIndividualData[]
   name: string
-  rarity: WearableRarity
-  type: 'on-chain' | 'off-chain' | 'base' // TODO review possible values
+  rarity: RarityName
+  type: 'on-chain' | 'off-chain' | 'base'
   urn: URNWithoutTokenId
 }
 export type CatalystWearableMap = {

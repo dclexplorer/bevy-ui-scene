@@ -1,7 +1,11 @@
 import { expect } from "chai";
 import { getOutfitSetupFromWearables, getWearablesFromOutfit, EMPTY_OUTFIT } from "../../scene/src/service/outfit";
 import type { URN, URNWithoutTokenId } from "../../scene/src/utils/definitions";
-import type { WearableEntityMetadata, OutfitSetup } from "../../scene/src/utils/wearables-definitions";
+import type {
+    WearableEntityMetadata,
+    OutfitSetup,
+    CatalystWearableMap
+} from '../../scene/src/utils/wearables-definitions'
 
 describe("getOutfitSetupFromWearables", () => {
     it("should return an outfit with wearables mapped correctly", () => {
@@ -10,10 +14,10 @@ describe("getOutfitSetupFromWearables", () => {
             "urn:decentraland:ethereum:collections-v1:0x5678:item" as URNWithoutTokenId
         ];
 
-        const catalystWearables: WearableEntityMetadata[] = [
-            { id: "urn:decentraland:ethereum:collections-v1:0x1234:item", data: { category: "hat" } } as any,
-            { id: "urn:decentraland:ethereum:collections-v1:0x5678:item", data: { category: "eyewear" } } as any
-        ];
+        const catalystWearables: CatalystWearableMap = {
+            [equippedWearables[0]]:{ id:equippedWearables[0], data: { category: "hat" } } as WearableEntityMetadata,
+            [equippedWearables[1]]:{ id:equippedWearables[1], data: { category: "eyewear" } } as WearableEntityMetadata
+        };
 
         const outfit = getOutfitSetupFromWearables(equippedWearables, catalystWearables);
         expect(outfit.hat).to.equal(equippedWearables[0]);
@@ -21,7 +25,7 @@ describe("getOutfitSetupFromWearables", () => {
     });
 
     it("should return an empty outfit when no wearables match", () => {
-        const outfit = getOutfitSetupFromWearables([], []);
+        const outfit = getOutfitSetupFromWearables([], {});
         expect(outfit).to.deep.equal(EMPTY_OUTFIT.wearables);
     });
 });

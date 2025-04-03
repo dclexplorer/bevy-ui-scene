@@ -5,9 +5,21 @@ import { noop } from '../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { COLOR } from '../color-palette'
-import { WEARABLE_CATEGORY_DEFINITIONS } from '../../service/wearable-categories'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { Color4 } from '@dcl/sdk/math'
+import Icon from '../icon/Icon'
+import { type URNWithoutTokenId } from '../../utils/definitions'
+
+const SELECTED_BACKGROUND = getBackgroundFromAtlas({
+  atlasName: 'backpack',
+  spriteName: 'catalog-selection-frame'
+})
+
+const LOADING_TEXTURE_PROPS = getBackgroundFromAtlas({
+  atlasName: 'backpack',
+  spriteName: 'loading-wearable'
+})
+const DOUBLE_CLICK_DELAY = 400
 
 type WearableCatalogItemProps = {
   uiTransform?: UiTransformProps
@@ -16,22 +28,15 @@ type WearableCatalogItemProps = {
   isSelected: boolean
   loading: boolean
   wearableElement: CatalogWearableElement
-  onUnequipWearable: (wearableElement: CatalogWearableElement) => void
-  onEquipWearable: (wearableElement: CatalogWearableElement) => void
-  onSelect: () => void
+  onUnequipWearable?: (wearableElement: CatalogWearableElement) => void
+  onEquipWearable?: (wearableElement: CatalogWearableElement) => void
+  onSelect?: () => void
 }
-
-const SELECTED_BACKGROUND = {
-  ...getBackgroundFromAtlas({
-    atlasName: 'backpack',
-    spriteName: 'selection'
-  })
-}
-
-const LOADING_TEXTURE_PROPS = getBackgroundFromAtlas({
-  atlasName: 'backpack',
-  spriteName: 'loading-wearable'
-})
+const state: {
+  hoveredURN: URNWithoutTokenId | null
+  lastTimeClick: number
+  lastElementClick: CatalogWearableElement | null
+} = { hoveredURN: null, lastTimeClick: 0, lastElementClick: null }
 
 export function WearableCatalogItem(
   props: WearableCatalogItemProps
@@ -47,7 +52,10 @@ export function WearableCatalogItem(
     uiTransform
   } = props
   const canvasScaleRatio = getCanvasScaleRatio()
-
+  const mustShowEquippedBorder = (): boolean =>
+    !loading && isEquipped && !isSelected
+  const mustShowSelectedOverlay = (): boolean => isSelected && !loading
+  const isHovered = (): boolean => state.hoveredURN === wearableElement?.urn
   return (
     <UiEntity
       uiTransform={{
@@ -57,97 +65,83 @@ export function WearableCatalogItem(
         padding: 8 * canvasScaleRatio,
         ...uiTransform
       }}
-      onMouseDown={onSelect}
+      onMouseDown={() => {
+        if (
+          state.lastTimeClick + DOUBLE_CLICK_DELAY > Date.now() &&
+          state.lastElementClick === wearableElement
+        ) {
+          onEquipWearable(wearableElement)
+        } else {
+          state.lastTimeClick = Date.now()
+          state.lastElementClick = wearableElement
+          onSelect()
+        }
+      }}
+      onMouseEnter={() => {
+        console.log('hoveredURN', wearableElement.urn)
+        state.hoveredURN = wearableElement.urn
+      }}
+      onMouseLeave={() => {
+        if (!(state.hoveredURN && state.hoveredURN !== wearableElement.urn)) {
+          state.hoveredURN = null
+        }
+      }}
     >
-      {!loading && isEquipped && !isSelected ? (
-        <UiEntity
-          uiTransform={{
-            positionType: 'absolute',
-            width: '100%',
-            height: '100%',
-            position: {
-              top: 0,
-              left: 0
-            }
-          }}
-          uiBackground={
-            !loading && isEquipped
-              ? {
-                  ...ROUNDED_TEXTURE_BACKGROUND,
-                  texture: {
-                    src: 'assets/images/backgrounds/rounded-border.png'
-                  },
-                  color: COLOR.ACTIVE_BACKGROUND_COLOR
-                }
-              : {}
-          }
-        />
-      ) : null}
-      {!isSelected ? (
+      {mustShowEquippedBorder() && <EquippedBorder />}
+      {isHovered() && <HoverBorder />}
+      {!isSelected && (
         <WearableCellThumbnail
-          uiTransform={{
-            width: '100%',
-            height: '100%'
-          }}
+          uiTransform={{ width: '100%', height: '100%' }}
           wearableElement={wearableElement}
           loading={loading}
         />
-      ) : null}
-      {isSelected && !loading && (
-        <UiEntity
-          uiTransform={{
-            width: canvasScaleRatio * 240,
-            height: canvasScaleRatio * 320,
-            positionType: 'absolute',
-            position: {
-              top: -16 * canvasScaleRatio,
-              left: -12 * canvasScaleRatio
-            },
-            padding: {
-              top: 18 * canvasScaleRatio,
-              left: 13 * canvasScaleRatio
-            },
-            zIndex: 2,
-            flexDirection: 'column',
-            pointerFilter: 'none'
-          }}
-          uiBackground={SELECTED_BACKGROUND}
-        >
-          <WearableCellThumbnail
-            uiTransform={{
-              width: canvasScaleRatio * 210,
-              height: canvasScaleRatio * 210
-            }}
-            wearableElement={wearableElement}
-            loading={loading}
-          />
-          {isEquipped &&
-          wearableElement.category ===
-            WEARABLE_CATEGORY_DEFINITIONS.body_shape.id ? null : (
-            <RoundedButton
-              uiTransform={{
-                margin: {
-                  top: 9 * canvasScaleRatio,
-                  left: 1
-                },
-                width: 206 * canvasScaleRatio,
-                height: 60 * canvasScaleRatio
-              }}
-              fontSize={26 * canvasScaleRatio}
-              text={isEquipped ? 'UNEQUIP' : 'EQUIP'}
-              isSecondary={isEquipped}
-              onClick={() => {
-                if (isEquipped) {
-                  onUnequipWearable(wearableElement)
-                } else {
-                  onEquipWearable(wearableElement)
-                }
-              }}
-            />
-          )}
-        </UiEntity>
+      )}
+      {mustShowSelectedOverlay() && (
+        <SelectedWearableOverlay
+          wearableElement={wearableElement}
+          isEquipped={isEquipped}
+          onEquipWearable={onEquipWearable}
+          onUnequipWearable={onUnequipWearable}
+        />
       )}
     </UiEntity>
+  )
+}
+
+function HoverBorder(): ReactElement | null {
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        width: '105%',
+        height: '100%',
+        position: { top: '-2%', left: '-2%' }
+      }}
+      uiBackground={{
+        ...getBackgroundFromAtlas({
+          spriteName: 'hover-item',
+          atlasName: 'backpack'
+        })
+      }}
+    />
+  )
+}
+
+function EquippedBorder(): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        width: '100%',
+        height: '95%',
+        position: { top: 0, left: 0 }
+      }}
+      uiBackground={{
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        texture: { src: 'assets/images/backgrounds/rounded-border.png' },
+        color: COLOR.ACTIVE_BACKGROUND_COLOR
+      }}
+    />
   )
 }
 
@@ -163,7 +157,6 @@ function WearableCellThumbnail({
   uiTransform
 }: WearableCellProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
-
   return (
     <UiEntity
       uiTransform={{
@@ -171,47 +164,145 @@ function WearableCellThumbnail({
         height: canvasScaleRatio * 180,
         ...uiTransform
       }}
-      uiBackground={{
-        ...(loading
+      uiBackground={
+        loading
           ? LOADING_TEXTURE_PROPS
           : getBackgroundFromAtlas({
-              spriteName: wearableElement?.rarity ?? 'base',
+              spriteName: `rarity-background-${
+                wearableElement?.rarity ?? 'base'
+              }`,
               atlasName: 'backpack'
-            }))
-      }}
+            })
+      }
     >
-      {!loading && Boolean(wearableElement?.urn) ? (
+      {!loading && wearableElement?.urn && (
+        <WearableImage wearableElement={wearableElement} />
+      )}
+      {wearableElement?.individualData?.length > 1 && (
         <UiEntity
           uiTransform={{
-            width: '100%',
-            height: '100%'
+            alignSelf: 'flex-end',
+            margin: { right: '2%', bottom: '8%' }
           }}
           uiBackground={{
-            texture: {
-              src: `https://peer.decentraland.org/lambdas/collections/contents/${wearableElement.urn}/thumbnail`
-            },
-            textureMode: 'stretch'
+            ...ROUNDED_TEXTURE_BACKGROUND,
+            color: COLOR.SMALL_TAG_BACKGROUND
           }}
-        ></UiEntity>
-      ) : null}
+        >
+          <Label value={`${wearableElement.individualData.length}X`} />
+        </UiEntity>
+      )}
     </UiEntity>
   )
 }
 
-type RoundedButtonProps = {
-  uiTransform?: UiTransformProps
-  isSecondary?: boolean
-  onClick?: () => void
-  text: string
-  fontSize?: number
+function WearableImage({
+  wearableElement
+}: {
+  wearableElement: CatalogWearableElement
+}): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{ width: '95%', height: '95%' }}
+      uiBackground={{
+        texture: {
+          src: `https://peer.decentraland.org/lambdas/collections/contents/${wearableElement.urn}/thumbnail`
+        },
+        textureMode: 'stretch'
+      }}
+    >
+      <UiEntity
+        uiTransform={{ width: '50%', height: '50%', positionType: 'absolute' }}
+        uiBackground={getBackgroundFromAtlas({
+          atlasName: 'backpack',
+          spriteName: `rarity-corner-${wearableElement.rarity ?? 'base'}`
+        })}
+      >
+        <Icon
+          uiTransform={{ margin: { top: '5%', left: '8%' } }}
+          iconSize={'40%'}
+          icon={{
+            atlasName: 'backpack',
+            spriteName: `category-${wearableElement.category}`
+          }}
+        />
+      </UiEntity>
+    </UiEntity>
+  )
 }
+
+type SelectedWearableOverlayProps = {
+  wearableElement: CatalogWearableElement
+  isEquipped: boolean
+  onEquipWearable: (w: CatalogWearableElement) => void
+  onUnequipWearable: (w: CatalogWearableElement) => void
+}
+
+function SelectedWearableOverlay({
+  wearableElement,
+  isEquipped,
+  onEquipWearable,
+  onUnequipWearable
+}: SelectedWearableOverlayProps): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  return (
+    <UiEntity
+      uiTransform={{
+        width: canvasScaleRatio * 260,
+        height: canvasScaleRatio * 320,
+        positionType: 'absolute',
+        position: { top: -16 * canvasScaleRatio, left: -23 * canvasScaleRatio },
+        padding: {
+          top: 24 * canvasScaleRatio,
+          left: 24 * canvasScaleRatio,
+          bottom: 24 * canvasScaleRatio
+        },
+        zIndex: 2,
+        flexDirection: 'column',
+        pointerFilter: 'none'
+      }}
+      uiBackground={SELECTED_BACKGROUND}
+    >
+      <WearableCellThumbnail
+        uiTransform={{
+          width: canvasScaleRatio * 210,
+          height: canvasScaleRatio * 210
+        }}
+        wearableElement={wearableElement}
+        loading={false}
+      />
+      <RoundedButton
+        uiTransform={{
+          margin: { top: 9 * canvasScaleRatio, left: 1 },
+          width: 206 * canvasScaleRatio,
+          height: 60 * canvasScaleRatio
+        }}
+        fontSize={26 * canvasScaleRatio}
+        text={isEquipped ? 'UNEQUIP' : 'EQUIP'}
+        isSecondary={isEquipped}
+        onClick={() => {
+          isEquipped
+            ? onUnequipWearable?.(wearableElement)
+            : onEquipWearable?.(wearableElement)
+        }}
+      />
+    </UiEntity>
+  )
+}
+
 function RoundedButton({
   isSecondary,
   text,
   onClick = noop,
   uiTransform,
   fontSize = 20
-}: RoundedButtonProps): ReactElement {
+}: {
+  isSecondary?: boolean
+  text: string
+  onClick?: () => void
+  uiTransform?: UiTransformProps
+  fontSize?: number
+}): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -221,12 +312,10 @@ function RoundedButton({
         justifyContent: 'center',
         ...uiTransform
       }}
-      onMouseDown={() => {
-        onClick()
-      }}
+      onMouseDown={onClick}
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
-        color: isSecondary === true ? Color4.Black() : Color4.Red()
+        color: isSecondary ? Color4.Black() : Color4.Red()
       }}
     >
       <Label value={text} fontSize={fontSize} />

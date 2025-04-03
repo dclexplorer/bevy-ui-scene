@@ -2,6 +2,7 @@ import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { store } from '../../state/store'
 import { updateViewportSize } from '../../state/viewport/actions'
+import { CustomMouseCursorElement } from '../custom-cursor-component'
 
 function Canvas(props: {
   uiTransform?: UiTransformProps
@@ -28,6 +29,7 @@ function Canvas(props: {
       }}
     >
       {props.children}
+      <CustomMouseCursorElement />
     </UiEntity>
   )
 }

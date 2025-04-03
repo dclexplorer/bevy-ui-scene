@@ -1,6 +1,8 @@
 import { type BackpackPageState } from './state'
 import { BACKPACK_ACTION, type BackpackActions } from './actions'
 import { getOutfitSetupFromWearables } from '../../service/outfit'
+import { store } from '../store'
+import { catalystWearableMap } from '../../utils/wearables-promise-utils'
 
 export function reducer(
   backpackPageState: BackpackPageState,
@@ -16,6 +18,11 @@ export function reducer(
         ...backpackPageState,
         activeWearableCategory: action.payload,
         currentPage: 1
+      }
+    case BACKPACK_ACTION.UPDATE_LOADING_PAGE:
+      return {
+        ...backpackPageState,
+        loadingPage: true
       }
     case BACKPACK_ACTION.UPDATE_LOADED_PAGE:
       return {
@@ -37,7 +44,8 @@ export function reducer(
               action.payload.wearablesData
             )
           }
-        }
+        },
+        changedFromResetVersion: true
       }
     case BACKPACK_ACTION.UPDATE_AVATAR_BASE:
       return {
@@ -52,7 +60,70 @@ export function reducer(
             skinColor: action.payload.skinColor,
             bodyShapeUrn: action.payload.bodyShapeUrn
           }
-        }
+        },
+        changedFromResetVersion: true
+      }
+    case BACKPACK_ACTION.UPDATE_CACHE_KEY:
+      return {
+        ...backpackPageState,
+        cacheKey: Date.now().toString()
+      }
+    case BACKPACK_ACTION.SWITCH_FORCE_RENDER_CATEGORY:
+      return {
+        ...backpackPageState,
+        forceRender: backpackPageState.forceRender.includes(action.payload)
+          ? backpackPageState.forceRender.filter((i) => i !== action.payload)
+          : [...backpackPageState.forceRender, action.payload],
+        changedFromResetVersion: true
+      }
+    case BACKPACK_ACTION.UPDATE_SAVED_RESET_VERSION:
+      return {
+        ...backpackPageState,
+        savedResetOutfit: {
+          base: JSON.parse(
+            JSON.stringify(store.getState().backpack.outfitSetup.base)
+          ),
+          equippedWearables: JSON.parse(
+            JSON.stringify(store.getState().backpack.equippedWearables)
+          ),
+          forceRender: [...store.getState().backpack.forceRender]
+        },
+        changedFromResetVersion: false
+      }
+    case BACKPACK_ACTION.RESET_OUTFIT:
+      return {
+        ...backpackPageState,
+        outfitSetup: {
+          ...backpackPageState.outfitSetup,
+          base: JSON.parse(
+            JSON.stringify(backpackPageState.savedResetOutfit.base)
+          ),
+          wearables: getOutfitSetupFromWearables(
+            backpackPageState.savedResetOutfit.equippedWearables,
+            catalystWearableMap
+          )
+        },
+        forceRender: [...backpackPageState.savedResetOutfit.forceRender],
+        equippedWearables: [
+          ...backpackPageState.savedResetOutfit.equippedWearables
+        ],
+        changedFromResetVersion: false
+      }
+    case BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY:
+      return {
+        ...backpackPageState,
+        outfitSetup: {
+          ...backpackPageState.outfitSetup,
+          wearables: {
+            ...backpackPageState.outfitSetup.wearables,
+            [action.payload]: null
+          }
+        },
+        equippedWearables: backpackPageState.equippedWearables.filter(
+          (equippedWearable) =>
+            equippedWearable !==
+            backpackPageState.outfitSetup.wearables[action.payload]
+        )
       }
     default:
       return backpackPageState

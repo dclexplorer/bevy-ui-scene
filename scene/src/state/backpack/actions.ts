@@ -3,7 +3,7 @@ import { type URNWithoutTokenId } from '../../utils/definitions'
 import { type WearableCategory } from '../../service/wearable-categories'
 import {
   type CatalogWearableElement,
-  type WearableEntityMetadata
+  type CatalystWearableMap
 } from '../../utils/wearables-definitions'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 
@@ -16,7 +16,12 @@ export enum BACKPACK_ACTION {
   UPDATE_LOADING_PAGE,
   UPDATE_LOADED_PAGE,
   UPDATE_EQUIPPED_WEARABLES,
-  UPDATE_AVATAR_BASE
+  UPDATE_AVATAR_BASE,
+  UPDATE_CACHE_KEY,
+  SWITCH_FORCE_RENDER_CATEGORY,
+  UPDATE_SAVED_RESET_VERSION,
+  RESET_OUTFIT,
+  UNEQUIP_WEARABLE_CATEGORY
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -40,7 +45,7 @@ export type BackpackUpdateLoadingPageAction = BackpackActionId & {
 }
 export type BackpackUpdateEquippedWearablesPayload = {
   wearables: URNWithoutTokenId[]
-  wearablesData: WearableEntityMetadata[]
+  wearablesData: CatalystWearableMap
 }
 export type BackpackUpdateEquippedWearablesAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES
@@ -61,7 +66,24 @@ export type BackpackUpdateLoadedPageAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_LOADED_PAGE
   payload: BackpackUpdateLoadedPagePayload
 }
+export type BackpackUpdateCacheKeyAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_CACHE_KEY
+}
+export type BackpackSwitchForceRenderCategory = BackpackActionId & {
+  type: BACKPACK_ACTION.SWITCH_FORCE_RENDER_CATEGORY
+  payload: WearableCategory
+}
 
+export type BackpackUpdateSavedResetVersionAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_SAVED_RESET_VERSION
+}
+export type BackpackResetOutfitAction = BackpackActionId & {
+  type: BACKPACK_ACTION.RESET_OUTFIT
+}
+export type BackpackUnequipWearableCategoryAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY
+  payload: WearableCategory
+}
 export type BackpackActions =
   | BackpackSelectWearableURNAction
   | BackpackUpdateCurrentPageAction
@@ -70,6 +92,11 @@ export type BackpackActions =
   | BackpackUpdateLoadedPageAction
   | BackpackUpdateEquippedWearablesAction
   | BackpackUpdateAvatarBaseAction
+  | BackpackUpdateCacheKeyAction
+  | BackpackSwitchForceRenderCategory
+  | BackpackUpdateSavedResetVersionAction
+  | BackpackResetOutfitAction
+  | BackpackUnequipWearableCategoryAction
 
 export const updateSelectedWearableURN = (
   payload: URNWithoutTokenId | null
@@ -124,5 +151,37 @@ export const updateAvatarBase = (
 ): BackpackUpdateAvatarBaseAction => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.UPDATE_AVATAR_BASE,
+  payload
+})
+
+export const updateCacheKey = (): BackpackUpdateCacheKeyAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UPDATE_CACHE_KEY
+})
+
+export const switchForceRenderCategory = (
+  payload: WearableCategory
+): BackpackSwitchForceRenderCategory => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.SWITCH_FORCE_RENDER_CATEGORY,
+  payload
+})
+
+export const updateSavedResetVersion =
+  (): BackpackUpdateSavedResetVersionAction => ({
+    __reducer: BACKPACK_STORE_ID,
+    type: BACKPACK_ACTION.UPDATE_SAVED_RESET_VERSION
+  })
+
+export const resetOutfitAction = (): BackpackResetOutfitAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.RESET_OUTFIT
+})
+
+export const unequipWearableCategory = (
+  payload: WearableCategory
+): BackpackUnequipWearableCategoryAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY,
   payload
 })

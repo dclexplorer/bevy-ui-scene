@@ -96,8 +96,8 @@ export default class AddLink {
           }}
           onMouseDown={() => {}}
           uiBackground={{
-            color: Color4.Purple(),
-            ...ROUNDED_TEXTURE_BACKGROUND
+            ...ROUNDED_TEXTURE_BACKGROUND,
+            color: Color4.Purple()
           }}
         >
           <Label

@@ -2,7 +2,8 @@ import type { URN, URNWithoutTokenId } from './definitions'
 
 export const BASE_MALE_URN: URNWithoutTokenId =
   'urn:decentraland:off-chain:base-avatars:BaseMale' as URNWithoutTokenId
-
+export const BASE_FEMALE_URN: URNWithoutTokenId =
+  'urn:decentraland:off-chain:base-avatars:BaseFemale' as URNWithoutTokenId
 const urnWithoutTokenIdMemo = new Map<URN, URNWithoutTokenId>()
 export const urnWithTokenIdMemo = new Map<URNWithoutTokenId, URN>()
 

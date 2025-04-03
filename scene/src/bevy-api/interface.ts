@@ -1,5 +1,6 @@
 import type { Vector2 } from '@dcl/sdk/math'
 import type { URN, URNWithoutTokenId } from '../utils/definitions'
+import { type WearableCategory } from '../service/wearable-categories'
 
 export type ExplorerSetting = {
   name: string
@@ -31,6 +32,7 @@ export type KernelFetchRespose = {
 type PBAvatarEquippedData = {
   wearableUrns: URN[]
   emoteUrns: URN[]
+  forceRender: WearableCategory[]
 }
 type RGBColor = { r: number; g: number; b: number }
 export type PBAvatarBase = {

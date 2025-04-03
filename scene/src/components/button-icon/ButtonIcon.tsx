@@ -11,6 +11,7 @@ import { type AtlasIcon } from '../../utils/definitions'
 import { ArrowToast } from '../arrow-toast'
 import Icon from '../icon/Icon'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
+import { type UiBackgroundProps } from '@dcl/react-ecs'
 
 function ButtonIcon(props: {
   // Events
@@ -19,6 +20,7 @@ function ButtonIcon(props: {
   onMouseDown?: Callback
   // Shape
   uiTransform?: UiTransformProps
+  uiBackground?: UiBackgroundProps
   backgroundColor?: Color4
   icon: AtlasIcon
   iconSize?: number
@@ -49,7 +51,8 @@ function ButtonIcon(props: {
       }}
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
-        color: props.backgroundColor ?? { ...Color4.White(), a: 0 }
+        color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
+        ...props.uiBackground
       }}
       onMouseDown={props.onMouseDown}
       onMouseEnter={props.onMouseEnter}

@@ -13,7 +13,9 @@
       "error",
       {
         "allowNullableObject": true,
-        "allowNullableString": true
+        "allowNullableString": true,
+        "allowNullableBoolean": true,
+        "allowAny": true
       }
     ]
   },
