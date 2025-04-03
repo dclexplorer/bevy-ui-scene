@@ -216,7 +216,7 @@ export default class SceneInfo {
   }
 
   async setHome(realm?: string, position?: Vector3 | undefined): Promise<void> {
-    const newRealm = realm ?? 'https://peer-ec1.decentraland.org/about'
+    const newRealm = realm ?? 'http://realm-provider-ea.decentraland.org/main'
     const newParcel =
       Vector2.create(position?.x, position?.z) ?? Vector2.create(0, 0)
     this.home = { realm: newRealm, parcel: newParcel }
@@ -226,11 +226,7 @@ export default class SceneInfo {
   }
 
   async reloadScene(hash?: string): Promise<void> {
-    if (hash) {
-      await BevyApi.reload(hash)
-    } else {
-      await BevyApi.reload(undefined)
-    }
+    await BevyApi.reload(hash ?? undefined)
   }
 
   async openSceneInfo(): Promise<void> {
@@ -265,7 +261,7 @@ export default class SceneInfo {
           uiTransform={{
             width: panelWidth,
             height: 'auto',
-            minHeight: this.fontSize * 3,
+            minHeight: this.fontSize * 3.5,
             justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'column',

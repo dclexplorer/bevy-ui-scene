@@ -67,12 +67,11 @@ export class GameController {
           parcel.x === explorerCoords.x && parcel.y === explorerCoords.z
       )
     )
-    if (currentScene !== undefined)
-      store.dispatch(loadSceneFromBevyApi(currentScene))
-
-    const place = await fetchPlaceFromCoords(explorerCoords)
-    const explorerPlace = await fetchPlaceFromApi(place.id)
-    store.dispatch(loadPlaceFromApi(explorerPlace))
+    store.dispatch(loadSceneFromBevyApi(currentScene))
+    store.dispatch(loadPlaceFromApi(undefined))
+    fetchPlaceFromCoords(explorerCoords).then((place) => {
+      store.dispatch(loadPlaceFromApi(place))
+    }).catch(console.error)
     this.uiController.mainHud.sceneInfo.update().catch(console.error)
   }
 }

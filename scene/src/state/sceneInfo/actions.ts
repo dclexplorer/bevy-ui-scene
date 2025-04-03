@@ -42,11 +42,11 @@ export type GetPhotos = SceneActionId & {
 }
 export type GetPlace = SceneActionId & {
   type: SCENE_INFO_ACTION.GET_PLACE_FROM_API
-  payload: PlaceFromApi
+  payload: PlaceFromApi | undefined
 }
 export type GetScene = SceneActionId & {
   type: SCENE_INFO_ACTION.GET_SCENE_FROM_BEVY_API
-  payload: LiveSceneInfo
+  payload: LiveSceneInfo | undefined
 }
 export type SetFav = SceneActionId & {
   type: SCENE_INFO_ACTION.SET_FAV_TO_SEND
@@ -110,13 +110,13 @@ export const loadEventsToAttendFromApi = (
   payload: events
 })
 
-export const loadPlaceFromApi = (place: PlaceFromApi): GetPlace => ({
+export const loadPlaceFromApi = (place: PlaceFromApi | undefined): GetPlace => ({
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_PLACE_FROM_API,
   payload: place
 })
 
-export const loadSceneFromBevyApi = (scene: LiveSceneInfo): GetScene => ({
+export const loadSceneFromBevyApi = (scene: LiveSceneInfo | undefined): GetScene => ({
   __reducer: SCENE_INFO_STORE_ID,
   type: SCENE_INFO_ACTION.GET_SCENE_FROM_BEVY_API,
   payload: scene
