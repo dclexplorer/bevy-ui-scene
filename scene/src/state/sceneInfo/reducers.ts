@@ -20,14 +20,10 @@ export function reducer(
       return { ...state, sceneInfoCardFavToSend: action.payload }
     case SCENE_INFO_ACTION.SET_LIKE_TO_SEND:
       return { ...state, sceneInfoCardLikeToSend: action.payload }
-    // case SCENE_INFO_ACTION.SET_EVENTS_ID_TO_CREATE_ATTENDEE:
-    //   return { ...state, EventsAttendeeToCreate: action.payload }
-    // case SCENE_INFO_ACTION.SET_EVENTS_ID_TO_REMOVE_ATTENDEE:
-    //   return { ...state, EventsAttendeeToRemove: action.payload }
     case SCENE_INFO_ACTION.GET_PHOTOS_FROM_API:
       return { ...state, explorerPhotos: action.payload }
-    case SCENE_INFO_ACTION.SAVE_PLAYER_POSITION:
-      return { ...state, explorerPlayerPosition: action.payload }
+    case SCENE_INFO_ACTION.SAVE_PLAYER_PARCEL_ACTION:
+      return { ...state, explorerPlayerParcelAction: action.payload }
     case SCENE_INFO_ACTION.GET_FAVS_FROM_API:
       return { ...state, explorerFavorites: action.payload }
     case SCENE_INFO_ACTION.SET_HOME:

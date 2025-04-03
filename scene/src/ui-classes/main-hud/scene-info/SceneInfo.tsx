@@ -91,7 +91,7 @@ export default class SceneInfo {
     this.place = store.getState().scene.explorerPlace
     this.liveSceneInfo = store.getState().scene.explorerScene
     this.home = store.getState().scene.home
-    this.sceneCoords = store.getState().scene.explorerPlayerPosition
+    this.sceneCoords = store.getState().scene.explorerPlayerParcelAction
     this.realm = await BevyApi.getRealmProvider()
     if (this.home !== undefined && this.sceneCoords !== undefined) {
       if (
@@ -222,9 +222,7 @@ export default class SceneInfo {
     this.home = { realm: newRealm, parcel: newParcel }
     store.dispatch(setHome(this.home))
     BevyApi.setHomeScene(this.home)
-    this.update().catch((reason) => {
-      console.error(reason)
-    })
+    this.update().catch(console.error)
   }
 
   async reloadScene(hash?: string): Promise<void> {
@@ -243,7 +241,7 @@ export default class SceneInfo {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    const sceneCoords = store.getState().scene.explorerPlayerPosition
+    const sceneCoords = store.getState().scene.explorerPlayerParcelAction
     if (sceneCoords === undefined) return null
 
     let leftPosition: number
@@ -267,6 +265,7 @@ export default class SceneInfo {
           uiTransform={{
             width: panelWidth,
             height: 'auto',
+            minHeight: this.fontSize * 3,
             justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'column',
@@ -481,9 +480,7 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                this.toggleSceneUi().catch((reason) => {
-                  console.error(reason)
-                })
+                this.toggleSceneUi().catch(console.error)
               }}
               onMouseEnter={() => {
                 this.sceneUiLabelColor = ALMOST_WHITE
@@ -524,13 +521,11 @@ export default class SceneInfo {
               }}
               onMouseDown={() => {
                 if (this.isHome) {
-                  this.setHome().catch((reason) => {
-                    console.error(reason)
-                  })
+                  this.setHome().catch(console.error)
                 } else {
-                  this.setHome(this.realm, this.sceneCoords).catch((reason) => {
-                    console.error(reason)
-                  })
+                  this.setHome(this.realm, this.sceneCoords).catch(
+                    console.error
+                  )
                 }
               }}
               onMouseEnter={() => {
@@ -575,9 +570,7 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                this.reloadScene(this.liveSceneInfo?.hash).catch((reason) => {
-                  console.error(reason)
-                })
+                this.reloadScene(this.liveSceneInfo?.hash).catch(console.error)
               }}
               onMouseEnter={() => {
                 this.reloadLabelColor = ALMOST_WHITE
@@ -616,9 +609,7 @@ export default class SceneInfo {
                 flexDirection: 'row'
               }}
               onMouseDown={() => {
-                this.openSceneInfo().catch((reason) => {
-                  console.error(reason)
-                })
+                this.openSceneInfo().catch(console.error)
               }}
               onMouseEnter={() => {
                 this.openInfoLabelColor = ALMOST_WHITE

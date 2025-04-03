@@ -6,7 +6,7 @@ import type { LiveSceneInfo } from 'src/bevy-api/interface'
 import {
   loadPlaceFromApi,
   loadSceneFromBevyApi,
-  savePlayerPosition
+  savePlayerParcelAction
 } from 'src/state/sceneInfo/actions'
 import { store } from 'src/state/store'
 import {
@@ -17,7 +17,6 @@ import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
 
 export class GameController {
-  public timer: number = 0
   uiController: UIController
   constructor() {
     this.uiController = new UIController(this)
@@ -35,7 +34,7 @@ export class GameController {
     if (engine.PlayerEntity !== undefined) {
       const newPosition: Vector3 = getPlayerPosition()
       const oldPosition: Vector3 | undefined =
-        store.getState().scene.explorerPlayerPosition
+        store.getState().scene.explorerPlayerParcelAction
 
       if (
         oldPosition === undefined ||
@@ -43,22 +42,20 @@ export class GameController {
         Math.floor(newPosition.z / 16) !== oldPosition.z
       ) {
         store.dispatch(
-          savePlayerPosition({
+          savePlayerParcelAction({
             x: Math.floor(newPosition.x / 16),
             y: 0,
             z: Math.floor(newPosition.z / 16)
           })
         )
-        this.updateWidgetPlace().catch((reason) => {
-          console.error(reason)
-        })
+        this.updateWidgetPlace().catch(console.error)
       }
     }
   }
 
   async updateWidgetPlace(): Promise<void> {
     const explorerCoords: ReadOnlyVector3 | undefined =
-      store.getState().scene.explorerPlayerPosition
+      store.getState().scene.explorerPlayerParcelAction
     if (explorerCoords === undefined) {
       return
     }
@@ -76,9 +73,7 @@ export class GameController {
     const place = await fetchPlaceFromCoords(explorerCoords)
     const explorerPlace = await fetchPlaceFromApi(place.id)
     store.dispatch(loadPlaceFromApi(explorerPlace))
-    this.uiController.mainHud.sceneInfo.update().catch((reason) => {
-      console.error(reason)
-    })
+    this.uiController.mainHud.sceneInfo.update().catch(console.error)
   }
 }
 

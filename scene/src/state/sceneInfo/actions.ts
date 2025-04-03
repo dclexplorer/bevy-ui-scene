@@ -19,11 +19,9 @@ export enum SCENE_INFO_ACTION {
   GET_SCENE_FROM_BEVY_API,
   SET_FAV_TO_SEND,
   SET_LIKE_TO_SEND,
-  // SET_EVENTS_ID_TO_CREATE_ATTENDEE,
-  // SET_EVENTS_ID_TO_REMOVE_ATTENDEE,
   CLEAN_FAV_TO_SEND,
   CLEAN_LIKE_TO_SEND,
-  SAVE_PLAYER_POSITION,
+  SAVE_PLAYER_PARCEL_ACTION,
   GET_FAVS_FROM_API,
   GET_LIKES_FROM_API,
   GET_SCENE_INFO_CARD_PLACE_FROM_API,
@@ -58,14 +56,6 @@ export type SetLike = SceneActionId & {
   type: SCENE_INFO_ACTION.SET_LIKE_TO_SEND
   payload: LikePayload
 }
-// export type CreateAttend = SceneActionId & {
-//   type: SCENE_INFO_ACTION.SET_EVENTS_ID_TO_CREATE_ATTENDEE
-//   payload: string[]
-// }
-// export type RemoveAttend = SceneActionId & {
-//   type: SCENE_INFO_ACTION.SET_EVENTS_ID_TO_REMOVE_ATTENDEE
-//   payload: string[]
-// }
 export type CleanFav = SceneActionId & {
   type: SCENE_INFO_ACTION.CLEAN_FAV_TO_SEND
   payload: undefined
@@ -79,7 +69,7 @@ export type GetSceneInfoPlace = SceneActionId & {
   payload: PlaceFromApi
 }
 export type SavePlayerPosition = SceneActionId & {
-  type: SCENE_INFO_ACTION.SAVE_PLAYER_POSITION
+  type: SCENE_INFO_ACTION.SAVE_PLAYER_PARCEL_ACTION
   payload: Vector3
 }
 export type GetFavorites = SceneActionId & {
@@ -105,8 +95,6 @@ export type SceneActions =
   | CleanFav
   | CleanLike
   | SetHome
-// | CreateAttend
-// | RemoveAttend
 
 export const loadEventsFromApi = (events: EventFromApi[]): GetEvents => ({
   __reducer: SCENE_INFO_STORE_ID,
@@ -160,9 +148,11 @@ export const loadPhotosFromApi = (photos: PhotoFromApi[]): GetPhotos => ({
   payload: photos
 })
 
-export const savePlayerPosition = (position: Vector3): SavePlayerPosition => ({
+export const savePlayerParcelAction = (
+  position: Vector3
+): SavePlayerPosition => ({
   __reducer: SCENE_INFO_STORE_ID,
-  type: SCENE_INFO_ACTION.SAVE_PLAYER_POSITION,
+  type: SCENE_INFO_ACTION.SAVE_PLAYER_PARCEL_ACTION,
   payload: position
 })
 
@@ -179,19 +169,3 @@ export const setHome = (home: HomeScene | undefined): SetHome => ({
   type: SCENE_INFO_ACTION.SET_HOME,
   payload: home
 })
-
-// export const setCreateAttendToSend = (
-//   EventsToAddIntentionToAttend: string[]
-// ): CreateAttend => ({
-//   __reducer: SCENE_INFO_STORE_ID,
-//   type: SCENE_INFO_ACTION.SET_EVENTS_ID_TO_CREATE_ATTENDEE,
-//   payload: EventsToAddIntentionToAttend
-// })
-
-// export const setRemoveAttendToSend = (
-//   EventsToRemoveIntentionToAttend: string[]
-// ): RemoveAttend => ({
-//   __reducer: SCENE_INFO_STORE_ID,
-//   type: SCENE_INFO_ACTION.SET_EVENTS_ID_TO_REMOVE_ATTENDEE,
-//   payload: EventsToRemoveIntentionToAttend
-// })

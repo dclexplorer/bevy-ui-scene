@@ -1218,9 +1218,7 @@ export default class SceneInfoCard {
                   flexGrow: 1
                 }}
                 onMouseDown={() => {
-                  this.interestedOnMouseDown(event).catch((reason) => {
-                    console.error(reason)
-                  })
+                  this.interestedOnMouseDown(event).catch(console.error)
                 }}
                 onMouseEnter={() => {
                   this.eventInterestedEnter = index

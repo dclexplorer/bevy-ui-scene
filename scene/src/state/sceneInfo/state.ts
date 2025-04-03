@@ -18,10 +18,8 @@ export type SceneState = {
   sceneInfoCardPlace: PlaceFromApi | undefined
   sceneInfoCardFavToSend: FavPayload | undefined
   sceneInfoCardLikeToSend: LikePayload | undefined
-  EventsAttendeeToCreate: string[]
-  EventsAttendeeToRemove: string[]
   explorerPhotos: PhotoFromApi[]
-  explorerPlayerPosition: Vector3 | undefined
+  explorerPlayerParcelAction: Vector3 | undefined
   explorerFavorites: PlaceFromApi[] | undefined
   home: HomeScene | undefined
 }
@@ -34,10 +32,8 @@ export const sceneInitialState: SceneState = {
   sceneInfoCardPlace: undefined,
   sceneInfoCardFavToSend: undefined,
   sceneInfoCardLikeToSend: undefined,
-  EventsAttendeeToCreate: [],
-  EventsAttendeeToRemove: [],
   explorerPhotos: [],
-  explorerPlayerPosition: undefined,
+  explorerPlayerParcelAction: undefined,
   explorerFavorites: undefined,
   home: undefined
 }
