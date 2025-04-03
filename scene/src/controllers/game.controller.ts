@@ -11,7 +11,6 @@ import {
 import { store } from 'src/state/store'
 import {
   fetchPlaceFromCoords,
-  fetchPlaceFromApi
 } from 'src/utils/promise-utils'
 import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
