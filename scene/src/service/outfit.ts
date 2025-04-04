@@ -2,12 +2,14 @@ import type { URNWithoutTokenId } from '../utils/definitions'
 import type {
   OutfitSetup,
   OutfitSetupWearables,
-  CatalystWearableMap
-} from '../utils/wearables-definitions'
+  CatalystMetadataMap,
+  WearableEntityMetadata,
+  EmoteEntityMetadata
+} from '../utils/item-definitions'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from './wearable-categories'
+} from './categories'
 import { BASE_MALE_URN } from '../utils/urn-utils'
 import { deepFreeze } from '../utils/object-utils'
 
@@ -43,13 +45,15 @@ export const EMPTY_OUTFIT: OutfitSetup = deepFreeze({
 
 export function getOutfitSetupFromWearables(
   equippedWearables: URNWithoutTokenId[] = [],
-  catalystWearables: CatalystWearableMap
+  catalystWearables: CatalystMetadataMap
 ): OutfitSetupWearables {
   return equippedWearables.reduce(
     (acc: OutfitSetupWearables, wearableURN: URNWithoutTokenId) => {
-      const wearableEntityMetadatum = catalystWearables[wearableURN]
-      acc[wearableEntityMetadatum.data.category as WearableCategory] =
-        wearableURN
+      const entityMetadata = catalystWearables[wearableURN]
+      const data =
+        (entityMetadata as WearableEntityMetadata).data ??
+        (entityMetadata as EmoteEntityMetadata)?.emoteDataADR74
+      acc[data.category as WearableCategory] = wearableURN
       return acc
     },
     { ...EMPTY_OUTFIT.wearables }

@@ -1,10 +1,14 @@
-import { BACKPACK_STORE_ID } from './state'
-import { type URNWithoutTokenId } from '../../utils/definitions'
-import { type WearableCategory } from '../../service/wearable-categories'
+import { type BACKPACK_SECTION, BACKPACK_STORE_ID } from './state'
 import {
+  type EquippedEmote,
+  type URNWithoutTokenId
+} from '../../utils/definitions'
+import { type WearableCategory } from '../../service/categories'
+import {
+  type CatalogEmoteElement,
   type CatalogWearableElement,
-  type CatalystWearableMap
-} from '../../utils/wearables-definitions'
+  type CatalystMetadataMap
+} from '../../utils/item-definitions'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 
 type BackpackActionId = { __reducer: typeof BACKPACK_STORE_ID }
@@ -21,7 +25,11 @@ export enum BACKPACK_ACTION {
   SWITCH_FORCE_RENDER_CATEGORY,
   UPDATE_SAVED_RESET_VERSION,
   RESET_OUTFIT,
-  UNEQUIP_WEARABLE_CATEGORY
+  UNEQUIP_WEARABLE_CATEGORY,
+  CHANGE_SECTION,
+  UPDATE_EQUIPPED_EMOTES,
+  UPDATE_EQUIPPED_EMOTE,
+  SELECT_EMOTE_SLOT
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -45,13 +53,24 @@ export type BackpackUpdateLoadingPageAction = BackpackActionId & {
 }
 export type BackpackUpdateEquippedWearablesPayload = {
   wearables: URNWithoutTokenId[]
-  wearablesData: CatalystWearableMap
+  wearablesData: CatalystMetadataMap
 }
 export type BackpackUpdateEquippedWearablesAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES
   payload: BackpackUpdateEquippedWearablesPayload
 }
-
+export type BackpackUpdateEquippedEmotesAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTES
+  payload: EquippedEmote[]
+}
+export type BackpackUpdateEquippedEmotePayload = {
+  equippedEmote: EquippedEmote
+  slot: number
+}
+export type BackpackUpdateEquippedEmoteAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTE
+  payload: BackpackUpdateEquippedEmotePayload
+}
 export type BackpackUpdateAvatarBasePayload = PBAvatarBase
 export type BackpackUpdateAvatarBaseAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_AVATAR_BASE
@@ -60,7 +79,7 @@ export type BackpackUpdateAvatarBaseAction = BackpackActionId & {
 
 export type BackpackUpdateLoadedPagePayload = {
   totalPages: number
-  shownWearables: CatalogWearableElement[]
+  elements: Array<CatalogWearableElement | CatalogEmoteElement>
 }
 export type BackpackUpdateLoadedPageAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_LOADED_PAGE
@@ -84,6 +103,15 @@ export type BackpackUnequipWearableCategoryAction = BackpackActionId & {
   type: BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY
   payload: WearableCategory
 }
+
+export type BackpackChangeSectionAction = BackpackActionId & {
+  type: BACKPACK_ACTION.CHANGE_SECTION
+  payload: BACKPACK_SECTION
+}
+export type BackpackSelectEmoteSlotAction = BackpackActionId & {
+  type: BACKPACK_ACTION.SELECT_EMOTE_SLOT
+  payload: number
+}
 export type BackpackActions =
   | BackpackSelectWearableURNAction
   | BackpackUpdateCurrentPageAction
@@ -97,6 +125,10 @@ export type BackpackActions =
   | BackpackUpdateSavedResetVersionAction
   | BackpackResetOutfitAction
   | BackpackUnequipWearableCategoryAction
+  | BackpackChangeSectionAction
+  | BackpackUpdateEquippedEmotesAction
+  | BackpackUpdateEquippedEmoteAction
+  | BackpackSelectEmoteSlotAction
 
 export const updateSelectedWearableURN = (
   payload: URNWithoutTokenId | null
@@ -146,6 +178,22 @@ export const updateEquippedWearables = (
   payload
 })
 
+export const updateEquippedEmotesAction = (
+  payload: EquippedEmote[]
+): BackpackUpdateEquippedEmotesAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTES,
+  payload
+})
+
+export const updateEquippedEmoteAction = (
+  payload: BackpackUpdateEquippedEmotePayload
+): BackpackUpdateEquippedEmoteAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTE,
+  payload
+})
+
 export const updateAvatarBase = (
   payload: BackpackUpdateAvatarBasePayload
 ): BackpackUpdateAvatarBaseAction => ({
@@ -183,5 +231,21 @@ export const unequipWearableCategory = (
 ): BackpackUnequipWearableCategoryAction => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY,
+  payload
+})
+
+export const changeSectionAction = (
+  payload: BACKPACK_SECTION
+): BackpackChangeSectionAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.CHANGE_SECTION,
+  payload
+})
+
+export const selectEmoteSlotAction = (
+  payload: number
+): BackpackSelectEmoteSlotAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.SELECT_EMOTE_SLOT,
   payload
 })

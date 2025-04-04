@@ -1,5 +1,5 @@
 import { Label, UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
-import type { CatalogWearableElement } from '../../utils/wearables-definitions'
+import type { ItemElement } from '../../utils/item-definitions'
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { noop } from '../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
@@ -8,7 +8,11 @@ import { COLOR } from '../color-palette'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { Color4 } from '@dcl/sdk/math'
 import Icon from '../icon/Icon'
-import { type URNWithoutTokenId } from '../../utils/definitions'
+import {
+  type offchainEmoteURN,
+  type URNWithoutTokenId
+} from '../../utils/definitions'
+import { DEFAULT_EMOTES } from '../../utils/backpack-constants'
 
 const SELECTED_BACKGROUND = getBackgroundFromAtlas({
   atlasName: 'backpack',
@@ -21,41 +25,39 @@ const LOADING_TEXTURE_PROPS = getBackgroundFromAtlas({
 })
 const DOUBLE_CLICK_DELAY = 400
 
-type WearableCatalogItemProps = {
+type CatalogItemProps = {
   uiTransform?: UiTransformProps
   key: number
   isEquipped: boolean
   isSelected: boolean
   loading: boolean
-  wearableElement: CatalogWearableElement
-  onUnequipWearable?: (wearableElement: CatalogWearableElement) => void
-  onEquipWearable?: (wearableElement: CatalogWearableElement) => void
+  itemElement: ItemElement
+  onUnequipItem?: (itemElement: ItemElement) => void
+  onEquipItem?: (itemElement: ItemElement) => void
   onSelect?: () => void
 }
 const state: {
-  hoveredURN: URNWithoutTokenId | null
+  hoveredURN: URNWithoutTokenId | offchainEmoteURN | null
   lastTimeClick: number
-  lastElementClick: CatalogWearableElement | null
+  lastElementClick: ItemElement | null
 } = { hoveredURN: null, lastTimeClick: 0, lastElementClick: null }
 
-export function WearableCatalogItem(
-  props: WearableCatalogItemProps
-): ReactElement {
+export function CatalogItem(props: CatalogItemProps): ReactElement {
   const {
     isEquipped,
     isSelected,
     onSelect = noop,
     loading = true,
-    wearableElement,
-    onUnequipWearable = noop,
-    onEquipWearable = noop,
+    itemElement,
+    onUnequipItem = noop,
+    onEquipItem = noop,
     uiTransform
   } = props
   const canvasScaleRatio = getCanvasScaleRatio()
   const mustShowEquippedBorder = (): boolean =>
     !loading && isEquipped && !isSelected
   const mustShowSelectedOverlay = (): boolean => isSelected && !loading
-  const isHovered = (): boolean => state.hoveredURN === wearableElement?.urn
+  const isHovered = (): boolean => state.hoveredURN === itemElement?.urn
   return (
     <UiEntity
       uiTransform={{
@@ -68,21 +70,20 @@ export function WearableCatalogItem(
       onMouseDown={() => {
         if (
           state.lastTimeClick + DOUBLE_CLICK_DELAY > Date.now() &&
-          state.lastElementClick === wearableElement
+          state.lastElementClick === itemElement
         ) {
-          onEquipWearable(wearableElement)
+          onEquipItem(itemElement)
         } else {
           state.lastTimeClick = Date.now()
-          state.lastElementClick = wearableElement
+          state.lastElementClick = itemElement
           onSelect()
         }
       }}
       onMouseEnter={() => {
-        console.log('hoveredURN', wearableElement.urn)
-        state.hoveredURN = wearableElement.urn
+        state.hoveredURN = itemElement?.urn ?? null
       }}
       onMouseLeave={() => {
-        if (!(state.hoveredURN && state.hoveredURN !== wearableElement.urn)) {
+        if (!(state.hoveredURN && state.hoveredURN !== itemElement.urn)) {
           state.hoveredURN = null
         }
       }}
@@ -90,18 +91,18 @@ export function WearableCatalogItem(
       {mustShowEquippedBorder() && <EquippedBorder />}
       {isHovered() && <HoverBorder />}
       {!isSelected && (
-        <WearableCellThumbnail
+        <ItemCellThumbnail
           uiTransform={{ width: '100%', height: '100%' }}
-          wearableElement={wearableElement}
+          itemElement={itemElement}
           loading={loading}
         />
       )}
       {mustShowSelectedOverlay() && (
-        <SelectedWearableOverlay
-          wearableElement={wearableElement}
+        <SelectedItemOverlay
+          itemElement={itemElement}
           isEquipped={isEquipped}
-          onEquipWearable={onEquipWearable}
-          onUnequipWearable={onUnequipWearable}
+          onEquipItem={onEquipItem}
+          onUnequipItem={onUnequipItem}
         />
       )}
     </UiEntity>
@@ -145,17 +146,17 @@ function EquippedBorder(): ReactElement {
   )
 }
 
-type WearableCellProps = {
+type ItemCellProps = {
   loading: boolean
-  wearableElement: CatalogWearableElement
+  itemElement: ItemElement
   uiTransform?: UiTransformProps
 }
 
-function WearableCellThumbnail({
+function ItemCellThumbnail({
   loading,
-  wearableElement,
+  itemElement,
   uiTransform
-}: WearableCellProps): ReactElement {
+}: ItemCellProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   return (
     <UiEntity
@@ -168,17 +169,13 @@ function WearableCellThumbnail({
         loading
           ? LOADING_TEXTURE_PROPS
           : getBackgroundFromAtlas({
-              spriteName: `rarity-background-${
-                wearableElement?.rarity ?? 'base'
-              }`,
+              spriteName: `rarity-background-${itemElement?.rarity ?? 'base'}`,
               atlasName: 'backpack'
             })
       }
     >
-      {!loading && wearableElement?.urn && (
-        <WearableImage wearableElement={wearableElement} />
-      )}
-      {wearableElement?.individualData?.length > 1 && (
+      {!loading && itemElement?.urn && <ItemImage itemElement={itemElement} />}
+      {itemElement?.individualData?.length > 1 && (
         <UiEntity
           uiTransform={{
             alignSelf: 'flex-end',
@@ -189,33 +186,42 @@ function WearableCellThumbnail({
             color: COLOR.SMALL_TAG_BACKGROUND
           }}
         >
-          <Label value={`${wearableElement.individualData.length}X`} />
+          <Label value={`${itemElement.amount}X`} />
         </UiEntity>
       )}
     </UiEntity>
   )
 }
 
-function WearableImage({
-  wearableElement
+function ItemImage({
+  itemElement
 }: {
-  wearableElement: CatalogWearableElement
+  itemElement: ItemElement
 }): ReactElement {
   return (
     <UiEntity
       uiTransform={{ width: '95%', height: '95%' }}
-      uiBackground={{
-        texture: {
-          src: `https://peer.decentraland.org/lambdas/collections/contents/${wearableElement.urn}/thumbnail`
-        },
-        textureMode: 'stretch'
-      }}
+      uiBackground={
+        DEFAULT_EMOTES.includes(itemElement.urn as offchainEmoteURN)
+          ? getBackgroundFromAtlas({
+              spriteName: itemElement.urn,
+              atlasName: 'emotes'
+            })
+          : {
+              texture: {
+                src: `https://peer.decentraland.org/lambdas/collections/contents/${
+                  itemElement.urn as string
+                }/thumbnail`
+              },
+              textureMode: 'stretch'
+            }
+      }
     >
       <UiEntity
         uiTransform={{ width: '50%', height: '50%', positionType: 'absolute' }}
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
-          spriteName: `rarity-corner-${wearableElement.rarity ?? 'base'}`
+          spriteName: `rarity-corner-${itemElement.rarity ?? 'base'}`
         })}
       >
         <Icon
@@ -223,7 +229,7 @@ function WearableImage({
           iconSize={'40%'}
           icon={{
             atlasName: 'backpack',
-            spriteName: `category-${wearableElement.category}`
+            spriteName: `category-${itemElement.category}`
           }}
         />
       </UiEntity>
@@ -231,19 +237,19 @@ function WearableImage({
   )
 }
 
-type SelectedWearableOverlayProps = {
-  wearableElement: CatalogWearableElement
+type SelectedItemOverlayProps = {
+  itemElement: ItemElement
   isEquipped: boolean
-  onEquipWearable: (w: CatalogWearableElement) => void
-  onUnequipWearable: (w: CatalogWearableElement) => void
+  onEquipItem: (w: ItemElement) => void
+  onUnequipItem: (w: ItemElement) => void
 }
 
-function SelectedWearableOverlay({
-  wearableElement,
+function SelectedItemOverlay({
+  itemElement,
   isEquipped,
-  onEquipWearable,
-  onUnequipWearable
-}: SelectedWearableOverlayProps): ReactElement {
+  onEquipItem,
+  onUnequipItem
+}: SelectedItemOverlayProps): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   return (
     <UiEntity
@@ -263,12 +269,12 @@ function SelectedWearableOverlay({
       }}
       uiBackground={SELECTED_BACKGROUND}
     >
-      <WearableCellThumbnail
+      <ItemCellThumbnail
         uiTransform={{
           width: canvasScaleRatio * 210,
           height: canvasScaleRatio * 210
         }}
-        wearableElement={wearableElement}
+        itemElement={itemElement}
         loading={false}
       />
       <RoundedButton
@@ -281,9 +287,7 @@ function SelectedWearableOverlay({
         text={isEquipped ? 'UNEQUIP' : 'EQUIP'}
         isSecondary={isEquipped}
         onClick={() => {
-          isEquipped
-            ? onUnequipWearable?.(wearableElement)
-            : onEquipWearable?.(wearableElement)
+          isEquipped ? onUnequipItem?.(itemElement) : onEquipItem?.(itemElement)
         }}
       />
     </UiEntity>
