@@ -76,5 +76,5 @@ export const WEARABLE_CATEGORY_DEFINITIONS: {
 
 export function categoryHasColor(category: WearableCategory | null): boolean {
   if (!category) return false
-  return !!WEARABLE_CATEGORY_DEFINITIONS[category].baseColorKey ?? false
+  return !!WEARABLE_CATEGORY_DEFINITIONS[category].baseColorKey
 }

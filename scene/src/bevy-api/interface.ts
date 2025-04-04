@@ -1,3 +1,4 @@
+import type { Vector2 } from '@dcl/sdk/math'
 import type { URN, URNWithoutTokenId } from '../utils/definitions'
 import { type WearableCategory } from '../service/categories'
 
@@ -13,10 +14,10 @@ export type ExplorerSetting = {
 
 export type KernelFetch = {
   url: string
-  init: {
+  init?: {
     method: 'PATCH' | 'POST' | 'GET' | 'DELETE'
     headers: Record<string, string>
-    body: string
+    body?: string
   }
 }
 
@@ -46,6 +47,24 @@ export type SetAvatarData = {
   base?: PBAvatarBase
   equip?: PBAvatarEquippedData
 }
+
+export type LiveSceneInfo = {
+  hash: string
+  base_url?: string
+  title: string
+  parcels: Vector2[]
+  isPortable: boolean
+  isBroken: boolean
+  isBlocked: boolean
+  isSuper: boolean
+  sdkVersion: string
+}
+
+export type HomeScene = {
+  realm: string
+  parcel: Vector2
+}
+
 export type BevyApiInterface = {
   setAvatar: (avatarData: SetAvatarData) => Promise<number>
   openSceneLogger: () => Promise<void>
@@ -64,6 +83,16 @@ export type BevyApiInterface = {
   getSettings: () => Promise<ExplorerSetting[]>
   setSetting: (name: string, value: number) => Promise<void>
   kernelFetch: (requestBody: KernelFetch) => Promise<KernelFetchRespose>
+
+  reload: (hash: string | undefined) => Promise<void>
+  showUi: (
+    hash: string | undefined,
+    show: boolean | undefined
+  ) => Promise<boolean>
+  liveSceneInfo: () => Promise<LiveSceneInfo[]>
+  getHomeScene: () => Promise<HomeScene>
+  setHomeScene: (home: HomeScene) => void
+  getRealmProvider: () => Promise<string>
 }
 
 // system api module
