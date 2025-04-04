@@ -33,7 +33,7 @@ export type BackpackPageState = {
   equippedWearables: URNWithoutTokenId[]
   outfitSetup: OutfitSetup
   forceRender: WearableCategory[]
-  changedFromResetVersion: boolean // TODO we can remove it and replace it with a memoized function that compares savedResetOutfit with state
+  changedFromResetVersion: boolean
   savedResetOutfit: {
     base: PBAvatarBase
     equippedWearables: URNWithoutTokenId[]
