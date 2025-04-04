@@ -190,7 +190,7 @@ export async function updateFavoriteStatus(
     throw new Error('Failed to update favorite status')
   }
 }
-// TODO move getRealm out of here to avoid the coupling
+
 export async function fetchJsonOrTryFallback(URL: string): Promise<any> {
   const realmBaseURL =
     (await getRealm({})).realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
