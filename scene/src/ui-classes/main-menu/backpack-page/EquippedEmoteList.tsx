@@ -43,7 +43,7 @@ export function EquippedEmoteList({
             <UiEntity
               uiTransform={{
                 height: canvasScaleRatio * 120,
-                width: canvasScaleRatio * 500,
+                width: canvasScaleRatio * 498,
                 margin: canvasScaleRatio * 10,
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
