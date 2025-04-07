@@ -17,6 +17,8 @@ import {
 } from '../../service/categories'
 import { BACKPACK_SECTION } from '../../state/backpack/state'
 import { store } from '../../state/store'
+import { DEFAULT_EMOTE_NAMES } from '../../utils/backpack-constants'
+import { getEmoteThumbnail } from '../../service/emotes'
 
 export type InfoPanelProps = {
   canvasScaleRatio: number
@@ -66,12 +68,7 @@ export function InfoPanel({
               alignSelf: 'center',
               margin: { top: '10%' }
             }}
-            uiBackground={{
-              texture: {
-                src: `https://peer.decentraland.org/lambdas/collections/contents/${entityMetadata?.id}/thumbnail`
-              },
-              textureMode: 'stretch'
-            }}
+            uiBackground={getEmoteThumbnail(entityMetadata?.id)}
           />
           <UiEntity
             uiTransform={{
