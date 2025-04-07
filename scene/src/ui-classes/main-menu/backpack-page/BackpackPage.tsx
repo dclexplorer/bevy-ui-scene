@@ -349,9 +349,9 @@ function BackpackNavBar({
                 backpackState.activeWearableCategory
               )
               playEmote('')
-              setAvatarPreviewZoomFactor(0.5)
             }}
           />
+
           <NavButton
             icon={{
               spriteName: 'Emotes',
@@ -375,7 +375,6 @@ function BackpackNavBar({
               setAvatarPreviewCameraToWearableCategory(
                 WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
               )
-              setAvatarPreviewZoomFactor(0.5)
             }}
           />
         </NavButtonBar>
