@@ -16,6 +16,7 @@ import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
 import {
   createAvatarPreview,
+  playEmote,
   setAvatarPreviewCameraToWearableCategory,
   setAvatarPreviewZoomFactor
 } from '../../../components/backpack/AvatarPreview'
@@ -347,6 +348,7 @@ function BackpackNavBar({
               setAvatarPreviewCameraToWearableCategory(
                 backpackState.activeWearableCategory
               )
+              playEmote('')
               setAvatarPreviewZoomFactor(0.5)
             }}
           />
