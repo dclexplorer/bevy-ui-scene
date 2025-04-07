@@ -145,6 +145,20 @@ export function reducer(
         equippedItems
       }
     }
+    case BACKPACK_ACTION.UPDATE_EMOTES_SAVED_RESET_VERSION: {
+      return {
+        ...backpackPageState,
+        savedResetEmotes: cloneDeep(backpackPageState.equippedEmotes),
+        changedEmotesFromResetVersion: false
+      }
+    }
+    case BACKPACK_ACTION.RESET_EMOTES: {
+      return {
+        ...backpackPageState,
+        equippedEmotes: cloneDeep(backpackPageState.savedResetEmotes),
+        changedEmotesFromResetVersion: false
+      }
+    }
     case BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY: {
       const equippedWearables = backpackPageState.equippedWearables.filter(
         (equippedWearable) =>
@@ -181,7 +195,9 @@ export function reducer(
     case BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTES: {
       return {
         ...backpackPageState,
-        equippedEmotes: action.payload
+        equippedEmotes: action.payload,
+        changedEmotesFromResetVersion: false,
+        savedResetEmotes: cloneDeep(action.payload)
       }
     }
     case BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTE: {
@@ -189,7 +205,8 @@ export function reducer(
       newEquippedEmotes[action.payload.slot] = action.payload.equippedEmote
       return {
         ...backpackPageState,
-        equippedEmotes: newEquippedEmotes
+        equippedEmotes: newEquippedEmotes,
+        changedEmotesFromResetVersion: true
       }
     }
     case BACKPACK_ACTION.SELECT_EMOTE_SLOT: {

@@ -29,7 +29,9 @@ export enum BACKPACK_ACTION {
   CHANGE_SECTION,
   UPDATE_EQUIPPED_EMOTES,
   UPDATE_EQUIPPED_EMOTE,
-  SELECT_EMOTE_SLOT
+  SELECT_EMOTE_SLOT,
+  UPDATE_EMOTES_SAVED_RESET_VERSION,
+  RESET_EMOTES
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -99,6 +101,12 @@ export type BackpackUpdateSavedResetVersionAction = BackpackActionId & {
 export type BackpackResetOutfitAction = BackpackActionId & {
   type: BACKPACK_ACTION.RESET_OUTFIT
 }
+export type BackpackUpdateEmotesSavedResetVersionAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_EMOTES_SAVED_RESET_VERSION
+}
+export type BackpackResetEmotesAction = BackpackActionId & {
+  type: BACKPACK_ACTION.RESET_EMOTES
+}
 export type BackpackUnequipWearableCategoryAction = BackpackActionId & {
   type: BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY
   payload: WearableCategory
@@ -129,6 +137,8 @@ export type BackpackActions =
   | BackpackUpdateEquippedEmotesAction
   | BackpackUpdateEquippedEmoteAction
   | BackpackSelectEmoteSlotAction
+  | BackpackUpdateEmotesSavedResetVersionAction
+  | BackpackResetEmotesAction
 
 export const updateSelectedWearableURN = (
   payload: URNWithoutTokenId | null
@@ -224,6 +234,17 @@ export const updateSavedResetVersion =
 export const resetOutfitAction = (): BackpackResetOutfitAction => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.RESET_OUTFIT
+})
+
+export const updateEmotesSavedResetVersion =
+  (): BackpackUpdateEmotesSavedResetVersionAction => ({
+    __reducer: BACKPACK_STORE_ID,
+    type: BACKPACK_ACTION.UPDATE_EMOTES_SAVED_RESET_VERSION
+  })
+
+export const resetEmotesAction = (): BackpackResetEmotesAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.RESET_EMOTES
 })
 
 export const unequipWearableCategory = (

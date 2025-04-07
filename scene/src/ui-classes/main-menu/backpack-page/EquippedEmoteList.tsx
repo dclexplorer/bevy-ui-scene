@@ -44,7 +44,12 @@ export function EquippedEmoteList({
               uiTransform={{
                 height: canvasScaleRatio * 120,
                 width: canvasScaleRatio * 498,
-                margin: canvasScaleRatio * 10,
+                margin: {
+                  left: canvasScaleRatio * 10,
+                  right: canvasScaleRatio * 10,
+                  bottom: canvasScaleRatio * 5,
+                  top: canvasScaleRatio * 5
+                },
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
                 alignItems: 'center',

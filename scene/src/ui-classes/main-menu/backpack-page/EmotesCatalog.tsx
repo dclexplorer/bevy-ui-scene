@@ -15,6 +15,7 @@ import { CatalogGrid } from '../../../components/backpack/CatalogGrid'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { fetchEmotesPage } from '../../../utils/emotes-promise-utils'
 import {
+  resetEmotesAction,
   updateEquippedEmoteAction,
   updateSelectedWearableURN
 } from '../../../state/backpack/actions'
@@ -23,6 +24,8 @@ import { playEmote } from '../../../components/backpack/AvatarPreview'
 import { EquippedEmoteList } from './EquippedEmoteList'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
+import { Color4 } from '@dcl/sdk/math'
+import { COLOR } from '../../../components/color-palette'
 
 export function EmotesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
@@ -82,9 +85,31 @@ export function EmotesCatalog(): ReactElement {
             )
           }}
         />
+        {backpackState.changedEmotesFromResetVersion && (
+          <NavButton
+            icon={{ atlasName: 'icons', spriteName: 'BackStepIcon' }}
+            text={'RESET EMOTES'}
+            color={Color4.White()}
+            backgroundColor={COLOR.SMALL_TAG_BACKGROUND}
+            uiTransform={{
+              positionType: 'absolute',
+              height: '5%',
+              padding: { left: '1%', right: '2%' },
+              position: { bottom: '1%', left: '-54%' }
+            }}
+            onClick={() => {
+              resetEmotes()
+            }}
+          />
+        )}
       </ItemsCatalog>
     </UiEntity>
   )
+}
+
+function resetEmotes(): void {
+  store.dispatch(resetEmotesAction())
+  playEmote('')
 }
 
 function EmoteNavBar(): ReactElement {

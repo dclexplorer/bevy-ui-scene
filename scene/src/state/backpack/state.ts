@@ -39,6 +39,8 @@ export type BackpackPageState = {
     equippedWearables: URNWithoutTokenId[]
     forceRender: WearableCategory[]
   }
+  changedEmotesFromResetVersion: boolean
+  savedResetEmotes: EquippedEmote[]
   equippedItems: Array<URNWithoutTokenId | EquippedEmote> // gather equippedWearables, baseBody.bodyShapeUrn & emotes
   selectedURN: URNWithoutTokenId | null
   cacheKey: string
@@ -67,5 +69,7 @@ export const backpackInitialState: BackpackPageState = {
     base: EMPTY_OUTFIT.base,
     equippedWearables: getWearablesFromOutfit(EMPTY_OUTFIT),
     forceRender: []
-  }
+  },
+  changedEmotesFromResetVersion: false,
+  savedResetEmotes: EMPTY_EMOTES
 }
