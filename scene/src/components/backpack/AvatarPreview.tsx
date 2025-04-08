@@ -150,7 +150,8 @@ export function createAvatarPreview(): void {
     mode: {
       $case: 'perspective',
       perspective: { fieldOfView: 1 }
-    }
+    },
+    volume: 1
   })
 
   Transform.create(avatarEntity, {
