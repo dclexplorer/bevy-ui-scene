@@ -12,7 +12,11 @@ import {
   fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
-import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
+import type {
+  EquippedEmote,
+  URN,
+  URNWithoutTokenId
+} from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
 import {
   createAvatarPreview,
@@ -48,7 +52,6 @@ import {
   fetchEmotesData,
   fetchEmotesPage
 } from '../../../utils/emotes-promise-utils'
-import { fetchEquippedEmotes } from '../../../service/emotes'
 import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
 import { type SetAvatarData } from '../../../bevy-api/interface'
 import { getRealm } from '~system/Runtime'
@@ -127,23 +130,27 @@ export default class BackpackPage {
   }
 
   async init(): Promise<void> {
+    store.dispatch(updateLoadingPage(true))
     store.dispatch(updateCacheKey())
     closeColorPicker()
     createAvatarPreview()
-    store.dispatch(updateLoadingPage(true))
     const player = getPlayer()
-    const wearables: URNWithoutTokenId[] = (getPlayer()?.wearables ?? []).map(
+    const wearables: URNWithoutTokenId[] = (player?.wearables ?? []).map(
       (urn) => getURNWithoutTokenId(urn as URN)
     ) as URNWithoutTokenId[]
-    const emotes = await fetchEquippedEmotes(player?.userId ?? ZERO_ADDRESS)
+    const playerEmoteURNs = player?.emotes ?? []
+    const equippedEmotes: EquippedEmote[] = new Array(10)
+      .fill('')
+      .map((urn, index) =>
+        getURNWithoutTokenId((playerEmoteURNs[index] ?? '') as URN)
+      ) as EquippedEmote[]
 
     await fetchWearablesData(
       (await getRealm({}))?.realmInfo?.baseUrl ??
         'https://peer.decentraland.org'
     )(...(wearables ?? []))
-    await fetchEmotesData(...(emotes ?? []))
-
-    store.dispatch(updateEquippedEmotesAction(emotes))
+    await fetchEmotesData(...(equippedEmotes ?? []))
+    store.dispatch(updateEquippedEmotesAction(equippedEmotes))
     store.dispatch(
       updateEquippedWearables({
         wearables,
@@ -327,14 +334,15 @@ function BackpackNavBar({
             active={backpackState.activeSection === BACKPACK_SECTION.WEARABLES}
             text={'Wearables'}
             onClick={() => {
-              store.dispatch(changeSectionAction(BACKPACK_SECTION.WEARABLES))
               const backpackState = store.getState().backpack
+              if (backpackState.loadingPage) return
               const pageParams = {
                 pageNum: backpackState.currentPage,
                 pageSize: ITEMS_CATALOG_PAGE_SIZE,
                 address: getPlayer()?.userId ?? ZERO_ADDRESS,
                 cacheKey: store.getState().backpack.cacheKey
               }
+              store.dispatch(changeSectionAction(BACKPACK_SECTION.WEARABLES))
               updatePage(
                 async () =>
                   await fetchWearablesPage(
@@ -360,8 +368,9 @@ function BackpackNavBar({
             text={'Emotes'}
             uiTransform={{ margin: { left: 12 } }}
             onClick={() => {
-              store.dispatch(changeSectionAction(BACKPACK_SECTION.EMOTES))
               const backpackState = store.getState().backpack
+              if (backpackState.loadingPage) return
+              store.dispatch(changeSectionAction(BACKPACK_SECTION.EMOTES))
               const pageParams = {
                 pageNum: backpackState.currentPage,
                 pageSize: ITEMS_CATALOG_PAGE_SIZE,
