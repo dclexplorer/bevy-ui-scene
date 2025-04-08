@@ -17,8 +17,7 @@ import { BevyApi } from '../../../bevy-api'
 import {
   createAvatarPreview,
   playEmote,
-  setAvatarPreviewCameraToWearableCategory,
-  setAvatarPreviewZoomFactor
+  setAvatarPreviewCameraToWearableCategory
 } from '../../../components/backpack/AvatarPreview'
 import {
   ROUNDED_TEXTURE_BACKGROUND,

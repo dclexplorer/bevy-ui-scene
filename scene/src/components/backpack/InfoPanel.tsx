@@ -17,7 +17,6 @@ import {
 } from '../../service/categories'
 import { BACKPACK_SECTION } from '../../state/backpack/state'
 import { store } from '../../state/store'
-import { DEFAULT_EMOTE_NAMES } from '../../utils/backpack-constants'
 import { getEmoteThumbnail } from '../../service/emotes'
 
 export type InfoPanelProps = {
