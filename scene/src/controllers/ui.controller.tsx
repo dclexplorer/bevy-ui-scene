@@ -14,6 +14,7 @@ import { PopUpAction } from '../ui-classes/main-hud/pop-up-action'
 import { PopUpWarning } from '../ui-classes/main-hud/pop-up-warning'
 import { SceneInfoCard } from '../ui-classes/scene-info-card'
 import Photos from 'src/ui-classes/photos/Photos'
+import { renderEmotesWheel } from '../emotes-wheel/emotes-wheel'
 
 export class UIController {
   public isPhotosVisible: boolean = false
@@ -80,6 +81,7 @@ export class UIController {
         {this.loadingAndLogin?.mainUi()}
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
+        {renderEmotesWheel()}
       </UiEntity>
     )
   }

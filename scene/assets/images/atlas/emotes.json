@@ -62,8 +62,8 @@
 		},
 		"handsair.png": {
 			"frame": {
-				"x": 1,
-				"y": 259,
+				"x": 775,
+				"y": 1,
 				"w": 256,
 				"h": 256
 			},
@@ -82,7 +82,7 @@
 		},
 		"headexplode.png": {
 			"frame": {
-				"x": 259,
+				"x": 1,
 				"y": 259,
 				"w": 256,
 				"h": 256
@@ -102,7 +102,7 @@
 		},
 		"kiss.png": {
 			"frame": {
-				"x": 517,
+				"x": 259,
 				"y": 259,
 				"w": 256,
 				"h": 256
@@ -122,8 +122,8 @@
 		},
 		"money.png": {
 			"frame": {
-				"x": 1,
-				"y": 517,
+				"x": 517,
+				"y": 259,
 				"w": 256,
 				"h": 256
 			},
@@ -142,8 +142,8 @@
 		},
 		"raiseHand.png": {
 			"frame": {
-				"x": 259,
-				"y": 517,
+				"x": 775,
+				"y": 259,
 				"w": 256,
 				"h": 256
 			},
@@ -162,7 +162,7 @@
 		},
 		"shrug.png": {
 			"frame": {
-				"x": 517,
+				"x": 1,
 				"y": 517,
 				"w": 256,
 				"h": 256
@@ -182,202 +182,242 @@
 		},
 		"wave.png": {
 			"frame": {
-				"x": 775,
+				"x": 259,
+				"y": 517,
+				"w": 256,
+				"h": 256
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 256,
+				"h": 256
+			},
+			"sourceSize": {
+				"w": 256,
+				"h": 256
+			}
+		},
+		"wheel-background.png": {
+			"frame": {
+				"x": 517,
+				"y": 517,
+				"w": 470,
+				"h": 470
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 470,
+				"h": 470
+			},
+			"sourceSize": {
+				"w": 470,
+				"h": 470
+			}
+		},
+		"wheel-slot-0.png": {
+			"frame": {
+				"x": 989,
+				"y": 517,
+				"w": 259,
+				"h": 235
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 259,
+				"h": 235
+			},
+			"sourceSize": {
+				"w": 259,
+				"h": 235
+			}
+		},
+		"wheel-slot-1.png": {
+			"frame": {
+				"x": 1033,
 				"y": 1,
-				"w": 256,
-				"h": 256
+				"w": 277,
+				"h": 280
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 256,
-				"h": 256
+				"w": 277,
+				"h": 280
 			},
 			"sourceSize": {
-				"w": 256,
-				"h": 256
+				"w": 277,
+				"h": 280
 			}
 		},
-		"wheel-base.png": {
+		"wheel-slot-2.png": {
 			"frame": {
-				"x": 775,
-				"y": 259,
-				"w": 132,
-				"h": 119
+				"x": 1250,
+				"y": 283,
+				"w": 263,
+				"h": 252
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 132,
-				"h": 119
+				"w": 263,
+				"h": 252
 			},
 			"sourceSize": {
-				"w": 132,
-				"h": 119
+				"w": 263,
+				"h": 252
 			}
 		},
-		"wheel-common.png": {
+		"wheel-slot-3.png": {
 			"frame": {
-				"x": 909,
-				"y": 259,
-				"w": 132,
-				"h": 119
+				"x": 1250,
+				"y": 537,
+				"w": 260,
+				"h": 249
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 132,
-				"h": 119
+				"w": 260,
+				"h": 249
 			},
 			"sourceSize": {
-				"w": 132,
-				"h": 119
+				"w": 260,
+				"h": 249
 			}
 		},
-		"wheel-epic.png": {
+		"wheel-slot-4.png": {
 			"frame": {
-				"x": 775,
-				"y": 380,
-				"w": 132,
-				"h": 119
+				"x": 1,
+				"y": 788,
+				"w": 277,
+				"h": 281
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 132,
-				"h": 119
+				"w": 277,
+				"h": 281
 			},
 			"sourceSize": {
-				"w": 132,
-				"h": 119
+				"w": 277,
+				"h": 281
 			}
 		},
-		"wheel-exotic.png": {
+		"wheel-slot-5.png": {
 			"frame": {
-				"x": 909,
-				"y": 380,
-				"w": 132,
-				"h": 119
+				"x": 989,
+				"y": 788,
+				"w": 258,
+				"h": 236
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 132,
-				"h": 119
+				"w": 258,
+				"h": 236
 			},
 			"sourceSize": {
-				"w": 132,
-				"h": 119
+				"w": 258,
+				"h": 236
 			}
 		},
-		"wheel-legendary.png": {
+		"wheel-slot-6.png": {
 			"frame": {
-				"x": 775,
-				"y": 501,
-				"w": 132,
-				"h": 119
+				"x": 1249,
+				"y": 788,
+				"w": 276,
+				"h": 280
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 132,
-				"h": 119
+				"w": 276,
+				"h": 280
 			},
 			"sourceSize": {
-				"w": 132,
-				"h": 119
+				"w": 276,
+				"h": 280
 			}
 		},
-		"wheel-mythic.png": {
+		"wheel-slot-7.png": {
 			"frame": {
-				"x": 909,
-				"y": 501,
-				"w": 132,
-				"h": 119
+				"x": 280,
+				"y": 1070,
+				"w": 261,
+				"h": 251
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 132,
-				"h": 119
+				"w": 261,
+				"h": 251
 			},
 			"sourceSize": {
-				"w": 132,
-				"h": 119
+				"w": 261,
+				"h": 251
 			}
 		},
-		"wheel-rare.png": {
+		"wheel-slot-8.png": {
 			"frame": {
-				"x": 775,
-				"y": 622,
-				"w": 132,
-				"h": 119
+				"x": 543,
+				"y": 1070,
+				"w": 262,
+				"h": 251
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 132,
-				"h": 119
+				"w": 262,
+				"h": 251
 			},
 			"sourceSize": {
-				"w": 132,
-				"h": 119
+				"w": 262,
+				"h": 251
 			}
 		},
-		"wheel-uncommon.png": {
+		"wheel-slot-9.png": {
 			"frame": {
-				"x": 909,
-				"y": 622,
-				"w": 132,
-				"h": 119
+				"x": 807,
+				"y": 1070,
+				"w": 278,
+				"h": 281
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 132,
-				"h": 119
+				"w": 278,
+				"h": 281
 			},
 			"sourceSize": {
-				"w": 132,
-				"h": 119
-			}
-		},
-		"wheel-unique.png": {
-			"frame": {
-				"x": 775,
-				"y": 743,
-				"w": 132,
-				"h": 119
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 132,
-				"h": 119
-			},
-			"sourceSize": {
-				"w": 132,
-				"h": 119
+				"w": 278,
+				"h": 281
 			}
 		}
 	},
@@ -387,8 +427,8 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 1042,
-			"h": 863
+			"w": 1526,
+			"h": 1352
 		},
 		"scale": "1"
 	}
