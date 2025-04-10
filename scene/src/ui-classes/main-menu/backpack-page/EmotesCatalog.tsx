@@ -151,16 +151,16 @@ function resetEmotes(): void {
 function EmoteNavBar(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
-
+  const slot = (backpackState.selectedEmoteSlot + 1) % 10
   return (
     <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
       <NavButton
         active={!backpackState.equippedEmotes[backpackState.selectedEmoteSlot]}
         icon={{
-          spriteName: `emote-circle-${backpackState.selectedEmoteSlot}`,
+          spriteName: `emote-circle-${slot}`,
           atlasName: 'backpack'
         }}
-        text={`EMOTE ${(backpackState.selectedEmoteSlot + 1) % 10}`}
+        text={`EMOTE ${slot}`}
         uiTransform={{ padding: 40 * canvasScaleRatio }}
         onClick={() => {
           if (backpackState.activeWearableCategory === null) return null
