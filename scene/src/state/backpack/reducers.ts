@@ -11,6 +11,7 @@ import {
 } from '../../utils/definitions'
 import { cloneDeep } from '../../utils/function-utils'
 import { catalystMetadataMap } from '../../utils/catalyst-metadata-map'
+import { DEFAULT_EMOTES } from '../../utils/backpack-constants'
 
 export function reducer(
   backpackPageState: BackpackPageState,
@@ -213,6 +214,13 @@ export function reducer(
       return {
         ...backpackPageState,
         selectedEmoteSlot: action.payload
+      }
+    }
+    case BACKPACK_ACTION.RESET_DEFAULT_EMOTES: {
+      return {
+        ...backpackPageState,
+        equippedEmotes: DEFAULT_EMOTES,
+        changedEmotesFromResetVersion: true
       }
     }
     default:

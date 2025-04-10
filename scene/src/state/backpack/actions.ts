@@ -31,7 +31,8 @@ export enum BACKPACK_ACTION {
   UPDATE_EQUIPPED_EMOTE,
   SELECT_EMOTE_SLOT,
   UPDATE_EMOTES_SAVED_RESET_VERSION,
-  RESET_EMOTES
+  RESET_EMOTES,
+  RESET_DEFAULT_EMOTES
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -120,6 +121,10 @@ export type BackpackSelectEmoteSlotAction = BackpackActionId & {
   type: BACKPACK_ACTION.SELECT_EMOTE_SLOT
   payload: number
 }
+export type BackpackResetDefaultEmotesAction = BackpackActionId & {
+  type: BACKPACK_ACTION.RESET_DEFAULT_EMOTES
+}
+
 export type BackpackActions =
   | BackpackSelectWearableURNAction
   | BackpackUpdateCurrentPageAction
@@ -139,6 +144,7 @@ export type BackpackActions =
   | BackpackSelectEmoteSlotAction
   | BackpackUpdateEmotesSavedResetVersionAction
   | BackpackResetEmotesAction
+  | BackpackResetDefaultEmotesAction
 
 export const updateSelectedWearableURN = (
   payload: URNWithoutTokenId | null
@@ -270,3 +276,9 @@ export const selectEmoteSlotAction = (
   type: BACKPACK_ACTION.SELECT_EMOTE_SLOT,
   payload
 })
+
+export const resetDefaultEmotesAction =
+  (): BackpackResetDefaultEmotesAction => ({
+    __reducer: BACKPACK_STORE_ID,
+    type: BACKPACK_ACTION.RESET_DEFAULT_EMOTES
+  })
