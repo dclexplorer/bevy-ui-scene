@@ -128,15 +128,9 @@ export function EquippedEmoteList({
                     })
               }
             >
-              {isHovered() &&
-                backpackState.equippedEmotes[
-                  fromVisualIndexToRealIndex(index)
-                ] && (
-                  <UnequipEmoteCross
-                    slot={fromVisualIndexToRealIndex(index)}
-                    index={index}
-                  />
-                )}
+              {isHovered() && backpackState.equippedEmotes[index] && (
+                <UnequipEmoteCross slot={index} index={index} />
+              )}
               <UiEntity
                 uiTransform={{
                   height: canvasScaleRatio * 100,
