@@ -84,7 +84,7 @@ export function EquippedEmoteList({
               }}
               uiBackground={getBackgroundFromAtlas({
                 atlasName: 'backpack',
-                spriteName: `emote-circle-${fromVisualIndexToRealIndex(index)}`
+                spriteName: `emote-circle-${fromIndexToSlot(index)}`
               })}
             />
             <UiEntity
@@ -98,9 +98,9 @@ export function EquippedEmoteList({
                 fontSize: canvasScaleRatio * 30
               }}
             />
-            {isHovered() &&
-              fromVisualIndexToRealIndex(index) !==
-                backpackState.selectedEmoteSlot && <EmoteHoveredSquare />}
+            {isHovered() && index !== backpackState.selectedEmoteSlot && (
+              <EmoteHoveredSquare />
+            )}
             <UiEntity
               uiTransform={{
                 height: canvasScaleRatio * (equippedEmoteURN ? 105 : 100),
@@ -149,7 +149,7 @@ export function EquippedEmoteList({
     </UiEntity>
   )
 }
-function fromVisualIndexToRealIndex(index: number): number {
+function fromIndexToSlot(index: number): number {
   return (index + 1) % 10
 }
 
