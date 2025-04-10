@@ -46,7 +46,7 @@ export type BackpackPageState = {
   cacheKey: string
 }
 export const backpackInitialState: BackpackPageState = {
-  activeSection: BACKPACK_SECTION.EMOTES,
+  activeSection: BACKPACK_SECTION.WEARABLES,
   activeWearableCategory: null,
   selectedEmoteSlot: 1,
   currentPage: 1,
