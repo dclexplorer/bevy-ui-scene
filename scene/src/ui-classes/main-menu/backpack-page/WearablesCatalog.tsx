@@ -17,7 +17,7 @@ import {
   resetOutfitAction,
   updateAvatarBase,
   updateEquippedWearables,
-  updateSelectedWearableURN
+  updateSelectedCatalogURNAction
 } from '../../../state/backpack/actions'
 import type { ItemElement } from '../../../utils/item-definitions'
 import {
@@ -80,7 +80,7 @@ export function WearablesCatalog(): ReactElement {
           equippedItems={backpackState.equippedItems}
           onChangeSelection={(selectedURN): void => {
             store.dispatch(
-              updateSelectedWearableURN(selectedURN as URNWithoutTokenId)
+              updateSelectedCatalogURNAction(selectedURN as URNWithoutTokenId)
             )
           }}
           onEquipItem={(itemElement: ItemElement): void => {

@@ -18,7 +18,7 @@ import {
   resetDefaultEmotesAction,
   resetEmotesAction,
   updateEquippedEmoteAction,
-  updateSelectedWearableURN
+  updateSelectedCatalogURNAction
 } from '../../../state/backpack/actions'
 import { urnWithTokenIdMemo } from '../../../utils/urn-utils'
 import { playEmote } from '../../../components/backpack/AvatarPreview'
@@ -63,7 +63,7 @@ export function EmotesCatalog(): ReactElement {
           ]}
           onChangeSelection={(selectedURN): void => {
             store.dispatch(
-              updateSelectedWearableURN(selectedURN as URNWithoutTokenId)
+              updateSelectedCatalogURNAction(selectedURN as URNWithoutTokenId)
             )
             playEmote(selectedURN as EquippedEmote)
           }}

@@ -14,7 +14,7 @@ import { type PBAvatarBase } from '../../bevy-api/interface'
 type BackpackActionId = { __reducer: typeof BACKPACK_STORE_ID }
 
 export enum BACKPACK_ACTION {
-  SELECT_WEARABLE_URN,
+  SELECT_CATALOG_URN,
   UPDATE_CURRENT_PAGE,
   UPDATE_ACTIVE_WEARABLE_CATEGORY,
   UPDATE_LOADING_PAGE,
@@ -36,7 +36,7 @@ export enum BACKPACK_ACTION {
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
-  type: BACKPACK_ACTION.SELECT_WEARABLE_URN
+  type: BACKPACK_ACTION.SELECT_CATALOG_URN
   payload: URNWithoutTokenId | null
 }
 
@@ -146,11 +146,11 @@ export type BackpackActions =
   | BackpackResetEmotesAction
   | BackpackResetDefaultEmotesAction
 
-export const updateSelectedWearableURN = (
+export const updateSelectedCatalogURNAction = (
   payload: URNWithoutTokenId | null
 ): BackpackSelectWearableURNAction => ({
   __reducer: BACKPACK_STORE_ID,
-  type: BACKPACK_ACTION.SELECT_WEARABLE_URN,
+  type: BACKPACK_ACTION.SELECT_CATALOG_URN,
   payload
 })
 
