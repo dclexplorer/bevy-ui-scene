@@ -53,7 +53,7 @@ export function EquippedEmoteList({
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                position: { left: '5%' }
+                position: { left: '2%' }
               }}
               uiBackground={{
                 ...ROUNDED_TEXTURE_BACKGROUND,
@@ -61,7 +61,7 @@ export function EquippedEmoteList({
                   backpackState.selectedEmoteSlot ===
                   fromVisualIndexToRealIndex(index)
                     ? COLOR.ACTIVE_BACKGROUND_COLOR
-                    : COLOR.SMALL_TAG_BACKGROUND
+                    : COLOR.DARK_OPACITY_2
               }}
               onMouseDown={() => {
                 store.dispatch(

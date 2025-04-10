@@ -79,9 +79,7 @@ export function WearableCategoryButton({
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
         color:
-          active === true
-            ? COLOR.ACTIVE_BACKGROUND_COLOR
-            : Color4.create(0, 0, 0, 0.2)
+          active === true ? COLOR.ACTIVE_BACKGROUND_COLOR : COLOR.DARK_OPACITY_2
       }}
       onMouseDown={() => {
         onClick()
