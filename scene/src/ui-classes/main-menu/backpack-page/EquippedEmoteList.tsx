@@ -24,149 +24,134 @@ export function EquippedEmoteList({
   equippedEmotes: EquippedEmote[]
 }): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
-  const visualOrderList = [
-    ...equippedEmotes.slice(1, equippedEmotes.length),
-    equippedEmotes[0]
-  ]
 
   return (
     <UiEntity uiTransform={{ flexDirection: 'column' }}>
-      {visualOrderList.map(
-        (
-          equippedEmoteURN: EquippedEmote,
-          index: number,
-          arr: EquippedEmote[]
-        ) => {
-          const isHovered = (): boolean => state.hoveredIndex === index
-          const backpackState = store.getState().backpack
-          return (
+      {equippedEmotes.map((equippedEmoteURN: EquippedEmote, index: number) => {
+        const isHovered = (): boolean => state.hoveredIndex === index
+        const backpackState = store.getState().backpack
+        return (
+          <UiEntity
+            uiTransform={{
+              height: canvasScaleRatio * 120,
+              width: canvasScaleRatio * 498,
+              margin: {
+                left: canvasScaleRatio * 10,
+                right: canvasScaleRatio * 10,
+                bottom: canvasScaleRatio * 5,
+                top: canvasScaleRatio * 5
+              },
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              position: { left: '2%' }
+            }}
+            uiBackground={{
+              ...ROUNDED_TEXTURE_BACKGROUND,
+              color:
+                backpackState.selectedEmoteSlot === index
+                  ? COLOR.ACTIVE_BACKGROUND_COLOR
+                  : COLOR.DARK_OPACITY_2
+            }}
+            onMouseDown={() => {
+              store.dispatch(selectEmoteSlotAction(index))
+              const newBackpackState = store.getState().backpack
+              const selectedEmoteURN =
+                newBackpackState.equippedEmotes[
+                  newBackpackState.selectedEmoteSlot
+                ]
+
+              playEmote(selectedEmoteURN)
+            }}
+            onMouseEnter={() => {
+              state.hoveredIndex = index
+            }}
+            onMouseLeave={() => {
+              if (
+                !(state.hoveredIndex !== null && state.hoveredIndex !== index)
+              ) {
+                state.hoveredIndex = null
+              }
+            }}
+          >
             <UiEntity
               uiTransform={{
-                height: canvasScaleRatio * 120,
-                width: canvasScaleRatio * 498,
-                margin: {
-                  left: canvasScaleRatio * 10,
-                  right: canvasScaleRatio * 10,
-                  bottom: canvasScaleRatio * 5,
-                  top: canvasScaleRatio * 5
-                },
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                position: { left: '2%' }
+                height: canvasScaleRatio * 100,
+                width: canvasScaleRatio * 100,
+                flexShrink: 0,
+                flexGrow: 0,
+                margin: { left: '2%' }
               }}
-              uiBackground={{
-                ...ROUNDED_TEXTURE_BACKGROUND,
-                color:
-                  backpackState.selectedEmoteSlot ===
-                  fromVisualIndexToRealIndex(index)
-                    ? COLOR.ACTIVE_BACKGROUND_COLOR
-                    : COLOR.DARK_OPACITY_2
+              uiBackground={getBackgroundFromAtlas({
+                atlasName: 'backpack',
+                spriteName: `emote-circle-${fromVisualIndexToRealIndex(index)}`
+              })}
+            />
+            <UiEntity
+              uiTransform={{
+                flexWrap: 'wrap',
+                width: '50%'
               }}
-              onMouseDown={() => {
-                store.dispatch(
-                  selectEmoteSlotAction(fromVisualIndexToRealIndex(index))
-                )
-                const newBackpackState = store.getState().backpack
-                const selectedEmoteURN =
-                  newBackpackState.equippedEmotes[
-                    newBackpackState.selectedEmoteSlot
-                  ]
-
-                playEmote(selectedEmoteURN)
+              uiText={{
+                textAlign: 'top-left',
+                value: getEmoteName(equippedEmoteURN),
+                fontSize: canvasScaleRatio * 30
               }}
-              onMouseEnter={() => {
-                state.hoveredIndex = index
-              }}
-              onMouseLeave={() => {
-                if (
-                  !(state.hoveredIndex !== null && state.hoveredIndex !== index)
-                ) {
-                  state.hoveredIndex = null
+            />
+            {isHovered() &&
+              fromVisualIndexToRealIndex(index) !==
+                backpackState.selectedEmoteSlot && <EmoteHoveredSquare />}
+            <UiEntity
+              uiTransform={{
+                height: canvasScaleRatio * (equippedEmoteURN ? 105 : 100),
+                width: canvasScaleRatio * 100,
+                flexShrink: 0,
+                positionType: 'absolute',
+                position: {
+                  right: canvasScaleRatio * 20,
+                  top: canvasScaleRatio * 10
                 }
               }}
+              uiBackground={
+                equippedEmoteURN
+                  ? getBackgroundFromAtlas({
+                      atlasName: 'backpack',
+                      spriteName: `rarity-background-${
+                        catalystMetadataMap[
+                          equippedEmoteURN as URNWithoutTokenId
+                        ]?.rarity ?? 'base'
+                      }`
+                    })
+                  : getBackgroundFromAtlas({
+                      atlasName: 'backpack',
+                      spriteName: 'empty-wearable-field'
+                    })
+              }
             >
+              {isHovered() &&
+                backpackState.equippedEmotes[
+                  fromVisualIndexToRealIndex(index)
+                ] && (
+                  <UnequipEmoteCross
+                    slot={fromVisualIndexToRealIndex(index)}
+                    index={index}
+                  />
+                )}
               <UiEntity
                 uiTransform={{
                   height: canvasScaleRatio * 100,
                   width: canvasScaleRatio * 100,
-                  flexShrink: 0,
-                  flexGrow: 0,
-                  margin: { left: '2%' }
+                  flexShrink: 0
                 }}
-                uiBackground={getBackgroundFromAtlas({
-                  atlasName: 'backpack',
-                  spriteName: `emote-circle-${fromVisualIndexToRealIndex(
-                    index
-                  )}`
-                })}
-              />
-              <UiEntity
-                uiTransform={{
-                  flexWrap: 'wrap',
-                  width: '50%'
-                }}
-                uiText={{
-                  textAlign: 'top-left',
-                  value: getEmoteName(equippedEmoteURN),
-                  fontSize: canvasScaleRatio * 30
+                uiBackground={{
+                  ...getEmoteThumbnail(equippedEmoteURN)
+                  // color: Color4.create(1, 0, 0, 0.4)
                 }}
               />
-              {isHovered() &&
-                fromVisualIndexToRealIndex(index) !==
-                  backpackState.selectedEmoteSlot && <EmoteHoveredSquare />}
-              <UiEntity
-                uiTransform={{
-                  height: canvasScaleRatio * (equippedEmoteURN ? 105 : 100),
-                  width: canvasScaleRatio * 100,
-                  flexShrink: 0,
-                  positionType: 'absolute',
-                  position: {
-                    right: canvasScaleRatio * 20,
-                    top: canvasScaleRatio * 10
-                  }
-                }}
-                uiBackground={
-                  equippedEmoteURN
-                    ? getBackgroundFromAtlas({
-                        atlasName: 'backpack',
-                        spriteName: `rarity-background-${
-                          catalystMetadataMap[
-                            equippedEmoteURN as URNWithoutTokenId
-                          ]?.rarity ?? 'base'
-                        }`
-                      })
-                    : getBackgroundFromAtlas({
-                        atlasName: 'backpack',
-                        spriteName: 'empty-wearable-field'
-                      })
-                }
-              >
-                {isHovered() &&
-                  backpackState.equippedEmotes[
-                    fromVisualIndexToRealIndex(index)
-                  ] && (
-                    <UnequipEmoteCross
-                      slot={fromVisualIndexToRealIndex(index)}
-                      index={index}
-                    />
-                  )}
-                <UiEntity
-                  uiTransform={{
-                    height: canvasScaleRatio * 100,
-                    width: canvasScaleRatio * 100,
-                    flexShrink: 0
-                  }}
-                  uiBackground={{
-                    ...getEmoteThumbnail(equippedEmoteURN)
-                    // color: Color4.create(1, 0, 0, 0.4)
-                  }}
-                />
-              </UiEntity>
             </UiEntity>
-          )
-        }
-      )}
+          </UiEntity>
+        )
+      })}
     </UiEntity>
   )
 }
