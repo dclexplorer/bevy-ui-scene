@@ -140,7 +140,7 @@
 				"h": 256
 			}
 		},
-		"raisehand.png": {
+		"raiseHand.png": {
 			"frame": {
 				"x": 259,
 				"y": 517,
@@ -199,6 +199,186 @@
 				"w": 256,
 				"h": 256
 			}
+		},
+		"wheel-base.png": {
+			"frame": {
+				"x": 775,
+				"y": 259,
+				"w": 132,
+				"h": 119
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 132,
+				"h": 119
+			},
+			"sourceSize": {
+				"w": 132,
+				"h": 119
+			}
+		},
+		"wheel-common.png": {
+			"frame": {
+				"x": 909,
+				"y": 259,
+				"w": 132,
+				"h": 119
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 132,
+				"h": 119
+			},
+			"sourceSize": {
+				"w": 132,
+				"h": 119
+			}
+		},
+		"wheel-epic.png": {
+			"frame": {
+				"x": 775,
+				"y": 380,
+				"w": 132,
+				"h": 119
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 132,
+				"h": 119
+			},
+			"sourceSize": {
+				"w": 132,
+				"h": 119
+			}
+		},
+		"wheel-exotic.png": {
+			"frame": {
+				"x": 909,
+				"y": 380,
+				"w": 132,
+				"h": 119
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 132,
+				"h": 119
+			},
+			"sourceSize": {
+				"w": 132,
+				"h": 119
+			}
+		},
+		"wheel-legendary.png": {
+			"frame": {
+				"x": 775,
+				"y": 501,
+				"w": 132,
+				"h": 119
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 132,
+				"h": 119
+			},
+			"sourceSize": {
+				"w": 132,
+				"h": 119
+			}
+		},
+		"wheel-mythic.png": {
+			"frame": {
+				"x": 909,
+				"y": 501,
+				"w": 132,
+				"h": 119
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 132,
+				"h": 119
+			},
+			"sourceSize": {
+				"w": 132,
+				"h": 119
+			}
+		},
+		"wheel-rare.png": {
+			"frame": {
+				"x": 775,
+				"y": 622,
+				"w": 132,
+				"h": 119
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 132,
+				"h": 119
+			},
+			"sourceSize": {
+				"w": 132,
+				"h": 119
+			}
+		},
+		"wheel-uncommon.png": {
+			"frame": {
+				"x": 909,
+				"y": 622,
+				"w": 132,
+				"h": 119
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 132,
+				"h": 119
+			},
+			"sourceSize": {
+				"w": 132,
+				"h": 119
+			}
+		},
+		"wheel-unique.png": {
+			"frame": {
+				"x": 775,
+				"y": 743,
+				"w": 132,
+				"h": 119
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 132,
+				"h": 119
+			},
+			"sourceSize": {
+				"w": 132,
+				"h": 119
+			}
 		}
 	},
 	"meta": {
@@ -207,8 +387,8 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 1032,
-			"h": 774
+			"w": 1042,
+			"h": 863
 		},
 		"scale": "1"
 	}
