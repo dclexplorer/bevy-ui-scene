@@ -22,6 +22,7 @@ import {
 } from '../../state/backpack/actions'
 import { updateAvatarPreview } from './AvatarPreview'
 import { catalystMetadataMap } from '../../utils/catalyst-metadata-map'
+import { HoverUiEntity, isHovered } from 'src/utils/hoverable'
 
 type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps
@@ -31,9 +32,6 @@ type WearableCategoryButtonProps = {
   selectedURN: URNWithoutTokenId | null
   forceRender?: boolean
   showForceRender?: boolean
-}
-const state: { hoveredCategory: null | WearableCategory } = {
-  hoveredCategory: null
 }
 const BACKGROUND_AND_SHADOW_HEIGHT = 127
 const BACKGROUND_WIDTH = 120
@@ -60,9 +58,9 @@ export function WearableCategoryButton({
         atlasName: 'backpack',
         spriteName: 'empty-wearable-field'
       })
-  const isHovered = (): boolean => state.hoveredCategory === category
   return (
-    <UiEntity
+    <HoverUiEntity
+      hoverKey={category}
       uiTransform={{
         ...uiTransform,
         width: 239 * canvasScaleRatio,
@@ -83,14 +81,6 @@ export function WearableCategoryButton({
       }}
       onMouseDown={() => {
         onClick()
-      }}
-      onMouseEnter={() => {
-        state.hoveredCategory = category
-      }}
-      onMouseLeave={() => {
-        if (!(state.hoveredCategory && state.hoveredCategory !== category)) {
-          state.hoveredCategory = null
-        }
       }}
     >
       <Icon icon={categoryIcon} iconSize={iconSize} />
@@ -113,7 +103,7 @@ export function WearableCategoryButton({
           }`
         })}
       />
-      {isHovered() && <HoveredSquare selectedURN={selectedURN} />}
+      {isHovered(category) && <HoveredSquare selectedURN={selectedURN} />}
       <UiEntity
         uiTransform={{
           width: thumbnailSize,
@@ -127,7 +117,7 @@ export function WearableCategoryButton({
         }}
       >
         {selectedURN &&
-          category === state.hoveredCategory &&
+          isHovered(category) &&
           category !== WEARABLE_CATEGORY_DEFINITIONS.body_shape.id && (
             <UnequipButton category={category} />
           )}
@@ -137,7 +127,7 @@ export function WearableCategoryButton({
         )}
         <UiEntity />
       </UiEntity>
-    </UiEntity>
+    </HoverUiEntity>
   )
 }
 
@@ -148,7 +138,8 @@ function UnequipButton({
 }): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   return (
-    <UiEntity
+    <HoverUiEntity
+      hoverKey={category}
       uiTransform={{
         width: canvasScaleRatio * 36,
         height: canvasScaleRatio * 36,
@@ -164,9 +155,6 @@ function UnequipButton({
         ...ROUNDED_TEXTURE_BACKGROUND,
         color: COLOR.TEXT_COLOR
       }}
-      onMouseEnter={() => {
-        state.hoveredCategory = category
-      }}
       onMouseDown={() => {
         store.dispatch(unequipWearableCategory(category))
         updateAvatarPreview(
@@ -181,7 +169,7 @@ function UnequipButton({
         uiTransform={{ alignSelf: 'center', flexShrink: 0 }}
         icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
       />
-    </UiEntity>
+    </HoverUiEntity>
   )
 }
 

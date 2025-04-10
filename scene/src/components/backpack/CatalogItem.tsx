@@ -13,6 +13,7 @@ import {
   type URNWithoutTokenId
 } from '../../utils/definitions'
 import { DEFAULT_EMOTES } from '../../utils/backpack-constants'
+import { HoverUiEntity, isHovered } from 'src/utils/hoverable'
 
 const SELECTED_BACKGROUND = getBackgroundFromAtlas({
   atlasName: 'backpack',
@@ -37,10 +38,9 @@ type CatalogItemProps = {
   onSelect?: () => void
 }
 const state: {
-  hoveredURN: URNWithoutTokenId | offchainEmoteURN | null
   lastTimeClick: number
   lastElementClick: ItemElement | null
-} = { hoveredURN: null, lastTimeClick: 0, lastElementClick: null }
+} = { lastTimeClick: 0, lastElementClick: null }
 
 export function CatalogItem(props: CatalogItemProps): ReactElement {
   const {
@@ -57,9 +57,9 @@ export function CatalogItem(props: CatalogItemProps): ReactElement {
   const mustShowEquippedBorder = (): boolean =>
     !loading && isEquipped && !isSelected
   const mustShowSelectedOverlay = (): boolean => isSelected && !loading
-  const isHovered = (): boolean => state.hoveredURN === itemElement?.urn
   return (
-    <UiEntity
+    <HoverUiEntity
+      hoverKey={itemElement?.urn}
       uiTransform={{
         width: 210 * canvasScaleRatio,
         height: 210 * canvasScaleRatio,
@@ -79,17 +79,9 @@ export function CatalogItem(props: CatalogItemProps): ReactElement {
           onSelect()
         }
       }}
-      onMouseEnter={() => {
-        state.hoveredURN = itemElement?.urn ?? null
-      }}
-      onMouseLeave={() => {
-        if (!(state.hoveredURN && state.hoveredURN !== itemElement.urn)) {
-          state.hoveredURN = null
-        }
-      }}
     >
       {mustShowEquippedBorder() && <EquippedBorder />}
-      {isHovered() && <HoverBorder />}
+      {isHovered(itemElement?.urn) && <HoverBorder />}
       {!isSelected && (
         <ItemCellThumbnail
           uiTransform={{ width: '100%', height: '100%' }}
@@ -105,7 +97,7 @@ export function CatalogItem(props: CatalogItemProps): ReactElement {
           onUnequipItem={onUnequipItem}
         />
       )}
-    </UiEntity>
+    </HoverUiEntity>
   )
 }
 
