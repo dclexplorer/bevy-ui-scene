@@ -17,6 +17,8 @@ import { COLOR } from '../color-palette'
 import { Color4 } from '@dcl/sdk/math'
 import Icon from '../icon/Icon'
 import { openExternalUrl } from '~system/RestrictedActions'
+import { store } from '../../state/store'
+import { updateSelectedCatalogURNAction } from '../../state/backpack/actions'
 
 export type WearableCatalogGridProps = {
   items: CatalogWearableElement[] | CatalogEmoteElement[]
@@ -28,14 +30,6 @@ export type WearableCatalogGridProps = {
   ) => void
   onEquipItem: (itemElement: ItemElement) => void
   onUnequipItem: (itemElement: ItemElement) => void
-}
-
-type CatalogGridState = {
-  selectedItemURN: URNWithoutTokenId | offchainEmoteURN | null
-}
-
-const state: CatalogGridState = {
-  selectedItemURN: null
 }
 
 const isEquippedMemo: {
@@ -132,7 +126,7 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
             onSelect={() => {
               if (isSelected(itemElement.urn)) return
               select(itemElement.urn)
-              onChangeSelection(state.selectedItemURN)
+              onChangeSelection(store.getState().backpack.selectedURN)
             }}
             isSelected={isSelected(itemElement?.urn)}
             isEquipped={isEquipped(itemElement, equippedItems)}
@@ -145,13 +139,15 @@ If you want you can find the ideal one for you in the <color=${Color4.toHexStrin
 }
 
 function isSelected(itemURN: URNWithoutTokenId | offchainEmoteURN): boolean {
-  return state.selectedItemURN === itemURN
+  return store.getState().backpack.selectedURN === itemURN
 }
 
 function select(
   itemURNWithoutTokenId: null | URNWithoutTokenId | offchainEmoteURN
 ): void {
-  state.selectedItemURN = itemURNWithoutTokenId
+  store.dispatch(
+    updateSelectedCatalogURNAction(itemURNWithoutTokenId as URNWithoutTokenId)
+  )
 }
 
 function isEquipped(

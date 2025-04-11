@@ -18,7 +18,7 @@ import {
   resetDefaultEmotesAction,
   resetEmotesAction,
   updateEquippedEmoteAction,
-  updateSelectedWearableURN
+  updateSelectedCatalogURNAction
 } from '../../../state/backpack/actions'
 import { urnWithTokenIdMemo } from '../../../utils/urn-utils'
 import { playEmote } from '../../../components/backpack/AvatarPreview'
@@ -63,7 +63,7 @@ export function EmotesCatalog(): ReactElement {
           ]}
           onChangeSelection={(selectedURN): void => {
             store.dispatch(
-              updateSelectedWearableURN(selectedURN as URNWithoutTokenId)
+              updateSelectedCatalogURNAction(selectedURN as URNWithoutTokenId)
             )
             playEmote(selectedURN as EquippedEmote)
           }}
@@ -109,7 +109,7 @@ export function EmotesCatalog(): ReactElement {
                 padding: { left: '1%', right: '2%' },
                 flexWrap: 'nowrap',
                 margin: { right: '1%' },
-                width: canvasScaleRatio * 290
+                width: canvasScaleRatio * 300
               }}
               onClick={() => {
                 resetEmotes()
@@ -151,16 +151,16 @@ function resetEmotes(): void {
 function EmoteNavBar(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
-
+  const slot = (backpackState.selectedEmoteSlot + 1) % 10
   return (
     <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
       <NavButton
         active={!backpackState.equippedEmotes[backpackState.selectedEmoteSlot]}
         icon={{
-          spriteName: `emote-circle-${backpackState.selectedEmoteSlot}`,
+          spriteName: `emote-circle-${slot}`,
           atlasName: 'backpack'
         }}
-        text={`EMOTE ${(backpackState.selectedEmoteSlot + 1) % 10}`}
+        text={`EMOTE ${slot}`}
         uiTransform={{ padding: 40 * canvasScaleRatio }}
         onClick={() => {
           if (backpackState.activeWearableCategory === null) return null

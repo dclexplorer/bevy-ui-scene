@@ -20,7 +20,7 @@ export function reducer(
   switch (action.type) {
     case BACKPACK_ACTION.UPDATE_CURRENT_PAGE:
       return { ...backpackPageState, currentPage: action.payload }
-    case BACKPACK_ACTION.SELECT_WEARABLE_URN:
+    case BACKPACK_ACTION.SELECT_CATALOG_URN:
       return { ...backpackPageState, selectedURN: action.payload }
     case BACKPACK_ACTION.UPDATE_ACTIVE_WEARABLE_CATEGORY:
       return {
