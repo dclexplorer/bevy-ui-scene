@@ -22,13 +22,10 @@ import { getEmoteThumbnail } from '../service/emotes'
 import { catalystMetadataMap } from '../utils/catalyst-metadata-map'
 import { fetchEmotesData } from '../utils/emotes-promise-utils'
 import { type EmoteEntityMetadata } from '../utils/item-definitions'
-import {
-  DEFAULT_EMOTE_NAMES,
-  DEFAULT_EMOTES
-} from '../utils/backpack-constants'
+import { DEFAULT_EMOTE_NAMES } from '../utils/backpack-constants'
 
 const state: any = {
-  active: false
+  visible: false
 }
 export async function initEmotesWheel(): Promise<void> {
   const equippedEmotes: EquippedEmote[] = (getPlayer()?.emotes ?? []).map(
@@ -45,11 +42,27 @@ export async function initEmotesWheel(): Promise<void> {
     }, 0)
   }
 }
+export function showEmotesWheel(): void {
+  state.visible = true
+  // TODO add number listeners here
+}
+
+export function hideEmotesWheel(): void {
+  state.visible = false
+  // TODO remove number listeners here
+}
 
 async function awaitStream(stream: SystemAction[]): Promise<void> {
-  for await (const action of stream) {
-    console.log('Received:', action)
-    state.active = !state.active
+  for await (const actionInfo of stream) {
+    console.log('Received:', actionInfo)
+    if (actionInfo.action === 'Emote' && actionInfo.pressed) {
+      if (isEmotesWheelAvailable()) {
+        state.visible = !state.visible
+      }
+    }
+  }
+  function isEmotesWheelAvailable(): boolean {
+    return true // TODO store.getState().backpack.isShown ?
   }
 }
 export function renderEmotesWheel(): ReactElement {
@@ -59,76 +72,73 @@ export function renderEmotesWheel(): ReactElement {
   )
 
   return (
-    <Canvas
-      uiTransform={{
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}
-    >
-      <UiEntity
+    state.visible && (
+      <Canvas
         uiTransform={{
-          width: canvasScaleRatio * 1000,
-          height: canvasScaleRatio * 1000
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
-        uiBackground={getBackgroundFromAtlas({
-          spriteName: 'wheel-background',
-          atlasName: 'emotes'
-        })}
       >
-        {equippedEmotes.map((equippedEmote, index) => {
-          const visualSlotInfo = getSlotInfo(index)
-          const equippedEmoteData: EmoteEntityMetadata = catalystMetadataMap[
-            equippedEmote as URNWithoutTokenId
-          ] as EmoteEntityMetadata
-          const emoteName =
-            equippedEmoteData?.name ??
-            DEFAULT_EMOTE_NAMES[equippedEmote as offchainEmoteURN] ??
-            ''
-          return (
-            <UiEntity
-              uiTransform={{
-                width: visualSlotInfo.width,
-                height: visualSlotInfo.height,
-                positionType: 'absolute',
-                flexShrink: 0,
-                position: {
-                  top: visualSlotInfo.y,
-                  left: visualSlotInfo.x
-                },
-                flexGrow: 0
-              }}
-              uiBackground={{
-                ...getBackgroundFromAtlas({
-                  spriteName: visualSlotInfo.spriteName,
-                  atlasName: 'emotes'
-                }),
-                color: RARITY_COLORS.legendary
-              }}
-            >
+        <UiEntity
+          uiTransform={{
+            width: canvasScaleRatio * 1000,
+            height: canvasScaleRatio * 1000
+          }}
+          uiBackground={getBackgroundFromAtlas({
+            spriteName: 'wheel-background',
+            atlasName: 'emotes'
+          })}
+        >
+          {equippedEmotes.map((equippedEmote, index) => {
+            const visualSlotInfo = getSlotInfo(index)
+            const equippedEmoteData: EmoteEntityMetadata = catalystMetadataMap[
+              equippedEmote as URNWithoutTokenId
+            ] as EmoteEntityMetadata
+
+            const emoteName =
+              equippedEmoteData?.name ??
+              DEFAULT_EMOTE_NAMES[equippedEmote as offchainEmoteURN] ??
+              ''
+            return (
               <UiEntity
                 uiTransform={{
-                  width: '55%',
-                  height: '55%',
-                  flexGrow: 0,
-                  flexShrink: 0,
+                  width: visualSlotInfo.width,
+                  height: visualSlotInfo.height,
                   positionType: 'absolute',
-                  margin: '27.5%',
-                  alignSelf: 'center',
-                  borderWidth: 1,
-                  borderColor: Color4.Black(),
-                  borderRadius: 1
+                  flexShrink: 0,
+                  position: {
+                    top: visualSlotInfo.y,
+                    left: visualSlotInfo.x
+                  },
+                  flexGrow: 0
                 }}
-                uiText={{
-                  value: emoteName
+                uiBackground={{
+                  ...getBackgroundFromAtlas({
+                    spriteName: visualSlotInfo.spriteName,
+                    atlasName: 'emotes'
+                  }),
+                  color: RARITY_COLORS[equippedEmoteData?.rarity ?? 'empty']
                 }}
-                uiBackground={getEmoteThumbnail(equippedEmote)}
-              ></UiEntity>
-            </UiEntity>
-          )
-        })}
-        <EmoteNumbers />
-      </UiEntity>
-    </Canvas>
+              >
+                <UiEntity
+                  uiTransform={{
+                    width: '55%',
+                    height: '55%',
+                    flexGrow: 0,
+                    flexShrink: 0,
+                    positionType: 'absolute',
+                    margin: '27.5%',
+                    alignSelf: 'center'
+                  }}
+                  uiBackground={getEmoteThumbnail(equippedEmote)}
+                ></UiEntity>
+              </UiEntity>
+            )
+          })}
+          <EmoteNumbers />
+        </UiEntity>
+      </Canvas>
+    )
   )
 }
 

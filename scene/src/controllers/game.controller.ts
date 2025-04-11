@@ -12,12 +12,15 @@ import { store } from 'src/state/store'
 import { fetchPlaceFromCoords } from 'src/utils/promise-utils'
 import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
+import { initEmotesWheel } from '../emotes-wheel/emotes-wheel'
 
 export class GameController {
   uiController: UIController
   constructor() {
     this.uiController = new UIController(this)
     engine.addSystem(this.positionSystem.bind(this))
+    initEmotesWheel().catch(console.error)
+
     // this.getFavorites().catch((reason)=>console.error(reason))
   }
 
