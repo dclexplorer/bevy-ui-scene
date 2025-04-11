@@ -42,27 +42,13 @@ export async function initEmotesWheel(): Promise<void> {
     }, 0)
   }
 }
-export function showEmotesWheel(): void {
-  state.visible = true
-  // TODO add number listeners here
-}
-
-export function hideEmotesWheel(): void {
-  state.visible = false
-  // TODO remove number listeners here
-}
 
 async function awaitStream(stream: SystemAction[]): Promise<void> {
   for await (const actionInfo of stream) {
-    console.log('Received:', actionInfo)
     if (actionInfo.action === 'Emote' && actionInfo.pressed) {
-      if (isEmotesWheelAvailable()) {
-        state.visible = !state.visible
-      }
+      // TODO REVIEW: add isAvailable to don't let switch when in other menu etc?
+      state.visible = !state.visible
     }
-  }
-  function isEmotesWheelAvailable(): boolean {
-    return true // TODO store.getState().backpack.isShown ?
   }
 }
 export function renderEmotesWheel(): ReactElement {

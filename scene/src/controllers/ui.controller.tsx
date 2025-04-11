@@ -81,7 +81,7 @@ export class UIController {
         {this.loadingAndLogin?.mainUi()}
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
-        {renderEmotesWheel()}
+        {!this.isMainMenuVisible && renderEmotesWheel()}
       </UiEntity>
     )
   }
