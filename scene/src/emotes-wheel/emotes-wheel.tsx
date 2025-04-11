@@ -34,10 +34,7 @@ export async function initEmotesWheel(): Promise<void> {
   const equippedEmotes: EquippedEmote[] = (getPlayer()?.emotes ?? []).map(
     (e) => getURNWithoutTokenId(e as URN) as EquippedEmote
   )
-  console.log('equippedEmotes', equippedEmotes)
-
-  const emotes = await fetchEmotesData(...equippedEmotes)
-  console.log('fetchEmotesData1', emotes)
+  await fetchEmotesData(...equippedEmotes)
   listen().catch(console.error)
 
   async function listen(): Promise<void> {

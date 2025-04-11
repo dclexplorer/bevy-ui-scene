@@ -2,7 +2,12 @@ import {
   type EmoteCategory,
   type WearableCategory
 } from '../service/categories'
-import type { offchainEmoteURN, URN, URNWithoutTokenId } from './definitions'
+import type {
+  EquippedEmote,
+  offchainEmoteURN,
+  URN,
+  URNWithoutTokenId
+} from './definitions'
 import type { PBAvatarBase } from '../bevy-api/interface'
 
 export type OutfitSetupWearables = {
@@ -101,7 +106,7 @@ export type EmoteEntityMetadata = {
     tags: string[]
   }
   i18n: I18n[]
-  id: offchainEmoteURN
+  id: EquippedEmote
   image: string
   metrics: Metrics
   name: string
