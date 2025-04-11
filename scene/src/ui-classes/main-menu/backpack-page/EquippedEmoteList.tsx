@@ -179,9 +179,6 @@ function UnequipEmoteCross({
         ...ROUNDED_TEXTURE_BACKGROUND,
         color: COLOR.TEXT_COLOR
       }}
-      onMouseEnter={() => {
-        state.hoveredIndex = index
-      }}
       onMouseDown={() => {
         store.dispatch(updateEquippedEmoteAction({ slot, equippedEmote: '' }))
       }}

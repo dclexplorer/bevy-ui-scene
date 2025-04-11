@@ -109,7 +109,7 @@ export function EmotesCatalog(): ReactElement {
                 padding: { left: '1%', right: '2%' },
                 flexWrap: 'nowrap',
                 margin: { right: '1%' },
-                width: canvasScaleRatio * 290
+                width: canvasScaleRatio * 300
               }}
               onClick={() => {
                 resetEmotes()
