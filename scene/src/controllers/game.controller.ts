@@ -19,7 +19,13 @@ export class GameController {
   constructor() {
     this.uiController = new UIController(this)
     engine.addSystem(this.positionSystem.bind(this))
-    initEmotesWheel().catch(console.error)
+    initEmotesWheel({
+      showBackpackMenu: () => {
+        if (!this.uiController.isMainMenuVisible) {
+          this.uiController.menu?.show('backpack')
+        }
+      }
+    }).catch(console.error)
 
     // this.getFavorites().catch((reason)=>console.error(reason))
   }

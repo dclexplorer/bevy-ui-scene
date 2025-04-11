@@ -22,17 +22,45 @@ import { fetchEmotesData } from '../utils/emotes-promise-utils'
 import { type EmoteEntityMetadata } from '../utils/item-definitions'
 import { DEFAULT_EMOTE_NAMES } from '../utils/backpack-constants'
 import { triggerEmote } from '~system/RestrictedActions'
+import {
+  engine,
+  InputAction,
+  inputSystem,
+  PointerEventType
+} from '@dcl/sdk/ecs'
+import { BACKPACK_SECTION } from '../state/backpack/state'
+import { store } from '../state/store'
+import { changeSectionAction } from '../state/backpack/actions'
 
 const state: any = {
   visible: true,
   hoveredURN: ''
 }
-export async function initEmotesWheel(): Promise<void> {
+export async function initEmotesWheel({
+  showBackpackMenu
+}: {
+  showBackpackMenu: () => void
+}): Promise<void> {
   const equippedEmotes: EquippedEmote[] = (getPlayer()?.emotes ?? []).map(
     (e) => getURNWithoutTokenId(e as URN) as EquippedEmote
   )
   await fetchEmotesData(...equippedEmotes)
   listen().catch(console.error)
+
+  engine.addSystem(() => {
+    const cmd = inputSystem.getInputCommand(
+      InputAction.IA_ANY,
+      PointerEventType.PET_DOWN,
+      engine.RootEntity
+    )
+
+    if (cmd) {
+      if (cmd?.button === InputAction.IA_PRIMARY && state.visible) {
+        showBackpackMenu()
+        store.dispatch(changeSectionAction(BACKPACK_SECTION.EMOTES))
+      }
+    }
+  })
 
   async function listen(): Promise<void> {
     const stream: SystemAction[] = await BevyApi.getSystemActionStream()
@@ -43,11 +71,14 @@ export async function initEmotesWheel(): Promise<void> {
   }
 }
 
+export function switchEmotesWheelVisibility(): void {
+  state.visible = !state.visible
+}
+
 async function awaitStream(stream: SystemAction[]): Promise<void> {
   for await (const actionInfo of stream) {
     if (actionInfo.action === 'Emote' && actionInfo.pressed) {
-      // TODO REVIEW: add isAvailable to don't let switch when in other menu etc?
-      state.visible = !state.visible
+      switchEmotesWheelVisibility()
     }
   }
 }

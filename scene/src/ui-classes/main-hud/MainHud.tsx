@@ -11,6 +11,7 @@ import { ALPHA_BLACK_PANEL, SELECTED_BUTTON_COLOR } from '../../utils/constants'
 import { ChatsAndLogs } from './chat-and-logs'
 import { Friends } from './friends'
 import { SceneInfo } from './scene-info'
+import { switchEmotesWheelVisibility } from '../../emotes-wheel/emotes-wheel'
 
 export default class MainHud {
   public fontSize: number = 16
@@ -592,11 +593,11 @@ export default class MainHud {
                   this.updateButtons()
                 }}
                 onMouseDown={() => {
-                  console.log('clicked')
+                  switchEmotesWheelVisibility()
                 }}
                 backgroundColor={this.emotesBackground}
                 icon={this.emotesIcon}
-                hintText={'Emotes'}
+                hintText={'Emotes (Alt or ⌥)'}
                 showHint={this.emotesHint}
               />
             </UiEntity>

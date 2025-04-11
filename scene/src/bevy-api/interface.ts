@@ -99,7 +99,7 @@ export type BevyApiInterface = {
   getHomeScene: () => Promise<HomeScene>
   setHomeScene: (home: HomeScene) => void
   getRealmProvider: () => Promise<string>
-  getSystemActionStream: () => Promise<SystemAction[]> // TODO
+  getSystemActionStream: () => Promise<SystemAction[]>
 }
 
 // system api module
