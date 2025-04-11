@@ -1,5 +1,5 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import {
@@ -7,38 +7,58 @@ import {
   getContentHeight,
   getContentWidth
 } from '../../../service/canvas-ratio'
-import { type WearableCategory } from '../../../service/wearable-categories'
-import { WearableCategoryList } from '../../../components/backpack/WearableCategoryList'
 import {
-  catalystWearableMap,
-  fetchWearablesData
+  fetchWearablesData,
+  fetchWearablesPage
 } from '../../../utils/wearables-promise-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
-import type { URN, URNWithoutTokenId } from '../../../utils/definitions'
+import type {
+  EquippedEmote,
+  URN,
+  URNWithoutTokenId
+} from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
-import { createAvatarPreview } from '../../../components/backpack/AvatarPreview'
-import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
+import {
+  createAvatarPreview,
+  playEmote,
+  setAvatarPreviewCameraToWearableCategory
+} from '../../../components/backpack/AvatarPreview'
+import {
+  ROUNDED_TEXTURE_BACKGROUND,
+  ZERO_ADDRESS
+} from '../../../utils/constants'
 import {
   BASE_MALE_URN,
   getURNWithoutTokenId,
-  getWearablesWithTokenId
+  getItemsWithTokenId
 } from '../../../utils/urn-utils'
 import { store } from '../../../state/store'
 import {
+  changeSectionAction,
   updateAvatarBase,
   updateCacheKey,
+  updateEquippedEmotesAction,
   updateEquippedWearables,
   updateLoadingPage
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
-import {
-  saveResetOutfit,
-  updatePage,
-  WearablesCatalog
-} from './WearableCatalog'
-import { InfoPanel } from '../../../components/backpack/InfoPanel'
+import { saveResetOutfit, updatePage } from './ItemCatalog'
 import { closeColorPicker } from './WearableColorPicker'
-import { changeCategory } from '../../../service/wearable-category-service'
+import { WearablesCatalog } from './WearablesCatalog'
+import { BACKPACK_SECTION } from '../../../state/backpack/state'
+import { EmotesCatalog } from './EmotesCatalog'
+import { noop } from '../../../utils/function-utils'
+import {
+  fetchEmotesData,
+  fetchEmotesPage
+} from '../../../utils/emotes-promise-utils'
+import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
+import { type SetAvatarData } from '../../../bevy-api/interface'
+import { getRealm } from '~system/Runtime'
+import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
+import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
+
+let originalAvatarJSON: string
 
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
@@ -70,32 +90,14 @@ export default class BackpackPage {
               ...ROUNDED_TEXTURE_BACKGROUND,
               color: { ...Color4.Black(), a: 0.35 }
             }}
+            onMouseDown={noop}
           >
-            {/* CATEGORY SELECTORS COLUMN */}
-            <WearableCategoryList
-              outfitSetup={backpackState.outfitSetup}
-              activeCategory={backpackState.activeWearableCategory}
-              onSelectCategory={(category: WearableCategory | null): void => {
-                if (!backpackState.loadingPage) changeCategory(category)
-              }}
-            />
-            {/* CATALOG COLUMN */}
-            <WearablesCatalog />
-            {/* SELECTED ITEM COLUMN */}
-            <InfoPanel
-              uiTransform={{
-                position: {
-                  top: -50 * canvasScaleRatio,
-                  left: -20 * canvasScaleRatio
-                }
-              }}
-              canvasScaleRatio={canvasScaleRatio}
-              wearable={
-                backpackState.selectedURN === null
-                  ? null
-                  : catalystWearableMap[backpackState.selectedURN]
-              }
-            />
+            {backpackState.activeSection === BACKPACK_SECTION.WEARABLES && (
+              <WearablesCatalog />
+            )}
+            {backpackState.activeSection === BACKPACK_SECTION.EMOTES && (
+              <EmotesCatalog />
+            )}
           </UiEntity>
         </Content>
       </MainContent>
@@ -105,45 +107,54 @@ export default class BackpackPage {
   async saveAvatar(): Promise<void> {
     try {
       const backpackState = store.getState().backpack
-
-      if (
-        [...backpackState.equippedWearables].sort(sortAbc).join(',') !==
-        [...(getPlayer()?.wearables ?? [])].sort(sortAbc).join(',')
-      ) {
-        await BevyApi.setAvatar({
-          base: backpackState.outfitSetup.base,
-          equip: {
-            wearableUrns: getWearablesWithTokenId(
-              backpackState.equippedWearables
-            ),
-            emoteUrns: [], // TODO implement emotes
-            forceRender: backpackState.forceRender ?? []
-          }
-        })
+      const avatarPayload: SetAvatarData = {
+        base: backpackState.outfitSetup.base,
+        equip: {
+          wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
+          emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
+            nullAsEmptyString
+          ) as URN[],
+          forceRender: backpackState.forceRender ?? []
+        }
+      }
+      if (avatarHasChanged(avatarPayload)) {
+        await BevyApi.setAvatar(avatarPayload)
       }
     } catch (error) {
       console.log('setAvatar error', error)
     }
 
-    function sortAbc(a: string, b: string): number {
-      return a.localeCompare(b)
+    function avatarHasChanged(avatarPayload: SetAvatarData): boolean {
+      return originalAvatarJSON !== JSON.stringify(avatarPayload)
     }
   }
 
   async init(): Promise<void> {
+    store.dispatch(updateLoadingPage(true))
     store.dispatch(updateCacheKey())
     closeColorPicker()
     createAvatarPreview()
-    store.dispatch(updateLoadingPage(true))
     const player = getPlayer()
-    const wearables: URNWithoutTokenId[] = (getPlayer()?.wearables ?? []).map(
+    const wearables: URNWithoutTokenId[] = (player?.wearables ?? []).map(
       (urn) => getURNWithoutTokenId(urn as URN)
     ) as URNWithoutTokenId[]
-    await fetchWearablesData(...(wearables ?? []))
+    const playerEmoteURNs = player?.emotes ?? []
+    const equippedEmotes: EquippedEmote[] = new Array(10)
+      .fill('')
+      .map((urn, index) =>
+        getURNWithoutTokenId((playerEmoteURNs[index] ?? '') as URN)
+      ) as EquippedEmote[]
+
+    await fetchWearablesData(
+      (await getRealm({}))?.realmInfo?.baseUrl ??
+        'https://peer.decentraland.org'
+    )(...(wearables ?? []))
+    await fetchEmotesData(...(equippedEmotes ?? []))
+    store.dispatch(updateEquippedEmotesAction(equippedEmotes))
     store.dispatch(
       updateEquippedWearables({
         wearables,
-        wearablesData: catalystWearableMap
+        wearablesData: catalystMetadataMap
       })
     )
     store.dispatch(
@@ -157,12 +168,37 @@ export default class BackpackPage {
       })
     )
     saveResetOutfit()
+    const backpackState = store.getState().backpack
+    const pageParams = {
+      pageNum: backpackState.currentPage,
+      pageSize: ITEMS_CATALOG_PAGE_SIZE,
+      address: getPlayer()?.userId ?? ZERO_ADDRESS,
+      cacheKey: store.getState().backpack.cacheKey
+    }
+    await updatePage(
+      backpackState.activeSection === BACKPACK_SECTION.WEARABLES
+        ? async () =>
+            await fetchWearablesPage((await getRealm({}))?.realmInfo?.baseUrl)({
+              ...pageParams,
+              wearableCategory: backpackState.activeWearableCategory
+            })
+        : async () => await fetchEmotesPage(pageParams)
+    )
 
-    await updatePage()
+    originalAvatarJSON = JSON.stringify({
+      base: backpackState.outfitSetup.base,
+      equip: {
+        wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
+        emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
+          nullAsEmptyString
+        ) as URN[],
+        forceRender: backpackState.forceRender ?? []
+      }
+    } satisfies SetAvatarData)
   }
 }
 
-function MainContent({ children }: any): ReactElement {
+function MainContent({ children }: { children?: ReactElement }): ReactElement {
   return (
     <UiEntity
       onMouseEnter={() => {}}
@@ -184,7 +220,8 @@ function MainContent({ children }: any): ReactElement {
   )
 }
 
-function NavBar({ children, canvasScaleRatio }: any): ReactElement {
+function NavBar({ children }: { children?: ReactElement }): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
   return (
     <UiEntity
       uiTransform={{
@@ -202,7 +239,7 @@ function NavBar({ children, canvasScaleRatio }: any): ReactElement {
   )
 }
 
-function LeftSection({ children }: any): ReactElement {
+function LeftSection({ children }: { children?: ReactElement }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -239,7 +276,7 @@ function NavBarTitle({
   )
 }
 
-function NavButtonBar({ children }: any): ReactElement {
+function NavButtonBar({ children }: { children?: ReactElement }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -257,7 +294,7 @@ function NavButtonBar({ children }: any): ReactElement {
   )
 }
 
-function Content({ children }: any): ReactElement {
+function Content({ children }: { children?: ReactElement }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -279,9 +316,9 @@ function BackpackNavBar({
 }: {
   canvasScaleRatio: number
 }): ReactElement {
+  const backpackState = store.getState().backpack
   return (
-    <NavBar canvasScaleRatio={canvasScaleRatio}>
-      {/* LEFT SECTION */}
+    <NavBar>
       <LeftSection>
         <NavBarTitle
           text={'<b>Backpack</b>'}
@@ -294,19 +331,67 @@ function BackpackNavBar({
               spriteName: 'Wearables',
               atlasName: 'icons'
             }}
-            active={true}
+            active={backpackState.activeSection === BACKPACK_SECTION.WEARABLES}
             text={'Wearables'}
+            onClick={() => {
+              const backpackState = store.getState().backpack
+              if (backpackState.loadingPage) return
+              const pageParams = {
+                pageNum: backpackState.currentPage,
+                pageSize: ITEMS_CATALOG_PAGE_SIZE,
+                address: getPlayer()?.userId ?? ZERO_ADDRESS,
+                cacheKey: store.getState().backpack.cacheKey
+              }
+              store.dispatch(changeSectionAction(BACKPACK_SECTION.WEARABLES))
+              updatePage(
+                async () =>
+                  await fetchWearablesPage(
+                    (await getRealm({}))?.realmInfo?.baseUrl
+                  )({
+                    ...pageParams,
+                    wearableCategory: backpackState.activeWearableCategory
+                  })
+              ).catch(console.error)
+              setAvatarPreviewCameraToWearableCategory(
+                backpackState.activeWearableCategory
+              )
+              playEmote('')
+            }}
           />
+
           <NavButton
             icon={{
               spriteName: 'Emotes',
               atlasName: 'icons'
             }}
+            active={backpackState.activeSection === BACKPACK_SECTION.EMOTES}
             text={'Emotes'}
             uiTransform={{ margin: { left: 12 } }}
+            onClick={() => {
+              const backpackState = store.getState().backpack
+              if (backpackState.loadingPage) return
+              store.dispatch(changeSectionAction(BACKPACK_SECTION.EMOTES))
+              const pageParams = {
+                pageNum: backpackState.currentPage,
+                pageSize: ITEMS_CATALOG_PAGE_SIZE,
+                address: getPlayer()?.userId ?? ZERO_ADDRESS,
+                cacheKey: store.getState().backpack.cacheKey
+              }
+              updatePage(async () => await fetchEmotesPage(pageParams)).catch(
+                console.error
+              )
+              setAvatarPreviewCameraToWearableCategory(
+                WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
+              )
+            }}
           />
         </NavButtonBar>
       </LeftSection>
     </NavBar>
   )
+}
+
+function nullAsEmptyString(v: any): any {
+  if (!v) return ''
+  return v
 }

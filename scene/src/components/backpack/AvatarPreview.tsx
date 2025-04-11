@@ -9,13 +9,16 @@ import {
 } from '@dcl/sdk/ecs'
 import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { type URNWithoutTokenId } from '../../utils/definitions'
+import {
+  type EquippedEmote,
+  type URNWithoutTokenId
+} from '../../utils/definitions'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from '../../service/wearable-categories'
+} from '../../service/categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
-import { getWearablesWithTokenId } from '../../utils/urn-utils'
+import { getItemsWithTokenId } from '../../utils/urn-utils'
 import { type Perspective } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/texture_camera.gen'
 
 type AvatarPreview = {
@@ -47,6 +50,11 @@ export const setAvatarPreviewZoomFactor = (zoomFactor: number): void => {
 
 export const getAvatarPreviewQuaternion = (): Quaternion => {
   return Transform.get(avatarPreview.avatarEntity).rotation
+}
+
+export const playEmote = (emoteURN: EquippedEmote): void => {
+  AvatarShape.getMutable(avatarPreview.avatarEntity).expressionTriggerId =
+    emoteURN
 }
 
 const AVATAR_CAMERA_POSITION: Record<string, Vector3> = {
@@ -94,7 +102,7 @@ export function updateAvatarPreview(
   forceRender: WearableCategory[] = []
 ): void {
   const mutableAvatarShape = AvatarShape.getMutable(avatarPreview.avatarEntity)
-  mutableAvatarShape.wearables = getWearablesWithTokenId(wearables)
+  mutableAvatarShape.wearables = getItemsWithTokenId(wearables)
   mutableAvatarShape.bodyShape = avatarBase.bodyShapeUrn
   mutableAvatarShape.hairColor = avatarBase.hairColor
   mutableAvatarShape.eyeColor = avatarBase.eyesColor
@@ -142,7 +150,8 @@ export function createAvatarPreview(): void {
     mode: {
       $case: 'perspective',
       perspective: { fieldOfView: 1 }
-    }
+    },
+    volume: 1
   })
 
   Transform.create(avatarEntity, {

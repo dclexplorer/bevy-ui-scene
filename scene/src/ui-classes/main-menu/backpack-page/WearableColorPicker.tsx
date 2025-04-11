@@ -9,7 +9,7 @@ import {
   CATEGORY_COLOR_DEFINITIONS,
   categoryHasColor,
   WEARABLE_CATEGORY_DEFINITIONS
-} from '../../../service/wearable-categories'
+} from '../../../service/categories'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { noop } from '../../../utils/function-utils'
 import { BasicSlider } from '../../../components/slider/BasicSlider'
@@ -57,7 +57,7 @@ export function WearableColorPicker(): ReactElement {
         uiText={{
           value: `<b>${CATEGORY_COLOR_DEFINITIONS[
             categoryColorKey
-          ]?.name.toUpperCase()}</b>`,
+          ]?.name?.toUpperCase()}</b>`,
           color: COLOR.TEXT_COLOR,
           fontSize: 26 * canvasScaleRatio
         }}
@@ -88,12 +88,11 @@ function updateAvatar(payload: BackpackUpdateAvatarBasePayload): void {
 
 function ColorBox({
   color,
-  key,
   onMouseDown,
   uiTransform
 }: {
   color: Color4
-  key?: any
+  key?: Color4
   onMouseDown?: () => void
   uiTransform?: UiTransformProps
 }): ReactElement {
@@ -176,7 +175,7 @@ function ColorPickerDialog({
               height: canvasScaleRatio * 60
             }}
             color={color}
-            key={index}
+            key={color}
             onMouseDown={() => {
               const avatarBase = store.getState().backpack.outfitSetup.base
               const payload = {

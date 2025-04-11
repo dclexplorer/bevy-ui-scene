@@ -1,8 +1,17 @@
-import { type BackpackPageState } from './state'
+import { BACKPACK_SECTION, type BackpackPageState } from './state'
 import { BACKPACK_ACTION, type BackpackActions } from './actions'
 import { getOutfitSetupFromWearables } from '../../service/outfit'
 import { store } from '../store'
-import { catalystWearableMap } from '../../utils/wearables-promise-utils'
+
+import { type WearableCategory } from '../../service/categories'
+import { type PBAvatarBase } from '../../bevy-api/interface'
+import {
+  type EquippedEmote,
+  type URNWithoutTokenId
+} from '../../utils/definitions'
+import { cloneDeep } from '../../utils/function-utils'
+import { catalystMetadataMap } from '../../utils/catalyst-metadata-map'
+import { DEFAULT_EMOTES } from '../../utils/backpack-constants'
 
 export function reducer(
   backpackPageState: BackpackPageState,
@@ -11,7 +20,7 @@ export function reducer(
   switch (action.type) {
     case BACKPACK_ACTION.UPDATE_CURRENT_PAGE:
       return { ...backpackPageState, currentPage: action.payload }
-    case BACKPACK_ACTION.SELECT_WEARABLE_URN:
+    case BACKPACK_ACTION.SELECT_CATALOG_URN:
       return { ...backpackPageState, selectedURN: action.payload }
     case BACKPACK_ACTION.UPDATE_ACTIVE_WEARABLE_CATEGORY:
       return {
@@ -24,14 +33,25 @@ export function reducer(
         ...backpackPageState,
         loadingPage: true
       }
-    case BACKPACK_ACTION.UPDATE_LOADED_PAGE:
+    case BACKPACK_ACTION.UPDATE_LOADED_PAGE: {
+      const key =
+        backpackPageState.activeSection === BACKPACK_SECTION.WEARABLES
+          ? 'shownWearables'
+          : 'shownEmotes'
       return {
         ...backpackPageState,
         totalPages: action.payload.totalPages,
-        shownWearables: action.payload.shownWearables,
+        [key]: action.payload.elements,
         loadingPage: false
       }
-    case BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES:
+    }
+
+    case BACKPACK_ACTION.UPDATE_EQUIPPED_WEARABLES: {
+      const equippedItems = gatherEquippedItems({
+        base: backpackPageState.outfitSetup.base,
+        equippedWearables: action.payload.wearables,
+        equippedEmotes: backpackPageState.equippedEmotes
+      })
       return {
         ...backpackPageState,
         equippedWearables: action.payload.wearables,
@@ -45,24 +65,34 @@ export function reducer(
             )
           }
         },
-        changedFromResetVersion: true
+        changedFromResetVersion: true,
+        equippedItems
       }
-    case BACKPACK_ACTION.UPDATE_AVATAR_BASE:
+    }
+    case BACKPACK_ACTION.UPDATE_AVATAR_BASE: {
+      const base = {
+        ...backpackPageState.outfitSetup.base,
+        name: action.payload.name,
+        eyesColor: action.payload.eyesColor,
+        hairColor: action.payload.hairColor,
+        skinColor: action.payload.skinColor,
+        bodyShapeUrn: action.payload.bodyShapeUrn
+      }
+      const equippedItems = gatherEquippedItems({
+        base,
+        equippedWearables: backpackPageState.equippedWearables,
+        equippedEmotes: backpackPageState.equippedEmotes
+      })
       return {
         ...backpackPageState,
         outfitSetup: {
           ...backpackPageState.outfitSetup,
-          base: {
-            ...backpackPageState.outfitSetup.base,
-            name: action.payload.name,
-            eyesColor: action.payload.eyesColor,
-            hairColor: action.payload.hairColor,
-            skinColor: action.payload.skinColor,
-            bodyShapeUrn: action.payload.bodyShapeUrn
-          }
+          base
         },
-        changedFromResetVersion: true
+        changedFromResetVersion: true,
+        equippedItems
       }
+    }
     case BACKPACK_ACTION.UPDATE_CACHE_KEY:
       return {
         ...backpackPageState,
@@ -80,36 +110,64 @@ export function reducer(
       return {
         ...backpackPageState,
         savedResetOutfit: {
-          base: JSON.parse(
-            JSON.stringify(store.getState().backpack.outfitSetup.base)
-          ),
-          equippedWearables: JSON.parse(
-            JSON.stringify(store.getState().backpack.equippedWearables)
+          base: cloneDeep(store.getState().backpack.outfitSetup.base),
+          equippedWearables: cloneDeep(
+            store.getState().backpack.equippedWearables
           ),
           forceRender: [...store.getState().backpack.forceRender]
         },
         changedFromResetVersion: false
       }
-    case BACKPACK_ACTION.RESET_OUTFIT:
+    case BACKPACK_ACTION.RESET_OUTFIT: {
+      const base: PBAvatarBase = cloneDeep(
+        backpackPageState.savedResetOutfit.base
+      )
+      const equippedWearables = [
+        ...backpackPageState.savedResetOutfit.equippedWearables
+      ]
+      const equippedItems = gatherEquippedItems({
+        base,
+        equippedWearables,
+        equippedEmotes: backpackPageState.equippedEmotes
+      })
       return {
         ...backpackPageState,
         outfitSetup: {
           ...backpackPageState.outfitSetup,
-          base: JSON.parse(
-            JSON.stringify(backpackPageState.savedResetOutfit.base)
-          ),
+          base,
           wearables: getOutfitSetupFromWearables(
             backpackPageState.savedResetOutfit.equippedWearables,
-            catalystWearableMap
+            catalystMetadataMap
           )
         },
         forceRender: [...backpackPageState.savedResetOutfit.forceRender],
-        equippedWearables: [
-          ...backpackPageState.savedResetOutfit.equippedWearables
-        ],
-        changedFromResetVersion: false
+        equippedWearables,
+        changedFromResetVersion: false,
+        equippedItems
       }
-    case BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY:
+    }
+    case BACKPACK_ACTION.UPDATE_EMOTES_SAVED_RESET_VERSION: {
+      return {
+        ...backpackPageState,
+        savedResetEmotes: cloneDeep(backpackPageState.equippedEmotes),
+        changedEmotesFromResetVersion: false
+      }
+    }
+    case BACKPACK_ACTION.RESET_EMOTES: {
+      return {
+        ...backpackPageState,
+        equippedEmotes: cloneDeep(backpackPageState.savedResetEmotes),
+        changedEmotesFromResetVersion: false
+      }
+    }
+    case BACKPACK_ACTION.UNEQUIP_WEARABLE_CATEGORY: {
+      const equippedWearables = backpackPageState.equippedWearables.filter(
+        (equippedWearable) =>
+          equippedWearable !==
+          backpackPageState.outfitSetup.wearables[
+            action.payload as WearableCategory
+          ]
+      )
       return {
         ...backpackPageState,
         outfitSetup: {
@@ -119,13 +177,67 @@ export function reducer(
             [action.payload]: null
           }
         },
-        equippedWearables: backpackPageState.equippedWearables.filter(
-          (equippedWearable) =>
-            equippedWearable !==
-            backpackPageState.outfitSetup.wearables[action.payload]
-        )
+        equippedWearables,
+        equippedItems: gatherEquippedItems({
+          base: backpackPageState.outfitSetup.base,
+          equippedWearables,
+          equippedEmotes: backpackPageState.equippedEmotes
+        })
       }
+    }
+    case BACKPACK_ACTION.CHANGE_SECTION: {
+      return {
+        ...backpackPageState,
+        activeSection: action.payload,
+        currentPage: 1,
+        selectedURN: null
+      }
+    }
+    case BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTES: {
+      return {
+        ...backpackPageState,
+        equippedEmotes: action.payload,
+        changedEmotesFromResetVersion: false,
+        savedResetEmotes: cloneDeep(action.payload)
+      }
+    }
+    case BACKPACK_ACTION.UPDATE_EQUIPPED_EMOTE: {
+      const newEquippedEmotes = [...backpackPageState.equippedEmotes]
+      newEquippedEmotes[action.payload.slot] = action.payload.equippedEmote
+      return {
+        ...backpackPageState,
+        equippedEmotes: newEquippedEmotes,
+        changedEmotesFromResetVersion: true
+      }
+    }
+    case BACKPACK_ACTION.SELECT_EMOTE_SLOT: {
+      return {
+        ...backpackPageState,
+        selectedEmoteSlot: action.payload
+      }
+    }
+    case BACKPACK_ACTION.RESET_DEFAULT_EMOTES: {
+      return {
+        ...backpackPageState,
+        equippedEmotes: DEFAULT_EMOTES,
+        changedEmotesFromResetVersion: true
+      }
+    }
     default:
       return backpackPageState
   }
+}
+
+function gatherEquippedItems({
+  base,
+  equippedWearables,
+  equippedEmotes
+}: {
+  base: PBAvatarBase
+  equippedWearables: URNWithoutTokenId[]
+  equippedEmotes: EquippedEmote[]
+}): EquippedEmote[] {
+  return [base.bodyShapeUrn, ...equippedWearables, ...equippedEmotes].filter(
+    (i) => i
+  )
 }

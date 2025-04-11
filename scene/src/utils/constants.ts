@@ -538,7 +538,7 @@ export const ROUNDED_TEXTURE_BACKGROUND = {
   textureSlices: TEXTURE_SLICES_05,
   color: COLOR.ACTIVE_BACKGROUND_COLOR
 }
-export const WEARABLE_CATALOG_PAGE_SIZE = 16
+
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
   id: '00000000-0000-0000-0000-000000000000',
@@ -561,5 +561,14 @@ export const EMPTY_PHOTO_METADATA: PhotoMetadataResponse = {
     placeId: '00000000-0000-0000-0000-000000000000'
   }
 }
-
+export const ITEMS_ORDER_BY = {
+  DATE: 'date',
+  RARITY: 'rarity',
+  NAME: 'name'
+}
+export const ITEMS_ORDER_DIRECTION = {
+  DESC: 'DESC',
+  ASC: 'ASC'
+}
 export const MAX_ZINDEX = 98303
+export const CATALYST_BASE_URL_FALLBACK = 'https://peer.decentraland.org'

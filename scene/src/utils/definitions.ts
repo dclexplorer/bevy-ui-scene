@@ -35,6 +35,17 @@ type URN_VALUE =
   | `decentraland:${Network}:collections-thirdparty:${string}:${string}:${string}:${string}:${string}:${string}`
 
 export type URN = `urn:${URN_VALUE}`
+export type offchainEmoteURN =
+  | `handsair`
+  | `wave`
+  | `fistpump`
+  | `dance`
+  | `raisehand`
+  | `clap`
+  | `money`
+  | `kiss`
+  | `headexplode`
+  | `shrug`
 export type URNWithoutTokenId =
   | `decentraland:off-chain:base-avatars:${string}`
   | `decentraland:${Network}:collections-v1:${ContractAddress}:${string}`
@@ -120,9 +131,11 @@ export type Atlas =
   | 'voice-chat'
   | 'social'
   | 'info-panel'
+  | 'emotes'
 
 export type FormattedURN = {
   version: string
   contractAddress: string
   itemId: string
 }
+export type EquippedEmote = URNWithoutTokenId | offchainEmoteURN | ``
