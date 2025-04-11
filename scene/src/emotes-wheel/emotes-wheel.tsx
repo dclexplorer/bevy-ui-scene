@@ -2,13 +2,11 @@ import { timers } from '@dcl-sdk/utils'
 import { BevyApi } from '../bevy-api'
 import { type SystemAction } from '../bevy-api/interface'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { Color4, Vector2 } from '@dcl/sdk/math'
+import { Color4 } from '@dcl/sdk/math'
 import { Canvas } from '../components/canvas'
 import { getCanvasScaleRatio } from '../service/canvas-ratio'
-import { store } from '../state/store'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR, RARITY_COLORS } from '../components/color-palette'
-import emoteAtlas from '../../assets/images/atlas/emotes.json'
 import { wheelNumbers, wheelSlotBoxes } from './wheel-boxes'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { getURNWithoutTokenId } from '../utils/urn-utils'
@@ -25,7 +23,8 @@ import { type EmoteEntityMetadata } from '../utils/item-definitions'
 import { DEFAULT_EMOTE_NAMES } from '../utils/backpack-constants'
 
 const state: any = {
-  visible: false
+  visible: true,
+  hoveredURN: ''
 }
 export async function initEmotesWheel(): Promise<void> {
   const equippedEmotes: EquippedEmote[] = (getPlayer()?.emotes ?? []).map(
@@ -56,6 +55,16 @@ export function renderEmotesWheel(): ReactElement {
   const equippedEmotes: EquippedEmote[] = (getPlayer()?.emotes ?? []).map(
     (e) => getURNWithoutTokenId(e as URN) as EquippedEmote
   )
+  const hoveredEmoteData: EmoteEntityMetadata | null = state.hoveredURN
+    ? (catalystMetadataMap[
+        state.hoveredURN as URNWithoutTokenId
+      ] as EmoteEntityMetadata)
+    : null
+  const hoveredName: string = state.hoveredURN
+    ? hoveredEmoteData?.name ??
+      DEFAULT_EMOTE_NAMES[state.hoveredURN as offchainEmoteURN] ??
+      ''
+    : ''
 
   return (
     state.visible && (
@@ -67,6 +76,7 @@ export function renderEmotesWheel(): ReactElement {
       >
         <UiEntity
           uiTransform={{
+            positionType: 'absolute',
             width: canvasScaleRatio * 1000,
             height: canvasScaleRatio * 1000
           }}
@@ -81,10 +91,6 @@ export function renderEmotesWheel(): ReactElement {
               equippedEmote as URNWithoutTokenId
             ] as EmoteEntityMetadata
 
-            const emoteName =
-              equippedEmoteData?.name ??
-              DEFAULT_EMOTE_NAMES[equippedEmote as offchainEmoteURN] ??
-              ''
             return (
               <UiEntity
                 uiTransform={{
@@ -105,6 +111,9 @@ export function renderEmotesWheel(): ReactElement {
                   }),
                   color: RARITY_COLORS[equippedEmoteData?.rarity ?? 'empty']
                 }}
+                onMouseEnter={() => {
+                  state.hoveredURN = equippedEmote
+                }}
               >
                 <UiEntity
                   uiTransform={{
@@ -123,6 +132,22 @@ export function renderEmotesWheel(): ReactElement {
           })}
           <EmoteNumbers />
         </UiEntity>
+        <UiEntity
+          uiTransform={{
+            positionType: 'absolute',
+            alignSelf: 'center'
+          }}
+          uiText={{
+            value: `${hoveredName}
+<b>EMOTES</b>
+Customize <b>[E]</b>
+Press <b>[Alt + num]</b> to run emote`,
+            color: Color4.White(),
+            textAlign: 'middle-center',
+            fontSize: canvasScaleRatio * 30,
+            textWrap: 'wrap'
+          }}
+        />
       </Canvas>
     )
   )
