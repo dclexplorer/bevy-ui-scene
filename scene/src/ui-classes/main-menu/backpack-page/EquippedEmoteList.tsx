@@ -11,7 +11,7 @@ import {
   selectEmoteSlotAction,
   updateEquippedEmoteAction
 } from '../../../state/backpack/actions'
-import { playEmote } from '../../../components/backpack/AvatarPreview'
+import { playPreviewEmote } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getEmoteName, getEmoteThumbnail } from '../../../service/emotes'
 import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
@@ -61,7 +61,7 @@ export function EquippedEmoteList({
                   newBackpackState.selectedEmoteSlot
                 ]
 
-              playEmote(selectedEmoteURN)
+              playPreviewEmote(selectedEmoteURN)
             }}
             onMouseEnter={() => {
               state.hoveredIndex = index

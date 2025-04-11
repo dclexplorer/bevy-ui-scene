@@ -21,7 +21,7 @@ import {
   updateSelectedCatalogURNAction
 } from '../../../state/backpack/actions'
 import { urnWithTokenIdMemo } from '../../../utils/urn-utils'
-import { playEmote } from '../../../components/backpack/AvatarPreview'
+import { playPreviewEmote } from '../../../components/backpack/AvatarPreview'
 import { EquippedEmoteList } from './EquippedEmoteList'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import {
@@ -65,7 +65,7 @@ export function EmotesCatalog(): ReactElement {
             store.dispatch(
               updateSelectedCatalogURNAction(selectedURN as URNWithoutTokenId)
             )
-            playEmote(selectedURN as EquippedEmote)
+            playPreviewEmote(selectedURN as EquippedEmote)
           }}
           onEquipItem={(itemElement: ItemElement): void => {
             urnWithTokenIdMemo.set(
@@ -129,7 +129,7 @@ export function EmotesCatalog(): ReactElement {
               }}
               onClick={() => {
                 store.dispatch(resetDefaultEmotesAction())
-                playEmote('')
+                playPreviewEmote('')
               }}
             />
           )}
@@ -145,7 +145,7 @@ function areDefaultEmotes(equippedEmotes: EquippedEmote[]): boolean {
 
 function resetEmotes(): void {
   store.dispatch(resetEmotesAction())
-  playEmote('')
+  playPreviewEmote('')
 }
 
 function EmoteNavBar(): ReactElement {

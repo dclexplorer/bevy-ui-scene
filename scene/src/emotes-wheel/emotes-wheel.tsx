@@ -21,6 +21,7 @@ import { catalystMetadataMap } from '../utils/catalyst-metadata-map'
 import { fetchEmotesData } from '../utils/emotes-promise-utils'
 import { type EmoteEntityMetadata } from '../utils/item-definitions'
 import { DEFAULT_EMOTE_NAMES } from '../utils/backpack-constants'
+import { triggerEmote } from '~system/RestrictedActions'
 
 const state: any = {
   visible: true,
@@ -113,6 +114,12 @@ export function renderEmotesWheel(): ReactElement {
                 }}
                 onMouseEnter={() => {
                   state.hoveredURN = equippedEmote
+                }}
+                onMouseDown={() => {
+                  triggerEmote({ predefinedEmote: equippedEmote }).catch(
+                    console.error
+                  )
+                  state.visible = false
                 }}
               >
                 <UiEntity
