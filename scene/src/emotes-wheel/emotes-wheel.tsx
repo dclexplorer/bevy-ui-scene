@@ -33,7 +33,7 @@ import { store } from '../state/store'
 import { changeSectionAction } from '../state/backpack/actions'
 
 const state: any = {
-  visible: true,
+  visible: false,
   hoveredURN: ''
 }
 export async function initEmotesWheel({
