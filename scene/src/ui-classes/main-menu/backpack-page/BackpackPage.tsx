@@ -1,5 +1,5 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, UiCanvasInformation, UiInput } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import {
@@ -57,9 +57,14 @@ import { type SetAvatarData } from '../../../bevy-api/interface'
 import { getRealm } from '~system/Runtime'
 import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
 import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
+import { Input } from '@dcl/sdk/react-ecs'
+import { COLOR } from '../../../components/color-palette'
 
 let originalAvatarJSON: string
 
+const state = {
+  searchName: ''
+}
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
 
@@ -255,6 +260,22 @@ function LeftSection({ children }: { children?: ReactElement }): ReactElement {
   )
 }
 
+function RightSection({ children }: { children?: ReactElement }): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        height: '100%',
+        flexDirection: 'row',
+        padding: { right: '1%' },
+        justifyContent: 'flex-end',
+        flexGrow: 1
+      }}
+    >
+      {children}
+    </UiEntity>
+  )
+}
+
 function NavBarTitle({
   text,
   canvasScaleRatio
@@ -387,6 +408,26 @@ function BackpackNavBar({
           />
         </NavButtonBar>
       </LeftSection>
+      <RightSection>
+        <Input
+          uiTransform={{
+            width: '35%',
+            height: '70%',
+            alignSelf: 'center',
+            borderColor: COLOR.TEXT_COLOR,
+            borderWidth: 1,
+            borderRadius: getCanvasScaleRatio() * 30,
+            padding: getCanvasScaleRatio() * 20
+          }}
+          uiBackground={{
+            color: Color4.White()
+          }}
+          fontSize={canvasScaleRatio * 100}
+          value={state.searchName}
+          placeholder={'Search by name ...'}
+          onChange={(e) => {}}
+        />
+      </RightSection>
     </NavBar>
   )
 }
