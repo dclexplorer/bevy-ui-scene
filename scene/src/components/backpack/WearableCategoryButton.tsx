@@ -2,7 +2,7 @@ import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from '../../service/wearable-categories'
+} from '../../service/categories'
 import ReactEcs, {
   type ReactElement,
   type UiBackgroundProps
@@ -14,7 +14,6 @@ import Icon from '../icon/Icon'
 import type { AtlasIcon, URNWithoutTokenId } from '../../utils/definitions'
 import { noop } from '../../utils/function-utils'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { catalystWearableMap } from '../../utils/wearables-promise-utils'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { store } from '../../state/store'
 import {
@@ -22,6 +21,7 @@ import {
   unequipWearableCategory
 } from '../../state/backpack/actions'
 import { updateAvatarPreview } from './AvatarPreview'
+import { catalystMetadataMap } from '../../utils/catalyst-metadata-map'
 
 type WearableCategoryButtonProps = {
   uiTransform?: UiTransformProps
@@ -58,7 +58,7 @@ export function WearableCategoryButton({
     ? getWearableThumbnailBackground(selectedURN)
     : getBackgroundFromAtlas({
         atlasName: 'backpack',
-        spriteName: 'empty-wearable-field' // TODO change and fix file
+        spriteName: 'empty-wearable-field'
       })
   const isHovered = (): boolean => state.hoveredCategory === category
   return (
@@ -79,9 +79,7 @@ export function WearableCategoryButton({
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
         color:
-          active === true
-            ? COLOR.ACTIVE_BACKGROUND_COLOR
-            : Color4.create(0, 0, 0, 0.2)
+          active === true ? COLOR.ACTIVE_BACKGROUND_COLOR : COLOR.DARK_OPACITY_2
       }}
       onMouseDown={() => {
         onClick()
@@ -110,7 +108,7 @@ export function WearableCategoryButton({
         uiBackground={getBackgroundFromAtlas({
           atlasName: 'backpack',
           spriteName: `rarity-background-${
-            catalystWearableMap[selectedURN as URNWithoutTokenId]?.rarity ??
+            catalystMetadataMap[selectedURN as URNWithoutTokenId]?.rarity ??
             'base'
           }`
         })}
@@ -170,7 +168,6 @@ function UnequipButton({
         state.hoveredCategory = category
       }}
       onMouseDown={() => {
-        console.log('UNEQUIP ', category)
         store.dispatch(unequipWearableCategory(category))
         updateAvatarPreview(
           store.getState().backpack.equippedWearables,
@@ -260,7 +257,7 @@ function HoveredSquare({
         positionType: 'absolute',
         position: {
           left: 108 * canvasScaleRatio,
-          top: 0 * canvasScaleRatio
+          top: 0
         },
         zIndex: 1
       }

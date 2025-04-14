@@ -3,11 +3,12 @@ import { WearableCategoryButton } from './WearableCategoryButton'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from '../../service/wearable-categories'
-import { type OutfitSetup } from '../../utils/wearables-definitions'
+} from '../../service/categories'
+import { type OutfitSetup } from '../../utils/item-definitions'
 import { store } from '../../state/store'
-import { catalystWearableMap } from '../../utils/wearables-promise-utils'
+
 import { forceRenderHasEffect } from '../../service/force-render-service'
+import { catalystMetadataMap } from '../../utils/catalyst-metadata-map'
 
 type WearableCategoryListProps = {
   activeCategory: WearableCategory | null
@@ -49,7 +50,7 @@ export function WearableCategoryList({
             showForceRender={forceRenderHasEffect(
               category,
               outfitSetup.wearables[category],
-              catalystWearableMap,
+              catalystMetadataMap,
               backpackState.equippedWearables
             )}
             forceRender={isCategoryInForceRender(category)}
@@ -68,7 +69,7 @@ export function WearableCategoryList({
             showForceRender={forceRenderHasEffect(
               category,
               outfitSetup.wearables[category],
-              catalystWearableMap,
+              catalystMetadataMap,
               backpackState.equippedWearables
             )}
             forceRender={isCategoryInForceRender(category)}

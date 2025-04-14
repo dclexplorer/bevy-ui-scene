@@ -1,14 +1,17 @@
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from './wearable-categories'
+} from './categories'
 import type { URNWithoutTokenId } from '../utils/definitions'
-import type { CatalystWearableMap } from '../utils/wearables-definitions'
+import {
+  type CatalystMetadataMap,
+  type WearableEntityMetadata
+} from '../utils/item-definitions'
 
 export function forceRenderHasEffect(
   category: WearableCategory,
   currentWearableURN: URNWithoutTokenId | null,
-  wearablesData: CatalystWearableMap,
+  wearablesData: CatalystMetadataMap,
   equippedWearables: URNWithoutTokenId[]
 ): boolean {
   if (category === WEARABLE_CATEGORY_DEFINITIONS.body_shape.id) return false
@@ -23,10 +26,12 @@ export function forceRenderHasEffect(
 
   return equippedWearables.some((wearableURN: URNWithoutTokenId) => {
     if (currentWearableURN === wearableURN) return false
-
+    const wearableMetadata: WearableEntityMetadata = wearablesData[
+      wearableURN
+    ] as WearableEntityMetadata
     return (
-      wearablesData[wearableURN].data.hides.includes(category) ||
-      (categoryIsHead && wearablesData[wearableURN].data.hides.includes('head'))
+      wearableMetadata.data.hides.includes(category) ||
+      (categoryIsHead && wearableMetadata.data.hides.includes('head'))
     )
   })
 }

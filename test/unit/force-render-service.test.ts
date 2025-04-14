@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { forceRenderHasEffect } from '../../scene/src/service/force-render-service'
-import { WEARABLE_CATEGORY_DEFINITIONS } from '../../scene/src/service/wearable-categories'
+import { WEARABLE_CATEGORY_DEFINITIONS } from '../../scene/src/service/categories'
 import catalystWearableMapMock from './catalyst-wearable-map-mock.json'
-import { CatalystWearableMap } from '../../scene/src/utils/wearables-definitions'
+import { CatalystMetadataMap } from '../../scene/src/utils/item-definitions'
 import { URNWithoutTokenId } from '../../scene/src/utils/definitions'
 
 const hairURN ="urn:decentraland:ethereum:collections-v1:mf_sammichgamer:mf_animehair" as URNWithoutTokenId
@@ -13,7 +13,7 @@ describe("forceRenderHasEffect", () => {
   it("it should return false for body_shape category", () => {
       expect(forceRenderHasEffect(
         WEARABLE_CATEGORY_DEFINITIONS.body_shape.id,
-        "decentraland:ethereum:collections-v1:contractAddress:0x1",
+        "decentraland:ethereum:collections-v1:contractAddress:0x1:0" as URNWithoutTokenId,
         {},
         []
       )).to.equal(false);
@@ -36,7 +36,7 @@ describe("forceRenderHasEffect", () => {
     expect(forceRenderHasEffect(
       WEARABLE_CATEGORY_DEFINITIONS.hair.id,
       hairURN as URNWithoutTokenId,
-      catalystWearableMapMock as CatalystWearableMap,
+      catalystWearableMapMock as CatalystMetadataMap,
       equippedHairAndHatThatHidesHair
     )).to.eq(true);
   })
@@ -50,7 +50,7 @@ describe("forceRenderHasEffect", () => {
     expect(forceRenderHasEffect(
       WEARABLE_CATEGORY_DEFINITIONS.hair.id,
       hairURN as URNWithoutTokenId,
-      catalystWearableMapMock as CatalystWearableMap,
+      catalystWearableMapMock as CatalystMetadataMap,
       equippedMaskHidingHeadThenHair as URNWithoutTokenId[]
     )).to.eq(true);
 

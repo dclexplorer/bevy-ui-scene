@@ -1,6 +1,6 @@
 import type { Vector2 } from '@dcl/sdk/math'
 import type { URN, URNWithoutTokenId } from '../utils/definitions'
-import { type WearableCategory } from '../service/wearable-categories'
+import { type WearableCategory } from '../service/categories'
 
 export type ExplorerSetting = {
   name: string
@@ -43,7 +43,7 @@ export type PBAvatarBase = {
   bodyShapeUrn: URNWithoutTokenId
 }
 
-type SetAvatarData = {
+export type SetAvatarData = {
   base?: PBAvatarBase
   equip?: PBAvatarEquippedData
 }

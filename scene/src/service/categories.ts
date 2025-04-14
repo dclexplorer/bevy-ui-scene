@@ -18,6 +18,15 @@ export type WearableCategory =
   | 'eyebrows'
   | 'body_shape'
 
+export type EmoteCategory =
+  | 'fun'
+  | 'dance'
+  | 'poses'
+  | 'miscellaneous'
+  | 'reactions'
+  | 'stunt'
+  | 'greetings'
+
 type CategoryColorDefiniton = { key: string; name: string }
 export const CATEGORY_COLOR_DEFINITIONS: Record<
   string,

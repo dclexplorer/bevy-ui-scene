@@ -1,9 +1,10 @@
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import type {
-  WearableEntityMetadata,
-  RarityName
-} from '../../utils/wearables-definitions'
+  EmoteEntityMetadata,
+  RarityName,
+  WearableEntityMetadata
+} from '../../utils/item-definitions'
 import Icon from '../icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 
@@ -13,20 +14,26 @@ import { type Color4 } from '@dcl/sdk/math'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
-} from '../../service/wearable-categories'
+} from '../../service/categories'
+import { BACKPACK_SECTION } from '../../state/backpack/state'
+import { store } from '../../state/store'
+import { getEmoteThumbnail } from '../../service/emotes'
 
 export type InfoPanelProps = {
   canvasScaleRatio: number
-  wearable: WearableEntityMetadata | null
+  entityMetadata: WearableEntityMetadata | EmoteEntityMetadata | null
   uiTransform?: UiTransformProps
 }
 
 export function InfoPanel({
   canvasScaleRatio,
-  wearable,
+  entityMetadata,
   uiTransform
 }: InfoPanelProps): ReactElement {
-  const rarityColor = RARITY_COLORS[wearable?.rarity as RarityName]
+  const rarityColor = RARITY_COLORS[entityMetadata?.rarity as RarityName]
+  const data =
+    (entityMetadata as WearableEntityMetadata)?.data ??
+    (entityMetadata as EmoteEntityMetadata)?.emoteDataADR74
 
   return (
     <UiEntity
@@ -40,11 +47,11 @@ export function InfoPanel({
       uiBackground={{
         ...getBackgroundFromAtlas({
           atlasName: 'info-panel',
-          spriteName: wearable ? wearable.rarity ?? 'base' : 'empty'
+          spriteName: entityMetadata ? entityMetadata.rarity ?? 'base' : 'empty'
         })
       }}
     >
-      {wearable ? (
+      {entityMetadata ? (
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -60,12 +67,7 @@ export function InfoPanel({
               alignSelf: 'center',
               margin: { top: '10%' }
             }}
-            uiBackground={{
-              texture: {
-                src: `https://peer.decentraland.org/lambdas/collections/contents/${wearable?.id}/thumbnail`
-              },
-              textureMode: 'stretch'
-            }}
+            uiBackground={getEmoteThumbnail(entityMetadata?.id)}
           />
           <UiEntity
             uiTransform={{
@@ -87,7 +89,12 @@ export function InfoPanel({
                 height: canvasScaleRatio * 40
               }}
               icon={{
-                spriteName: `category-${wearable?.data.category}`,
+                spriteName: `category-${
+                  store.getState().backpack.activeSection ===
+                  BACKPACK_SECTION.EMOTES
+                    ? 'dance'
+                    : data.category
+                }`,
                 atlasName: 'backpack'
               }}
               iconSize={35 * canvasScaleRatio}
@@ -97,7 +104,7 @@ export function InfoPanel({
                 alignSelf: 'flex-start'
               }}
               uiText={{
-                value: `<b>${wearable?.name}</b>`,
+                value: `<b>${entityMetadata?.name}</b>`,
                 fontSize: 35 * canvasScaleRatio,
                 textWrap: 'wrap',
                 textAlign: 'top-left'
@@ -105,11 +112,11 @@ export function InfoPanel({
             />
           </UiEntity>
           <Tag
-            text={wearable?.rarity?.toUpperCase() ?? ''}
+            text={entityMetadata?.rarity?.toUpperCase() ?? ''}
             backgroundColor={rarityColor}
             canvasScaleRatio={canvasScaleRatio}
           />
-          {wearable?.description !== '' && (
+          {entityMetadata?.description !== '' && (
             <UiEntity
               uiTransform={{
                 flexDirection: 'column',
@@ -128,14 +135,14 @@ export function InfoPanel({
               <UiEntity
                 uiTransform={{ width: '100%' }}
                 uiText={{
-                  value: `${wearable?.description}`,
+                  value: `${entityMetadata?.description}`,
                   textAlign: 'top-left',
                   fontSize: 26 * canvasScaleRatio
                 }}
               />
             </UiEntity>
           )}
-          {wearable?.data.hides?.length > 0 && (
+          {data.hides?.length > 0 && (
             <UiEntity
               uiTransform={{
                 flexDirection: 'column',
@@ -172,7 +179,7 @@ export function InfoPanel({
                   margin: { top: '5%' }
                 }}
               >
-                {wearable?.data.hides.map((hiddenCategory) => {
+                {data.hides?.map((hiddenCategory: string) => {
                   return (
                     <UiEntity
                       uiBackground={{
