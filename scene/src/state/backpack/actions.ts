@@ -129,10 +129,13 @@ export type BackpackSelectEmoteSlotAction = BackpackActionId & {
 export type BackpackResetDefaultEmotesAction = BackpackActionId & {
   type: BACKPACK_ACTION.RESET_DEFAULT_EMOTES
 }
-
+export type SearchFilterPayload = {
+  name?: string
+  collectiblesOnly?: boolean
+}
 export type BackpackUpdateSearchFilter = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_SEARCH_FILTER
-  payload: SearchFilterState
+  payload: SearchFilterPayload
 }
 
 export type BackpackActions =
@@ -295,7 +298,7 @@ export const resetDefaultEmotesAction =
   })
 
 export const updateSearchFilterAction = (
-  payload: SearchFilterState
+  payload: SearchFilterPayload
 ): BackpackUpdateSearchFilter => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.UPDATE_SEARCH_FILTER,

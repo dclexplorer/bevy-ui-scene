@@ -21,6 +21,7 @@ export enum BACKPACK_SECTION {
 }
 export type SearchFilterState = {
   name: string
+  collectiblesOnly: boolean
 }
 export type BackpackPageState = {
   activeSection: BACKPACK_SECTION
@@ -53,7 +54,8 @@ export const backpackInitialState: BackpackPageState = {
   activeSection: BACKPACK_SECTION.WEARABLES,
   activeWearableCategory: null,
   searchFilter: {
-    name: ''
+    name: '',
+    collectiblesOnly: false
   },
   selectedEmoteSlot: 1,
   currentPage: 1,

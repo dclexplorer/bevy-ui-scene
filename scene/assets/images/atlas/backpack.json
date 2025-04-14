@@ -640,6 +640,46 @@
 				"h": 81
 			}
 		},
+		"check-off.png": {
+			"frame": {
+				"x": 231,
+				"y": 41,
+				"w": 18,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 18,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 18,
+				"h": 17
+			}
+		},
+		"check-on.png": {
+			"frame": {
+				"x": 251,
+				"y": 41,
+				"w": 18,
+				"h": 17
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 18,
+				"h": 17
+			},
+			"sourceSize": {
+				"w": 18,
+				"h": 17
+			}
+		},
 		"colo-slider.png": {
 			"frame": {
 				"x": 165,
@@ -682,7 +722,7 @@
 		},
 		"emote-circle-0.png": {
 			"frame": {
-				"x": 231,
+				"x": 271,
 				"y": 41,
 				"w": 50,
 				"h": 50
@@ -702,7 +742,7 @@
 		},
 		"emote-circle-1.png": {
 			"frame": {
-				"x": 283,
+				"x": 323,
 				"y": 41,
 				"w": 50,
 				"h": 50
@@ -722,7 +762,7 @@
 		},
 		"emote-circle-2.png": {
 			"frame": {
-				"x": 335,
+				"x": 375,
 				"y": 41,
 				"w": 50,
 				"h": 50
@@ -742,7 +782,7 @@
 		},
 		"emote-circle-3.png": {
 			"frame": {
-				"x": 387,
+				"x": 759,
 				"y": 41,
 				"w": 50,
 				"h": 50
@@ -762,26 +802,6 @@
 		},
 		"emote-circle-4.png": {
 			"frame": {
-				"x": 759,
-				"y": 41,
-				"w": 50,
-				"h": 50
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 50,
-				"h": 50
-			},
-			"sourceSize": {
-				"w": 50,
-				"h": 50
-			}
-		},
-		"emote-circle-5.png": {
-			"frame": {
 				"x": 123,
 				"y": 93,
 				"w": 50,
@@ -800,7 +820,7 @@
 				"h": 50
 			}
 		},
-		"emote-circle-6.png": {
+		"emote-circle-5.png": {
 			"frame": {
 				"x": 175,
 				"y": 93,
@@ -820,7 +840,7 @@
 				"h": 50
 			}
 		},
-		"emote-circle-7.png": {
+		"emote-circle-6.png": {
 			"frame": {
 				"x": 227,
 				"y": 93,
@@ -840,7 +860,7 @@
 				"h": 50
 			}
 		},
-		"emote-circle-8.png": {
+		"emote-circle-7.png": {
 			"frame": {
 				"x": 279,
 				"y": 93,
@@ -860,9 +880,29 @@
 				"h": 50
 			}
 		},
-		"emote-circle-9.png": {
+		"emote-circle-8.png": {
 			"frame": {
 				"x": 331,
+				"y": 93,
+				"w": 50,
+				"h": 50
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 50,
+				"h": 50
+			},
+			"sourceSize": {
+				"w": 50,
+				"h": 50
+			}
+		},
+		"emote-circle-9.png": {
+			"frame": {
+				"x": 383,
 				"y": 93,
 				"w": 50,
 				"h": 50

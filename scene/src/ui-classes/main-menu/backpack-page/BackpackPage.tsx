@@ -46,10 +46,7 @@ import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreview
 import { saveResetOutfit, updatePage } from './ItemCatalog'
 import { closeColorPicker } from './WearableColorPicker'
 import { WearablesCatalog } from './WearablesCatalog'
-import {
-  BACKPACK_SECTION,
-  type SearchFilterState
-} from '../../../state/backpack/state'
+import { BACKPACK_SECTION } from '../../../state/backpack/state'
 import { EmotesCatalog } from './EmotesCatalog'
 import { cloneDeep, noop } from '../../../utils/function-utils'
 import {
@@ -64,6 +61,7 @@ import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 import { Input } from '@dcl/sdk/react-ecs'
 import { COLOR } from '../../../components/color-palette'
 import { throttle } from '../../../utils/dcl-utils'
+import { Checkbox } from '../../../components/checkbox'
 
 let originalAvatarJSON: string
 
@@ -91,9 +89,9 @@ const updatePageGeneric = async (): Promise<void> => {
   )
 }
 
-const throttleSearch = throttle((searchFilterChange: SearchFilterState) => {
+const throttleSearch = throttle((name: string) => {
   const oldSearchFilter = cloneDeep(store.getState().backpack.searchFilter)
-  store.dispatch(updateSearchFilterAction(searchFilterChange))
+  store.dispatch(updateSearchFilterAction({ name }))
   if (
     JSON.stringify(oldSearchFilter) !==
     JSON.stringify(store.getState().backpack.searchFilter)
@@ -435,6 +433,23 @@ function BackpackNavBar({
         </NavButtonBar>
       </LeftSection>
       <RightSection>
+        <Checkbox
+          uiTransform={{
+            margin: { right: '1%' }
+          }}
+          onChange={() => {
+            console.log('onChange')
+            store.dispatch(
+              updateSearchFilterAction({
+                ...backpackState.searchFilter,
+                collectiblesOnly: !backpackState.searchFilter.collectiblesOnly
+              })
+            )
+            updatePageGeneric().catch(console.error)
+          }}
+          value={!!backpackState.searchFilter.collectiblesOnly}
+          label={'Collectibles only'}
+        />
         <Input
           uiTransform={{
             width: '35%',
@@ -453,7 +468,7 @@ function BackpackNavBar({
           placeholder={'Search by name ...'}
           onChange={(name) => {
             // TODO onChange is called continuously, figure out why and replace throttle with debounce
-            throttleSearch({ name })
+            throttleSearch(name)
           }}
         />
       </RightSection>
