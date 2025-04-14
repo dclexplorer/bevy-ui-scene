@@ -4,7 +4,6 @@ import type { ExplorerSetting } from '../bevy-api/interface'
 import { GameController } from '../controllers/game.controller'
 import { loadSettingsFromExplorer } from '../state/settings/actions'
 import { store } from '../state/store'
-import { initEmotesWheel } from '../emotes-wheel/emotes-wheel'
 
 let gameInstance: GameController
 
@@ -13,7 +12,6 @@ export async function init(retry: boolean): Promise<void> {
   gameInstance.uiController.loadingAndLogin.startLoading()
   // BevyApi.loginGuest()
   // gameInstance.uiController.loadingAndLogin.finishLoading()
-  await initEmotesWheel().catch(console.error)
   const { description, url } = await BevyApi.checkForUpdate()
 
   if (url !== '') {
