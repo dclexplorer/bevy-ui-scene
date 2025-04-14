@@ -59,4 +59,25 @@ describe("emote-catalog-decoration", () => {
     expect(decoratedPageResult.elements[15]).to.deep.equal(DEFAULT_EMOTE_ELEMENTS[0])
     expect(decoratedPageResult.elements.length).to.eq(16)
   })
+
+  it("should append DEFAULT_EMOTES but handling name filter", ()=>{
+    const params ={
+      pageNum:2,
+      pageSize:ITEMS_CATALOG_PAGE_SIZE,
+      searchFilter:{
+        name:"Head"
+      }
+    }
+    const totalAmount = ITEMS_CATALOG_PAGE_SIZE*2-1
+    const responseResult:EmotesPageResponse = {
+      ...params,
+      elements:new Array(15).fill({}),
+      totalAmount
+    }
+    const decoratedPageResult = decoratePageResultWithEmbededEmotes(params as EmotesCatalogPageRequest, responseResult)
+
+    expect(decoratedPageResult.totalAmount).to.equal(totalAmount + 1)
+    expect(decoratedPageResult.elements[15]).to.deep.equal(DEFAULT_EMOTE_ELEMENTS[8])
+    expect(decoratedPageResult.elements.length).to.eq(16)
+  })
 })
