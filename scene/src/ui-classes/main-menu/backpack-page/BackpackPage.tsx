@@ -1,5 +1,5 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { engine, UiCanvasInformation, UiInput } from '@dcl/sdk/ecs'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import {
@@ -39,15 +39,19 @@ import {
   updateCacheKey,
   updateEquippedEmotesAction,
   updateEquippedWearables,
-  updateLoadingPage
+  updateLoadingPage,
+  updateSearchFilterAction
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
 import { saveResetOutfit, updatePage } from './ItemCatalog'
 import { closeColorPicker } from './WearableColorPicker'
 import { WearablesCatalog } from './WearablesCatalog'
-import { BACKPACK_SECTION } from '../../../state/backpack/state'
+import {
+  BACKPACK_SECTION,
+  type SearchFilterState
+} from '../../../state/backpack/state'
 import { EmotesCatalog } from './EmotesCatalog'
-import { noop } from '../../../utils/function-utils'
+import { cloneDeep, noop } from '../../../utils/function-utils'
 import {
   fetchEmotesData,
   fetchEmotesPage
@@ -59,12 +63,45 @@ import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
 import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 import { Input } from '@dcl/sdk/react-ecs'
 import { COLOR } from '../../../components/color-palette'
+import { throttle } from '../../../utils/dcl-utils'
 
 let originalAvatarJSON: string
 
-const state = {
-  searchName: ''
+const updatePageGeneric = async (): Promise<void> => {
+  const backpackState = store.getState().backpack
+  const pageParams = {
+    pageNum: backpackState.currentPage,
+    pageSize: ITEMS_CATALOG_PAGE_SIZE,
+    address: getPlayer()?.userId ?? ZERO_ADDRESS,
+    cacheKey: store.getState().backpack.cacheKey
+  }
+  await updatePage(
+    backpackState.activeSection === BACKPACK_SECTION.WEARABLES
+      ? async () =>
+          await fetchWearablesPage((await getRealm({}))?.realmInfo?.baseUrl)({
+            ...pageParams,
+            wearableCategory: backpackState.activeWearableCategory,
+            searchFilter: backpackState.searchFilter
+          })
+      : async () =>
+          await fetchEmotesPage({
+            ...pageParams,
+            searchFilter: backpackState.searchFilter
+          })
+  )
 }
+
+const throttleSearch = throttle((searchFilterChange: SearchFilterState) => {
+  const oldSearchFilter = cloneDeep(store.getState().backpack.searchFilter)
+  store.dispatch(updateSearchFilterAction(searchFilterChange))
+  if (
+    JSON.stringify(oldSearchFilter) !==
+    JSON.stringify(store.getState().backpack.searchFilter)
+  ) {
+    updatePageGeneric().catch(console.error)
+  }
+}, 300)
+
 export default class BackpackPage {
   public fontSize: number = 16 * getCanvasScaleRatio() * 2
 
@@ -173,22 +210,9 @@ export default class BackpackPage {
       })
     )
     saveResetOutfit()
+    await updatePageGeneric()
+
     const backpackState = store.getState().backpack
-    const pageParams = {
-      pageNum: backpackState.currentPage,
-      pageSize: ITEMS_CATALOG_PAGE_SIZE,
-      address: getPlayer()?.userId ?? ZERO_ADDRESS,
-      cacheKey: store.getState().backpack.cacheKey
-    }
-    await updatePage(
-      backpackState.activeSection === BACKPACK_SECTION.WEARABLES
-        ? async () =>
-            await fetchWearablesPage((await getRealm({}))?.realmInfo?.baseUrl)({
-              ...pageParams,
-              wearableCategory: backpackState.activeWearableCategory
-            })
-        : async () => await fetchEmotesPage(pageParams)
-    )
 
     originalAvatarJSON = JSON.stringify({
       base: backpackState.outfitSetup.base,
@@ -370,7 +394,8 @@ function BackpackNavBar({
                     (await getRealm({}))?.realmInfo?.baseUrl
                   )({
                     ...pageParams,
-                    wearableCategory: backpackState.activeWearableCategory
+                    wearableCategory: backpackState.activeWearableCategory,
+                    searchFilter: backpackState.searchFilter
                   })
               ).catch(console.error)
               setAvatarPreviewCameraToWearableCategory(
@@ -396,7 +421,8 @@ function BackpackNavBar({
                 pageNum: backpackState.currentPage,
                 pageSize: ITEMS_CATALOG_PAGE_SIZE,
                 address: getPlayer()?.userId ?? ZERO_ADDRESS,
-                cacheKey: store.getState().backpack.cacheKey
+                cacheKey: store.getState().backpack.cacheKey,
+                searchFilter: backpackState.searchFilter
               }
               updatePage(async () => await fetchEmotesPage(pageParams)).catch(
                 console.error
@@ -423,9 +449,11 @@ function BackpackNavBar({
             color: Color4.White()
           }}
           fontSize={canvasScaleRatio * 32}
-          value={state.searchName}
+          value={backpackState.searchFilter.name}
           placeholder={'Search by name ...'}
-          onChange={(e) => {}}
+          onChange={(name) => {
+            throttleSearch({ name })
+          }}
         />
       </RightSection>
     </NavBar>

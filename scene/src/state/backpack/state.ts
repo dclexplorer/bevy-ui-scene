@@ -19,10 +19,13 @@ export enum BACKPACK_SECTION {
   EMOTES,
   OUTFITS
 }
-
+export type SearchFilterState = {
+  name: string
+}
 export type BackpackPageState = {
   activeSection: BACKPACK_SECTION
   activeWearableCategory: WearableCategory | null
+  searchFilter: SearchFilterState
   selectedEmoteSlot: number
   currentPage: number
   loadingPage: boolean
@@ -45,9 +48,13 @@ export type BackpackPageState = {
   selectedURN: URNWithoutTokenId | null
   cacheKey: string
 }
+
 export const backpackInitialState: BackpackPageState = {
   activeSection: BACKPACK_SECTION.WEARABLES,
   activeWearableCategory: null,
+  searchFilter: {
+    name: ''
+  },
   selectedEmoteSlot: 1,
   currentPage: 1,
   loadingPage: false,

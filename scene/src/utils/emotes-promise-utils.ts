@@ -19,6 +19,7 @@ import {
 import { decoratePageResultWithEmbededEmotes } from '../service/emote-catalog-decoration'
 import { catalystMetadataMap } from './catalyst-metadata-map'
 import { DEFAULT_EMOTES } from './backpack-constants'
+import { type SearchFilterState } from '../state/backpack/state'
 
 export type EmotesCatalogPageRequest = {
   pageNum: number
@@ -32,6 +33,7 @@ export type EmotesCatalogPageRequest = {
     | typeof ITEMS_ORDER_DIRECTION.ASC
     | typeof ITEMS_ORDER_DIRECTION.DESC
   cacheKey: string
+  searchFilter: SearchFilterState
 }
 export type EmotesPageResponse = {
   elements: CatalogEmoteElement[]
@@ -51,7 +53,8 @@ export async function fetchEmotesPage(
     address,
     orderBy = ITEMS_ORDER_BY.DATE,
     orderDirection = ITEMS_ORDER_DIRECTION.DESC,
-    cacheKey = Date.now().toString()
+    cacheKey = Date.now().toString(),
+    searchFilter
   } = emotesPageRequest
   const realm = await getRealm({})
   const catalystBaseURl = realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
@@ -61,7 +64,8 @@ export async function fetchEmotesPage(
     address,
     orderBy,
     orderDirection,
-    cacheKey
+    cacheKey,
+    searchFilter
   })}`
   if (pageCache.has(emoteCatalogPageURL)) {
     return pageCache.get(emoteCatalogPageURL) as EmotesPageResponse
@@ -76,11 +80,20 @@ export async function fetchEmotesPage(
 }
 
 function getEmoteCatalogPageURL(params: EmotesCatalogPageRequest): string {
-  const { pageNum, pageSize, address, orderBy, orderDirection, cacheKey } =
-    params
-
+  const {
+    pageNum,
+    pageSize,
+    address,
+    orderBy,
+    orderDirection,
+    cacheKey,
+    searchFilter
+  } = params
   let url: string = `/lambdas/users/${address}/emotes?includeEntities=true&pageNum=${pageNum}&pageSize=${pageSize}`
   url += `&orderBy=${orderBy}&direction=${orderDirection}&cacheKey=${cacheKey}`
+  if (searchFilter?.name) {
+    url += `&name=${searchFilter.name}`
+  }
   return url
 }
 

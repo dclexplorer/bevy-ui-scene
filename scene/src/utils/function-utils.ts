@@ -19,3 +19,11 @@ export function memoize<T, U>(fn: (arg: T) => U): (arg: T) => U {
 export function cloneDeep<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
 }
+
+export const getWaitFor =
+  (sleep: (ms: number) => Promise<any>) =>
+  async (conditionFn: () => boolean, timeInterval = 100) => {
+    while (!conditionFn()) {
+      await sleep(timeInterval)
+    }
+  }

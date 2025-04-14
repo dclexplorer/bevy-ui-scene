@@ -223,6 +223,15 @@ export function reducer(
         changedEmotesFromResetVersion: true
       }
     }
+    case BACKPACK_ACTION.UPDATE_SEARCH_FILTER: {
+      return {
+        ...backpackPageState,
+        searchFilter: {
+          ...backpackPageState.searchFilter,
+          ...action.payload
+        }
+      }
+    }
     default:
       return backpackPageState
   }

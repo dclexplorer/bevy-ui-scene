@@ -1,4 +1,8 @@
-import { type BACKPACK_SECTION, BACKPACK_STORE_ID } from './state'
+import {
+  type BACKPACK_SECTION,
+  BACKPACK_STORE_ID,
+  type SearchFilterState
+} from './state'
 import {
   type EquippedEmote,
   type URNWithoutTokenId
@@ -32,7 +36,8 @@ export enum BACKPACK_ACTION {
   SELECT_EMOTE_SLOT,
   UPDATE_EMOTES_SAVED_RESET_VERSION,
   RESET_EMOTES,
-  RESET_DEFAULT_EMOTES
+  RESET_DEFAULT_EMOTES,
+  UPDATE_SEARCH_FILTER
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -125,6 +130,11 @@ export type BackpackResetDefaultEmotesAction = BackpackActionId & {
   type: BACKPACK_ACTION.RESET_DEFAULT_EMOTES
 }
 
+export type BackpackUpdateSearchFilter = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_SEARCH_FILTER
+  payload: SearchFilterState
+}
+
 export type BackpackActions =
   | BackpackSelectWearableURNAction
   | BackpackUpdateCurrentPageAction
@@ -145,6 +155,7 @@ export type BackpackActions =
   | BackpackUpdateEmotesSavedResetVersionAction
   | BackpackResetEmotesAction
   | BackpackResetDefaultEmotesAction
+  | BackpackUpdateSearchFilter
 
 export const updateSelectedCatalogURNAction = (
   payload: URNWithoutTokenId | null
@@ -282,3 +293,11 @@ export const resetDefaultEmotesAction =
     __reducer: BACKPACK_STORE_ID,
     type: BACKPACK_ACTION.RESET_DEFAULT_EMOTES
   })
+
+export const updateSearchFilterAction = (
+  payload: SearchFilterState
+): BackpackUpdateSearchFilter => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UPDATE_SEARCH_FILTER,
+  payload
+})
