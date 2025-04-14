@@ -417,12 +417,12 @@ function BackpackNavBar({
             borderColor: COLOR.TEXT_COLOR,
             borderWidth: 1,
             borderRadius: getCanvasScaleRatio() * 30,
-            padding: getCanvasScaleRatio() * 20
+            padding: getCanvasScaleRatio() * 22
           }}
           uiBackground={{
             color: Color4.White()
           }}
-          fontSize={canvasScaleRatio * 100}
+          fontSize={canvasScaleRatio * 32}
           value={state.searchName}
           placeholder={'Search by name ...'}
           onChange={(e) => {}}
