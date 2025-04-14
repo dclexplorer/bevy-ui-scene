@@ -452,6 +452,7 @@ function BackpackNavBar({
           value={backpackState.searchFilter.name}
           placeholder={'Search by name ...'}
           onChange={(name) => {
+            // TODO onChange is called continuously, figure out why and replace throttle with debounce
             throttleSearch({ name })
           }}
         />
