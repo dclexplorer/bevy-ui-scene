@@ -141,7 +141,11 @@ export function renderEmotesWheel(): ReactElement {
                     spriteName: visualSlotInfo.spriteName,
                     atlasName: 'emotes'
                   }),
-                  color: RARITY_COLORS[equippedEmoteData?.rarity ?? 'empty']
+                  color:
+                    equippedEmoteData?.rarity === 'base'
+                      ? Color4.White()
+                      : RARITY_COLORS[equippedEmoteData?.rarity] ??
+                        Color4.White()
                 }}
                 onMouseEnter={() => {
                   state.hoveredURN = equippedEmote
@@ -163,7 +167,14 @@ export function renderEmotesWheel(): ReactElement {
                     margin: '27.5%',
                     alignSelf: 'center'
                   }}
-                  uiBackground={getEmoteThumbnail(equippedEmote)}
+                  uiBackground={
+                    equippedEmote
+                      ? getEmoteThumbnail(equippedEmote)
+                      : getBackgroundFromAtlas({
+                          spriteName: 'empty-icon',
+                          atlasName: 'backpack'
+                        })
+                  }
                 ></UiEntity>
               </UiEntity>
             )

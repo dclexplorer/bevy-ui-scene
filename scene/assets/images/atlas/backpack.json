@@ -900,6 +900,26 @@
 				"h": 200
 			}
 		},
+		"empty-icon.png": {
+			"frame": {
+				"x": 383,
+				"y": 93,
+				"w": 39,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 39,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 39,
+				"h": 38
+			}
+		},
 		"empty-search-result.png": {
 			"frame": {
 				"x": 813,
