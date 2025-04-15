@@ -34,7 +34,8 @@ import { changeSectionAction } from '../state/backpack/actions'
 
 const state: any = {
   visible: false,
-  hoveredURN: ''
+  hoveredURN: '',
+  hoveredIndex: null
 }
 export async function initEmotesWheel({
   showBackpackMenu
@@ -122,7 +123,7 @@ export function renderEmotesWheel(): ReactElement {
             const equippedEmoteData: EmoteEntityMetadata = catalystMetadataMap[
               equippedEmote as URNWithoutTokenId
             ] as EmoteEntityMetadata
-
+            const hoverFactor = state.hoveredIndex === index ? 1.5 : 0.9
             return (
               <UiEntity
                 uiTransform={{
@@ -141,14 +142,28 @@ export function renderEmotesWheel(): ReactElement {
                     spriteName: visualSlotInfo.spriteName,
                     atlasName: 'emotes'
                   }),
-                  color:
-                    equippedEmoteData?.rarity === 'base'
+                  color: {
+                    ...(equippedEmoteData?.rarity === 'base'
                       ? Color4.White()
                       : RARITY_COLORS[equippedEmoteData?.rarity] ??
-                        Color4.White()
+                        Color4.White()),
+                    a: hoverFactor
+                  }
                 }}
                 onMouseEnter={() => {
                   state.hoveredURN = equippedEmote
+                  state.hoveredIndex = index
+                }}
+                onMouseLeave={() => {
+                  if (
+                    !(
+                      state.hoveredIndex !== null &&
+                      state.hoveredIndex !== index
+                    )
+                  ) {
+                    state.hoveredURN = null
+                    state.hoveredIndex = null
+                  }
                 }}
                 onMouseDown={() => {
                   triggerEmote({ predefinedEmote: equippedEmote }).catch(
@@ -217,7 +232,8 @@ function EmoteNumbers(): ReactElement {
               position: {
                 top: top - getCanvasScaleRatio() * 30,
                 left: left - getCanvasScaleRatio() * 20
-              }
+              },
+              zIndex: 1
             }}
             uiText={{
               value: `<b>${(index + 1).toString().slice(-1, 2)}</b>`,
