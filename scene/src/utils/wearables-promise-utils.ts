@@ -67,7 +67,7 @@ export const fetchWearablesPage =
         wearableCategory,
         orderBy,
         orderDirection,
-        includeBase: true,
+        includeBase: !searchFilter.collectiblesOnly,
         includeOnChain: true,
         catalystBaseUrl: catalystBaseUrl ?? CATALYST_BASE_URL_FALLBACK,
         cacheKey,

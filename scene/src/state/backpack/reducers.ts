@@ -229,7 +229,8 @@ export function reducer(
         searchFilter: {
           ...backpackPageState.searchFilter,
           ...action.payload
-        }
+        },
+        currentPage: 1
       }
     }
     default:

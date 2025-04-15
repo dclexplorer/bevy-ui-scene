@@ -91,11 +91,13 @@ const updatePageGeneric = async (): Promise<void> => {
 
 const throttleSearch = throttle((name: string) => {
   const oldSearchFilter = cloneDeep(store.getState().backpack.searchFilter)
-  store.dispatch(updateSearchFilterAction({ name }))
-  if (
-    JSON.stringify(oldSearchFilter) !==
-    JSON.stringify(store.getState().backpack.searchFilter)
-  ) {
+
+  const newSearchFilter = {
+    ...oldSearchFilter,
+    name
+  }
+  if (JSON.stringify(oldSearchFilter) !== JSON.stringify(newSearchFilter)) {
+    store.dispatch(updateSearchFilterAction({ name }))
     updatePageGeneric().catch(console.error)
   }
 }, 300)
