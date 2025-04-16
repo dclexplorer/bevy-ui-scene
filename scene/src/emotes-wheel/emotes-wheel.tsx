@@ -31,10 +31,12 @@ import {
 import { BACKPACK_SECTION } from '../state/backpack/state'
 import { store } from '../state/store'
 import { changeSectionAction } from '../state/backpack/actions'
+import { CloseButton } from '../components/close-button'
 
 const state: any = {
   visible: false,
-  hoveredURN: ''
+  hoveredURN: '',
+  hoveredIndex: null
 }
 export async function initEmotesWheel({
   showBackpackMenu
@@ -122,7 +124,7 @@ export function renderEmotesWheel(): ReactElement {
             const equippedEmoteData: EmoteEntityMetadata = catalystMetadataMap[
               equippedEmote as URNWithoutTokenId
             ] as EmoteEntityMetadata
-
+            const hoverFactor = state.hoveredIndex === index ? 1.5 : 0.9
             return (
               <UiEntity
                 uiTransform={{
@@ -141,10 +143,28 @@ export function renderEmotesWheel(): ReactElement {
                     spriteName: visualSlotInfo.spriteName,
                     atlasName: 'emotes'
                   }),
-                  color: RARITY_COLORS[equippedEmoteData?.rarity ?? 'empty']
+                  color: {
+                    ...(equippedEmoteData?.rarity === 'base'
+                      ? Color4.White()
+                      : RARITY_COLORS[equippedEmoteData?.rarity] ??
+                        Color4.White()),
+                    a: hoverFactor
+                  }
                 }}
                 onMouseEnter={() => {
                   state.hoveredURN = equippedEmote
+                  state.hoveredIndex = index
+                }}
+                onMouseLeave={() => {
+                  if (
+                    !(
+                      state.hoveredIndex !== null &&
+                      state.hoveredIndex !== index
+                    )
+                  ) {
+                    state.hoveredURN = null
+                    state.hoveredIndex = null
+                  }
                 }}
                 onMouseDown={() => {
                   triggerEmote({ predefinedEmote: equippedEmote }).catch(
@@ -163,12 +183,28 @@ export function renderEmotesWheel(): ReactElement {
                     margin: '27.5%',
                     alignSelf: 'center'
                   }}
-                  uiBackground={getEmoteThumbnail(equippedEmote)}
+                  uiBackground={
+                    equippedEmote
+                      ? getEmoteThumbnail(equippedEmote)
+                      : getBackgroundFromAtlas({
+                          spriteName: 'empty-icon',
+                          atlasName: 'backpack'
+                        })
+                  }
                 ></UiEntity>
               </UiEntity>
             )
           })}
           <EmoteNumbers />
+          <CloseButton
+            uiTransform={{
+              position: {
+                top: '5%',
+                right: '5%'
+              }
+            }}
+            onClick={() => (state.visible = false)}
+          />
         </UiEntity>
         <UiEntity
           uiTransform={{
@@ -206,7 +242,8 @@ function EmoteNumbers(): ReactElement {
               position: {
                 top: top - getCanvasScaleRatio() * 30,
                 left: left - getCanvasScaleRatio() * 20
-              }
+              },
+              zIndex: 1
             }}
             uiText={{
               value: `<b>${(index + 1).toString().slice(-1, 2)}</b>`,
