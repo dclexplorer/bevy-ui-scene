@@ -36,7 +36,7 @@ export const Checkbox = ({
           atlasName: 'backpack'
         }}
       />
-      {label && <Label value={label} />}
+      {label && <Label value={label} fontSize={canvasScaleRatio * 32} />}
     </UiEntity>
   )
 }
