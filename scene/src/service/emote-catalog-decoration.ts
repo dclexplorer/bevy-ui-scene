@@ -32,10 +32,15 @@ export function decoratePageResultWithEmbededEmotes(
           return true
         return false
       })
-  const filteredDefaultEmoteElements = DEFAULT_EMOTE_ELEMENTS.filter(
-    (element) => filteredDefaultEmotes.includes(element.urn)
-  )
-  newEmotesPageResponse.totalAmount += filteredDefaultEmotes.length
+  const filteredDefaultEmoteElements = searchFilter.collectiblesOnly
+    ? []
+    : DEFAULT_EMOTE_ELEMENTS.filter((element) =>
+        filteredDefaultEmotes.includes(element.urn)
+      )
+  if (!searchFilter.collectiblesOnly) {
+    newEmotesPageResponse.totalAmount += filteredDefaultEmotes.length
+  }
+
   const isExtraPage =
     pageNum * pageSize >=
     (Math.ceil(originalTotalAmount / pageSize) + 1) * pageSize

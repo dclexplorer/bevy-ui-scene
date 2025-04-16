@@ -440,7 +440,6 @@ function BackpackNavBar({
             margin: { right: '1%' }
           }}
           onChange={() => {
-            console.log('onChange')
             store.dispatch(
               updateSearchFilterAction({
                 ...backpackState.searchFilter,

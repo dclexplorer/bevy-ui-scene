@@ -56,6 +56,7 @@ export async function fetchEmotesPage(
     cacheKey = Date.now().toString(),
     searchFilter
   } = emotesPageRequest
+
   const realm = await getRealm({})
   const catalystBaseURl = realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
   const emoteCatalogPageURL = `${catalystBaseURl}${getEmoteCatalogPageURL({
@@ -90,7 +91,7 @@ function getEmoteCatalogPageURL(params: EmotesCatalogPageRequest): string {
     searchFilter
   } = params
   let url: string = `/lambdas/users/${address}/emotes?includeEntities=true&pageNum=${pageNum}&pageSize=${pageSize}`
-  url += `&orderBy=${orderBy}&direction=${orderDirection}&cacheKey=${cacheKey}`
+  url += `&orderBy=${orderBy}&direction=${orderDirection}&cacheKey=${cacheKey}&collectiblesOnly=${!!searchFilter?.collectiblesOnly}`
   if (searchFilter?.name) {
     url += `&name=${searchFilter.name}`
   }

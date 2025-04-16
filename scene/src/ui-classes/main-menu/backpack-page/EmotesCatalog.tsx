@@ -41,6 +41,7 @@ export function EmotesCatalog(): ReactElement {
       <ItemsCatalog
         fetchItemsPage={async () => {
           const backpackState = store.getState().backpack
+
           return await fetchEmotesPage({
             pageNum: backpackState.currentPage,
             pageSize: ITEMS_CATALOG_PAGE_SIZE,
