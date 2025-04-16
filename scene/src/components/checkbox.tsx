@@ -18,7 +18,12 @@ export const Checkbox = ({
 
   return (
     <UiEntity
-      uiTransform={{ alignSelf: 'center', ...uiTransform }}
+      uiTransform={{
+        alignSelf: 'center',
+        ...uiTransform,
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
       onMouseDown={() => {
         console.log('onMouseDown')
         onChange()
