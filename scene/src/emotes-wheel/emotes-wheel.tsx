@@ -31,6 +31,9 @@ import {
 import { BACKPACK_SECTION } from '../state/backpack/state'
 import { store } from '../state/store'
 import { changeSectionAction } from '../state/backpack/actions'
+import { type Callback, type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { noop } from '../utils/function-utils'
+import { CloseButton } from '../components/close-button'
 
 const state: any = {
   visible: false,
@@ -195,6 +198,15 @@ export function renderEmotesWheel(): ReactElement {
             )
           })}
           <EmoteNumbers />
+          <CloseButton
+            uiTransform={{
+              position: {
+                top: '5%',
+                right: '5%'
+              }
+            }}
+            onClick={() => (state.visible = false)}
+          />
         </UiEntity>
         <UiEntity
           uiTransform={{
