@@ -7,8 +7,8 @@ import type { URNWithoutTokenId } from './definitions'
 import { type WearableCategory } from '../service/categories'
 import {
   CATALYST_BASE_URL_FALLBACK,
-  ITEMS_ORDER_BY,
-  ITEMS_ORDER_DIRECTION
+  type ITEMS_ORDER_BY,
+  type ITEMS_ORDER_DIRECTION
 } from './constants'
 import { fetchJsonOrTryFallback } from './promise-utils'
 import { catalystMetadataMap } from './catalyst-metadata-map'
@@ -54,8 +54,6 @@ export const fetchWearablesPage =
       pageSize,
       wearableCategory,
       address,
-      orderBy = ITEMS_ORDER_BY.DATE,
-      orderDirection = ITEMS_ORDER_DIRECTION.DESC,
       cacheKey = Date.now().toString(),
       searchFilter
     } = requestParams
@@ -65,8 +63,6 @@ export const fetchWearablesPage =
         pageSize,
         address,
         wearableCategory,
-        orderBy,
-        orderDirection,
         includeBase: !searchFilter.collectiblesOnly,
         includeOnChain: true,
         catalystBaseUrl: catalystBaseUrl ?? CATALYST_BASE_URL_FALLBACK,
@@ -108,8 +104,6 @@ export const fetchWearablesPage =
         pageSize,
         address,
         wearableCategory,
-        orderBy,
-        orderDirection,
         includeBase,
         includeOnChain,
         catalystBaseUrl,
@@ -117,7 +111,7 @@ export const fetchWearablesPage =
         searchFilter
       } = params
       let url: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
-      url += `&orderBy=${orderBy}&direction=${orderDirection}&cacheKey=${cacheKey}`
+      url += `&orderBy=${searchFilter.orderBy}&direction=${searchFilter.orderDirection}&cacheKey=${cacheKey}`
       if (searchFilter.name) {
         url += `&name=${searchFilter.name}`
       }

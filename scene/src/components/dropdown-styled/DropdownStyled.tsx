@@ -21,7 +21,7 @@ function DropdownStyled(props: {
   onMouseDown: Callback
   onOptionMouseDown: (index: number, title: string) => void
   onOptionMouseEnter: (index: number) => void
-  onOptionMouseLeave: () => void
+  onOptionMouseLeave: (index: number) => void
   // Shape
   uiTransform?: UiTransformProps
   backgroundColor?: Color4
@@ -182,7 +182,7 @@ function DropdownStyled(props: {
                       props.onOptionMouseEnter(index)
                     }}
                     onMouseLeave={() => {
-                      props.onOptionMouseLeave()
+                      props.onOptionMouseLeave(index)
                     }}
                   >
                     <UiEntity

@@ -4,7 +4,11 @@ import { NavButton } from '../../../components/nav-button/NavButton'
 import { BACKPACK_SECTION } from '../../../state/backpack/state'
 import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { ZERO_ADDRESS } from '../../../utils/constants'
+import {
+  SORT_OPTIONS,
+  SORT_OPTIONS_PARAMS,
+  ZERO_ADDRESS
+} from '../../../utils/constants'
 import {
   changeSectionAction,
   updateSearchFilterAction
@@ -26,6 +30,7 @@ import { Color4 } from '@dcl/sdk/math'
 import { throttle } from '../../../utils/dcl-utils'
 import { cloneDeep } from '../../../utils/function-utils'
 import { updatePageGeneric } from './backpack-service'
+import { DropdownComponent } from '../../../components/dropdown-component'
 
 const throttleSearch = throttle((name: string) => {
   const oldSearchFilter = cloneDeep(store.getState().backpack.searchFilter)
@@ -156,6 +161,54 @@ export function BackpackNavBar({
             throttleSearch(name)
           }}
         />
+        <UiEntity
+          uiTransform={{
+            width: 'auto',
+            flexShrink: 0,
+            flexGrow: 0
+          }}
+        >
+          <UiEntity
+            uiTransform={{
+              alignSelf: 'center',
+              flexShrink: 0
+            }}
+            uiText={{
+              value: 'Sort: ',
+              fontSize: canvasScaleRatio * 32
+            }}
+          />
+          <DropdownComponent
+            dropdownId={'sort'}
+            uiTransform={{
+              position: { top: '-10%' },
+              width: canvasScaleRatio * 280,
+              alignSelf: 'flex-end'
+            }}
+            options={SORT_OPTIONS}
+            value={
+              SORT_OPTIONS[
+                SORT_OPTIONS_PARAMS.findIndex(([orderBy, orderDirection]) => {
+                  return (
+                    orderBy ===
+                      store.getState().backpack.searchFilter.orderBy &&
+                    orderDirection ===
+                      store.getState().backpack.searchFilter.orderDirection
+                  )
+                })
+              ]
+            }
+            fontSize={canvasScaleRatio * 32}
+            onChange={(value) => {
+              const [orderBy, orderDirection] =
+                SORT_OPTIONS_PARAMS[SORT_OPTIONS.indexOf(value)]
+              store.dispatch(
+                updateSearchFilterAction({ orderBy, orderDirection })
+              )
+              updatePageGeneric().catch(console.error)
+            }}
+          />
+        </UiEntity>
       </RightSection>
     </NavBar>
   )

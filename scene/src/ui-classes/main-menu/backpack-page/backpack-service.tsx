@@ -14,7 +14,9 @@ export const updatePageGeneric = async (): Promise<void> => {
     pageNum: backpackState.currentPage,
     pageSize: ITEMS_CATALOG_PAGE_SIZE,
     address: getPlayer()?.userId ?? ZERO_ADDRESS,
-    cacheKey: store.getState().backpack.cacheKey
+    cacheKey: store.getState().backpack.cacheKey,
+    orderBy: store.getState().backpack.searchFilter.orderBy,
+    orderDirection: store.getState().backpack.searchFilter.orderDirection
   }
   await updatePage(
     backpackState.activeSection === BACKPACK_SECTION.WEARABLES

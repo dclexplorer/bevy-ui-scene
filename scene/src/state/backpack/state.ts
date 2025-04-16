@@ -12,6 +12,7 @@ import {
   EMPTY_EMOTES,
   ITEMS_CATALOG_PAGE_SIZE
 } from '../../utils/backpack-constants'
+import { ITEMS_ORDER_BY, ITEMS_ORDER_DIRECTION } from '../../utils/constants'
 
 export const BACKPACK_STORE_ID: 'backpack' = 'backpack'
 export enum BACKPACK_SECTION {
@@ -22,6 +23,13 @@ export enum BACKPACK_SECTION {
 export type SearchFilterState = {
   name: string
   collectiblesOnly: boolean
+  orderBy:
+    | typeof ITEMS_ORDER_BY.DATE
+    | typeof ITEMS_ORDER_BY.RARITY
+    | typeof ITEMS_ORDER_BY.NAME
+  orderDirection?:
+    | typeof ITEMS_ORDER_DIRECTION.ASC
+    | typeof ITEMS_ORDER_DIRECTION.DESC
 }
 export type BackpackPageState = {
   activeSection: BACKPACK_SECTION
@@ -55,7 +63,9 @@ export const backpackInitialState: BackpackPageState = {
   activeWearableCategory: null,
   searchFilter: {
     name: '',
-    collectiblesOnly: false
+    collectiblesOnly: false,
+    orderBy: ITEMS_ORDER_BY.DATE,
+    orderDirection: ITEMS_ORDER_DIRECTION.DESC
   },
   selectedEmoteSlot: 1,
   currentPage: 1,

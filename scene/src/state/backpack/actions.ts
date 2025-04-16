@@ -1,8 +1,4 @@
-import {
-  type BACKPACK_SECTION,
-  BACKPACK_STORE_ID,
-  type SearchFilterState
-} from './state'
+import { type BACKPACK_SECTION, BACKPACK_STORE_ID } from './state'
 import {
   type EquippedEmote,
   type URNWithoutTokenId
@@ -132,6 +128,8 @@ export type BackpackResetDefaultEmotesAction = BackpackActionId & {
 export type SearchFilterPayload = {
   name?: string
   collectiblesOnly?: boolean
+  orderBy?: string
+  orderDirection?: string
 }
 export type BackpackUpdateSearchFilter = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_SEARCH_FILTER

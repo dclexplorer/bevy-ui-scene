@@ -81,17 +81,11 @@ export async function fetchEmotesPage(
 }
 
 function getEmoteCatalogPageURL(params: EmotesCatalogPageRequest): string {
-  const {
-    pageNum,
-    pageSize,
-    address,
-    orderBy,
-    orderDirection,
-    cacheKey,
-    searchFilter
-  } = params
+  const { pageNum, pageSize, address, cacheKey, searchFilter } = params
   let url: string = `/lambdas/users/${address}/emotes?includeEntities=true&pageNum=${pageNum}&pageSize=${pageSize}`
-  url += `&orderBy=${orderBy}&direction=${orderDirection}&cacheKey=${cacheKey}&collectiblesOnly=${!!searchFilter?.collectiblesOnly}`
+  url += `&orderBy=${searchFilter.orderBy}&direction=${
+    searchFilter.orderDirection
+  }&cacheKey=${cacheKey}&collectiblesOnly=${!!searchFilter?.collectiblesOnly}`
   if (searchFilter?.name) {
     url += `&name=${searchFilter.name}`
   }

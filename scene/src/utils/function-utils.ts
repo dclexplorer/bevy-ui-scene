@@ -27,3 +27,7 @@ export const getWaitFor =
       await sleep(timeInterval)
     }
   }
+
+export function isNull(value: any | null): boolean {
+  return value === null
+}
