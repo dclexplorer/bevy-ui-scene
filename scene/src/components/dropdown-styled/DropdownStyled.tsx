@@ -31,10 +31,12 @@ function DropdownStyled(props: {
   fontColor?: Color4
   value: number
   entered: number
+  scroll?: boolean
   options: string[]
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
+  const { scroll = true } = props
   return (
     <UiEntity
       uiTransform={{
@@ -115,10 +117,11 @@ function DropdownStyled(props: {
           uiTransform={{
             display: props.isOpen ? 'flex' : 'none',
             width: '100%',
-            height:
-              props.options.length >= 4
+            height: scroll
+              ? props.options.length >= 4
                 ? props.fontSize * 2.1 * 4
-                : props.fontSize * props.options.length * 2.1,
+                : props.fontSize * props.options.length * 2.1
+              : undefined,
 
             positionType: 'absolute',
             position: { left: 0, top: 2.5 * props.fontSize },
@@ -134,7 +137,7 @@ function DropdownStyled(props: {
               width: '100%',
               height: '100%',
               flexDirection: 'column',
-              overflow: 'scroll'
+              overflow: scroll ? 'scroll' : undefined
               // scrollVisible: 'hidden'
             }}
           >

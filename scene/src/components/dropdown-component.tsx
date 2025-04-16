@@ -37,6 +37,7 @@ export function DropdownComponent({
 
   return (
     <DropdownStyled
+      scroll={false}
       uiTransform={uiTransform}
       isOpen={state[dropdownId].open}
       onMouseDown={() => (state[dropdownId].open = !state[dropdownId].open)}
