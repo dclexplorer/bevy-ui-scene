@@ -31,8 +31,6 @@ import {
 import { BACKPACK_SECTION } from '../state/backpack/state'
 import { store } from '../state/store'
 import { changeSectionAction } from '../state/backpack/actions'
-import { type Callback, type UiTransformProps } from '@dcl/sdk/react-ecs'
-import { noop } from '../utils/function-utils'
 import { CloseButton } from '../components/close-button'
 
 const state: any = {
