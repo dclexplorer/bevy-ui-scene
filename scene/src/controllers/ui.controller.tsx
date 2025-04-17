@@ -14,7 +14,13 @@ import { PopUpAction } from '../ui-classes/main-hud/pop-up-action'
 import { PopUpWarning } from '../ui-classes/main-hud/pop-up-warning'
 import { SceneInfoCard } from '../ui-classes/scene-info-card'
 import Photos from 'src/ui-classes/photos/Photos'
-import { renderEmotesWheel } from '../emotes-wheel/emotes-wheel'
+import {
+  initEmotesWheel,
+  renderEmotesWheel
+} from '../emotes-wheel/emotes-wheel'
+import { getWaitFor } from '../utils/function-utils'
+import { dclSleep } from '../utils/dcl-utils'
+import { getPlayer } from '@dcl/sdk/src/players'
 
 export class UIController {
   public isPhotosVisible: boolean = false
@@ -63,6 +69,23 @@ export class UIController {
     this.sceneCard = new SceneInfoCard(this)
     this.warningPopUp = new PopUpWarning(this)
     this.photosPanel = new Photos(this)
+
+    this.loadingAndLogin.onFinish(() => {
+      const waitFor = getWaitFor(dclSleep)
+
+      ;(async () => {
+        // TODO review with bevy-explorer dev or protocol why getPlayer().emotes is empty at first
+        await waitFor(() => (getPlayer()?.emotes?.length ?? 0) > 0, 3000)
+
+        await initEmotesWheel({
+          showBackpackMenu: () => {
+            if (!this.isMainMenuVisible) {
+              this.menu?.show('backpack')
+            }
+          }
+        })
+      })().catch(console.error)
+    })
 
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
