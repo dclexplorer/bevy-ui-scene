@@ -31,6 +31,7 @@ import { debounce } from '../../../utils/dcl-utils'
 import { updatePageGeneric } from './backpack-service'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import Icon from '../../../components/icon/Icon'
+import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 
 const debouncedSearch = debounce((name: string) => {
   updatePageGeneric().catch(console.error)
@@ -286,15 +287,14 @@ function SearchBox(): ReactElement {
       <Input
         uiTransform={{
           width: '100%',
-          height: '70%',
+          height: '60%',
           alignSelf: 'center',
-          borderColor: COLOR.TEXT_COLOR,
-          borderWidth: 1,
-          borderRadius: 7,
+          borderWidth: 0,
+          borderRadius: canvasScaleRatio * BORDER_RADIUS_F,
           padding: {
-            top: getCanvasScaleRatio() * 22,
-            left: getCanvasScaleRatio() * 82,
-            right: getCanvasScaleRatio() * 22
+            top: canvasScaleRatio * 22,
+            left: canvasScaleRatio * 82,
+            right: canvasScaleRatio * 22
           }
         }}
         uiBackground={{
