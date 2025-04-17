@@ -142,7 +142,7 @@ export function BackpackNavBar({
         />
         <Input
           uiTransform={{
-            width: '35%',
+            width: '25%',
             height: '70%',
             alignSelf: 'center',
             borderColor: COLOR.TEXT_COLOR,
