@@ -148,10 +148,12 @@ export function renderEmotesWheel(): ReactElement {
                     spriteName: visualSlotInfo.spriteName,
                     atlasName: 'emotes'
                   }),
-                  color:
+                  color: getLighterColorIfHovered(
+                    index,
                     equippedEmoteData?.rarity === 'base'
-                      ? Color4.White()
+                      ? COLOR.WHEEL_BASE_RARITY
                       : RARITY_COLORS[equippedEmoteData?.rarity]
+                  )
                 }}
                 onMouseEnter={() => {
                   state.hoveredURN = equippedEmote
@@ -227,6 +229,18 @@ Press <b>[Alt + num]</b> to run emote`,
       </Canvas>
     )
   )
+}
+
+function getLighterColorIfHovered(index: number, color: Color4): Color4 {
+  if (state.hoveredIndex === index) {
+    return Color4.create(
+      Math.min(color.r + 0.2, 1),
+      Math.min(color.g + 0.2, 1),
+      Math.min(color.b + 0.2, 1),
+      color.a
+    )
+  }
+  return color
 }
 
 function EmoteNumbers(): ReactElement {
