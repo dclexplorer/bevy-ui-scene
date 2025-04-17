@@ -160,17 +160,16 @@ function DropdownStyled(props: {
                   <UiEntity
                     uiTransform={{
                       width: '100%',
-                      height: props.fontSize * 0.1,
+                      height: '100%',
                       display: index > 0 ? 'flex' : 'none'
                     }}
                   />
                   <UiEntity
                     uiTransform={{
-                      width: '95%',
-                      height: props.fontSize * 1.2,
+                      width: '100%',
+                      height: '100%',
                       justifyContent: 'space-between',
-                      alignItems: 'center',
-                      margin: { top: props.fontSize * 0.3 }
+                      alignItems: 'center'
                     }}
                     uiBackground={{
                       color:
