@@ -9,16 +9,17 @@ import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import {
   ALMOST_WHITE,
   ALMOST_BLACK,
-  CLICKED_PRIMARY_COLOR,
   ORANGE,
   ROUNDED_TEXTURE_BACKGROUND
 } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { COLOR } from '../color-palette'
 
 function DropdownStyled(props: {
   isOpen: boolean
   // Events
   onMouseDown: Callback
+  onListMouseLeave: Callback
   onOptionMouseDown: (index: number, title: string) => void
   onOptionMouseEnter: (index: number) => void
   onOptionMouseLeave: (index: number) => void
@@ -131,6 +132,9 @@ function DropdownStyled(props: {
             ...ROUNDED_TEXTURE_BACKGROUND,
             color: ALMOST_WHITE
           }}
+          onMouseLeave={() => {
+            props.onListMouseLeave()
+          }}
         >
           <UiEntity
             uiTransform={{
@@ -174,7 +178,7 @@ function DropdownStyled(props: {
                     uiBackground={{
                       color:
                         index === props.entered
-                          ? { ...CLICKED_PRIMARY_COLOR, a: 0.5 }
+                          ? COLOR.DROPDOWN_ITEM_HOVER
                           : ALMOST_WHITE
                     }}
                     onMouseDown={() => {

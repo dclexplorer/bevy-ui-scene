@@ -2,7 +2,8 @@ import { DropdownStyled } from './dropdown-styled'
 import { getCanvasScaleRatio } from '../service/canvas-ratio'
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
-import { isNull, noop } from '../utils/function-utils'
+import { noop } from '../utils/function-utils'
+import { timers } from '@dcl-sdk/utils'
 
 export type DropdownComponentProps = {
   dropdownId: string // TODO refactor with useState when  it's available
@@ -49,19 +50,21 @@ export function DropdownComponent({
         state[dropdownId].entered = index
       }}
       onOptionMouseLeave={(index) => {
-        if (
-          !(
-            isNull(state[dropdownId].entered) &&
-            state[dropdownId].entered !== index
-          )
-        ) {
+        // TODO onMouseLeave doesn't work well, it can be executed before onMouseEnter
+      }}
+      onListMouseLeave={() => {
+        timers.setTimeout(() => {
           state[dropdownId].entered = null
-        }
+        }, 100)
       }}
       title={''}
       fontSize={fontSize}
       value={options.indexOf(value)}
-      entered={state[dropdownId].entered ?? -1}
+      entered={
+        state[dropdownId].entered !== null
+          ? state[dropdownId].entered ?? -1
+          : -1
+      }
       options={options}
     />
   )
