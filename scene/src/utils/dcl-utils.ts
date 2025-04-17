@@ -8,19 +8,15 @@ export const waitFor = getWaitFor(sleep)
 
 export function debounce<T extends (...args: any[]) => void>(
   func: T,
-  wait: number = 300
+  delay: number = 1000
 ): (...args: Parameters<T>) => void {
-  // TODO timers.setTimeout or timers.clearTimeout seems buggy using wait time > 40ms
-  let timeout: ReturnType<typeof timers.setTimeout> | null = null
+  let timeoutId: ReturnType<typeof timers.setTimeout>
 
-  return function (...args: Parameters<T>) {
-    if (timeout === null) {
-      func(args)
-    }
-    timers.clearTimeout(timeout as number)
-    timeout = timers.setTimeout(() => {
-      timeout = null
-    }, wait)
+  return (...args: Parameters<T>) => {
+    timers.clearTimeout(timeoutId)
+    timeoutId = timers.setTimeout(() => {
+      func(...args)
+    }, delay)
   }
 }
 

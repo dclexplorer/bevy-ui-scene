@@ -27,23 +27,13 @@ import { Input } from '@dcl/sdk/react-ecs'
 import { COLOR } from '../../../components/color-palette'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
-import { throttle } from '../../../utils/dcl-utils'
-import { cloneDeep } from '../../../utils/function-utils'
+import { debounce } from '../../../utils/dcl-utils'
 import { updatePageGeneric } from './backpack-service'
 import { DropdownComponent } from '../../../components/dropdown-component'
 
-const throttleSearch = throttle((name: string) => {
-  const oldSearchFilter = cloneDeep(store.getState().backpack.searchFilter)
-
-  const newSearchFilter = {
-    ...oldSearchFilter,
-    name
-  }
-  if (JSON.stringify(oldSearchFilter) !== JSON.stringify(newSearchFilter)) {
-    store.dispatch(updateSearchFilterAction({ name }))
-    updatePageGeneric().catch(console.error)
-  }
-}, 300)
+const debouncedSearch = debounce((name: string) => {
+  updatePageGeneric().catch(console.error)
+}, 600)
 
 export function BackpackNavBar({
   canvasScaleRatio
@@ -157,8 +147,10 @@ export function BackpackNavBar({
           value={backpackState.searchFilter.name}
           placeholder={'Search by name ...'}
           onChange={(name) => {
-            // TODO onChange is called continuously, figure out why and replace throttle with debounce
-            throttleSearch(name)
+            if (name !== backpackState.searchFilter.name) {
+              store.dispatch(updateSearchFilterAction({ name }))
+              debouncedSearch(name)
+            }
           }}
         />
         <UiEntity
