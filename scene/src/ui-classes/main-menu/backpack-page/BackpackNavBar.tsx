@@ -30,6 +30,7 @@ import { Color4 } from '@dcl/sdk/math'
 import { debounce } from '../../../utils/dcl-utils'
 import { updatePageGeneric } from './backpack-service'
 import { DropdownComponent } from '../../../components/dropdown-component'
+import Icon from '../../../components/icon/Icon'
 
 const debouncedSearch = debounce((name: string) => {
   updatePageGeneric().catch(console.error)
@@ -130,6 +131,16 @@ export function BackpackNavBar({
           value={backpackState.searchFilter.collectiblesOnly}
           label={'Collectibles only'}
         />
+        <Icon
+          uiTransform={{
+            alignSelf: 'center',
+            position: { right: canvasScaleRatio * -66 },
+            zIndex: 1
+          }}
+          icon={{ atlasName: 'backpack', spriteName: 'search-icon' }}
+          iconSize={canvasScaleRatio * 42}
+          iconColor={COLOR.TEXT_COLOR}
+        />
         <Input
           uiTransform={{
             width: '25%',
@@ -138,7 +149,11 @@ export function BackpackNavBar({
             borderColor: COLOR.TEXT_COLOR,
             borderWidth: 1,
             borderRadius: getCanvasScaleRatio() * 30,
-            padding: getCanvasScaleRatio() * 22
+            padding: {
+              top: getCanvasScaleRatio() * 22,
+              left: getCanvasScaleRatio() * 82,
+              right: getCanvasScaleRatio() * 22
+            }
           }}
           uiBackground={{
             color: Color4.White()

@@ -1520,6 +1520,26 @@
 				"h": 31
 			}
 		},
+		"search-icon.png": {
+			"frame": {
+				"x": 146,
+				"y": 332,
+				"w": 21,
+				"h": 20
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 21,
+				"h": 20
+			},
+			"sourceSize": {
+				"w": 21,
+				"h": 20
+			}
+		},
 		"value-slider.png": {
 			"frame": {
 				"x": 269,
