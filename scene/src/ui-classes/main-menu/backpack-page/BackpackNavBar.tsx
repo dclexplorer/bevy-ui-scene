@@ -131,43 +131,7 @@ export function BackpackNavBar({
           value={backpackState.searchFilter.collectiblesOnly}
           label={'Collectibles only'}
         />
-        <Icon
-          uiTransform={{
-            alignSelf: 'center',
-            position: { right: canvasScaleRatio * -66 },
-            zIndex: 1
-          }}
-          icon={{ atlasName: 'backpack', spriteName: 'search-icon' }}
-          iconSize={canvasScaleRatio * 42}
-          iconColor={COLOR.TEXT_COLOR}
-        />
-        <Input
-          uiTransform={{
-            width: '25%',
-            height: '70%',
-            alignSelf: 'center',
-            borderColor: COLOR.TEXT_COLOR,
-            borderWidth: 1,
-            borderRadius: getCanvasScaleRatio() * 30,
-            padding: {
-              top: getCanvasScaleRatio() * 22,
-              left: getCanvasScaleRatio() * 82,
-              right: getCanvasScaleRatio() * 22
-            }
-          }}
-          uiBackground={{
-            color: Color4.White()
-          }}
-          fontSize={canvasScaleRatio * 32}
-          value={backpackState.searchFilter.name}
-          placeholder={'Search by name ...'}
-          onChange={(name) => {
-            if (name !== backpackState.searchFilter.name) {
-              store.dispatch(updateSearchFilterAction({ name }))
-              debouncedSearch(name)
-            }
-          }}
-        />
+        <SearchBox />
         <UiEntity
           uiTransform={{
             width: 'auto',
@@ -293,6 +257,112 @@ function NavBarTitle({
   )
 }
 
+const state: { searchHistory: string[]; showHistory: boolean } = {
+  searchHistory: [],
+  showHistory: false
+}
+
+function SearchBox(): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  const backpackState = store.getState().backpack
+
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '25%',
+        height: '100%'
+      }}
+    >
+      <Icon
+        uiTransform={{
+          alignSelf: 'center',
+          position: { right: canvasScaleRatio * -66 },
+          zIndex: 1
+        }}
+        icon={{ atlasName: 'backpack', spriteName: 'search-icon' }}
+        iconSize={canvasScaleRatio * 42}
+        iconColor={COLOR.TEXT_COLOR}
+      />
+      <Input
+        uiTransform={{
+          width: '100%',
+          height: '70%',
+          alignSelf: 'center',
+          borderColor: COLOR.TEXT_COLOR,
+          borderWidth: 1,
+          borderRadius: 7,
+          padding: {
+            top: getCanvasScaleRatio() * 22,
+            left: getCanvasScaleRatio() * 82,
+            right: getCanvasScaleRatio() * 22
+          }
+        }}
+        uiBackground={{
+          color: Color4.White()
+        }}
+        fontSize={canvasScaleRatio * 32}
+        value={backpackState.searchFilter.name}
+        placeholder={'Search by name ...'}
+        onChange={(name) => {
+          if (name !== backpackState.searchFilter.name) {
+            store.dispatch(updateSearchFilterAction({ name }))
+            debouncedSearch(name)
+          }
+        }}
+      />
+
+      {state.searchHistory.length && state.showHistory && (
+        <UiEntity
+          uiTransform={{
+            width: '94%',
+            positionType: 'absolute',
+            position: { top: '90%', left: '6%' },
+            zIndex: 2,
+            flexDirection: 'column',
+            borderRadius: 7,
+            borderWidth: 1,
+            borderColor: COLOR.TEXT_COLOR
+          }}
+          uiBackground={{
+            color: Color4.White()
+          }}
+        >
+          {state.searchHistory.map((item) => {
+            return (
+              <UiEntity
+                uiTransform={{
+                  width: '100%'
+                }}
+              >
+                <UiEntity
+                  uiTransform={{
+                    padding: { left: '10%' }
+                  }}
+                  uiText={{
+                    value: item,
+                    color: COLOR.TEXT_COLOR,
+                    textAlign: 'top-left',
+                    fontSize: canvasScaleRatio * 32
+                  }}
+                />
+                <Icon
+                  icon={{ atlasName: 'backpack', spriteName: 'history-icon' }}
+                  iconSize={canvasScaleRatio * 42}
+                  uiTransform={{
+                    alignSelf: 'center',
+                    positionType: 'absolute',
+                    position: { left: '5%' }
+                  }}
+                  iconColor={COLOR.TEXT_COLOR}
+                />
+              </UiEntity>
+            )
+          })}
+        </UiEntity>
+      )}
+    </UiEntity>
+  )
+}
 function NavButtonBar({ children }: { children?: ReactElement }): ReactElement {
   return (
     <UiEntity

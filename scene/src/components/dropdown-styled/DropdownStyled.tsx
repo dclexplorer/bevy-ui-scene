@@ -14,12 +14,13 @@ import {
 } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { COLOR } from '../color-palette'
+import { noop } from '../../utils/function-utils'
 
 function DropdownStyled(props: {
   isOpen: boolean
   // Events
   onMouseDown: Callback
-  onListMouseLeave: Callback
+  onListMouseLeave?: Callback
   onOptionMouseDown: (index: number, title: string) => void
   onOptionMouseEnter: (index: number) => void
   onOptionMouseLeave: (index: number) => void
@@ -133,7 +134,7 @@ function DropdownStyled(props: {
             color: ALMOST_WHITE
           }}
           onMouseLeave={() => {
-            props.onListMouseLeave()
+            ;(props.onListMouseLeave ?? noop)()
           }}
         >
           <UiEntity
