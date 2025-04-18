@@ -49,9 +49,7 @@ export function DropdownComponent({
       onOptionMouseEnter={(index) => {
         state[dropdownId].entered = index
       }}
-      onOptionMouseLeave={(index) => {
-        // TODO onMouseLeave doesn't work well, it can be executed before onMouseEnter
-      }}
+      onOptionMouseLeave={(index) => {}}
       onListMouseLeave={() => {
         timers.setTimeout(() => {
           state[dropdownId].entered = null

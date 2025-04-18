@@ -25,7 +25,6 @@ export const Checkbox = ({
         justifyContent: 'center'
       }}
       onMouseDown={() => {
-        console.log('onMouseDown')
         onChange()
       }}
     >
