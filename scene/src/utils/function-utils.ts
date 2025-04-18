@@ -22,8 +22,15 @@ export function cloneDeep<T>(obj: T): T {
 
 export const getWaitFor =
   (sleep: (ms: number) => Promise<any>) =>
-  async (conditionFn: () => boolean, timeInterval = 100) => {
+  async (conditionFn: () => boolean, timeInterval = 100, timeout = 0) => {
+    const started = Date.now()
     while (!conditionFn()) {
+      if (timeout && Date.now() - started >= timeout) {
+        console.log(
+          `warning: reached timeout waiting for ${conditionFn.toString()}`
+        )
+        return
+      }
       await sleep(timeInterval)
     }
   }

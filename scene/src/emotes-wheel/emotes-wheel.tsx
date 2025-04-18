@@ -20,7 +20,10 @@ import { getEmoteThumbnail } from '../service/emotes'
 import { catalystMetadataMap } from '../utils/catalyst-metadata-map'
 import { fetchEmotesData } from '../utils/emotes-promise-utils'
 import { type EmoteEntityMetadata } from '../utils/item-definitions'
-import { DEFAULT_EMOTE_NAMES } from '../utils/backpack-constants'
+import {
+  DEFAULT_EMOTE_NAMES,
+  DEFAULT_EMOTES
+} from '../utils/backpack-constants'
 import { triggerEmote } from '~system/RestrictedActions'
 import {
   engine,
@@ -43,10 +46,12 @@ export async function initEmotesWheel({
 }: {
   showBackpackMenu: () => void
 }): Promise<void> {
-  const equippedEmotes: EquippedEmote[] = (getPlayer()?.emotes ?? []).map(
-    (e) => getURNWithoutTokenId(e as URN) as EquippedEmote
-  )
+  const equippedEmotes: EquippedEmote[] = (
+    getPlayer()?.emotes ?? DEFAULT_EMOTES
+  ).map((e) => getURNWithoutTokenId(e as URN) as EquippedEmote)
+
   await fetchEmotesData(...equippedEmotes)
+
   listen().catch(console.error)
 
   engine.addSystem(() => {
@@ -124,7 +129,7 @@ export function renderEmotesWheel(): ReactElement {
             const equippedEmoteData: EmoteEntityMetadata = catalystMetadataMap[
               equippedEmote as URNWithoutTokenId
             ] as EmoteEntityMetadata
-            const hoverFactor = state.hoveredIndex === index ? 1.5 : 0.9
+
             return (
               <UiEntity
                 uiTransform={{
@@ -143,13 +148,12 @@ export function renderEmotesWheel(): ReactElement {
                     spriteName: visualSlotInfo.spriteName,
                     atlasName: 'emotes'
                   }),
-                  color: {
-                    ...(equippedEmoteData?.rarity === 'base'
-                      ? Color4.White()
-                      : RARITY_COLORS[equippedEmoteData?.rarity] ??
-                        Color4.White()),
-                    a: hoverFactor
-                  }
+                  color: getLighterColorIfHovered(
+                    index,
+                    equippedEmoteData?.rarity === 'base'
+                      ? COLOR.WHEEL_BASE_RARITY
+                      : RARITY_COLORS[equippedEmoteData?.rarity]
+                  )
                 }}
                 onMouseEnter={() => {
                   state.hoveredURN = equippedEmote
@@ -225,6 +229,18 @@ Press <b>[Alt + num]</b> to run emote`,
       </Canvas>
     )
   )
+}
+
+function getLighterColorIfHovered(index: number, color: Color4): Color4 {
+  if (state.hoveredIndex === index) {
+    return Color4.create(
+      Math.min(color.r + 0.2, 1),
+      Math.min(color.g + 0.2, 1),
+      Math.min(color.b + 0.2, 1),
+      color.a
+    )
+  }
+  return color
 }
 
 function EmoteNumbers(): ReactElement {
