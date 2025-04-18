@@ -19,7 +19,7 @@ import {
   renderEmotesWheel
 } from '../emotes-wheel/emotes-wheel'
 import { getWaitFor } from '../utils/function-utils'
-import { dclSleep } from '../utils/dcl-utils'
+import { sleep } from '../utils/dcl-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
 
 export class UIController {
@@ -71,7 +71,7 @@ export class UIController {
     this.photosPanel = new Photos(this)
 
     this.loadingAndLogin.onFinish(() => {
-      const waitFor = getWaitFor(dclSleep)
+      const waitFor = getWaitFor(sleep)
 
       ;(async () => {
         // TODO review with bevy-explorer dev or protocol why getPlayer().emotes is empty at first
