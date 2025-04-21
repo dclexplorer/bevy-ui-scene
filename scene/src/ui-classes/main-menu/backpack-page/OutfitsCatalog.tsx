@@ -7,6 +7,9 @@ import {
 import { store } from '../../../state/store'
 import { type OutfitDefinition } from '../../../utils/outfit-definitions'
 
+import { Color4 } from '@dcl/sdk/math'
+import { getSlotAvatar } from '../../../components/backpack/OutfitAvatar'
+
 const SLOTS: any[] = new Array(10).fill(null)
 const state: { hoveredIndex: number } = {
   hoveredIndex: -1
@@ -48,7 +51,7 @@ export const OutfitsCatalog = (): ReactElement => {
               state.hoveredIndex = index
             }}
           >
-            {isEmptySlot(viewSlot) && (
+            {isEmptySlot(viewSlot) ? (
               <UiEntity
                 uiTransform={{
                   positionType: 'absolute',
@@ -57,10 +60,30 @@ export const OutfitsCatalog = (): ReactElement => {
                   alignSelf: 'center',
                   position: { left: '10%' }
                 }}
-                uiBackground={getBackgroundFromAtlas({
-                  atlasName: 'backpack',
-                  spriteName: 'outfit-slot-silhouette'
-                })}
+                uiBackground={{
+                  ...getBackgroundFromAtlas({
+                    atlasName: 'backpack',
+                    spriteName: 'outfit-slot-silhouette'
+                  }),
+                  color: Color4.create(0, 0, 0, 1)
+                }}
+              />
+            ) : (
+              <UiEntity
+                uiTransform={{
+                  positionType: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  alignSelf: 'center',
+                  position: { left: '0%' },
+                  zIndex: 9
+                }}
+                uiText={{ value: 'FOO', textAlign: 'middle-center' }}
+                uiBackground={{
+                  videoTexture: {
+                    videoPlayerEntity: getSlotAvatar(index)?.cameraEntity
+                  }
+                }}
               />
             )}
           </UiEntity>
@@ -72,6 +95,5 @@ export const OutfitsCatalog = (): ReactElement => {
 
 function isEmptySlot(viewSlot: OutfitDefinition | null): boolean {
   if (viewSlot === null) return true
-  if (!viewSlot?.bodyShape) return true
-  return false
+  return !viewSlot?.bodyShape
 }

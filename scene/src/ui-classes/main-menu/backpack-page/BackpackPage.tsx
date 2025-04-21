@@ -46,6 +46,7 @@ import { BackpackNavBar } from './BackpackNavBar'
 import { updatePageGeneric } from './backpack-service'
 import { OutfitsCatalog } from './OutfitsCatalog'
 import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
+import { initOutfitAvatars } from '../../../components/backpack/OutfitAvatar'
 
 let originalAvatarJSON: string
 
@@ -126,6 +127,7 @@ export default class BackpackPage {
     store.dispatch(updateCacheKey())
     closeColorPicker()
     createAvatarPreview()
+    initOutfitAvatars()
     const player = getPlayer()
     const wearables: URNWithoutTokenId[] = (player?.wearables ?? []).map(
       (urn) => getURNWithoutTokenId(urn as URN)

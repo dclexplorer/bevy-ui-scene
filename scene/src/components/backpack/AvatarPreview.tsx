@@ -21,7 +21,7 @@ import { type PBAvatarBase } from '../../bevy-api/interface'
 import { getItemsWithTokenId } from '../../utils/urn-utils'
 import { type Perspective } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/texture_camera.gen'
 
-type AvatarPreview = {
+export type AvatarPreview = {
   avatarEntity: Entity
   cameraEntity: Entity
 }
@@ -57,7 +57,7 @@ export const playPreviewEmote = (emoteURN: EquippedEmote): void => {
     emoteURN
 }
 
-const AVATAR_CAMERA_POSITION: Record<string, Vector3> = {
+export const AVATAR_CAMERA_POSITION: Record<string, Vector3> = {
   BODY: Vector3.create(8, 2.5, 8 - 6),
   TOP: Vector3.create(8, 3.5, 8 - 3),
   FEET: Vector3.create(8, 1, 8 - 4),

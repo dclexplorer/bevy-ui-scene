@@ -13,6 +13,5 @@ export async function fetchPlayerOutfitMetadata({
   const outfitsMetadataURL = `${catalystBaseURl}/lambdas/outfits/${address}`
   const outfitsMetadataResponse =
     await fetchJsonOrTryFallback(outfitsMetadataURL)
-  console.log('outfitsMetadataResponse', outfitsMetadataResponse)
   return outfitsMetadataResponse?.metadata
 }
