@@ -132,6 +132,13 @@ export const OutfitsCatalog = (): ReactElement => {
               onMouseEnter={() => {
                 state.hoveredIndex = index
               }}
+              onMouseLeave={() => {
+                if (
+                  !(state.hoveredIndex >= 0 && state.hoveredIndex !== index)
+                ) {
+                  state.hoveredIndex = -1
+                }
+              }}
               onMouseDown={() => {
                 console.log('SELECTED', index)
                 if (!isEmptySlot(viewSlot)) {
@@ -146,7 +153,9 @@ export const OutfitsCatalog = (): ReactElement => {
                     width: '80%',
                     height: '80%',
                     alignSelf: 'center',
-                    position: { left: '10%' }
+                    position: { left: '10%' },
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}
                   uiBackground={{
                     ...getBackgroundFromAtlas({
@@ -155,7 +164,32 @@ export const OutfitsCatalog = (): ReactElement => {
                     }),
                     color: Color4.create(0, 0, 0, 1)
                   }}
-                />
+                  uiText={{
+                    value:
+                      state.hoveredIndex === index
+                        ? `\n\nSAVE OUTFIT`
+                        : `<b>Empty</b>\nSLOT`,
+                    fontSize: canvasScaleRatio * 32
+                  }}
+                >
+                  {state.hoveredIndex === index && (
+                    <UiEntity
+                      uiTransform={{
+                        width: canvasScaleRatio * 88,
+                        height: canvasScaleRatio * 88,
+                        positionType: 'absolute',
+                        alignSelf: 'center',
+
+                        position: { top: '30%' }
+                      }}
+                      uiBackground={getBackgroundFromAtlas({
+                        atlasName: 'backpack',
+                        spriteName: 'add-icon'
+                      })}
+                      uiText={{ value: '' }}
+                    ></UiEntity>
+                  )}
+                </UiEntity>
               ) : (
                 <UiEntity
                   uiTransform={{
