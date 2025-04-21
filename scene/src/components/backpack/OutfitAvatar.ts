@@ -32,30 +32,33 @@ export const initOutfitAvatars = (): void => {
   outfitsMetadata.outfits.forEach((outfitMetadata) => {
     viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
   })
+
   viewSlots.forEach((slot, index) => {
+    const layer = 2 + index
     slotAvatars[index] = {
       avatarEntity: engine.addEntity(),
       cameraEntity: engine.addEntity()
     }
+
     const { avatarEntity, cameraEntity } = slotAvatars[index]
     AvatarShape.create(avatarEntity, {
-      bodyShape: BASE_MALE_URN,
+      bodyShape: slot?.bodyShape ?? BASE_MALE_URN,
       emotes: [],
       expressionTriggerId: undefined,
       expressionTriggerTimestamp: undefined,
-      eyeColor: EYE_COLOR_PRESETS[0],
-      hairColor: HAIR_COLOR_PRESETS[0],
+      eyeColor: slot?.eyes.color ?? EYE_COLOR_PRESETS[0],
+      hairColor: slot?.hair.color ?? HAIR_COLOR_PRESETS[0],
       id: '',
       name: undefined,
-      skinColor: SKIN_COLOR_PRESETS[0],
+      skinColor: slot?.skin.color ?? SKIN_COLOR_PRESETS[0],
       talking: false,
-      wearables: [BASE_MALE_URN]
+      wearables: slot?.wearables ?? []
     })
     CameraLayers.create(avatarEntity, {
-      layers: [2]
+      layers: [layer]
     })
     CameraLayer.create(cameraEntity, {
-      layer: 2,
+      layer,
       directionalLight: false,
       showAvatars: false,
       showSkybox: false,
@@ -66,8 +69,8 @@ export const initOutfitAvatars = (): void => {
     TextureCamera.create(cameraEntity, {
       width: CAMERA_SIZE.WIDTH,
       height: CAMERA_SIZE.HEIGHT,
-      layer: 2,
-      clearColor: Color4.create(0.4, 0.4, 1.0, 1),
+      layer,
+      clearColor: Color4.create(0.4, 0.4, 1.0, 0.5),
       mode: {
         $case: 'perspective',
         perspective: { fieldOfView: 1 }

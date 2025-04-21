@@ -127,7 +127,7 @@ export default class BackpackPage {
     store.dispatch(updateCacheKey())
     closeColorPicker()
     createAvatarPreview()
-    initOutfitAvatars()
+
     const player = getPlayer()
     const wearables: URNWithoutTokenId[] = (player?.wearables ?? []).map(
       (urn) => getURNWithoutTokenId(urn as URN)
@@ -182,6 +182,7 @@ export default class BackpackPage {
           await fetchPlayerOutfitMetadata({ address: player.userId })
         )
       )
+      initOutfitAvatars()
     }
   }
 }

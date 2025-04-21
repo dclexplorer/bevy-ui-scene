@@ -78,7 +78,6 @@ export const OutfitsCatalog = (): ReactElement => {
                   position: { left: '0%' },
                   zIndex: 9
                 }}
-                uiText={{ value: 'FOO', textAlign: 'middle-center' }}
                 uiBackground={{
                   videoTexture: {
                     videoPlayerEntity: getSlotAvatar(index)?.cameraEntity
