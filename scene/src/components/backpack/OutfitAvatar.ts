@@ -70,7 +70,7 @@ export const initOutfitAvatars = (): void => {
       width: CAMERA_SIZE.WIDTH,
       height: CAMERA_SIZE.HEIGHT,
       layer,
-      clearColor: Color4.create(0.4, 0.4, 1.0, 0.5),
+      clearColor: Color4.create(0.4, 0.4, 1.0, 0),
       mode: {
         $case: 'perspective',
         perspective: { fieldOfView: 1 }
