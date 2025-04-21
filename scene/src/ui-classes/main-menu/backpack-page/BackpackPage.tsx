@@ -27,6 +27,7 @@ import {
   updateCacheKey,
   updateEquippedEmotesAction,
   updateEquippedWearables,
+  updateLoadedOutfitsMetadataAction,
   updateLoadingPage
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
@@ -44,6 +45,7 @@ import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 import { BackpackNavBar } from './BackpackNavBar'
 import { updatePageGeneric } from './backpack-service'
 import { OutfitsCatalog } from './OutfitsCatalog'
+import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
 
 let originalAvatarJSON: string
 
@@ -172,6 +174,13 @@ export default class BackpackPage {
         forceRender: backpackState.forceRender ?? []
       }
     } satisfies SetAvatarData)
+    if (player && !player?.isGuest) {
+      store.dispatch(
+        updateLoadedOutfitsMetadataAction(
+          await fetchPlayerOutfitMetadata({ address: player.userId })
+        )
+      )
+    }
   }
 }
 

@@ -10,6 +10,7 @@ import {
   type CatalystMetadataMap
 } from '../../utils/item-definitions'
 import { type PBAvatarBase } from '../../bevy-api/interface'
+import { type OutfitsMetadata } from '../../utils/outfit-definitions'
 
 type BackpackActionId = { __reducer: typeof BACKPACK_STORE_ID }
 
@@ -33,7 +34,8 @@ export enum BACKPACK_ACTION {
   UPDATE_EMOTES_SAVED_RESET_VERSION,
   RESET_EMOTES,
   RESET_DEFAULT_EMOTES,
-  UPDATE_SEARCH_FILTER
+  UPDATE_SEARCH_FILTER,
+  LOADED_OUTFITS_METADATA
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -136,6 +138,11 @@ export type BackpackUpdateSearchFilter = BackpackActionId & {
   payload: SearchFilterPayload
 }
 
+export type BackpackLoadedOutfitsMetadataAction = BackpackActionId & {
+  type: BACKPACK_ACTION.LOADED_OUTFITS_METADATA
+  payload: OutfitsMetadata
+}
+
 export type BackpackActions =
   | BackpackSelectWearableURNAction
   | BackpackUpdateCurrentPageAction
@@ -157,6 +164,7 @@ export type BackpackActions =
   | BackpackResetEmotesAction
   | BackpackResetDefaultEmotesAction
   | BackpackUpdateSearchFilter
+  | BackpackLoadedOutfitsMetadataAction
 
 export const updateSelectedCatalogURNAction = (
   payload: URNWithoutTokenId | null
@@ -300,5 +308,13 @@ export const updateSearchFilterAction = (
 ): BackpackUpdateSearchFilter => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.UPDATE_SEARCH_FILTER,
+  payload
+})
+
+export const updateLoadedOutfitsMetadataAction = (
+  payload: OutfitsMetadata
+): BackpackLoadedOutfitsMetadataAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.LOADED_OUTFITS_METADATA,
   payload
 })

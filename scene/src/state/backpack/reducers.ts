@@ -233,6 +233,12 @@ export function reducer(
         currentPage: 1
       }
     }
+    case BACKPACK_ACTION.LOADED_OUTFITS_METADATA: {
+      return {
+        ...backpackPageState,
+        outfitsMetadata: action.payload
+      }
+    }
     default:
       return backpackPageState
   }
