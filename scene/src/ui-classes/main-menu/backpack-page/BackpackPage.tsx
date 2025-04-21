@@ -43,6 +43,7 @@ import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 
 import { BackpackNavBar } from './BackpackNavBar'
 import { updatePageGeneric } from './backpack-service'
+import { OutfitsCatalog } from './OutfitsCatalog'
 
 let originalAvatarJSON: string
 
@@ -83,6 +84,9 @@ export default class BackpackPage {
             )}
             {backpackState.activeSection === BACKPACK_SECTION.EMOTES && (
               <EmotesCatalog />
+            )}
+            {backpackState.activeSection === BACKPACK_SECTION.OUTFITS && (
+              <OutfitsCatalog />
             )}
           </UiEntity>
         </Content>
