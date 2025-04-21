@@ -20,7 +20,7 @@ import type {
 import { BevyApi } from '../../../bevy-api'
 import {
   createAvatarPreview,
-  playEmote,
+  playPreviewEmote,
   setAvatarPreviewCameraToWearableCategory
 } from '../../../components/backpack/AvatarPreview'
 import {
@@ -355,7 +355,7 @@ function BackpackNavBar({
               setAvatarPreviewCameraToWearableCategory(
                 backpackState.activeWearableCategory
               )
-              playEmote('')
+              playPreviewEmote('')
             }}
           />
 

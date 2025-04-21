@@ -9,10 +9,11 @@ let gameInstance: GameController
 
 export async function init(retry: boolean): Promise<void> {
   gameInstance = new GameController()
+
   gameInstance.uiController.loadingAndLogin.startLoading()
   // BevyApi.loginGuest()
   // gameInstance.uiController.loadingAndLogin.finishLoading()
-
+  // gameInstance.uiController.menu?.show('backpack')
   const { description, url } = await BevyApi.checkForUpdate()
 
   if (url !== '') {
@@ -20,7 +21,6 @@ export async function init(retry: boolean): Promise<void> {
   } else {
     console.log('No update available')
   }
-
   const { message } = await BevyApi.messageOfTheDay()
   if (message !== '') {
     gameInstance.uiController.warningPopUp.tittle = 'Message of the day:'

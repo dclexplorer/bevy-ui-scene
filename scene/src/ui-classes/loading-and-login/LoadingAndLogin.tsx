@@ -1,6 +1,6 @@
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
-import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, { type Callback, UiEntity } from '@dcl/sdk/react-ecs'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
 import { ArrowToast } from '../../components/arrow-toast'
@@ -15,6 +15,7 @@ import {
 } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import Canvas from '../../components/canvas/Canvas'
+import { noop } from '../../utils/function-utils'
 
 type StatusType =
   | 'loading'
@@ -57,6 +58,12 @@ export default class LoadingAndLogin {
   public timer: number = 2
   private readonly uiController: UIController
 
+  onFinishCallback: Callback = noop
+
+  public onFinish(callback: Callback): void {
+    this.onFinishCallback = callback
+  }
+
   constructor(uiController: UIController) {
     this.uiController = uiController
   }
@@ -69,6 +76,7 @@ export default class LoadingAndLogin {
 
   finishLoading(): void {
     this.isVisible = false
+    this.onFinishCallback()
   }
 
   visible(): boolean {

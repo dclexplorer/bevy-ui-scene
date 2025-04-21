@@ -52,7 +52,7 @@ export const getAvatarPreviewQuaternion = (): Quaternion => {
   return Transform.get(avatarPreview.avatarEntity).rotation
 }
 
-export const playEmote = (emoteURN: EquippedEmote): void => {
+export const playPreviewEmote = (emoteURN: EquippedEmote): void => {
   AvatarShape.getMutable(avatarPreview.avatarEntity).expressionTriggerId =
     emoteURN
 }

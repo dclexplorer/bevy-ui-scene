@@ -65,6 +65,12 @@ export type HomeScene = {
   parcel: Vector2
 }
 
+export type SystemAction = {
+  action: string
+  pressed: boolean
+  toString: string
+}
+
 export type BevyApiInterface = {
   setAvatar: (avatarData: SetAvatarData) => Promise<number>
   openSceneLogger: () => Promise<void>
@@ -93,6 +99,7 @@ export type BevyApiInterface = {
   getHomeScene: () => Promise<HomeScene>
   setHomeScene: (home: HomeScene) => void
   getRealmProvider: () => Promise<string>
+  getSystemActionStream: () => Promise<SystemAction[]>
 }
 
 // system api module
