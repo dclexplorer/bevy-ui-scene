@@ -8,6 +8,7 @@ import {
 } from '../utils/emotes-promise-utils'
 import {
   DEFAULT_EMOTE_ELEMENTS,
+  DEFAULT_EMOTE_NAMES,
   DEFAULT_EMOTES
 } from '../utils/backpack-constants'
 import { catalystMetadataMap } from '../utils/catalyst-metadata-map'
@@ -16,11 +17,30 @@ export function decoratePageResultWithEmbededEmotes(
   emotesPageRequest: EmotesCatalogPageRequest,
   emotesPageResponse: EmotesPageResponse
 ): EmotesPageResponse {
-  const { pageNum, pageSize } = emotesPageRequest
+  const { pageNum, pageSize, searchFilter } = emotesPageRequest
   const originalTotalAmount = emotesPageResponse.totalAmount
   const newEmotesPageResponse = cloneDeep(emotesPageResponse)
+  const filteredDefaultEmotes = !searchFilter?.name
+    ? DEFAULT_EMOTES
+    : DEFAULT_EMOTES.filter((offchainURN): boolean => {
+        if (offchainURN.includes(searchFilter.name.toLowerCase())) return true
+        if (
+          DEFAULT_EMOTE_NAMES[offchainURN]
+            .toLowerCase()
+            .includes(searchFilter.name)
+        )
+          return true
+        return false
+      })
+  const filteredDefaultEmoteElements = searchFilter.collectiblesOnly
+    ? []
+    : DEFAULT_EMOTE_ELEMENTS.filter((element) =>
+        filteredDefaultEmotes.includes(element.urn)
+      )
+  if (!searchFilter.collectiblesOnly) {
+    newEmotesPageResponse.totalAmount += filteredDefaultEmotes.length
+  }
 
-  newEmotesPageResponse.totalAmount += DEFAULT_EMOTES.length
   const isExtraPage =
     pageNum * pageSize >=
     (Math.ceil(originalTotalAmount / pageSize) + 1) * pageSize
@@ -32,17 +52,17 @@ export function decoratePageResultWithEmbededEmotes(
   if (isOriginalLastPage && lastPageEmptyCells > 0) {
     newEmotesPageResponse.elements = [
       ...emotesPageResponse.elements,
-      ...DEFAULT_EMOTE_ELEMENTS.slice(0, lastPageEmptyCells)
+      ...filteredDefaultEmoteElements.slice(0, lastPageEmptyCells)
     ] as CatalogEmoteElement[]
   } else if (
     isExtraPage &&
-    lastPageEmptyCells < DEFAULT_EMOTE_ELEMENTS.length
+    lastPageEmptyCells < filteredDefaultEmoteElements.length
   ) {
     newEmotesPageResponse.elements = [
       ...emotesPageResponse.elements,
-      ...DEFAULT_EMOTE_ELEMENTS.slice(
+      ...filteredDefaultEmoteElements.slice(
         lastPageEmptyCells,
-        DEFAULT_EMOTE_ELEMENTS.length
+        filteredDefaultEmoteElements.length
       )
     ] as CatalogEmoteElement[]
   }

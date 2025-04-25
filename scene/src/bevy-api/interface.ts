@@ -100,6 +100,7 @@ export type BevyApiInterface = {
   setHomeScene: (home: HomeScene) => void
   getRealmProvider: () => Promise<string>
   getSystemActionStream: () => Promise<SystemAction[]>
+  localStorage: any
 }
 
 // system api module

@@ -9,19 +9,21 @@ import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import {
   ALMOST_WHITE,
   ALMOST_BLACK,
-  CLICKED_PRIMARY_COLOR,
   ORANGE,
   ROUNDED_TEXTURE_BACKGROUND
 } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { COLOR } from '../color-palette'
+import { noop } from '../../utils/function-utils'
 
 function DropdownStyled(props: {
   isOpen: boolean
   // Events
   onMouseDown: Callback
+  onListMouseLeave?: Callback
   onOptionMouseDown: (index: number, title: string) => void
   onOptionMouseEnter: (index: number) => void
-  onOptionMouseLeave: () => void
+  onOptionMouseLeave: (index: number) => void
   // Shape
   uiTransform?: UiTransformProps
   backgroundColor?: Color4
@@ -31,10 +33,12 @@ function DropdownStyled(props: {
   fontColor?: Color4
   value: number
   entered: number
+  scroll?: boolean
   options: string[]
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
+  const { scroll = true } = props
   return (
     <UiEntity
       uiTransform={{
@@ -115,10 +119,11 @@ function DropdownStyled(props: {
           uiTransform={{
             display: props.isOpen ? 'flex' : 'none',
             width: '100%',
-            height:
-              props.options.length >= 4
+            height: scroll
+              ? props.options.length >= 4
                 ? props.fontSize * 2.1 * 4
-                : props.fontSize * props.options.length * 2.1,
+                : props.fontSize * props.options.length * 2.1
+              : undefined,
 
             positionType: 'absolute',
             position: { left: 0, top: 2.5 * props.fontSize },
@@ -128,13 +133,16 @@ function DropdownStyled(props: {
             ...ROUNDED_TEXTURE_BACKGROUND,
             color: ALMOST_WHITE
           }}
+          onMouseLeave={() => {
+            ;(props.onListMouseLeave ?? noop)()
+          }}
         >
           <UiEntity
             uiTransform={{
               width: '100%',
               height: '100%',
               flexDirection: 'column',
-              overflow: 'scroll'
+              overflow: scroll ? 'scroll' : undefined
               // scrollVisible: 'hidden'
             }}
           >
@@ -157,22 +165,21 @@ function DropdownStyled(props: {
                   <UiEntity
                     uiTransform={{
                       width: '100%',
-                      height: props.fontSize * 0.1,
+                      height: '100%',
                       display: index > 0 ? 'flex' : 'none'
                     }}
                   />
                   <UiEntity
                     uiTransform={{
-                      width: '95%',
-                      height: props.fontSize * 1.2,
+                      width: '100%',
+                      height: '100%',
                       justifyContent: 'space-between',
-                      alignItems: 'center',
-                      margin: { top: props.fontSize * 0.3 }
+                      alignItems: 'center'
                     }}
                     uiBackground={{
                       color:
                         index === props.entered
-                          ? { ...CLICKED_PRIMARY_COLOR, a: 0.5 }
+                          ? COLOR.DROPDOWN_ITEM_HOVER
                           : ALMOST_WHITE
                     }}
                     onMouseDown={() => {
@@ -182,7 +189,7 @@ function DropdownStyled(props: {
                       props.onOptionMouseEnter(index)
                     }}
                     onMouseLeave={() => {
-                      props.onOptionMouseLeave()
+                      props.onOptionMouseLeave(index)
                     }}
                   >
                     <UiEntity

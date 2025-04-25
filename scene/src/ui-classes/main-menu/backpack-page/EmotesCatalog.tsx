@@ -41,11 +41,13 @@ export function EmotesCatalog(): ReactElement {
       <ItemsCatalog
         fetchItemsPage={async () => {
           const backpackState = store.getState().backpack
+
           return await fetchEmotesPage({
             pageNum: backpackState.currentPage,
             pageSize: ITEMS_CATALOG_PAGE_SIZE,
             address: getPlayer()?.userId ?? ZERO_ADDRESS,
-            cacheKey: store.getState().backpack.cacheKey
+            cacheKey: backpackState.cacheKey,
+            searchFilter: backpackState.searchFilter
           })
         }}
       >

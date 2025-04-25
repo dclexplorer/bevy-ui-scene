@@ -66,7 +66,8 @@ export function WearablesCatalog(): ReactElement {
             pageSize: ITEMS_CATALOG_PAGE_SIZE,
             address: getPlayer()?.userId ?? ZERO_ADDRESS,
             wearableCategory: backpackState.activeWearableCategory,
-            cacheKey: store.getState().backpack.cacheKey
+            cacheKey: backpackState.cacheKey,
+            searchFilter: backpackState.searchFilter
           })
         }}
       >

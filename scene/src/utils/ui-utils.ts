@@ -354,3 +354,5 @@ export function parseCoordinates(
 
   return null
 }
+// TODO replace old rounded texture with border radius where we can
+export const BORDER_RADIUS_F = 18
