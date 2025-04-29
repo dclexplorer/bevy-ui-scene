@@ -53,6 +53,7 @@ export const getAvatarPreviewQuaternion = (): Quaternion => {
 }
 
 export const playPreviewEmote = (emoteURN: EquippedEmote): void => {
+  if (AvatarShape.getMutableOrNull(avatarPreview.avatarEntity) === null) return
   AvatarShape.getMutable(avatarPreview.avatarEntity).expressionTriggerId =
     emoteURN
 }
