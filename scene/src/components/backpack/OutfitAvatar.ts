@@ -25,6 +25,21 @@ const CAMERA_SIZE = { WIDTH: 138 * 4, HEIGHT: 252 * 4 }
 export const getSlotAvatar = (slotIndex: number): AvatarPreview =>
   slotAvatars[slotIndex]
 
+export const updateOutfitAvatar = (
+  slotIndex: number,
+  slot: OutfitDefinition
+): void => {
+  const mutableAvatarShape = AvatarShape.getMutable(
+    slotAvatars[slotIndex].avatarEntity
+  )
+  mutableAvatarShape.wearables = slot.wearables
+  mutableAvatarShape.bodyShape = slot.bodyShape
+  mutableAvatarShape.hairColor = slot.hair.color
+  mutableAvatarShape.eyeColor = slot.eyes.color
+  mutableAvatarShape.skinColor = slot.skin.color
+  mutableAvatarShape.forceRender = slot.forceRender
+}
+
 export const initOutfitAvatars = (): void => {
   const backpackState = store.getState().backpack
   const outfitsMetadata = backpackState.outfitsMetadata

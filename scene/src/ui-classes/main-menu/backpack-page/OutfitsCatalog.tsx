@@ -5,22 +5,33 @@ import {
   getBackgroundFromAtlas
 } from '../../../utils/ui-utils'
 import { store } from '../../../state/store'
-import { type OutfitDefinition } from '../../../utils/outfit-definitions'
+import {
+  type OutfitDefinition,
+  type OutfitsMetadata
+} from '../../../utils/outfit-definitions'
 
 import { Color4 } from '@dcl/sdk/math'
-import { getSlotAvatar } from '../../../components/backpack/OutfitAvatar'
+import {
+  getSlotAvatar,
+  updateOutfitAvatar
+} from '../../../components/backpack/OutfitAvatar'
 import { RoundedButton } from '../../../components/rounded-button'
 import {
   updateAvatarBase,
-  updateEquippedWearables
+  updateEquippedWearables,
+  updateLoadedOutfitsMetadataAction
 } from '../../../state/backpack/actions'
-import { SKIN_COLOR_PRESETS } from '../../../components/color-palette'
 import { type URNWithoutTokenId } from '../../../utils/definitions'
-import { getURNWithoutTokenId } from '../../../utils/urn-utils'
+import {
+  getItemsWithTokenId,
+  getURNWithoutTokenId
+} from '../../../utils/urn-utils'
 import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 import { fetchWearablesData } from '../../../utils/wearables-promise-utils'
 import { getRealm } from '~system/Runtime'
 import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
+import { cloneDeep } from '../../../utils/function-utils'
+import type { RGBColor } from '../../../bevy-api/interface'
 
 const SLOTS: any[] = new Array(10).fill(null)
 const state: { hoveredIndex: number; selectedIndex: number } = {
@@ -32,8 +43,8 @@ export const OutfitsCatalog = (): ReactElement => {
   const backpackState = store.getState().backpack
   const outfitsMetadata = backpackState.outfitsMetadata
   const viewSlots: Array<OutfitDefinition | null> = [...SLOTS]
-  outfitsMetadata.outfits.forEach((outfitMetadata) => {
-    viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
+  outfitsMetadata.outfits.forEach((outfitMetadata, index) => {
+    viewSlots[index] = outfitMetadata === null ? null : outfitMetadata.outfit
   })
 
   return (
@@ -140,7 +151,6 @@ export const OutfitsCatalog = (): ReactElement => {
                 }
               }}
               onMouseDown={() => {
-                console.log('SELECTED', index)
                 if (!isEmptySlot(viewSlot)) {
                   state.selectedIndex = index
                 }
@@ -170,6 +180,9 @@ export const OutfitsCatalog = (): ReactElement => {
                         ? `\n\nSAVE OUTFIT`
                         : `<b>Empty</b>\nSLOT`,
                     fontSize: canvasScaleRatio * 32
+                  }}
+                  onMouseDown={() => {
+                    saveOutfitSlot(index)
                   }}
                 >
                   {state.hoveredIndex === index && (
@@ -219,4 +232,26 @@ export const OutfitsCatalog = (): ReactElement => {
 function isEmptySlot(viewSlot: OutfitDefinition | null): boolean {
   if (viewSlot === null) return true
   return !viewSlot?.bodyShape
+}
+
+function saveOutfitSlot(index: number): void {
+  const backpackState = store.getState().backpack
+  const currentOutfitsMetadata: OutfitsMetadata = backpackState.outfitsMetadata
+  const newOutfitsMetadata: OutfitsMetadata = cloneDeep(currentOutfitsMetadata)
+  const outfitDefinition = {
+    bodyShape: backpackState.outfitSetup.base.bodyShapeUrn,
+    eyes: { color: backpackState.outfitSetup.base.eyesColor as RGBColor },
+    hair: { color: backpackState.outfitSetup.base.hairColor as RGBColor },
+    skin: { color: backpackState.outfitSetup.base.skinColor as RGBColor },
+    wearables: getItemsWithTokenId(backpackState.equippedWearables),
+    forceRender: backpackState.forceRender
+  }
+  newOutfitsMetadata.outfits[index] = {
+    slot: index,
+    outfit: outfitDefinition
+  }
+
+  store.dispatch(updateLoadedOutfitsMetadataAction(newOutfitsMetadata))
+
+  updateOutfitAvatar(index, outfitDefinition)
 }
