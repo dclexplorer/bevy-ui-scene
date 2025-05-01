@@ -176,7 +176,8 @@ export default class BackpackPage {
         forceRender: backpackState.forceRender ?? []
       }
     } satisfies SetAvatarData)
-    if (player && !player?.isGuest) {
+
+    if (player && !player?.isGuest && !backpackState.outfitsMetadata) {
       store.dispatch(
         updateLoadedOutfitsMetadataAction(
           await fetchPlayerOutfitMetadata({ address: player.userId })

@@ -57,11 +57,11 @@ export type BackpackPageState = {
   equippedItems: Array<URNWithoutTokenId | EquippedEmote> // gather equippedWearables, baseBody.bodyShapeUrn & emotes
   selectedURN: URNWithoutTokenId | null
   cacheKey: string
-  outfitsMetadata: OutfitsMetadata
+  outfitsMetadata: OutfitsMetadata | null
 }
 
 export const backpackInitialState: BackpackPageState = {
-  activeSection: BACKPACK_SECTION.OUTFITS,
+  activeSection: BACKPACK_SECTION.WEARABLES,
   activeWearableCategory: null,
   searchFilter: {
     name: '',
@@ -93,5 +93,5 @@ export const backpackInitialState: BackpackPageState = {
   },
   changedEmotesFromResetVersion: true,
   savedResetEmotes: EMPTY_EMOTES,
-  outfitsMetadata: { outfits: [], namesForExtraSlots: [] }
+  outfitsMetadata: null
 }

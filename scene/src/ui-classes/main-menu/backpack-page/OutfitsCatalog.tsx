@@ -9,7 +9,6 @@ import {
   type OutfitDefinition,
   type OutfitsMetadata
 } from '../../../utils/outfit-definitions'
-
 import { Color4 } from '@dcl/sdk/math'
 import {
   getSlotAvatar,
@@ -43,8 +42,8 @@ export const OutfitsCatalog = (): ReactElement => {
   const backpackState = store.getState().backpack
   const outfitsMetadata = backpackState.outfitsMetadata
   const viewSlots: Array<OutfitDefinition | null> = [...SLOTS]
-  outfitsMetadata.outfits.forEach((outfitMetadata, index) => {
-    viewSlots[index] = outfitMetadata === null ? null : outfitMetadata.outfit
+  outfitsMetadata?.outfits.forEach((outfitMetadata, index) => {
+    viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
   })
 
   return (
@@ -236,7 +235,8 @@ function isEmptySlot(viewSlot: OutfitDefinition | null): boolean {
 
 function saveOutfitSlot(index: number): void {
   const backpackState = store.getState().backpack
-  const currentOutfitsMetadata: OutfitsMetadata = backpackState.outfitsMetadata
+  const currentOutfitsMetadata: OutfitsMetadata =
+    backpackState.outfitsMetadata as OutfitsMetadata
   const newOutfitsMetadata: OutfitsMetadata = cloneDeep(currentOutfitsMetadata)
   const outfitDefinition = {
     bodyShape: backpackState.outfitSetup.base.bodyShapeUrn,
@@ -246,11 +246,11 @@ function saveOutfitSlot(index: number): void {
     wearables: getItemsWithTokenId(backpackState.equippedWearables),
     forceRender: backpackState.forceRender
   }
-  newOutfitsMetadata.outfits[index] = {
+  newOutfitsMetadata.outfits.push({
     slot: index,
     outfit: outfitDefinition
-  }
-
+  })
+  newOutfitsMetadata.outfits.sort((a, b) => a.slot - b.slot)
   store.dispatch(updateLoadedOutfitsMetadataAction(newOutfitsMetadata))
 
   updateOutfitAvatar(index, outfitDefinition)

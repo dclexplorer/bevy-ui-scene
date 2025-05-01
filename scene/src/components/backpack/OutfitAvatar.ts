@@ -1,5 +1,8 @@
 import { store } from '../../state/store'
-import type { OutfitDefinition } from '../../utils/outfit-definitions'
+import type {
+  OutfitDefinition,
+  OutfitsMetadata
+} from '../../utils/outfit-definitions'
 import { AVATAR_CAMERA_POSITION, type AvatarPreview } from './AvatarPreview'
 import {
   AvatarShape,
@@ -42,7 +45,7 @@ export const updateOutfitAvatar = (
 
 export const initOutfitAvatars = (): void => {
   const backpackState = store.getState().backpack
-  const outfitsMetadata = backpackState.outfitsMetadata
+  const outfitsMetadata = backpackState.outfitsMetadata as OutfitsMetadata
   const viewSlots: Array<OutfitDefinition | null> = [...SLOTS] // TODO duplicated code
   outfitsMetadata.outfits.forEach((outfitMetadata) => {
     viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
