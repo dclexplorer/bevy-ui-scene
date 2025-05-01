@@ -31,11 +31,12 @@ import { getRealm } from '~system/Runtime'
 import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 import { cloneDeep } from '../../../utils/function-utils'
 import type { RGBColor } from '../../../bevy-api/interface'
+import { ButtonIcon } from '../../../components/button-icon'
 
 const SLOTS: any[] = new Array(10).fill(null)
 const state: { hoveredIndex: number; selectedIndex: number } = {
   hoveredIndex: -1,
-  selectedIndex: -1
+  selectedIndex: 0
 }
 export const OutfitsCatalog = (): ReactElement => {
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -123,6 +124,20 @@ export const OutfitsCatalog = (): ReactElement => {
                     })().catch(console.error)
                   }}
                 />
+                <ButtonIcon
+                  icon={{ atlasName: 'backpack', spriteName: 'delete-icon' }}
+                  iconSize={getCanvasScaleRatio() * 32}
+                  uiTransform={{
+                    zIndex: 99,
+                    positionType: 'absolute',
+                    padding: '3%',
+                    position: { right: '10%', top: '4%' }
+                  }}
+                  uiBackground={{ color: Color4.Black() }}
+                  onMouseDown={() => {
+                    deleteOutfitSlot(index)
+                  }}
+                />
               </UiEntity>
             )}
             <UiEntity
@@ -150,6 +165,7 @@ export const OutfitsCatalog = (): ReactElement => {
                 }
               }}
               onMouseDown={() => {
+                console.log('SELECT', index, viewSlot)
                 if (!isEmptySlot(viewSlot)) {
                   state.selectedIndex = index
                 }
@@ -231,6 +247,18 @@ export const OutfitsCatalog = (): ReactElement => {
 function isEmptySlot(viewSlot: OutfitDefinition | null): boolean {
   if (viewSlot === null) return true
   return !viewSlot?.bodyShape
+}
+
+function deleteOutfitSlot(index: number): void {
+  const backpackState = store.getState().backpack
+  const currentOutfitsMetadata: OutfitsMetadata =
+    backpackState.outfitsMetadata as OutfitsMetadata
+  const newOutfitsMetadata: OutfitsMetadata = cloneDeep(currentOutfitsMetadata)
+  newOutfitsMetadata.outfits = newOutfitsMetadata.outfits.filter(
+    (o) => o.slot !== index
+  )
+  store.dispatch(updateLoadedOutfitsMetadataAction(newOutfitsMetadata))
+  state.selectedIndex = -1
 }
 
 function saveOutfitSlot(index: number): void {
