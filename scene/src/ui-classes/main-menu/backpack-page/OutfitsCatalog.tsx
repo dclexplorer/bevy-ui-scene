@@ -36,7 +36,7 @@ import { ButtonIcon } from '../../../components/button-icon'
 const SLOTS: any[] = new Array(10).fill(null)
 const state: { hoveredIndex: number; selectedIndex: number } = {
   hoveredIndex: -1,
-  selectedIndex: 0
+  selectedIndex: -1
 }
 export const OutfitsCatalog = (): ReactElement => {
   const canvasScaleRatio = getCanvasScaleRatio()
@@ -146,7 +146,8 @@ export const OutfitsCatalog = (): ReactElement => {
                 height: canvasScaleRatio * 560,
                 flexShrink: 0,
                 margin: { left: '2%', bottom: '4%', right: '2%' },
-                borderRadius: BORDER_RADIUS_F
+                borderRadius: BORDER_RADIUS_F,
+                pointerFilter: 'block'
               }}
               uiBackground={{
                 ...getBackgroundFromAtlas({
@@ -162,12 +163,6 @@ export const OutfitsCatalog = (): ReactElement => {
                   !(state.hoveredIndex >= 0 && state.hoveredIndex !== index)
                 ) {
                   state.hoveredIndex = -1
-                }
-              }}
-              onMouseDown={() => {
-                console.log('SELECT', index, viewSlot)
-                if (!isEmptySlot(viewSlot)) {
-                  state.selectedIndex = index
                 }
               }}
             >
@@ -228,6 +223,9 @@ export const OutfitsCatalog = (): ReactElement => {
                     position: { left: '0%' },
                     zIndex: 9,
                     pointerFilter: 'none'
+                  }}
+                  onMouseDown={() => {
+                    state.selectedIndex = index
                   }}
                   uiBackground={{
                     videoTexture: {
