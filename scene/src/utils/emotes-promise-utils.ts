@@ -47,37 +47,48 @@ const pageCache = new Map<string, EmotesPageResponse>()
 export async function fetchEmotesPage(
   emotesPageRequest: EmotesCatalogPageRequest
 ): Promise<EmotesPageResponse> {
-  const {
-    pageNum,
-    pageSize,
-    address,
-    orderBy = ITEMS_ORDER_BY.DATE,
-    orderDirection = ITEMS_ORDER_DIRECTION.DESC,
-    cacheKey = Date.now().toString(),
-    searchFilter
-  } = emotesPageRequest
+  try {
+    const {
+      pageNum,
+      pageSize,
+      address,
+      orderBy = ITEMS_ORDER_BY.DATE,
+      orderDirection = ITEMS_ORDER_DIRECTION.DESC,
+      cacheKey = Date.now().toString(),
+      searchFilter
+    } = emotesPageRequest
 
-  const realm = await getRealm({})
-  const catalystBaseURl = realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
-  const emoteCatalogPageURL = `${catalystBaseURl}${getEmoteCatalogPageURL({
-    pageNum,
-    pageSize,
-    address,
-    orderBy,
-    orderDirection,
-    cacheKey,
-    searchFilter
-  })}`
-  if (pageCache.has(emoteCatalogPageURL)) {
-    return pageCache.get(emoteCatalogPageURL) as EmotesPageResponse
+    const realm = await getRealm({})
+    const catalystBaseURl =
+      realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
+    const emoteCatalogPageURL = `${catalystBaseURl}${getEmoteCatalogPageURL({
+      pageNum,
+      pageSize,
+      address,
+      orderBy,
+      orderDirection,
+      cacheKey,
+      searchFilter
+    })}`
+    if (pageCache.has(emoteCatalogPageURL)) {
+      return pageCache.get(emoteCatalogPageURL) as EmotesPageResponse
+    }
+    const emotesPageResponse: EmotesPageResponse =
+      await fetchJsonOrTryFallback(emoteCatalogPageURL)
+    const decoratedEmotesPageResponse: EmotesPageResponse =
+      decoratePageResultWithEmbededEmotes(emotesPageRequest, emotesPageResponse)
+
+    pageCache.set(emoteCatalogPageURL, decoratedEmotesPageResponse)
+    return decoratedEmotesPageResponse
+  } catch (error) {
+    console.error('fetchEmotesPage error', error)
+    return {
+      elements: [],
+      pageNum: 0,
+      pageSize: 0,
+      totalAmount: 0
+    }
   }
-  const emotesPageResponse: EmotesPageResponse =
-    await fetchJsonOrTryFallback(emoteCatalogPageURL)
-  const decoratedEmotesPageResponse: EmotesPageResponse =
-    decoratePageResultWithEmbededEmotes(emotesPageRequest, emotesPageResponse)
-
-  pageCache.set(emoteCatalogPageURL, decoratedEmotesPageResponse)
-  return decoratedEmotesPageResponse
 }
 
 function getEmoteCatalogPageURL(params: EmotesCatalogPageRequest): string {
@@ -124,7 +135,7 @@ export async function fetchEmotesData(
     })
     return emotes
   } catch (error) {
-    console.error('fetchWearablesData error', error)
+    console.error('fetchEmotesData error', error)
     return []
   }
 }
