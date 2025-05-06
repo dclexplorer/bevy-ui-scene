@@ -32,8 +32,12 @@ import { updateAvatarPreview } from '../../../components/backpack/AvatarPreview'
 import { cloneDeep } from '../../../utils/function-utils'
 import type { RGBColor } from '../../../bevy-api/interface'
 import { ButtonIcon } from '../../../components/button-icon'
+import { openExternalUrl } from '~system/RestrictedActions'
+
+declare const localStorage: any
 
 const SLOTS: any[] = new Array(10).fill(null)
+const FREE_SLOTS_WITHOUT_NAMES = 4
 const state: { hoveredIndex: number; selectedIndex: number } = {
   hoveredIndex: -1,
   selectedIndex: -1
@@ -152,7 +156,12 @@ export const OutfitsCatalog = (): ReactElement => {
               uiBackground={{
                 ...getBackgroundFromAtlas({
                   atlasName: 'backpack',
-                  spriteName: 'outfit-slot-background'
+                  spriteName:
+                    isEmptySlot(viewSlot) &&
+                    !isAvailableSlot(index) &&
+                    !isFirstAvailableSlot(index)
+                      ? 'outfit-dashed-background'
+                      : 'outfit-slot-background'
                 })
               }}
               onMouseEnter={() => {
@@ -166,54 +175,10 @@ export const OutfitsCatalog = (): ReactElement => {
                 }
               }}
             >
-              {isEmptySlot(viewSlot) ? (
-                <UiEntity
-                  uiTransform={{
-                    positionType: 'absolute',
-                    width: '80%',
-                    height: '80%',
-                    alignSelf: 'center',
-                    position: { left: '10%' },
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                  uiBackground={{
-                    ...getBackgroundFromAtlas({
-                      atlasName: 'backpack',
-                      spriteName: 'outfit-slot-silhouette'
-                    }),
-                    color: Color4.create(0, 0, 0, 1)
-                  }}
-                  uiText={{
-                    value:
-                      state.hoveredIndex === index
-                        ? `\n\nSAVE OUTFIT`
-                        : `<b>Empty</b>\nSLOT`,
-                    fontSize: canvasScaleRatio * 32
-                  }}
-                  onMouseDown={() => {
-                    saveOutfitSlot(index)
-                  }}
-                >
-                  {state.hoveredIndex === index && (
-                    <UiEntity
-                      uiTransform={{
-                        width: canvasScaleRatio * 88,
-                        height: canvasScaleRatio * 88,
-                        positionType: 'absolute',
-                        alignSelf: 'center',
-
-                        position: { top: '30%' }
-                      }}
-                      uiBackground={getBackgroundFromAtlas({
-                        atlasName: 'backpack',
-                        spriteName: 'add-icon'
-                      })}
-                      uiText={{ value: '' }}
-                    ></UiEntity>
-                  )}
-                </UiEntity>
-              ) : (
+              {isEmptySlot(viewSlot) && isAvailableSlot(index) && (
+                <EmptySlot slotIndex={index} />
+              )}
+              {!isEmptySlot(viewSlot) && (
                 <UiEntity
                   uiTransform={{
                     positionType: 'absolute',
@@ -234,12 +199,30 @@ export const OutfitsCatalog = (): ReactElement => {
                   }}
                 />
               )}
+              {isEmptySlot(viewSlot) && isFirstAvailableSlot(index) && (
+                <BuyNameSlot />
+              )}
             </UiEntity>
           </UiEntity>
         )
       })}
     </UiEntity>
   )
+
+  function availableSlots(): number {
+    return (
+      FREE_SLOTS_WITHOUT_NAMES +
+      (outfitsMetadata?.namesForExtraSlots.length ?? 0)
+    )
+  }
+  function isFirstAvailableSlot(index: number): boolean {
+    return index === availableSlots()
+  }
+  function isAvailableSlot(index: number): boolean {
+    if (!outfitsMetadata) return false
+
+    return index + 1 <= availableSlots()
+  }
 }
 
 function isEmptySlot(viewSlot: OutfitDefinition | null): boolean {
@@ -259,7 +242,7 @@ function deleteOutfitSlot(index: number): void {
   state.selectedIndex = -1
 }
 
-function saveOutfitSlot(index: number): void {
+async function saveOutfitSlot(index: number): Promise<void> {
   const backpackState = store.getState().backpack
   const currentOutfitsMetadata: OutfitsMetadata =
     backpackState.outfitsMetadata as OutfitsMetadata
@@ -280,4 +263,92 @@ function saveOutfitSlot(index: number): void {
   store.dispatch(updateLoadedOutfitsMetadataAction(newOutfitsMetadata))
 
   updateOutfitAvatar(index, outfitDefinition)
+
+  // TODO PERSIST OUTFITS IN NON RUNTIME MEMORY
+}
+
+function EmptySlot({ slotIndex }: { slotIndex: number }): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        width: '80%',
+        height: '80%',
+        alignSelf: 'center',
+        position: { left: '10%' },
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      uiBackground={{
+        ...getBackgroundFromAtlas({
+          atlasName: 'backpack',
+          spriteName: 'outfit-slot-silhouette'
+        }),
+        color: Color4.create(0, 0, 0, 1)
+      }}
+      uiText={{
+        value:
+          state.hoveredIndex === slotIndex
+            ? `\n\nSAVE OUTFIT`
+            : `<b>Empty</b>\nSLOT`,
+        fontSize: canvasScaleRatio * 32
+      }}
+      onMouseDown={() => {
+        saveOutfitSlot(slotIndex).catch(console.error)
+      }}
+    >
+      {state.hoveredIndex === slotIndex && (
+        <UiEntity
+          uiTransform={{
+            width: canvasScaleRatio * 88,
+            height: canvasScaleRatio * 88,
+            positionType: 'absolute',
+            alignSelf: 'center',
+
+            position: { top: '30%' }
+          }}
+          uiBackground={getBackgroundFromAtlas({
+            atlasName: 'backpack',
+            spriteName: 'add-icon'
+          })}
+          uiText={{ value: '' }}
+        ></UiEntity>
+      )}
+    </UiEntity>
+  )
+}
+
+function BuyNameSlot(): ReactElement {
+  const canvasScaleRatio = getCanvasScaleRatio()
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        width: '80%',
+
+        alignSelf: 'center',
+        position: { left: '10%' },
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        alignContent: 'center'
+      }}
+      uiText={{
+        value: `Buy a <b>name</b> to add\nand extra slot!\n\n`,
+        fontSize: canvasScaleRatio * 29
+      }}
+    >
+      <RoundedButton
+        uiTransform={{ width: '100%', alignSelf: 'center' }}
+        text={`BUY NAME`}
+        fontSize={canvasScaleRatio * 32}
+        onClick={() => {
+          openExternalUrl({
+            url: `https://decentraland.org/marketplace/names/claim`
+          }).catch(console.error)
+        }}
+      />
+    </UiEntity>
+  )
 }
