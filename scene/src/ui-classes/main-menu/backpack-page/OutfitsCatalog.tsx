@@ -33,11 +33,14 @@ import { cloneDeep } from '../../../utils/function-utils'
 import type { RGBColor } from '../../../bevy-api/interface'
 import { ButtonIcon } from '../../../components/button-icon'
 import { openExternalUrl } from '~system/RestrictedActions'
+import { LOCAL_STORAGE_OUTFITS_KEY } from '../../../utils/constants'
+import { getPlayer } from '@dcl/sdk/src/players'
+import { getOutfitLocalKey } from '../../../utils/outfits-promise-utils'
 
 declare const localStorage: any
 
 const SLOTS: any[] = new Array(10).fill(null)
-const FREE_SLOTS_WITHOUT_NAMES = 4
+const FREE_SLOTS_WITHOUT_NAMES = 5
 const state: { hoveredIndex: number; selectedIndex: number } = {
   hoveredIndex: -1,
   selectedIndex: -1
@@ -264,7 +267,13 @@ async function saveOutfitSlot(index: number): Promise<void> {
 
   updateOutfitAvatar(index, outfitDefinition)
 
-  // TODO PERSIST OUTFITS IN NON RUNTIME MEMORY
+  localStorage.setItem(getOutfitLocalKey(), JSON.stringify(newOutfitsMetadata))
+
+  console.log(
+    'saved',
+    getOutfitLocalKey(),
+    localStorage.getItem(LOCAL_STORAGE_OUTFITS_KEY + ':' + getPlayer()?.userId)
+  )
 }
 
 function EmptySlot({ slotIndex }: { slotIndex: number }): ReactElement {
@@ -326,7 +335,6 @@ function BuyNameSlot(): ReactElement {
       uiTransform={{
         positionType: 'absolute',
         width: '80%',
-
         alignSelf: 'center',
         position: { left: '10%' },
         alignItems: 'center',

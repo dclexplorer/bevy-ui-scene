@@ -177,13 +177,17 @@ export default class BackpackPage {
       }
     } satisfies SetAvatarData)
 
-    if (player && !player?.isGuest && !backpackState.outfitsMetadata) {
+    if (!backpackState.outfitsMetadata) {
+      store.dispatch(updateLoadingPage(true))
       store.dispatch(
         updateLoadedOutfitsMetadataAction(
-          await fetchPlayerOutfitMetadata({ address: player.userId })
+          await fetchPlayerOutfitMetadata({ address: player?.userId as string })
         )
       )
+
       initOutfitAvatars()
+
+      store.dispatch(updateLoadingPage(false))
     }
   }
 }
