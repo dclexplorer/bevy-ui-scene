@@ -26,7 +26,6 @@ import {
   showMouseCursor
 } from '../../service/custom-cursor-service'
 import { type AtlasIcon } from '../../utils/definitions'
-import { store } from '../../state/store'
 
 const ROTATION_FACTOR = -0.5
 const state = {
@@ -66,8 +65,7 @@ export function AvatarPreviewElement(): ReactElement {
           uiBackground={{
             videoTexture: { videoPlayerEntity: getAvatarCamera() },
             color:
-              loadingState?.currentState === LoadingState.LOADING ||
-              store.getState().backpack.loadingPage
+              loadingState?.currentState === LoadingState.LOADING
                 ? Color4.create(1, 1, 1, 0.5)
                 : Color4.create(1, 1, 1, 1)
           }}
