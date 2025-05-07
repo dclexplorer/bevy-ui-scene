@@ -34,7 +34,8 @@ const avatarPreview: AvatarPreview = {
 }
 
 export const getAvatarCamera: () => Entity = () => avatarPreview.cameraEntity
-
+export const getAvatarPreviewEntity: () => Entity = () =>
+  avatarPreview.avatarEntity
 export const setAvatarPreviewRotation = (rotation: Quaternion): void => {
   Transform.getMutable(avatarPreview.avatarEntity).rotation = rotation
 }
