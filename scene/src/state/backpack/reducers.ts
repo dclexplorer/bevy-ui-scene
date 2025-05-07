@@ -239,6 +239,12 @@ export function reducer(
         outfitsMetadata: action.payload
       }
     }
+    case BACKPACK_ACTION.UPDATE_FORCE_RENDER: {
+      return {
+        ...backpackPageState,
+        forceRender: action.payload
+      }
+    }
     default:
       return backpackPageState
   }

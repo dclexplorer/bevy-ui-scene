@@ -35,7 +35,8 @@ export enum BACKPACK_ACTION {
   RESET_EMOTES,
   RESET_DEFAULT_EMOTES,
   UPDATE_SEARCH_FILTER,
-  LOADED_OUTFITS_METADATA
+  LOADED_OUTFITS_METADATA,
+  UPDATE_FORCE_RENDER
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -143,6 +144,11 @@ export type BackpackLoadedOutfitsMetadataAction = BackpackActionId & {
   payload: OutfitsMetadata
 }
 
+export type BackpackUpdateForceRenderAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_FORCE_RENDER
+  payload: WearableCategory[]
+}
+
 export type BackpackActions =
   | BackpackSelectWearableURNAction
   | BackpackUpdateCurrentPageAction
@@ -165,6 +171,7 @@ export type BackpackActions =
   | BackpackResetDefaultEmotesAction
   | BackpackUpdateSearchFilter
   | BackpackLoadedOutfitsMetadataAction
+  | BackpackUpdateForceRenderAction
 
 export const updateSelectedCatalogURNAction = (
   payload: URNWithoutTokenId | null
@@ -316,5 +323,13 @@ export const updateLoadedOutfitsMetadataAction = (
 ): BackpackLoadedOutfitsMetadataAction => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.LOADED_OUTFITS_METADATA,
+  payload
+})
+
+export const updateForceRenderAction = (
+  payload: WearableCategory[]
+): BackpackUpdateForceRenderAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UPDATE_FORCE_RENDER,
   payload
 })

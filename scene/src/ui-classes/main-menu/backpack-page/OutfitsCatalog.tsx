@@ -18,6 +18,7 @@ import { RoundedButton } from '../../../components/rounded-button'
 import {
   updateAvatarBase,
   updateEquippedWearables,
+  updateForceRenderAction,
   updateLoadedOutfitsMetadataAction
 } from '../../../state/backpack/actions'
 import { type URNWithoutTokenId } from '../../../utils/definitions'
@@ -33,8 +34,6 @@ import { cloneDeep } from '../../../utils/function-utils'
 import type { RGBColor } from '../../../bevy-api/interface'
 import { ButtonIcon } from '../../../components/button-icon'
 import { openExternalUrl } from '~system/RestrictedActions'
-import { LOCAL_STORAGE_OUTFITS_KEY } from '../../../utils/constants'
-import { getPlayer } from '@dcl/sdk/src/players'
 import { getOutfitLocalKey } from '../../../utils/outfits-promise-utils'
 
 declare const localStorage: any
@@ -122,6 +121,10 @@ export const OutfitsCatalog = (): ReactElement => {
                           wearablesData: catalystMetadataMap
                         })
                       )
+                      store.dispatch(
+                        updateForceRenderAction(viewSlot?.forceRender ?? [])
+                      )
+
                       updateAvatarPreview(
                         store.getState().backpack.equippedWearables,
                         store.getState().backpack.outfitSetup.base,
