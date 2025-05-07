@@ -98,7 +98,6 @@ export const OutfitsCatalog = (): ReactElement => {
                   isSecondary={false}
                   onClick={() => {
                     ;(async () => {
-                      console.log('EQUIP')
                       store.dispatch(
                         updateAvatarBase({
                           skinColor: viewSlot?.skin.color ?? undefined,
@@ -268,12 +267,6 @@ async function saveOutfitSlot(index: number): Promise<void> {
   updateOutfitAvatar(index, outfitDefinition)
 
   localStorage.setItem(getOutfitLocalKey(), JSON.stringify(newOutfitsMetadata))
-
-  console.log(
-    'saved',
-    getOutfitLocalKey(),
-    localStorage.getItem(LOCAL_STORAGE_OUTFITS_KEY + ':' + getPlayer()?.userId)
-  )
 }
 
 function EmptySlot({ slotIndex }: { slotIndex: number }): ReactElement {
