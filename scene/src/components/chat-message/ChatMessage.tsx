@@ -8,17 +8,14 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import {
-  LAVANDER,
-  ALMOST_WHITE,
-  ROUNDED_TEXTURE_BACKGROUND
-} from '../../utils/constants'
+import { ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { type Message } from './ChatMessage.types'
+import { type ChatMessageRepresentation } from './ChatMessage.types'
+import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 
 function ChatMessage(props: {
   uiTransform?: UiTransformProps
-  message: Message
+  message: ChatMessageRepresentation
   fontSize?: number
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
@@ -27,7 +24,8 @@ function ChatMessage(props: {
   if (myPlayer === null) {
     return null
   }
-  const playerName = getPlayer({ userId: props.message.from })?.avatar?.name
+  const playerName = props.message.name
+  const SYSTEM_CHAT_SENDER_ID = 'dcl'
 
   return (
     <UiEntity
@@ -35,7 +33,9 @@ function ChatMessage(props: {
         height: 'auto',
         width: '100%',
         flexDirection:
-          props.message.from === myPlayer.userId ? 'row-reverse' : 'row',
+          props.message.sender_address === myPlayer.userId
+            ? 'row-reverse'
+            : 'row',
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
         margin: { bottom: 2, top: 2 },
@@ -49,17 +49,17 @@ function ChatMessage(props: {
           justifyContent: 'center',
           alignItems: 'center',
           margin:
-            props.message.from === myPlayer.userId
+            props.message.sender_address === myPlayer.userId
               ? { left: canvasInfo.width * 0.005 }
               : { right: canvasInfo.width * 0.005 }
         }}
         uiBackground={
-          props.message.from === 'dcl'
+          props.message.sender_address === SYSTEM_CHAT_SENDER_ID
             ? getBackgroundFromAtlas({
                 atlasName: 'icons',
                 spriteName: 'DdlIconColor'
               })
-            : { avatarTexture: { userId: props.message.from } }
+            : { avatarTexture: { userId: props.message.sender_address } }
         }
       />
 
@@ -84,11 +84,17 @@ function ChatMessage(props: {
             maxWidth: canvasInfo.width * 0.09,
             height: props.fontSize ?? 14
           }}
-          value={
-            props.message.from === 'dcl' ? 'DCL System:' : playerName + ':'
-          }
+          value={`<b>${
+            props.message.sender_address === SYSTEM_CHAT_SENDER_ID
+              ? 'DCL System:'
+              : playerName + ':'
+          }</b>`}
           fontSize={props.fontSize ?? 14}
-          color={props.message.from === 'dcl' ? Color4.Green() : LAVANDER}
+          color={
+            props.message.sender_address === SYSTEM_CHAT_SENDER_ID
+              ? Color4.Gray()
+              : (getAddressColor(props.message.sender_address) as Color4)
+          }
           textAlign="middle-left"
         />
         {/* TEXT */}
@@ -98,7 +104,7 @@ function ChatMessage(props: {
             maxWidth: canvasInfo.width * 0.09,
             height: 'auto'
           }}
-          value={props.message.text}
+          value={props.message.message}
           fontSize={props.fontSize ?? 14}
           color={ALMOST_WHITE}
           textWrap="wrap"

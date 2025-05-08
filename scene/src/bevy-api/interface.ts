@@ -1,6 +1,7 @@
 import type { Vector2 } from '@dcl/sdk/math'
 import type { URN, URNWithoutTokenId } from '../utils/definitions'
 import { type WearableCategory } from '../service/categories'
+import { type ChatMessageDefinition } from '../components/chat-message/ChatMessage.types'
 
 export type ExplorerSetting = {
   name: string
@@ -100,7 +101,8 @@ export type BevyApiInterface = {
   setHomeScene: (home: HomeScene) => void
   getRealmProvider: () => Promise<string>
   getSystemActionStream: () => Promise<SystemAction[]>
-  localStorage: any
+  getChatStream: () => Promise<ChatMessageDefinition[]>
+  sendChat: (message: string, channel?: string) => void
 }
 
 // system api module
