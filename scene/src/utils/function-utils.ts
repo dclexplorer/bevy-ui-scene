@@ -38,16 +38,3 @@ export const getWaitFor =
 export function isNull(value: any | null): boolean {
   return value === null
 }
-export function isFalsy(value: any): boolean {
-  return (
-    value === null ||
-    value === undefined ||
-    value === false ||
-    value === 0 ||
-    value === '' ||
-    isNaN(value)
-  )
-}
-export function isTruthy(value: any): boolean {
-  return !!value
-}

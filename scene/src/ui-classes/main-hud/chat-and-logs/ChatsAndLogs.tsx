@@ -1,108 +1,78 @@
-import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
-import { Color4, Vector2 } from '@dcl/sdk/math'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Input, UiEntity } from '@dcl/sdk/react-ecs'
 // import ButtonIcon from '../../components/ButtonIcon'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { ButtonIcon } from '../../../components/button-icon'
 import { ChatMessage } from '../../../components/chat-message'
+import { type Message } from '../../../components/chat-message/ChatMessage.types'
 import { type UIController } from '../../../controllers/ui.controller'
-import MockMessages from './MessagesMock.json'
 import {
-  ALMOST_WHITE,
-  ALPHA_BLACK_PANEL,
-  LEFT_PANEL_MIN_WIDTH,
   LEFT_PANEL_WIDTH_FACTOR,
+  LEFT_PANEL_MIN_WIDTH,
+  ALPHA_BLACK_PANEL,
+  ALMOST_WHITE,
   ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
-import { BevyApi } from '../../../bevy-api'
-import {
-  CHAT_SIDE,
-  type ChatMessageDefinition,
-  type ChatMessageRepresentation
-} from '../../../components/chat-message/ChatMessage.types'
-import { sleep } from '../../../utils/dcl-utils'
-import { isTruthy } from '../../../utils/function-utils'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
-import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
-const BUFFER_SIZE = 19
 
 export default class ChatAndLogs {
   private readonly uiController: UIController
   public fontSize: number = 14
-  public messages: ChatMessageRepresentation[] = MockMessages.slice(
-    0,
-    BUFFER_SIZE
-  )
+  private readonly BUFFER_SIZE: number = 9
+  public messages: Message[] = []
 
   private inputValue: string = ''
   private readonly myPlayer = getPlayer()
 
   constructor(uiController: UIController) {
     this.uiController = uiController
-    this.listenMessages().catch(console.error)
   }
 
-  async listenMessages(): Promise<void> {
-    const awaitChatStream = async (
-      stream: ChatMessageDefinition[]
-    ): Promise<void> => {
-      for await (const chatMessage of stream) {
-        this.pushMessage(chatMessage)
-      }
-    }
-
-    await awaitChatStream(await BevyApi.getChatStream())
-  }
-
-  pushMessage(message: ChatMessageDefinition): void {
-    if (this.messages.length >= BUFFER_SIZE) {
-      this.messages.shift()
-    }
-
-    this.messages.push({
-      ...message,
-      timestamp: Date.now(),
-      name: getPlayer({ userId: message.sender_address })?.name ?? `Unknown*`,
-      side: getNextMessageSide(this.messages)
-    })
-
-    function getNextMessageSide(
-      messages: ChatMessageRepresentation[]
-    ): CHAT_SIDE {
-      const previousMessage: ChatMessageRepresentation =
-        messages[messages.length - 1]
-
-      return isTruthy(previousMessage) &&
-        previousMessage.sender_address !== message.sender_address
-        ? getSwitchedSide(previousMessage)
-        : CHAT_SIDE.RIGHT
-
-      function getSwitchedSide(message: ChatMessageRepresentation): CHAT_SIDE {
-        return message.side === CHAT_SIDE.LEFT
-          ? CHAT_SIDE.RIGHT
-          : CHAT_SIDE.LEFT
-      }
+  handleSubmitMessage(value: string): void {
+    if (this.myPlayer !== null) {
+      this.messages.push({ from: this.myPlayer.userId, text: value })
+      console.log(this.messages)
     }
   }
 
-  handleSubmitMessageFromOther(value: string): void {}
+  handleSubmitMessageFromOther(value: string): void {
+    this.messages.push({ from: 'Other people', text: value })
+    console.log(this.messages)
+  }
 
-  handleSubmitMessageFromDcl(value: string): void {}
+  handleSubmitMessageFromDcl(value: string): void {
+    this.messages.push({ from: 'dcl', text: value })
+    console.log(this.messages)
+  }
 
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    const panelWidth: number = getCanvasScaleRatio() * 800
-    const maxHeight = getCanvasScaleRatio() * 1400
-    const scrollPosition = Vector2.create(0, maxHeight)
+
+    let panelWidth: number
+
+    if (canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR < LEFT_PANEL_MIN_WIDTH) {
+      panelWidth = LEFT_PANEL_MIN_WIDTH
+    } else {
+      panelWidth = canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR
+    }
+
     return (
       <UiEntity
         uiTransform={{
           width: panelWidth,
+          minWidth: 250,
           height: 'auto',
+          // maxHeight: canvasInfo.height * 0.4,
           justifyContent: 'center',
           alignItems: 'flex-end',
-          flexDirection: 'column-reverse'
+          flexDirection: 'column-reverse',
+          padding:
+            canvasInfo.width * 0.005 > 2.5 ? canvasInfo.width * 0.005 : 2.5
+        }}
+        uiBackground={{
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: ALPHA_BLACK_PANEL
         }}
       >
         {/* INPUT AREA */}
@@ -131,28 +101,21 @@ export default class ChatAndLogs {
             textAlign="middle-center"
             fontSize={this.fontSize}
             color={ALMOST_WHITE}
-            onChange={(inputValue) => {
-              console.log('onChange', inputValue)
-              this.inputValue = inputValue
+            onChange={($) => {
+              this.inputValue = $
             }}
             value={this.inputValue}
             placeholder="Click to chat"
             placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
             onSubmit={(value) => {
-              // TODO issue with onInput, becomes a loop
-              // this.handleSubmitMessage(value)
+              this.handleSubmitMessage(value)
             }}
           />
 
           <ButtonIcon
             onMouseDown={() => {
-              BevyApi.sendChat(this.inputValue, 'Nearby')
-
-              executeTask(async () => {
-                // TODO this doesn't work, probably because onChange loop, or that value only works in initialization
-                await sleep(0)
-                this.inputValue = ''
-              })
+              this.handleSubmitMessage(this.inputValue)
+              this.inputValue = ''
             }}
             uiTransform={{
               width: 20,
@@ -160,7 +123,7 @@ export default class ChatAndLogs {
             }}
             icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
           />
-          {/* <ButtonIcon
+          <ButtonIcon
             onMouseDown={() => {
               this.handleSubmitMessageFromOther(this.inputValue)
               this.inputValue = ''
@@ -181,8 +144,9 @@ export default class ChatAndLogs {
               height: 20
             }}
             icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
-          /> */}
+          />
         </UiEntity>
+
         {/* CHAT AREA */}
         <UiEntity
           uiTransform={{
@@ -190,20 +154,38 @@ export default class ChatAndLogs {
             height: 'auto',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            justifyContent: 'flex-end',
-            overflow: 'scroll',
-            maxHeight,
-            scrollPosition,
-            borderRadius: BORDER_RADIUS_F,
-            padding: { right: '10%' }
-          }}
-          uiBackground={{
-            color: ALPHA_BLACK_PANEL
+
+            justifyContent: 'flex-end'
           }}
         >
-          {this.messages.map((message) => (
-            <ChatMessage message={message} />
-          ))}
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: '100%',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+              position: { bottom: 0 }
+            }}
+          >
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: 'auto',
+
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column'
+              }}
+            >
+              {this.messages.length >= 1 &&
+                this.messages.map(
+                  (message, index) =>
+                    index > this.messages.length - this.BUFFER_SIZE && (
+                      <ChatMessage message={message} />
+                    )
+                )}
+            </UiEntity>
+          </UiEntity>
         </UiEntity>
       </UiEntity>
     )
