@@ -31,7 +31,7 @@ export const HAIR_COLOR_PRESETS: Color4[] = [
   Color4.fromHexString('#9878ed'),
   Color4.fromHexString('#e875a9')
 ]
-const EYE_COLOR_PRESETS: Color4[] = [
+export const EYE_COLOR_PRESETS: Color4[] = [
   Color4.fromHexString('#3B9F4F'),
   Color4.fromHexString('#49DC75'),
   Color4.fromHexString('#387CB0'),

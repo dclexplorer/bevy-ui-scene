@@ -77,13 +77,15 @@ export class UIController {
         // TODO review with bevy-explorer dev or protocol why getPlayer().emotes is empty at first
         await waitFor(() => (getPlayer()?.emotes?.length ?? 0) > 0, 3000)
 
-        await initEmotesWheel({
+        void initEmotesWheel({
           showBackpackMenu: () => {
             if (!this.isMainMenuVisible) {
               this.menu?.show('backpack')
             }
           }
         })
+
+        void this.backpackPage.init()
       })().catch(console.error)
     })
 

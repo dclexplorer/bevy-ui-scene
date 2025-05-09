@@ -13,6 +13,8 @@ import {
 import { fetchJsonOrTryFallback } from './promise-utils'
 import { catalystMetadataMap } from './catalyst-metadata-map'
 import { type SearchFilterState } from '../state/backpack/state'
+import { updateLoadingPage } from '../state/backpack/actions'
+import { store } from '../state/store'
 
 export type WearablesPageResponse = {
   elements: CatalogWearableElement[]
@@ -93,6 +95,7 @@ export const fetchWearablesPage =
       return wearablesPageResponse
     } catch (error) {
       console.error('wearablesPage Error fetching:', error)
+      store.dispatch(updateLoadingPage(false))
       throw error
     }
 

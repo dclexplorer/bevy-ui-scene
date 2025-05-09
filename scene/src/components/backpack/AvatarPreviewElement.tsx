@@ -1,4 +1,4 @@
-import { Quaternion, Vector2 } from '@dcl/sdk/math'
+import { Color4, Quaternion, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import {
   getCanvasScaleRatio,
@@ -7,12 +7,15 @@ import {
 } from '../../service/canvas-ratio'
 import {
   getAvatarCamera,
+  getAvatarPreviewEntity,
   getAvatarPreviewQuaternion,
   setAvatarPreviewRotation,
   setAvatarPreviewZoomFactor
 } from './AvatarPreview'
 import {
   engine,
+  GltfContainerLoadingState,
+  LoadingState,
   PrimaryPointerInfo,
   UiScrollResult,
   UiTransform
@@ -39,6 +42,9 @@ const ROTATE_ICON: AtlasIcon = {
 
 export function AvatarPreviewElement(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
+  const loadingState = GltfContainerLoadingState.getOrNull(
+    getAvatarPreviewEntity()
+  )
   return (
     <UiEntity
       uiTransform={{
@@ -57,7 +63,11 @@ export function AvatarPreviewElement(): ReactElement {
             height: '140%'
           }}
           uiBackground={{
-            videoTexture: { videoPlayerEntity: getAvatarCamera() }
+            videoTexture: { videoPlayerEntity: getAvatarCamera() },
+            color:
+              loadingState?.currentState === LoadingState.LOADING
+                ? Color4.create(1, 1, 1, 0.5)
+                : Color4.create(1, 1, 1, 1)
           }}
         >
           <UiEntity
