@@ -11,6 +11,11 @@
 OR if you are running a local scene...
 
  ``` cargo run --release --bin decentra-bevy  --features="console" -- --ui http://localhost:8000 --ui-preview --scene_log_to_console --server http://localhost:8001 --location 76,-9```
+
+to run with genesis plaza...
+```
+cargo run --release --bin decentra-bevy  --features="console" -- --ui http://localhost:8000 --ui-preview --scene_log_to_console --server https://realm-provider-ea.decentraland.org/main --location 0,0
+```
 # Working and bundling texture spritesheets
 
 We rename the names that come from figma file, and we change to names that make more sense from a programming point of view, for example, we rename HeadIcon to category-top_head, which for example it's the exact category id coming from API.
