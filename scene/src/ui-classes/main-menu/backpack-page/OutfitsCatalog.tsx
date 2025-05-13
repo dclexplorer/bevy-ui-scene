@@ -11,7 +11,7 @@ import {
 } from '../../../utils/outfit-definitions'
 import { Color4 } from '@dcl/sdk/math'
 import {
-  getSlotAvatar,
+  outfitsCameraEntity,
   updateOutfitAvatar
 } from '../../../components/backpack/OutfitAvatar'
 import { RoundedButton } from '../../../components/rounded-button'
@@ -62,6 +62,17 @@ export const OutfitsCatalog = (): ReactElement => {
       }}
     >
       {viewSlots.map((viewSlot, index: number) => {
+        const uvs = getUvsFromSprite({
+          spriteDefinition: {
+            spriteSheetWidth: 1000,
+            spriteSheetHeight: 100,
+            x: 100 * index,
+            y: 0,
+            w: 100,
+            h: 100
+          }
+        })
+
         return (
           <UiEntity
             uiTransform={{
@@ -183,6 +194,7 @@ export const OutfitsCatalog = (): ReactElement => {
               {isEmptySlot(viewSlot) && isAvailableSlot(index) && (
                 <EmptySlot slotIndex={index} />
               )}
+
               {!isEmptySlot(viewSlot) && (
                 <UiEntity
                   uiTransform={{
@@ -198,10 +210,16 @@ export const OutfitsCatalog = (): ReactElement => {
                     state.selectedIndex = index
                   }}
                   uiBackground={{
+                    textureMode: 'stretch',
+                    /* texture: {
+                      src: 'assets/images/mock_outfits_for_uvs_2.png'
+                    }, */
                     videoTexture: {
-                      videoPlayerEntity: getSlotAvatar(index)?.cameraEntity
-                    }
+                      videoPlayerEntity: outfitsCameraEntity
+                    },
+                    uvs
                   }}
+                  uiText={{ value: index.toString() }}
                 />
               )}
               {isEmptySlot(viewSlot) && isFirstAvailableSlot(index) && (
@@ -211,6 +229,27 @@ export const OutfitsCatalog = (): ReactElement => {
           </UiEntity>
         )
       })}
+      <UiEntity
+        uiTransform={{
+          positionType: 'absolute',
+          position: { top: 0, left: -300 },
+          width: 2000,
+          height: 200,
+          zIndex: 999,
+          borderColor: Color4.create(1, 0, 0, 1),
+          borderWidth: 1,
+          borderRadius: 1
+        }}
+        uiBackground={{
+          textureMode: 'stretch',
+          videoTexture: {
+            videoPlayerEntity: outfitsCameraEntity
+          }
+          /* texture: {
+            src: 'assets/images/mock_outfits_for_uvs_2.png'
+          } */
+        }}
+      ></UiEntity>
     </UiEntity>
   )
 
@@ -220,9 +259,11 @@ export const OutfitsCatalog = (): ReactElement => {
       (outfitsMetadata?.namesForExtraSlots.length ?? 0)
     )
   }
+
   function isFirstAvailableSlot(index: number): boolean {
     return index === availableSlots()
   }
+
   function isAvailableSlot(index: number): boolean {
     if (!outfitsMetadata) return false
 
@@ -270,6 +311,8 @@ async function saveOutfitSlot(index: number): Promise<void> {
   updateOutfitAvatar(index, outfitDefinition)
 
   localStorage.setItem(getOutfitLocalKey(), JSON.stringify(newOutfitsMetadata))
+
+  console.log('localStorage', localStorage.getItem(getOutfitLocalKey()))
 }
 
 function EmptySlot({ slotIndex }: { slotIndex: number }): ReactElement {
@@ -355,4 +398,34 @@ function BuyNameSlot(): ReactElement {
       />
     </UiEntity>
   )
+}
+
+// TODO import from sammich-system project
+export function getUvsFromSprite({
+  spriteDefinition,
+  back = 0
+}: any): number[] {
+  const { spriteSheetWidth, spriteSheetHeight, x, y, w, h } = spriteDefinition
+  const X1 = x / spriteSheetWidth
+  const X2 = x / spriteSheetWidth + w / spriteSheetWidth
+  const Y1 = 1 - y / spriteSheetHeight
+  const Y2 = 1 - (y / spriteSheetHeight + h / spriteSheetHeight)
+  const FRONT_UVS = [
+    X1,
+    Y2, // A
+    X1,
+    Y1, // B
+    X2,
+    Y1, // C
+    X2,
+    Y2 // D
+  ]
+  const BACK_UVS =
+    back === 0
+      ? [0, 0, 0, 0, 0, 0, 0, 0]
+      : back === 1
+      ? FRONT_UVS
+      : [X2, Y2, X2, Y1, X1, Y1, X1, Y2]
+
+  return [...FRONT_UVS, ...BACK_UVS]
 }

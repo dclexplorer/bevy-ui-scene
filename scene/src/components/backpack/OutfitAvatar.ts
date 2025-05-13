@@ -3,7 +3,7 @@ import type {
   OutfitDefinition,
   OutfitsMetadata
 } from '../../utils/outfit-definitions'
-import { AVATAR_CAMERA_POSITION, type AvatarPreview } from './AvatarPreview'
+import { type AvatarPreview } from './AvatarPreview'
 import {
   AvatarShape,
   CameraLayer,
@@ -18,12 +18,11 @@ import {
   HAIR_COLOR_PRESETS,
   SKIN_COLOR_PRESETS
 } from '../color-palette'
-import { Color4, Quaternion } from '@dcl/sdk/math'
+import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
 
 const SLOTS: any[] = new Array(10).fill(null) // TODO duplicated code
 
 const slotAvatars: AvatarPreview[] = []
-const CAMERA_SIZE = { WIDTH: 138 * 4, HEIGHT: 252 * 4 }
 
 export const getSlotAvatar = (slotIndex: number): AvatarPreview =>
   slotAvatars[slotIndex]
@@ -35,6 +34,7 @@ export const updateOutfitAvatar = (
   const mutableAvatarShape = AvatarShape.getMutable(
     slotAvatars[slotIndex].avatarEntity
   )
+
   mutableAvatarShape.wearables = slot.wearables
   mutableAvatarShape.bodyShape = slot.bodyShape
   mutableAvatarShape.hairColor = slot.hair.color
@@ -43,6 +43,36 @@ export const updateOutfitAvatar = (
   mutableAvatarShape.forceRender = slot.forceRender
 }
 
+export const outfitsCameraEntity = engine.addEntity()
+const AVATAR_WIDTH = 4
+const CAMERA_SIZE = {
+  WIDTH: AVATAR_WIDTH * 10,
+  HEIGHT: AVATAR_WIDTH * 1
+}
+const CAMERA_SIZE_FACTOR = 100
+TextureCamera.create(outfitsCameraEntity, {
+  width: CAMERA_SIZE.WIDTH * CAMERA_SIZE_FACTOR,
+  height: CAMERA_SIZE.HEIGHT * CAMERA_SIZE_FACTOR,
+  layer: 2,
+  clearColor: Color4.create(0.4, 0.4, 1.0, 0),
+  mode: {
+    $case: 'orthographic',
+    orthographic: { verticalRange: 8 }
+  }
+})
+CameraLayer.create(outfitsCameraEntity, {
+  layer: 2,
+  directionalLight: false,
+  showAvatars: false,
+  showSkybox: false,
+  showFog: false,
+  ambientBrightnessOverride: 5
+})
+
+Transform.create(outfitsCameraEntity, {
+  position: Vector3.create((AVATAR_WIDTH * 10) / 2, 2),
+  rotation: Quaternion.fromEulerDegrees(4, 0, 0)
+})
 export const initOutfitAvatars = (): void => {
   const backpackState = store.getState().backpack
   const outfitsMetadata = backpackState.outfitsMetadata as OutfitsMetadata
@@ -52,13 +82,14 @@ export const initOutfitAvatars = (): void => {
   })
 
   viewSlots.forEach((slot, index) => {
-    const layer = 2 + index
+    const layer = 2
     slotAvatars[index] = {
       avatarEntity: engine.addEntity(),
-      cameraEntity: engine.addEntity()
+      cameraEntity: outfitsCameraEntity
     }
 
-    const { avatarEntity, cameraEntity } = slotAvatars[index]
+    const { avatarEntity } = slotAvatars[index]
+
     AvatarShape.create(avatarEntity, {
       bodyShape: slot?.bodyShape ?? BASE_MALE_URN,
       emotes: [],
@@ -75,35 +106,17 @@ export const initOutfitAvatars = (): void => {
     CameraLayers.create(avatarEntity, {
       layers: [layer]
     })
-    CameraLayer.create(cameraEntity, {
-      layer,
-      directionalLight: false,
-      showAvatars: false,
-      showSkybox: false,
-      showFog: false,
-      ambientBrightnessOverride: 5
-    })
 
-    TextureCamera.create(cameraEntity, {
-      width: CAMERA_SIZE.WIDTH,
-      height: CAMERA_SIZE.HEIGHT,
-      layer,
-      clearColor: Color4.create(0.4, 0.4, 1.0, 0),
-      mode: {
-        $case: 'perspective',
-        perspective: { fieldOfView: 1 }
-      }
-    })
+    const position = {
+      x: AVATAR_WIDTH / 2 + index * AVATAR_WIDTH,
+      y: 0,
+      z: 8
+    }
 
     Transform.create(avatarEntity, {
-      position: { x: 8, y: 0, z: 8 },
+      position,
       rotation: Quaternion.fromEulerDegrees(0, 180, 0), // TODO it would be good to rotate the outfitAvatar when avatarPreview is rotated
-      scale: { x: 2, y: 2, z: 2 }
-    })
-
-    Transform.create(cameraEntity, {
-      position: AVATAR_CAMERA_POSITION.BODY,
-      rotation: Quaternion.fromEulerDegrees(4, 0, 0)
+      scale: { x: 1, y: 1, z: 1 }
     })
   })
 }
