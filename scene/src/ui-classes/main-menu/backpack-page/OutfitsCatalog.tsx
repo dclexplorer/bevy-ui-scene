@@ -62,19 +62,9 @@ export const OutfitsCatalog = (): ReactElement => {
       }}
     >
       {viewSlots.map((viewSlot, index: number) => {
-        const uvs = getUvsFromSprite({
-          spriteDefinition: {
-            spriteSheetWidth: 1000,
-            spriteSheetHeight: 100,
-            x: 100 * index,
-            y: 0,
-            w: 100,
-            h: 100
-          }
-        })
-
         return (
           <UiEntity
+            key={index}
             uiTransform={{
               width: canvasScaleRatio * 320,
               height: canvasScaleRatio * 560,
@@ -195,33 +185,7 @@ export const OutfitsCatalog = (): ReactElement => {
                 <EmptySlot slotIndex={index} />
               )}
 
-              {!isEmptySlot(viewSlot) && (
-                <UiEntity
-                  uiTransform={{
-                    positionType: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    alignSelf: 'center',
-                    position: { left: '0%' },
-                    zIndex: 9,
-                    pointerFilter: 'none'
-                  }}
-                  onMouseDown={() => {
-                    state.selectedIndex = index
-                  }}
-                  uiBackground={{
-                    textureMode: 'stretch',
-                    /* texture: {
-                      src: 'assets/images/mock_outfits_for_uvs_2.png'
-                    }, */
-                    videoTexture: {
-                      videoPlayerEntity: outfitsCameraEntity
-                    },
-                    uvs
-                  }}
-                  uiText={{ value: index.toString() }}
-                />
-              )}
+              {!isEmptySlot(viewSlot) && <FilledOutfitSlot index={index} />}
               {isEmptySlot(viewSlot) && isFirstAvailableSlot(index) && (
                 <BuyNameSlot />
               )}
@@ -229,29 +193,47 @@ export const OutfitsCatalog = (): ReactElement => {
           </UiEntity>
         )
       })}
+    </UiEntity>
+  )
+
+  function FilledOutfitSlot({ index }: { index: number }): ReactElement {
+    const uvs = getUvsFromSprite({
+      spriteDefinition: {
+        spriteSheetWidth: 4,
+        spriteSheetHeight: 3,
+        x: (index % 4) + 0.25,
+        y: Math.floor(index / 4),
+        w: 1 * 0.5,
+        h: 1
+      }
+    })
+    return (
       <UiEntity
         uiTransform={{
           positionType: 'absolute',
-          position: { top: 0, left: -300 },
-          width: 2000,
-          height: 200,
-          zIndex: 999,
-          borderColor: Color4.create(1, 0, 0, 1),
-          borderWidth: 1,
-          borderRadius: 1
+          width: '100%',
+          height: '100%',
+          alignSelf: 'center',
+          position: { left: '0%' },
+          zIndex: 9,
+          pointerFilter: 'none'
+        }}
+        onMouseDown={() => {
+          state.selectedIndex = index
         }}
         uiBackground={{
           textureMode: 'stretch',
-          videoTexture: {
-            videoPlayerEntity: outfitsCameraEntity
-          }
           /* texture: {
             src: 'assets/images/mock_outfits_for_uvs_2.png'
-          } */
+          }, */
+          videoTexture: {
+            videoPlayerEntity: outfitsCameraEntity
+          },
+          uvs
         }}
-      ></UiEntity>
-    </UiEntity>
-  )
+      />
+    )
+  }
 
   function availableSlots(): number {
     return (
