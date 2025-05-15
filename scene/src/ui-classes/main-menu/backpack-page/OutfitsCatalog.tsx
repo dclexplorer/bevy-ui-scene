@@ -49,7 +49,7 @@ export const OutfitsCatalog = (): ReactElement => {
   const backpackState = store.getState().backpack
   const outfitsMetadata = backpackState.outfitsMetadata
   const viewSlots: Array<OutfitDefinition | null> = [...SLOTS]
-  outfitsMetadata?.outfits.forEach((outfitMetadata, index) => {
+  outfitsMetadata?.outfits.forEach((outfitMetadata) => {
     viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
   })
 
@@ -68,7 +68,7 @@ export const OutfitsCatalog = (): ReactElement => {
             spriteSheetHeight: 3,
             x: (index % 4) + 0.25,
             y: Math.floor(index / 4),
-            w: 1 * 0.5,
+            w: 0.5,
             h: 1
           }
         })
@@ -259,11 +259,13 @@ function deleteOutfitSlot(index: number): void {
   const currentOutfitsMetadata: OutfitsMetadata =
     backpackState.outfitsMetadata as OutfitsMetadata
   const newOutfitsMetadata: OutfitsMetadata = cloneDeep(currentOutfitsMetadata)
+
   newOutfitsMetadata.outfits = newOutfitsMetadata.outfits.filter(
     (o) => o.slot !== index
   )
   store.dispatch(updateLoadedOutfitsMetadataAction(newOutfitsMetadata))
   state.selectedIndex = -1
+  localStorage.setItem(getOutfitLocalKey(), JSON.stringify(newOutfitsMetadata))
 }
 
 async function saveOutfitSlot(index: number): Promise<void> {
@@ -289,8 +291,6 @@ async function saveOutfitSlot(index: number): Promise<void> {
   updateOutfitAvatar(index, outfitDefinition)
 
   localStorage.setItem(getOutfitLocalKey(), JSON.stringify(newOutfitsMetadata))
-
-  console.log('localStorage', localStorage.getItem(getOutfitLocalKey()))
 }
 
 function EmptySlot({ slotIndex }: { slotIndex: number }): ReactElement {
