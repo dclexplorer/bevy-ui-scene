@@ -12,6 +12,7 @@ import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { playPreviewEmote } from '../../components/backpack/AvatarPreview'
+import { removeOutfitsTextureCamera } from '../../components/backpack/OutfitAvatar'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
@@ -74,6 +75,7 @@ export default class MainMenu {
 
   hide(): void {
     void this.uiController.backpackPage.saveAvatar()
+    removeOutfitsTextureCamera()
     this.uiController.isMainMenuVisible = false
     this.closeButtonColor = ALMOST_BLACK
     playPreviewEmote('')

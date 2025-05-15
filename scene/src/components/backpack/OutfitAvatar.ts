@@ -55,6 +55,7 @@ export const initOutfitAvatars = (): void => {
   const backpackState = store.getState().backpack
   const outfitsMetadata = backpackState.outfitsMetadata as OutfitsMetadata
   const viewSlots: Array<OutfitDefinition | null> = [...SLOTS] // TODO duplicated code
+
   outfitsMetadata.outfits.forEach((outfitMetadata) => {
     viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
   })
@@ -111,29 +112,34 @@ export const initOutfitAvatars = (): void => {
     MeshCollider.setPlane(platform)
     Transform.create(platform, { parent: avatarWrapperEntity })
   })
+
+  CameraLayer.create(outfitsCameraEntity, {
+    layer: 2,
+    directionalLight: false,
+    showAvatars: false,
+    showSkybox: false,
+    showFog: false,
+    ambientBrightnessOverride: 5
+  })
+  Transform.create(outfitsCameraEntity, {
+    position: cameraPosition,
+    rotation: Quaternion.fromEulerDegrees(4, 0, 0)
+  })
 }
 
-TextureCamera.create(outfitsCameraEntity, {
-  width: MAX_CAMERA_SIZE,
-  height: MAX_CAMERA_SIZE * (3 / 4),
-  layer: 2,
-  clearColor: Color4.create(0.4, 0.4, 1.0, 0.3),
-  mode: {
-    $case: 'orthographic',
-    orthographic: { verticalRange: AVATAR_FRAME_SIZE * 3 }
-  }
-})
+export function removeOutfitsTextureCamera(): void {
+  TextureCamera.deleteFrom(outfitsCameraEntity)
+}
 
-CameraLayer.create(outfitsCameraEntity, {
-  layer: 2,
-  directionalLight: false,
-  showAvatars: false,
-  showSkybox: false,
-  showFog: false,
-  ambientBrightnessOverride: 5
-})
-
-Transform.create(outfitsCameraEntity, {
-  position: cameraPosition,
-  rotation: Quaternion.fromEulerDegrees(4, 0, 0)
-})
+export function attachOutfitsTextureCamera(): void {
+  TextureCamera.create(outfitsCameraEntity, {
+    width: MAX_CAMERA_SIZE,
+    height: MAX_CAMERA_SIZE * (3 / 4),
+    layer: 2,
+    clearColor: Color4.create(0.4, 0.4, 1.0, 0.3),
+    mode: {
+      $case: 'orthographic',
+      orthographic: { verticalRange: AVATAR_FRAME_SIZE * 3 }
+    }
+  })
+}
