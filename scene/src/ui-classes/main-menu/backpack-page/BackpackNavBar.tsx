@@ -273,11 +273,6 @@ function NavBarTitle({
   )
 }
 
-const state: { searchHistory: string[]; showHistory: boolean } = {
-  searchHistory: [],
-  showHistory: false
-}
-
 function SearchBox(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
@@ -325,56 +320,6 @@ function SearchBox(): ReactElement {
           }
         }}
       />
-
-      {state.searchHistory.length && state.showHistory && (
-        <UiEntity
-          uiTransform={{
-            width: '94%',
-            positionType: 'absolute',
-            position: { top: '90%', left: '6%' },
-            zIndex: 2,
-            flexDirection: 'column',
-            borderRadius: 7,
-            borderWidth: 1,
-            borderColor: COLOR.TEXT_COLOR
-          }}
-          uiBackground={{
-            color: Color4.White()
-          }}
-        >
-          {state.searchHistory.map((item) => {
-            return (
-              <UiEntity
-                uiTransform={{
-                  width: '100%'
-                }}
-              >
-                <UiEntity
-                  uiTransform={{
-                    padding: { left: '10%' }
-                  }}
-                  uiText={{
-                    value: item,
-                    color: COLOR.TEXT_COLOR,
-                    textAlign: 'top-left',
-                    fontSize: canvasScaleRatio * 32
-                  }}
-                />
-                <Icon
-                  icon={{ atlasName: 'backpack', spriteName: 'history-icon' }}
-                  iconSize={canvasScaleRatio * 42}
-                  uiTransform={{
-                    alignSelf: 'center',
-                    positionType: 'absolute',
-                    position: { left: '5%' }
-                  }}
-                  iconColor={COLOR.TEXT_COLOR}
-                />
-              </UiEntity>
-            )
-          })}
-        </UiEntity>
-      )}
     </UiEntity>
   )
 }
