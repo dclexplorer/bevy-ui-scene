@@ -66,7 +66,7 @@ export const OutfitsCatalog = (): ReactElement => {
           spriteDefinition: {
             spriteSheetWidth: 4,
             spriteSheetHeight: 3,
-            x: (index % 4) + 0.25,
+            x: (index % 4) + 0.2,
             y: Math.floor(index / 4),
             w: 145 / 250,
             h: 1

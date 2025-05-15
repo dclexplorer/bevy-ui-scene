@@ -9,9 +9,7 @@ import {
   CameraLayer,
   CameraLayers,
   engine,
-  Material,
   MeshCollider,
-  MeshRenderer,
   TextureCamera,
   Transform
 } from '@dcl/sdk/ecs'
@@ -107,23 +105,11 @@ export const initOutfitAvatars = (): void => {
       scale: Vector3.create(AVATAR_SCALE, AVATAR_SCALE, AVATAR_SCALE)
     })
 
-    const boxEntity = engine.addEntity()
-    MeshRenderer.setBox(boxEntity)
     const platform = engine.addEntity()
 
     // MeshRenderer.setPlane(platform)
     MeshCollider.setPlane(platform)
     Transform.create(platform, { parent: avatarWrapperEntity })
-
-    Material.setPbrMaterial(boxEntity, {
-      albedoColor: Color4.Red(),
-      metallic: 0.8,
-      roughness: 0.1
-    })
-    Transform.create(boxEntity, {
-      parent: avatarWrapperEntity,
-      scale: { x: 0.1, y: 0.1, z: 0.1 }
-    })
   })
 }
 
