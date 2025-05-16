@@ -16,6 +16,7 @@ import {
 } from '../../../components/backpack/OutfitAvatar'
 import { RoundedButton } from '../../../components/rounded-button'
 import {
+  resetOutfitAction,
   updateAvatarBase,
   updateEquippedWearables,
   updateForceRenderAction,
@@ -37,6 +38,8 @@ import { openExternalUrl } from '~system/RestrictedActions'
 import { getOutfitLocalKey } from '../../../utils/outfits-promise-utils'
 import { DOUBLE_CLICK_DELAY } from '../../../utils/constants'
 import { showDeleteOutfitConfirmation } from './delete-outfit-dialog'
+import { NavButton } from '../../../components/nav-button/NavButton'
+import { COLOR } from '../../../components/color-palette'
 
 declare const localStorage: any
 
@@ -67,7 +70,8 @@ export const OutfitsCatalog = (): ReactElement => {
       uiTransform={{
         width: getCanvasScaleRatio() * 2145,
         flexWrap: 'wrap',
-        justifyContent: 'center'
+        justifyContent: 'flex-start',
+        padding: { bottom: '4%' }
       }}
     >
       {viewSlots.map((viewSlot, index: number) => {
@@ -214,6 +218,27 @@ export const OutfitsCatalog = (): ReactElement => {
           </UiEntity>
         )
       })}
+      {backpackState.changedFromResetVersion && (
+        <NavButton
+          icon={{ atlasName: 'icons', spriteName: 'BackStepIcon' }}
+          text={'RESET OUTFIT'}
+          color={Color4.White()}
+          backgroundColor={COLOR.SMALL_TAG_BACKGROUND}
+          uiTransform={{
+            positionType: 'absolute',
+            position: { bottom: '1%', left: '2%' }
+          }}
+          onClick={() => {
+            store.dispatch(resetOutfitAction())
+
+            updateAvatarPreview(
+              store.getState().backpack.equippedWearables,
+              store.getState().backpack.outfitSetup.base,
+              store.getState().backpack.forceRender
+            )
+          }}
+        />
+      )}
     </UiEntity>
   )
 
