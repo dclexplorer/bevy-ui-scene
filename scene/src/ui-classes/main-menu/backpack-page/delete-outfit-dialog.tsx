@@ -17,7 +17,7 @@ export function showDeleteOutfitConfirmation(deleteFn: () => void): void {
   state.shown = true
 }
 
-function closeDeleteOutfitDialog() {
+function closeDeleteOutfitDialog(): void {
   state.shown = false
   state.confirmFn = noop
 }
@@ -68,15 +68,16 @@ export function DeleteOutfitDialog(): ReactElement | null {
             value: '<b>Are you sure you want to delete this outfit?</b>',
             color: COLOR.TEXT_COLOR,
             textWrap: 'wrap',
-            fontSize: getCanvasScaleRatio() * 48
+            fontSize: getCanvasScaleRatio() * 42
           }}
           uiTransform={{
-            width: '100%'
+            margin: '5%',
+            width: '60%'
           }}
         />
         <UiEntity
           uiTransform={{
-            position: { left: '-5%', top: '10%' },
+            position: { left: '-5%', top: '5%' },
             alignItems: 'space-around'
           }}
         >
