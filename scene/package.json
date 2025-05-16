@@ -34,8 +34,6 @@
   },
   "dependencies": {
     "@dcl-sdk/utils": "^1.2.8",
-    "dcl-npc-toolkit": "^1.2.2",
-    "dcl-ui-toolkit": "^0.10.0",
-    "fp-future": "^1.0.1"
+    "dcl-ui-toolkit": "^0.10.0"
   }
 }
