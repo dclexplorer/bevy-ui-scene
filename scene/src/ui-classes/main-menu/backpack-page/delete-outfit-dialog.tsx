@@ -17,6 +17,11 @@ export function showDeleteOutfitConfirmation(deleteFn: () => void): void {
   state.shown = true
 }
 
+function closeDeleteOutfitDialog() {
+  state.shown = false
+  state.confirmFn = noop
+}
+
 export function DeleteOutfitDialog(): ReactElement | null {
   if (!state.shown) return null
   return (
@@ -33,6 +38,9 @@ export function DeleteOutfitDialog(): ReactElement | null {
       uiBackground={{
         color: Color4.create(0, 0, 0, 0.8)
       }}
+      onMouseDown={() => {
+        closeDeleteOutfitDialog()
+      }}
     >
       <UiEntity
         uiTransform={{
@@ -45,14 +53,14 @@ export function DeleteOutfitDialog(): ReactElement | null {
           flexDirection: 'column',
           padding: '2%'
         }}
+        onMouseDown={noop}
         uiBackground={{
           color: Color4.White()
         }}
       >
         <Icon
-          icon={{ spriteName: 'outfits-icon', atlasName: 'backpack' }}
-          iconSize={getCanvasScaleRatio() * 64}
-          iconColor={COLOR.TEXT_COLOR}
+          icon={{ spriteName: 'delete-outfit-icon', atlasName: 'backpack' }}
+          iconSize={getCanvasScaleRatio() * 96}
         />
 
         <UiEntity
@@ -87,8 +95,7 @@ export function DeleteOutfitDialog(): ReactElement | null {
             color={Color4.White()}
             fontSize={getCanvasScaleRatio() * 28}
             onMouseDown={() => {
-              state.shown = false
-              state.confirmFn = noop
+              closeDeleteOutfitDialog()
             }}
           />
           <Button
