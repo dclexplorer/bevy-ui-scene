@@ -21,7 +21,7 @@ import {
   updateForceRenderAction,
   updateLoadedOutfitsMetadataAction
 } from '../../../state/backpack/actions'
-import { offchainEmoteURN, type URNWithoutTokenId } from '../../../utils/definitions'
+import { type URNWithoutTokenId } from '../../../utils/definitions'
 import {
   getItemsWithTokenId,
   getURNWithoutTokenId
@@ -35,18 +35,23 @@ import type { RGBColor } from '../../../bevy-api/interface'
 import { ButtonIcon } from '../../../components/button-icon'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { getOutfitLocalKey } from '../../../utils/outfits-promise-utils'
-import type { ItemElement } from '../../../utils/item-definitions'
 import { DOUBLE_CLICK_DELAY } from '../../../utils/constants'
+import { showDeleteOutfitConfirmation } from './delete-outfit-dialog'
 
 declare const localStorage: any
 
 const SLOTS: any[] = new Array(10).fill(null)
 const FREE_SLOTS_WITHOUT_NAMES = 5
-const state: { hoveredIndex: number; selectedIndex: number,  lastTimeClick: number,
-  lastElementClick: number | null } = {
+const state: {
+  hoveredIndex: number
+  selectedIndex: number
+  lastTimeClick: number
+  lastElementClick: number | null
+} = {
   hoveredIndex: -1,
   selectedIndex: -1,
-  lastTimeClick: 0, lastElementClick: null
+  lastTimeClick: 0,
+  lastElementClick: null
 }
 
 export const OutfitsCatalog = (): ReactElement => {
@@ -57,7 +62,6 @@ export const OutfitsCatalog = (): ReactElement => {
   outfitsMetadata?.outfits.forEach((outfitMetadata) => {
     viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
   })
-
   return (
     <UiEntity
       uiTransform={{
@@ -111,7 +115,9 @@ export const OutfitsCatalog = (): ReactElement => {
                   fontSize={26 * canvasScaleRatio}
                   text={'EQUIP'}
                   isSecondary={false}
-                  onClick={() => (equipOutfit(viewSlot).catch(console.error))}
+                  onClick={() => {
+                    equipOutfit(viewSlot).catch(console.error)
+                  }}
                 />
                 <ButtonIcon
                   icon={{ atlasName: 'backpack', spriteName: 'delete-icon' }}
@@ -124,7 +130,9 @@ export const OutfitsCatalog = (): ReactElement => {
                   }}
                   uiBackground={{ color: Color4.Black() }}
                   onMouseDown={() => {
-                    deleteOutfitSlot(index)
+                    showDeleteOutfitConfirmation(() => {
+                      deleteOutfitSlot(index)
+                    })
                   }}
                 />
               </UiEntity>
@@ -180,7 +188,7 @@ export const OutfitsCatalog = (): ReactElement => {
                       state.lastTimeClick + DOUBLE_CLICK_DELAY > Date.now() &&
                       state.lastElementClick === index
                     ) {
-                     equipOutfit(viewSlot).catch(console.error)
+                      equipOutfit(viewSlot).catch(console.error)
                     } else {
                       state.lastTimeClick = Date.now()
                       state.lastElementClick = index
@@ -209,14 +217,13 @@ export const OutfitsCatalog = (): ReactElement => {
     </UiEntity>
   )
 
-  async function equipOutfit(viewSlot:OutfitDefinition | null){
+  async function equipOutfit(viewSlot: OutfitDefinition | null): Promise<void> {
     store.dispatch(
       updateAvatarBase({
         skinColor: viewSlot?.skin.color ?? undefined,
         hairColor: viewSlot?.hair.color ?? undefined,
         eyesColor: viewSlot?.eyes.color ?? undefined,
-        bodyShapeUrn:
-          viewSlot?.bodyShape as URNWithoutTokenId,
+        bodyShapeUrn: viewSlot?.bodyShape as URNWithoutTokenId,
         name: ''
       })
     )
@@ -226,7 +233,7 @@ export const OutfitsCatalog = (): ReactElement => {
     ) as URNWithoutTokenId[]
     await fetchWearablesData(
       (await getRealm({}))?.realmInfo?.baseUrl ??
-      'https://peer.decentraland.org'
+        'https://peer.decentraland.org'
     )(...(wearables ?? []))
     store.dispatch(
       updateEquippedWearables({
@@ -234,9 +241,7 @@ export const OutfitsCatalog = (): ReactElement => {
         wearablesData: catalystMetadataMap
       })
     )
-    store.dispatch(
-      updateForceRenderAction(viewSlot?.forceRender ?? [])
-    )
+    store.dispatch(updateForceRenderAction(viewSlot?.forceRender ?? []))
 
     updateAvatarPreview(
       store.getState().backpack.equippedWearables,

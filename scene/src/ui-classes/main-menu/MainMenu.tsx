@@ -16,6 +16,7 @@ import {
   attachOutfitsTextureCamera,
   removeOutfitsTextureCamera
 } from '../../components/backpack/OutfitAvatar'
+import { DeleteOutfitDialog } from './backpack-page/delete-outfit-dialog'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
@@ -138,6 +139,7 @@ export default class MainMenu {
 
     return (
       <Canvas>
+        <DeleteOutfitDialog />
         <UiEntity
           uiTransform={{
             width: '100%',
