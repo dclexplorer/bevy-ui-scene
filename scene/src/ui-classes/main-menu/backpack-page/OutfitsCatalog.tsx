@@ -208,7 +208,7 @@ export const OutfitsCatalog = (): ReactElement => {
   }: {
     viewSlot: OutfitDefinition
     slotIndex: number
-  }) {
+  }): ReactElement {
     return (
       <UiEntity
         uiTransform={{
