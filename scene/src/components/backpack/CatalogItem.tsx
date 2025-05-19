@@ -3,7 +3,10 @@ import type { ItemElement } from '../../utils/item-definitions'
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { noop } from '../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
+import {
+  DOUBLE_CLICK_DELAY,
+  ROUNDED_TEXTURE_BACKGROUND
+} from '../../utils/constants'
 import { COLOR } from '../color-palette'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import Icon from '../icon/Icon'
@@ -23,7 +26,6 @@ const LOADING_TEXTURE_PROPS = getBackgroundFromAtlas({
   atlasName: 'backpack',
   spriteName: 'loading-wearable'
 })
-const DOUBLE_CLICK_DELAY = 400
 
 type CatalogItemProps = {
   uiTransform?: UiTransformProps

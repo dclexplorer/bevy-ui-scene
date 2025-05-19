@@ -11,11 +11,12 @@ import {
 } from '../../../utils/outfit-definitions'
 import { Color4 } from '@dcl/sdk/math'
 import {
-  getSlotAvatar,
+  outfitsCameraEntity,
   updateOutfitAvatar
 } from '../../../components/backpack/OutfitAvatar'
 import { RoundedButton } from '../../../components/rounded-button'
 import {
+  resetOutfitAction,
   updateAvatarBase,
   updateEquippedWearables,
   updateForceRenderAction,
@@ -35,35 +36,48 @@ import type { RGBColor } from '../../../bevy-api/interface'
 import { ButtonIcon } from '../../../components/button-icon'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { getOutfitLocalKey } from '../../../utils/outfits-promise-utils'
+import { DOUBLE_CLICK_DELAY } from '../../../utils/constants'
+import { showDeleteOutfitConfirmation } from './delete-outfit-dialog'
+import { NavButton } from '../../../components/nav-button/NavButton'
+import { COLOR } from '../../../components/color-palette'
 
 declare const localStorage: any
 
 const SLOTS: any[] = new Array(10).fill(null)
 const FREE_SLOTS_WITHOUT_NAMES = 5
-const state: { hoveredIndex: number; selectedIndex: number } = {
+const state: {
+  hoveredIndex: number
+  selectedIndex: number
+  lastTimeClick: number
+  lastElementClick: number | null
+} = {
   hoveredIndex: -1,
-  selectedIndex: -1
+  selectedIndex: -1,
+  lastTimeClick: 0,
+  lastElementClick: null
 }
+
 export const OutfitsCatalog = (): ReactElement => {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
   const outfitsMetadata = backpackState.outfitsMetadata
   const viewSlots: Array<OutfitDefinition | null> = [...SLOTS]
-  outfitsMetadata?.outfits.forEach((outfitMetadata, index) => {
+  outfitsMetadata?.outfits.forEach((outfitMetadata) => {
     viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
   })
-
   return (
     <UiEntity
       uiTransform={{
         width: getCanvasScaleRatio() * 2145,
         flexWrap: 'wrap',
-        justifyContent: 'center'
+        justifyContent: 'flex-start',
+        padding: { bottom: '4%' }
       }}
     >
       {viewSlots.map((viewSlot, index: number) => {
         return (
           <UiEntity
+            key={index}
             uiTransform={{
               width: canvasScaleRatio * 320,
               height: canvasScaleRatio * 560,
@@ -96,41 +110,7 @@ export const OutfitsCatalog = (): ReactElement => {
                   text={'EQUIP'}
                   isSecondary={false}
                   onClick={() => {
-                    ;(async () => {
-                      store.dispatch(
-                        updateAvatarBase({
-                          skinColor: viewSlot?.skin.color ?? undefined,
-                          hairColor: viewSlot?.hair.color ?? undefined,
-                          eyesColor: viewSlot?.eyes.color ?? undefined,
-                          bodyShapeUrn:
-                            viewSlot?.bodyShape as URNWithoutTokenId,
-                          name: ''
-                        })
-                      )
-
-                      const wearables = viewSlot?.wearables.map((i) =>
-                        getURNWithoutTokenId(i)
-                      ) as URNWithoutTokenId[]
-                      await fetchWearablesData(
-                        (await getRealm({}))?.realmInfo?.baseUrl ??
-                          'https://peer.decentraland.org'
-                      )(...(wearables ?? []))
-                      store.dispatch(
-                        updateEquippedWearables({
-                          wearables,
-                          wearablesData: catalystMetadataMap
-                        })
-                      )
-                      store.dispatch(
-                        updateForceRenderAction(viewSlot?.forceRender ?? [])
-                      )
-
-                      updateAvatarPreview(
-                        store.getState().backpack.equippedWearables,
-                        store.getState().backpack.outfitSetup.base,
-                        store.getState().backpack.forceRender
-                      )
-                    })().catch(console.error)
+                    equipOutfit(viewSlot).catch(console.error)
                   }}
                 />
                 <ButtonIcon
@@ -144,7 +124,9 @@ export const OutfitsCatalog = (): ReactElement => {
                   }}
                   uiBackground={{ color: Color4.Black() }}
                   onMouseDown={() => {
-                    deleteOutfitSlot(index)
+                    showDeleteOutfitConfirmation(() => {
+                      deleteOutfitSlot(index)
+                    })
                   }}
                 />
               </UiEntity>
@@ -183,27 +165,12 @@ export const OutfitsCatalog = (): ReactElement => {
               {isEmptySlot(viewSlot) && isAvailableSlot(index) && (
                 <EmptySlot slotIndex={index} />
               )}
-              {!isEmptySlot(viewSlot) && (
-                <UiEntity
-                  uiTransform={{
-                    positionType: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    alignSelf: 'center',
-                    position: { left: '0%' },
-                    zIndex: 9,
-                    pointerFilter: 'none'
-                  }}
-                  onMouseDown={() => {
-                    state.selectedIndex = index
-                  }}
-                  uiBackground={{
-                    videoTexture: {
-                      videoPlayerEntity: getSlotAvatar(index)?.cameraEntity
-                    }
-                  }}
-                />
-              )}
+
+              {!isEmptySlot(viewSlot) &&
+                FilledOutfitSlot({
+                  viewSlot: viewSlot as OutfitDefinition,
+                  slotIndex: index
+                })}
               {isEmptySlot(viewSlot) && isFirstAvailableSlot(index) && (
                 <BuyNameSlot />
               )}
@@ -211,18 +178,125 @@ export const OutfitsCatalog = (): ReactElement => {
           </UiEntity>
         )
       })}
+      {backpackState.changedFromResetVersion && (
+        <NavButton
+          icon={{ atlasName: 'icons', spriteName: 'BackStepIcon' }}
+          text={'RESET OUTFIT'}
+          color={Color4.White()}
+          backgroundColor={COLOR.SMALL_TAG_BACKGROUND}
+          uiTransform={{
+            positionType: 'absolute',
+            position: { bottom: '1%', left: '2%' }
+          }}
+          onClick={() => {
+            store.dispatch(resetOutfitAction())
+
+            updateAvatarPreview(
+              store.getState().backpack.equippedWearables,
+              store.getState().backpack.outfitSetup.base,
+              store.getState().backpack.forceRender
+            )
+          }}
+        />
+      )}
     </UiEntity>
   )
 
+  function FilledOutfitSlot({
+    viewSlot,
+    slotIndex
+  }: {
+    viewSlot: OutfitDefinition
+    slotIndex: number
+  }): ReactElement {
+    return (
+      <UiEntity
+        uiTransform={{
+          positionType: 'absolute',
+          width: '100%',
+          height: '100%',
+          alignSelf: 'center',
+          position: { left: '0%' },
+          zIndex: 9,
+          pointerFilter: 'none'
+        }}
+        onMouseDown={() => {
+          if (
+            state.lastTimeClick + DOUBLE_CLICK_DELAY > Date.now() &&
+            state.lastElementClick === slotIndex
+          ) {
+            equipOutfit(viewSlot).catch(console.error)
+          } else {
+            state.lastTimeClick = Date.now()
+            state.lastElementClick = slotIndex
+            state.selectedIndex = slotIndex
+          }
+        }}
+        uiBackground={{
+          textureMode: 'stretch',
+          /* texture: {
+        src: 'assets/images/mock_outfits_for_uvs_2.png'
+      }, */
+          videoTexture: {
+            videoPlayerEntity: outfitsCameraEntity
+          },
+          uvs: getUvsFromSprite({
+            spriteDefinition: {
+              spriteSheetWidth: 4,
+              spriteSheetHeight: 3,
+              x: (slotIndex % 4) + 0.2,
+              y: Math.floor(slotIndex / 4),
+              w: 145 / 250,
+              h: 1
+            }
+          })
+        }}
+      />
+    )
+  }
+  async function equipOutfit(viewSlot: OutfitDefinition | null): Promise<void> {
+    store.dispatch(
+      updateAvatarBase({
+        skinColor: viewSlot?.skin.color ?? undefined,
+        hairColor: viewSlot?.hair.color ?? undefined,
+        eyesColor: viewSlot?.eyes.color ?? undefined,
+        bodyShapeUrn: viewSlot?.bodyShape as URNWithoutTokenId,
+        name: ''
+      })
+    )
+
+    const wearables = viewSlot?.wearables.map((i) =>
+      getURNWithoutTokenId(i)
+    ) as URNWithoutTokenId[]
+    await fetchWearablesData(
+      (await getRealm({}))?.realmInfo?.baseUrl ??
+        'https://peer.decentraland.org'
+    )(...(wearables ?? []))
+    store.dispatch(
+      updateEquippedWearables({
+        wearables,
+        wearablesData: catalystMetadataMap
+      })
+    )
+    store.dispatch(updateForceRenderAction(viewSlot?.forceRender ?? []))
+
+    updateAvatarPreview(
+      store.getState().backpack.equippedWearables,
+      store.getState().backpack.outfitSetup.base,
+      store.getState().backpack.forceRender
+    )
+  }
   function availableSlots(): number {
     return (
       FREE_SLOTS_WITHOUT_NAMES +
       (outfitsMetadata?.namesForExtraSlots.length ?? 0)
     )
   }
+
   function isFirstAvailableSlot(index: number): boolean {
     return index === availableSlots()
   }
+
   function isAvailableSlot(index: number): boolean {
     if (!outfitsMetadata) return false
 
@@ -240,11 +314,13 @@ function deleteOutfitSlot(index: number): void {
   const currentOutfitsMetadata: OutfitsMetadata =
     backpackState.outfitsMetadata as OutfitsMetadata
   const newOutfitsMetadata: OutfitsMetadata = cloneDeep(currentOutfitsMetadata)
+
   newOutfitsMetadata.outfits = newOutfitsMetadata.outfits.filter(
     (o) => o.slot !== index
   )
   store.dispatch(updateLoadedOutfitsMetadataAction(newOutfitsMetadata))
   state.selectedIndex = -1
+  localStorage.setItem(getOutfitLocalKey(), JSON.stringify(newOutfitsMetadata))
 }
 
 async function saveOutfitSlot(index: number): Promise<void> {
@@ -355,4 +431,34 @@ function BuyNameSlot(): ReactElement {
       />
     </UiEntity>
   )
+}
+
+// TODO import from sammich-system project
+export function getUvsFromSprite({
+  spriteDefinition,
+  back = 0
+}: any): number[] {
+  const { spriteSheetWidth, spriteSheetHeight, x, y, w, h } = spriteDefinition
+  const X1 = x / spriteSheetWidth
+  const X2 = x / spriteSheetWidth + w / spriteSheetWidth
+  const Y1 = 1 - y / spriteSheetHeight
+  const Y2 = 1 - (y / spriteSheetHeight + h / spriteSheetHeight)
+  const FRONT_UVS = [
+    X1,
+    Y2, // A
+    X1,
+    Y1, // B
+    X2,
+    Y1, // C
+    X2,
+    Y2 // D
+  ]
+  const BACK_UVS =
+    back === 0
+      ? [0, 0, 0, 0, 0, 0, 0, 0]
+      : back === 1
+      ? FRONT_UVS
+      : [X2, Y2, X2, Y1, X1, Y1, X1, Y2]
+
+  return [...FRONT_UVS, ...BACK_UVS]
 }
