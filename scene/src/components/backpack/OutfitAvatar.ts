@@ -9,7 +9,6 @@ import {
   CameraLayer,
   CameraLayers,
   engine,
-  MeshCollider,
   TextureCamera,
   Transform
 } from '@dcl/sdk/ecs'
@@ -25,7 +24,7 @@ const AVATAR_FRAME_SIZE = 4
 const MAX_CAMERA_SIZE = 2048
 const cameraPosition = Vector3.create(
   (AVATAR_FRAME_SIZE * 4) / 2,
-  (AVATAR_FRAME_SIZE * 3) / 2 + 0.5,
+  -(AVATAR_FRAME_SIZE * 3) / 2 + 0.5,
   0
 )
 
@@ -91,7 +90,7 @@ export const initOutfitAvatars = (): void => {
 
     const avatarPosition = {
       x: AVATAR_FRAME_SIZE / 2 + Math.floor(index % 4) * AVATAR_FRAME_SIZE,
-      y: 2 * AVATAR_FRAME_SIZE - Math.floor(index / 4) * AVATAR_FRAME_SIZE,
+      y: -AVATAR_FRAME_SIZE - Math.floor(index / 4) * AVATAR_FRAME_SIZE,
       z: 8
     }
 
@@ -105,12 +104,6 @@ export const initOutfitAvatars = (): void => {
       parent: avatarWrapperEntity,
       scale: Vector3.create(AVATAR_SCALE, AVATAR_SCALE, AVATAR_SCALE)
     })
-
-    const platform = engine.addEntity()
-
-    // MeshRenderer.setPlane(platform)
-    MeshCollider.setPlane(platform)
-    Transform.create(platform, { parent: avatarWrapperEntity })
   })
 
   CameraLayer.create(outfitsCameraEntity, {

@@ -199,6 +199,21 @@ export const OutfitsCatalog = (): ReactElement => {
           }}
         />
       )}
+      <UiEntity
+        uiTransform={{
+          width: 4 * 100,
+          height: 3 * 100,
+          positionType: 'absolute',
+          position: { top: 600 }
+        }}
+        uiBackground={{
+          textureMode: 'stretch',
+          videoTexture: {
+            videoPlayerEntity: outfitsCameraEntity
+          },
+          color: Color4.create(0, 1, 0, 0.5)
+        }}
+      />
     </UiEntity>
   )
 
