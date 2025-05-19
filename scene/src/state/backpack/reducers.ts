@@ -31,7 +31,7 @@ export function reducer(
     case BACKPACK_ACTION.UPDATE_LOADING_PAGE:
       return {
         ...backpackPageState,
-        loadingPage: true
+        loadingPage: action.payload
       }
     case BACKPACK_ACTION.UPDATE_LOADED_PAGE: {
       const key =
@@ -231,6 +231,18 @@ export function reducer(
           ...action.payload
         },
         currentPage: 1
+      }
+    }
+    case BACKPACK_ACTION.LOADED_OUTFITS_METADATA: {
+      return {
+        ...backpackPageState,
+        outfitsMetadata: action.payload
+      }
+    }
+    case BACKPACK_ACTION.UPDATE_FORCE_RENDER: {
+      return {
+        ...backpackPageState,
+        forceRender: action.payload
       }
     }
     default:

@@ -85,7 +85,20 @@ export function BackpackNavBar({
               playPreviewEmote('')
             }}
           />
-
+          <NavButton
+            icon={{
+              spriteName: 'outfits-icon',
+              atlasName: 'backpack'
+            }}
+            active={backpackState.activeSection === BACKPACK_SECTION.OUTFITS}
+            text={'Outfits'}
+            uiTransform={{ margin: { left: 12 } }}
+            onClick={() => {
+              const backpackState = store.getState().backpack
+              if (backpackState.loadingPage) return
+              store.dispatch(changeSectionAction(BACKPACK_SECTION.OUTFITS))
+            }}
+          />
           <NavButton
             icon={{
               spriteName: 'Emotes',
@@ -115,73 +128,75 @@ export function BackpackNavBar({
           />
         </NavButtonBar>
       </LeftSection>
-      <RightSection>
-        <Checkbox
-          uiTransform={{
-            margin: { right: '1%' }
-          }}
-          onChange={() => {
-            store.dispatch(
-              updateSearchFilterAction({
-                ...backpackState.searchFilter,
-                collectiblesOnly: !backpackState.searchFilter.collectiblesOnly
-              })
-            )
-            updatePageGeneric().catch(console.error)
-          }}
-          value={backpackState.searchFilter.collectiblesOnly}
-          label={'Collectibles only'}
-        />
-        <SearchBox />
-        <UiEntity
-          uiTransform={{
-            width: 'auto',
-            flexShrink: 0,
-            flexGrow: 0
-          }}
-        >
-          <UiEntity
+      {backpackState.activeSection !== BACKPACK_SECTION.OUTFITS && (
+        <RightSection>
+          <Checkbox
             uiTransform={{
-              alignSelf: 'center',
-              flexShrink: 0
+              margin: { right: '1%' }
             }}
-            uiText={{
-              value: 'Sort: ',
-              fontSize: canvasScaleRatio * 32
-            }}
-          />
-          <DropdownComponent
-            dropdownId={'sort'}
-            uiTransform={{
-              position: { top: '-10%' },
-              width: canvasScaleRatio * 280,
-              alignSelf: 'flex-end'
-            }}
-            options={SORT_OPTIONS}
-            value={
-              SORT_OPTIONS[
-                SORT_OPTIONS_PARAMS.findIndex(([orderBy, orderDirection]) => {
-                  return (
-                    orderBy ===
-                      store.getState().backpack.searchFilter.orderBy &&
-                    orderDirection ===
-                      store.getState().backpack.searchFilter.orderDirection
-                  )
-                })
-              ]
-            }
-            fontSize={canvasScaleRatio * 32}
-            onChange={(value) => {
-              const [orderBy, orderDirection] =
-                SORT_OPTIONS_PARAMS[SORT_OPTIONS.indexOf(value)]
+            onChange={() => {
               store.dispatch(
-                updateSearchFilterAction({ orderBy, orderDirection })
+                updateSearchFilterAction({
+                  ...backpackState.searchFilter,
+                  collectiblesOnly: !backpackState.searchFilter.collectiblesOnly
+                })
               )
               updatePageGeneric().catch(console.error)
             }}
+            value={backpackState.searchFilter.collectiblesOnly}
+            label={'Collectibles only'}
           />
-        </UiEntity>
-      </RightSection>
+          <SearchBox />
+          <UiEntity
+            uiTransform={{
+              width: 'auto',
+              flexShrink: 0,
+              flexGrow: 0
+            }}
+          >
+            <UiEntity
+              uiTransform={{
+                alignSelf: 'center',
+                flexShrink: 0
+              }}
+              uiText={{
+                value: 'Sort: ',
+                fontSize: canvasScaleRatio * 32
+              }}
+            />
+            <DropdownComponent
+              dropdownId={'sort'}
+              uiTransform={{
+                position: { top: '-10%' },
+                width: canvasScaleRatio * 280,
+                alignSelf: 'flex-end'
+              }}
+              options={SORT_OPTIONS}
+              value={
+                SORT_OPTIONS[
+                  SORT_OPTIONS_PARAMS.findIndex(([orderBy, orderDirection]) => {
+                    return (
+                      orderBy ===
+                        store.getState().backpack.searchFilter.orderBy &&
+                      orderDirection ===
+                        store.getState().backpack.searchFilter.orderDirection
+                    )
+                  })
+                ]
+              }
+              fontSize={canvasScaleRatio * 32}
+              onChange={(value) => {
+                const [orderBy, orderDirection] =
+                  SORT_OPTIONS_PARAMS[SORT_OPTIONS.indexOf(value)]
+                store.dispatch(
+                  updateSearchFilterAction({ orderBy, orderDirection })
+                )
+                updatePageGeneric().catch(console.error)
+              }}
+            />
+          </UiEntity>
+        </RightSection>
+      )}
     </NavBar>
   )
 }
@@ -258,11 +273,6 @@ function NavBarTitle({
   )
 }
 
-const state: { searchHistory: string[]; showHistory: boolean } = {
-  searchHistory: [],
-  showHistory: false
-}
-
 function SearchBox(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const backpackState = store.getState().backpack
@@ -310,56 +320,6 @@ function SearchBox(): ReactElement {
           }
         }}
       />
-
-      {state.searchHistory.length && state.showHistory && (
-        <UiEntity
-          uiTransform={{
-            width: '94%',
-            positionType: 'absolute',
-            position: { top: '90%', left: '6%' },
-            zIndex: 2,
-            flexDirection: 'column',
-            borderRadius: 7,
-            borderWidth: 1,
-            borderColor: COLOR.TEXT_COLOR
-          }}
-          uiBackground={{
-            color: Color4.White()
-          }}
-        >
-          {state.searchHistory.map((item) => {
-            return (
-              <UiEntity
-                uiTransform={{
-                  width: '100%'
-                }}
-              >
-                <UiEntity
-                  uiTransform={{
-                    padding: { left: '10%' }
-                  }}
-                  uiText={{
-                    value: item,
-                    color: COLOR.TEXT_COLOR,
-                    textAlign: 'top-left',
-                    fontSize: canvasScaleRatio * 32
-                  }}
-                />
-                <Icon
-                  icon={{ atlasName: 'backpack', spriteName: 'history-icon' }}
-                  iconSize={canvasScaleRatio * 42}
-                  uiTransform={{
-                    alignSelf: 'center',
-                    positionType: 'absolute',
-                    position: { left: '5%' }
-                  }}
-                  iconColor={COLOR.TEXT_COLOR}
-                />
-              </UiEntity>
-            )
-          })}
-        </UiEntity>
-      )}
     </UiEntity>
   )
 }

@@ -156,6 +156,7 @@ function DropdownStyled(props: {
             >
               {props.options.map((option, index) => (
                 <UiEntity
+                  key={option}
                   uiTransform={{
                     width: '100%',
                     height: 'auto',

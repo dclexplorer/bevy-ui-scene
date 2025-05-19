@@ -1,4 +1,3 @@
-import { timers } from '@dcl-sdk/utils'
 import { BevyApi } from '../bevy-api'
 import { type SystemAction } from '../bevy-api/interface'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
@@ -35,6 +34,8 @@ import { BACKPACK_SECTION } from '../state/backpack/state'
 import { store } from '../state/store'
 import { changeSectionAction } from '../state/backpack/actions'
 import { CloseButton } from '../components/close-button'
+import { sleep } from '../utils/dcl-utils'
+import { isFalsy } from '../utils/function-utils'
 
 const state: any = {
   visible: false,
@@ -70,11 +71,8 @@ export async function initEmotesWheel({
   })
 
   async function listen(): Promise<void> {
-    const stream: SystemAction[] = await BevyApi.getSystemActionStream()
-
-    timers.setTimeout(() => {
-      awaitStream(stream).catch(console.error)
-    }, 0)
+    await sleep(0)
+    awaitStream(await BevyApi.getSystemActionStream()).catch(console.error)
   }
 }
 
@@ -148,12 +146,14 @@ export function renderEmotesWheel(): ReactElement {
                     spriteName: visualSlotInfo.spriteName,
                     atlasName: 'emotes'
                   }),
-                  color: getLighterColorIfHovered(
-                    index,
-                    equippedEmoteData?.rarity === 'base'
-                      ? COLOR.WHEEL_BASE_RARITY
-                      : RARITY_COLORS[equippedEmoteData?.rarity]
-                  )
+                  color: isFalsy(equippedEmoteData)
+                    ? COLOR.WHEEL_BASE_RARITY
+                    : getLighterColorIfHovered(
+                        index,
+                        equippedEmoteData?.rarity === 'base'
+                          ? COLOR.WHEEL_BASE_RARITY
+                          : RARITY_COLORS[equippedEmoteData?.rarity]
+                      )
                 }}
                 onMouseEnter={() => {
                   state.hoveredURN = equippedEmote

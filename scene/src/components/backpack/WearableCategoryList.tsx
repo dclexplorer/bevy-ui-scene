@@ -35,8 +35,9 @@ export function WearableCategoryList({
   return (
     <UiEntity>
       <UiEntity uiTransform={{ flexDirection: 'column' }}>
-        {wearableCategoryColumns[0].map((category) => (
+        {wearableCategoryColumns[0].map((category: WearableCategory) => (
           <WearableCategoryButton
+            key={category}
             category={category}
             active={activeCategory === category}
             onClick={() => {
@@ -60,6 +61,7 @@ export function WearableCategoryList({
       <UiEntity uiTransform={{ flexDirection: 'column' }}>
         {wearableCategoryColumns[1].map((category) => (
           <WearableCategoryButton
+            key={category}
             category={category}
             active={activeCategory === category}
             onClick={() => {

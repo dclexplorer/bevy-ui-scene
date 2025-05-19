@@ -27,6 +27,7 @@ import {
   updateCacheKey,
   updateEquippedEmotesAction,
   updateEquippedWearables,
+  updateLoadedOutfitsMetadataAction,
   updateLoadingPage
 } from '../../../state/backpack/actions'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
@@ -43,6 +44,8 @@ import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 
 import { BackpackNavBar } from './BackpackNavBar'
 import { updatePageGeneric } from './backpack-service'
+import { OutfitsCatalog } from './OutfitsCatalog'
+import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
 
 let originalAvatarJSON: string
 
@@ -84,6 +87,9 @@ export default class BackpackPage {
             {backpackState.activeSection === BACKPACK_SECTION.EMOTES && (
               <EmotesCatalog />
             )}
+            {backpackState.activeSection === BACKPACK_SECTION.OUTFITS && (
+              <OutfitsCatalog />
+            )}
           </UiEntity>
         </Content>
       </MainContent>
@@ -120,6 +126,7 @@ export default class BackpackPage {
     store.dispatch(updateCacheKey())
     closeColorPicker()
     createAvatarPreview()
+
     const player = getPlayer()
     const wearables: URNWithoutTokenId[] = (player?.wearables ?? []).map(
       (urn) => getURNWithoutTokenId(urn as URN)
@@ -168,6 +175,17 @@ export default class BackpackPage {
         forceRender: backpackState.forceRender ?? []
       }
     } satisfies SetAvatarData)
+
+    if (!backpackState.outfitsMetadata) {
+      store.dispatch(updateLoadingPage(true))
+      store.dispatch(
+        updateLoadedOutfitsMetadataAction(
+          await fetchPlayerOutfitMetadata({ address: player?.userId as string })
+        )
+      )
+
+      store.dispatch(updateLoadingPage(false))
+    }
   }
 }
 

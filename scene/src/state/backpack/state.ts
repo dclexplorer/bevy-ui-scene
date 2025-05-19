@@ -13,6 +13,7 @@ import {
   ITEMS_CATALOG_PAGE_SIZE
 } from '../../utils/backpack-constants'
 import { ITEMS_ORDER_BY, ITEMS_ORDER_DIRECTION } from '../../utils/constants'
+import { type OutfitsMetadata } from '../../utils/outfit-definitions'
 
 export const BACKPACK_STORE_ID: 'backpack' = 'backpack'
 export enum BACKPACK_SECTION {
@@ -56,6 +57,7 @@ export type BackpackPageState = {
   equippedItems: Array<URNWithoutTokenId | EquippedEmote> // gather equippedWearables, baseBody.bodyShapeUrn & emotes
   selectedURN: URNWithoutTokenId | null
   cacheKey: string
+  outfitsMetadata: OutfitsMetadata | null
 }
 
 export const backpackInitialState: BackpackPageState = {
@@ -90,5 +92,6 @@ export const backpackInitialState: BackpackPageState = {
     forceRender: []
   },
   changedEmotesFromResetVersion: true,
-  savedResetEmotes: EMPTY_EMOTES
+  savedResetEmotes: EMPTY_EMOTES,
+  outfitsMetadata: null
 }

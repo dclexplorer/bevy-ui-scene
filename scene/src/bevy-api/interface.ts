@@ -34,7 +34,7 @@ type PBAvatarEquippedData = {
   emoteUrns: URN[]
   forceRender: WearableCategory[]
 }
-type RGBColor = { r: number; g: number; b: number }
+export type RGBColor = { r: number; g: number; b: number }
 export type PBAvatarBase = {
   name: string
   skinColor?: RGBColor
