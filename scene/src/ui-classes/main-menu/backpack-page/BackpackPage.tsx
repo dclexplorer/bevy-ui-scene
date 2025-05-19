@@ -46,7 +46,6 @@ import { BackpackNavBar } from './BackpackNavBar'
 import { updatePageGeneric } from './backpack-service'
 import { OutfitsCatalog } from './OutfitsCatalog'
 import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
-import { initOutfitAvatars } from '../../../components/backpack/OutfitAvatar'
 
 let originalAvatarJSON: string
 
@@ -184,8 +183,6 @@ export default class BackpackPage {
           await fetchPlayerOutfitMetadata({ address: player?.userId as string })
         )
       )
-
-      initOutfitAvatars()
 
       store.dispatch(updateLoadingPage(false))
     }

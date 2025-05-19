@@ -3,12 +3,12 @@ import type {
   OutfitDefinition,
   OutfitsMetadata
 } from '../../utils/outfit-definitions'
-import { type AvatarPreview } from './AvatarPreview'
 import {
   AvatarShape,
   CameraLayer,
   CameraLayers,
   engine,
+  type Entity,
   TextureCamera,
   Transform
 } from '@dcl/sdk/ecs'
@@ -19,26 +19,27 @@ import {
   SKIN_COLOR_PRESETS
 } from '../color-palette'
 import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
+import { waitFor } from '../../utils/dcl-utils'
 
 const AVATAR_FRAME_SIZE = 4
 const MAX_CAMERA_SIZE = 2048
-const cameraPosition = Vector3.create(
-  (AVATAR_FRAME_SIZE * 4) / 2,
-  -(AVATAR_FRAME_SIZE * 3) / 2 + 0.5,
-  0
-)
 
 const SLOTS: any[] = new Array(10).fill(null) // TODO duplicated code
-const slotAvatars: AvatarPreview[] = []
 
-export const getSlotAvatar = (slotIndex: number): AvatarPreview =>
-  slotAvatars[slotIndex]
+const catalogEntities: {
+  avatars: Entity[]
+  camera: Entity
+} = {
+  avatars: [],
+  camera: engine.RootEntity
+}
+
 export const updateOutfitAvatar = (
   slotIndex: number,
   slot: OutfitDefinition
 ): void => {
   const mutableAvatarShape = AvatarShape.getMutable(
-    slotAvatars[slotIndex].avatarEntity
+    catalogEntities.avatars[slotIndex]
   )
 
   mutableAvatarShape.wearables = slot.wearables
@@ -48,27 +49,43 @@ export const updateOutfitAvatar = (
   mutableAvatarShape.skinColor = slot.skin.color
   mutableAvatarShape.forceRender = slot.forceRender
 }
-export const outfitsCameraEntity = engine.addEntity()
 
-export const initOutfitAvatars = (): void => {
+export const initOutfitsCatalog = async (): Promise<void> => {
+  await waitFor(() => store.getState().backpack.outfitsMetadata !== null)
   const backpackState = store.getState().backpack
   const outfitsMetadata = backpackState.outfitsMetadata as OutfitsMetadata
-  const viewSlots: Array<OutfitDefinition | null> = [...SLOTS] // TODO duplicated code
-
+  const viewSlots: Array<OutfitDefinition | null> = [...SLOTS]
+  const outfitsCameraEntity = (catalogEntities.camera = engine.addEntity())
+  const cameraPosition = Vector3.create(
+    (AVATAR_FRAME_SIZE * 4) / 2,
+    -(AVATAR_FRAME_SIZE * 3) / 2 + 0.5,
+    0
+  )
+  TextureCamera.create(outfitsCameraEntity, {
+    width: MAX_CAMERA_SIZE,
+    height: MAX_CAMERA_SIZE * (3 / 4),
+    layer: 2,
+    clearColor: Color4.create(0.4, 0.4, 1.0, 0.3),
+    mode: {
+      $case: 'orthographic',
+      orthographic: { verticalRange: AVATAR_FRAME_SIZE * 3 }
+    }
+  })
   outfitsMetadata.outfits.forEach((outfitMetadata) => {
     viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
   })
 
   viewSlots.forEach((slot, index) => {
     const layer = 2
-    slotAvatars[index] = {
-      avatarEntity: engine.addEntity(),
-      cameraEntity: outfitsCameraEntity
+    const avatarEntity = engine.addEntity()
+    const avatarWrapperEntity = engine.addEntity()
+    const avatarPosition = {
+      x: AVATAR_FRAME_SIZE / 2 + Math.floor(index % 4) * AVATAR_FRAME_SIZE,
+      y: -AVATAR_FRAME_SIZE - Math.floor(index / 4) * AVATAR_FRAME_SIZE,
+      z: 8
     }
 
-    const { avatarEntity } = slotAvatars[index]
-
-    const avatarWrapperEntity = engine.addEntity()
+    catalogEntities.avatars[index] = avatarEntity
 
     AvatarShape.create(avatarEntity, {
       bodyShape: slot?.bodyShape ?? BASE_MALE_URN,
@@ -87,12 +104,6 @@ export const initOutfitAvatars = (): void => {
     CameraLayers.create(avatarWrapperEntity, {
       layers: [layer]
     })
-
-    const avatarPosition = {
-      x: AVATAR_FRAME_SIZE / 2 + Math.floor(index % 4) * AVATAR_FRAME_SIZE,
-      y: -AVATAR_FRAME_SIZE - Math.floor(index / 4) * AVATAR_FRAME_SIZE,
-      z: 8
-    }
 
     Transform.create(avatarWrapperEntity, {
       position: avatarPosition,
@@ -120,19 +131,13 @@ export const initOutfitAvatars = (): void => {
   })
 }
 
-export function removeOutfitsTextureCamera(): void {
-  TextureCamera.deleteFrom(outfitsCameraEntity)
+export function disposeOutfitsCatalog(): void {
+  engine.removeEntity(catalogEntities.camera)
+  SLOTS.forEach((_, index) => {
+    engine.removeEntity(catalogEntities.avatars[index])
+  })
 }
 
-export function attachOutfitsTextureCamera(): void {
-  TextureCamera.create(outfitsCameraEntity, {
-    width: MAX_CAMERA_SIZE,
-    height: MAX_CAMERA_SIZE * (3 / 4),
-    layer: 2,
-    clearColor: Color4.create(0.4, 0.4, 1.0, 0.3),
-    mode: {
-      $case: 'orthographic',
-      orthographic: { verticalRange: AVATAR_FRAME_SIZE * 3 }
-    }
-  })
+export function getOutfitsCameraEntity(): Entity {
+  return catalogEntities.camera
 }

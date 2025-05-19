@@ -1,4 +1,4 @@
-import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type Key, UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
@@ -31,7 +31,9 @@ type WearableCategoryButtonProps = {
   selectedURN: URNWithoutTokenId | null
   forceRender?: boolean
   showForceRender?: boolean
+  key?: Key
 }
+
 const state: { hoveredCategory: null | WearableCategory } = {
   hoveredCategory: null
 }
@@ -64,7 +66,7 @@ export function WearableCategoryButton({
   return (
     <UiEntity
       uiTransform={{
-        ...uiTransform,
+        ...(uiTransform as UiTransformProps),
         width: 239 * canvasScaleRatio,
         height: 133 * canvasScaleRatio,
         margin: {
