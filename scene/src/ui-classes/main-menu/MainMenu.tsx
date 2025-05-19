@@ -13,8 +13,8 @@ import { COLOR } from '../../components/color-palette'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { playPreviewEmote } from '../../components/backpack/AvatarPreview'
 import {
-  attachOutfitsTextureCamera,
-  removeOutfitsTextureCamera
+  initOutfitsCatalog,
+  disposeOutfitsCatalog
 } from '../../components/backpack/OutfitAvatar'
 import { DeleteOutfitDialog } from './backpack-page/delete-outfit-dialog'
 
@@ -82,7 +82,7 @@ export default class MainMenu {
     this.uiController.isMainMenuVisible = false
     this.closeButtonColor = ALMOST_BLACK
     playPreviewEmote('')
-    removeOutfitsTextureCamera()
+    disposeOutfitsCatalog()
   }
 
   show(page: MenuPage): void {
@@ -91,7 +91,7 @@ export default class MainMenu {
     this.uiController.isMainMenuVisible = true
     this.updateButtons()
     this.uiController.show(page)
-    attachOutfitsTextureCamera()
+    initOutfitsCatalog().catch(console.error)
   }
 
   updateButtons(): void {

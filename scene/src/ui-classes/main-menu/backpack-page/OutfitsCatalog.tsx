@@ -11,7 +11,7 @@ import {
 } from '../../../utils/outfit-definitions'
 import { Color4 } from '@dcl/sdk/math'
 import {
-  outfitsCameraEntity,
+  getOutfitsCameraEntity,
   updateOutfitAvatar
 } from '../../../components/backpack/OutfitAvatar'
 import { RoundedButton } from '../../../components/rounded-button'
@@ -238,7 +238,7 @@ export const OutfitsCatalog = (): ReactElement => {
         src: 'assets/images/mock_outfits_for_uvs_2.png'
       }, */
           videoTexture: {
-            videoPlayerEntity: outfitsCameraEntity
+            videoPlayerEntity: getOutfitsCameraEntity()
           },
           uvs: getUvsFromSprite({
             spriteDefinition: {
