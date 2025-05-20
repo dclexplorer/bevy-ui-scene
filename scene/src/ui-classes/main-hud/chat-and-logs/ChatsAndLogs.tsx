@@ -29,10 +29,10 @@ const BUFFER_SIZE = 19
 export default class ChatAndLogs {
   private readonly uiController: UIController
   public fontSize: number = 14
-  public messages: ChatMessageRepresentation[] = MockMessages.slice(
-    0,
-    BUFFER_SIZE
-  )
+  public messages: ChatMessageRepresentation[] = MockMessages.map((m) => ({
+    ...m,
+    timestamp: Date.now() - 30000 + m.timestamp
+  })).slice(0, BUFFER_SIZE)
 
   private inputValue: string = ''
   private readonly myPlayer = getPlayer()
@@ -102,7 +102,11 @@ export default class ChatAndLogs {
           height: 'auto',
           justifyContent: 'center',
           alignItems: 'flex-end',
-          flexDirection: 'column-reverse'
+          flexDirection: 'column-reverse',
+          padding: '2%'
+        }}
+        uiBackground={{
+          color: Color4.create(0, 0, 0, 0.3)
         }}
       >
         {/* INPUT AREA */}
@@ -160,28 +164,6 @@ export default class ChatAndLogs {
             }}
             icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
           />
-          {/* <ButtonIcon
-            onMouseDown={() => {
-              this.handleSubmitMessageFromOther(this.inputValue)
-              this.inputValue = ''
-            }}
-            uiTransform={{
-              width: 20,
-              height: 20
-            }}
-            icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
-          />
-          <ButtonIcon
-            onMouseDown={() => {
-              this.handleSubmitMessageFromDcl(this.inputValue)
-              this.inputValue = ''
-            }}
-            uiTransform={{
-              width: 20,
-              height: 20
-            }}
-            icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
-          /> */}
         </UiEntity>
         {/* CHAT AREA */}
         <UiEntity
@@ -194,15 +176,17 @@ export default class ChatAndLogs {
             overflow: 'scroll',
             maxHeight,
             scrollPosition,
-            borderRadius: BORDER_RADIUS_F,
+            borderRadius: getCanvasScaleRatio() * BORDER_RADIUS_F * 2,
             padding: { right: '10%' }
           }}
-          uiBackground={{
-            color: ALPHA_BLACK_PANEL
-          }}
+          uiBackground={
+            {
+              // color: ALPHA_BLACK_PANEL
+            }
+          }
         >
           {this.messages.map((message) => (
-            <ChatMessage message={message} />
+            <ChatMessage message={message} key={message.timestamp} />
           ))}
         </UiEntity>
       </UiEntity>

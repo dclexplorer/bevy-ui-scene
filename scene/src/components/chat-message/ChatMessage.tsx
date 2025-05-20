@@ -3,20 +3,29 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 
 import ReactEcs, {
+  type Key,
   Label,
   UiEntity,
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
-import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { BORDER_RADIUS_F, getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { type ChatMessageRepresentation } from './ChatMessage.types'
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
+import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { COLOR } from '../color-palette'
+import { memoize } from '../../utils/function-utils'
+enum SIDE {
+  LEFT,
+  RIGHT
+}
 
 function ChatMessage(props: {
   uiTransform?: UiTransformProps
   message: ChatMessageRepresentation
   fontSize?: number
+  key?: Key
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -24,48 +33,69 @@ function ChatMessage(props: {
   if (myPlayer === null) {
     return null
   }
+  const defaultFontSize = getCanvasScaleRatio() * 36
   const playerName = props.message.name
   const SYSTEM_CHAT_SENDER_ID = 'dcl'
+  const addressColor = getAddressColor(props.message.sender_address) as Color4
 
+  const side =
+    props.message.sender_address === myPlayer.userId ? SIDE.RIGHT : SIDE.LEFT
+  const align = side === SIDE.LEFT ? 'left' : 'right'
+  const messageMargin = 12 * getCanvasScaleRatio()
   return (
     <UiEntity
       uiTransform={{
-        height: 'auto',
         width: '100%',
-        flexDirection:
-          props.message.sender_address === myPlayer.userId
-            ? 'row-reverse'
-            : 'row',
+        flexDirection: side === SIDE.RIGHT ? 'row-reverse' : 'row',
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
-        margin: { bottom: 2, top: 2 },
+        margin: { bottom: messageMargin, top: messageMargin },
+        borderRadius: getCanvasScaleRatio() * BORDER_RADIUS_F * 4,
+        borderColor: COLOR.BLACK_TRANSPARENT,
+        borderWidth: 0,
         ...props.uiTransform
       }}
     >
       <UiEntity
         uiTransform={{
-          width: 24,
-          height: 24,
+          width: getCanvasScaleRatio() * 64,
+          height: getCanvasScaleRatio() * 64,
           justifyContent: 'center',
           alignItems: 'center',
           margin:
             props.message.sender_address === myPlayer.userId
               ? { left: canvasInfo.width * 0.005 }
-              : { right: canvasInfo.width * 0.005 }
+              : { right: canvasInfo.width * 0.005 },
+          borderRadius: 999,
+          borderWidth: getCanvasScaleRatio() * 3,
+          borderColor: addressColor
         }}
-        uiBackground={
-          props.message.sender_address === SYSTEM_CHAT_SENDER_ID
-            ? getBackgroundFromAtlas({
-                atlasName: 'icons',
-                spriteName: 'DdlIconColor'
-              })
-            : { avatarTexture: { userId: props.message.sender_address } }
-        }
-      />
+        uiBackground={{
+          color: { ...addressColor, a: 0.3 }
+        }}
+      >
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: '100%'
+          }}
+          uiBackground={
+            props.message.sender_address === SYSTEM_CHAT_SENDER_ID
+              ? getBackgroundFromAtlas({
+                  atlasName: 'icons',
+                  spriteName: 'DdlIconColor'
+                })
+              : {
+                  textureMode: 'stretch',
+                  avatarTexture: { userId: props.message.sender_address }
+                }
+          }
+        />
+      </UiEntity>
 
       <UiEntity
         uiTransform={{
-          width: 'auto',
+          width: '70%',
           maxWidth: '100%',
           height: '100%',
           justifyContent: 'center',
@@ -80,39 +110,56 @@ function ChatMessage(props: {
       >
         <Label
           uiTransform={{
-            width: 'auto',
-            maxWidth: canvasInfo.width * 0.09,
-            height: props.fontSize ?? 14
+            width: '100%',
+            height: props.fontSize ?? defaultFontSize
           }}
           value={`<b>${
             props.message.sender_address === SYSTEM_CHAT_SENDER_ID
-              ? 'DCL System:'
-              : playerName + ':'
+              ? 'DCL System'
+              : playerName
           }</b>`}
-          fontSize={props.fontSize ?? 14}
+          fontSize={props.fontSize ?? defaultFontSize}
           color={
             props.message.sender_address === SYSTEM_CHAT_SENDER_ID
               ? Color4.Gray()
               : (getAddressColor(props.message.sender_address) as Color4)
           }
-          textAlign="middle-left"
+          textAlign={`middle-${align}`}
         />
         {/* TEXT */}
         <Label
           uiTransform={{
-            width: 'auto',
-            maxWidth: canvasInfo.width * 0.09,
-            height: 'auto'
+            width: '100%'
           }}
           value={props.message.message}
-          fontSize={props.fontSize ?? 14}
+          fontSize={props.fontSize ?? defaultFontSize}
           color={ALMOST_WHITE}
           textWrap="wrap"
-          textAlign="middle-left"
+          textAlign={`middle-${align}`}
+        />
+        <Label
+          uiTransform={{
+            width: '100%',
+            height: getCanvasScaleRatio() * 30
+          }}
+          value={formatTimestamp(props.message.timestamp)}
+          fontSize={props.fontSize ?? defaultFontSize * 0.8}
+          color={COLOR.INACTIVE}
+          textWrap="wrap"
+          textAlign={`middle-${align}`}
         />
       </UiEntity>
     </UiEntity>
   )
 }
+
+const formatTimestamp = memoize((timestamp: number): string => {
+  const date = new Date(timestamp)
+
+  return `${date.getHours().toString().padStart(2, '0')}:${date
+    .getMinutes()
+    .toString()
+    .padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
+})
 
 export default ChatMessage
