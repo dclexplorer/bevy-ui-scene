@@ -12,12 +12,14 @@ import { store } from 'src/state/store'
 import { fetchPlaceFromCoords } from 'src/utils/promise-utils'
 import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
+import { initSystemActionsEmitter } from '../service/system-actions-emitter'
 
 export class GameController {
   uiController: UIController
   constructor() {
     this.uiController = new UIController(this)
     engine.addSystem(this.positionSystem.bind(this))
+    initSystemActionsEmitter()
     // this.getFavorites().catch((reason)=>console.error(reason))
   }
 
