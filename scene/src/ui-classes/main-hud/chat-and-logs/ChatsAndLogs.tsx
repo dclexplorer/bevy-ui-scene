@@ -21,6 +21,11 @@ import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 const BUFFER_SIZE = 19
 
+const state: { open: boolean; unreadMessages: number } = {
+  open: false,
+  unreadMessages: 0
+}
+
 export default class ChatAndLogs {
   public messages: ChatMessageRepresentation[] = MockMessages.map((m) => ({
     ...m,
@@ -28,10 +33,24 @@ export default class ChatAndLogs {
   })).slice(0, BUFFER_SIZE)
 
   private inputValue: string = ''
-  private readonly myPlayer = getPlayer()
 
   constructor() {
     this.listenMessages().catch(console.error)
+  }
+
+  switchOpen(): void {
+    state.open = !state.open
+    if (state.open) {
+      state.unreadMessages = 0
+    }
+  }
+
+  isOpen(): boolean {
+    return state.open
+  }
+
+  getUnreadMessages(): number {
+    return state.unreadMessages
   }
 
   async listenMessages(): Promise<void> {
@@ -40,6 +59,9 @@ export default class ChatAndLogs {
     ): Promise<void> => {
       for await (const chatMessage of stream) {
         this.pushMessage(chatMessage)
+        if (!state.open) {
+          state.unreadMessages++
+        }
       }
     }
 

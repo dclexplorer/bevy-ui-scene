@@ -226,7 +226,7 @@ export default class MainHud {
       this.friendsBackground = undefined
     }
     this.friendsHint = false
-    if (!this.chatOpen) {
+    if (!this.chatAndLogs.isOpen()) {
       this.chatIcon.spriteName = 'Chat off'
       this.chatBackground = undefined
     }
@@ -240,7 +240,7 @@ export default class MainHud {
 
   openCloseChat(): void {
     this.chatEnter()
-    this.chatOpen = !this.chatOpen
+    this.chatAndLogs.switchOpen()
     this.friendsOpen = false
     this.updateButtons()
   }
@@ -248,7 +248,6 @@ export default class MainHud {
   openCloseFriends(): void {
     this.friendsEnter()
     this.friendsOpen = !this.friendsOpen
-    this.chatOpen = false
     this.updateButtons()
   }
 
@@ -574,7 +573,7 @@ export default class MainHud {
                 icon={this.chatIcon}
                 hintText={'Chat'}
                 showHint={this.chatHint}
-                notifications={0}
+                notifications={this.chatAndLogs.getUnreadMessages()}
               />
 
               <ButtonIcon
@@ -621,7 +620,7 @@ export default class MainHud {
           <UiEntity
             uiTransform={{
               flexDirection: 'column-reverse',
-              display: this.chatOpen ? 'flex' : 'none',
+              display: this.chatAndLogs.isOpen() ? 'flex' : 'none',
               width: 'auto',
               height: 'auto',
               margin: { right: canvasInfo.width / 100 }
