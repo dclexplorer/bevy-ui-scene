@@ -116,7 +116,7 @@ export default class MainHud {
   constructor(uiController: UIController) {
     this.uiController = uiController
     this.sceneInfo = new SceneInfo(uiController)
-    this.chatAndLogs = new ChatsAndLogs(uiController)
+    this.chatAndLogs = new ChatsAndLogs()
     this.friends = new Friends(uiController)
   }
 

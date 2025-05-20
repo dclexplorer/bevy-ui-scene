@@ -1,17 +1,12 @@
 import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, { Input, UiEntity } from '@dcl/sdk/react-ecs'
-// import ButtonIcon from '../../components/ButtonIcon'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { ButtonIcon } from '../../../components/button-icon'
 import { ChatMessage } from '../../../components/chat-message'
-import { type UIController } from '../../../controllers/ui.controller'
 import MockMessages from './MessagesMock.json'
 import {
   ALMOST_WHITE,
-  ALPHA_BLACK_PANEL,
-  LEFT_PANEL_MIN_WIDTH,
-  LEFT_PANEL_WIDTH_FACTOR,
   ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 import { BevyApi } from '../../../bevy-api'
@@ -27,8 +22,6 @@ import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 const BUFFER_SIZE = 19
 
 export default class ChatAndLogs {
-  private readonly uiController: UIController
-  public fontSize: number = 14
   public messages: ChatMessageRepresentation[] = MockMessages.map((m) => ({
     ...m,
     timestamp: Date.now() - 30000 + m.timestamp
@@ -37,8 +30,7 @@ export default class ChatAndLogs {
   private inputValue: string = ''
   private readonly myPlayer = getPlayer()
 
-  constructor(uiController: UIController) {
-    this.uiController = uiController
+  constructor() {
     this.listenMessages().catch(console.error)
   }
 
@@ -95,6 +87,8 @@ export default class ChatAndLogs {
     const panelWidth: number = getCanvasScaleRatio() * 800
     const maxHeight = getCanvasScaleRatio() * 1400
     const scrollPosition = Vector2.create(0, maxHeight)
+    const inputFontSize = '1vw' // Math.floor(getCanvasScaleRatio() * 60) // TODO cannot change Input fontSize in runtime
+
     return (
       <UiEntity
         uiTransform={{
@@ -113,7 +107,7 @@ export default class ChatAndLogs {
         <UiEntity
           uiTransform={{
             width: '100%',
-            height: this.fontSize * 3,
+            height: getCanvasScaleRatio() * 120,
             justifyContent: 'space-between',
             alignItems: 'center',
             flexDirection: 'row',
@@ -127,16 +121,15 @@ export default class ChatAndLogs {
         >
           <Input
             uiTransform={{
-              padding: { left: this.fontSize * 0.5 },
+              padding: { left: '1%' },
               width: '80%',
-              height: 1.4 * this.fontSize,
+              height: '100%',
               alignContent: 'center'
             }}
             textAlign="middle-center"
-            fontSize={this.fontSize}
+            fontSize={inputFontSize}
             color={ALMOST_WHITE}
             onChange={(inputValue) => {
-              console.log('onChange', inputValue)
               this.inputValue = inputValue
             }}
             value={this.inputValue}
