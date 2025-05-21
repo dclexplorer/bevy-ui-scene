@@ -9,9 +9,16 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { ALMOST_WHITE, ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
+import {
+  ALMOST_WHITE,
+  ROUNDED_TEXTURE_BACKGROUND,
+  ZERO_ADDRESS
+} from '../../utils/constants'
 import { BORDER_RADIUS_F, getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { type ChatMessageRepresentation } from './ChatMessage.types'
+import {
+  type ChatMessageDefinition,
+  type ChatMessageRepresentation
+} from './ChatMessage.types'
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
@@ -80,7 +87,7 @@ function ChatMessage(props: {
             height: '100%'
           }}
           uiBackground={
-            props.message.sender_address === SYSTEM_CHAT_SENDER_ID
+            isSystemMessage(props.message)
               ? getBackgroundFromAtlas({
                   atlasName: 'icons',
                   spriteName: 'DdlIconColor'
@@ -105,7 +112,10 @@ function ChatMessage(props: {
         }}
         uiBackground={{
           ...ROUNDED_TEXTURE_BACKGROUND,
-          color: { ...Color4.Black(), a: 0.4 }
+          color: {
+            ...Color4.Black(),
+            a: isSystemMessage(props.message) ? 0.2 : 0.4
+          }
         }}
       >
         <Label
@@ -163,3 +173,7 @@ const formatTimestamp = memoize((timestamp: number): string => {
 })
 
 export default ChatMessage
+
+export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
+  return messageData.sender_address === ZERO_ADDRESS
+}

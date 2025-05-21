@@ -23,6 +23,7 @@ import { listenSystemAction } from '../../../service/system-actions-emitter'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { setUiFocus } from '~system/RestrictedActions'
+import { isSystemMessage } from '../../../components/chat-message/ChatMessage'
 
 const BUFFER_SIZE = 40
 
@@ -96,7 +97,9 @@ export default class ChatAndLogs {
         this.messages[this.messages.length - 1].timestamp === Date.now()
           ? Date.now() + 1
           : Date.now(),
-      name: getPlayer({ userId: message.sender_address })?.name ?? `Unknown*`,
+      name: isSystemMessage(message)
+        ? ``
+        : getPlayer({ userId: message.sender_address })?.name ?? `Unknown*`,
       side: getNextMessageSide(this.messages)
     })
 
