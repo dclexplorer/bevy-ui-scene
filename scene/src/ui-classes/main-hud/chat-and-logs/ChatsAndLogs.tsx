@@ -1,4 +1,4 @@
-import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, { Input, UiEntity } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
@@ -23,7 +23,6 @@ import { listenSystemAction } from '../../../service/system-actions-emitter'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { setUiFocus } from '~system/RestrictedActions'
-import { sleep } from '../../../utils/dcl-utils'
 
 const BUFFER_SIZE = 19
 
@@ -39,18 +38,6 @@ const state: {
   inputValue: ''
 }
 
-const sendChatMessage = (): void => {
-  if (!state.inputValue) return
-  BevyApi.sendChat(state.inputValue, 'Nearby')
-}
-const updateInputValue = (value: string): void => {
-  state.inputValue = value
-}
-
-function scrollToBottom(): void {
-  state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
-}
-
 export default class ChatAndLogs {
   public messages: ChatMessageRepresentation[] = MockMessages.map((m) => ({
     ...m,
@@ -61,9 +48,7 @@ export default class ChatAndLogs {
     this.listenMessages().catch(console.error)
     listenSystemAction('Chat', (pressed) => {
       if (pressed) {
-        setUiFocus({ elementId: 'chat-input' })
-        state.open = true
-        scrollToBottom()
+        focusChatInput()
       }
     })
   }
@@ -177,7 +162,7 @@ export default class ChatAndLogs {
             uiTransform={{
               elementId: 'chat-input',
               padding: { left: '1%' },
-              width: '80%',
+              width: '100%',
               height: '100%',
               alignContent: 'center'
             }}
@@ -188,6 +173,16 @@ export default class ChatAndLogs {
             placeholder="Press ENTER to chat"
             placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
             onSubmit={sendChatMessage}
+          />
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: '100%',
+              positionType: 'absolute'
+            }}
+            onMouseDown={() => {
+              focusChatInput()
+            }}
           />
         </UiEntity>
         {/* CHAT AREA */}
@@ -205,11 +200,6 @@ export default class ChatAndLogs {
             borderRadius: getCanvasScaleRatio() * BORDER_RADIUS_F * 2,
             padding: { right: '10%' }
           }}
-          uiBackground={
-            {
-              // color: ALPHA_BLACK_PANEL
-            }
-          }
         >
           {this.messages.map((message) => (
             <ChatMessage message={message} key={message.timestamp} />
@@ -218,4 +208,22 @@ export default class ChatAndLogs {
       </UiEntity>
     )
   }
+}
+
+function sendChatMessage(): void {
+  if (!state.inputValue) return
+  BevyApi.sendChat(state.inputValue, 'Nearby')
+}
+function updateInputValue(value: string): void {
+  state.inputValue = value
+}
+
+function scrollToBottom(): void {
+  state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
+}
+
+function focusChatInput(): void {
+  setUiFocus({ elementId: 'chat-input' })
+  state.open = true
+  scrollToBottom()
 }

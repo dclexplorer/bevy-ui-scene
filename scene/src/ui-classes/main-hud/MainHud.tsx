@@ -227,6 +227,7 @@ export default class MainHud {
     }
     this.friendsHint = false
     if (!this.chatAndLogs.isOpen()) {
+      // TODO review for a more reactive pattern,to have sync between menu and chat, e.g. when chat is open button icon should be "Chat On"
       this.chatIcon.spriteName = 'Chat off'
       this.chatBackground = undefined
     }
