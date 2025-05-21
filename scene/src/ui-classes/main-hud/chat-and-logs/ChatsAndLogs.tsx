@@ -2,7 +2,6 @@ import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, { Input, UiEntity } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { ButtonIcon } from '../../../components/button-icon'
 import { ChatMessage } from '../../../components/chat-message'
 import MockMessages from './MessagesMock.json'
 import {
@@ -93,6 +92,7 @@ export default class ChatAndLogs {
       stream: ChatMessageDefinition[]
     ): Promise<void> => {
       for await (const chatMessage of stream) {
+        if (chatMessage.message.indexOf('␑') === 0) return
         this.pushMessage(chatMessage)
         if (!state.open) {
           state.unreadMessages++
@@ -107,7 +107,7 @@ export default class ChatAndLogs {
     if (this.messages.length >= BUFFER_SIZE) {
       this.messages.shift()
     }
-
+    console.log('message', message)
     this.messages.push({
       ...message,
       timestamp: Date.now(),
