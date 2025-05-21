@@ -1,12 +1,13 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4, Vector2 } from '@dcl/sdk/math'
-import ReactEcs, { Input, UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, { Input, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { ChatMessage } from '../../../components/chat-message'
 import MockMessages from './MessagesMock.json'
 import {
   ALMOST_WHITE,
-  ROUNDED_TEXTURE_BACKGROUND
+  ROUNDED_TEXTURE_BACKGROUND,
+  TEXTURE_SLICES_05
 } from '../../../utils/constants'
 import { BevyApi } from '../../../bevy-api'
 import {
@@ -16,6 +17,7 @@ import {
 } from '../../../components/chat-message/ChatMessage.types'
 import { isTruthy } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+// TODO Review getCanvasScaleRatio , if Chat should be based in height and portions by docs ?
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 
@@ -24,6 +26,13 @@ import { listenSystemAction } from '../../../service/system-actions-emitter'
 // @ts-expect-error
 import { setUiFocus } from '~system/RestrictedActions'
 import { isSystemMessage } from '../../../components/chat-message/ChatMessage'
+import { COLOR } from '../../../components/color-palette'
+import { type ReactElement } from '@dcl/react-ecs'
+import Icon from '../../../components/icon/Icon'
+import {
+  getChatMembers,
+  initChatMembersCount
+} from '../../../service/chat-members'
 
 const BUFFER_SIZE = 40
 
@@ -33,7 +42,7 @@ const state: {
   autoScrollSwitch: number
   inputValue: string
 } = {
-  open: false,
+  open: true,
   unreadMessages: 0,
   autoScrollSwitch: 0,
   inputValue: ''
@@ -46,12 +55,15 @@ export default class ChatAndLogs {
   })).slice(0, BUFFER_SIZE)
 
   constructor() {
+    console.log('ChatAndLogs constructor')
+
     this.listenMessages().catch(console.error)
     listenSystemAction('Chat', (pressed) => {
       if (pressed) {
         focusChatInput()
       }
     })
+    initChatMembersCount().catch(console.error)
   }
 
   switchOpen(): void {
@@ -122,17 +134,11 @@ export default class ChatAndLogs {
     }
   }
 
-  handleSubmitMessageFromOther(value: string): void {}
-
-  handleSubmitMessageFromDcl(value: string): void {}
-
   mainUi(): ReactEcs.JSX.Element | null {
+    const panelWidth: number = getCanvasScaleRatio() * 800
+
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    const panelWidth: number = getCanvasScaleRatio() * 800
-    const maxHeight = Math.floor(getCanvasScaleRatio() * 1400)
-    const scrollPosition = Vector2.create(0, maxHeight - state.autoScrollSwitch)
-    const inputFontSize = '1vw' // Math.floor(getCanvasScaleRatio() * 60) // TODO cannot change Input fontSize in runtime
 
     return (
       <UiEntity
@@ -142,80 +148,161 @@ export default class ChatAndLogs {
           justifyContent: 'center',
           alignItems: 'flex-end',
           flexDirection: 'column-reverse',
-          padding: '2%'
+          padding: '2%',
+          borderRadius: 10,
+          borderColor: COLOR.BLACK_TRANSPARENT,
+          borderWidth: 0
         }}
         uiBackground={{
           color: Color4.create(0, 0, 0, 0.3)
         }}
       >
-        {/* INPUT AREA */}
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: getCanvasScaleRatio() * 120,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexDirection: 'row',
-            margin: { top: canvasInfo.height * 0.005 },
-            padding: 5
-          }}
-          uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
-            color: { ...Color4.Black(), a: 0.4 }
-          }}
-        >
-          <Input
-            uiTransform={{
-              elementId: 'chat-input',
-              padding: { left: '1%' },
-              width: '100%',
-              height: '100%',
-              alignContent: 'center'
-            }}
-            textAlign="middle-center"
-            fontSize={inputFontSize}
-            color={ALMOST_WHITE}
-            onChange={updateInputValue}
-            placeholder="Press ENTER to chat"
-            placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
-            onSubmit={sendChatMessage}
-          />
-          <UiEntity
-            uiTransform={{
-              width: '100%',
-              height: '100%',
-              positionType: 'absolute'
-            }}
-            onMouseDown={() => {
-              focusChatInput()
-            }}
-          />
-        </UiEntity>
-        {/* CHAT AREA */}
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: 'auto',
-            display: state.open ? 'flex' : 'none',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            justifyContent: 'flex-end',
-            overflow: 'scroll',
-            maxHeight,
-            scrollPosition,
-            borderRadius: getCanvasScaleRatio() * BORDER_RADIUS_F * 2,
-            padding: { right: '10%' }
-          }}
-        >
-          {this.messages.map((message) => (
-            <ChatMessage message={message} key={message.timestamp} />
-          ))}
-        </UiEntity>
+        {InputArea()}
+        {ChatArea({ messages: this.messages })}
+        {HeaderArea()}
       </UiEntity>
     )
   }
 }
+function HeaderArea(): ReactElement {
+  const fontSize = getCanvasScaleRatio() * 48
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '102%',
+        position: { top: '-1%' },
+        padding: { top: 8, bottom: -8, left: 0, right: 0 },
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        borderRadius: 10,
+        borderColor: COLOR.BLACK_TRANSPARENT,
+        borderWidth: 1
+      }}
+      uiBackground={{
+        color: COLOR.TEXT_COLOR
+      }}
+    >
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '50%', // TODO review all literal values
+          positionType: 'absolute',
+          position: { top: '80%' }
+        }}
+        uiBackground={{
+          color: COLOR.TEXT_COLOR
+        }}
+      />
+      <Icon
+        uiTransform={{ margin: { left: '4%' } }}
+        iconSize={28}
+        icon={{ spriteName: 'DdlIconColor', atlasName: 'icons' }}
+      />
+      <Label value={'Nearby'} fontSize={fontSize} color={COLOR.INACTIVE} />
+      <UiEntity
+        uiTransform={{
+          alignSelf: 'flex-end',
+          width: '60%',
+          height: '100%',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'flex-end'
+        }}
+      >
+        <Icon
+          iconSize={getCanvasScaleRatio() * 48}
+          icon={{ spriteName: 'Members', atlasName: 'icons' }}
+        />
+        <Label
+          uiTransform={{ position: { left: '-4%' } }}
+          value={getChatMembers().length.toString()}
+          fontSize={fontSize}
+        />
+      </UiEntity>
+    </UiEntity>
+  )
+}
+function InputArea(): ReactElement | null {
+  const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
+  const inputFontSize = '1vw' // Math.floor(getCanvasScaleRatio() * 60) // TODO cannot change Input fontSize in runtime
 
+  if (canvasInfo === null) return null
+
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '100%',
+        height: getCanvasScaleRatio() * 120,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'row',
+        margin: { top: canvasInfo.height * 0.005 },
+        padding: 5
+      }}
+      uiBackground={{
+        ...ROUNDED_TEXTURE_BACKGROUND,
+        color: { ...Color4.Black(), a: 0.4 }
+      }}
+    >
+      <Input
+        uiTransform={{
+          elementId: 'chat-input',
+          padding: { left: '1%' },
+          width: '100%',
+          height: '100%',
+          alignContent: 'center'
+        }}
+        textAlign="middle-center"
+        fontSize={inputFontSize}
+        color={ALMOST_WHITE}
+        onChange={updateInputValue}
+        placeholder="Press ENTER to chat"
+        placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
+        onSubmit={sendChatMessage}
+      />
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+        onMouseDown={() => {
+          focusChatInput()
+        }}
+      />
+    </UiEntity>
+  )
+}
+function ChatArea({
+  messages
+}: {
+  messages: ChatMessageRepresentation[]
+}): ReactElement {
+  const maxHeight = Math.floor(getCanvasScaleRatio() * 1400)
+  const scrollPosition = Vector2.create(0, maxHeight - state.autoScrollSwitch)
+
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '100%',
+        height: 'auto',
+        display: state.open ? 'flex' : 'none',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-end',
+        overflow: 'scroll',
+        maxHeight,
+        scrollPosition,
+        borderRadius: getCanvasScaleRatio() * BORDER_RADIUS_F * 2,
+        padding: { right: '10%' }
+      }}
+    >
+      {messages.map((message) => (
+        <ChatMessage message={message} key={message.timestamp} />
+      ))}
+    </UiEntity>
+  )
+}
 function sendChatMessage(): void {
   if (!state.inputValue) return
   BevyApi.sendChat(state.inputValue, 'Nearby')

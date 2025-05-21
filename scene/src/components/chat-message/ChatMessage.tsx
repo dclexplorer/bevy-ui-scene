@@ -42,7 +42,6 @@ function ChatMessage(props: {
   }
   const defaultFontSize = getCanvasScaleRatio() * 36
   const playerName = props.message.name
-  const SYSTEM_CHAT_SENDER_ID = 'dcl'
   const addressColor = getAddressColor(props.message.sender_address) as Color4
 
   const side =
@@ -123,14 +122,10 @@ function ChatMessage(props: {
             width: '100%',
             height: props.fontSize ?? defaultFontSize
           }}
-          value={`<b>${
-            props.message.sender_address === SYSTEM_CHAT_SENDER_ID
-              ? 'DCL System'
-              : playerName
-          }</b>`}
+          value={`<b>${playerName}</b>`}
           fontSize={props.fontSize ?? defaultFontSize}
           color={
-            props.message.sender_address === SYSTEM_CHAT_SENDER_ID
+            isSystemMessage(props.message)
               ? Color4.Gray()
               : (getAddressColor(props.message.sender_address) as Color4)
           }
