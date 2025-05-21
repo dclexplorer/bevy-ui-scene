@@ -143,7 +143,7 @@ function ChatMessage(props: {
             height: getCanvasScaleRatio() * 30
           }}
           value={formatTimestamp(props.message.timestamp)}
-          fontSize={props.fontSize ?? defaultFontSize * 0.8}
+          fontSize={props.fontSize ?? defaultFontSize * 0.7}
           color={COLOR.INACTIVE}
           textWrap="wrap"
           textAlign={`middle-${align}`}

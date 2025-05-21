@@ -21,9 +21,14 @@ import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 const BUFFER_SIZE = 19
 
-const state: { open: boolean; unreadMessages: number } = {
+const state: {
+  open: boolean
+  unreadMessages: number
+  autoScrollSwitch: number
+} = {
   open: false,
-  unreadMessages: 0
+  unreadMessages: 0,
+  autoScrollSwitch: 0
 }
 
 export default class ChatAndLogs {
@@ -42,6 +47,7 @@ export default class ChatAndLogs {
     state.open = !state.open
     if (state.open) {
       state.unreadMessages = 0
+      state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
     }
   }
 
@@ -107,8 +113,8 @@ export default class ChatAndLogs {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
     const panelWidth: number = getCanvasScaleRatio() * 800
-    const maxHeight = getCanvasScaleRatio() * 1400
-    const scrollPosition = Vector2.create(0, maxHeight)
+    const maxHeight = Math.floor(getCanvasScaleRatio() * 1400)
+    const scrollPosition = Vector2.create(0, maxHeight - state.autoScrollSwitch)
     const inputFontSize = '1vw' // Math.floor(getCanvasScaleRatio() * 60) // TODO cannot change Input fontSize in runtime
 
     return (
@@ -146,12 +152,16 @@ export default class ChatAndLogs {
               padding: { left: '1%' },
               width: '80%',
               height: '100%',
-              alignContent: 'center'
+              alignContent: 'center',
+              borderRadius: 0,
+              borderColor: Color4.Red(),
+              borderWidth: 1
             }}
             textAlign="middle-center"
             fontSize={inputFontSize}
             color={ALMOST_WHITE}
             onChange={(inputValue) => {
+              console.log('onChange', inputValue)
               this.inputValue = inputValue
             }}
             value={this.inputValue}
@@ -185,6 +195,7 @@ export default class ChatAndLogs {
           uiTransform={{
             width: '100%',
             height: 'auto',
+            display: state.open ? 'flex' : 'none',
             flexDirection: 'column',
             alignItems: 'flex-start',
             justifyContent: 'flex-end',

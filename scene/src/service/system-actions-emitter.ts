@@ -2,7 +2,6 @@ import type { SystemAction } from '../bevy-api/interface'
 import { sleep } from '../utils/dcl-utils'
 import { BevyApi } from '../bevy-api'
 import { createMediator } from '../utils/function-utils'
-import { type Callback } from '@dcl/sdk/react-ecs'
 
 const systemActionsEmitter = createMediator()
 

@@ -620,7 +620,7 @@ export default class MainHud {
           <UiEntity
             uiTransform={{
               flexDirection: 'column-reverse',
-              display: this.chatAndLogs.isOpen() ? 'flex' : 'none',
+
               width: 'auto',
               height: 'auto',
               margin: { right: canvasInfo.width / 100 }
