@@ -48,10 +48,7 @@ const updateInputValue = (value: string): void => {
 }
 
 function scrollToBottom(): void {
-  executeTask(async () => {
-    await sleep(0) // TODO review once scroll and visibility can be done in the same tick, we can remove async delay
-    state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
-  })
+  state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
 }
 
 export default class ChatAndLogs {
