@@ -15,20 +15,44 @@ import {
   type ChatMessageDefinition,
   type ChatMessageRepresentation
 } from '../../../components/chat-message/ChatMessage.types'
-import { sleep } from '../../../utils/dcl-utils'
 import { isTruthy } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
+import { listenSystemAction } from '../../../service/system-actions-emitter'
+
+// TODO remove ts-expect-error
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import { setUiFocus } from '~system/RestrictedActions'
+import { sleep } from '../../../utils/dcl-utils'
+
 const BUFFER_SIZE = 19
 
 const state: {
   open: boolean
   unreadMessages: number
   autoScrollSwitch: number
+  inputValue: string
 } = {
   open: false,
   unreadMessages: 0,
-  autoScrollSwitch: 0
+  autoScrollSwitch: 0,
+  inputValue: ''
+}
+
+const sendChatMessage = (): void => {
+  if (!state.inputValue) return
+  BevyApi.sendChat(state.inputValue, 'Nearby')
+}
+const updateInputValue = (value: string): void => {
+  state.inputValue = value
+}
+
+function scrollToBottom(): void {
+  executeTask(async () => {
+    await sleep(0) // TODO review once scroll and visibility can be done in the same tick, we can remove async delay
+    state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
+  })
 }
 
 export default class ChatAndLogs {
@@ -37,17 +61,22 @@ export default class ChatAndLogs {
     timestamp: Date.now() - 30000 + m.timestamp
   })).slice(0, BUFFER_SIZE)
 
-  private inputValue: string = ''
-
   constructor() {
     this.listenMessages().catch(console.error)
+    listenSystemAction('Chat', (pressed) => {
+      if (pressed) {
+        setUiFocus({ elementId: 'chat-input' })
+        state.open = true
+        scrollToBottom()
+      }
+    })
   }
 
   switchOpen(): void {
     state.open = !state.open
     if (state.open) {
       state.unreadMessages = 0
-      state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
+      scrollToBottom()
     }
   }
 
@@ -149,45 +178,19 @@ export default class ChatAndLogs {
         >
           <Input
             uiTransform={{
+              elementId: 'chat-input',
               padding: { left: '1%' },
               width: '80%',
               height: '100%',
-              alignContent: 'center',
-              borderRadius: 0,
-              borderColor: Color4.Red(),
-              borderWidth: 1
+              alignContent: 'center'
             }}
             textAlign="middle-center"
             fontSize={inputFontSize}
             color={ALMOST_WHITE}
-            onChange={(inputValue) => {
-              console.log('onChange', inputValue)
-              this.inputValue = inputValue
-            }}
-            value={this.inputValue}
-            placeholder="Click to chat"
+            onChange={updateInputValue}
+            placeholder="Press ENTER to chat"
             placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
-            onSubmit={(value) => {
-              // TODO issue with onInput, becomes a loop
-              // this.handleSubmitMessage(value)
-            }}
-          />
-
-          <ButtonIcon
-            onMouseDown={() => {
-              BevyApi.sendChat(this.inputValue, 'Nearby')
-
-              executeTask(async () => {
-                // TODO this doesn't work, probably because onChange loop, or that value only works in initialization
-                await sleep(0)
-                this.inputValue = ''
-              })
-            }}
-            uiTransform={{
-              width: 20,
-              height: 20
-            }}
-            icon={{ atlasName: 'icons', spriteName: 'PublishIcon' }}
+            onSubmit={sendChatMessage}
           />
         </UiEntity>
         {/* CHAT AREA */}
