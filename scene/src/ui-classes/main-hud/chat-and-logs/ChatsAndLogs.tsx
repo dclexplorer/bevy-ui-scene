@@ -24,7 +24,7 @@ import { listenSystemAction } from '../../../service/system-actions-emitter'
 // @ts-expect-error
 import { setUiFocus } from '~system/RestrictedActions'
 
-const BUFFER_SIZE = 19
+const BUFFER_SIZE = 40
 
 const state: {
   open: boolean
@@ -92,7 +92,10 @@ export default class ChatAndLogs {
     console.log('message', message)
     this.messages.push({
       ...message,
-      timestamp: Date.now(),
+      timestamp:
+        this.messages[this.messages.length - 1].timestamp === Date.now()
+          ? Date.now() + 1
+          : Date.now(),
       name: getPlayer({ userId: message.sender_address })?.name ?? `Unknown*`,
       side: getNextMessageSide(this.messages)
     })

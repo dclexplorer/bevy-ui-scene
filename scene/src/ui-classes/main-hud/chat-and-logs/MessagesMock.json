@@ -8,7 +8,7 @@
     "timestamp": 0
   },
   {
-    "sender_address": "0x581198bcбef9063f554d660f3481a241fb6054f2",
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
     "name": "Rob",
     "message": "Hey Sebas!",
     "channel": "Nearby",
@@ -16,7 +16,7 @@
     "timestamp": 1000
   },
   {
-    "sender_address": "0xabc1234e5f6789ab1c2d3e4f5a6b7c8d9e0f1a2a",
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
     "name": "Kuruk",
     "message": "Hello guys!",
     "channel": "Nearby",
@@ -32,7 +32,7 @@
     "timestamp": 3000
   },
   {
-    "sender_address": "0x581198bcбef9063f554d660f3481a241fb6054f2",
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
     "name": "Rob",
     "message": "Doing great! Just finished work.",
     "channel": "Nearby",
@@ -40,7 +40,7 @@
     "timestamp": 4000
   },
   {
-    "sender_address": "0xabc1234e5f6789ab1c2d3e4f5a6b7c8d9e0f1a2a",
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
     "name": "Kuruk",
     "message": "Same here, just relaxing now.",
     "channel": "Nearby",
@@ -72,7 +72,7 @@
     "timestamp": 8000
   },
   {
-    "sender_address": "0x581198bcбef9063f554d660f3481a241fb6054f2",
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
     "name": "Rob",
     "message": "Yeah, I noticed. Huge improvement!",
     "channel": "Nearby",
@@ -80,7 +80,7 @@
     "timestamp": 9000
   },
   {
-    "sender_address": "0xabc1234e5f6789ab1c2d3e4f5a6b7c8d9e0f1a2a",
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
     "name": "Kuruk",
     "message": "Absolutely! Finally, they fixed it.",
     "channel": "Nearby",
@@ -96,7 +96,7 @@
     "timestamp": 11000
   },
   {
-    "sender_address": "0x581198bcбef9063f554d660f3481a241fb6054f2",
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
     "name": "Rob",
     "message": "Count me in!",
     "channel": "Nearby",
@@ -104,7 +104,7 @@
     "timestamp": 12000
   },
   {
-    "sender_address": "0xabc1234e5f6789ab1c2d3e4f5a6b7c8d9e0f1a2a",
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
     "name": "Kuruk",
     "message": "I'm in too. What time?",
     "channel": "Nearby",
@@ -128,7 +128,7 @@
     "timestamp": 15000
   },
   {
-    "sender_address": "0x581198bcбef9063f554d660f3481a241fb6054f2",
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
     "name": "Rob",
     "message": "Perfect! I'll bring some snacks.",
     "channel": "Nearby",
@@ -136,11 +136,515 @@
     "timestamp": 16000
   },
   {
-    "sender_address": "0xabc1234e5f6789ab1c2d3e4f5a6b7c8d9e0f1a2a",
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
     "name": "Kuruk",
     "message": "I'll bring some water.",
     "channel": "Nearby",
     "side": 0,
     "timestamp": 17000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Can't wait for tomorrow!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 18000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "We should bring a camera.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 19000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "The trail might be muddy though.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 20000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "I\u2019ll wear my hiking boots.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 21000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Who's driving?",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 22000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "I can pick you both up.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 23000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Great! Let\u2019s meet at my place.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 24000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Don\u2019t forget sunscreen!",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 25000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "I'll bring some extra hats.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 26000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Should we pack lunch?",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 27000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Yes, sandwiches would be good.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 28000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "I'll make a few wraps.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 29000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Bringing fruit too.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 30000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "We might see some wildlife.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 31000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "I hope we spot deer again.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 32000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Last time was amazing.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 33000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "I\u2019ll bring binoculars.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 34000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Charging my phone now.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 35000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Let\u2019s take lots of photos.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 36000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Agreed. Memories!",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 37000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "We should start a photo album.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 38000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Good idea!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 39000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Uploading them later would be cool.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 40000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "We can make a shared folder.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 41000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "I\u2019ll create one after the hike.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 42000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Perfect.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 43000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Forecast says sunny.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 44000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "That\u2019s lucky.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 45000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Let\u2019s hope it stays that way.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 46000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "I\u2019ll bring a light jacket.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 47000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "I packed mine already.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 48000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Can't wait to hit the trail!",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 49000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Same here.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 50000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Adventure time!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 51000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Let\u2019s sleep early tonight.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 52000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Good call.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 53000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "See you in the morning!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 54000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Night everyone!",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 55000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Good night!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 56000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Sleep well guys.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 57000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Morning! Ready?",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 58000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "All set!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 59000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Grabbing my bag now.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 60000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Be there in 10 mins.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 61000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Let\u2019s go!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 62000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Here we go!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 63000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Look at that sunrise!",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 64000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Beautiful start.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 65000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Already worth it.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 66000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Breathtaking!",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 67000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Glad we came.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 68000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Great company too.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 69000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "This is the best.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 70000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Let\u2019s rest a bit.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 71000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Snack break?",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 72000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Yes please.",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 73000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Good idea.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 74000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Thanks for the bar.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 75000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Want a banana?",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 76000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "Sure!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 77000
+  },
+  {
+    "sender_address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+    "name": "Sebas",
+    "message": "Almost at the top.",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 78000
+  },
+  {
+    "sender_address": "0xd6c957f9a6411f35d01baae2658758f277408878",
+    "name": "Rob",
+    "message": "Let\u2019s push!",
+    "channel": "Nearby",
+    "side": 1,
+    "timestamp": 79000
+  },
+  {
+    "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+    "name": "Kuruk",
+    "message": "We made it!",
+    "channel": "Nearby",
+    "side": 0,
+    "timestamp": 80000
   }
 ]
