@@ -21,6 +21,9 @@ import {
 import { getWaitFor } from '../utils/function-utils'
 import { sleep } from '../utils/dcl-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { Color4 } from '@dcl/sdk/math'
+import { type ReactElement } from '@dcl/react-ecs'
 
 export class UIController {
   public isPhotosVisible: boolean = false
@@ -95,6 +98,7 @@ export class UIController {
   ui(): ReactEcs.JSX.Element {
     return (
       <UiEntity>
+        {InteractableArea({ active: false })}
         {this.mainHud.mainUi()}
         {this.isMainMenuVisible && this.menu.mainUi()}
         {this.isProfileVisible && this.profile.mainUi()}
@@ -110,4 +114,35 @@ export class UIController {
       </UiEntity>
     )
   }
+}
+
+function InteractableArea({
+  active = false,
+  opacity = 0.1
+}: {
+  active?: boolean
+  opacity?: number
+}): ReactElement | null {
+  if (!active) return null
+  const canvas = UiCanvasInformation.get(engine.RootEntity)
+  if (!canvas?.interactableArea) return null
+
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        position: canvas.interactableArea,
+        width:
+          canvas.width -
+          (canvas.interactableArea.right + canvas.interactableArea.left),
+        height:
+          canvas.height -
+          (canvas.interactableArea.top + canvas.interactableArea.bottom),
+        zIndex: 999999
+      }}
+      uiBackground={{
+        color: Color4.create(0, 1, 0, opacity)
+      }}
+    />
+  )
 }
