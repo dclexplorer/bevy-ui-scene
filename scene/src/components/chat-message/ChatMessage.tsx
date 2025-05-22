@@ -117,20 +117,22 @@ function ChatMessage(props: {
           }
         }}
       >
-        <Label
-          uiTransform={{
-            width: '100%',
-            height: props.fontSize ?? defaultFontSize
-          }}
-          value={`<b>${playerName}</b>`}
-          fontSize={props.fontSize ?? defaultFontSize}
-          color={
-            isSystemMessage(props.message)
-              ? Color4.Gray()
-              : (getAddressColor(props.message.sender_address) as Color4)
-          }
-          textAlign={`middle-${align}`}
-        />
+        {!isSystemMessage(props.message) && (
+          <Label
+            uiTransform={{
+              width: '100%',
+              height: props.fontSize ?? defaultFontSize
+            }}
+            value={`<b>${playerName}</b>`}
+            fontSize={props.fontSize ?? defaultFontSize}
+            color={
+              isSystemMessage(props.message)
+                ? Color4.Gray()
+                : (getAddressColor(props.message.sender_address) as Color4)
+            }
+            textAlign={`middle-${align}`}
+          />
+        )}
         {/* TEXT */}
         <Label
           uiTransform={{
