@@ -1,4 +1,4 @@
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, { Input, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
@@ -14,7 +14,7 @@ import {
   type ChatMessageDefinition,
   type ChatMessageRepresentation
 } from '../../../components/chat-message/ChatMessage.types'
-import { isTruthy } from '../../../utils/function-utils'
+import { isTruthy, memoize } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 // TODO Review getCanvasScaleRatio , if Chat should be based in height and portions by docs ?
 import { listenSystemAction } from '../../../service/system-actions-emitter'
@@ -31,6 +31,8 @@ import {
   getChatMembers,
   initChatMembersCount
 } from '../../../service/chat-members'
+import { store } from '../../../state/store'
+import { sleep } from '../../../utils/dcl-utils'
 
 const BUFFER_SIZE = 40
 
@@ -40,7 +42,7 @@ const state: {
   autoScrollSwitch: number
   inputValue: string
 } = {
-  open: true,
+  open: false,
   unreadMessages: 0,
   autoScrollSwitch: 0,
   inputValue: ''
@@ -280,11 +282,17 @@ function InputArea(): ReactElement | null {
   )
 }
 
+const getScrollVector = memoize(_getScrollVector)
+
 function ChatArea({
   messages
 }: {
   messages: ChatMessageRepresentation[]
 }): ReactElement {
+  const scrollPosition = getScrollVector(
+    store.getState().viewport.height * 0.7 - state.autoScrollSwitch
+  )
+
   return (
     <UiEntity
       uiTransform={{
@@ -294,8 +302,9 @@ function ChatArea({
         alignSelf: 'flex-end',
         alignItems: 'flex-start',
         justifyContent: 'flex-end',
-        height: '70vh', // TODO the rest of the sibling in parent container
+        height: getChatMaxHeight(), // TODO the rest of the sibling in parent container
         overflow: 'scroll',
+        scrollPosition,
         padding: { left: '3%', right: '8%' }
       }}
     >
@@ -305,10 +314,16 @@ function ChatArea({
     </UiEntity>
   )
 }
+
 function sendChatMessage(): void {
   if (!state.inputValue) return
   BevyApi.sendChat(state.inputValue, 'Nearby')
+  executeTask(async () => {
+    await sleep(0)
+    scrollToBottom()
+  })
 }
+
 function updateInputValue(value: string): void {
   state.inputValue = value
 }
@@ -321,4 +336,11 @@ function focusChatInput(): void {
   setUiFocus({ elementId: 'chat-input' })
   state.open = true
   scrollToBottom()
+}
+
+function _getScrollVector(positionY: number): Vector2 {
+  return Vector2.create(0, positionY)
+}
+function getChatMaxHeight(): number {
+  return store.getState().viewport.height * 0.7
 }
