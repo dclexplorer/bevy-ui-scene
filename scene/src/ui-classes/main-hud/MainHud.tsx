@@ -3,7 +3,6 @@ import { type Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Position, UiEntity } from '@dcl/sdk/react-ecs'
 import ButtonIcon from '../../components/button-icon/ButtonIcon'
 import { type UIController } from '../../controllers/ui.controller'
-import Canvas from '../../components/canvas/Canvas'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../bevy-api'
 import { type AtlasIcon } from '../../utils/definitions'
@@ -13,7 +12,6 @@ import { Friends } from './friends'
 import { SceneInfo } from './scene-info'
 import { switchEmotesWheelVisibility } from '../../emotes-wheel/emotes-wheel'
 import { type ReactElement } from '@dcl/react-ecs'
-import { COLOR } from '../../components/color-palette'
 
 export default class MainHud {
   public fontSize: number = 16
@@ -255,6 +253,8 @@ export default class MainHud {
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
+    if (this.uiController.menu.isOpen()) return null
+
     return (
       <UiEntity
         uiTransform={{
