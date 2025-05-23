@@ -240,55 +240,32 @@ export default class SceneInfo {
     const sceneCoords = store.getState().scene.explorerPlayerParcelAction
     if (sceneCoords === undefined) return null
 
-    let leftPosition: number
-    if ((canvasInfo.width * 2.5) / 100 < 45) {
-      leftPosition = 45 + (canvasInfo.width * 1) / 100
-    } else {
-      leftPosition = (canvasInfo.width * 3.4) / 100
-    }
-
-    let panelWidth: number
-
-    if (canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR < LEFT_PANEL_MIN_WIDTH) {
-      panelWidth = LEFT_PANEL_MIN_WIDTH
-    } else {
-      panelWidth = canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR
-    }
-
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: 'auto',
+          minHeight: this.fontSize * 3.5,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column'
+        }}
+        uiBackground={{
+          ...ROUNDED_TEXTURE_BACKGROUND,
+          color: ALPHA_BLACK_PANEL
+        }}
+      >
         <UiEntity
           uiTransform={{
-            width: panelWidth,
+            width: '100%',
             height: 'auto',
-            minHeight: this.fontSize * 3.5,
-            justifyContent: 'center',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            flexDirection: 'column',
-            position: {
-              left: this.uiController.mainHud.isSideBarVisible
-                ? leftPosition
-                : canvasInfo.width * 0.01,
-              top: canvasInfo.width * 0.01
-            },
-            positionType: 'absolute'
-          }}
-          uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
-            color: ALPHA_BLACK_PANEL
+            flexDirection: 'row'
           }}
         >
-          <UiEntity
-            uiTransform={{
-              width: '100%',
-              height: 'auto',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexDirection: 'row'
-            }}
-          >
-            {/* FOR DEBUG INFO OR MINIMAP */}
-            {/* <ButtonIcon
+          {/* FOR DEBUG INFO OR MINIMAP */}
+          {/* <ButtonIcon
               onMouseDown={() => {
                 this.setExpanded(!this.isExpanded).catch((reason)=>{console.error(reason)})
               }}
@@ -306,334 +283,329 @@ export default class SceneInfo {
               backgroundColor={this.expandBackgroundColor}
               icon={this.expandIcon}
             /> */}
-            <UiEntity
-              uiTransform={{
-                width: 'auto',
-                height: 'auto',
-                justifyContent: 'flex-start',
-                padding: this.fontSize * 0.5,
-                alignItems: 'flex-start',
-                flexDirection: 'column',
-                flexGrow: 1
-              }}
-            >
-              <Label
-                value={truncateWithoutBreakingWords(
-                  this.liveSceneInfo?.title ?? '',
-                  20
-                )}
-                fontSize={this.fontSize}
-                uiTransform={{
-                  display: this.liveSceneInfo?.title ? 'flex' : 'none',
-                  height: this.fontSize * 1.1
-                }}
-                textAlign="middle-left"
-              />
-              <UiEntity
-                uiTransform={{
-                  width: '100%',
-                  height: this.fontSize,
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                  margin: {
-                    left: this.fontSize * 0.25,
-                    top: this.fontSize * 0.25
-                  }
-                }}
-              >
-                <UiEntity
-                  uiTransform={{
-                    width: this.fontSize * 0.875,
-                    height: this.fontSize * 0.875
-                  }}
-                  uiBackground={{
-                    ...getBackgroundFromAtlas({
-                      atlasName: 'icons',
-                      spriteName: 'PinIcn'
-                    }),
-                    color: UNSELECTED_TEXT_WHITE
-                  }}
-                />
-                <Label
-                  value={
-                    sceneCoords.x.toString() + ',' + sceneCoords.z.toString()
-                  }
-                  fontSize={this.fontSize}
-                  uiTransform={{}}
-                />
-
-                <UiEntity
-                  uiTransform={{
-                    display:
-                      this.liveSceneInfo?.sdkVersion === 'sdk6'
-                        ? 'flex'
-                        : 'none',
-                    width: (this.fontSize * 0.875) / 0.41,
-                    height: this.fontSize * 0.875,
-                    margin: { left: this.fontSize * 0.5 }
-                  }}
-                  uiBackground={{
-                    ...getBackgroundFromAtlas({
-                      atlasName: 'icons',
-                      spriteName: 'Tag'
-                    })
-                  }}
-                />
-
-                <ButtonIcon
-                  uiTransform={{
-                    display: this.flagIcon !== undefined ? 'flex' : 'none',
-                    width: this.fontSize * 1.2,
-                    height: this.fontSize * 1.2,
-                    margin: { left: this.fontSize * 0.5 }
-                  }}
-                  icon={{
-                    atlasName: 'toggles',
-                    spriteName: this.flagIcon ?? ''
-                  }}
-                  iconSize={this.fontSize}
-                  onMouseEnter={() => {
-                    this.isFlagHintVisible = true
-                  }}
-                  onMouseLeave={() => {
-                    this.isFlagHintVisible = false
-                  }}
-                  hintText={this.flagHint}
-                  showHint={this.isFlagHintVisible}
-                  hintFontSize={this.fontSize * 0.75}
-                />
-                <ButtonIcon
-                  uiTransform={{
-                    display:
-                      this.liveSceneInfo?.isBroken === true ? 'flex' : 'none',
-                    width: this.fontSize * 1.2,
-                    height: this.fontSize * 1.2,
-                    margin: { left: this.fontSize * 0.5 }
-                  }}
-                  icon={{ atlasName: 'icons', spriteName: 'WarningError' }}
-                  iconSize={this.fontSize}
-                  onMouseEnter={() => {
-                    this.isBrokenHintVisible = true
-                  }}
-                  onMouseLeave={() => {
-                    this.isBrokenHintVisible = false
-                  }}
-                  hintText={'Scene is broken'}
-                  showHint={this.isBrokenHintVisible}
-                  hintFontSize={this.fontSize * 0.75}
-                />
-              </UiEntity>
-            </UiEntity>
-
-            <ButtonIcon
-              onMouseDown={() => {
-                this.setMenuOpen(!this.isMenuOpen)
-              }}
-              onMouseEnter={() => {
-                this.menuBackgroundColor = SELECTED_BUTTON_COLOR
-              }}
-              onMouseLeave={() => {
-                this.menuBackgroundColor = undefined
-              }}
-              uiTransform={{
-                width: this.fontSize * 2,
-                height: this.fontSize * 2,
-                margin: { right: this.fontSize * 0.5 }
-              }}
-              backgroundColor={this.menuBackgroundColor}
-              icon={{ atlasName: 'icons', spriteName: 'Menu' }}
-              iconSize={this.fontSize * 1.5}
-            />
-          </UiEntity>
-
           <UiEntity
             uiTransform={{
-              display: this.isMenuOpen ? 'flex' : 'none',
-              minWidth: 150,
-              width: 150,
+              width: 'auto',
               height: 'auto',
-              justifyContent: 'center',
-              alignItems: 'center',
+              justifyContent: 'flex-start',
+              padding: this.fontSize * 0.5,
+              alignItems: 'flex-start',
               flexDirection: 'column',
-              position: {
-                left: '105%',
-                top: 0
-              },
-              positionType: 'absolute'
+              flexGrow: 1
             }}
-            uiBackground={{
-              ...ROUNDED_TEXTURE_BACKGROUND,
-              color: ALPHA_BLACK_PANEL
+          >
+            <Label
+              value={truncateWithoutBreakingWords(
+                this.liveSceneInfo?.title ?? '',
+                20
+              )}
+              fontSize={this.fontSize}
+              uiTransform={{
+                display: this.liveSceneInfo?.title ? 'flex' : 'none',
+                height: this.fontSize * 1.1
+              }}
+              textAlign="middle-left"
+            />
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: this.fontSize,
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                flexDirection: 'row',
+                margin: {
+                  left: this.fontSize * 0.25,
+                  top: this.fontSize * 0.25
+                }
+              }}
+            >
+              <UiEntity
+                uiTransform={{
+                  width: this.fontSize * 0.875,
+                  height: this.fontSize * 0.875
+                }}
+                uiBackground={{
+                  ...getBackgroundFromAtlas({
+                    atlasName: 'icons',
+                    spriteName: 'PinIcn'
+                  }),
+                  color: UNSELECTED_TEXT_WHITE
+                }}
+              />
+              <Label
+                value={
+                  sceneCoords.x.toString() + ',' + sceneCoords.z.toString()
+                }
+                fontSize={this.fontSize}
+                uiTransform={{}}
+              />
+
+              <UiEntity
+                uiTransform={{
+                  display:
+                    this.liveSceneInfo?.sdkVersion === 'sdk6' ? 'flex' : 'none',
+                  width: (this.fontSize * 0.875) / 0.41,
+                  height: this.fontSize * 0.875,
+                  margin: { left: this.fontSize * 0.5 }
+                }}
+                uiBackground={{
+                  ...getBackgroundFromAtlas({
+                    atlasName: 'icons',
+                    spriteName: 'Tag'
+                  })
+                }}
+              />
+
+              <ButtonIcon
+                uiTransform={{
+                  display: this.flagIcon !== undefined ? 'flex' : 'none',
+                  width: this.fontSize * 1.2,
+                  height: this.fontSize * 1.2,
+                  margin: { left: this.fontSize * 0.5 }
+                }}
+                icon={{
+                  atlasName: 'toggles',
+                  spriteName: this.flagIcon ?? ''
+                }}
+                iconSize={this.fontSize}
+                onMouseEnter={() => {
+                  this.isFlagHintVisible = true
+                }}
+                onMouseLeave={() => {
+                  this.isFlagHintVisible = false
+                }}
+                hintText={this.flagHint}
+                showHint={this.isFlagHintVisible}
+                hintFontSize={this.fontSize * 0.75}
+              />
+              <ButtonIcon
+                uiTransform={{
+                  display:
+                    this.liveSceneInfo?.isBroken === true ? 'flex' : 'none',
+                  width: this.fontSize * 1.2,
+                  height: this.fontSize * 1.2,
+                  margin: { left: this.fontSize * 0.5 }
+                }}
+                icon={{ atlasName: 'icons', spriteName: 'WarningError' }}
+                iconSize={this.fontSize}
+                onMouseEnter={() => {
+                  this.isBrokenHintVisible = true
+                }}
+                onMouseLeave={() => {
+                  this.isBrokenHintVisible = false
+                }}
+                hintText={'Scene is broken'}
+                showHint={this.isBrokenHintVisible}
+                hintFontSize={this.fontSize * 0.75}
+              />
+            </UiEntity>
+          </UiEntity>
+
+          <ButtonIcon
+            onMouseDown={() => {
+              this.setMenuOpen(!this.isMenuOpen)
+            }}
+            onMouseEnter={() => {
+              this.menuBackgroundColor = SELECTED_BUTTON_COLOR
+            }}
+            onMouseLeave={() => {
+              this.menuBackgroundColor = undefined
+            }}
+            uiTransform={{
+              width: this.fontSize * 2,
+              height: this.fontSize * 2,
+              margin: { right: this.fontSize * 0.5 }
+            }}
+            backgroundColor={this.menuBackgroundColor}
+            icon={{ atlasName: 'icons', spriteName: 'Menu' }}
+            iconSize={this.fontSize * 1.5}
+          />
+        </UiEntity>
+
+        <UiEntity
+          uiTransform={{
+            display: this.isMenuOpen ? 'flex' : 'none',
+            minWidth: 150,
+            width: 150,
+            height: 'auto',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            position: {
+              left: '105%',
+              top: 0
+            },
+            positionType: 'absolute'
+          }}
+          uiBackground={{
+            ...ROUNDED_TEXTURE_BACKGROUND,
+            color: ALPHA_BLACK_PANEL
+          }}
+        >
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: 'auto',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexDirection: 'row'
+            }}
+            onMouseDown={() => {
+              this.toggleSceneUi().catch(console.error)
+            }}
+            onMouseEnter={() => {
+              this.sceneUiLabelColor = ALMOST_WHITE
+            }}
+            onMouseLeave={() => {
+              this.sceneUiLabelColor = UNSELECTED_TEXT_WHITE
+            }}
+          >
+            <Label
+              value={'Hide Scene UI'}
+              fontSize={this.fontSize * 0.8}
+              color={this.sceneUiLabelColor}
+              uiTransform={{ margin: { left: this.fontSize / 3 } }}
+            />
+            <UiEntity
+              uiTransform={{
+                width: (this.fontSize * 0.8 * 65) / 36,
+                height: this.fontSize * 0.8,
+                margin: this.fontSize * 0.5
+              }}
+              uiBackground={{
+                ...getBackgroundFromAtlas(this.sceneUiToggle),
+                color: this.sceneUiLabelColor
+              }}
+            />
+          </UiEntity>
+          <UiEntity
+            uiTransform={{ width: '100%', height: 1 }}
+            uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+          />
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: 'auto',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              flexDirection: 'row'
+            }}
+            onMouseDown={() => {
+              if (this.isHome) {
+                this.setHome().catch(console.error)
+              } else {
+                this.setHome(this.realm, this.sceneCoords).catch(console.error)
+              }
+            }}
+            onMouseEnter={() => {
+              this.setHomeLabelColor = ALMOST_WHITE
+            }}
+            onMouseLeave={() => {
+              this.setHomeLabelColor = UNSELECTED_TEXT_WHITE
             }}
           >
             <UiEntity
               uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row'
+                width: this.fontSize * 0.8,
+                height: this.fontSize * 0.8,
+                margin: this.fontSize * 0.5
               }}
-              onMouseDown={() => {
-                this.toggleSceneUi().catch(console.error)
+              uiBackground={{
+                ...getBackgroundFromAtlas(this.setAtHomeIcon),
+                color: this.setHomeLabelColor
               }}
-              onMouseEnter={() => {
-                this.sceneUiLabelColor = ALMOST_WHITE
-              }}
-              onMouseLeave={() => {
-                this.sceneUiLabelColor = UNSELECTED_TEXT_WHITE
-              }}
-            >
-              <Label
-                value={'Hide Scene UI'}
-                fontSize={this.fontSize * 0.8}
-                color={this.sceneUiLabelColor}
-                uiTransform={{ margin: { left: this.fontSize / 3 } }}
-              />
-              <UiEntity
-                uiTransform={{
-                  width: (this.fontSize * 0.8 * 65) / 36,
-                  height: this.fontSize * 0.8,
-                  margin: this.fontSize * 0.5
-                }}
-                uiBackground={{
-                  ...getBackgroundFromAtlas(this.sceneUiToggle),
-                  color: this.sceneUiLabelColor
-                }}
-              />
-            </UiEntity>
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-              onMouseDown={() => {
-                if (this.isHome) {
-                  this.setHome().catch(console.error)
-                } else {
-                  this.setHome(this.realm, this.sceneCoords).catch(
-                    console.error
-                  )
-                }
-              }}
-              onMouseEnter={() => {
-                this.setHomeLabelColor = ALMOST_WHITE
-              }}
-              onMouseLeave={() => {
-                this.setHomeLabelColor = UNSELECTED_TEXT_WHITE
-              }}
-            >
-              <UiEntity
-                uiTransform={{
-                  width: this.fontSize * 0.8,
-                  height: this.fontSize * 0.8,
-                  margin: this.fontSize * 0.5
-                }}
-                uiBackground={{
-                  ...getBackgroundFromAtlas(this.setAtHomeIcon),
-                  color: this.setHomeLabelColor
-                }}
-              />
-              <Label
-                value={this.isHome ? 'Unset as Home' : 'Set as Home'}
-                fontSize={this.fontSize * 0.8}
-                color={this.setHomeLabelColor}
-              />
-            </UiEntity>
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+            <Label
+              value={this.isHome ? 'Unset as Home' : 'Set as Home'}
+              fontSize={this.fontSize * 0.8}
+              color={this.setHomeLabelColor}
             />
+          </UiEntity>
+          <UiEntity
+            uiTransform={{ width: '100%', height: 1 }}
+            uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+          />
 
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-              onMouseDown={() => {
-                this.reloadScene(this.liveSceneInfo?.hash).catch(console.error)
-              }}
-              onMouseEnter={() => {
-                this.reloadLabelColor = ALMOST_WHITE
-              }}
-              onMouseLeave={() => {
-                this.reloadLabelColor = UNSELECTED_TEXT_WHITE
-              }}
-            >
-              <UiEntity
-                uiTransform={{
-                  width: this.fontSize * 0.8,
-                  height: this.fontSize * 0.8,
-                  margin: this.fontSize * 0.5
-                }}
-                uiBackground={{
-                  ...getBackgroundFromAtlas(this.reloadIcon),
-                  color: this.reloadLabelColor
-                }}
-              />
-              <Label
-                value="Reload Scene"
-                fontSize={this.fontSize * 0.8}
-                color={this.reloadLabelColor}
-              />
-            </UiEntity>
-            <UiEntity
-              uiTransform={{ width: '100%', height: 1 }}
-              uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
-            />
+          <UiEntity
+            uiTransform={{ width: '100%', height: 1 }}
+            uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+          />
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: 'auto',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              flexDirection: 'row'
+            }}
+            onMouseDown={() => {
+              this.reloadScene(this.liveSceneInfo?.hash).catch(console.error)
+            }}
+            onMouseEnter={() => {
+              this.reloadLabelColor = ALMOST_WHITE
+            }}
+            onMouseLeave={() => {
+              this.reloadLabelColor = UNSELECTED_TEXT_WHITE
+            }}
+          >
             <UiEntity
               uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                flexDirection: 'row'
+                width: this.fontSize * 0.8,
+                height: this.fontSize * 0.8,
+                margin: this.fontSize * 0.5
               }}
-              onMouseDown={() => {
-                this.openSceneInfo().catch(console.error)
+              uiBackground={{
+                ...getBackgroundFromAtlas(this.reloadIcon),
+                color: this.reloadLabelColor
               }}
-              onMouseEnter={() => {
-                this.openInfoLabelColor = ALMOST_WHITE
+            />
+            <Label
+              value="Reload Scene"
+              fontSize={this.fontSize * 0.8}
+              color={this.reloadLabelColor}
+            />
+          </UiEntity>
+          <UiEntity
+            uiTransform={{ width: '100%', height: 1 }}
+            uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
+          />
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: 'auto',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              flexDirection: 'row'
+            }}
+            onMouseDown={() => {
+              this.openSceneInfo().catch(console.error)
+            }}
+            onMouseEnter={() => {
+              this.openInfoLabelColor = ALMOST_WHITE
+            }}
+            onMouseLeave={() => {
+              this.openInfoLabelColor = UNSELECTED_TEXT_WHITE
+            }}
+          >
+            <UiEntity
+              uiTransform={{
+                width: this.fontSize * 0.8,
+                height: this.fontSize * 0.8,
+                margin: this.fontSize * 0.5
               }}
-              onMouseLeave={() => {
-                this.openInfoLabelColor = UNSELECTED_TEXT_WHITE
+              uiBackground={{
+                ...getBackgroundFromAtlas(this.infoIcon),
+                color: this.openInfoLabelColor
               }}
-            >
-              <UiEntity
-                uiTransform={{
-                  width: this.fontSize * 0.8,
-                  height: this.fontSize * 0.8,
-                  margin: this.fontSize * 0.5
-                }}
-                uiBackground={{
-                  ...getBackgroundFromAtlas(this.infoIcon),
-                  color: this.openInfoLabelColor
-                }}
-              />
-              <Label
-                value="Scene Info"
-                fontSize={this.fontSize * 0.8}
-                color={this.openInfoLabelColor}
-              />
-            </UiEntity>
+            />
+            <Label
+              value="Scene Info"
+              fontSize={this.fontSize * 0.8}
+              color={this.openInfoLabelColor}
+            />
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 

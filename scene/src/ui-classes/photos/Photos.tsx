@@ -118,7 +118,13 @@ export default class Photos {
     const photoInfo: PhotoMetadataResponse = store.getState().photo.photoInfo
 
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+      >
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -495,7 +501,7 @@ export default class Photos {
             </UiEntity>
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 

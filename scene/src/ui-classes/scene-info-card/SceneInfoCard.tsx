@@ -322,7 +322,13 @@ export default class SceneInfoCard {
 
     if (this.place === undefined) return null
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+      >
         <UiEntity
           uiTransform={{
             width: panelWidth,
@@ -381,7 +387,7 @@ export default class SceneInfoCard {
             </UiEntity>
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 

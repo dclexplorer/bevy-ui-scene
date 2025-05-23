@@ -231,7 +231,13 @@ export default class Profile {
     const rightMarginIfMenuVisible: number =
       Math.max(canvasInfo.height * 0.024, 46) * 2 + 10
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+      >
         <UiEntity
           uiTransform={{
             flexDirection: 'column',
@@ -1511,7 +1517,7 @@ export default class Profile {
           {/* ADD LINK */}
           {this.addLink.mainUi()}
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 }

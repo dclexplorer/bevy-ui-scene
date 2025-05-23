@@ -240,13 +240,17 @@ export default class LoadingAndLogin {
 
     const LEFT_PANEL_HEIGHT: number = canvasInfo.height * 0.5
     const LEFT_PANEL_WIDTH: number = canvasInfo.width * 0.3
-    // TODO: back when avatar panel is implemented
-    // const AVATAR_PANEL_WIDTH: number = canvasInfo.height * 0.4
-    // const AVATAR_PANEL_HEIGHT: number = canvasInfo.height * 0.8
 
     const HEADER_HEIGHT: number = LEFT_PANEL_HEIGHT * 0.15
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute',
+          zIndex: 9999
+        }}
+      >
         {this.isVisible && (
           <UiEntity
             uiTransform={{
@@ -661,7 +665,7 @@ export default class LoadingAndLogin {
             )}
           </UiEntity>
         )}
-      </Canvas>
+      </UiEntity>
     )
   }
 }

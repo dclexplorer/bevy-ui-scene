@@ -55,7 +55,10 @@ function ChatMessage(props: {
         flexDirection: side === SIDE.RIGHT ? 'row-reverse' : 'row',
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
-        margin: { bottom: messageMargin, top: messageMargin },
+        margin: {
+          bottom: messageMargin,
+          top: messageMargin
+        },
         borderRadius: getCanvasScaleRatio() * BORDER_RADIUS_F * 4,
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 0,
@@ -138,7 +141,11 @@ function ChatMessage(props: {
           uiTransform={{
             width: '100%'
           }}
-          value={props.message.message}
+          value={
+            isSystemMessage(props.message)
+              ? `<i>${props.message.message}</i>`
+              : props.message.message
+          }
           fontSize={props.fontSize ?? defaultFontSize}
           color={ALMOST_WHITE}
           textWrap="wrap"

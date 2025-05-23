@@ -6,8 +6,7 @@ import { ChatMessage } from '../../../components/chat-message'
 import MockMessages from './MessagesMock.json'
 import {
   ALMOST_WHITE,
-  ROUNDED_TEXTURE_BACKGROUND,
-  TEXTURE_SLICES_05
+  ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 import { BevyApi } from '../../../bevy-api'
 import {
@@ -18,7 +17,6 @@ import {
 import { isTruthy } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 // TODO Review getCanvasScaleRatio , if Chat should be based in height and portions by docs ?
-import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 
 // TODO remove ts-expect-error
@@ -135,20 +133,17 @@ export default class ChatAndLogs {
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
-    const panelWidth: number = getCanvasScaleRatio() * 800
-
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
     return (
       <UiEntity
         uiTransform={{
-          width: panelWidth,
-          height: 'auto',
-          justifyContent: 'center',
-          alignItems: 'flex-end',
-          flexDirection: 'column-reverse',
-          padding: '2%',
+          width: '100%',
+          height: '100%',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+          flexDirection: 'column',
           borderRadius: 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0
@@ -157,22 +152,24 @@ export default class ChatAndLogs {
           color: Color4.create(0, 0, 0, 0.3)
         }}
       >
-        {InputArea()}
-        {ChatArea({ messages: this.messages })}
         {HeaderArea()}
+        {ChatArea({ messages: this.messages })}
+        {InputArea()}
       </UiEntity>
     )
   }
 }
+
 function HeaderArea(): ReactElement {
   const fontSize = getCanvasScaleRatio() * 48
   return (
     <UiEntity
       uiTransform={{
-        width: '102%',
-        position: { top: '-1%' },
-        padding: { top: 8, bottom: -8, left: 0, right: 0 },
+        width: '100%',
+        height: '4%',
+        padding: { top: '4%', bottom: '-1%', left: 0, right: 0 },
         justifyContent: 'flex-start',
+        flexShrink: 0,
         alignItems: 'center',
         borderRadius: 10,
         borderColor: COLOR.BLACK_TRANSPARENT,
@@ -185,20 +182,26 @@ function HeaderArea(): ReactElement {
       <UiEntity
         uiTransform={{
           width: '100%',
-          height: '50%', // TODO review all literal values
+          height: '100%',
           positionType: 'absolute',
-          position: { top: '80%' }
+          position: { top: '70%' },
+          zIndex: 1
         }}
         uiBackground={{
           color: COLOR.TEXT_COLOR
         }}
       />
       <Icon
-        uiTransform={{ margin: { left: '4%' } }}
+        uiTransform={{ margin: { left: '4%' }, zIndex: 2 }}
         iconSize={28}
         icon={{ spriteName: 'DdlIconColor', atlasName: 'icons' }}
       />
-      <Label value={'Nearby'} fontSize={fontSize} color={COLOR.INACTIVE} />
+      <Label
+        uiTransform={{ zIndex: 1 }}
+        value={'Nearby'}
+        fontSize={fontSize}
+        color={COLOR.INACTIVE}
+      />
       <UiEntity
         uiTransform={{
           alignSelf: 'flex-end',
@@ -206,7 +209,8 @@ function HeaderArea(): ReactElement {
           height: '100%',
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'flex-end'
+          justifyContent: 'flex-end',
+          zIndex: 1
         }}
       >
         <Icon
@@ -222,6 +226,7 @@ function HeaderArea(): ReactElement {
     </UiEntity>
   )
 }
+
 function InputArea(): ReactElement | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   const inputFontSize = '1vw' // Math.floor(getCanvasScaleRatio() * 60) // TODO cannot change Input fontSize in runtime
@@ -232,7 +237,8 @@ function InputArea(): ReactElement | null {
     <UiEntity
       uiTransform={{
         width: '100%',
-        height: getCanvasScaleRatio() * 120,
+        height: '4%',
+        flexGrow: 0,
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
@@ -273,28 +279,24 @@ function InputArea(): ReactElement | null {
     </UiEntity>
   )
 }
+
 function ChatArea({
   messages
 }: {
   messages: ChatMessageRepresentation[]
 }): ReactElement {
-  const maxHeight = Math.floor(getCanvasScaleRatio() * 1400)
-  const scrollPosition = Vector2.create(0, maxHeight - state.autoScrollSwitch)
-
   return (
     <UiEntity
       uiTransform={{
         width: '100%',
-        height: 'auto',
         display: state.open ? 'flex' : 'none',
         flexDirection: 'column',
+        alignSelf: 'flex-end',
         alignItems: 'flex-start',
         justifyContent: 'flex-end',
+        height: '70vh', // TODO the rest of the sibling in parent container
         overflow: 'scroll',
-        maxHeight,
-        scrollPosition,
-        borderRadius: getCanvasScaleRatio() * BORDER_RADIUS_F * 2,
-        padding: { right: '10%' }
+        padding: { left: '3%', right: '8%' }
       }}
     >
       {messages.map((message) => (

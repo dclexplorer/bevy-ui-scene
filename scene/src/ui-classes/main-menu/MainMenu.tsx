@@ -138,7 +138,13 @@ export default class MainMenu {
     const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1
 
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+      >
         <DeleteOutfitDialog />
         <UiEntity
           uiTransform={{
@@ -357,7 +363,7 @@ export default class MainMenu {
             />
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 }

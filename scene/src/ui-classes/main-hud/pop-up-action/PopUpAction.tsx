@@ -106,7 +106,13 @@ export default class PopUpAction {
     }
 
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+      >
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -284,7 +290,7 @@ export default class PopUpAction {
             </UiEntity>
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 }

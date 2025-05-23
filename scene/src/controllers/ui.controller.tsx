@@ -24,6 +24,7 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { type ReactElement } from '@dcl/react-ecs'
+import { Canvas } from '../components/canvas'
 
 export class UIController {
   public isPhotosVisible: boolean = false
@@ -97,7 +98,7 @@ export class UIController {
 
   ui(): ReactEcs.JSX.Element {
     return (
-      <UiEntity>
+      <Canvas>
         {InteractableArea({ active: false })}
         {this.mainHud.mainUi()}
         {this.isMainMenuVisible && this.menu.mainUi()}
@@ -111,7 +112,7 @@ export class UIController {
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
         {!this.isMainMenuVisible && renderEmotesWheel()}
-      </UiEntity>
+      </Canvas>
     )
   }
 }

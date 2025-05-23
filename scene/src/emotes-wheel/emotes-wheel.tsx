@@ -95,10 +95,14 @@ export function renderEmotesWheel(): ReactElement {
 
   return (
     state.visible && (
-      <Canvas
+      <UiEntity
         uiTransform={{
           alignItems: 'center',
-          justifyContent: 'center'
+          alignSelf: 'center',
+          justifyContent: 'center',
+          positionType: 'absolute',
+          width: '100%',
+          height: '100%'
         }}
       >
         <UiEntity
@@ -216,7 +220,7 @@ Press <b>[Alt + num]</b> to run emote`,
             textWrap: 'wrap'
           }}
         />
-      </Canvas>
+      </UiEntity>
     )
   )
 }
