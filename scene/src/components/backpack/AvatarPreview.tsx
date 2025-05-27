@@ -20,7 +20,6 @@ import {
 } from '../../service/categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { getItemsWithTokenId } from '../../utils/urn-utils'
-import { type Perspective } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/texture_camera.gen'
 
 export type AvatarPreview = {
   avatarEntity: Entity

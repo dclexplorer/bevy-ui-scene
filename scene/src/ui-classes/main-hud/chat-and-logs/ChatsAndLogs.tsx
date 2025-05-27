@@ -1,4 +1,14 @@
-import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
+import {
+  engine,
+  type Entity,
+  executeTask,
+  type PBUiScrollResult,
+  type PBUiTransform,
+  ScrollPositionValue,
+  UiCanvasInformation,
+  UiScrollResult,
+  UiTransform
+} from '@dcl/sdk/ecs'
 import { Color4, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, { Input, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
@@ -32,7 +42,7 @@ import {
   initChatMembersCount
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
-import { sleep } from '../../../utils/dcl-utils'
+import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
 
 const BUFFER_SIZE = 40
 
@@ -41,11 +51,15 @@ const state: {
   unreadMessages: number
   autoScrollSwitch: number
   inputValue: string
+  newMessages: ChatMessageRepresentation[]
+  addingNewMessages: boolean
 } = {
-  open: false,
+  open: true,
   unreadMessages: 0,
   autoScrollSwitch: 0,
-  inputValue: ''
+  inputValue: '',
+  newMessages: [],
+  addingNewMessages: false
 }
 
 export default class ChatAndLogs {
@@ -55,8 +69,6 @@ export default class ChatAndLogs {
   })).slice(0, BUFFER_SIZE)
 
   constructor() {
-    console.log('ChatAndLogs constructor')
-
     this.listenMessages().catch(console.error)
     listenSystemAction('Chat', (pressed) => {
       if (pressed) {
@@ -102,8 +114,8 @@ export default class ChatAndLogs {
     if (this.messages.length >= BUFFER_SIZE) {
       this.messages.shift()
     }
-    console.log('message', message)
-    this.messages.push({
+
+    const chatMessage: ChatMessageRepresentation = {
       ...message,
       timestamp:
         this.messages[this.messages.length - 1].timestamp === Date.now()
@@ -113,7 +125,14 @@ export default class ChatAndLogs {
         ? ``
         : getPlayer({ userId: message.sender_address })?.name ?? `Unknown*`,
       side: getNextMessageSide(this.messages)
-    })
+    }
+    const chatScroll: Vector2 = getChatScroll()
+
+    if (chatScroll.y < 1) {
+      state.newMessages.push(chatMessage)
+    } else {
+      this.messages.push(chatMessage) // TODO move to state
+    }
 
     function getNextMessageSide(
       messages: ChatMessageRepresentation[]
@@ -134,10 +153,25 @@ export default class ChatAndLogs {
     }
   }
 
+  checkScrollToAppendMessages(): void {
+    if (
+      !state.addingNewMessages &&
+      state.newMessages.length &&
+      getChatScroll().y === 1
+    ) {
+      state.addingNewMessages = true
+      this.messages.push(state.newMessages.shift() as ChatMessageRepresentation)
+      executeTask(async () => {
+        await sleep(30)
+        state.addingNewMessages = false
+      })
+    }
+  }
+
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-
+    this.checkScrollToAppendMessages()
     return (
       <UiEntity
         uiTransform={{
@@ -157,9 +191,44 @@ export default class ChatAndLogs {
         {HeaderArea()}
         {ChatArea({ messages: this.messages })}
         {InputArea()}
+        {ShowNewMessages()}
       </UiEntity>
     )
   }
+}
+
+function ShowNewMessages(): ReactElement | null {
+  if (!state.newMessages.length) return null
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        position: { right: '-10%', bottom: '6%' },
+        borderRadius: 10,
+        borderColor: COLOR.BLACK_TRANSPARENT,
+        borderWidth: 0,
+        height: '10%',
+        width: '10%',
+        zIndex: 999,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column'
+      }}
+      uiBackground={{
+        color: COLOR.DARK_OPACITY_7
+      }}
+      onMouseDown={scrollToBottom}
+    >
+      <Label
+        value={`+${state.newMessages.length}`}
+        fontSize={getCanvasScaleRatio() * 48}
+      />
+      <Icon
+        iconSize={20}
+        icon={{ spriteName: 'DownArrow', atlasName: 'icons' }}
+      />
+    </UiEntity>
+  )
 }
 
 function HeaderArea(): ReactElement {
@@ -296,6 +365,7 @@ function ChatArea({
   return (
     <UiEntity
       uiTransform={{
+        elementId: 'chat-area',
         width: '100%',
         display: state.open ? 'flex' : 'none',
         flexDirection: 'column',
@@ -343,4 +413,15 @@ function _getScrollVector(positionY: number): Vector2 {
 }
 function getChatMaxHeight(): number {
   return store.getState().viewport.height * 0.7
+}
+function getChatScroll(): Vector2 {
+  const [[, , userScrollPosition]] = filterEntitiesWith(
+    ([, uiTransformResult]): boolean => {
+      // TODO fix type
+      return (uiTransformResult as any).elementId === 'chat-area'
+    },
+    UiTransform,
+    UiScrollResult
+  )
+  return (userScrollPosition as any).value as Vector2
 }
