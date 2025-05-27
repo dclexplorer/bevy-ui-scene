@@ -66,7 +66,8 @@ export const COLOR = {
   TEXT_COLOR: Color4.fromHexString('#2B272AFF'),
   INACTIVE: Color4.fromHexString('#d8d8d8'),
   WHEEL_BASE_RARITY: Color4.fromHexString('#e1e1e1'),
-  BLACK_TRANSPARENT: Color4.create(0, 0, 0, 0)
+  BLACK_TRANSPARENT: Color4.create(0, 0, 0, 0),
+  MESSAGE_MENTION: Color4.fromHexString('#FD2D58')
 }
 export const RARITY_COLORS: Record<RarityName, Color4> = {
   base: Color4.fromHexString('#a09ba8'),

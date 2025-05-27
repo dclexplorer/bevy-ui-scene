@@ -39,6 +39,7 @@ import {
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
+import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 
 const BUFFER_SIZE = 40
 
@@ -288,6 +289,42 @@ function HeaderArea(): ReactElement {
           uiTransform={{ position: { left: '-4%' } }}
           value={getChatMembers().length.toString()}
           fontSize={fontSize}
+        />
+      </UiEntity>
+      <UiEntity
+        uiTransform={{
+          alignSelf: 'flex-end',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          zIndex: 1,
+          width: getCanvasScaleRatio() * 64,
+          height: getCanvasScaleRatio() * 64,
+          position: { top: '50%', right: '1%' },
+          borderRadius: 10,
+          borderColor: COLOR.BLACK_TRANSPARENT,
+          borderWidth: 0
+        }}
+        uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
+        onMouseDown={() => (state.open = !state.open)}
+      >
+        <Icon
+          uiTransform={{
+            positionType: 'absolute',
+            zIndex: 9,
+            position: { top: -10 * getCanvasScaleRatio() }
+          }}
+          iconSize={getCanvasScaleRatio() * 48}
+          icon={{ spriteName: 'DownArrow', atlasName: 'icons' }}
+        />
+        <Icon
+          uiTransform={{
+            positionType: 'absolute',
+            zIndex: 10,
+            position: { top: 5 * getCanvasScaleRatio() }
+          }}
+          iconSize={getCanvasScaleRatio() * 48}
+          icon={{ spriteName: 'DownArrow', atlasName: 'icons' }}
         />
       </UiEntity>
     </UiEntity>
