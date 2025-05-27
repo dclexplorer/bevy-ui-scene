@@ -48,7 +48,8 @@ function ChatMessage(props: {
     props.message.sender_address === myPlayer.userId ? SIDE.RIGHT : SIDE.LEFT
   const align = side === SIDE.LEFT ? 'left' : 'right'
   const messageMargin = 12 * getCanvasScaleRatio()
-  const hasMentionToMyself: boolean = messageHasMentionToMyself(
+  const hasMentionToMe: boolean = messageHasMentionToMyself(
+    // TODO memoize or preprocess and flag in MessageRepresentation.hasMentionToMe ?
     props.message.message
   )
   return (
@@ -114,22 +115,23 @@ function ChatMessage(props: {
           alignItems: 'flex-start',
           padding: 5,
           flexDirection: 'column',
-
-          ...(hasMentionToMyself
+          borderRadius: 10,
+          ...(hasMentionToMe
             ? {
-                borderRadius: 10,
                 borderWidth: getCanvasScaleRatio() * 10,
                 borderColor: COLOR.MESSAGE_MENTION
               }
-            : undefined)
+            : {
+                borderWidth: getCanvasScaleRatio() * 1,
+                borderColor: COLOR.BLACK_TRANSPARENT
+              })
         }}
         uiBackground={{
-          ...ROUNDED_TEXTURE_BACKGROUND,
-          color: hasMentionToMyself
+          color: hasMentionToMe
             ? COLOR.MESSAGE_MENTION_BACKGROUND
             : {
                 ...Color4.Black(),
-                a: isSystemMessage(props.message) ? 0.2 : 0.4
+                a: isSystemMessage(props.message) ? 0.2 : 0.8
               }
         }}
       >
