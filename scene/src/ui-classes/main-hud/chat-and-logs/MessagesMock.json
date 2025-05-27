@@ -306,7 +306,7 @@
   {
     "sender_address": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
     "name": "Kuruk",
-    "message": "We should start a photo album <color=#00B1FE>@pablo</color>.",
+    "message": "We should start a photo album @_own_player_name_.",
     "channel": "Nearby",
     "side": 0,
     "timestamp": 38000

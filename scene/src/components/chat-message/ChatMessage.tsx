@@ -48,6 +48,9 @@ function ChatMessage(props: {
     props.message.sender_address === myPlayer.userId ? SIDE.RIGHT : SIDE.LEFT
   const align = side === SIDE.LEFT ? 'left' : 'right'
   const messageMargin = 12 * getCanvasScaleRatio()
+  const hasMentionToMyself: boolean = messageHasMentionToMyself(
+    props.message.message
+  )
   return (
     <UiEntity
       uiTransform={{
@@ -110,14 +113,24 @@ function ChatMessage(props: {
           justifyContent: 'center',
           alignItems: 'flex-start',
           padding: 5,
-          flexDirection: 'column'
+          flexDirection: 'column',
+
+          ...(hasMentionToMyself
+            ? {
+                borderRadius: 10,
+                borderWidth: getCanvasScaleRatio() * 10,
+                borderColor: COLOR.MESSAGE_MENTION
+              }
+            : undefined)
         }}
         uiBackground={{
           ...ROUNDED_TEXTURE_BACKGROUND,
-          color: {
-            ...Color4.Black(),
-            a: isSystemMessage(props.message) ? 0.2 : 0.4
-          }
+          color: hasMentionToMyself
+            ? COLOR.MESSAGE_MENTION_BACKGROUND
+            : {
+                ...Color4.Black(),
+                a: isSystemMessage(props.message) ? 0.2 : 0.4
+              }
         }}
       >
         {!isSystemMessage(props.message) && (
@@ -144,7 +157,7 @@ function ChatMessage(props: {
           value={
             isSystemMessage(props.message)
               ? `<i>${props.message.message}</i>`
-              : props.message.message
+              : decorateNamesWithLinkColor(props.message.message)
           }
           fontSize={props.fontSize ?? defaultFontSize}
           color={ALMOST_WHITE}
@@ -180,4 +193,12 @@ export default ChatMessage
 
 export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
   return messageData.sender_address === ZERO_ADDRESS
+}
+
+export function decorateNamesWithLinkColor(message: string): string {
+  // 00B1FE
+  return message.replace(/(@\w+)/g, `<color=#00B1FE>$1</color>`)
+}
+export function messageHasMentionToMyself(message: string): boolean {
+  return message.includes(`@${getPlayer()?.name}`)
 }

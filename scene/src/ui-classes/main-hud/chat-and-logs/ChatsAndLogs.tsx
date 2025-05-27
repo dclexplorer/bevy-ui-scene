@@ -38,8 +38,7 @@ import {
   initChatMembersCount
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
-import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
-import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
+import { filterEntitiesWith, sleep, waitFor } from '../../../utils/dcl-utils'
 
 const BUFFER_SIZE = 40
 
@@ -72,7 +71,15 @@ export default class ChatAndLogs {
         focusChatInput()
       }
     })
+
     initChatMembersCount().catch(console.error)
+    executeTask(async () => {
+      // TODO remove for production
+      await waitFor(() => getPlayer() != null)
+      this.messages.forEach(
+        (m) => (m.message = m.message.replace('_own_player_name_', 'pablo'))
+      )
+    })
   }
 
   switchOpen(): void {
