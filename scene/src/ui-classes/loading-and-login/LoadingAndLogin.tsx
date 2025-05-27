@@ -14,7 +14,6 @@ import {
   RUBY
 } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import Canvas from '../../components/canvas/Canvas'
 import { noop } from '../../utils/function-utils'
 
 type StatusType =

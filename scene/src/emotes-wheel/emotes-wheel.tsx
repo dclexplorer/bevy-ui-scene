@@ -1,6 +1,5 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { Canvas } from '../components/canvas'
 import { getCanvasScaleRatio } from '../service/canvas-ratio'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR, RARITY_COLORS } from '../components/color-palette'

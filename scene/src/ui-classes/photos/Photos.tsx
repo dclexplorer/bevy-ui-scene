@@ -14,7 +14,6 @@ import {
   ROUNDED_TEXTURE_BACKGROUND,
   RUBY
 } from 'src/utils/constants'
-import Canvas from '../../components/canvas/Canvas'
 import { type UIController } from '../../controllers/ui.controller'
 import type {
   PhotoFromApi,

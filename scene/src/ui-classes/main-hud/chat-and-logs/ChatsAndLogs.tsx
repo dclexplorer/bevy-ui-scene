@@ -1,10 +1,6 @@
 import {
   engine,
-  type Entity,
   executeTask,
-  type PBUiScrollResult,
-  type PBUiTransform,
-  ScrollPositionValue,
   UiCanvasInformation,
   UiScrollResult,
   UiTransform

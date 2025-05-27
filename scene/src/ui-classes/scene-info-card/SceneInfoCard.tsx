@@ -26,7 +26,6 @@ import {
 import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
-import Canvas from '../../components/canvas/Canvas'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,

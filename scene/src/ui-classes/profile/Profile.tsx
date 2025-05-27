@@ -21,7 +21,6 @@ import {
 } from '../../utils/constants'
 import { getBackgroundFromAtlas, isValidDate } from '../../utils/ui-utils'
 import { AddLink } from '../add-link'
-import Canvas from '../../components/canvas/Canvas'
 import { BevyApi } from '../../bevy-api'
 import { ButtonTextIcon } from '../../components/button-text-icon'
 import { ButtonText } from '../../components/button-text'

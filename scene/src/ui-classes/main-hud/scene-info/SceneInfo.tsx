@@ -4,13 +4,11 @@ import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { store } from 'src/state/store'
 import type { PlaceFromApi } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { ButtonIcon } from '../../../components/button-icon'
-import Canvas from '../../../components/canvas/Canvas'
+
 import type { UIController } from '../../../controllers/ui.controller'
 import {
   ALMOST_WHITE,
   ALPHA_BLACK_PANEL,
-  LEFT_PANEL_MIN_WIDTH,
-  LEFT_PANEL_WIDTH_FACTOR,
   ROUNDED_TEXTURE_BACKGROUND,
   SELECTED_BUTTON_COLOR,
   UNSELECTED_TEXT_WHITE

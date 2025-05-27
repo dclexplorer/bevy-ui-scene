@@ -3,7 +3,6 @@ import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Callback, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { ButtonIcon } from '../../../components/button-icon'
 import { ButtonText } from '../../../components/button-text'
-import Canvas from '../../../components/canvas/Canvas'
 import { type UIController } from '../../../controllers/ui.controller'
 import {
   RUBY,
