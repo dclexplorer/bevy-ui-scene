@@ -40,6 +40,18 @@ const ROTATE_ICON: AtlasIcon = {
   spriteName: 'RotateIcn'
 }
 
+export function setAvatarPreviewZoom(): void {
+  for (const [, scroll, transform] of engine.getEntitiesWith(
+    UiScrollResult,
+    UiTransform
+  )) {
+    if (transform.elementId !== AVATAR_PREVIEW_ELEMENT_ID) continue
+    if (scroll.value === undefined) continue
+    state.zoomFactor = scroll.value.y
+    setAvatarPreviewZoomFactor(state.zoomFactor)
+  }
+}
+
 export function AvatarPreviewElement(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const loadingState = GltfContainerLoadingState.getOrNull(
@@ -196,14 +208,6 @@ function AvatarPreviewInstructions(): ReactElement {
 
 function AvatarPreviewZoomSystem(): void {
   if (state.listenZoom) {
-    for (const [, scroll, transform] of engine.getEntitiesWith(
-      UiScrollResult,
-      UiTransform
-    )) {
-      if (transform.elementId !== AVATAR_PREVIEW_ELEMENT_ID) continue
-      if (scroll.value === undefined) continue
-      state.zoomFactor = scroll.value.y
-      setAvatarPreviewZoomFactor(state.zoomFactor)
-    }
+    setAvatarPreviewZoom()
   }
 }

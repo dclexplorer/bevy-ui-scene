@@ -30,7 +30,10 @@ import {
   updateLoadedOutfitsMetadataAction,
   updateLoadingPage
 } from '../../../state/backpack/actions'
-import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
+import {
+  AvatarPreviewElement,
+  setAvatarPreviewZoom
+} from '../../../components/backpack/AvatarPreviewElement'
 import { saveResetOutfit } from './ItemCatalog'
 import { closeColorPicker } from './WearableColorPicker'
 import { WearablesCatalog } from './WearablesCatalog'
@@ -188,6 +191,8 @@ export default class BackpackPage {
 
       store.dispatch(updateLoadingPage(false))
     }
+
+    setAvatarPreviewZoom()
   }
 }
 
