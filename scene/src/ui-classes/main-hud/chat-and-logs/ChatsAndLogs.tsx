@@ -399,12 +399,15 @@ function InputArea(): ReactElement | null {
     <UiEntity
       uiTransform={{
         width: '100%',
-        height: '4%',
+        height: canvasInfo.height * 0.05,
         flexGrow: 0,
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
-        margin: { top: canvasInfo.height * 0.005 },
+        margin: {
+          top: canvasInfo.height * 0.005,
+          bottom: canvasInfo.height * 0.005
+        },
         padding: 5
       }}
       uiBackground={{
