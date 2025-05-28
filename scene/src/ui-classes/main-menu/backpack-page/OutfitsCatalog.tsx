@@ -40,6 +40,7 @@ import { DOUBLE_CLICK_DELAY } from '../../../utils/constants'
 import { showDeleteOutfitConfirmation } from './delete-outfit-dialog'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import { COLOR } from '../../../components/color-palette'
+import { getPlayer } from '@dcl/sdk/src/players'
 
 declare const localStorage: any
 
@@ -257,11 +258,13 @@ export const OutfitsCatalog = (): ReactElement => {
   async function equipOutfit(viewSlot: OutfitDefinition | null): Promise<void> {
     store.dispatch(
       updateAvatarBase({
+        ...store.getState().backpack.outfitSetup.base,
         skinColor: viewSlot?.skin.color ?? undefined,
         hairColor: viewSlot?.hair.color ?? undefined,
         eyesColor: viewSlot?.eyes.color ?? undefined,
         bodyShapeUrn: viewSlot?.bodyShape as URNWithoutTokenId,
-        name: ''
+
+        name: (viewSlot?.name as string) ?? getPlayer()?.name
       })
     )
 
@@ -328,13 +331,14 @@ async function saveOutfitSlot(index: number): Promise<void> {
   const currentOutfitsMetadata: OutfitsMetadata =
     backpackState.outfitsMetadata as OutfitsMetadata
   const newOutfitsMetadata: OutfitsMetadata = cloneDeep(currentOutfitsMetadata)
-  const outfitDefinition = {
+  const outfitDefinition: OutfitDefinition = {
     bodyShape: backpackState.outfitSetup.base.bodyShapeUrn,
     eyes: { color: backpackState.outfitSetup.base.eyesColor as RGBColor },
     hair: { color: backpackState.outfitSetup.base.hairColor as RGBColor },
     skin: { color: backpackState.outfitSetup.base.skinColor as RGBColor },
     wearables: getItemsWithTokenId(backpackState.equippedWearables),
-    forceRender: backpackState.forceRender
+    forceRender: backpackState.forceRender,
+    name: backpackState.outfitSetup.base.name
   }
   newOutfitsMetadata.outfits.push({
     slot: index,

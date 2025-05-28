@@ -76,8 +76,12 @@ export default class ChatAndLogs {
     executeTask(async () => {
       // TODO remove for production
       await waitFor(() => getPlayer() != null)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      const playerName = getPlayer().name
+
       this.messages.forEach(
-        (m) => (m.message = m.message.replace('_own_player_name_', 'pablo'))
+        (m) => (m.message = m.message.replace('_own_player_name_', playerName))
       )
     })
   }

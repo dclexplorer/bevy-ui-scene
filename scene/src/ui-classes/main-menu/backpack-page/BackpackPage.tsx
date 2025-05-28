@@ -46,6 +46,7 @@ import { BackpackNavBar } from './BackpackNavBar'
 import { updatePageGeneric } from './backpack-service'
 import { OutfitsCatalog } from './OutfitsCatalog'
 import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
+import { waitFor } from '../../../utils/dcl-utils'
 
 let originalAvatarJSON: string
 
@@ -126,7 +127,7 @@ export default class BackpackPage {
     store.dispatch(updateCacheKey())
     closeColorPicker()
     createAvatarPreview()
-
+    await waitFor(() => getPlayer() !== null)
     const player = getPlayer()
     const wearables: URNWithoutTokenId[] = (player?.wearables ?? []).map(
       (urn) => getURNWithoutTokenId(urn as URN)
@@ -152,7 +153,8 @@ export default class BackpackPage {
     )
     store.dispatch(
       updateAvatarBase({
-        name: player?.name ?? '',
+        ...store.getState().backpack.outfitSetup.base,
+        name: getPlayer()?.name as string,
         eyesColor: player?.avatar?.eyesColor,
         hairColor: player?.avatar?.hairColor,
         skinColor: player?.avatar?.skinColor,

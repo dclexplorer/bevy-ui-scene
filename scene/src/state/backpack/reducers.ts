@@ -72,11 +72,7 @@ export function reducer(
     case BACKPACK_ACTION.UPDATE_AVATAR_BASE: {
       const base = {
         ...backpackPageState.outfitSetup.base,
-        name: action.payload.name,
-        eyesColor: action.payload.eyesColor,
-        hairColor: action.payload.hairColor,
-        skinColor: action.payload.skinColor,
-        bodyShapeUrn: action.payload.bodyShapeUrn
+        ...action.payload
       }
       const equippedItems = gatherEquippedItems({
         base,

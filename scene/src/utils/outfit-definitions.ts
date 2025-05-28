@@ -10,6 +10,7 @@ export type OutfitDefinition = {
   skin: { color: RGBColor }
   wearables: URN[]
   forceRender: WearableCategory[]
+  name: string
 }
 export type OutfitSlot = {
   slot: number
