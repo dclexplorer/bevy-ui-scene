@@ -288,6 +288,8 @@ function HeaderArea(): ReactElement {
   return (
     <UiEntity
       uiTransform={{
+        positionType: 'absolute',
+        position: { top: '-5%' },
         width: '100%',
         height: '4%',
         padding: { top: '4%', bottom: '-1%', left: 0, right: 0 },
@@ -296,7 +298,8 @@ function HeaderArea(): ReactElement {
         alignItems: 'center',
         borderRadius: 10,
         borderColor: COLOR.BLACK_TRANSPARENT,
-        borderWidth: 1
+        borderWidth: 1,
+        zIndex: 2
       }}
       uiBackground={{
         color: COLOR.TEXT_COLOR
@@ -308,19 +311,19 @@ function HeaderArea(): ReactElement {
           height: '100%',
           positionType: 'absolute',
           position: { top: '70%' },
-          zIndex: 1
+          zIndex: 2
         }}
         uiBackground={{
           color: COLOR.TEXT_COLOR
         }}
       />
       <Icon
-        uiTransform={{ margin: { left: '4%' }, zIndex: 2 }}
+        uiTransform={{ margin: { left: '4%' }, zIndex: 3 }}
         iconSize={28}
         icon={{ spriteName: 'DdlIconColor', atlasName: 'icons' }}
       />
       <Label
-        uiTransform={{ zIndex: 1 }}
+        uiTransform={{ zIndex: 3 }}
         value={'Nearby'}
         fontSize={fontSize}
         color={COLOR.INACTIVE}
@@ -333,7 +336,7 @@ function HeaderArea(): ReactElement {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'flex-end',
-          zIndex: 1
+          zIndex: 3
         }}
       >
         <Icon
@@ -352,10 +355,10 @@ function HeaderArea(): ReactElement {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'flex-end',
-          zIndex: 1,
+          zIndex: 2,
           width: getCanvasScaleRatio() * 64,
           height: getCanvasScaleRatio() * 64,
-          position: { top: '50%', right: '1%' },
+          position: { top: '60%', right: '1%' },
           borderRadius: 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0
@@ -367,7 +370,7 @@ function HeaderArea(): ReactElement {
           uiTransform={{
             positionType: 'absolute',
             zIndex: 9,
-            position: { top: -10 * getCanvasScaleRatio() }
+            position: { top: -5 * getCanvasScaleRatio() }
           }}
           iconSize={getCanvasScaleRatio() * 48}
           icon={{ spriteName: 'DownArrow', atlasName: 'icons' }}
