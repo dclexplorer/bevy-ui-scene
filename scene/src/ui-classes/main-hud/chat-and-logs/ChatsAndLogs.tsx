@@ -1,6 +1,8 @@
 import {
   engine,
   executeTask,
+  PointerLock,
+  PrimaryPointerInfo,
   UiCanvasInformation,
   UiScrollResult,
   UiTransform
@@ -39,6 +41,10 @@ import {
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep, waitFor } from '../../../utils/dcl-utils'
+type Box = {
+  position: { x: number; y: number }
+  size: { x: number; y: number }
+}
 
 const BUFFER_SIZE = 40
 
@@ -49,13 +55,19 @@ const state: {
   inputValue: string
   newMessages: ChatMessageRepresentation[]
   addingNewMessages: boolean
+  cameraPointerLocked: boolean
+  hoveringChat: boolean
+  chatBox: Box
 } = {
   open: true,
   unreadMessages: 0,
   autoScrollSwitch: 0,
   inputValue: '',
   newMessages: [],
-  addingNewMessages: false
+  addingNewMessages: false,
+  cameraPointerLocked: false,
+  hoveringChat: false,
+  chatBox: { position: { x: 0, y: 0 }, size: { x: 0, y: 0 } }
 }
 
 export default class ChatAndLogs {
@@ -65,7 +77,14 @@ export default class ChatAndLogs {
   })).slice(0, BUFFER_SIZE)
 
   constructor() {
+    const colorBlack = Color4.Black()
+    console.log('colorBlack', colorBlack)
+    colorBlack.a = 0.5
+    console.log('colorBlack2', colorBlack)
+    console.log('Color4.Black()', Color4.Black())
+
     this.listenMessages().catch(console.error)
+    this.listenMouseHover()
     listenSystemAction('Chat', (pressed) => {
       if (pressed) {
         focusChatInput()
@@ -116,6 +135,29 @@ export default class ChatAndLogs {
     }
 
     await awaitChatStream(await BevyApi.getChatStream())
+  }
+
+  listenMouseHover(): void {
+    PointerLock.onChange(engine.CameraEntity, (pointerLock) => {
+      if (!pointerLock) return
+      state.cameraPointerLocked = pointerLock.isPointerLocked
+    })
+
+    store.subscribe(() => {
+      state.chatBox.position.x = store.getState().viewport.width * 0.03 // TODO review
+      state.chatBox.position.y = store.getState().viewport.height * 0.2
+      state.chatBox.size.x = store.getState().viewport.width * 0.25
+      state.chatBox.size.y = store.getState().viewport.height * 0.8
+    })
+
+    engine.addSystem(() => {
+      const { screenCoordinates } = PrimaryPointerInfo.get(engine.RootEntity)
+
+      if (!screenCoordinates) return
+      state.hoveringChat =
+        !state.cameraPointerLocked &&
+        isVectorInBox(screenCoordinates, state.chatBox)
+    })
   }
 
   pushMessage(message: ChatMessageDefinition): void {
@@ -193,10 +235,12 @@ export default class ChatAndLogs {
           borderWidth: 0
         }}
         uiBackground={{
-          color: Color4.create(0, 0, 0, 0.3)
+          color: state.hoveringChat
+            ? COLOR.DARK_OPACITY_5
+            : COLOR.BLACK_TRANSPARENT
         }}
       >
-        {HeaderArea()}
+        {state.hoveringChat && HeaderArea()}
         {ChatArea({ messages: this.messages })}
         {InputArea()}
         {ShowNewMessages()}
@@ -418,6 +462,7 @@ function ChatArea({
         justifyContent: 'flex-end',
         height: getChatMaxHeight(), // TODO the rest of the sibling in parent container
         overflow: 'scroll',
+        scrollVisible: state.hoveringChat ? 'vertical' : 'hidden',
         scrollPosition,
         padding: { left: '3%', right: '8%' }
       }}
@@ -468,4 +513,16 @@ function getChatScroll(): Vector2 {
     UiScrollResult
   )
   return (userScrollPosition as any).value as Vector2
+}
+
+function isVectorInBox(point: Vector2, box: Box): boolean {
+  const { x, y } = point
+  const { position, size } = box
+
+  return (
+    x >= position.x &&
+    x <= position.x + size.x &&
+    y >= position.y &&
+    y <= position.y + size.y
+  )
 }
