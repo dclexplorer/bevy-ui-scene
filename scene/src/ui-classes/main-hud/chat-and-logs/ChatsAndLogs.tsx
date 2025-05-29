@@ -73,7 +73,8 @@ const state: {
 export default class ChatAndLogs {
   public messages: ChatMessageRepresentation[] = MockMessages.map((m) => ({
     ...m,
-    timestamp: Date.now() - 30000 + m.timestamp
+    timestamp: Date.now() - 30000 + m.timestamp,
+    hasMentionToMe: messageHasMentionToMe(m.message)
   })).slice(0, BUFFER_SIZE)
 
   constructor() {
@@ -146,7 +147,7 @@ export default class ChatAndLogs {
     store.subscribe(() => {
       state.chatBox.position.x = store.getState().viewport.width * 0.03 // TODO review
       state.chatBox.position.y = store.getState().viewport.height * 0.2
-      state.chatBox.size.x = store.getState().viewport.width * 0.25
+      state.chatBox.size.x = store.getState().viewport.width * 0.26
       state.chatBox.size.y = store.getState().viewport.height * 0.8
     })
 
@@ -174,7 +175,8 @@ export default class ChatAndLogs {
       name: isSystemMessage(message)
         ? ``
         : getPlayer({ userId: message.sender_address })?.name ?? `Unknown*`,
-      side: getNextMessageSide(this.messages)
+      side: getNextMessageSide(this.messages),
+      hasMentionToMe: messageHasMentionToMe(message.message)
     }
     const chatScroll: Vector2 = getChatScroll()
 
@@ -531,4 +533,7 @@ function isVectorInBox(point: Vector2, box: Box): boolean {
     y >= position.y &&
     y <= position.y + size.y
   )
+}
+export function messageHasMentionToMe(message: string): boolean {
+  return message.includes(`@${getPlayer()?.name}`)
 }

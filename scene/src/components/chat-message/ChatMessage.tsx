@@ -9,11 +9,7 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import {
-  ALMOST_WHITE,
-  ROUNDED_TEXTURE_BACKGROUND,
-  ZERO_ADDRESS
-} from '../../utils/constants'
+import { ALMOST_WHITE, ZERO_ADDRESS } from '../../utils/constants'
 import { BORDER_RADIUS_F, getBackgroundFromAtlas } from '../../utils/ui-utils'
 import {
   type ChatMessageDefinition,
@@ -48,10 +44,7 @@ function ChatMessage(props: {
     props.message.sender_address === myPlayer.userId ? SIDE.RIGHT : SIDE.LEFT
   const align = side === SIDE.LEFT ? 'left' : 'right'
   const messageMargin = 12 * getCanvasScaleRatio()
-  const hasMentionToMe: boolean = messageHasMentionToMyself(
-    // TODO memoize or preprocess and flag in MessageRepresentation.hasMentionToMe ?
-    props.message.message
-  )
+
   return (
     <UiEntity
       uiTransform={{
@@ -116,7 +109,7 @@ function ChatMessage(props: {
           padding: 5,
           flexDirection: 'column',
           borderRadius: 10,
-          ...(hasMentionToMe
+          ...(props.message.hasMentionToMe
             ? {
                 borderWidth: getCanvasScaleRatio() * 10,
                 borderColor: COLOR.MESSAGE_MENTION
@@ -127,7 +120,7 @@ function ChatMessage(props: {
               })
         }}
         uiBackground={{
-          color: hasMentionToMe
+          color: props.message.hasMentionToMe
             ? COLOR.MESSAGE_MENTION_BACKGROUND
             : {
                 ...Color4.Black(),
@@ -200,7 +193,4 @@ export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
 export function decorateNamesWithLinkColor(message: string): string {
   // 00B1FE
   return message.replace(/(@\w+)/g, `<color=#00B1FE>$1</color>`)
-}
-export function messageHasMentionToMyself(message: string): boolean {
-  return message.includes(`@${getPlayer()?.name}`)
 }
