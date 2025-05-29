@@ -54,6 +54,7 @@ const state: {
   autoScrollSwitch: number
   inputValue: string
   newMessages: ChatMessageRepresentation[]
+  shownMessages: ChatMessageRepresentation[]
   addingNewMessages: boolean
   cameraPointerLocked: boolean
   hoveringChat: boolean
@@ -64,6 +65,12 @@ const state: {
   autoScrollSwitch: 0,
   inputValue: '',
   newMessages: [],
+  shownMessages: MockMessages.map((m) => ({
+    // TODO remove for production
+    ...m,
+    timestamp: Date.now() - 30000 + m.timestamp,
+    hasMentionToMe: messageHasMentionToMe(m.message)
+  })).slice(0, BUFFER_SIZE),
   addingNewMessages: false,
   cameraPointerLocked: false,
   hoveringChat: false,
@@ -71,12 +78,6 @@ const state: {
 }
 
 export default class ChatAndLogs {
-  public messages: ChatMessageRepresentation[] = MockMessages.map((m) => ({
-    ...m,
-    timestamp: Date.now() - 30000 + m.timestamp,
-    hasMentionToMe: messageHasMentionToMe(m.message)
-  })).slice(0, BUFFER_SIZE)
-
   constructor() {
     const colorBlack = Color4.Black()
     console.log('colorBlack', colorBlack)
@@ -100,7 +101,7 @@ export default class ChatAndLogs {
       // @ts-expect-error
       const playerName = getPlayer().name
 
-      this.messages.forEach(
+      state.shownMessages.forEach(
         (m) => (m.message = m.message.replace('_own_player_name_', playerName))
       )
     })
@@ -145,7 +146,7 @@ export default class ChatAndLogs {
     })
 
     store.subscribe(() => {
-      state.chatBox.position.x = store.getState().viewport.width * 0.03 // TODO review
+      state.chatBox.position.x = store.getState().viewport.width * 0.03
       state.chatBox.position.y = store.getState().viewport.height * 0.2
       state.chatBox.size.x = store.getState().viewport.width * 0.26
       state.chatBox.size.y = store.getState().viewport.height * 0.8
@@ -162,20 +163,21 @@ export default class ChatAndLogs {
   }
 
   pushMessage(message: ChatMessageDefinition): void {
-    if (this.messages.length >= BUFFER_SIZE) {
-      this.messages.shift()
+    if (state.shownMessages.length >= BUFFER_SIZE) {
+      state.shownMessages.shift()
     }
 
     const chatMessage: ChatMessageRepresentation = {
       ...message,
       timestamp:
-        this.messages[this.messages.length - 1].timestamp === Date.now()
+        state.shownMessages[state.shownMessages.length - 1].timestamp ===
+        Date.now()
           ? Date.now() + 1
           : Date.now(),
       name: isSystemMessage(message)
         ? ``
         : getPlayer({ userId: message.sender_address })?.name ?? `Unknown*`,
-      side: getNextMessageSide(this.messages),
+      side: getNextMessageSide(state.shownMessages),
       hasMentionToMe: messageHasMentionToMe(message.message)
     }
     const chatScroll: Vector2 = getChatScroll()
@@ -183,7 +185,7 @@ export default class ChatAndLogs {
     if (chatScroll.y < 1) {
       state.newMessages.push(chatMessage)
     } else {
-      this.messages.push(chatMessage) // TODO move to state
+      state.shownMessages.push(chatMessage) // TODO move to state
     }
 
     function getNextMessageSide(
@@ -212,7 +214,9 @@ export default class ChatAndLogs {
       getChatScroll().y === 1
     ) {
       state.addingNewMessages = true
-      this.messages.push(state.newMessages.shift() as ChatMessageRepresentation)
+      state.shownMessages.push(
+        state.newMessages.shift() as ChatMessageRepresentation
+      )
       executeTask(async () => {
         await sleep(30)
         state.addingNewMessages = false
@@ -243,7 +247,7 @@ export default class ChatAndLogs {
         }}
       >
         {state.hoveringChat && HeaderArea()}
-        {ChatArea({ messages: this.messages })}
+        {ChatArea({ messages: state.shownMessages })}
         {InputArea()}
         {ShowNewMessages()}
       </UiEntity>
@@ -468,7 +472,7 @@ function ChatArea({
         alignSelf: 'flex-end',
         alignItems: 'flex-start',
         justifyContent: 'flex-end',
-        height: getChatMaxHeight(), // TODO the rest of the sibling in parent container
+        height: getChatMaxHeight(), // the rest of the sibling in parent container
         overflow: 'scroll',
         scrollVisible: state.hoveringChat ? 'vertical' : 'hidden',
         scrollPosition,
