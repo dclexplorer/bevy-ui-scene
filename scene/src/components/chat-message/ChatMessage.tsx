@@ -12,6 +12,7 @@ import { Color4 } from '@dcl/sdk/math'
 import { ALMOST_WHITE, ZERO_ADDRESS } from '../../utils/constants'
 import { BORDER_RADIUS_F, getBackgroundFromAtlas } from '../../utils/ui-utils'
 import {
+  CHAT_SIDE,
   type ChatMessageDefinition,
   type ChatMessageRepresentation
 } from './ChatMessage.types'
@@ -19,9 +20,11 @@ import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorBy
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
 import { memoize } from '../../utils/function-utils'
-enum SIDE {
-  LEFT,
-  RIGHT
+import { ButtonIcon } from '../button-icon'
+
+const state: { hoveringMessageID: number; openMessageMenu: boolean } = {
+  hoveringMessageID: 0,
+  openMessageMenu: false
 }
 
 function ChatMessage(props: {
@@ -29,6 +32,7 @@ function ChatMessage(props: {
   message: ChatMessageRepresentation
   fontSize?: number
   key?: Key
+  onMessageMenu: (id: number) => void
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -40,16 +44,14 @@ function ChatMessage(props: {
   const playerName = props.message.name
   const addressColor = getAddressColor(props.message.sender_address) as Color4
 
-  const side =
-    props.message.sender_address === myPlayer.userId ? SIDE.RIGHT : SIDE.LEFT
-  const align = side === SIDE.LEFT ? 'left' : 'right'
+  const side = props.message.side
   const messageMargin = 12 * getCanvasScaleRatio()
 
   return (
     <UiEntity
       uiTransform={{
         width: '100%',
-        flexDirection: side === SIDE.RIGHT ? 'row-reverse' : 'row',
+        flexDirection: side === CHAT_SIDE.RIGHT ? 'row-reverse' : 'row',
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
         margin: {
@@ -60,6 +62,14 @@ function ChatMessage(props: {
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 0,
         ...props.uiTransform
+      }}
+      onMouseEnter={() => {
+        state.hoveringMessageID = props.message.timestamp
+      }}
+      onMouseLeave={() => {
+        if (state.hoveringMessageID !== 0) {
+          state.hoveringMessageID = 0
+        }
       }}
     >
       <UiEntity
@@ -141,7 +151,7 @@ function ChatMessage(props: {
                 ? Color4.Gray()
                 : (getAddressColor(props.message.sender_address) as Color4)
             }
-            textAlign={`middle-${align}`}
+            textAlign={`middle-left`}
           />
         )}
         {/* TEXT */}
@@ -157,19 +167,43 @@ function ChatMessage(props: {
           fontSize={props.fontSize ?? defaultFontSize}
           color={ALMOST_WHITE}
           textWrap="wrap"
-          textAlign={`middle-${align}`}
+          textAlign={`middle-left`}
         />
         <Label
           uiTransform={{
             width: '100%',
             height: getCanvasScaleRatio() * 30
           }}
-          value={formatTimestamp(props.message.timestamp)}
+          value={
+            formatTimestamp(props.message.timestamp) +
+            ` (${props.message.side})`
+          }
           fontSize={props.fontSize ?? defaultFontSize * 0.7}
           color={COLOR.INACTIVE}
           textWrap="wrap"
-          textAlign={`middle-${align}`}
+          textAlign={`middle-left`}
         />
+        {
+          <ButtonIcon
+            onMouseDown={() => {
+              props.onMessageMenu(props.message.timestamp)
+            }}
+            uiTransform={{
+              positionType: 'absolute',
+              position: { right: '1%', top: '5%' },
+              width: getCanvasScaleRatio() * 48,
+              height: getCanvasScaleRatio() * 48,
+              margin: { right: getCanvasScaleRatio() * 10 },
+              display:
+                state.hoveringMessageID === props.message.timestamp
+                  ? 'flex'
+                  : 'none',
+              pointerFilter: 'block'
+            }}
+            icon={{ atlasName: 'icons', spriteName: 'Menu' }}
+            iconSize={getCanvasScaleRatio() * 32}
+          />
+        }
       </UiEntity>
     </UiEntity>
   )

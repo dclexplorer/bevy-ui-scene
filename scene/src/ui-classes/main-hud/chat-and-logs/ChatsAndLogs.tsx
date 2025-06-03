@@ -49,6 +49,10 @@ type Box = {
 const BUFFER_SIZE = 40
 
 const state: {
+  mouseX: number
+  mouseY: number
+  messageMenuPositionTop: number
+  messageMenuTimestamp: number
   open: boolean
   unreadMessages: number
   autoScrollSwitch: number
@@ -60,6 +64,10 @@ const state: {
   hoveringChat: boolean
   chatBox: Box
 } = {
+  mouseX: 0,
+  mouseY: 0,
+  messageMenuPositionTop: 0,
+  messageMenuTimestamp: 0,
   open: true,
   unreadMessages: 0,
   autoScrollSwitch: 0,
@@ -154,7 +162,8 @@ export default class ChatAndLogs {
 
     engine.addSystem(() => {
       const { screenCoordinates } = PrimaryPointerInfo.get(engine.RootEntity)
-
+      state.mouseX = screenCoordinates?.x ?? 0
+      state.mouseY = screenCoordinates?.y ?? 0
       if (!screenCoordinates) return
       state.hoveringChat =
         !state.cameraPointerLocked &&
@@ -224,6 +233,13 @@ export default class ChatAndLogs {
     }
   }
 
+  onMessageMenu(timestamp: number): void {
+    state.messageMenuTimestamp = timestamp
+    state.messageMenuPositionTop =
+      state.mouseY -
+      (UiCanvasInformation.getOrNull(engine.RootEntity)?.height ?? 0) * 0.25
+  }
+
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
@@ -247,9 +263,40 @@ export default class ChatAndLogs {
         }}
       >
         {state.hoveringChat && HeaderArea()}
-        {ChatArea({ messages: state.shownMessages })}
+
+        {ChatArea({
+          messages: state.shownMessages,
+          onMessageMenu: this.onMessageMenu
+        })}
+
         {InputArea()}
         {ShowNewMessages()}
+
+        <UiEntity
+          uiTransform={{
+            positionType: 'absolute',
+            position: {
+              left:
+                canvasInfo.width *
+                (0.188 +
+                  (state.shownMessages.find(
+                    (m) => m.timestamp === state.messageMenuTimestamp
+                  )?.side ?? 0) *
+                    0.019),
+              top: state.messageMenuPositionTop
+            },
+            width: canvasInfo.width * 0.1,
+            height: '10%',
+            flexShrink: 0,
+            flexGrow: 1,
+            zIndex: 2
+          }}
+          uiBackground={{
+            color: COLOR.ACTIVE_BACKGROUND_COLOR
+          }}
+        >
+          <UiEntity></UiEntity>
+        </UiEntity>
       </UiEntity>
     )
   }
@@ -454,9 +501,11 @@ function InputArea(): ReactElement | null {
 const getScrollVector = memoize(_getScrollVector)
 
 function ChatArea({
-  messages
+  messages,
+  onMessageMenu
 }: {
   messages: ChatMessageRepresentation[]
+  onMessageMenu: any // TODO define type
 }): ReactElement {
   const scrollPosition = getScrollVector(
     store.getState().viewport.height * 0.7 - state.autoScrollSwitch
@@ -480,7 +529,11 @@ function ChatArea({
       }}
     >
       {messages.map((message) => (
-        <ChatMessage message={message} key={message.timestamp} />
+        <ChatMessage
+          message={message}
+          key={message.timestamp}
+          onMessageMenu={onMessageMenu}
+        />
       ))}
     </UiEntity>
   )
