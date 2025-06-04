@@ -59,6 +59,7 @@ export const COLOR = {
   NAV_BUTTON_INACTIVE_BACKGROUND: Color4.fromHexString('#FFFFFF'),
   NAV_BUTTON_INACTIVE_COLOR: Color4.fromHexString('#000000'),
   SMALL_TAG_BACKGROUND: Color4.fromHexString('#00000066'),
+  MENU_ITEM_BACKGROUND: Color4.fromHexString('#42404A'),
   DARK_OPACITY_2: Color4.create(0, 0, 0, 0.2),
   DARK_OPACITY_5: Color4.create(0, 0, 0, 0.5),
   DARK_OPACITY_7: Color4.create(0, 0, 0, 0.7),

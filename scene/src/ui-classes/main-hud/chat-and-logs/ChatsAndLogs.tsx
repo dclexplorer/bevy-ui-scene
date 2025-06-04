@@ -41,6 +41,7 @@ import {
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep, waitFor } from '../../../utils/dcl-utils'
+import { type PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
 type Box = {
   position: { x: number; y: number }
   size: { x: number; y: number }
@@ -271,35 +272,76 @@ export default class ChatAndLogs {
 
         {InputArea()}
         {ShowNewMessages()}
-
-        <UiEntity
-          uiTransform={{
-            positionType: 'absolute',
-            position: {
-              left:
-                canvasInfo.width *
-                (0.188 +
-                  (state.shownMessages.find(
-                    (m) => m.timestamp === state.messageMenuTimestamp
-                  )?.side ?? 0) *
-                    0.019),
-              top: state.messageMenuPositionTop
-            },
-            width: canvasInfo.width * 0.1,
-            height: '10%',
-            flexShrink: 0,
-            flexGrow: 1,
-            zIndex: 2
-          }}
-          uiBackground={{
-            color: COLOR.ACTIVE_BACKGROUND_COLOR
-          }}
-        >
-          <UiEntity></UiEntity>
-        </UiEntity>
+        {MessageSubMenu({ canvasInfo })}
       </UiEntity>
     )
   }
+}
+
+function MessageSubMenu({
+  canvasInfo
+}: {
+  canvasInfo: PBUiCanvasInformation
+}): ReactElement | null {
+  if (!state.messageMenuTimestamp) return null
+
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        position: {
+          left:
+            canvasInfo.width *
+            (0.188 +
+              (state.shownMessages.find(
+                (m) => m.timestamp === state.messageMenuTimestamp
+              )?.side ?? 0) *
+                0.019),
+          top: state.messageMenuPositionTop
+        },
+        width: canvasInfo.width * 0.1,
+        height: '5%',
+        flexShrink: 0,
+        flexGrow: 1,
+        zIndex: 2,
+        borderWidth: 0,
+        borderRadius: 10,
+        borderColor: COLOR.DARK_OPACITY_9,
+        padding: '1%'
+      }}
+      uiBackground={{
+        color: COLOR.DARK_OPACITY_9
+      }}
+    >
+      <UiEntity
+        uiTransform={{
+          borderWidth: 1,
+          borderRadius: 10,
+          borderColor: COLOR.MENU_ITEM_BACKGROUND,
+          alignItems: 'center',
+          width: '100%',
+          height: '100%',
+          padding: { left: '2%' }
+        }}
+        uiBackground={{
+          color: COLOR.MENU_ITEM_BACKGROUND
+        }}
+        onMouseDown={() => {
+          const messageToCopy = state.shownMessages.find(
+            (m) => m.timestamp === state.messageMenuTimestamp
+          )?.message
+          // TODO BevyApi.copyToClipboard(messageToCopy)
+          console.log('Message to copy:', messageToCopy)
+          state.messageMenuTimestamp = 0
+        }}
+      >
+        <Icon icon={{ spriteName: 'CopyIcon', atlasName: 'icons' }} />
+        <UiEntity
+          uiText={{ value: 'COPY', fontSize: getCanvasScaleRatio() * 32 }}
+        />
+      </UiEntity>
+    </UiEntity>
+  )
 }
 
 function ShowNewMessages(): ReactElement | null {
