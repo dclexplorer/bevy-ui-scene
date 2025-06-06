@@ -12,9 +12,11 @@ import { Friends } from './friends'
 import { SceneInfo } from './scene-info'
 import { switchEmotesWheelVisibility } from '../../emotes-wheel/emotes-wheel'
 import { type ReactElement } from '@dcl/react-ecs'
-
+const ZERO_SIZE = {
+  width: 0,
+  height: 0
+}
 export default class MainHud {
-  public fontSize: number = 16
   public readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
   readonly bellIcon: AtlasIcon = {
@@ -272,15 +274,8 @@ export default class MainHud {
             flexDirection: 'column'
           }}
         >
-          <UiEntity
-            uiTransform={{
-              width: '100%',
-              padding: '2%',
-              height: '10%'
-            }}
-          >
-            {this.sceneInfo.mainUi()}
-          </UiEntity>
+          {this.sceneInfo.mainUi()}
+
           <UiEntity
             uiTransform={{
               width: '100%',
@@ -301,9 +296,18 @@ export default class MainHud {
   }
 
   MainSideBar(): ReactElement | null {
-    const buttonSize: number = 38
+    const canvasInfo =
+      UiCanvasInformation.getOrNull(engine.RootEntity) ?? ZERO_SIZE
+    const buttonMinSize: number = 38
+    const buttonSize = (canvasInfo.height * 5) / 100
     const buttonMargin: Partial<Position> = { top: 5, bottom: 5 }
-    const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
+    const buttonTransform = {
+      height: buttonSize,
+      minHeight: buttonMinSize,
+      width: buttonSize,
+      minWidth: buttonMinSize,
+      margin: buttonMargin
+    }
     if (canvasInfo === null) return null
     return (
       <UiEntity
@@ -340,14 +344,7 @@ export default class MainHud {
             }}
           >
             <ButtonIcon
-              uiTransform={{
-                margin: { top: 5, bottom: 5 },
-                height: (canvasInfo.width * 2.1) / 100,
-                minHeight: buttonSize,
-                width: (canvasInfo.width * 2.1) / 100,
-
-                minWidth: buttonSize
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.walletEnter()
               }}
@@ -364,14 +361,7 @@ export default class MainHud {
             />
 
             <ButtonIcon
-              uiTransform={{
-                height: (canvasInfo.width * 2.1) / 100,
-                minHeight: buttonSize,
-                width: (canvasInfo.width * 2.1) / 100,
-
-                minWidth: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.notificationsEnter()
               }}
@@ -393,14 +383,7 @@ export default class MainHud {
             />
 
             <ButtonIcon
-              uiTransform={{
-                height: (canvasInfo.width * 2.1) / 100,
-                minHeight: buttonSize,
-                width: (canvasInfo.width * 2.1) / 100,
-
-                minWidth: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.mapEnter()
               }}
@@ -416,14 +399,7 @@ export default class MainHud {
               showHint={this.mapHint}
             />
             <ButtonIcon
-              uiTransform={{
-                height: (canvasInfo.width * 2.1) / 100,
-                minHeight: buttonSize,
-                width: (canvasInfo.width * 2.1) / 100,
-
-                minWidth: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.exploreEnter()
               }}
@@ -440,14 +416,7 @@ export default class MainHud {
             />
 
             <ButtonIcon
-              uiTransform={{
-                height: (canvasInfo.width * 2.1) / 100,
-                minHeight: buttonSize,
-                width: (canvasInfo.width * 2.1) / 100,
-
-                minWidth: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.backpackEnter()
               }}
@@ -464,14 +433,7 @@ export default class MainHud {
             />
 
             <ButtonIcon
-              uiTransform={{
-                height: (canvasInfo.width * 2.1) / 100,
-                minHeight: buttonSize,
-                width: (canvasInfo.width * 2.1) / 100,
-
-                minWidth: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.settingsEnter()
               }}
@@ -493,14 +455,7 @@ export default class MainHud {
             />
 
             <ButtonIcon
-              uiTransform={{
-                height: (canvasInfo.width * 2.1) / 100,
-                minHeight: buttonSize,
-                width: (canvasInfo.width * 2.1) / 100,
-
-                minWidth: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.helpEnter()
               }}
@@ -549,11 +504,7 @@ export default class MainHud {
                 showHint={this.experiencesHint} />
               */}
             <ButtonIcon
-              uiTransform={{
-                height: buttonSize,
-                width: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.friendsEnter()
               }}
@@ -573,11 +524,7 @@ export default class MainHud {
               }
             />
             <ButtonIcon
-              uiTransform={{
-                height: buttonSize,
-                width: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.voiceChatEnter()
               }}
@@ -593,11 +540,7 @@ export default class MainHud {
               showHint={this.voiceChatHint}
             />
             <ButtonIcon
-              uiTransform={{
-                height: buttonSize,
-                width: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.chatEnter()
               }}
@@ -615,14 +558,7 @@ export default class MainHud {
             />
 
             <ButtonIcon
-              uiTransform={{
-                height: (canvasInfo.width * 2.1) / 100,
-                minHeight: buttonSize,
-                width: (canvasInfo.width * 2.1) / 100,
-
-                minWidth: buttonSize,
-                margin: buttonMargin
-              }}
+              uiTransform={buttonTransform}
               onMouseEnter={() => {
                 this.emotesEnter()
               }}
