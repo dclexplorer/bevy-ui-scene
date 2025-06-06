@@ -26,6 +26,7 @@ const state: { hoveringMessageID: number; openMessageMenu: boolean } = {
   hoveringMessageID: 0,
   openMessageMenu: false
 }
+const _getAddressColor = memoize(getAddressColor)
 
 function ChatMessage(props: {
   uiTransform?: UiTransformProps
@@ -42,7 +43,7 @@ function ChatMessage(props: {
   }
   const defaultFontSize = getCanvasScaleRatio() * 36
   const playerName = props.message.name
-  const addressColor = getAddressColor(props.message.sender_address) as Color4
+  const addressColor = _getAddressColor(props.message.sender_address) as Color4
 
   const side = props.message.side
   const messageMargin = 12 * getCanvasScaleRatio()
