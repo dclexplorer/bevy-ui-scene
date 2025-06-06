@@ -195,7 +195,7 @@ export default class ChatAndLogs {
     if (chatScroll.y < 1) {
       state.newMessages.push(chatMessage)
     } else {
-      state.shownMessages.push(chatMessage) // TODO move to state
+      state.shownMessages.push(chatMessage)
     }
 
     function getNextMessageSide(
@@ -486,7 +486,7 @@ function HeaderArea(): ReactElement {
 
 function InputArea(): ReactElement | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-  const inputFontSize = '1vw' // Math.floor(getCanvasScaleRatio() * 60) // TODO cannot change Input fontSize in runtime
+  const inputFontSize = '1vw' // TODO review if fontSize should be height based
 
   if (canvasInfo === null) return null
 
@@ -547,7 +547,7 @@ function ChatArea({
   onMessageMenu
 }: {
   messages: ChatMessageRepresentation[]
-  onMessageMenu: any // TODO define type
+  onMessageMenu: (timestampKey: number) => void
 }): ReactElement {
   const scrollPosition = getScrollVector(
     store.getState().viewport.height * 0.7 - state.autoScrollSwitch
