@@ -31,7 +31,6 @@ const _getAddressColor = memoize(getAddressColor)
 function ChatMessage(props: {
   uiTransform?: UiTransformProps
   message: ChatMessageRepresentation
-  fontSize?: number
   key?: Key
   onMessageMenu: (id: number) => void
 }): ReactEcs.JSX.Element | null {
@@ -143,10 +142,10 @@ function ChatMessage(props: {
           <Label
             uiTransform={{
               width: '100%',
-              height: props.fontSize ?? defaultFontSize
+              height: defaultFontSize
             }}
             value={`<b>${playerName}</b>`}
-            fontSize={props.fontSize ?? defaultFontSize}
+            fontSize={defaultFontSize}
             color={
               isSystemMessage(props.message)
                 ? Color4.Gray()
@@ -165,7 +164,7 @@ function ChatMessage(props: {
               ? `<i>${props.message.message}</i>`
               : decorateNamesWithLinkColor(props.message.message)
           }
-          fontSize={props.fontSize ?? defaultFontSize}
+          fontSize={defaultFontSize}
           color={ALMOST_WHITE}
           textWrap="wrap"
           textAlign={`middle-left`}
@@ -179,7 +178,7 @@ function ChatMessage(props: {
             formatTimestamp(props.message.timestamp) +
             ` (${props.message.side})`
           }
-          fontSize={props.fontSize ?? defaultFontSize * 0.7}
+          fontSize={defaultFontSize * 0.7}
           color={COLOR.INACTIVE}
           textWrap="wrap"
           textAlign={`middle-left`}

@@ -21,6 +21,7 @@ import {
 import type { HomeScene, LiveSceneInfo } from 'src/bevy-api/interface'
 import { BevyApi } from 'src/bevy-api'
 import { setHome } from 'src/state/sceneInfo/actions'
+import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 
 export default class SceneInfo {
   private readonly uiController: UIController
@@ -237,6 +238,8 @@ export default class SceneInfo {
 
     const sceneCoords = store.getState().scene.explorerPlayerParcelAction
     if (sceneCoords === undefined) return null
+
+    this.fontSize = Math.floor(48 * getCanvasScaleRatio())
 
     return (
       <UiEntity
