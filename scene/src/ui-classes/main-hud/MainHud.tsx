@@ -299,20 +299,20 @@ export default class MainHud {
     const canvasInfo =
       UiCanvasInformation.getOrNull(engine.RootEntity) ?? ZERO_SIZE
     const buttonMinSize: number = 38
-    const buttonSize = (canvasInfo.height * 5) / 100
-    const buttonMargin: Partial<Position> = { top: 5, bottom: 5 }
+    const buttonSize = Math.max(buttonMinSize, (canvasInfo.height * 5) / 100)
+    const buttonMargin: Partial<Position> = { top: 5, bottom: 5 } // TODO review responsiveness
     const buttonTransform = {
       height: buttonSize,
-      minHeight: buttonMinSize,
       width: buttonSize,
-      minWidth: buttonMinSize,
       margin: buttonMargin
     }
+    const buttonIconSize = buttonSize * 0.7
+
     if (canvasInfo === null) return null
     return (
       <UiEntity
         uiTransform={{
-          width: (canvasInfo.width * 2.5) / 100,
+          width: '4%',
           minWidth: 45,
           height: '100%',
           position: { left: 0, top: 0 }
@@ -358,6 +358,7 @@ export default class MainHud {
               icon={this.walletIcon}
               hintText={'Profile'}
               showHint={this.walletHint}
+              iconSize={buttonIconSize}
             />
 
             <ButtonIcon
@@ -375,6 +376,7 @@ export default class MainHud {
               icon={this.bellIcon}
               hintText={'Notifications'}
               showHint={this.bellHint}
+              iconSize={buttonIconSize}
             />
 
             <UiEntity
@@ -397,6 +399,7 @@ export default class MainHud {
               icon={this.mapIcon}
               hintText={'Map'}
               showHint={this.mapHint}
+              iconSize={buttonIconSize}
             />
             <ButtonIcon
               uiTransform={buttonTransform}
@@ -413,6 +416,7 @@ export default class MainHud {
               icon={this.exploreIcon}
               hintText={'Explore'}
               showHint={this.exploreHint}
+              iconSize={buttonIconSize}
             />
 
             <ButtonIcon
@@ -430,6 +434,7 @@ export default class MainHud {
               icon={this.backpackIcon}
               hintText={'Backpack'}
               showHint={this.backpackHint}
+              iconSize={buttonIconSize}
             />
 
             <ButtonIcon
@@ -447,6 +452,7 @@ export default class MainHud {
               icon={this.settingsIcon}
               hintText={'Settings'}
               showHint={this.settingsHint}
+              iconSize={buttonIconSize}
             />
 
             <UiEntity
@@ -472,6 +478,7 @@ export default class MainHud {
               icon={this.helpIcon}
               hintText={'Help'}
               showHint={this.helpHint}
+              iconSize={buttonIconSize}
             />
           </UiEntity>
 
@@ -522,6 +529,7 @@ export default class MainHud {
                 this.uiController.friends.incomingFriendsMessages +
                 this.uiController.friends.requestsNumber
               }
+              iconSize={buttonIconSize}
             />
             <ButtonIcon
               uiTransform={buttonTransform}
@@ -538,6 +546,7 @@ export default class MainHud {
               icon={this.voiceChatIcon}
               hintText={'Voice Chat'}
               showHint={this.voiceChatHint}
+              iconSize={buttonIconSize}
             />
             <ButtonIcon
               uiTransform={buttonTransform}
@@ -555,6 +564,7 @@ export default class MainHud {
               hintText={'Chat'}
               showHint={this.chatHint}
               notifications={this.chatAndLogs.getUnreadMessages()}
+              iconSize={buttonIconSize}
             />
 
             <ButtonIcon
@@ -572,6 +582,7 @@ export default class MainHud {
               icon={this.emotesIcon}
               hintText={'Emotes (Alt or ⌥)'}
               showHint={this.emotesHint}
+              iconSize={buttonIconSize}
             />
           </UiEntity>
         </UiEntity>
