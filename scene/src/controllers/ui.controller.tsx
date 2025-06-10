@@ -25,6 +25,7 @@ import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { type ReactElement } from '@dcl/react-ecs'
 import { Canvas } from '../components/canvas'
+import { store } from '../state/store'
 
 export class UIController {
   public isPhotosVisible: boolean = false
@@ -127,22 +128,23 @@ function InteractableArea({
   if (!active) return null
   const canvas = UiCanvasInformation.get(engine.RootEntity)
   if (!canvas?.interactableArea) return null
-
+  const viewportState = store.getState().viewport
+  const { interactableArea } = viewportState
   return (
     <UiEntity
       uiTransform={{
         positionType: 'absolute',
-        position: canvas.interactableArea,
-        width:
-          canvas.width -
-          (canvas.interactableArea.right + canvas.interactableArea.left),
+        position: {
+          left: interactableArea.left,
+          top: interactableArea.top
+        },
+        width: canvas.width - (interactableArea.right + interactableArea.left),
         height:
-          canvas.height -
-          (canvas.interactableArea.top + canvas.interactableArea.bottom),
+          canvas.height - (interactableArea.top + interactableArea.bottom),
         zIndex: 999999
       }}
       uiBackground={{
-        color: Color4.create(0, 1, 0, opacity)
+        color: Color4.create(0, 1, 1, opacity)
       }}
     />
   )

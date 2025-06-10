@@ -266,7 +266,19 @@ export default class MainHud {
           flexDirection: 'row'
         }}
       >
-        {this.MainSideBar()}
+        <UiEntity
+          uiTransform={{
+            width: '4%',
+            minWidth: 45,
+            height: '100%',
+            position: { left: 0, top: 0 }
+          }}
+          // onMouseEnter={() => (this.isSideBarVisible = true)}
+          // onMouseLeave={() => (this.isSideBarVisible = false)}
+        >
+          {this.MainSideBar()}
+        </UiEntity>
+
         <UiEntity
           uiTransform={{
             width: '25%',
@@ -312,187 +324,177 @@ export default class MainHud {
     return (
       <UiEntity
         uiTransform={{
-          width: '4%',
-          minWidth: 45,
+          display: this.isSideBarVisible ? 'flex' : 'none',
+          width: '100%',
           height: '100%',
-          position: { left: 0, top: 0 }
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexDirection: 'column'
         }}
-        // onMouseEnter={() => (this.isSideBarVisible = true)}
-        // onMouseLeave={() => (this.isSideBarVisible = false)}
+        uiBackground={{
+          color: ALPHA_BLACK_PANEL
+        }}
       >
         <UiEntity
           uiTransform={{
             display: this.isSideBarVisible ? 'flex' : 'none',
             width: '100%',
-            height: '100%',
-            justifyContent: 'space-between',
+            height: 'auto',
+            justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'column'
           }}
-          uiBackground={{
-            color: ALPHA_BLACK_PANEL
+        >
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.walletEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              this.uiController.profile.showCard()
+            }}
+            backgroundColor={this.walletBackground}
+            icon={this.walletIcon}
+            hintText={'Profile'}
+            showHint={this.walletHint}
+            iconSize={buttonIconSize}
+          />
+
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.notificationsEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              console.log('clicked')
+            }}
+            backgroundColor={this.bellBackground}
+            icon={this.bellIcon}
+            hintText={'Notifications'}
+            showHint={this.bellHint}
+            iconSize={buttonIconSize}
+          />
+
+          <UiEntity
+            uiTransform={{ height: 1, width: '80%' }}
+            uiBackground={{ color: SELECTED_BUTTON_COLOR }}
+          />
+
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.mapEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              this.uiController.menu?.show('map')
+            }}
+            backgroundColor={this.mapBackground}
+            icon={this.mapIcon}
+            hintText={'Map'}
+            showHint={this.mapHint}
+            iconSize={buttonIconSize}
+          />
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.exploreEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              this.uiController.menu?.show('explore')
+            }}
+            backgroundColor={this.exploreBackground}
+            icon={this.exploreIcon}
+            hintText={'Explore'}
+            showHint={this.exploreHint}
+            iconSize={buttonIconSize}
+          />
+
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.backpackEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              this.uiController.menu?.show('backpack')
+            }}
+            backgroundColor={this.backpackBackground}
+            icon={this.backpackIcon}
+            hintText={'Backpack'}
+            showHint={this.backpackHint}
+            iconSize={buttonIconSize}
+          />
+
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.settingsEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              this.uiController.menu?.show('settings')
+            }}
+            backgroundColor={this.settingsBackground}
+            icon={this.settingsIcon}
+            hintText={'Settings'}
+            showHint={this.settingsHint}
+            iconSize={buttonIconSize}
+          />
+
+          <UiEntity
+            uiTransform={{ height: 1, width: '80%' }}
+            uiBackground={{ color: SELECTED_BUTTON_COLOR }}
+          />
+
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.helpEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              BevyApi.openSceneLogger().catch(console.error)
+              openExternalUrl({
+                url: 'https://decentraland.org/help/'
+              }).catch(console.error)
+            }}
+            backgroundColor={this.helpBackground}
+            icon={this.helpIcon}
+            hintText={'Help'}
+            showHint={this.helpHint}
+            iconSize={buttonIconSize}
+          />
+        </UiEntity>
+
+        <UiEntity
+          uiTransform={{
+            display: this.isSideBarVisible ? 'flex' : 'none',
+            width: '100%',
+            height: 'auto',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column'
           }}
         >
-          <UiEntity
-            uiTransform={{
-              display: this.isSideBarVisible ? 'flex' : 'none',
-              width: '100%',
-              height: 'auto',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'column'
-            }}
-          >
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.walletEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.uiController.profile.showCard()
-              }}
-              backgroundColor={this.walletBackground}
-              icon={this.walletIcon}
-              hintText={'Profile'}
-              showHint={this.walletHint}
-              iconSize={buttonIconSize}
-            />
-
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.notificationsEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                console.log('clicked')
-              }}
-              backgroundColor={this.bellBackground}
-              icon={this.bellIcon}
-              hintText={'Notifications'}
-              showHint={this.bellHint}
-              iconSize={buttonIconSize}
-            />
-
-            <UiEntity
-              uiTransform={{ height: 1, width: '80%' }}
-              uiBackground={{ color: SELECTED_BUTTON_COLOR }}
-            />
-
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.mapEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.uiController.menu?.show('map')
-              }}
-              backgroundColor={this.mapBackground}
-              icon={this.mapIcon}
-              hintText={'Map'}
-              showHint={this.mapHint}
-              iconSize={buttonIconSize}
-            />
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.exploreEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.uiController.menu?.show('explore')
-              }}
-              backgroundColor={this.exploreBackground}
-              icon={this.exploreIcon}
-              hintText={'Explore'}
-              showHint={this.exploreHint}
-              iconSize={buttonIconSize}
-            />
-
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.backpackEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.uiController.menu?.show('backpack')
-              }}
-              backgroundColor={this.backpackBackground}
-              icon={this.backpackIcon}
-              hintText={'Backpack'}
-              showHint={this.backpackHint}
-              iconSize={buttonIconSize}
-            />
-
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.settingsEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.uiController.menu?.show('settings')
-              }}
-              backgroundColor={this.settingsBackground}
-              icon={this.settingsIcon}
-              hintText={'Settings'}
-              showHint={this.settingsHint}
-              iconSize={buttonIconSize}
-            />
-
-            <UiEntity
-              uiTransform={{ height: 1, width: '80%' }}
-              uiBackground={{ color: SELECTED_BUTTON_COLOR }}
-            />
-
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.helpEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                BevyApi.openSceneLogger().catch(console.error)
-                openExternalUrl({
-                  url: 'https://decentraland.org/help/'
-                }).catch(console.error)
-              }}
-              backgroundColor={this.helpBackground}
-              icon={this.helpIcon}
-              hintText={'Help'}
-              showHint={this.helpHint}
-              iconSize={buttonIconSize}
-            />
-          </UiEntity>
-
-          <UiEntity
-            uiTransform={{
-              display: this.isSideBarVisible ? 'flex' : 'none',
-              width: '100%',
-              height: 'auto',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'column'
-            }}
-          >
-            {/* <ButtonIcon uiTransform={{height:buttonSize, width:buttonSize}}
+          {/* <ButtonIcon uiTransform={{height:buttonSize, width:buttonSize}}
                 onMouseEnter={()=>{this.cameraEnter()}}
                 onMouseLeave={()=>{this.cameraLeave()}}
                 onMouseDown={()=>{console.log('Camera clicked')}}
@@ -510,81 +512,80 @@ export default class MainHud {
                 hintText={'Experiences'}
                 showHint={this.experiencesHint} />
               */}
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.friendsEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.openCloseFriends()
-              }}
-              backgroundColor={this.friendsBackground}
-              icon={this.friendsIcon}
-              hintText={'Friends'}
-              showHint={this.friendsHint}
-              notifications={
-                this.uiController.friends.incomingFriendsMessages +
-                this.uiController.friends.requestsNumber
-              }
-              iconSize={buttonIconSize}
-            />
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.voiceChatEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.voiceChatDown()
-              }}
-              backgroundColor={this.voiceChatBackground}
-              icon={this.voiceChatIcon}
-              hintText={'Voice Chat'}
-              showHint={this.voiceChatHint}
-              iconSize={buttonIconSize}
-            />
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.chatEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.openCloseChat()
-              }}
-              backgroundColor={this.chatBackground}
-              icon={this.chatIcon}
-              hintText={'Chat'}
-              showHint={this.chatHint}
-              notifications={this.chatAndLogs.getUnreadMessages()}
-              iconSize={buttonIconSize}
-            />
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.friendsEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              this.openCloseFriends()
+            }}
+            backgroundColor={this.friendsBackground}
+            icon={this.friendsIcon}
+            hintText={'Friends'}
+            showHint={this.friendsHint}
+            notifications={
+              this.uiController.friends.incomingFriendsMessages +
+              this.uiController.friends.requestsNumber
+            }
+            iconSize={buttonIconSize}
+          />
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.voiceChatEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              this.voiceChatDown()
+            }}
+            backgroundColor={this.voiceChatBackground}
+            icon={this.voiceChatIcon}
+            hintText={'Voice Chat'}
+            showHint={this.voiceChatHint}
+            iconSize={buttonIconSize}
+          />
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.chatEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              this.openCloseChat()
+            }}
+            backgroundColor={this.chatBackground}
+            icon={this.chatIcon}
+            hintText={'Chat'}
+            showHint={this.chatHint}
+            notifications={this.chatAndLogs.getUnreadMessages()}
+            iconSize={buttonIconSize}
+          />
 
-            <ButtonIcon
-              uiTransform={buttonTransform}
-              onMouseEnter={() => {
-                this.emotesEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                switchEmotesWheelVisibility()
-              }}
-              backgroundColor={this.emotesBackground}
-              icon={this.emotesIcon}
-              hintText={'Emotes (Alt or ⌥)'}
-              showHint={this.emotesHint}
-              iconSize={buttonIconSize}
-            />
-          </UiEntity>
+          <ButtonIcon
+            uiTransform={buttonTransform}
+            onMouseEnter={() => {
+              this.emotesEnter()
+            }}
+            onMouseLeave={() => {
+              this.updateButtons()
+            }}
+            onMouseDown={() => {
+              switchEmotesWheelVisibility()
+            }}
+            backgroundColor={this.emotesBackground}
+            icon={this.emotesIcon}
+            hintText={'Emotes (Alt or ⌥)'}
+            showHint={this.emotesHint}
+            iconSize={buttonIconSize}
+          />
         </UiEntity>
       </UiEntity>
     )
