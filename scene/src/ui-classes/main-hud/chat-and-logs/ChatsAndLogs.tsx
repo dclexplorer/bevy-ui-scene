@@ -316,7 +316,7 @@ function MessageSubMenu({
       <UiEntity
         uiTransform={{
           borderWidth: 1,
-          borderRadius: 10,
+          borderRadius: getCanvasScaleRatio() * 18,
           borderColor: COLOR.MENU_ITEM_BACKGROUND,
           alignItems: 'center',
           width: '100%',
@@ -335,7 +335,10 @@ function MessageSubMenu({
           state.messageMenuTimestamp = 0
         }}
       >
-        <Icon icon={{ spriteName: 'CopyIcon', atlasName: 'icons' }} />
+        <Icon
+          icon={{ spriteName: 'CopyIcon', atlasName: 'icons' }}
+          iconSize={getCanvasScaleRatio() * 32}
+        />
         <UiEntity
           uiText={{ value: 'COPY', fontSize: getCanvasScaleRatio() * 32 }}
         />
