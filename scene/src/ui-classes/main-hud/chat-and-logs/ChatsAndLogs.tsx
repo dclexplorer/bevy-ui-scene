@@ -48,6 +48,7 @@ import {
   updateHudStateAction
 } from '../../../state/hud/actions'
 import { type AppState } from '../../../state/types'
+import { getUserData } from '~system/UserIdentity'
 type Box = {
   position: { x: number; y: number }
   size: { x: number; y: number }
@@ -134,7 +135,7 @@ export default class ChatAndLogs {
     ): Promise<void> => {
       for await (const chatMessage of stream) {
         if (chatMessage.message.indexOf('␑') === 0) return
-        this.pushMessage(chatMessage)
+        this.pushMessage(chatMessage).catch(console.error)
         if (!this.isOpen()) {
           state.unreadMessages++
         }
@@ -169,11 +170,17 @@ export default class ChatAndLogs {
     })
   }
 
-  pushMessage(message: ChatMessageDefinition): void {
+  async pushMessage(message: ChatMessageDefinition): Promise<void> {
     if (state.shownMessages.length >= BUFFER_SIZE) {
       state.shownMessages.shift()
     }
 
+    const name = isSystemMessage(message)
+      ? ``
+      : getPlayer({ userId: message.sender_address })?.name ??
+        (await getUserData({ userId: message.sender_address }))?.data
+          ?.displayName ??
+        `Unknown*`
     const chatMessage: ChatMessageRepresentation = {
       ...message,
       timestamp:
@@ -181,12 +188,11 @@ export default class ChatAndLogs {
         Date.now()
           ? Date.now() + 1
           : Date.now(),
-      name: isSystemMessage(message)
-        ? ``
-        : getPlayer({ userId: message.sender_address })?.name ?? `Unknown*`,
+      name,
       side: getNextMessageSide(state.shownMessages),
       hasMentionToMe: messageHasMentionToMe(message.message)
     }
+
     if ((getChatScroll()?.y ?? 0) < 1) {
       state.newMessages.push(chatMessage)
     } else {
