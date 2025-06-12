@@ -42,6 +42,12 @@ import {
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
 import { type PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
+import {
+  HUD_ACTION,
+  type UpdateHudAction,
+  updateHudStateAction
+} from '../../../state/hud/actions'
+import { type AppState } from '../../../state/types'
 type Box = {
   position: { x: number; y: number }
   size: { x: number; y: number }
@@ -97,23 +103,27 @@ export default class ChatAndLogs {
     this.listenMouseHover()
     listenSystemAction('Chat', (pressed) => {
       if (pressed) {
+        // TODO we should not focus if the input already has the focus, need  a way to check if it's already focused
         focusChatInput()
       }
     })
 
     initChatMembersCount().catch(console.error)
-  }
 
-  switchOpen(): void {
-    state.open = !state.open
-    if (state.open) {
-      state.unreadMessages = 0
-      scrollToBottom()
-    }
+    store.subscribe((action, previousState: AppState) => {
+      if (
+        action.type === HUD_ACTION.UPDATE_HUD_STATE &&
+        (action as UpdateHudAction).payload.chatOpen &&
+        !previousState.hud.chatOpen
+      ) {
+        state.unreadMessages = 0
+        scrollToBottom()
+      }
+    })
   }
 
   isOpen(): boolean {
-    return state.open
+    return store.getState().hud.chatOpen
   }
 
   getUnreadMessages(): number {
@@ -127,7 +137,7 @@ export default class ChatAndLogs {
       for await (const chatMessage of stream) {
         if (chatMessage.message.indexOf('␑') === 0) return
         this.pushMessage(chatMessage)
-        if (!state.open) {
+        if (!this.isOpen()) {
           state.unreadMessages++
         }
       }
@@ -142,7 +152,8 @@ export default class ChatAndLogs {
       state.cameraPointerLocked = pointerLock.isPointerLocked
     })
 
-    store.subscribe(() => {
+    store.subscribe((action) => {
+      // TODO check action store / type
       state.chatBox.position.x = store.getState().viewport.width * 0.03
       state.chatBox.position.y = store.getState().viewport.height * 0.2
       state.chatBox.size.x = store.getState().viewport.width * 0.26
@@ -223,6 +234,10 @@ export default class ChatAndLogs {
   }
 
   onMessageMenu(timestamp: number): void {
+    if (state.messageMenuTimestamp === timestamp) {
+      state.messageMenuTimestamp = 0
+      return
+    }
     state.messageMenuTimestamp = timestamp
     state.messageMenuPositionTop =
       state.mouseY -
@@ -455,7 +470,11 @@ function HeaderArea(): ReactElement {
           borderWidth: 0
         }}
         uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
-        onMouseDown={() => (state.open = !state.open)}
+        onMouseDown={() => {
+          store.dispatch(
+            updateHudStateAction({ chatOpen: !store.getState().hud.chatOpen })
+          )
+        }}
       >
         <Icon
           uiTransform={{
@@ -554,7 +573,7 @@ function ChatArea({
       uiTransform={{
         elementId: 'chat-area',
         width: '100%',
-        display: state.open ? 'flex' : 'none',
+        display: store.getState().hud.chatOpen ? 'flex' : 'none',
         flexDirection: 'column',
         alignSelf: 'flex-end',
         alignItems: 'flex-start',
@@ -580,13 +599,16 @@ function ChatArea({
 function sendChatMessage(): void {
   if (!state.inputValue) return
   BevyApi.sendChat(state.inputValue, 'Nearby')
+
   executeTask(async () => {
+    updateInputValue('')
     await sleep(0)
     scrollToBottom()
   })
 }
 
 function updateInputValue(value: string): void {
+  console.log('updateInputValue', value)
   state.inputValue = value
 }
 
@@ -596,7 +618,7 @@ function scrollToBottom(): void {
 
 function focusChatInput(): void {
   setUiFocus({ elementId: 'chat-input' }).catch(console.error)
-  state.open = true
+  store.dispatch(updateHudStateAction({ chatOpen: true }))
   scrollToBottom()
 }
 

@@ -11,10 +11,29 @@ import { Friends } from './friends'
 import { SceneInfo } from './scene-info'
 import { switchEmotesWheelVisibility } from '../../emotes-wheel/emotes-wheel'
 import { type ReactElement } from '@dcl/react-ecs'
+import { store } from '../../state/store'
+import { updateHudStateAction } from '../../state/hud/actions'
 const ZERO_SIZE = {
   width: 0,
   height: 0
 }
+
+enum MENU_ELEMENT {
+  NONE,
+  CHAT
+}
+
+// TODO refactor to use redux store/hud
+const state: { hover: MENU_ELEMENT } = {
+  hover: MENU_ELEMENT.NONE
+}
+
+const ChatIconActive: AtlasIcon = { spriteName: 'Chat on', atlasName: 'navbar' }
+const ChatIconInactive: AtlasIcon = {
+  spriteName: 'Chat off',
+  atlasName: 'navbar'
+}
+
 export default class MainHud {
   public readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
@@ -83,7 +102,7 @@ export default class MainHud {
   private mapHint: boolean = false
   private settingsHint: boolean = false
   private walletHint: boolean = false
-  private chatHint: boolean = false
+
   private voiceChatHint: boolean = false
   private friendsHint: boolean = false
   // private cameraHint: boolean = false
@@ -185,12 +204,6 @@ export default class MainHud {
     this.friendsHint = true
   }
 
-  chatEnter(): void {
-    this.chatIcon.spriteName = 'Chat on'
-    this.chatBackground = SELECTED_BUTTON_COLOR
-    this.chatHint = true
-  }
-
   voiceChatEnter(): void {
     this.voiceChatBackground = SELECTED_BUTTON_COLOR
     this.voiceChatHint = true
@@ -232,7 +245,6 @@ export default class MainHud {
       this.chatIcon.spriteName = 'Chat off'
       this.chatBackground = undefined
     }
-    this.chatHint = false
     if (!this.voiceChatOn) {
       this.voiceChatIcon.spriteName = 'Mic off'
       this.voiceChatBackground = undefined
@@ -241,10 +253,10 @@ export default class MainHud {
   }
 
   openCloseChat(): void {
-    this.chatEnter()
-    this.chatAndLogs.switchOpen()
     this.friendsOpen = false
-    this.updateButtons()
+    store.dispatch(
+      updateHudStateAction({ chatOpen: !store.getState().hud.chatOpen })
+    )
   }
 
   openCloseFriends(): void {
@@ -551,18 +563,26 @@ export default class MainHud {
           <ButtonIcon
             uiTransform={buttonTransform}
             onMouseEnter={() => {
-              this.chatEnter()
+              state.hover = MENU_ELEMENT.CHAT
             }}
             onMouseLeave={() => {
-              this.updateButtons()
+              if (!(state.hover > 0 && state.hover !== MENU_ELEMENT.CHAT)) {
+                state.hover = MENU_ELEMENT.NONE
+              }
             }}
             onMouseDown={() => {
               this.openCloseChat()
             }}
-            backgroundColor={this.chatBackground}
-            icon={this.chatIcon}
+            backgroundColor={
+              state.hover === MENU_ELEMENT.CHAT
+                ? SELECTED_BUTTON_COLOR
+                : undefined
+            }
+            icon={
+              store.getState().hud.chatOpen ? ChatIconActive : ChatIconInactive
+            }
             hintText={'Chat'}
-            showHint={this.chatHint}
+            showHint={state.hover === MENU_ELEMENT.CHAT}
             notifications={this.chatAndLogs.getUnreadMessages()}
             iconSize={buttonIconSize}
           />

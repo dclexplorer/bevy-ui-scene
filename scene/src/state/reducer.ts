@@ -4,9 +4,11 @@ import { reducer as eventsReducer } from './sceneInfo/reducers'
 import { reducer as photoReducer } from './photoInfo/reducers'
 import { reducer as viewportReducer } from './viewport/reducers'
 import { reducer as backpackReducer } from './backpack/reducers'
+import { reducer as hudReducer } from './hud/reducers'
 import { VIEWPORT_STORE_ID } from './viewport/state'
 import { deepFreeze } from '../utils/object-utils'
 import { BACKPACK_STORE_ID } from './backpack/state'
+import { HUD_STORE_ID } from './hud/state'
 
 export function reducer(state: AppState, action: Action): AppState {
   const newState = { ...state }
@@ -25,6 +27,9 @@ export function reducer(state: AppState, action: Action): AppState {
   }
   if (action.__reducer === BACKPACK_STORE_ID) {
     newState.backpack = deepFreeze(backpackReducer(state.backpack, action))
+  }
+  if (action.__reducer === HUD_STORE_ID) {
+    newState.hud = deepFreeze(hudReducer(state.hud, action))
   }
 
   return newState
