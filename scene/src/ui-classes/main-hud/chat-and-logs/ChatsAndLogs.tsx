@@ -187,9 +187,7 @@ export default class ChatAndLogs {
       side: getNextMessageSide(state.shownMessages),
       hasMentionToMe: messageHasMentionToMe(message.message)
     }
-    const chatScroll: Vector2 = getChatScroll()
-
-    if (chatScroll.y < 1) {
+    if ((getChatScroll()?.y ?? 0) < 1) {
       state.newMessages.push(chatMessage)
     } else {
       state.shownMessages.push(chatMessage)
@@ -218,7 +216,7 @@ export default class ChatAndLogs {
     if (
       !state.addingNewMessages &&
       state.newMessages.length &&
-      getChatScroll().y === 1
+      getChatScroll()?.y === 1
     ) {
       state.addingNewMessages = true
       state.shownMessages.push(
@@ -615,17 +613,23 @@ function focusChatInput(): void {
 function _getScrollVector(positionY: number): Vector2 {
   return Vector2.create(0, positionY)
 }
+
 function getChatMaxHeight(): number {
   return store.getState().viewport.height * 0.7
 }
-function getChatScroll(): Vector2 {
-  const [[, , userScrollPosition]] = filterEntitiesWith(
+
+function getChatScroll(): Vector2 | null {
+  const filteredEntities = filterEntitiesWith(
     ([, uiTransformResult]): boolean => {
       return (uiTransformResult as UiTransformProps).elementId === 'chat-area'
     },
     UiTransform,
     UiScrollResult
   )
+
+  const foundEntity = filteredEntities[0]
+  if (foundEntity === undefined) return null
+  const [, , userScrollPosition] = foundEntity ?? []
   return (userScrollPosition as any).value as Vector2
 }
 
