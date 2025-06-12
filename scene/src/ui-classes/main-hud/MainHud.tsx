@@ -23,7 +23,6 @@ enum MENU_ELEMENT {
   CHAT
 }
 
-// TODO refactor to use redux store/hud
 const state: { hover: MENU_ELEMENT } = {
   hover: MENU_ELEMENT.NONE
 }
@@ -37,6 +36,8 @@ const ChatIconInactive: AtlasIcon = {
 export default class MainHud {
   public readonly isSideBarVisible: boolean = true
   private readonly uiController: UIController
+
+  // TODO refactor to use redux store/hud (only done in chat)
   readonly bellIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Notifications off'
