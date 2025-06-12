@@ -63,7 +63,6 @@ const state: {
   open: boolean
   unreadMessages: number
   autoScrollSwitch: number
-  inputValue: string
   newMessages: ChatMessageRepresentation[]
   shownMessages: ChatMessageRepresentation[]
   addingNewMessages: boolean
@@ -78,7 +77,6 @@ const state: {
   open: true,
   unreadMessages: 0,
   autoScrollSwitch: 0,
-  inputValue: '',
   newMessages: [],
   shownMessages: MockMessages.map((m) => ({
     ...m,
@@ -536,7 +534,6 @@ function InputArea(): ReactElement | null {
         textAlign="middle-center"
         fontSize={inputFontSize}
         color={ALMOST_WHITE}
-        onChange={updateInputValue}
         placeholder="Press ENTER to chat"
         placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
         onSubmit={sendChatMessage}
@@ -596,20 +593,13 @@ function ChatArea({
   )
 }
 
-function sendChatMessage(): void {
-  if (!state.inputValue) return
-  BevyApi.sendChat(state.inputValue, 'Nearby')
+function sendChatMessage(value: string): void {
+  BevyApi.sendChat(value, 'Nearby')
 
   executeTask(async () => {
-    updateInputValue('')
     await sleep(0)
     scrollToBottom()
   })
-}
-
-function updateInputValue(value: string): void {
-  console.log('updateInputValue', value)
-  state.inputValue = value
 }
 
 function scrollToBottom(): void {
