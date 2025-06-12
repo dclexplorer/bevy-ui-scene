@@ -123,7 +123,6 @@ export default class LoadingAndLogin {
               this.setStatus('secure-step')
               await getSuccess
 
-              // TODO: should this be redirected to backpack?
               this.finishLoading()
             })
             .catch((error) => {

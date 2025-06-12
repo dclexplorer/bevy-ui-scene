@@ -8,7 +8,12 @@ import {
   UiTransform
 } from '@dcl/sdk/ecs'
 import { Color4, Vector2 } from '@dcl/sdk/math'
-import ReactEcs, { Input, Label, UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, {
+  Input,
+  Label,
+  UiEntity,
+  type UiTransformProps
+} from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { ChatMessage } from '../../../components/chat-message'
 import MockMessages from './MessagesMock.json'
@@ -24,13 +29,8 @@ import {
 } from '../../../components/chat-message/ChatMessage.types'
 import { isTruthy, memoize } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
-// TODO Review getCanvasScaleRatio , if Chat should be based in height and portions by docs ?
 import { listenSystemAction } from '../../../service/system-actions-emitter'
-
-// TODO remove ts-expect-error
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import { setUiFocus } from '~system/RestrictedActions'
+import { setUiFocus, copyToClipboard } from '~system/RestrictedActions'
 import { isSystemMessage } from '../../../components/chat-message/ChatMessage'
 import { COLOR } from '../../../components/color-palette'
 import { type ReactElement } from '@dcl/react-ecs'
@@ -40,7 +40,7 @@ import {
   initChatMembersCount
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
-import { filterEntitiesWith, sleep, waitFor } from '../../../utils/dcl-utils'
+import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
 import { type PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
 type Box = {
   position: { x: number; y: number }
@@ -75,7 +75,6 @@ const state: {
   inputValue: '',
   newMessages: [],
   shownMessages: MockMessages.map((m) => ({
-    // TODO remove for production
     ...m,
     timestamp: Date.now() - 30000 + m.timestamp,
     hasMentionToMe: messageHasMentionToMe(m.message)
@@ -103,17 +102,6 @@ export default class ChatAndLogs {
     })
 
     initChatMembersCount().catch(console.error)
-    executeTask(async () => {
-      // TODO remove for production
-      await waitFor(() => getPlayer() != null)
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      const playerName = getPlayer().name
-
-      state.shownMessages.forEach(
-        (m) => (m.message = m.message.replace('_own_player_name_', playerName))
-      )
-    })
   }
 
   switchOpen(): void {
@@ -327,11 +315,16 @@ function MessageSubMenu({
           color: COLOR.MENU_ITEM_BACKGROUND
         }}
         onMouseDown={() => {
-          const messageToCopy = state.shownMessages.find(
-            (m) => m.timestamp === state.messageMenuTimestamp
-          )?.message
-          // TODO BevyApi.copyToClipboard(messageToCopy)
-          console.log('Message to copy:', messageToCopy)
+          try {
+            const textToCopy =
+              state.shownMessages.find(
+                (m) => m.timestamp === state.messageMenuTimestamp
+              )?.message ?? ''
+            copyToClipboard({
+              text: textToCopy
+            }).catch(console.error)
+          } catch (error) {}
+
           state.messageMenuTimestamp = 0
         }}
       >
@@ -489,7 +482,7 @@ function HeaderArea(): ReactElement {
 
 function InputArea(): ReactElement | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-  const inputFontSize = '1vw' // TODO review if fontSize should be height based
+  const inputFontSize = getCanvasScaleRatio() * 36
 
   if (canvasInfo === null) return null
 
@@ -602,7 +595,7 @@ function scrollToBottom(): void {
 }
 
 function focusChatInput(): void {
-  setUiFocus({ elementId: 'chat-input' })
+  setUiFocus({ elementId: 'chat-input' }).catch(console.error)
   state.open = true
   scrollToBottom()
 }
@@ -616,8 +609,7 @@ function getChatMaxHeight(): number {
 function getChatScroll(): Vector2 {
   const [[, , userScrollPosition]] = filterEntitiesWith(
     ([, uiTransformResult]): boolean => {
-      // TODO fix type
-      return (uiTransformResult as any).elementId === 'chat-area'
+      return (uiTransformResult as UiTransformProps).elementId === 'chat-area'
     },
     UiTransform,
     UiScrollResult
