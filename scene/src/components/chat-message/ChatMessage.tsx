@@ -101,9 +101,19 @@ function ChatMessage(props: {
                   atlasName: 'icons',
                   spriteName: 'DdlIconColor'
                 })
+              : props.message.isGuest
+              ? {
+                  ...getBackgroundFromAtlas({
+                    atlasName: 'icons', // TODO review to use guest real avatar profile image, for which avatarTexture don't work, review how unity explorer does for guests
+                    spriteName: 'Members'
+                  }),
+                  color: COLOR.WHITE_OPACITY_2
+                }
               : {
                   textureMode: 'stretch',
-                  avatarTexture: { userId: props.message.sender_address }
+                  avatarTexture: {
+                    userId: props.message.sender_address
+                  }
                 }
           }
         />

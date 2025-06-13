@@ -12,4 +12,5 @@ export type ChatMessageRepresentation = ChatMessageDefinition & {
   name: string
   side: CHAT_SIDE
   hasMentionToMe: boolean
+  isGuest: boolean
 }

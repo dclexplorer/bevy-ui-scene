@@ -170,10 +170,10 @@ export default class ChatAndLogs {
     if (state.shownMessages.length >= BUFFER_SIZE) {
       state.shownMessages.shift()
     }
-
+    const playerData = getPlayer({ userId: message.sender_address })
     const name = isSystemMessage(message)
       ? ``
-      : getPlayer({ userId: message.sender_address })?.name ??
+      : playerData?.name ??
         (await getUserData({ userId: message.sender_address }))?.data
           ?.displayName ??
         `Unknown*`
@@ -186,8 +186,11 @@ export default class ChatAndLogs {
           : Date.now(),
       name,
       side: getNextMessageSide(state.shownMessages),
-      hasMentionToMe: messageHasMentionToMe(message.message)
+      hasMentionToMe: messageHasMentionToMe(message.message),
+      isGuest: playerData ? playerData.isGuest : true
     }
+
+    console.log('chatMessage', chatMessage)
 
     if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
       state.newMessages.push(chatMessage)
@@ -199,6 +202,7 @@ export default class ChatAndLogs {
     function getNextMessageSide(
       messages: ChatMessageRepresentation[]
     ): CHAT_SIDE {
+      // TODO FIX: this is not working well
       const previousMessage: ChatMessageRepresentation =
         messages[messages.length - 1]
 
