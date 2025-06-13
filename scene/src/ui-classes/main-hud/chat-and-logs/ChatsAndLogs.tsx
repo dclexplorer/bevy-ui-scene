@@ -16,7 +16,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { ChatMessage } from '../../../components/chat-message'
-import MockMessages from './MessagesMock.json'
+
 import {
   ALMOST_WHITE,
   ROUNDED_TEXTURE_BACKGROUND
@@ -79,11 +79,7 @@ const state: {
   unreadMessages: 0,
   autoScrollSwitch: 0,
   newMessages: [],
-  shownMessages: MockMessages.map((m) => ({
-    ...m,
-    timestamp: Date.now() - 30000 + m.timestamp,
-    hasMentionToMe: messageHasMentionToMe(m.message)
-  })).slice(0, BUFFER_SIZE),
+  shownMessages: [],
   addingNewMessages: false,
   cameraPointerLocked: false,
   hoveringChat: false,
@@ -184,7 +180,7 @@ export default class ChatAndLogs {
     const chatMessage: ChatMessageRepresentation = {
       ...message,
       timestamp:
-        state.shownMessages[state.shownMessages.length - 1].timestamp ===
+        state.shownMessages[state.shownMessages.length - 1]?.timestamp ===
         Date.now()
           ? Date.now() + 1
           : Date.now(),
@@ -192,13 +188,11 @@ export default class ChatAndLogs {
       side: getNextMessageSide(state.shownMessages),
       hasMentionToMe: messageHasMentionToMe(message.message)
     }
-
-    if ((getChatScroll()?.y ?? 0) < 1) {
+    if (hasScroll() && (getChatScroll()?.y ?? 0) < 1) {
       state.newMessages.push(chatMessage)
     } else {
       state.shownMessages.push(chatMessage)
     }
-
     function getNextMessageSide(
       messages: ChatMessageRepresentation[]
     ): CHAT_SIDE {
@@ -215,6 +209,11 @@ export default class ChatAndLogs {
           ? CHAT_SIDE.RIGHT
           : CHAT_SIDE.LEFT
       }
+    }
+
+    function hasScroll(): boolean {
+      // TODO get content height and compare with container height or get scroll component information
+      return state.shownMessages?.length > 7
     }
   }
 
