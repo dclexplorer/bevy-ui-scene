@@ -188,11 +188,14 @@ export default class ChatAndLogs {
       side: getNextMessageSide(state.shownMessages),
       hasMentionToMe: messageHasMentionToMe(message.message)
     }
-    if (hasScroll() && (getChatScroll()?.y ?? 0) < 1) {
+
+    if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
       state.newMessages.push(chatMessage)
     } else {
       state.shownMessages.push(chatMessage)
+      scrollToBottom()
     }
+
     function getNextMessageSide(
       messages: ChatMessageRepresentation[]
     ): CHAT_SIDE {
@@ -209,11 +212,6 @@ export default class ChatAndLogs {
           ? CHAT_SIDE.RIGHT
           : CHAT_SIDE.LEFT
       }
-    }
-
-    function hasScroll(): boolean {
-      // TODO get content height and compare with container height or get scroll component information
-      return state.shownMessages?.length > 7
     }
   }
 
