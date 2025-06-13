@@ -30,7 +30,7 @@ import {
 import { isTruthy, memoize } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
-import { setUiFocus, copyToClipboard } from '~system/RestrictedActions'
+import { copyToClipboard, setUiFocus } from '~system/RestrictedActions'
 import { isSystemMessage } from '../../../components/chat-message/ChatMessage'
 import { COLOR } from '../../../components/color-palette'
 import { type ReactElement } from '@dcl/react-ecs'
@@ -88,12 +88,6 @@ const state: {
 
 export default class ChatAndLogs {
   constructor() {
-    const colorBlack = Color4.Black()
-    console.log('colorBlack', colorBlack)
-    colorBlack.a = 0.5
-    console.log('colorBlack2', colorBlack)
-    console.log('Color4.Black()', Color4.Black())
-
     this.listenMessages().catch(console.error)
     this.listenMouseHover()
     listenSystemAction('Chat', (pressed) => {
@@ -190,8 +184,6 @@ export default class ChatAndLogs {
       isGuest: playerData ? playerData.isGuest : true
     }
 
-    console.log('chatMessage', chatMessage)
-
     if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
       state.newMessages.push(chatMessage)
     } else {
@@ -202,14 +194,13 @@ export default class ChatAndLogs {
     function getNextMessageSide(
       messages: ChatMessageRepresentation[]
     ): CHAT_SIDE {
-      // TODO FIX: this is not working well
       const previousMessage: ChatMessageRepresentation =
         messages[messages.length - 1]
 
       return isTruthy(previousMessage) &&
         previousMessage.sender_address !== message.sender_address
         ? getSwitchedSide(previousMessage)
-        : CHAT_SIDE.RIGHT
+        : previousMessage?.side ?? CHAT_SIDE.LEFT
 
       function getSwitchedSide(message: ChatMessageRepresentation): CHAT_SIDE {
         return message.side === CHAT_SIDE.LEFT
