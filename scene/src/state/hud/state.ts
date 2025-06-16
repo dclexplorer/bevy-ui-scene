@@ -22,9 +22,5 @@ export type HudStateUpdateParams = {
 
 export const hudInitialState: HudState = {
   chatOpen: true,
-  shownPopup: {
-    // TODO set to null
-    type: HUD_POPUP_TYPE.URL,
-    data: 'https://google.com'
-  }
+  shownPopup: null
 }
