@@ -23,8 +23,5 @@ export type HudStateUpdateParams = {
 
 export const hudInitialState: HudState = {
   chatOpen: true,
-  shownPopup: {
-    type: HUD_POPUP_TYPE.PASSPORT,
-    data: `0x598f8af1565003AE7456DaC280a18ee826Df7a2c`
-  }
+  shownPopup: null
 }

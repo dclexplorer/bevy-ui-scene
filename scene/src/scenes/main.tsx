@@ -4,6 +4,10 @@ import type { ExplorerSetting } from '../bevy-api/interface'
 import { GameController } from '../controllers/game.controller'
 import { loadSettingsFromExplorer } from '../state/settings/actions'
 import { store } from '../state/store'
+import { updateHudStateAction } from '../state/hud/actions'
+import { HUD_POPUP_TYPE } from '../state/hud/state'
+import { executeTask } from '@dcl/sdk/ecs'
+import { sleep } from '../utils/dcl-utils'
 
 let gameInstance: GameController
 
@@ -14,6 +18,18 @@ export async function init(retry: boolean): Promise<void> {
   // BevyApi.loginGuest()
   // gameInstance.uiController.loadingAndLogin.finishLoading()
   // gameInstance.uiController.menu?.show('backpack')
+  executeTask(async () => {
+    await sleep(100)
+    store.dispatch(
+      updateHudStateAction({
+        shownPopup: {
+          type: HUD_POPUP_TYPE.PASSPORT,
+          data: `0x598f8af1565003AE7456DaC280a18ee826Df7a2c`
+        }
+      })
+    )
+  })
+
   const { description, url } = await BevyApi.checkForUpdate()
 
   if (url !== '') {
@@ -22,6 +38,7 @@ export async function init(retry: boolean): Promise<void> {
     console.log('No update available')
   }
   const { message } = await BevyApi.messageOfTheDay()
+
   if (message !== '') {
     gameInstance.uiController.warningPopUp.tittle = 'Message of the day:'
     gameInstance.uiController.warningPopUp.message = message

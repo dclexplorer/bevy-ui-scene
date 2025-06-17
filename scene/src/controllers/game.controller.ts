@@ -13,6 +13,7 @@ import { fetchPlaceFromCoords } from 'src/utils/promise-utils'
 import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
 import { initSystemActionsEmitter } from '../service/system-actions-emitter'
+import { setupPassportPopup } from '../ui-classes/main-hud/popup-passport'
 
 export class GameController {
   uiController: UIController
@@ -20,6 +21,7 @@ export class GameController {
     this.uiController = new UIController(this)
     engine.addSystem(this.positionSystem.bind(this))
     initSystemActionsEmitter()
+    setupPassportPopup()
     // this.getFavorites().catch((reason)=>console.error(reason))
   }
 

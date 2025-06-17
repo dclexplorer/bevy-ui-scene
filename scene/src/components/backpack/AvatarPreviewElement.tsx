@@ -26,6 +26,7 @@ import {
   showMouseCursor
 } from '../../service/custom-cursor-service'
 import { type AtlasIcon } from '../../utils/definitions'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 
 const ROTATION_FACTOR = -0.5
 const state = {
@@ -52,7 +53,11 @@ export function setAvatarPreviewZoom(): void {
   }
 }
 
-export function AvatarPreviewElement(): ReactElement {
+export function AvatarPreviewElement({
+  uiTransform
+}: {
+  uiTransform?: UiTransformProps
+}): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const loadingState = GltfContainerLoadingState.getOrNull(
     getAvatarPreviewEntity()
@@ -61,7 +66,8 @@ export function AvatarPreviewElement(): ReactElement {
     <UiEntity
       uiTransform={{
         height: getContentHeight(),
-        width: (540 / 1920) * getContentWidth() * 0.85
+        width: (540 / 1920) * getContentWidth() * 0.85,
+        ...uiTransform
       }}
     >
       {getAvatarCamera() === engine.RootEntity ? null : (
@@ -84,6 +90,16 @@ export function AvatarPreviewElement(): ReactElement {
         >
           <UiEntity
             key="avatar-preview-zoom"
+            uiTransform={{
+              height: '100%',
+              width: '100%',
+              elementId: AVATAR_PREVIEW_ELEMENT_ID,
+              overflow: 'scroll',
+              scrollPosition: state.listenZoom
+                ? undefined
+                : Vector2.create(0, state.zoomFactor),
+              scrollVisible: 'hidden'
+            }}
             onMouseDown={() => {
               showMouseCursor(ROTATE_ICON)
             }}
@@ -106,16 +122,6 @@ export function AvatarPreviewElement(): ReactElement {
               setAvatarPreviewRotation(
                 Quaternion.multiply(initialQuaternionCopy, qY)
               )
-            }}
-            uiTransform={{
-              height: '100%',
-              width: '100%',
-              elementId: AVATAR_PREVIEW_ELEMENT_ID,
-              overflow: 'scroll',
-              scrollPosition: state.listenZoom
-                ? undefined
-                : Vector2.create(0, state.zoomFactor),
-              scrollVisible: 'hidden'
             }}
             onMouseEnter={() => (state.listenZoom = true)}
             onMouseLeave={() => (state.listenZoom = false)}

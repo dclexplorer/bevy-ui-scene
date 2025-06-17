@@ -1,11 +1,34 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../components/color-palette'
 import { store } from '../../state/store'
-import { updateHudStateAction } from '../../state/hud/actions'
+import { HUD_ACTION, updateHudStateAction } from '../../state/hud/actions'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { noop } from '../../utils/function-utils'
 import { Content } from '../main-menu/backpack-page/BackpackPage'
+import { AvatarPreviewElement } from '../../components/backpack/AvatarPreviewElement'
+import {
+  createAvatarPreview,
+  updateAvatarPreview
+} from '../../components/backpack/AvatarPreview'
+
+export function setupPassportPopup(): void {
+  store.subscribe((action, previousState) => {
+    if (
+      action.type === HUD_ACTION.UPDATE_HUD_STATE &&
+      previousState.hud.shownPopup?.type !== HUD_POPUP_TYPE.PASSPORT &&
+      store.getState().hud.shownPopup?.type === HUD_POPUP_TYPE.PASSPORT
+    ) {
+      console.log('PASSPORT')
+      createAvatarPreview()
+      updateAvatarPreview(
+        store.getState().backpack.equippedWearables,
+        store.getState().backpack.outfitSetup.base,
+        store.getState().backpack.forceRender
+      )
+    }
+  })
+}
 
 export function PopupPassport(): ReactElement | null {
   if (store.getState().hud.shownPopup?.type !== HUD_POPUP_TYPE.PASSPORT) {
@@ -43,8 +66,20 @@ export function PopupPassport(): ReactElement | null {
             pointerFilter: 'block'
           }}
           onMouseDown={noop}
-          uiBackground={{ color: COLOR.RED }}
-        />
+          uiBackground={{
+            texture: { src: 'assets/images/passport/background.png' },
+            textureMode: 'stretch'
+          }}
+        >
+          <AvatarPreviewElement
+            uiTransform={{
+              borderWidth: 1,
+              borderColor: COLOR.RED,
+              borderRadius: 0,
+              position: { top: '-18%' }
+            }}
+          />
+        </UiEntity>
       </Content>
     </UiEntity>
   )
