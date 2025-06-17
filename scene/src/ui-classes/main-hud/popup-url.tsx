@@ -15,7 +15,7 @@ const state = {
   rememberDomain: false
 }
 
-export default function PopupUrl(): ReactElement | null {
+export function PopupUrl(): ReactElement | null {
   const URL = store.getState().hud.shownPopup?.data as string
   if (store.getState().hud.shownPopup?.type !== HUD_POPUP_TYPE.URL) return null
   return (

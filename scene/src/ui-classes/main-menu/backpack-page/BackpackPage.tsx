@@ -218,7 +218,12 @@ function MainContent({ children }: { children?: ReactElement }): ReactElement {
   )
 }
 
-function Content({ children }: { children?: ReactElement }): ReactElement {
+// TODO REVIEW: refactor, maybe move outside and change name to : <ResponsiveRatioBox,AspectRatioContainer, AdaptiveContent... getCanvasScaleRatio() should be renamed too
+export function Content({
+  children
+}: {
+  children?: ReactElement
+}): ReactElement {
   return (
     <UiEntity
       uiTransform={{
