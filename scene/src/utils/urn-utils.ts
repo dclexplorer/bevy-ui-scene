@@ -52,3 +52,12 @@ export function getURNWithoutTokenId(
 function isOffChainOrIncomplete(urn: string): boolean {
   return urn.includes(':off-chain:') || urn.split(':').length < 6
 }
+
+export function applyMiddleEllipsis(address: string): string {
+  if (!address) return ''
+
+  const start = address.slice(0, 6) // '0x' + 4 chars
+  const end = address.slice(-4) // Last 4 chars
+
+  return `${start}…${end}`
+}
