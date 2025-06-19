@@ -35,7 +35,7 @@ export type ProfileLink = {
   url: string
 }
 
-export type ViewAvatarData = {
+export type ViewAvatarData = Record<string, any> & {
   hasClaimedName: boolean
   description: string
   country: string
@@ -89,6 +89,7 @@ const editablePropertyKeys: string[] = [
   'realName',
   'hobbies'
 ]
+
 const labelsPerProperty: Record<string, string> = {
   country: 'country'.toUpperCase(),
   language: 'language'.toUpperCase(),
@@ -104,7 +105,14 @@ const labelsPerProperty: Record<string, string> = {
 }
 const iconsPerProperty: Record<string, string> = {
   country: 'CountryIcn',
-  gender: 'GenderIcn'
+  language: 'LanguageIcn',
+  gender: 'GenderIcn',
+  pronouns: 'PronounsIcn',
+  profession: 'ProfessionIcn',
+  hobbies: 'HobbiesIcn',
+  birthdate: 'BirthdayIcn',
+  realName: 'BirthdayIcn',
+  sexualOrientation: 'GenderIcn'
 }
 /**
  * setupPassportPopup: executed one time when the explorer is initialized
@@ -124,7 +132,6 @@ export function setupPassportPopup(): void {
         const profileData = await fetchProfileData({ userId })
         const [avatarData] = profileData.avatars
         Object.assign(state.profileData, avatarData as ViewAvatarData)
-
         createAvatarPreview()
         const wearables: URNWithoutTokenId[] = (
           avatarData.avatar.wearables ?? []
@@ -222,6 +229,9 @@ function ProfileContent(): ReactElement {
         })}
       </Header>
       <TabComponent
+        uiTransform={{
+          margin: { top: '5%' }
+        }}
         tabs={[
           {
             text: 'OVERVIEW',
@@ -246,8 +256,7 @@ function Overview(): ReactElement {
       uiTransform={{
         margin: { top: '4%' },
         padding: '2%',
-        width: '100%',
-        height: '50%',
+        width: '96%',
         borderRadius: getCanvasScaleRatio() * 20,
         borderColor: COLOR.TEXT_COLOR_WHITE,
         borderWidth: 0,
@@ -278,9 +287,11 @@ function Overview(): ReactElement {
           margin: { top: '2%' }
         }}
       >
-        {_getVisibleProperties(state.profileData).map((propertyKey) => (
-          <ProfilePropertyField propertyKey={propertyKey} />
-        ))}
+        {_getVisibleProperties(state.profileData).map(
+          (propertyKey: keyof ViewAvatarData) => (
+            <ProfilePropertyField propertyKey={propertyKey} />
+          )
+        )}
       </UiEntity>
     </UiEntity>
   )
@@ -295,7 +306,7 @@ function ProfilePropertyField({
     <UiEntity
       uiTransform={{
         flexDirection: 'column',
-        width: '20%',
+        width: '25%',
         alignItems: 'flex-start'
       }}
     >
@@ -304,7 +315,10 @@ function ProfilePropertyField({
           flexShrink: 0,
           flexGrow: 0,
           positionType: 'absolute',
-          position: { top: '10%', left: getCanvasScaleRatio() * 0 }
+          position: {
+            top: getCanvasScaleRatio() * 16,
+            left: getCanvasScaleRatio() * 5
+          }
         }}
         icon={{
           atlasName: 'profile',
@@ -314,19 +328,29 @@ function ProfilePropertyField({
         iconColor={COLOR.INACTIVE}
       />
       <UiEntity
-        uiTransform={{ margin: { left: getCanvasScaleRatio() * 20 } }}
-        uiText={{ value: labelsPerProperty[propertyKey] ?? 'LABEL' }}
+        uiTransform={{ margin: { left: getCanvasScaleRatio() * 30 } }}
+        uiText={{
+          value: labelsPerProperty[propertyKey],
+          fontSize: getCanvasScaleRatio() * 30
+        }}
       />
-      <UiEntity uiText={{ value: state.profileData[propertyKey] }} />
+      <UiEntity
+        uiText={{
+          value: formatProfileValue(propertyKey),
+          fontSize: getCanvasScaleRatio() * 30
+        }}
+      />
     </UiEntity>
   )
 }
-
+function formatProfileValue(key: string): string {
+  if (key === 'birthdate') {
+    return new Date(state.profileData[key] * 1000).toLocaleDateString()
+  }
+  return state.profileData[key]
+}
 function getVisibleProperties(profileData: ViewAvatarData): string[] {
-  // TODO fix type
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  return editablePropertyKeys.filter((key) => isTruthy(profileData[key as any]))
+  return editablePropertyKeys.filter((key) => !!profileData[key])
 }
 
 const _applyMiddleEllipsis = memoize(applyMiddleEllipsis)

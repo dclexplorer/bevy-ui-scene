@@ -1,6 +1,7 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { BottomBorder } from './bottom-border'
 import { COLOR } from './color-palette'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 
 export type Tab = {
   text: string
@@ -8,15 +9,18 @@ export type Tab = {
 }
 export function TabComponent({
   tabs,
-  fontSize
+  fontSize,
+  uiTransform
 }: {
   tabs: Tab[]
   fontSize: number
+  uiTransform: UiTransformProps
 }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
-        flexDirection: 'row'
+        flexDirection: 'row',
+        ...uiTransform
       }}
     >
       <BottomBorder color={COLOR.WHITE_OPACITY_1} />
