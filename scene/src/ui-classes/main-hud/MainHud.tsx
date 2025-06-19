@@ -13,8 +13,7 @@ import { switchEmotesWheelVisibility } from '../../emotes-wheel/emotes-wheel'
 import { type ReactElement } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { updateHudStateAction } from '../../state/hud/actions'
-import { PopupUrl } from './popup-url'
-import { PopupPassport } from './popup-passport'
+import { PopupStack } from '../../components/popup-stack'
 
 const ZERO_SIZE = {
   width: 0,
@@ -281,8 +280,7 @@ export default class MainHud {
           flexDirection: 'row'
         }}
       >
-        {PopupUrl()}
-        {PopupPassport()}
+        {PopupStack()}
         <UiEntity
           uiTransform={{
             width: '4%',

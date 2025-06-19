@@ -1,0 +1,25 @@
+import { type ReactElement } from '@dcl/react-ecs'
+import { store } from '../state/store'
+import { HUD_POPUP_TYPE, type HUDPopup } from '../state/hud/state'
+import { PopupUrl } from '../ui-classes/main-hud/popup-url'
+import { PopupPassport } from '../ui-classes/main-hud/popup-passport'
+
+export type PopupParameters = { shownPopup: HUDPopup }
+export type Popup = (
+  params: PopupParameters
+) => ReactElement | null | ReactElement[]
+
+const popupComponents: Record<number, Popup> = {
+  [HUD_POPUP_TYPE.URL as number]: PopupUrl,
+  [HUD_POPUP_TYPE.TELEPORT as number]: PopupUrl, // TODO
+  [HUD_POPUP_TYPE.PASSPORT as number]: PopupPassport
+}
+
+export function PopupStack(): ReactElement[] {
+  return store
+    .getState()
+    .hud.shownPopups.map(
+      (shownPopup: HUDPopup) =>
+        popupComponents[shownPopup.type]({ shownPopup }) as ReactElement
+    )
+}

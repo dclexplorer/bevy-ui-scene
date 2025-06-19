@@ -13,15 +13,15 @@ export type HUDPopup = {
 
 export type HudState = {
   chatOpen: boolean
-  shownPopup: HUDPopup | null
+  shownPopups: HUDPopup[]
 }
 
 export type HudStateUpdateParams = {
   chatOpen?: boolean
-  shownPopup?: HUDPopup | null
+  shownPopup?: HUDPopup[]
 }
 
 export const hudInitialState: HudState = {
   chatOpen: true,
-  shownPopup: null
+  shownPopups: []
 }

@@ -1,7 +1,7 @@
 import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { COLOR } from '../../components/color-palette'
-import { updateHudStateAction } from '../../state/hud/actions'
+import { closeLastPopupAction } from '../../state/hud/actions'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../utils/ui-utils'
 import { noop } from '../../utils/function-utils'
@@ -10,14 +10,16 @@ import Icon from '../../components/icon/Icon'
 import { Color4 } from '@dcl/sdk/math'
 import { Checkbox } from '../../components/checkbox'
 import { openExternalUrl } from '~system/RestrictedActions'
+import { type Popup } from '../../components/popup-stack'
 
 const state = {
   rememberDomain: false
 }
 
-export function PopupUrl(): ReactElement | null {
-  const URL = store.getState().hud.shownPopup?.data as string
-  if (store.getState().hud.shownPopup?.type !== HUD_POPUP_TYPE.URL) return null
+export const PopupUrl: Popup = ({ shownPopup }) => {
+  const URL = shownPopup.data
+  if (shownPopup?.type !== HUD_POPUP_TYPE.URL) return null
+
   return (
     <UiEntity
       uiTransform={{
@@ -143,6 +145,6 @@ export function PopupUrl(): ReactElement | null {
   )
 
   function closeDialog(): void {
-    store.dispatch(updateHudStateAction({ shownPopup: null }))
+    store.dispatch(closeLastPopupAction())
   }
 }

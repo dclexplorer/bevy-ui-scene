@@ -1,9 +1,9 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../components/color-palette'
 import { store } from '../../state/store'
-import { HUD_ACTION, updateHudStateAction } from '../../state/hud/actions'
+import { closeLastPopupAction, HUD_ACTION } from '../../state/hud/actions'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { HUD_POPUP_TYPE } from '../../state/hud/state'
+import { HUD_POPUP_TYPE, type HUDPopup } from '../../state/hud/state'
 import { memoize, noop } from '../../utils/function-utils'
 import { Content } from '../main-menu/backpack-page/BackpackPage'
 import { AvatarPreviewElement } from '../../components/backpack/AvatarPreviewElement'
@@ -25,6 +25,7 @@ import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { type WearableCategory } from '../../service/categories'
 import { TabComponent } from '../../components/tab-component'
+import { type Popup } from '../../components/popup-stack'
 
 const COPY_ICON_SIZE = 40
 export type ProfileLink = {
@@ -73,15 +74,16 @@ const state: PassportPopupState = {
 export function setupPassportPopup(): void {
   // When passport is open, the avatar preview is initialized and/or updated & profile data loaded
   store.subscribe((action, previousState) => {
-    // TODO Links popup should be shown above passport for profile links, so, passport cannot be that kind of popup or popups should be stackable
     if (
-      action.type === HUD_ACTION.UPDATE_HUD_STATE &&
-      previousState.hud.shownPopup?.type !== HUD_POPUP_TYPE.PASSPORT &&
-      store.getState().hud.shownPopup?.type === HUD_POPUP_TYPE.PASSPORT
+      action.type === HUD_ACTION.PUSH_POPUP &&
+      (action.payload as HUDPopup).type === HUD_POPUP_TYPE.PASSPORT
     ) {
+      // TODO review if a passport can be opened when other passport is open (popups are stackable), then we should check last popup type/data to update avatarPreview and profileData
+
       executeTask(async () => {
-        const userId: string = store.getState().hud.shownPopup?.data as string
-        await waitFor(() => (getPlayer({ userId })?.wearables.length ?? 0) > 0)
+        const shownPopup = action.payload as HUDPopup
+        const userId: string = shownPopup.data
+        await waitFor(() => (getPlayer({ userId })?.wearables.length ?? 0) > 0) // TODO handle if the player is not found
 
         createAvatarPreview()
 
@@ -102,13 +104,9 @@ export function setupPassportPopup(): void {
   })
 }
 
-export function PopupPassport(): ReactElement | null {
-  if (store.getState().hud.shownPopup?.type !== HUD_POPUP_TYPE.PASSPORT) {
-    return null
-  }
-
-  // const userId = store.getState().hud.shownPopup?.data as string
-  const player = getPlayer()
+export const PopupPassport: Popup = ({ shownPopup }) => {
+  const userId = shownPopup.data
+  const player = getPlayer({ userId })
 
   return (
     <UiEntity
@@ -191,7 +189,7 @@ export function PopupPassport(): ReactElement | null {
   )
 
   function closeDialog(): void {
-    store.dispatch(updateHudStateAction({ shownPopup: null }))
+    store.dispatch(closeLastPopupAction())
   }
 }
 
