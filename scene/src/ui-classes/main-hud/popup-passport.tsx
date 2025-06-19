@@ -2,9 +2,8 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../components/color-palette'
 import { store } from '../../state/store'
 import { closeLastPopupAction, HUD_ACTION } from '../../state/hud/actions'
-import { getPlayer } from '@dcl/sdk/src/players'
 import { HUD_POPUP_TYPE, type HUDPopup } from '../../state/hud/state'
-import { memoize, noop } from '../../utils/function-utils'
+import { isTruthy, memoize, noop } from '../../utils/function-utils'
 import { Content } from '../main-menu/backpack-page/BackpackPage'
 import { AvatarPreviewElement } from '../../components/backpack/AvatarPreviewElement'
 import {
@@ -27,6 +26,8 @@ import { type WearableCategory } from '../../service/categories'
 import { TabComponent } from '../../components/tab-component'
 import { type Popup } from '../../components/popup-stack'
 import { fetchProfileData } from '../../utils/passport-promise-utils'
+import { Label } from '@dcl/sdk/react-ecs'
+import Icon from '../../components/icon/Icon'
 
 const COPY_ICON_SIZE = 40
 export type ProfileLink = {
@@ -76,7 +77,35 @@ const state: PassportPopupState = {
     links: []
   }
 }
-
+const editablePropertyKeys: string[] = [
+  'country',
+  'language',
+  'pronouns',
+  'gender',
+  'relationshipStatus',
+  'sexualOrientation',
+  'profession',
+  'birthdate',
+  'realName',
+  'hobbies'
+]
+const labelsPerProperty: Record<string, string> = {
+  country: 'country'.toUpperCase(),
+  language: 'language'.toUpperCase(),
+  pronouns: 'pronouns'.toUpperCase(),
+  gender: 'gender'.toUpperCase(),
+  relationshipStatus: 'relationship status'.toUpperCase(),
+  sexualOrientation: 'sexual orientation'.toUpperCase(),
+  employmentStatus: 'employment status'.toUpperCase(),
+  profession: 'profession'.toUpperCase(),
+  birthdate: 'birthdate'.toUpperCase(),
+  realName: 'real name'.toUpperCase(),
+  hobbies: 'favorite hobby'.toUpperCase()
+}
+const iconsPerProperty: Record<string, string> = {
+  country: 'CountryIcn',
+  gender: 'GenderIcn'
+}
 /**
  * setupPassportPopup: executed one time when the explorer is initialized
  */
@@ -112,9 +141,6 @@ export function setupPassportPopup(): void {
 }
 
 export const PopupPassport: Popup = ({ shownPopup }) => {
-  const userId = shownPopup.data
-  const player = getPlayer({ userId })
-
   return (
     <UiEntity
       uiTransform={{
@@ -147,49 +173,22 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
             textureMode: 'stretch'
           }}
         >
-          <AvatarPreviewElement
-            uiTransform={{
-              position: { top: '-18%' },
-              flexShrink: 0,
-              flexGrow: 0
-            }}
-          />
-          <UiEntity
-            uiTransform={{
-              flexDirection: 'column',
-
-              flexGrow: 1
-            }}
-            onMouseDown={noop}
-          >
-            <Header>
-              {NameRow({
-                name: state.profileData.name,
-                fontSize: getCanvasScaleRatio() * 40,
-                hasClaimedName: state.profileData.hasClaimedName
-              })}
-              {!player?.isGuest &&
-                AddressRow({
-                  address: state.profileData.userId,
-                  fontSize: getCanvasScaleRatio() * 28
-                })}
-            </Header>
-            <TabComponent
-              tabs={[
-                {
-                  text: 'OVERVIEW',
-                  active: true
-                },
-                {
-                  text: 'BADGES'
-                },
-                {
-                  text: 'PHOTOS'
-                }
-              ]}
+          {!state.loadingProfile && [
+            <AvatarPreviewElement
+              uiTransform={{
+                position: { top: '-18%' },
+                flexShrink: 0,
+                flexGrow: 0
+              }}
+            />,
+            <ProfileContent />
+          ]}
+          {state.loadingProfile && (
+            <Label
+              value={'Loading ...'}
               fontSize={getCanvasScaleRatio() * 32}
             />
-          </UiEntity>
+          )}
         </UiEntity>
       </Content>
     </UiEntity>
@@ -198,6 +197,136 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
   function closeDialog(): void {
     store.dispatch(closeLastPopupAction())
   }
+}
+const _getVisibleProperties = memoize(getVisibleProperties)
+function ProfileContent(): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        flexDirection: 'column',
+
+        flexGrow: 1
+      }}
+      onMouseDown={noop}
+    >
+      <Header>
+        {NameRow({
+          name: state.profileData.name,
+          fontSize: getCanvasScaleRatio() * 40,
+          hasClaimedName: state.profileData.hasClaimedName
+        })}
+        {AddressRow({
+          // TODO review if need to check isGuest (not available in catalyst remote profile)
+          address: state.profileData.userId,
+          fontSize: getCanvasScaleRatio() * 28
+        })}
+      </Header>
+      <TabComponent
+        tabs={[
+          {
+            text: 'OVERVIEW',
+            active: true
+          },
+          {
+            text: 'BADGES'
+          },
+          {
+            text: 'PHOTOS'
+          }
+        ]}
+        fontSize={getCanvasScaleRatio() * 32}
+      />
+      <Overview />
+    </UiEntity>
+  )
+}
+function Overview(): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        margin: { top: '4%' },
+        padding: '2%',
+        width: '100%',
+        height: '50%',
+        borderRadius: getCanvasScaleRatio() * 20,
+        borderColor: COLOR.TEXT_COLOR_WHITE,
+        borderWidth: 0,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start'
+      }}
+      uiBackground={{ color: COLOR.DARK_OPACITY_2 }}
+    >
+      <UiEntity
+        uiText={{
+          value: '<b>ABOUT ME</b>',
+          fontSize: getCanvasScaleRatio() * 32
+        }}
+      />
+      <UiEntity
+        uiText={{
+          value: state.profileData.description
+        }}
+      />
+      <UiEntity
+        uiTransform={{
+          flexDirection: 'row',
+          flexShrink: 1,
+          flex: 1,
+          flexWrap: 'wrap',
+          width: '100%',
+          margin: { top: '2%' }
+        }}
+      >
+        {_getVisibleProperties(state.profileData).map((propertyKey) => (
+          <ProfilePropertyField propertyKey={propertyKey} />
+        ))}
+      </UiEntity>
+    </UiEntity>
+  )
+}
+
+function ProfilePropertyField({
+  propertyKey
+}: {
+  propertyKey: string
+}): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        flexDirection: 'column',
+        width: '20%',
+        alignItems: 'flex-start'
+      }}
+    >
+      <Icon
+        uiTransform={{
+          flexShrink: 0,
+          flexGrow: 0,
+          positionType: 'absolute',
+          position: { top: '10%', left: getCanvasScaleRatio() * 0 }
+        }}
+        icon={{
+          atlasName: 'profile',
+          spriteName: iconsPerProperty[propertyKey]
+        }}
+        iconSize={getCanvasScaleRatio() * 32}
+        iconColor={COLOR.INACTIVE}
+      />
+      <UiEntity
+        uiTransform={{ margin: { left: getCanvasScaleRatio() * 20 } }}
+        uiText={{ value: labelsPerProperty[propertyKey] ?? 'LABEL' }}
+      />
+      <UiEntity uiText={{ value: state.profileData[propertyKey] }} />
+    </UiEntity>
+  )
+}
+
+function getVisibleProperties(profileData: ViewAvatarData): string[] {
+  // TODO fix type
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  return editablePropertyKeys.filter((key) => isTruthy(profileData[key as any]))
 }
 
 const _applyMiddleEllipsis = memoize(applyMiddleEllipsis)

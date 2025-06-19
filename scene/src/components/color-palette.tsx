@@ -68,6 +68,7 @@ export const COLOR = {
   WHITE_OPACITY_2: Color4.create(1, 1, 1, 0.2),
   WHITE_OPACITY_5: Color4.create(1, 1, 1, 0.5),
   TEXT_COLOR: Color4.fromHexString('#2B272AFF'),
+  TEXT_COLOR_WHITE: Color4.fromHexString('#f4f4f4'),
   INACTIVE: Color4.fromHexString('#d8d8d8'),
   WHEEL_BASE_RARITY: Color4.fromHexString('#e1e1e1'),
   BLACK_TRANSPARENT: Color4.create(0, 0, 0, 0),
