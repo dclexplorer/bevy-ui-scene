@@ -19,7 +19,7 @@ import {
   getURNWithoutTokenId
 } from '../../utils/urn-utils'
 import { type URN, type URNWithoutTokenId } from '../../utils/definitions'
-import { convertToPBAvatarBase } from '../../utils/dcl-utils'
+import { convertToPBAvatarBase, sleep } from '../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { type WearableCategory } from '../../service/categories'
@@ -56,9 +56,11 @@ export type ViewAvatarData = Record<string, any> & {
 export type PassportPopupState = {
   loadingProfile: boolean
   profileData: ViewAvatarData
+  copying: null | string
 }
 const state: PassportPopupState = {
   loadingProfile: true,
+  copying: null,
   profileData: {
     userId: '',
     hasClaimedName: false,
@@ -384,7 +386,8 @@ function AddressRow({
       />
       {CopyButton({
         fontSize: getCanvasScaleRatio() * COPY_ICON_SIZE,
-        text: address
+        text: address,
+        elementId: 'copy-address'
       })}
     </UiEntity>
   )
@@ -428,7 +431,8 @@ function NameRow({
       )}
       {CopyButton({
         fontSize: getCanvasScaleRatio() * COPY_ICON_SIZE,
-        text: name
+        text: name,
+        elementId: 'copy-name'
       })}
     </UiEntity>
   )
@@ -436,10 +440,12 @@ function NameRow({
 
 function CopyButton({
   fontSize,
-  text
+  text,
+  elementId
 }: {
   fontSize: number
   text: string
+  elementId: string
 }): ReactElement {
   return (
     <UiEntity
@@ -453,10 +459,15 @@ function CopyButton({
           atlasName: 'icons',
           spriteName: 'CopyIcon'
         }),
-        color: { ...ALMOST_WHITE, a: 0.2 }
+        color: state.copying === elementId ? COLOR.WHITE : COLOR.WHITE_OPACITY_2
       }}
       onMouseDown={() => {
-        copyToClipboard({ text }).catch(console.error)
+        executeTask(async () => {
+          state.copying = elementId
+          copyToClipboard({ text }).catch(console.error)
+          await sleep(200)
+          state.copying = null
+        })
       }}
     />
   )
