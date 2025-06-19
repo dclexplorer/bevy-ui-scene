@@ -32,16 +32,6 @@ import { fetchProfileData } from '../../utils/passport-promise-utils'
 import { Label } from '@dcl/sdk/react-ecs'
 import Icon from '../../components/icon/Icon'
 
-const MockLinks = [
-  {
-    title: 'Twitter',
-    url: 'https://x.com/Pablo_es'
-  },
-  {
-    title: 'Twitter 2',
-    url: 'https://x.com/Pablo_es?x=2'
-  }
-]
 const COPY_ICON_SIZE = 40
 
 export type ViewAvatarData = Record<string, any> & {
@@ -275,7 +265,7 @@ function Overview(): ReactElement {
         justifyContent: 'flex-start',
         alignItems: 'flex-start'
       }}
-      uiBackground={{ color: COLOR.DARK_OPACITY_2 }}
+      uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
     >
       <UiEntity
         uiText={{
@@ -309,17 +299,24 @@ function Overview(): ReactElement {
           )
         )}
       </UiEntity>
-      <UiEntity
-        uiText={{
-          value: '<br/><br/><b>LINKS</b>',
-          fontSize: getCanvasScaleRatio() * 30
-        }}
-      />
-      <UiEntity uiTransform={{ flexDirection: 'row' }}>
-        {state.profileData.links.map((link: { title: string; url: string }) => (
-          <ProfileLink link={link} />
-        ))}
-      </UiEntity>
+      {state.profileData.links.length > 0 && [
+        <UiEntity
+          uiTransform={{
+            margin: { top: '5%' }
+          }}
+          uiText={{
+            value: '<b>LINKS</b>',
+            fontSize: getCanvasScaleRatio() * 30
+          }}
+        />,
+        <UiEntity uiTransform={{ flexDirection: 'row' }}>
+          {state.profileData.links.map(
+            (link: { title: string; url: string }) => (
+              <ProfileLink link={link} />
+            )
+          )}
+        </UiEntity>
+      ]}
     </UiEntity>
   )
 }
@@ -383,7 +380,8 @@ function ProfilePropertyField({
       uiTransform={{
         flexDirection: 'column',
         width: '25%',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        margin: { top: getCanvasScaleRatio() * 30 }
       }}
     >
       <Icon
@@ -404,16 +402,27 @@ function ProfilePropertyField({
         iconColor={COLOR.INACTIVE}
       />
       <UiEntity
-        uiTransform={{ margin: { left: getCanvasScaleRatio() * 30 } }}
+        uiTransform={{
+          margin: {
+            left: getCanvasScaleRatio() * 30
+          }
+        }}
         uiText={{
           value: labelsPerProperty[propertyKey],
           fontSize: getCanvasScaleRatio() * 30
         }}
       />
       <UiEntity
+        uiTransform={{
+          margin: {
+            top: getCanvasScaleRatio() * -20,
+            left: getCanvasScaleRatio() * 30
+          }
+        }}
         uiText={{
           value: formatProfileValue(propertyKey),
-          fontSize: getCanvasScaleRatio() * 30
+          fontSize: getCanvasScaleRatio() * 30,
+          color: COLOR.TEXT_COLOR_LIGHT_GREY
         }}
       />
     </UiEntity>
