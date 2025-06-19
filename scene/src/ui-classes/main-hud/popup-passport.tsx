@@ -111,7 +111,8 @@ export function PopupPassport(): ReactElement | null {
             <Header>
               {NameRow({
                 name: player?.name ?? '',
-                fontSize: getCanvasScaleRatio() * 40
+                fontSize: getCanvasScaleRatio() * 40,
+                isGuest: !!player?.isGuest
               })}
               {!player?.isGuest &&
                 AddressRow({
@@ -168,10 +169,12 @@ function AddressRow({
 
 function NameRow({
   name,
-  fontSize
+  fontSize,
+  isGuest
 }: {
   name: string
   fontSize: number
+  isGuest: boolean
 }): ReactElement {
   return (
     <UiEntity
@@ -188,16 +191,18 @@ function NameRow({
           margin: { left: '-5%' }
         }}
       />
-      <UiEntity
-        uiTransform={{
-          width: fontSize,
-          height: fontSize
-        }}
-        uiBackground={getBackgroundFromAtlas({
-          atlasName: 'icons',
-          spriteName: 'Verified'
-        })}
-      />
+      {!isGuest && (
+        <UiEntity
+          uiTransform={{
+            width: fontSize,
+            height: fontSize
+          }}
+          uiBackground={getBackgroundFromAtlas({
+            atlasName: 'icons',
+            spriteName: 'Verified'
+          })}
+        />
+      )}
       {CopyButton({
         fontSize: getCanvasScaleRatio() * COPY_ICON_SIZE,
         text: name
@@ -238,12 +243,13 @@ function StatusIcon({ fontSize }: { fontSize: number }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
-        width: fontSize,
-        height: fontSize
+        width: fontSize * 0.6,
+        height: fontSize * 0.6,
+        borderRadius: 9999,
+        borderWidth: 3 * getCanvasScaleRatio(),
+        borderColor: COLOR.WHITE
       }}
-      uiBackground={{
-        texture: { src: 'assets/images/passport/online.png' }
-      }}
+      uiBackground={{ color: COLOR.LINK_COLOR }}
     />
   )
 }
