@@ -24,6 +24,8 @@ import { waitFor } from '../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { type WearableCategory } from '../../service/categories'
+import { BottomBorder } from '../../components/bottom-border'
+import { TabComponent } from '../../components/tab-component'
 
 export function setupPassportPopup(): void {
   store.subscribe((action, previousState) => {
@@ -107,6 +109,7 @@ export function PopupPassport(): ReactElement | null {
 
               flexGrow: 1
             }}
+            onMouseDown={noop}
           >
             <Header>
               {NameRow({
@@ -120,6 +123,21 @@ export function PopupPassport(): ReactElement | null {
                   fontSize: getCanvasScaleRatio() * 28
                 })}
             </Header>
+            <TabComponent
+              tabs={[
+                {
+                  text: 'OVERVIEW',
+                  active: true
+                },
+                {
+                  text: 'BADGES'
+                },
+                {
+                  text: 'PHOTOS'
+                }
+              ]}
+              fontSize={getCanvasScaleRatio() * 32}
+            />
           </UiEntity>
         </UiEntity>
       </Content>
@@ -249,7 +267,7 @@ function StatusIcon({ fontSize }: { fontSize: number }): ReactElement {
         borderWidth: 3 * getCanvasScaleRatio(),
         borderColor: COLOR.WHITE
       }}
-      uiBackground={{ color: COLOR.LINK_COLOR }}
+      uiBackground={{ color: COLOR.STATUS_ACTIVE }} // TODO real status
     />
   )
 }
@@ -258,9 +276,6 @@ function Header({ children }: { children?: ReactElement }): ReactElement {
     <UiEntity
       uiTransform={{
         flexDirection: 'column',
-        borderWidth: 1,
-        borderColor: COLOR.RED,
-        borderRadius: 0,
         alignItems: 'flex-start'
       }}
     >

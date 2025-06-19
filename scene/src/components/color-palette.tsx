@@ -64,6 +64,7 @@ export const COLOR = {
   DARK_OPACITY_5: Color4.create(0, 0, 0, 0.5),
   DARK_OPACITY_7: Color4.create(0, 0, 0, 0.7),
   DARK_OPACITY_9: Color4.create(0, 0, 0, 0.9),
+  WHITE_OPACITY_1: Color4.create(1, 1, 1, 0.1),
   WHITE_OPACITY_2: Color4.create(1, 1, 1, 0.2),
   WHITE_OPACITY_5: Color4.create(1, 1, 1, 0.5),
   TEXT_COLOR: Color4.fromHexString('#2B272AFF'),
@@ -75,7 +76,8 @@ export const COLOR = {
   WHITE: Color4.White(),
   BLACK: Color4.Black(),
   RED: Color4.Red(),
-  URL_POPUP_BACKGROUND: Color4.fromHexString('#51157F')
+  URL_POPUP_BACKGROUND: Color4.fromHexString('#51157F'),
+  STATUS_ACTIVE: Color4.fromHexString('#3cd523')
 }
 export const RARITY_COLORS: Record<RarityName, Color4> = {
   base: Color4.fromHexString('#a09ba8'),
