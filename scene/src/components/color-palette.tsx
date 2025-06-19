@@ -51,6 +51,7 @@ export const COLOR_PRESETS: Record<string, Color4[]> = {
 export const COLOR = {
   ACTIVE_COLOR,
   LINK_COLOR,
+  LINK_BLUE: Color4.fromHexString('#4d82e4'),
   ACTIVE_BACKGROUND_COLOR,
   DROPDOWN_ITEM_HOVER: Color4.create(0, 0, 0, 0.1),
   MAIN_MENU_BACKGROUND: Color4.fromHexString('#161518'),

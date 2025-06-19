@@ -1,16 +1,19 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../components/color-palette'
 import { store } from '../../state/store'
-import { closeLastPopupAction, HUD_ACTION } from '../../state/hud/actions'
+import {
+  closeLastPopupAction,
+  HUD_ACTION,
+  pushPopupAction
+} from '../../state/hud/actions'
 import { HUD_POPUP_TYPE, type HUDPopup } from '../../state/hud/state'
-import { isTruthy, memoize, noop } from '../../utils/function-utils'
+import { memoize, noop } from '../../utils/function-utils'
 import { Content } from '../main-menu/backpack-page/BackpackPage'
 import { AvatarPreviewElement } from '../../components/backpack/AvatarPreviewElement'
 import {
   createAvatarPreview,
   updateAvatarPreview
 } from '../../components/backpack/AvatarPreview'
-import { ALMOST_WHITE } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { copyToClipboard } from '~system/RestrictedActions'
@@ -29,11 +32,17 @@ import { fetchProfileData } from '../../utils/passport-promise-utils'
 import { Label } from '@dcl/sdk/react-ecs'
 import Icon from '../../components/icon/Icon'
 
+const MockLinks = [
+  {
+    title: 'Twitter',
+    url: 'https://x.com/Pablo_es'
+  },
+  {
+    title: 'Twitter 2',
+    url: 'https://x.com/Pablo_es?x=2'
+  }
+]
 const COPY_ICON_SIZE = 40
-export type ProfileLink = {
-  title: string
-  url: string
-}
 
 export type ViewAvatarData = Record<string, any> & {
   hasClaimedName: boolean
@@ -49,7 +58,7 @@ export type ViewAvatarData = Record<string, any> & {
   birthdate: number
   hobbies: string
   name: string
-  links: ProfileLink[]
+  links: Array<{ url: string; title: string }>
   userId: string
 }
 
@@ -274,12 +283,16 @@ function Overview(): ReactElement {
           fontSize: getCanvasScaleRatio() * 32
         }}
       />
+
       <UiEntity
+        uiTransform={{ width: '100%' }}
         uiText={{
           value: state.profileData.description,
-          fontSize: getCanvasScaleRatio() * 32
+          fontSize: getCanvasScaleRatio() * 32,
+          textAlign: 'top-left'
         }}
       />
+
       <UiEntity
         uiTransform={{
           flexDirection: 'row',
@@ -296,6 +309,66 @@ function Overview(): ReactElement {
           )
         )}
       </UiEntity>
+      <UiEntity
+        uiText={{
+          value: '<br/><br/><b>LINKS</b>',
+          fontSize: getCanvasScaleRatio() * 30
+        }}
+      />
+      <UiEntity uiTransform={{ flexDirection: 'row' }}>
+        {state.profileData.links.map((link: { title: string; url: string }) => (
+          <ProfileLink link={link} />
+        ))}
+      </UiEntity>
+    </UiEntity>
+  )
+}
+
+function ProfileLink({
+  link
+}: {
+  link: { url: string; title: string }
+}): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        padding: getCanvasScaleRatio() * 10,
+        margin: getCanvasScaleRatio() * 10,
+        borderRadius: getCanvasScaleRatio() * 20,
+        borderColor: COLOR.BLACK_TRANSPARENT,
+        borderWidth: 0
+      }}
+      uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
+      onMouseDown={() => {
+        store.dispatch(
+          pushPopupAction({
+            type: HUD_POPUP_TYPE.URL,
+            data: link.url
+          })
+        )
+      }}
+    >
+      <Icon
+        uiTransform={{
+          position: {
+            top: getCanvasScaleRatio() * 15,
+            left: getCanvasScaleRatio() * 10
+          }
+        }}
+        icon={{
+          atlasName: 'icons',
+          spriteName: 'Link'
+        }}
+        iconSize={getCanvasScaleRatio() * 40}
+        iconColor={COLOR.LINK_BLUE}
+      />
+      <UiEntity
+        uiText={{
+          value: link.title,
+          color: COLOR.LINK_BLUE,
+          fontSize: getCanvasScaleRatio() * 32
+        }}
+      />
     </UiEntity>
   )
 }
