@@ -274,7 +274,8 @@ function Overview(): ReactElement {
       />
       <UiEntity
         uiText={{
-          value: state.profileData.description
+          value: state.profileData.description,
+          fontSize: getCanvasScaleRatio() * 32
         }}
       />
       <UiEntity
