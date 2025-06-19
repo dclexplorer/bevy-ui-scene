@@ -20,19 +20,22 @@ import {
   getURNWithoutTokenId
 } from '../../utils/urn-utils'
 import { type URN, type URNWithoutTokenId } from '../../utils/definitions'
-import { waitFor } from '../../utils/dcl-utils'
+import { convertToPBAvatarBase } from '../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { type WearableCategory } from '../../service/categories'
 import { TabComponent } from '../../components/tab-component'
 import { type Popup } from '../../components/popup-stack'
+import { fetchProfileData } from '../../utils/passport-promise-utils'
 
 const COPY_ICON_SIZE = 40
 export type ProfileLink = {
   title: string
   url: string
 }
-export type ProfileData = {
+
+export type ViewAvatarData = {
+  hasClaimedName: boolean
   description: string
   country: string
   language: string
@@ -44,15 +47,21 @@ export type ProfileData = {
   profession: string
   birthdate: number
   hobbies: string
+  name: string
   links: ProfileLink[]
+  userId: string
 }
+
 export type PassportPopupState = {
   loadingProfile: boolean
-  profileData: ProfileData
+  profileData: ViewAvatarData
 }
 const state: PassportPopupState = {
   loadingProfile: true,
   profileData: {
+    userId: '',
+    hasClaimedName: false,
+    name: '',
     description: '',
     country: '',
     language: '',
@@ -79,27 +88,25 @@ export function setupPassportPopup(): void {
       (action.payload as HUDPopup).type === HUD_POPUP_TYPE.PASSPORT
     ) {
       // TODO review if a passport can be opened when other passport is open (popups are stackable), then we should check last popup type/data to update avatarPreview and profileData
-
+      state.loadingProfile = true
       executeTask(async () => {
         const shownPopup = action.payload as HUDPopup
         const userId: string = shownPopup.data
-        await waitFor(() => (getPlayer({ userId })?.wearables.length ?? 0) > 0) // TODO handle if the player is not found
+        const profileData = await fetchProfileData({ userId })
+        const [avatarData] = profileData.avatars
+        Object.assign(state.profileData, avatarData as ViewAvatarData)
 
         createAvatarPreview()
-
-        const player = getPlayer({ userId })
-
-        const wearables: URNWithoutTokenId[] = (player?.wearables ?? []).map(
-          (urn) => getURNWithoutTokenId(urn as URN)
-        ) as URNWithoutTokenId[]
+        const wearables: URNWithoutTokenId[] = (
+          avatarData.avatar.wearables ?? []
+        ).map((urn) => getURNWithoutTokenId(urn as URN)) as URNWithoutTokenId[]
         updateAvatarPreview(
           wearables,
-          player?.avatar as PBAvatarBase,
-          player?.forceRender as WearableCategory[]
+          convertToPBAvatarBase(avatarData) as PBAvatarBase,
+          avatarData.avatar.forceRender as WearableCategory[]
         )
+        state.loadingProfile = false
       })
-
-      // TODO load profile data
     }
   })
 }
@@ -157,13 +164,13 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
           >
             <Header>
               {NameRow({
-                name: player?.name ?? '',
+                name: state.profileData.name,
                 fontSize: getCanvasScaleRatio() * 40,
-                isGuest: !!player?.isGuest
+                hasClaimedName: state.profileData.hasClaimedName
               })}
               {!player?.isGuest &&
                 AddressRow({
-                  address: player?.userId ?? '',
+                  address: state.profileData.userId,
                   fontSize: getCanvasScaleRatio() * 28
                 })}
             </Header>
@@ -232,11 +239,11 @@ function AddressRow({
 function NameRow({
   name,
   fontSize,
-  isGuest
+  hasClaimedName
 }: {
   name: string
   fontSize: number
-  isGuest: boolean
+  hasClaimedName: boolean
 }): ReactElement {
   return (
     <UiEntity
@@ -253,7 +260,7 @@ function NameRow({
           margin: { left: '-5%' }
         }}
       />
-      {!isGuest && (
+      {hasClaimedName && (
         <UiEntity
           uiTransform={{
             width: fontSize,

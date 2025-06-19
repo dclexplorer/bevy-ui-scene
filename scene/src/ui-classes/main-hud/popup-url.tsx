@@ -1,4 +1,4 @@
-import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { Button, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { COLOR } from '../../components/color-palette'
 import { closeLastPopupAction } from '../../state/hud/actions'
