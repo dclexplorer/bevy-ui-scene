@@ -24,11 +24,56 @@ import { waitFor } from '../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { type WearableCategory } from '../../service/categories'
-import { BottomBorder } from '../../components/bottom-border'
 import { TabComponent } from '../../components/tab-component'
 
+const COPY_ICON_SIZE = 40
+export type ProfileLink = {
+  title: string
+  url: string
+}
+export type ProfileData = {
+  description: string
+  country: string
+  language: string
+  gender: string
+  relationshipStatus: string
+  sexualOrientation: string
+  employmentStatus: string
+  pronouns: string
+  profession: string
+  birthdate: number
+  hobbies: string
+  links: ProfileLink[]
+}
+export type PassportPopupState = {
+  loadingProfile: boolean
+  profileData: ProfileData
+}
+const state: PassportPopupState = {
+  loadingProfile: true,
+  profileData: {
+    description: '',
+    country: '',
+    language: '',
+    gender: '',
+    relationshipStatus: '',
+    sexualOrientation: '',
+    employmentStatus: '',
+    pronouns: '',
+    profession: '',
+    birthdate: 0,
+    hobbies: '',
+    links: []
+  }
+}
+
+/**
+ * setupPassportPopup: executed one time when the explorer is initialized
+ */
 export function setupPassportPopup(): void {
+  // When passport is open, the avatar preview is initialized and/or updated & profile data loaded
   store.subscribe((action, previousState) => {
+    // TODO Links popup should be shown above passport for profile links, so, passport cannot be that kind of popup or popups should be stackable
     if (
       action.type === HUD_ACTION.UPDATE_HUD_STATE &&
       previousState.hud.shownPopup?.type !== HUD_POPUP_TYPE.PASSPORT &&
@@ -51,11 +96,12 @@ export function setupPassportPopup(): void {
           player?.forceRender as WearableCategory[]
         )
       })
+
+      // TODO load profile data
     }
   })
 }
 
-const COPY_ICON_SIZE = 40
 export function PopupPassport(): ReactElement | null {
   if (store.getState().hud.shownPopup?.type !== HUD_POPUP_TYPE.PASSPORT) {
     return null
