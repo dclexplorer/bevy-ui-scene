@@ -3,7 +3,7 @@ import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import Icon from '../../../components/icon/Icon'
 import { COLOR } from '../../../components/color-palette'
 import { type ViewAvatarData } from './popup-passport'
-import { Input } from '@dcl/sdk/react-ecs'
+import { Input, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { noop } from '../../../utils/function-utils'
 import selectableValues from './passport-field-selectable-values.json'
@@ -63,17 +63,20 @@ export const inputTypePerProperty: Record<string, number> = {
   birthdate: INPUT_TYPE.DATE,
   realName: INPUT_TYPE.TEXT,
   sexualOrientation: INPUT_TYPE.DROPDOWN,
-  employmentStatus: INPUT_TYPE.TEXT
+  employmentStatus: INPUT_TYPE.TEXT,
+  description: INPUT_TYPE.TEXT
 }
 
 export function ProfilePropertyField({
   propertyKey,
   profileData,
-  editing
+  editing,
+  uiTransform
 }: {
   propertyKey: string
   profileData: ViewAvatarData
   editing?: boolean
+  uiTransform?: UiTransformProps
 }): ReactElement {
   return (
     <UiEntity
@@ -81,37 +84,42 @@ export function ProfilePropertyField({
         flexDirection: 'column',
         width: '25%',
         alignItems: 'flex-start',
-        margin: { top: getCanvasScaleRatio() * 30 }
+        margin: { top: getCanvasScaleRatio() * 30 },
+        ...uiTransform
       }}
     >
-      <Icon
-        uiTransform={{
-          flexShrink: 0,
-          flexGrow: 0,
-          positionType: 'absolute',
-          position: {
-            top: getCanvasScaleRatio() * 16,
-            left: getCanvasScaleRatio() * 5
-          }
-        }}
-        icon={{
-          atlasName: 'profile',
-          spriteName: iconsPerProperty[propertyKey]
-        }}
-        iconSize={getCanvasScaleRatio() * 32}
-        iconColor={COLOR.INACTIVE}
-      />
-      <UiEntity
-        uiTransform={{
-          margin: {
-            left: getCanvasScaleRatio() * 30
-          }
-        }}
-        uiText={{
-          value: labelsPerProperty[propertyKey],
-          fontSize: getCanvasScaleRatio() * 30
-        }}
-      />
+      {!!iconsPerProperty[propertyKey] && (
+        <Icon
+          uiTransform={{
+            flexShrink: 0,
+            flexGrow: 0,
+            positionType: 'absolute',
+            position: {
+              top: getCanvasScaleRatio() * 16,
+              left: getCanvasScaleRatio() * 5
+            }
+          }}
+          icon={{
+            atlasName: 'profile',
+            spriteName: iconsPerProperty[propertyKey]
+          }}
+          iconSize={getCanvasScaleRatio() * 32}
+          iconColor={COLOR.INACTIVE}
+        />
+      )}
+      {labelsPerProperty[propertyKey] && (
+        <UiEntity
+          uiTransform={{
+            margin: {
+              left: getCanvasScaleRatio() * 30
+            }
+          }}
+          uiText={{
+            value: labelsPerProperty[propertyKey],
+            fontSize: getCanvasScaleRatio() * 30
+          }}
+        />
+      )}
       {editing ? (
         PassportEditableInput({ type: inputTypePerProperty[propertyKey] })
       ) : (

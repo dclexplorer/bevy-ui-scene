@@ -60,8 +60,10 @@ export type PassportPopupState = {
   loadingProfile: boolean
   profileData: ViewAvatarData
   copying: null | string
+  editing: boolean
 }
 const state: PassportPopupState = {
+  editing: false,
   loadingProfile: true,
   copying: null,
   profileData: {
@@ -246,13 +248,11 @@ function Overview(): ReactElement {
         }}
       />
 
-      <UiEntity
+      <ProfilePropertyField
         uiTransform={{ width: '100%' }}
-        uiText={{
-          value: state.profileData.description,
-          fontSize: getCanvasScaleRatio() * 32,
-          textAlign: 'top-left'
-        }}
+        propertyKey={'description'}
+        profileData={state.profileData}
+        editing={state.editing}
       />
 
       <UiEntity
@@ -270,7 +270,7 @@ function Overview(): ReactElement {
             <ProfilePropertyField
               propertyKey={propertyKey ?? ''}
               profileData={state.profileData}
-              editing={true}
+              editing={state.editing}
             />
           )
         )}
