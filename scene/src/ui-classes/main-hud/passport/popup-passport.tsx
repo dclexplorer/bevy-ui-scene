@@ -1,4 +1,4 @@
-import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../../components/color-palette'
 import { store } from '../../../state/store'
 import {
@@ -36,6 +36,7 @@ import {
   ProfilePropertyField
 } from './profile-property-input'
 import { ButtonIcon } from '../../../components/button-icon'
+import { BottomBorder, TopBorder } from '../../../components/bottom-border'
 
 const COPY_ICON_SIZE = 40
 
@@ -65,7 +66,7 @@ export type PassportPopupState = {
   editable: boolean
 }
 const state: PassportPopupState = {
-  editing: false,
+  editing: true,
   editable: true,
   loadingProfile: true,
   copying: null,
@@ -312,22 +313,72 @@ function Overview(): ReactElement {
             fontSize: getCanvasScaleRatio() * 30
           }}
         />,
+        state.editing && (
+          <UiEntity
+            uiText={{
+              value:
+                'Add a maximum of 5 links to promote your personal website or social networks.',
+              fontSize: getCanvasScaleRatio() * 30
+            }}
+          />
+        ),
         <UiEntity uiTransform={{ flexDirection: 'row' }}>
           {state.profileData.links.map(
             (link: { title: string; url: string }) => (
-              <ProfileLink link={link} />
+              <ProfileLink link={link} editing={state.editing} />
             )
           )}
         </UiEntity>
       ]}
+      {state.editing && (
+        <UiEntity
+          uiTransform={{
+            flexDirection: 'row',
+            width: '100%',
+            padding: { top: '1%' },
+            justifyContent: 'flex-end'
+          }}
+        >
+          <TopBorder
+            color={COLOR.WHITE_OPACITY_2}
+            uiTransform={{
+              height: 1
+            }}
+          />
+          <Button
+            uiTransform={{
+              borderRadius: getCanvasScaleRatio() * 10,
+              borderColor: COLOR.BLACK_TRANSPARENT,
+              borderWidth: 0,
+              width: getCanvasScaleRatio() * 150,
+              margin: { right: '1%' }
+            }}
+            uiBackground={{
+              color: COLOR.WHITE_OPACITY_1
+            }}
+            value={'CANCEL'}
+          />
+          <Button
+            uiTransform={{
+              borderRadius: getCanvasScaleRatio() * 10,
+              borderColor: COLOR.BLACK_TRANSPARENT,
+              borderWidth: 0,
+              width: getCanvasScaleRatio() * 150
+            }}
+            value={'SAVE'}
+          />
+        </UiEntity>
+      )}
     </UiEntity>
   )
 }
 
 function ProfileLink({
-  link
+  link,
+  editing
 }: {
   link: { url: string; title: string }
+  editing?: boolean
 }): ReactElement {
   return (
     <UiEntity
@@ -369,6 +420,18 @@ function ProfileLink({
           fontSize: getCanvasScaleRatio() * 32
         }}
       />
+      {editing && (
+        <ButtonIcon
+          icon={{ spriteName: 'CloseIcon', atlasName: 'icons' }}
+          iconSize={getCanvasScaleRatio() * 30}
+          uiBackground={{ color: COLOR.BLACK }}
+          onMouseDown={() => {
+            state.profileData.links = state.profileData.links.filter(
+              (x) => x.url !== link.url
+            )
+          }}
+        />
+      )}
     </UiEntity>
   )
 }
