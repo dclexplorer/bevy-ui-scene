@@ -4,6 +4,10 @@ import Icon from '../../../components/icon/Icon'
 import { COLOR } from '../../../components/color-palette'
 import { type ViewAvatarData } from './popup-passport'
 import { Input } from '@dcl/sdk/react-ecs'
+import { Color4 } from '@dcl/sdk/math'
+import { noop } from '../../../utils/function-utils'
+import selectableValues from './passport-field-selectable-values.json'
+import { DropdownComponent } from '../../../components/dropdown-component'
 
 export const editablePropertyKeys: string[] = [
   'country',
@@ -109,7 +113,7 @@ export function ProfilePropertyField({
         }}
       />
       {editing ? (
-        <PassportEditableInput type={inputTypePerProperty[propertyKey]} />
+        PassportEditableInput({ type: inputTypePerProperty[propertyKey] })
       ) : (
         <UiEntity
           uiTransform={{
@@ -136,6 +140,52 @@ export function ProfilePropertyField({
   }
 
   function PassportEditableInput({ type }: { type: INPUT_TYPE }): ReactElement {
-    return <Input />
+    if (type === INPUT_TYPE.TEXT) {
+      return (
+        <Input
+          uiTransform={{
+            width: '94%',
+            height: getCanvasScaleRatio() * 60,
+            zIndex: 999999,
+            borderColor: COLOR.BLACK_TRANSPARENT,
+            borderRadius: getCanvasScaleRatio() * 16,
+            borderWidth: 0,
+            padding: getCanvasScaleRatio() * 10
+          }}
+          uiBackground={{
+            color: Color4.White()
+          }}
+          fontSize={getCanvasScaleRatio() * 28}
+          value={profileData[propertyKey]}
+          onSubmit={noop}
+        />
+      )
+    }
+
+    type SelectablePropertyKey = keyof typeof selectableValues
+
+    if (type === INPUT_TYPE.DROPDOWN && propertyKey in selectableValues) {
+      return (
+        <DropdownComponent
+          dropdownId={propertyKey}
+          uiTransform={{
+            width: '97%',
+            zIndex: 999999,
+            margin: { top: getCanvasScaleRatio() * -20 },
+            height: getCanvasScaleRatio() * 60,
+            borderColor: COLOR.BLACK_TRANSPARENT,
+            borderRadius: getCanvasScaleRatio() * 16,
+            borderWidth: 0
+          }}
+          scroll={true}
+          options={selectableValues[propertyKey as SelectablePropertyKey]}
+          value={profileData[propertyKey]}
+          onChange={(value) => {
+            profileData[propertyKey] = value
+          }}
+        />
+      )
+    }
+    return <UiEntity uiText={{ value: profileData[propertyKey] }} />
   }
 }

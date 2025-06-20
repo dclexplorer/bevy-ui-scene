@@ -176,7 +176,7 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
 }
 const _getVisibleProperties = memoize(getVisibleProperties)
 function getVisibleProperties(profileData: ViewAvatarData): string[] {
-  return editablePropertyKeys.filter((key) => !!profileData[key])
+  return editablePropertyKeys.filter((key) => key && !!profileData[key])
 }
 
 function ProfileContent(): ReactElement {
@@ -268,8 +268,9 @@ function Overview(): ReactElement {
         {_getVisibleProperties(state.profileData).map(
           (propertyKey: keyof ViewAvatarData) => (
             <ProfilePropertyField
-              propertyKey={propertyKey}
+              propertyKey={propertyKey ?? ''}
               profileData={state.profileData}
+              editing={true}
             />
           )
         )}

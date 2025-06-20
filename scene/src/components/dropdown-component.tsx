@@ -12,6 +12,7 @@ export type DropdownComponentProps = {
   value: any
   fontSize?: number
   onChange: (value: any) => void
+  scroll?: boolean
 }
 
 export type DropdownState = Record<
@@ -29,7 +30,8 @@ export function DropdownComponent({
   value = null,
   uiTransform,
   fontSize = getCanvasScaleRatio() * 32,
-  onChange = noop
+  onChange = noop,
+  scroll = false
 }: DropdownComponentProps): ReactElement {
   state[dropdownId] = state[dropdownId] ?? {
     open: false,
@@ -38,7 +40,7 @@ export function DropdownComponent({
 
   return (
     <DropdownStyled
-      scroll={false}
+      scroll={scroll}
       uiTransform={uiTransform}
       isOpen={state[dropdownId].open}
       onMouseDown={() => (state[dropdownId].open = !state[dropdownId].open)}

@@ -14,7 +14,7 @@ import {
 } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { COLOR } from '../color-palette'
-import { noop } from '../../utils/function-utils'
+import { isTruthy, noop } from '../../utils/function-utils'
 
 function DropdownStyled(props: {
   isOpen: boolean
@@ -127,7 +127,9 @@ function DropdownStyled(props: {
 
             positionType: 'absolute',
             position: { left: 0, top: 2.5 * props.fontSize },
-            zIndex: 2
+            zIndex: isTruthy(props.uiTransform?.zIndex)
+              ? (props.uiTransform?.zIndex ?? 0) + 2
+              : 2
           }}
           uiBackground={{
             ...ROUNDED_TEXTURE_BACKGROUND,
