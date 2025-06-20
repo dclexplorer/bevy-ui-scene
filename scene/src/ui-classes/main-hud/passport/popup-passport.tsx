@@ -61,9 +61,11 @@ export type PassportPopupState = {
   profileData: ViewAvatarData
   copying: null | string
   editing: boolean
+  editable: boolean
 }
 const state: PassportPopupState = {
-  editing: false,
+  editing: true,
+  editable: true, // TODO
   loadingProfile: true,
   copying: null,
   profileData: {
@@ -265,15 +267,24 @@ function Overview(): ReactElement {
           margin: { top: '2%' }
         }}
       >
-        {_getVisibleProperties(state.profileData).map(
-          (propertyKey: keyof ViewAvatarData) => (
+        {!state.editing &&
+          _getVisibleProperties(state.profileData).map(
+            (propertyKey: keyof ViewAvatarData) => (
+              <ProfilePropertyField
+                propertyKey={propertyKey ?? ''}
+                profileData={state.profileData}
+                editing={state.editing}
+              />
+            )
+          )}
+        {state.editing &&
+          editablePropertyKeys.map((propertyKey: keyof ViewAvatarData) => (
             <ProfilePropertyField
               propertyKey={propertyKey ?? ''}
               profileData={state.profileData}
               editing={state.editing}
             />
-          )
-        )}
+          ))}
       </UiEntity>
       {state.profileData.links.length > 0 && [
         <UiEntity

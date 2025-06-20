@@ -23,7 +23,7 @@ export async function init(retry: boolean): Promise<void> {
     store.dispatch(
       pushPopupAction({
         type: HUD_POPUP_TYPE.PASSPORT,
-        data: `0x598f8af1565003AE7456DaC280a18ee826Df7a2c`
+        data: `0x4b538e1e044922aec2f428ec7e17a99f44205ff9` // 0x4b538e1e044922aec2f428ec7e17a99f44205ff9 , 0x598f8af1565003AE7456DaC280a18ee826Df7a2c
       })
     )
 

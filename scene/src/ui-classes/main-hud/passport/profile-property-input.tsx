@@ -64,7 +64,8 @@ export const inputTypePerProperty: Record<string, number> = {
   realName: INPUT_TYPE.TEXT,
   sexualOrientation: INPUT_TYPE.DROPDOWN,
   employmentStatus: INPUT_TYPE.TEXT,
-  description: INPUT_TYPE.TEXT
+  description: INPUT_TYPE.TEXT,
+  relationshipStatus: INPUT_TYPE.DROPDOWN
 }
 
 export function ProfilePropertyField({
@@ -142,9 +143,9 @@ export function ProfilePropertyField({
 
   function formatProfileValue(key: string): string {
     if (key === 'birthdate') {
-      return new Date(profileData[key] * 1000).toLocaleDateString()
+      return formatEpsilonToShortDate(profileData[key])
     }
-    return profileData[key]
+    return profileData[key] ?? ''
   }
 
   function PassportEditableInput({ type }: { type: INPUT_TYPE }): ReactElement {
@@ -187,8 +188,19 @@ export function ProfilePropertyField({
           }}
           scroll={true}
           options={selectableValues[propertyKey as SelectablePropertyKey]}
+          value={profileData[propertyKey] ?? ''}
+          onChange={(value) => {
+            // profileData[propertyKey] = value
+          }}
+        />
+      )
+    }
+    if (type === INPUT_TYPE.DATE) {
+      return (
+        <DateComponent
           value={profileData[propertyKey]}
           onChange={(value) => {
+            console.log('datechange', value)
             profileData[propertyKey] = value
           }}
         />
@@ -196,4 +208,63 @@ export function ProfilePropertyField({
     }
     return <UiEntity uiText={{ value: profileData[propertyKey] }} />
   }
+}
+
+function DateComponent({
+  value,
+  onChange,
+  uiTransform,
+  fontSize = getCanvasScaleRatio() * 28
+}: {
+  value: number
+  onChange: (epsilonSeconds: number) => void
+  uiTransform?: UiTransformProps
+  fontSize?: number
+}): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{ height: fontSize * 2, width: '100%', ...uiTransform }}
+    >
+      <Input
+        fontSize={fontSize}
+        uiTransform={{
+          width: '94%',
+          height: getCanvasScaleRatio() * 60,
+          zIndex: 999999,
+          borderColor: COLOR.BLACK_TRANSPARENT,
+          borderRadius: getCanvasScaleRatio() * 16,
+          borderWidth: 0,
+          padding: getCanvasScaleRatio() * 10
+        }}
+        uiBackground={{
+          color: Color4.White()
+        }}
+        value={formatEpsilonToShortDate(value)}
+        onChange={(value) => {
+          const epsilonSeconds = parseEpsilonSeconds(value)
+          if (epsilonSeconds !== null) onChange(epsilonSeconds)
+        }}
+        placeholder={'DD/MM/YYYY'}
+      />
+    </UiEntity>
+  )
+}
+
+function parseEpsilonSeconds(value: string): number | null {
+  try {
+    const date = new Date(value)
+    return Math.floor(date.getTime() / 1000)
+  } catch (error) {
+    return null
+  }
+}
+
+function formatEpsilonToShortDate(value: number): string {
+  const date = new Date(value * 1000)
+  const day = date.getDate()
+  const month = date.getMonth() + 1
+  const year = date.getFullYear()
+  return `${day.toString().padStart(2, '0')}/${month
+    .toString()
+    .padStart(2, '0')}/${year}`
 }
