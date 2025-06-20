@@ -1,36 +1,40 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { COLOR } from '../../components/color-palette'
-import { store } from '../../state/store'
+import { COLOR } from '../../../components/color-palette'
+import { store } from '../../../state/store'
 import {
   closeLastPopupAction,
   HUD_ACTION,
   pushPopupAction
-} from '../../state/hud/actions'
-import { HUD_POPUP_TYPE, type HUDPopup } from '../../state/hud/state'
-import { memoize, noop } from '../../utils/function-utils'
-import { Content } from '../main-menu/backpack-page/BackpackPage'
-import { AvatarPreviewElement } from '../../components/backpack/AvatarPreviewElement'
+} from '../../../state/hud/actions'
+import { HUD_POPUP_TYPE, type HUDPopup } from '../../../state/hud/state'
+import { memoize, noop } from '../../../utils/function-utils'
+import { Content } from '../../main-menu/backpack-page/BackpackPage'
+import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
 import {
   createAvatarPreview,
   updateAvatarPreview
-} from '../../components/backpack/AvatarPreview'
-import { getBackgroundFromAtlas } from '../../utils/ui-utils'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+} from '../../../components/backpack/AvatarPreview'
+import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
+import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { copyToClipboard } from '~system/RestrictedActions'
 import {
   applyMiddleEllipsis,
   getURNWithoutTokenId
-} from '../../utils/urn-utils'
-import { type URN, type URNWithoutTokenId } from '../../utils/definitions'
-import { convertToPBAvatarBase, sleep } from '../../utils/dcl-utils'
+} from '../../../utils/urn-utils'
+import { type URN, type URNWithoutTokenId } from '../../../utils/definitions'
+import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
-import { type PBAvatarBase } from '../../bevy-api/interface'
-import { type WearableCategory } from '../../service/categories'
-import { TabComponent } from '../../components/tab-component'
-import { type Popup } from '../../components/popup-stack'
-import { fetchProfileData } from '../../utils/passport-promise-utils'
+import { type PBAvatarBase } from '../../../bevy-api/interface'
+import { type WearableCategory } from '../../../service/categories'
+import { TabComponent } from '../../../components/tab-component'
+import { type Popup } from '../../../components/popup-stack'
+import { fetchProfileData } from '../../../utils/passport-promise-utils'
 import { Label } from '@dcl/sdk/react-ecs'
-import Icon from '../../components/icon/Icon'
+import Icon from '../../../components/icon/Icon'
+import {
+  editablePropertyKeys,
+  ProfilePropertyField
+} from './profile-property-input'
 
 const COPY_ICON_SIZE = 40
 
@@ -78,43 +82,7 @@ const state: PassportPopupState = {
     links: []
   }
 }
-const editablePropertyKeys: string[] = [
-  'country',
-  'language',
-  'pronouns',
-  'gender',
-  'relationshipStatus',
-  'sexualOrientation',
-  'profession',
-  'birthdate',
-  'realName',
-  'hobbies'
-]
 
-const labelsPerProperty: Record<string, string> = {
-  country: 'country'.toUpperCase(),
-  language: 'language'.toUpperCase(),
-  pronouns: 'pronouns'.toUpperCase(),
-  gender: 'gender'.toUpperCase(),
-  relationshipStatus: 'relationship status'.toUpperCase(),
-  sexualOrientation: 'sexual orientation'.toUpperCase(),
-  employmentStatus: 'employment status'.toUpperCase(),
-  profession: 'profession'.toUpperCase(),
-  birthdate: 'birthdate'.toUpperCase(),
-  realName: 'real name'.toUpperCase(),
-  hobbies: 'favorite hobby'.toUpperCase()
-}
-const iconsPerProperty: Record<string, string> = {
-  country: 'CountryIcn',
-  language: 'LanguageIcn',
-  gender: 'GenderIcn',
-  pronouns: 'PronounsIcn',
-  profession: 'ProfessionIcn',
-  hobbies: 'HobbiesIcn',
-  birthdate: 'BirthdayIcn',
-  realName: 'BirthdayIcn',
-  sexualOrientation: 'GenderIcn'
-}
 /**
  * setupPassportPopup: executed one time when the explorer is initialized
  */
@@ -207,12 +175,16 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
   }
 }
 const _getVisibleProperties = memoize(getVisibleProperties)
+function getVisibleProperties(profileData: ViewAvatarData): string[] {
+  return editablePropertyKeys.filter((key) => !!profileData[key])
+}
+
 function ProfileContent(): ReactElement {
   return (
     <UiEntity
       uiTransform={{
         flexDirection: 'column',
-
+        padding: { top: '1%' },
         flexGrow: 1
       }}
       onMouseDown={noop}
@@ -295,7 +267,10 @@ function Overview(): ReactElement {
       >
         {_getVisibleProperties(state.profileData).map(
           (propertyKey: keyof ViewAvatarData) => (
-            <ProfilePropertyField propertyKey={propertyKey} />
+            <ProfilePropertyField
+              propertyKey={propertyKey}
+              profileData={state.profileData}
+            />
           )
         )}
       </UiEntity>
@@ -368,74 +343,6 @@ function ProfileLink({
       />
     </UiEntity>
   )
-}
-
-function ProfilePropertyField({
-  propertyKey
-}: {
-  propertyKey: string
-}): ReactElement {
-  return (
-    <UiEntity
-      uiTransform={{
-        flexDirection: 'column',
-        width: '25%',
-        alignItems: 'flex-start',
-        margin: { top: getCanvasScaleRatio() * 30 }
-      }}
-    >
-      <Icon
-        uiTransform={{
-          flexShrink: 0,
-          flexGrow: 0,
-          positionType: 'absolute',
-          position: {
-            top: getCanvasScaleRatio() * 16,
-            left: getCanvasScaleRatio() * 5
-          }
-        }}
-        icon={{
-          atlasName: 'profile',
-          spriteName: iconsPerProperty[propertyKey]
-        }}
-        iconSize={getCanvasScaleRatio() * 32}
-        iconColor={COLOR.INACTIVE}
-      />
-      <UiEntity
-        uiTransform={{
-          margin: {
-            left: getCanvasScaleRatio() * 30
-          }
-        }}
-        uiText={{
-          value: labelsPerProperty[propertyKey],
-          fontSize: getCanvasScaleRatio() * 30
-        }}
-      />
-      <UiEntity
-        uiTransform={{
-          margin: {
-            top: getCanvasScaleRatio() * -20,
-            left: getCanvasScaleRatio() * 30
-          }
-        }}
-        uiText={{
-          value: formatProfileValue(propertyKey),
-          fontSize: getCanvasScaleRatio() * 30,
-          color: COLOR.TEXT_COLOR_LIGHT_GREY
-        }}
-      />
-    </UiEntity>
-  )
-}
-function formatProfileValue(key: string): string {
-  if (key === 'birthdate') {
-    return new Date(state.profileData[key] * 1000).toLocaleDateString()
-  }
-  return state.profileData[key]
-}
-function getVisibleProperties(profileData: ViewAvatarData): string[] {
-  return editablePropertyKeys.filter((key) => !!profileData[key])
 }
 
 const _applyMiddleEllipsis = memoize(applyMiddleEllipsis)

@@ -21,13 +21,13 @@ export async function init(retry: boolean): Promise<void> {
   executeTask(async () => {
     await sleep(100)
     store.dispatch(
-      updateHudStateAction({
-        shownPopup: {
-          type: HUD_POPUP_TYPE.PASSPORT,
-          data: `0x598f8af1565003AE7456DaC280a18ee826Df7a2c`
-        }
+      pushPopupAction({
+        type: HUD_POPUP_TYPE.PASSPORT,
+        data: `0x598f8af1565003AE7456DaC280a18ee826Df7a2c`
       })
     )
+
+    console.log('shownPopups', store.getState().hud.shownPopups)
   })
 
   const { description, url } = await BevyApi.checkForUpdate()

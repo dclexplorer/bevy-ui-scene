@@ -2,7 +2,7 @@ import { type ReactElement } from '@dcl/react-ecs'
 import { store } from '../state/store'
 import { HUD_POPUP_TYPE, type HUDPopup } from '../state/hud/state'
 import { PopupUrl } from '../ui-classes/main-hud/popup-url'
-import { PopupPassport } from '../ui-classes/main-hud/popup-passport'
+import { PopupPassport } from '../ui-classes/main-hud/passport/popup-passport'
 
 export type PopupParameters = { shownPopup: HUDPopup }
 export type Popup = (
