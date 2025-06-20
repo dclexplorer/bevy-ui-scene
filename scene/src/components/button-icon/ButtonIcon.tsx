@@ -12,6 +12,8 @@ import { ArrowToast } from '../arrow-toast'
 import Icon from '../icon/Icon'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
+import { COLOR } from '../color-palette'
+import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 
 function ButtonIcon(props: {
   // Events
@@ -47,10 +49,12 @@ function ButtonIcon(props: {
       uiTransform={{
         justifyContent: 'center',
         alignItems: 'center',
+        borderRadius: getCanvasScaleRatio() * 18,
+        borderColor: COLOR.BLACK_TRANSPARENT,
+        borderWidth: 0,
         ...props.uiTransform
       }}
       uiBackground={{
-        ...ROUNDED_TEXTURE_BACKGROUND,
         color: props.backgroundColor ?? { ...Color4.White(), a: 0 },
         ...props.uiBackground
       }}

@@ -35,6 +35,7 @@ import {
   editablePropertyKeys,
   ProfilePropertyField
 } from './profile-property-input'
+import { ButtonIcon } from '../../../components/button-icon'
 
 const COPY_ICON_SIZE = 40
 
@@ -64,8 +65,8 @@ export type PassportPopupState = {
   editable: boolean
 }
 const state: PassportPopupState = {
-  editing: true,
-  editable: true, // TODO
+  editing: false,
+  editable: true,
   loadingProfile: true,
   copying: null,
   profileData: {
@@ -243,6 +244,21 @@ function Overview(): ReactElement {
       }}
       uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
     >
+      {state.editable && !state.editing && (
+        <ButtonIcon
+          uiTransform={{
+            padding: getCanvasScaleRatio() * 8,
+            positionType: 'absolute',
+            position: { right: '2%' }
+          }}
+          icon={{ spriteName: 'Edit', atlasName: 'icons' }}
+          iconSize={getCanvasScaleRatio() * 40}
+          backgroundColor={COLOR.WHITE_OPACITY_1}
+          onMouseDown={() => {
+            state.editing = true
+          }}
+        />
+      )}
       <UiEntity
         uiText={{
           value: '<b>ABOUT ME</b>',
