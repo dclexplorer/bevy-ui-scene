@@ -537,6 +537,25 @@ function NameRow({
         text: name,
         elementId: 'copy-name'
       })}
+      {state.editable && !state.editing && (
+        <ButtonIcon
+          uiTransform={{
+            padding: getCanvasScaleRatio() * 8,
+            margin: { left: '8%' }
+          }}
+          icon={{ spriteName: 'Edit', atlasName: 'icons' }}
+          iconSize={getCanvasScaleRatio() * 40}
+          backgroundColor={COLOR.WHITE_OPACITY_1}
+          onMouseDown={() => {
+            store.dispatch(
+              pushPopupAction({
+                type: HUD_POPUP_TYPE.NAME_EDIT,
+                data: state.profileData.name
+              })
+            )
+          }}
+        />
+      )}
     </UiEntity>
   )
 }
@@ -555,7 +574,9 @@ function CopyButton({
       uiTransform={{
         width: fontSize,
         height: fontSize,
-        margin: { left: '5%' }
+        margin: { left: '5%' },
+        flexShrink: 0,
+        flexGrow: 0
       }}
       uiBackground={{
         ...getBackgroundFromAtlas({

@@ -3,7 +3,8 @@ export const HUD_STORE_ID = 'hud'
 export enum HUD_POPUP_TYPE {
   URL,
   TELEPORT,
-  PASSPORT
+  PASSPORT,
+  NAME_EDIT
 }
 
 export type HUDPopup = {
