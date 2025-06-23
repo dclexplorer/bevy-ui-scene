@@ -233,7 +233,7 @@ function Overview(): ReactElement {
   return (
     <UiEntity
       uiTransform={{
-        margin: { top: '4%' },
+        margin: { top: '1%' },
         padding: '2%',
         width: '96%',
         borderRadius: getCanvasScaleRatio() * 20,
