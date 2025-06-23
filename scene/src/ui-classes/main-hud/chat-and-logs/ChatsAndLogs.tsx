@@ -61,7 +61,6 @@ const state: {
   mouseY: number
   messageMenuPositionTop: number
   messageMenuTimestamp: number
-  open: boolean
   unreadMessages: number
   autoScrollSwitch: number
   newMessages: ChatMessageRepresentation[]
@@ -70,12 +69,12 @@ const state: {
   cameraPointerLocked: boolean
   hoveringChat: boolean
   chatBox: Box
+  inputFontSizeWorkaround: boolean
 } = {
   mouseX: 0,
   mouseY: 0,
   messageMenuPositionTop: 0,
   messageMenuTimestamp: 0,
-  open: true,
   unreadMessages: 0,
   autoScrollSwitch: 0,
   newMessages: [],
@@ -83,7 +82,8 @@ const state: {
   addingNewMessages: false,
   cameraPointerLocked: false,
   hoveringChat: false,
-  chatBox: { position: { x: 0, y: 0 }, size: { x: 0, y: 0 } }
+  chatBox: { position: { x: 0, y: 0 }, size: { x: 0, y: 0 } },
+  inputFontSizeWorkaround: false
 }
 
 export default class ChatAndLogs {
@@ -108,6 +108,13 @@ export default class ChatAndLogs {
         state.unreadMessages = 0
         scrollToBottom()
       }
+    })
+
+    // state.inputFontSizeWorkaround = true
+    executeTask(async () => {
+      // TODO on initialization, chat input doesn't apply the defined fontSize unless we show it with delay or we resize window
+      await sleep(100)
+      state.inputFontSizeWorkaround = true
     })
   }
 
@@ -495,17 +502,17 @@ function HeaderArea(): ReactElement {
 
 function InputArea(): ReactElement | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-  const inputFontSize = getCanvasScaleRatio() * 36
-
   if (canvasInfo === null) return null
-
+  const inputFontSize = Math.floor(getCanvasScaleRatio() * 36)
   return (
     <UiEntity
       uiTransform={{
-        width: '100%',
-        height: canvasInfo.height * 0.05,
+        width: '98%',
+        alignSelf: 'center',
+        height: inputFontSize * 2,
         flexGrow: 0,
-        justifyContent: 'space-between',
+        flexShrink: 0,
+        justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
         margin: {
@@ -519,21 +526,25 @@ function InputArea(): ReactElement | null {
         color: { ...Color4.Black(), a: 0.4 }
       }}
     >
-      <Input
-        uiTransform={{
-          elementId: 'chat-input',
-          padding: { left: '1%' },
-          width: '100%',
-          height: '100%',
-          alignContent: 'center'
-        }}
-        textAlign="middle-center"
-        fontSize={inputFontSize}
-        color={ALMOST_WHITE}
-        placeholder="Press ENTER to chat"
-        placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
-        onSubmit={sendChatMessage}
-      />
+      {state.inputFontSizeWorkaround && (
+        <Input
+          uiTransform={{
+            elementId: 'chat-input',
+            padding: { left: '1%' },
+            width: '100%',
+            height: '100%',
+            alignContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          textAlign="middle-center"
+          fontSize={inputFontSize}
+          color={ALMOST_WHITE}
+          placeholder="Press ENTER to chat"
+          placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
+          onSubmit={sendChatMessage}
+        />
+      )}
       <UiEntity
         uiTransform={{
           width: '100%',
