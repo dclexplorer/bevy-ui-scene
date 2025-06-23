@@ -90,7 +90,7 @@ const state: PassportPopupState = {
   loadingProfile: true,
   savingProfile: false,
   copying: null,
-  profileData: EMPTY_PROFILE_DATA,
+  profileData: EMPTY_PROFILE_DATA, // TODO REVIEW IF move to redux store, create a store name "avatar" , in fact store should be about stateful data not about visual elements
   pristineProfileData: cloneDeep(EMPTY_PROFILE_DATA)
 }
 
@@ -516,15 +516,17 @@ function NameRow({
       <UiEntity
         uiText={{ value: name, fontSize, textAlign: 'middle-left' }}
         uiTransform={{
+          alignSelf: 'flex-start',
           padding: 0,
-          margin: { left: '-5%' }
+          margin: { left: '-4%' }
         }}
       />
       {hasClaimedName && (
         <UiEntity
           uiTransform={{
             width: fontSize,
-            height: fontSize
+            height: fontSize,
+            flexShrink: 0
           }}
           uiBackground={getBackgroundFromAtlas({
             atlasName: 'icons',
@@ -605,7 +607,9 @@ function StatusIcon({ fontSize }: { fontSize: number }): ReactElement {
         height: fontSize * 0.6,
         borderRadius: 9999,
         borderWidth: 3 * getCanvasScaleRatio(),
-        borderColor: COLOR.WHITE
+        borderColor: COLOR.WHITE,
+        flexShrink: 0,
+        flexGrow: 0
       }}
       uiBackground={{ color: COLOR.STATUS_ACTIVE }} // TODO real status
     />

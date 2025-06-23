@@ -3,6 +3,7 @@ import { store } from '../state/store'
 import { HUD_POPUP_TYPE, type HUDPopup } from '../state/hud/state'
 import { PopupUrl } from '../ui-classes/main-hud/popup-url'
 import { PopupPassport } from '../ui-classes/main-hud/passport/popup-passport'
+import { NameEditPopup } from '../ui-classes/main-hud/passport/name-edit-popup'
 
 export type PopupParameters = { shownPopup: HUDPopup }
 export type Popup = (
@@ -12,7 +13,8 @@ export type Popup = (
 const popupComponents: Record<number, Popup> = {
   [HUD_POPUP_TYPE.URL as number]: PopupUrl,
   [HUD_POPUP_TYPE.TELEPORT as number]: PopupUrl, // TODO
-  [HUD_POPUP_TYPE.PASSPORT as number]: PopupPassport
+  [HUD_POPUP_TYPE.PASSPORT as number]: PopupPassport,
+  [HUD_POPUP_TYPE.NAME_EDIT as number]: NameEditPopup
 }
 
 export function PopupStack(): ReactElement[] {
