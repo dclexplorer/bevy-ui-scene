@@ -72,12 +72,14 @@ export function ProfilePropertyField({
   propertyKey,
   profileData,
   editing,
-  uiTransform
+  uiTransform,
+  disabled
 }: {
   propertyKey: string
   profileData: ViewAvatarData
   editing?: boolean
   uiTransform?: UiTransformProps
+  disabled?: boolean
 }): ReactElement {
   return (
     <UiEntity
@@ -122,7 +124,10 @@ export function ProfilePropertyField({
         />
       )}
       {editing ? (
-        PassportEditableInput({ type: inputTypePerProperty[propertyKey] })
+        PassportEditableInput({
+          type: inputTypePerProperty[propertyKey],
+          disabled
+        })
       ) : (
         <UiEntity
           uiTransform={{
@@ -148,7 +153,13 @@ export function ProfilePropertyField({
     return profileData[key] ?? ''
   }
 
-  function PassportEditableInput({ type }: { type: INPUT_TYPE }): ReactElement {
+  function PassportEditableInput({
+    type,
+    disabled
+  }: {
+    type: INPUT_TYPE
+    disabled?: boolean
+  }): ReactElement {
     if (type === INPUT_TYPE.TEXT) {
       return (
         <Input
@@ -161,6 +172,7 @@ export function ProfilePropertyField({
             borderWidth: 0,
             padding: getCanvasScaleRatio() * 10
           }}
+          disabled={disabled}
           uiBackground={{
             color: Color4.White()
           }}
@@ -192,6 +204,7 @@ export function ProfilePropertyField({
           onChange={(value) => {
             // profileData[propertyKey] = value
           }}
+          disabled={disabled}
         />
       )
     }
@@ -203,6 +216,7 @@ export function ProfilePropertyField({
             console.log('datechange', value)
             profileData[propertyKey] = value
           }}
+          disabled={disabled}
         />
       )
     }
@@ -214,12 +228,14 @@ function DateComponent({
   value,
   onChange,
   uiTransform,
-  fontSize = getCanvasScaleRatio() * 28
+  fontSize = getCanvasScaleRatio() * 28,
+  disabled = false
 }: {
   value: number
   onChange: (epsilonSeconds: number) => void
   uiTransform?: UiTransformProps
   fontSize?: number
+  disabled?: boolean
 }): ReactElement {
   return (
     <UiEntity
@@ -236,6 +252,7 @@ function DateComponent({
           borderWidth: 0,
           padding: getCanvasScaleRatio() * 10
         }}
+        disabled={disabled}
         uiBackground={{
           color: Color4.White()
         }}

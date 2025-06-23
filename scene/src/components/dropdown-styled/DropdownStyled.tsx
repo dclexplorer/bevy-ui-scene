@@ -35,6 +35,7 @@ function DropdownStyled(props: {
   entered: number
   scroll?: boolean
   options: string[]
+  disabled?: boolean
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null

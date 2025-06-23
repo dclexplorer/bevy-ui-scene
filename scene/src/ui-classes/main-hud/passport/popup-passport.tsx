@@ -60,6 +60,7 @@ export type ViewAvatarData = Record<string, any> & {
 
 export type PassportPopupState = {
   loadingProfile: boolean
+  savingProfile: boolean
   profileData: ViewAvatarData
   copying: null | string
   editing: boolean
@@ -69,6 +70,7 @@ const state: PassportPopupState = {
   editing: true,
   editable: true,
   loadingProfile: true,
+  savingProfile: false,
   copying: null,
   profileData: {
     userId: '',
@@ -272,6 +274,7 @@ function Overview(): ReactElement {
         propertyKey={'description'}
         profileData={state.profileData}
         editing={state.editing}
+        disabled={state.savingProfile}
       />
 
       <UiEntity
@@ -291,6 +294,7 @@ function Overview(): ReactElement {
                 propertyKey={propertyKey ?? ''}
                 profileData={state.profileData}
                 editing={state.editing}
+                disabled={state.savingProfile}
               />
             )
           )}
@@ -359,6 +363,7 @@ function Overview(): ReactElement {
             onMouseDown={() => {
               state.editing = false
             }}
+            disabled={state.savingProfile || state.loadingProfile}
             value={'CANCEL'}
           />
           <Button
@@ -368,7 +373,17 @@ function Overview(): ReactElement {
               borderWidth: 0,
               width: getCanvasScaleRatio() * 150
             }}
+            disabled={state.savingProfile || state.loadingProfile}
             value={'SAVE'}
+            onMouseDown={() => {
+              executeTask(async () => {
+                // TODO we are mocking async save request, replace with appropriate BevyApi or implement own signed fetch
+                state.savingProfile = true
+                await sleep(1000)
+                state.savingProfile = false
+                state.editing = false
+              })
+            }}
           />
         </UiEntity>
       )}
