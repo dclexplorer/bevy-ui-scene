@@ -523,7 +523,7 @@ function InputArea(): ReactElement | null {
   return (
     <UiEntity
       uiTransform={{
-        width: '98%',
+        width: '96%',
         alignSelf: 'center',
         height: inputFontSize * 2,
         flexGrow: 0,
@@ -535,7 +535,8 @@ function InputArea(): ReactElement | null {
           top: canvasInfo.height * 0.005,
           bottom: canvasInfo.height * 0.005
         },
-        padding: 5
+        position: { bottom: inputFontSize * 0.1 },
+        padding: inputFontSize * 0.4
       }}
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
