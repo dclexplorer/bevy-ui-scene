@@ -178,6 +178,9 @@ export function ProfilePropertyField({
           }}
           fontSize={getCanvasScaleRatio() * 28}
           value={profileData[propertyKey]}
+          onChange={(value) => {
+            profileData[propertyKey] = value
+          }}
           onSubmit={noop}
         />
       )
@@ -202,7 +205,7 @@ export function ProfilePropertyField({
           options={selectableValues[propertyKey as SelectablePropertyKey]}
           value={profileData[propertyKey] ?? ''}
           onChange={(value) => {
-            // profileData[propertyKey] = value
+            profileData[propertyKey] = value
           }}
           disabled={disabled}
         />

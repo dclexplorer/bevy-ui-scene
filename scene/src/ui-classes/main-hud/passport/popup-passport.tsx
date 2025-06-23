@@ -7,7 +7,7 @@ import {
   pushPopupAction
 } from '../../../state/hud/actions'
 import { HUD_POPUP_TYPE, type HUDPopup } from '../../../state/hud/state'
-import { memoize, noop } from '../../../utils/function-utils'
+import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { Content } from '../../main-menu/backpack-page/BackpackPage'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
 import {
@@ -62,33 +62,36 @@ export type PassportPopupState = {
   loadingProfile: boolean
   savingProfile: boolean
   profileData: ViewAvatarData
+  pristineProfileData: ViewAvatarData
   copying: null | string
   editing: boolean
   editable: boolean
 }
+const EMPTY_PROFILE_DATA = {
+  userId: '',
+  hasClaimedName: false,
+  name: '',
+  description: '',
+  country: '',
+  language: '',
+  gender: '',
+  relationshipStatus: '',
+  sexualOrientation: '',
+  employmentStatus: '',
+  pronouns: '',
+  profession: '',
+  birthdate: 0,
+  hobbies: '',
+  links: []
+}
 const state: PassportPopupState = {
-  editing: true,
+  editing: false,
   editable: true,
   loadingProfile: true,
   savingProfile: false,
   copying: null,
-  profileData: {
-    userId: '',
-    hasClaimedName: false,
-    name: '',
-    description: '',
-    country: '',
-    language: '',
-    gender: '',
-    relationshipStatus: '',
-    sexualOrientation: '',
-    employmentStatus: '',
-    pronouns: '',
-    profession: '',
-    birthdate: 0,
-    hobbies: '',
-    links: []
-  }
+  profileData: EMPTY_PROFILE_DATA,
+  pristineProfileData: cloneDeep(EMPTY_PROFILE_DATA)
 }
 
 /**
@@ -258,6 +261,7 @@ function Overview(): ReactElement {
           iconSize={getCanvasScaleRatio() * 40}
           backgroundColor={COLOR.WHITE_OPACITY_1}
           onMouseDown={() => {
+            state.pristineProfileData = cloneDeep(state.profileData)
             state.editing = true
           }}
         />
@@ -362,6 +366,7 @@ function Overview(): ReactElement {
             }}
             onMouseDown={() => {
               state.editing = false
+              state.profileData = cloneDeep(state.pristineProfileData)
             }}
             disabled={state.savingProfile || state.loadingProfile}
             value={'CANCEL'}
