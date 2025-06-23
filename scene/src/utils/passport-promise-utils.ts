@@ -16,9 +16,7 @@ export async function fetchProfileData({
   const realm = await getRealm({})
   const catalystBaseURl = realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
   const passportDataURL = `${catalystBaseURl}/lambdas/profiles/${userId}`
-  console.log('passportDataURL', passportDataURL)
   const response = await fetchJsonOrTryFallback(passportDataURL)
-  console.log('response', response)
 
   return response
 }

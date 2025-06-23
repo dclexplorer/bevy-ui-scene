@@ -36,7 +36,7 @@ import {
   ProfilePropertyField
 } from './profile-property-input'
 import { ButtonIcon } from '../../../components/button-icon'
-import { BottomBorder, TopBorder } from '../../../components/bottom-border'
+import { TopBorder } from '../../../components/bottom-border'
 
 const COPY_ICON_SIZE = 40
 
@@ -355,6 +355,9 @@ function Overview(): ReactElement {
             }}
             uiBackground={{
               color: COLOR.WHITE_OPACITY_1
+            }}
+            onMouseDown={() => {
+              state.editing = false
             }}
             value={'CANCEL'}
           />
