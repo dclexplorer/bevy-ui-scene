@@ -617,7 +617,9 @@ function ChatArea({
 }
 
 function sendChatMessage(value: string): void {
-  BevyApi.sendChat(value, 'Nearby')
+  if (!!value?.trim()) {
+    BevyApi.sendChat(value, 'Nearby')
+  }
 
   executeTask(async () => {
     await sleep(0)
