@@ -19,6 +19,7 @@ import { ChatMessage } from '../../../components/chat-message'
 
 import {
   ALMOST_WHITE,
+  MAX_ZINDEX,
   ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
 import { BevyApi } from '../../../bevy-api'
@@ -286,10 +287,25 @@ function MessageSubMenu({
   canvasInfo
 }: {
   canvasInfo: PBUiCanvasInformation
-}): ReactElement | null {
+}): ReactElement[] | null {
   if (!state.messageMenuTimestamp) return null
 
-  return (
+  return [
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        position: { top: '-100%', left: '-100%' },
+        width: canvasInfo.width * 2,
+        height: canvasInfo.height * 2,
+        zIndex: MAX_ZINDEX - 2
+      }}
+      uiBackground={{
+        color: COLOR.BLACK_TRANSPARENT
+      }}
+      onMouseDown={() => {
+        state.messageMenuTimestamp = 0
+      }}
+    />,
     <UiEntity
       uiTransform={{
         positionType: 'absolute',
@@ -307,7 +323,7 @@ function MessageSubMenu({
         height: '5%',
         flexShrink: 0,
         flexGrow: 1,
-        zIndex: 2,
+        zIndex: MAX_ZINDEX - 1,
         borderWidth: 0,
         borderRadius: 10,
         borderColor: COLOR.DARK_OPACITY_9,
@@ -353,7 +369,7 @@ function MessageSubMenu({
         />
       </UiEntity>
     </UiEntity>
-  )
+  ]
 }
 
 function ShowNewMessages(): ReactElement | null {
