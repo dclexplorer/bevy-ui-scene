@@ -9,14 +9,14 @@ import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { cloneDeep, noop } from '../../../utils/function-utils'
 import { type Popup } from '../../../components/popup-stack'
-import { TabComponent } from '../../../components/tab-component'
+import { Tab, TabComponent } from '../../../components/tab-component'
 import {
   fetchAllUserNames,
   NameDefinition
 } from '../../../utils/passport-promise-utils'
 import useEffect = ReactEcs.useEffect
 import { executeTask } from '@dcl/sdk/ecs'
-import { waitFor } from '../../../utils/dcl-utils'
+import { sleep, waitFor } from '../../../utils/dcl-utils'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import { openExternalUrl } from '~system/RestrictedActions'
 
@@ -26,16 +26,22 @@ const state = {
   rememberDomain: false
 }
 const NAME_EDIT_TABS = [
-  { text: 'UNIQUE NAME', active: true },
+  { text: 'UNIQUE NAME' },
   { text: 'NON-UNIQUE USERNAME' }
 ]
 
+const BUTTON_TEXT_COLOR = { ...COLOR.WHITE }
+
 const EditNameContent = () => {
-  const [names, setNames] = useState<string[]>([''])
-  const [selectedName, setSelectedName] = useState<string | null>(
-    store.getState().hud.profileData.name
+  const [selectableNAmes, setSelectableselectableNAmes] = useState<string[]>([
+    ''
+  ])
+  const [selectedName, setSelectedName] = useState<string>(
+    store.getState().hud.profileData.name ?? ''
   )
   const [loading, setLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState<number>(0)
+  const [tabs, setTabs] = useState<Tab[]>(NAME_EDIT_TABS)
 
   useEffect((): void => {
     executeTask(async () => {
@@ -46,10 +52,18 @@ const EditNameContent = () => {
         userId: store.getState().hud.profileData.userId
       })
       const names = nameDefinitions.map((n) => n.name).concat('') as string[]
+      const activeTab = nameDefinitions.length ? 0 : 1
+      const tabs = cloneDeep(NAME_EDIT_TABS).map((tabDefinition, index) => {
+        return { ...tabDefinition, active: index === activeTab }
+      })
 
-      setNames(names)
+      setActiveTab(activeTab)
+      setTabs(tabs)
+      setSelectableselectableNAmes(names)
       setSelectedName(store.getState().hud.profileData.name)
       setLoading(false)
+
+      console.log('activeTab', activeTab)
     })
   }, [])
 
@@ -78,62 +92,37 @@ const EditNameContent = () => {
         }}
       >
         <TabComponent
-          tabs={NAME_EDIT_TABS}
+          tabs={tabs}
           fontSize={getCanvasScaleRatio() * 32}
           uiTransform={{ width: '100%', margin: { bottom: '2%' } }}
-        />
-        <DropdownComponent
-          dropdownId={'unique-name-selector'}
-          uiTransform={{
-            width: '97%',
-            zIndex: 999999,
-            margin: { top: getCanvasScaleRatio() * -20 },
-            borderColor: COLOR.BLACK_TRANSPARENT,
-            borderRadius: getCanvasScaleRatio() * 16,
-            borderWidth: 0
+          onClickTab={(activeTab: number) => {
+            const tabs = cloneDeep(NAME_EDIT_TABS).map(
+              (tabDefinition, index) => {
+                return { ...tabDefinition, active: index === activeTab }
+              }
+            )
+
+            setActiveTab(activeTab)
+            setTabs(tabs)
           }}
-          scroll={true}
-          options={names}
-          value={selectedName}
-          onChange={(name) => setSelectedName(name)}
-          disabled={false}
         />
-        <UiEntity
-          uiTransform={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: { top: '5%' },
-            width: '100%'
-          }}
-        >
-          <Button
-            uiTransform={{
-              borderRadius: getCanvasScaleRatio() * 20,
-              borderColor: COLOR.WHITE_OPACITY_1,
-              borderWidth: 0,
-              width: '40%',
-              margin: { right: '5%' }
-            }}
-            uiBackground={{
-              color: COLOR.WHITE_OPACITY_1
-            }}
-            color={COLOR.WHITE}
-            value={'CANCEL'}
+
+        {!loading && activeTab === 0 && (
+          <UniqueNameForm
+            selectableNames={selectableNAmes}
+            selectedName={selectedName}
+            onChange={(value: string) => setSelectedName(value)}
             disabled={loading}
           />
-          <Button
-            variant={'primary'}
-            uiTransform={{
-              width: '40%',
-              borderRadius: getCanvasScaleRatio() * 20,
-              borderColor: COLOR.BLACK_TRANSPARENT,
-              borderWidth: 0
-            }}
-            value={'SAVE'}
+        )}
+        {!loading && activeTab === 1 && (
+          <NameForm
+            selectableNames={selectableNAmes}
+            selectedName={selectedName}
+            onChange={(value: string) => setSelectedName(value)}
             disabled={loading}
           />
-        </UiEntity>
+        )}
       </UiEntity>
 
       <UiEntity
@@ -147,18 +136,101 @@ const EditNameContent = () => {
           width: '100%',
           height: '50%',
           positionType: 'absolute',
-          position: { bottom: 0 }
+          position: { bottom: 0 },
+          opacity: loading ? 0.5 : 1
         }}
         onMouseDown={() => {
-          openExternalUrl({
-            url: 'https://decentraland.org/marketplace/names/claim'
-          }).catch(console.error)
+          executeTask(async () => {
+            setLoading(true)
+            openExternalUrl({
+              url: 'https://decentraland.org/marketplace/names/claim'
+            }).catch(console.error)
+            await sleep(1000)
+            setLoading(false)
+          })
         }}
       />
     </UiEntity>
   )
 }
 
+export const NameForm = () => {
+  return (
+    <UiEntity
+      uiTransform={{ flexDirection: 'column', width: '100%' }}
+    ></UiEntity>
+  )
+}
+
+export const UniqueNameForm = ({
+  selectableNames,
+  selectedName,
+  disabled = false,
+  onChange
+}: {
+  selectableNames: string[]
+  selectedName: string
+  disabled?: boolean
+  onChange: (value: string) => void
+}) => {
+  return (
+    <UiEntity uiTransform={{ flexDirection: 'column', width: '100%' }}>
+      <DropdownComponent
+        dropdownId={'unique-name-selector'}
+        uiTransform={{
+          width: '97%',
+          zIndex: 999999,
+          margin: { top: getCanvasScaleRatio() * -20 },
+          borderColor: COLOR.BLACK_TRANSPARENT,
+          borderRadius: getCanvasScaleRatio() * 16,
+          borderWidth: 0
+        }}
+        scroll={true}
+        options={selectableNames}
+        value={selectedName}
+        onChange={onChange}
+        disabled={disabled}
+      />
+      <UiEntity
+        uiTransform={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: { top: '5%' },
+          width: '100%'
+        }}
+      >
+        <Button
+          uiTransform={{
+            borderRadius: getCanvasScaleRatio() * 20,
+            borderColor: COLOR.WHITE_OPACITY_1,
+            borderWidth: 0,
+            width: '40%',
+            margin: { right: '5%' },
+            opacity: disabled ? 0.5 : 1
+          }}
+          uiBackground={{
+            color: COLOR.WHITE_OPACITY_1
+          }}
+          disabled={disabled}
+          color={BUTTON_TEXT_COLOR}
+          value={'CANCEL'}
+        />
+        <Button
+          variant={'primary'}
+          uiTransform={{
+            width: '40%',
+            borderRadius: getCanvasScaleRatio() * 20,
+            borderColor: COLOR.BLACK_TRANSPARENT,
+            borderWidth: 0
+          }}
+          value={'SAVE'}
+          disabled={disabled}
+        />
+      </UiEntity>
+    </UiEntity>
+  )
+}
 export const NameEditPopup: Popup = ({ shownPopup }) => {
   return (
     <UiEntity

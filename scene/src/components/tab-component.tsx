@@ -2,6 +2,7 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { BottomBorder } from './bottom-border'
 import { COLOR } from './color-palette'
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { noop } from '../utils/function-utils'
 
 export type Tab = {
   text: string
@@ -10,11 +11,13 @@ export type Tab = {
 export function TabComponent({
   tabs,
   fontSize,
-  uiTransform
+  uiTransform,
+  onClickTab = noop
 }: {
   tabs: Tab[]
   fontSize: number
   uiTransform?: UiTransformProps
+  onClickTab?: (tabIndex: number) => void
 }): ReactElement {
   return (
     <UiEntity
@@ -24,13 +27,15 @@ export function TabComponent({
       }}
     >
       <BottomBorder color={COLOR.WHITE_OPACITY_1} />
-      {tabs.map(({ text, active }) => (
+      {tabs.map(({ text, active }, index) => (
         <UiEntity
+          key={text}
           uiText={{
             value: active ? `<b>${text}</b>` : text,
             color: active ? COLOR.WHITE : COLOR.INACTIVE,
             fontSize
           }}
+          onMouseDown={() => onClickTab(index)}
         >
           {active && <BottomBorder color={COLOR.LINK_COLOR} />}
         </UiEntity>

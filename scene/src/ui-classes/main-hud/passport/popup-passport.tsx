@@ -81,7 +81,7 @@ export function setupPassportPopup(): void {
       state.loadingProfile = true
       executeTask(async () => {
         const shownPopup = action.payload as HUDPopup
-        const userId: string = shownPopup.data
+        const userId: string = shownPopup.data as string
         const profileData = await fetchProfileData({ userId })
         const [avatarData] = profileData.avatars
         const names = await fetchAllUserNames({ userId })

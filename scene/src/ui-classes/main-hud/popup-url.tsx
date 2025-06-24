@@ -117,7 +117,7 @@ export const PopupUrl: Popup = ({ shownPopup }) => {
             onMouseUp={() => {
               state.rememberDomain = false
               closeDialog()
-              openExternalUrl({ url: URL }).catch(console.error)
+              openExternalUrl({ url: URL as string }).catch(console.error)
               // TODO save domain on localStorage or bevy api ? Review with @rob
             }}
           />
