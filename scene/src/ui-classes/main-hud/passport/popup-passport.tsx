@@ -292,7 +292,7 @@ function Overview(): ReactElement {
             />
           ))}
       </UiEntity>
-      {profileData.links.length > 0 && [
+      {profileData.links?.length > 0 && [
         <UiEntity
           uiTransform={{
             margin: { top: '5%' }
