@@ -14,7 +14,7 @@ export function TabComponent({
 }: {
   tabs: Tab[]
   fontSize: number
-  uiTransform: UiTransformProps
+  uiTransform?: UiTransformProps
 }): ReactElement {
   return (
     <UiEntity

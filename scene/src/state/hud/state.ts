@@ -1,9 +1,11 @@
 import { cloneDeep } from '../../utils/function-utils'
+import { NameDefinition } from '../../utils/passport-promise-utils'
 
 export const HUD_STORE_ID = 'hud'
 
 export type ViewAvatarData = Record<string, any> & {
   hasClaimedName: boolean
+  hasConnectedWeb3: boolean
   description: string
   country: string
   language: string
@@ -22,6 +24,7 @@ export type ViewAvatarData = Record<string, any> & {
 export const EMPTY_PROFILE_DATA = {
   userId: '',
   hasClaimedName: false,
+  hasConnectedWeb3: false,
   name: '',
   description: '',
   country: '',
@@ -53,16 +56,19 @@ export type HudState = {
   chatOpen: boolean
   shownPopups: HUDPopup[]
   profileData: ViewAvatarData
+  names: NameDefinition[]
 }
 
 export type HudStateUpdateParams = {
   chatOpen?: boolean
   shownPopup?: HUDPopup[]
   profileData?: ViewAvatarData
+  names?: NameDefinition[]
 }
 
 export const hudInitialState: HudState = {
   chatOpen: true,
   shownPopups: [],
-  profileData: cloneDeep(EMPTY_PROFILE_DATA)
+  profileData: cloneDeep(EMPTY_PROFILE_DATA),
+  names: []
 }

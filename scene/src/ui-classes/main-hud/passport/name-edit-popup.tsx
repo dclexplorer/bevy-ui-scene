@@ -1,4 +1,4 @@
-import ReactEcs, { Button, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { UiEntity, useState } from '@dcl/react-ecs'
 import { store } from '../../../state/store'
 import { COLOR } from '../../../components/color-palette'
 import { closeLastPopupAction } from '../../../state/hud/actions'
@@ -6,19 +6,25 @@ import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { noop } from '../../../utils/function-utils'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
-import Icon from '../../../components/icon/Icon'
-import { Color4 } from '@dcl/sdk/math'
-import { Checkbox } from '../../../components/checkbox'
-import { openExternalUrl } from '~system/RestrictedActions'
 import { type Popup } from '../../../components/popup-stack'
+import { TabComponent } from '../../../components/tab-component'
 
 const state = {
   rememberDomain: false
 }
+const NAME_EDIT_TABS = [
+  { text: 'UNIQUE NAME', active: true },
+  { text: 'NON-UNIQUE USERNAME' }
+]
 
 export const NameEditPopup: Popup = ({ shownPopup }) => {
   const URL = shownPopup.data
   if (shownPopup?.type !== HUD_POPUP_TYPE.NAME_EDIT) return null
+  const profileData = store.getState().hud.profileData
+
+  const hasNames =
+    store.getState().hud.profileData.hasConnectedWeb3 &&
+    store.getState().hud.names.length
 
   return (
     <UiEntity
@@ -45,7 +51,7 @@ export const NameEditPopup: Popup = ({ shownPopup }) => {
           borderRadius: BORDER_RADIUS_F,
           borderWidth: 0,
           borderColor: COLOR.WHITE,
-          alignItems: 'center',
+          alignItems: 'flex-start',
           flexDirection: 'column',
           padding: '1%'
         }}
@@ -53,7 +59,21 @@ export const NameEditPopup: Popup = ({ shownPopup }) => {
         uiBackground={{
           color: COLOR.URL_POPUP_BACKGROUND
         }}
-      ></UiEntity>
+      >
+        <UiEntity uiTransform={{ flexDirection: 'column', width: '100%' }}>
+          <UiEntity
+            uiText={{
+              value: '<b>Edit Username</b>',
+              fontSize: getCanvasScaleRatio() * 50
+            }}
+          />
+          <TabComponent
+            tabs={NAME_EDIT_TABS}
+            fontSize={getCanvasScaleRatio() * 32}
+            uiTransform={{ width: '100%' }}
+          />
+        </UiEntity>
+      </UiEntity>
     </UiEntity>
   )
 

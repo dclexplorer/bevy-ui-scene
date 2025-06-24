@@ -20,3 +20,26 @@ export async function fetchProfileData({
 
   return response
 }
+
+export type NameDefinition = {
+  name: string
+  contractAddress: string
+  tokenId: string
+}
+
+const namesCache: Map<string, NameDefinition[]> = new Map()
+
+export async function fetchAllUserNames({
+  userId
+}: {
+  userId: string
+}): Promise<NameDefinition[]> {
+  if (namesCache.has(userId)) {
+    return namesCache.get(userId) as NameDefinition[]
+  }
+  const realm = await getRealm({})
+  const catalystBaseURl = realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
+  const namesURL = `${catalystBaseURl}/lambdas/users/${userId}/names`
+  const response = await fetchJsonOrTryFallback(namesURL)
+  return response?.elements ?? []
+}

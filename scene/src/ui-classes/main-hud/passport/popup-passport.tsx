@@ -34,7 +34,10 @@ import { type PBAvatarBase } from '../../../bevy-api/interface'
 import { type WearableCategory } from '../../../service/categories'
 import { TabComponent } from '../../../components/tab-component'
 import { type Popup } from '../../../components/popup-stack'
-import { fetchProfileData } from '../../../utils/passport-promise-utils'
+import {
+  fetchAllUserNames,
+  fetchProfileData
+} from '../../../utils/passport-promise-utils'
 import { Label } from '@dcl/sdk/react-ecs'
 import Icon from '../../../components/icon/Icon'
 import {
@@ -81,9 +84,11 @@ export function setupPassportPopup(): void {
         const userId: string = shownPopup.data
         const profileData = await fetchProfileData({ userId })
         const [avatarData] = profileData.avatars
+        const names = await fetchAllUserNames({ userId })
         store.dispatch(
           updateHudStateAction({
-            profileData: avatarData as ViewAvatarData
+            profileData: avatarData as ViewAvatarData,
+            names
           })
         )
         createAvatarPreview()
