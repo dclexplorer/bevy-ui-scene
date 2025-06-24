@@ -4,9 +4,15 @@ import { store } from '../../../state/store'
 import {
   closeLastPopupAction,
   HUD_ACTION,
-  pushPopupAction
+  pushPopupAction,
+  updateHudStateAction
 } from '../../../state/hud/actions'
-import { HUD_POPUP_TYPE, type HUDPopup } from '../../../state/hud/state'
+import {
+  EMPTY_PROFILE_DATA,
+  HUD_POPUP_TYPE,
+  type HUDPopup,
+  ViewAvatarData
+} from '../../../state/hud/state'
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { Content } from '../../main-menu/backpack-page/BackpackPage'
 import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
@@ -40,57 +46,21 @@ import { TopBorder } from '../../../components/bottom-border'
 
 const COPY_ICON_SIZE = 40
 
-export type ViewAvatarData = Record<string, any> & {
-  hasClaimedName: boolean
-  description: string
-  country: string
-  language: string
-  gender: string
-  relationshipStatus: string
-  sexualOrientation: string
-  employmentStatus: string
-  pronouns: string
-  profession: string
-  birthdate: number
-  hobbies: string
-  name: string
-  links: Array<{ url: string; title: string }>
-  userId: string
-}
-
 export type PassportPopupState = {
   loadingProfile: boolean
   savingProfile: boolean
-  profileData: ViewAvatarData
   pristineProfileData: ViewAvatarData
   copying: null | string
   editing: boolean
   editable: boolean
 }
-const EMPTY_PROFILE_DATA = {
-  userId: '',
-  hasClaimedName: false,
-  name: '',
-  description: '',
-  country: '',
-  language: '',
-  gender: '',
-  relationshipStatus: '',
-  sexualOrientation: '',
-  employmentStatus: '',
-  pronouns: '',
-  profession: '',
-  birthdate: 0,
-  hobbies: '',
-  links: []
-}
+
 const state: PassportPopupState = {
   editing: false,
   editable: true,
   loadingProfile: true,
   savingProfile: false,
   copying: null,
-  profileData: EMPTY_PROFILE_DATA, // TODO REVIEW IF move to redux store, create a store name "avatar" , in fact store should be about stateful data not about visual elements
   pristineProfileData: cloneDeep(EMPTY_PROFILE_DATA)
 }
 
@@ -111,7 +81,11 @@ export function setupPassportPopup(): void {
         const userId: string = shownPopup.data
         const profileData = await fetchProfileData({ userId })
         const [avatarData] = profileData.avatars
-        Object.assign(state.profileData, avatarData as ViewAvatarData)
+        store.dispatch(
+          updateHudStateAction({
+            profileData: avatarData as ViewAvatarData
+          })
+        )
         createAvatarPreview()
         const wearables: URNWithoutTokenId[] = (
           avatarData.avatar.wearables ?? []
@@ -191,6 +165,7 @@ function getVisibleProperties(profileData: ViewAvatarData): string[] {
 }
 
 function ProfileContent(): ReactElement {
+  const profileData = store.getState().hud.profileData
   return (
     <UiEntity
       uiTransform={{
@@ -202,13 +177,13 @@ function ProfileContent(): ReactElement {
     >
       <Header>
         {NameRow({
-          name: state.profileData.name,
+          name: profileData.name,
           fontSize: getCanvasScaleRatio() * 40,
-          hasClaimedName: state.profileData.hasClaimedName
+          hasClaimedName: profileData.hasClaimedName
         })}
         {AddressRow({
           // TODO review if need to check isGuest (not available in catalyst remote profile)
-          address: state.profileData.userId,
+          address: profileData.userId,
           fontSize: getCanvasScaleRatio() * 28
         })}
       </Header>
@@ -235,6 +210,7 @@ function ProfileContent(): ReactElement {
   )
 }
 function Overview(): ReactElement {
+  const profileData = store.getState().hud.profileData
   return (
     <UiEntity
       uiTransform={{
@@ -261,7 +237,7 @@ function Overview(): ReactElement {
           iconSize={getCanvasScaleRatio() * 40}
           backgroundColor={COLOR.WHITE_OPACITY_1}
           onMouseDown={() => {
-            state.pristineProfileData = cloneDeep(state.profileData)
+            state.pristineProfileData = cloneDeep(profileData)
             state.editing = true
           }}
         />
@@ -276,7 +252,7 @@ function Overview(): ReactElement {
       <ProfilePropertyField
         uiTransform={{ width: '100%' }}
         propertyKey={'description'}
-        profileData={state.profileData}
+        profileData={profileData}
         editing={state.editing}
         disabled={state.savingProfile}
       />
@@ -292,11 +268,11 @@ function Overview(): ReactElement {
         }}
       >
         {!state.editing &&
-          _getVisibleProperties(state.profileData).map(
+          _getVisibleProperties(profileData).map(
             (propertyKey: keyof ViewAvatarData) => (
               <ProfilePropertyField
                 propertyKey={propertyKey ?? ''}
-                profileData={state.profileData}
+                profileData={profileData}
                 editing={state.editing}
                 disabled={state.savingProfile}
               />
@@ -306,12 +282,12 @@ function Overview(): ReactElement {
           editablePropertyKeys.map((propertyKey: keyof ViewAvatarData) => (
             <ProfilePropertyField
               propertyKey={propertyKey ?? ''}
-              profileData={state.profileData}
+              profileData={profileData}
               editing={state.editing}
             />
           ))}
       </UiEntity>
-      {state.profileData.links.length > 0 && [
+      {profileData.links.length > 0 && [
         <UiEntity
           uiTransform={{
             margin: { top: '5%' }
@@ -331,11 +307,9 @@ function Overview(): ReactElement {
           />
         ),
         <UiEntity uiTransform={{ flexDirection: 'row' }}>
-          {state.profileData.links.map(
-            (link: { title: string; url: string }) => (
-              <ProfileLink link={link} editing={state.editing} />
-            )
-          )}
+          {profileData.links.map((link: { title: string; url: string }) => (
+            <ProfileLink link={link} editing={state.editing} />
+          ))}
         </UiEntity>
       ]}
       {state.editing && (
@@ -366,7 +340,11 @@ function Overview(): ReactElement {
             }}
             onMouseDown={() => {
               state.editing = false
-              state.profileData = cloneDeep(state.pristineProfileData)
+              store.dispatch(
+                updateHudStateAction({
+                  profileData: cloneDeep(state.pristineProfileData)
+                })
+              )
             }}
             disabled={state.savingProfile || state.loadingProfile}
             value={'CANCEL'}
@@ -403,6 +381,7 @@ function ProfileLink({
   link: { url: string; title: string }
   editing?: boolean
 }): ReactElement {
+  const profileData = store.getState().hud.profileData
   return (
     <UiEntity
       uiTransform={{
@@ -449,8 +428,14 @@ function ProfileLink({
           iconSize={getCanvasScaleRatio() * 30}
           uiBackground={{ color: COLOR.BLACK }}
           onMouseDown={() => {
-            state.profileData.links = state.profileData.links.filter(
+            const newProfileData = cloneDeep(profileData)
+            newProfileData.links = newProfileData.links.filter(
               (x) => x.url !== link.url
+            )
+            store.dispatch(
+              updateHudStateAction({
+                profileData: newProfileData
+              })
             )
           }}
         />
@@ -552,7 +537,7 @@ function NameRow({
             store.dispatch(
               pushPopupAction({
                 type: HUD_POPUP_TYPE.NAME_EDIT,
-                data: state.profileData.name
+                data: store.getState().hud.profileData.name
               })
             )
           }}

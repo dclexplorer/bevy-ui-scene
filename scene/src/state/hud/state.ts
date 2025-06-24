@@ -1,4 +1,41 @@
+import { cloneDeep } from '../../utils/function-utils'
+
 export const HUD_STORE_ID = 'hud'
+
+export type ViewAvatarData = Record<string, any> & {
+  hasClaimedName: boolean
+  description: string
+  country: string
+  language: string
+  gender: string
+  relationshipStatus: string
+  sexualOrientation: string
+  employmentStatus: string
+  pronouns: string
+  profession: string
+  birthdate: number
+  hobbies: string
+  name: string
+  links: Array<{ url: string; title: string }>
+  userId: string
+}
+export const EMPTY_PROFILE_DATA = {
+  userId: '',
+  hasClaimedName: false,
+  name: '',
+  description: '',
+  country: '',
+  language: '',
+  gender: '',
+  relationshipStatus: '',
+  sexualOrientation: '',
+  employmentStatus: '',
+  pronouns: '',
+  profession: '',
+  birthdate: 0,
+  hobbies: '',
+  links: []
+}
 
 export enum HUD_POPUP_TYPE {
   URL,
@@ -15,14 +52,17 @@ export type HUDPopup = {
 export type HudState = {
   chatOpen: boolean
   shownPopups: HUDPopup[]
+  profileData: ViewAvatarData
 }
 
 export type HudStateUpdateParams = {
   chatOpen?: boolean
   shownPopup?: HUDPopup[]
+  profileData?: ViewAvatarData
 }
 
 export const hudInitialState: HudState = {
   chatOpen: true,
-  shownPopups: []
+  shownPopups: [],
+  profileData: cloneDeep(EMPTY_PROFILE_DATA)
 }

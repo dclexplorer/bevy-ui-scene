@@ -41,7 +41,7 @@ export const NameEditPopup: Popup = ({ shownPopup }) => {
       <UiEntity
         uiTransform={{
           width: getCanvasScaleRatio() * 1200,
-          height: getCanvasScaleRatio() * 750,
+          height: getCanvasScaleRatio() * 1049,
           borderRadius: BORDER_RADIUS_F,
           borderWidth: 0,
           borderColor: COLOR.WHITE,

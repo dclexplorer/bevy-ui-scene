@@ -2,12 +2,14 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import Icon from '../../../components/icon/Icon'
 import { COLOR } from '../../../components/color-palette'
-import { type ViewAvatarData } from './popup-passport'
 import { Input, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { noop } from '../../../utils/function-utils'
+import { cloneDeep, noop } from '../../../utils/function-utils'
 import selectableValues from './passport-field-selectable-values.json'
 import { DropdownComponent } from '../../../components/dropdown-component'
+import { store } from '../../../state/store'
+import { updateHudStateAction } from '../../../state/hud/actions'
+import { ViewAvatarData } from '../../../state/hud/state'
 
 export const editablePropertyKeys: string[] = [
   'country',
@@ -126,7 +128,14 @@ export function ProfilePropertyField({
       {editing ? (
         PassportEditableInput({
           type: inputTypePerProperty[propertyKey],
-          disabled
+          disabled,
+          onChange: (value): void => {
+            const newProfileData = cloneDeep(store.getState().hud.profileData)
+            newProfileData[propertyKey] = value
+            store.dispatch(
+              updateHudStateAction({ profileData: newProfileData })
+            )
+          }
         })
       ) : (
         <UiEntity
@@ -155,10 +164,12 @@ export function ProfilePropertyField({
 
   function PassportEditableInput({
     type,
-    disabled
+    disabled,
+    onChange
   }: {
     type: INPUT_TYPE
     disabled?: boolean
+    onChange: (value: any) => void
   }): ReactElement {
     if (type === INPUT_TYPE.TEXT) {
       return (
@@ -178,9 +189,7 @@ export function ProfilePropertyField({
           }}
           fontSize={getCanvasScaleRatio() * 28}
           value={profileData[propertyKey]}
-          onChange={(value) => {
-            profileData[propertyKey] = value
-          }}
+          onChange={onChange}
           onSubmit={noop}
         />
       )
@@ -204,9 +213,7 @@ export function ProfilePropertyField({
           scroll={true}
           options={selectableValues[propertyKey as SelectablePropertyKey]}
           value={profileData[propertyKey] ?? ''}
-          onChange={(value) => {
-            profileData[propertyKey] = value
-          }}
+          onChange={onChange}
           disabled={disabled}
         />
       )
@@ -215,10 +222,7 @@ export function ProfilePropertyField({
       return (
         <DateComponent
           value={profileData[propertyKey]}
-          onChange={(value) => {
-            console.log('datechange', value)
-            profileData[propertyKey] = value
-          }}
+          onChange={onChange}
           disabled={disabled}
         />
       )
