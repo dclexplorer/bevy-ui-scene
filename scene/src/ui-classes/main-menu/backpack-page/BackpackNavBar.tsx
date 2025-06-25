@@ -210,7 +210,8 @@ function NavBar({ children }: { children?: ReactElement }): ReactElement {
         flexDirection: 'row',
         width: '100%',
         height: 120 * canvasScaleRatio,
-        pointerFilter: 'block'
+        pointerFilter: 'block',
+        zIndex: 2
       }}
       uiBackground={{
         color: { ...Color4.Black(), a: 0.4 }

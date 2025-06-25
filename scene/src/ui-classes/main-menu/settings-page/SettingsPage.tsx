@@ -522,13 +522,15 @@ export default class SettingsPage {
                         // display:
                         //   setting.category.toLowerCase() === this.buttonClicked
                         //     ? 'flex'
+
                         //     : 'none',
                         width: sliderWidth,
                         height: sliderHeight,
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        elementId: `setting-${setting.name}-${index}-parent`
+                        elementId: `setting-${setting.name}-${index}-parent`,
+                        zIndex: 999999
                       }}
                       onMouseEnter={() => {
                         this.settingsInfoDescription =

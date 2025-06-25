@@ -32,7 +32,8 @@ export function ItemsCatalog({
           flexDirection: 'column',
           padding: 14 * canvasScaleRatio,
           margin: { left: 30 * canvasScaleRatio },
-          height: '100%'
+          height: '100%',
+          zIndex: 1
         }}
       >
         {children}
