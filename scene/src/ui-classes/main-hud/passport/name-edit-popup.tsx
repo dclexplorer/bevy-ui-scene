@@ -19,6 +19,7 @@ import { executeTask } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../../../utils/dcl-utils'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import { openExternalUrl } from '~system/RestrictedActions'
+import { Input } from '@dcl/sdk/react-ecs'
 
 const { useState } = ReactEcs
 
@@ -117,8 +118,6 @@ const EditNameContent = () => {
         )}
         {!loading && activeTab === 1 && (
           <NameForm
-            selectableNames={selectableNAmes}
-            selectedName={selectedName}
             onChange={(value: string) => setSelectedName(value)}
             disabled={loading}
           />
@@ -154,11 +153,76 @@ const EditNameContent = () => {
   )
 }
 
-export const NameForm = () => {
+export const NameForm = ({
+  disabled = false,
+  onChange = noop,
+  value = ''
+}: {
+  disabled?: boolean
+  onChange?: (value: string) => void
+  value?: string
+}) => {
   return (
-    <UiEntity
-      uiTransform={{ flexDirection: 'column', width: '100%' }}
-    ></UiEntity>
+    <UiEntity uiTransform={{ flexDirection: 'column', width: '100%' }}>
+      <Input
+        uiTransform={{
+          width: '94%',
+          flexShrink: 0,
+          flexGrow: 0,
+          height: getCanvasScaleRatio() * 88,
+          margin: { top: getCanvasScaleRatio() * 14 },
+          borderColor: COLOR.BLACK_TRANSPARENT,
+          borderRadius: getCanvasScaleRatio() * 30,
+          borderWidth: 0,
+          padding: getCanvasScaleRatio() * 20
+        }}
+        fontSize={getCanvasScaleRatio() * 40}
+        uiBackground={{
+          color: COLOR.WHITE
+        }}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        placeholder={'Write a name...'}
+      />
+      <UiEntity
+        uiTransform={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: { top: '5%' },
+          width: '100%'
+        }}
+      >
+        <Button
+          uiTransform={{
+            borderRadius: getCanvasScaleRatio() * 20,
+            borderColor: COLOR.WHITE_OPACITY_1,
+            borderWidth: 0,
+            width: '40%',
+            margin: { right: '5%' },
+            opacity: disabled ? 0.5 : 1
+          }}
+          uiBackground={{
+            color: COLOR.WHITE_OPACITY_1
+          }}
+          disabled={disabled}
+          color={BUTTON_TEXT_COLOR}
+          value={'CANCEL'}
+        />
+        <Button
+          variant={'primary'}
+          uiTransform={{
+            width: '40%',
+            borderRadius: getCanvasScaleRatio() * 20,
+            borderColor: COLOR.BLACK_TRANSPARENT,
+            borderWidth: 0
+          }}
+          value={'SAVE'}
+          disabled={disabled || !value?.length}
+        />
+      </UiEntity>
+    </UiEntity>
   )
 }
 
@@ -182,9 +246,10 @@ export const UniqueNameForm = ({
           zIndex: 999999,
           margin: { top: getCanvasScaleRatio() * -20 },
           borderColor: COLOR.BLACK_TRANSPARENT,
-          borderRadius: getCanvasScaleRatio() * 16,
+          borderRadius: getCanvasScaleRatio() * 30,
           borderWidth: 0
         }}
+        fontSize={getCanvasScaleRatio() * 40}
         scroll={true}
         options={selectableNames}
         value={selectedName}

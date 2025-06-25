@@ -6,15 +6,11 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import {
-  ALMOST_WHITE,
-  ALMOST_BLACK,
-  ORANGE,
-  ROUNDED_TEXTURE_BACKGROUND
-} from '../../utils/constants'
+import { ALMOST_WHITE, ALMOST_BLACK, ORANGE } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { COLOR } from '../color-palette'
 import { isTruthy, noop } from '../../utils/function-utils'
+import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 
 function DropdownStyled(props: {
   isOpen: boolean
@@ -79,10 +75,12 @@ function DropdownStyled(props: {
           padding: { right: props.fontSize * 0.3 },
           justifyContent: 'space-between',
           alignItems: 'center',
+          borderRadius: getCanvasScaleRatio() * 30,
+          borderWidth: 0,
+          borderColor: COLOR.BLACK_TRANSPARENT,
           ...props.uiTransform
         }}
         uiBackground={{
-          ...ROUNDED_TEXTURE_BACKGROUND,
           color: ALMOST_WHITE
         }}
         onMouseDown={props.onMouseDown}
@@ -130,10 +128,12 @@ function DropdownStyled(props: {
             position: { left: 0, top: 2.5 * props.fontSize },
             zIndex: isTruthy(props.uiTransform?.zIndex)
               ? (props.uiTransform?.zIndex ?? 0) + 2
-              : 2
+              : 2,
+            borderRadius: getCanvasScaleRatio() * 30,
+            borderWidth: 0,
+            borderColor: COLOR.BLACK_TRANSPARENT
           }}
           uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
             color: ALMOST_WHITE
           }}
           onMouseLeave={() => {
