@@ -48,7 +48,9 @@ export function filterEntitiesWith(
     )) {
       result.push([entity, ...properties])
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error in filterEntitiesWith:', error)
+  }
 
   return result.filter(check)
 }
