@@ -20,6 +20,7 @@ import { sleep, waitFor } from '../../../utils/dcl-utils'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { Input } from '@dcl/sdk/react-ecs'
+import { BevyApi } from '../../../bevy-api'
 
 const { useState } = ReactEcs
 
@@ -91,7 +92,8 @@ const EditNameContent = () => {
           width: '100%',
           padding: '2%',
           flexDirection: 'column',
-          alignItems: 'flex-start'
+          alignItems: 'flex-start',
+          zIndex: 1
         }}
       >
         {tabs.length && (
@@ -118,6 +120,29 @@ const EditNameContent = () => {
             selectedName={selectedName}
             onChange={(value: string) => setSelectedName(value)}
             disabled={loading}
+            onSave={(selectedName: string) => {
+              console.log('onSave', selectedName)
+              executeTask(async () => {
+                setLoading(true)
+                await BevyApi.setAvatar({
+                  base: {
+                    ...store.getState().backpack.outfitSetup.base,
+                    name: selectedName
+                  }
+                })
+                setLoading(false)
+
+                store.dispatch(closeLastPopupAction())
+                store.dispatch(
+                  updateHudStateAction({
+                    profileData: {
+                      ...store.getState().hud.profileData,
+                      name: selectedName
+                    }
+                  })
+                )
+              })
+            }}
           />
         )}
         {!loading && activeTab === 1 && (
@@ -166,6 +191,7 @@ export const NameForm = ({
   onChange?: (value: string) => void
   value?: string
 }) => {
+  const [textValue, setTextValue] = useState(value)
   return (
     <UiEntity uiTransform={{ flexDirection: 'column', width: '100%' }}>
       <Input
@@ -184,11 +210,15 @@ export const NameForm = ({
         uiBackground={{
           color: COLOR.WHITE
         }}
-        value={value}
-        onChange={onChange}
+        value={textValue}
+        onChange={(value) => {
+          setTextValue(value)
+          onChange(value)
+        }}
         disabled={disabled}
         placeholder={'Write a name...'}
       />
+
       <UiEntity
         uiTransform={{
           flexDirection: 'row',
@@ -213,6 +243,9 @@ export const NameForm = ({
           disabled={disabled}
           color={BUTTON_TEXT_COLOR}
           value={'CANCEL'}
+          onMouseDown={() => {
+            store.dispatch(closeLastPopupAction())
+          }}
         />
         <Button
           variant={'primary'}
@@ -223,26 +256,35 @@ export const NameForm = ({
             borderWidth: 0
           }}
           value={'SAVE'}
-          disabled={disabled || !value?.length}
+          disabled={disabled || !textValue?.length || isInvalidName(textValue)}
         />
       </UiEntity>
     </UiEntity>
   )
+
+  function isInvalidName(name: string): boolean {
+    if (name.indexOf(' ') > 1) return true
+    return false
+  }
 }
 
 export const UniqueNameForm = ({
   selectableNames,
   selectedName,
   disabled = false,
-  onChange
+  onChange = noop,
+  onSave = noop
 }: {
   selectableNames: string[]
   selectedName: string
   disabled?: boolean
-  onChange: (value: string) => void
+  onChange?: (value: string) => void
+  onSave?: (selectedName: string) => void
 }) => {
   return (
-    <UiEntity uiTransform={{ flexDirection: 'column', width: '100%' }}>
+    <UiEntity
+      uiTransform={{ flexDirection: 'column', width: '100%', zIndex: 1 }}
+    >
       <DropdownComponent
         dropdownId={'unique-name-selector'}
         uiTransform={{
@@ -284,6 +326,9 @@ export const UniqueNameForm = ({
           disabled={disabled}
           color={BUTTON_TEXT_COLOR}
           value={'CANCEL'}
+          onMouseDown={() => {
+            store.dispatch(closeLastPopupAction())
+          }}
         />
         <Button
           variant={'primary'}
@@ -295,11 +340,15 @@ export const UniqueNameForm = ({
           }}
           value={'SAVE'}
           disabled={disabled}
+          onMouseDown={() => {
+            onSave(selectedName)
+          }}
         />
       </UiEntity>
     </UiEntity>
   )
 }
+
 export const NameEditPopup: Popup = ({ shownPopup }) => {
   return (
     <UiEntity
