@@ -286,7 +286,8 @@ export default class MainHud {
             width: '4%',
             minWidth: 45,
             height: '100%',
-            position: { left: 0, top: 0 }
+            position: { left: 0, top: 0 },
+            zIndex: 1
           }}
           // onMouseEnter={() => (this.isSideBarVisible = true)}
           // onMouseLeave={() => (this.isSideBarVisible = false)}
