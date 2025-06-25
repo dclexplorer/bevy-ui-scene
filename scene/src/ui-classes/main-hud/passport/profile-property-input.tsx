@@ -263,7 +263,7 @@ function DateComponent({
         uiBackground={{
           color: Color4.White()
         }}
-        value={formatEpsilonToShortDate(value)}
+        value={(value && formatEpsilonToShortDate(value)) || undefined}
         onChange={(value) => {
           const epsilonSeconds = parseEpsilonSeconds(value)
           if (epsilonSeconds !== null) onChange(epsilonSeconds)
