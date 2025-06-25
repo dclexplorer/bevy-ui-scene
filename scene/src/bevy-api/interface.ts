@@ -47,6 +47,7 @@ export type PBAvatarBase = {
 export type SetAvatarData = {
   base?: PBAvatarBase
   equip?: PBAvatarEquippedData
+  hasClaimedName?: boolean
 }
 
 export type LiveSceneInfo = {

@@ -35,12 +35,13 @@ const NAME_EDIT_TABS = [
 const BUTTON_TEXT_COLOR = { ...COLOR.WHITE }
 
 const EditNameContent = () => {
-  const [selectableNAmes, setSelectableselectableNAmes] = useState<string[]>([
-    ''
-  ])
+  const profileData = store.getState().hud.profileData
+  const [selectableNames, setSelectableNames] = useState<string[]>([''])
   const [selectedName, setSelectedName] = useState<string>(
-    store.getState().hud.profileData.name ?? ''
+    profileData.name ?? ''
   )
+  const [customName, setCustomName] = useState<string>(profileData.name ?? '')
+
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState<number>(0)
   const [tabs, setTabs] = useState<Tab[]>(NAME_EDIT_TABS)
@@ -49,9 +50,9 @@ const EditNameContent = () => {
     executeTask(async () => {
       setLoading(true)
       await waitFor(() => !!store.getState().hud.profileData.userId)
-
+      const profileData = store.getState().hud.profileData
       const nameDefinitions = await fetchAllUserNames({
-        userId: store.getState().hud.profileData.userId
+        userId: profileData.userId
       })
       const names = nameDefinitions.map((n) => n.name).concat('') as string[]
       const activeTab = nameDefinitions.length ? 0 : 1
@@ -63,14 +64,48 @@ const EditNameContent = () => {
 
       setActiveTab(activeTab)
       setTabs(tabs)
-      setSelectableselectableNAmes(names)
-      setSelectedName(store.getState().hud.profileData.name)
+      setSelectableNames(names)
+      setSelectedName(
+        names.indexOf(profileData.name) === -1 ? '' : profileData.name
+      )
       setLoading(false)
+      setCustomName(profileData.hasClaimedName ? '' : profileData.name)
 
       console.log('activeTab', activeTab)
     })
   }, [])
-
+  const onSave = (selectedName: string) => {
+    console.log('onSave', selectedName)
+    const hasClaimedName = selectableNames.indexOf(selectedName) !== -1
+    executeTask(async () => {
+      setLoading(true)
+      let failed = false
+      await BevyApi.setAvatar({
+        base: {
+          ...store.getState().backpack.outfitSetup.base,
+          name: selectedName
+        },
+        hasClaimedName
+      }).catch((error) => {
+        // TODO consider showing an informative "error" popup
+        console.error('onSave error', error)
+        failed = true
+      })
+      setLoading(false)
+      if (!failed) {
+        store.dispatch(closeLastPopupAction())
+        store.dispatch(
+          updateHudStateAction({
+            profileData: {
+              ...store.getState().hud.profileData,
+              name: selectedName,
+              hasClaimedName
+            }
+          })
+        )
+      }
+    })
+  }
   return (
     <UiEntity
       uiTransform={{
@@ -114,41 +149,21 @@ const EditNameContent = () => {
           />
         )}
 
-        {!loading && activeTab === 0 && (
+        {!loading && activeTab === 0 && selectableNames.length > 1 && (
           <UniqueNameForm
-            selectableNames={selectableNAmes}
+            selectableNames={selectableNames}
             selectedName={selectedName}
             onChange={(value: string) => setSelectedName(value)}
             disabled={loading}
-            onSave={(selectedName: string) => {
-              console.log('onSave', selectedName)
-              executeTask(async () => {
-                setLoading(true)
-                await BevyApi.setAvatar({
-                  base: {
-                    ...store.getState().backpack.outfitSetup.base,
-                    name: selectedName
-                  }
-                })
-                setLoading(false)
-
-                store.dispatch(closeLastPopupAction())
-                store.dispatch(
-                  updateHudStateAction({
-                    profileData: {
-                      ...store.getState().hud.profileData,
-                      name: selectedName
-                    }
-                  })
-                )
-              })
-            }}
+            onSave={onSave}
           />
         )}
         {!loading && activeTab === 1 && (
           <NameForm
-            onChange={(value: string) => setSelectedName(value)}
+            value={customName}
+            onChange={(value: string) => setCustomName(value)}
             disabled={loading}
+            onSave={onSave}
           />
         )}
       </UiEntity>
@@ -185,10 +200,12 @@ const EditNameContent = () => {
 export const NameForm = ({
   disabled = false,
   onChange = noop,
+  onSave = noop,
   value = ''
 }: {
   disabled?: boolean
   onChange?: (value: string) => void
+  onSave?: (value: string) => void
   value?: string
 }) => {
   const [textValue, setTextValue] = useState(value)
@@ -257,6 +274,9 @@ export const NameForm = ({
           }}
           value={'SAVE'}
           disabled={disabled || !textValue?.length || isInvalidName(textValue)}
+          onMouseDown={() => {
+            onSave(textValue)
+          }}
         />
       </UiEntity>
     </UiEntity>
@@ -339,7 +359,9 @@ export const UniqueNameForm = ({
             borderWidth: 0
           }}
           value={'SAVE'}
-          disabled={disabled}
+          disabled={
+            disabled || selectedName === store.getState().hud.profileData.name
+          }
           onMouseDown={() => {
             onSave(selectedName)
           }}
