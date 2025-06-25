@@ -54,9 +54,11 @@ const EditNameContent = () => {
       })
       const names = nameDefinitions.map((n) => n.name).concat('') as string[]
       const activeTab = nameDefinitions.length ? 0 : 1
-      const tabs = cloneDeep(NAME_EDIT_TABS).map((tabDefinition, index) => {
-        return { ...tabDefinition, active: index === activeTab }
-      })
+      const tabs = nameDefinitions.length
+        ? cloneDeep(NAME_EDIT_TABS).map((tabDefinition, index) => {
+            return { ...tabDefinition, active: index === activeTab }
+          })
+        : []
 
       setActiveTab(activeTab)
       setTabs(tabs)
@@ -92,21 +94,23 @@ const EditNameContent = () => {
           alignItems: 'flex-start'
         }}
       >
-        <TabComponent
-          tabs={tabs}
-          fontSize={getCanvasScaleRatio() * 32}
-          uiTransform={{ width: '100%', margin: { bottom: '2%' } }}
-          onClickTab={(activeTab: number) => {
-            const tabs = cloneDeep(NAME_EDIT_TABS).map(
-              (tabDefinition, index) => {
-                return { ...tabDefinition, active: index === activeTab }
-              }
-            )
+        {tabs.length && (
+          <TabComponent
+            tabs={tabs}
+            fontSize={getCanvasScaleRatio() * 32}
+            uiTransform={{ width: '100%', margin: { bottom: '2%' } }}
+            onClickTab={(activeTab: number) => {
+              const tabs = cloneDeep(NAME_EDIT_TABS).map(
+                (tabDefinition, index) => {
+                  return { ...tabDefinition, active: index === activeTab }
+                }
+              )
 
-            setActiveTab(activeTab)
-            setTabs(tabs)
-          }}
-        />
+              setActiveTab(activeTab)
+              setTabs(tabs)
+            }}
+          />
+        )}
 
         {!loading && activeTab === 0 && (
           <UniqueNameForm
