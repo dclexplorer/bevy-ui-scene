@@ -3,7 +3,6 @@ import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Callback, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { ButtonIcon } from '../../../components/button-icon'
 import { ButtonText } from '../../../components/button-text'
-import Canvas from '../../../components/canvas/Canvas'
 import { type UIController } from '../../../controllers/ui.controller'
 import {
   RUBY,
@@ -106,7 +105,13 @@ export default class PopUpAction {
     }
 
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+      >
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -284,7 +289,7 @@ export default class PopUpAction {
             </UiEntity>
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 }

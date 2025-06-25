@@ -1,4 +1,4 @@
-import { VIEWPORT_STORE_ID } from './state'
+import { VIEWPORT_STORE_ID, type ViewportState } from './state'
 
 type ViewportActionId = { __reducer: typeof VIEWPORT_STORE_ID }
 
@@ -13,10 +13,9 @@ export type ViewportInfoAction = ViewportActionId & {
 
 export type ViewportActions = ViewportInfoAction
 
-export const updateViewportSize = (viewportInfo: {
-  width: number
-  height: number
-}): ViewportActions => ({
+export const updateViewportSize = (
+  viewportInfo: ViewportState
+): ViewportActions => ({
   __reducer: VIEWPORT_STORE_ID,
   type: VIEWPORT_ACTION.UPDATE_VIEWPORT,
   payload: viewportInfo

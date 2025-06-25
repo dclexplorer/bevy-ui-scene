@@ -51,3 +51,41 @@ export function isFalsy(value: any): boolean {
 export function isTruthy(value: any): boolean {
   return !!value
 }
+
+type MediatorCallback<T extends any[] = any[]> = (...args: T) => void
+type Mediator = {
+  subscribe: <T extends any[]>(channel: string, fn: MediatorCallback<T>) => void
+  unsubscribe: <T extends any[]>(
+    channel: string,
+    fn: MediatorCallback<T>
+  ) => void
+  publish: <T extends any[]>(channel: string, ...args: T) => void
+}
+
+export function createMediator(): Mediator {
+  const channels = new Map<string, Set<MediatorCallback>>()
+
+  return {
+    subscribe: <T extends any[]>(channel: string, fn: MediatorCallback<T>) => {
+      let subscribers = channels.get(channel)
+      if (!subscribers) {
+        subscribers = new Set()
+        channels.set(channel, subscribers)
+      }
+      subscribers.add(fn as MediatorCallback)
+    },
+
+    unsubscribe: <T extends any[]>(
+      channel: string,
+      fn: MediatorCallback<T>
+    ) => {
+      channels.get(channel)?.delete(fn as MediatorCallback)
+    },
+
+    publish: <T extends any[]>(channel: string, ...args: T) => {
+      channels.get(channel)?.forEach((fn) => {
+        fn(...args)
+      })
+    }
+  }
+}

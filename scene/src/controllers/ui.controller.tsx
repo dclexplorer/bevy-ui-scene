@@ -21,6 +21,11 @@ import {
 import { getWaitFor } from '../utils/function-utils'
 import { sleep } from '../utils/dcl-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { Color4 } from '@dcl/sdk/math'
+import { type ReactElement } from '@dcl/react-ecs'
+import { Canvas } from '../components/canvas'
+import { store } from '../state/store'
 
 export class UIController {
   public isPhotosVisible: boolean = false
@@ -94,7 +99,8 @@ export class UIController {
 
   ui(): ReactEcs.JSX.Element {
     return (
-      <UiEntity>
+      <Canvas>
+        {InteractableArea({ active: false })}
         {this.mainHud.mainUi()}
         {this.isMainMenuVisible && this.menu.mainUi()}
         {this.isProfileVisible && this.profile.mainUi()}
@@ -107,7 +113,39 @@ export class UIController {
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
         {!this.isMainMenuVisible && renderEmotesWheel()}
-      </UiEntity>
+      </Canvas>
     )
   }
+}
+
+function InteractableArea({
+  active = false,
+  opacity = 0.1
+}: {
+  active?: boolean
+  opacity?: number
+}): ReactElement | null {
+  if (!active) return null
+  const canvas = UiCanvasInformation.get(engine.RootEntity)
+  if (!canvas?.interactableArea) return null
+  const viewportState = store.getState().viewport
+  const { interactableArea } = viewportState
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        position: {
+          left: interactableArea.left,
+          top: interactableArea.top
+        },
+        width: canvas.width - (interactableArea.right + interactableArea.left),
+        height:
+          canvas.height - (interactableArea.top + interactableArea.bottom),
+        zIndex: 999999
+      }}
+      uiBackground={{
+        color: Color4.create(0, 1, 1, opacity)
+      }}
+    />
+  )
 }

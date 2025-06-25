@@ -26,7 +26,6 @@ import {
 import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
-import Canvas from '../../components/canvas/Canvas'
 import { type UIController } from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
@@ -322,7 +321,13 @@ export default class SceneInfoCard {
 
     if (this.place === undefined) return null
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+      >
         <UiEntity
           uiTransform={{
             width: panelWidth,
@@ -381,7 +386,7 @@ export default class SceneInfoCard {
             </UiEntity>
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 

@@ -15,7 +15,22 @@ function Canvas(props: {
     viewportState.width !== canvasInfo.width ||
     viewportState.height !== canvasInfo.height
   ) {
-    store.dispatch(updateViewportSize(canvasInfo))
+    const sideMenuWidth = Math.max(canvasInfo.width * 0.04, 45)
+    const chatWidth = canvasInfo.width * 0.25
+    const hudWidth = sideMenuWidth + chatWidth
+
+    store.dispatch(
+      updateViewportSize({
+        width: canvasInfo.width,
+        height: canvasInfo.height,
+        interactableArea: {
+          top: 0,
+          left: hudWidth,
+          right: 0,
+          bottom: 0
+        }
+      })
+    )
   }
 
   return (

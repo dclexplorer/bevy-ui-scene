@@ -5,7 +5,8 @@ import {
   TextureCamera,
   Transform,
   AvatarShape,
-  type Entity
+  type Entity,
+  type Orthographic
 } from '@dcl/sdk/ecs'
 import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
 import { getPlayer } from '@dcl/sdk/src/players'
@@ -19,7 +20,6 @@ import {
 } from '../../service/categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { getItemsWithTokenId } from '../../utils/urn-utils'
-import { type Perspective } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/texture_camera.gen'
 
 export type AvatarPreview = {
   avatarEntity: Entity
@@ -39,14 +39,18 @@ export const getAvatarPreviewEntity: () => Entity = () =>
 export const setAvatarPreviewRotation = (rotation: Quaternion): void => {
   Transform.getMutable(avatarPreview.avatarEntity).rotation = rotation
 }
-type PerspectiveMode = {
-  $case: 'perspective'
-  perspective: Perspective
+
+type OrthographicMode = {
+  $case: 'orthographic'
+  orthographic: Orthographic
 }
 export const setAvatarPreviewZoomFactor = (zoomFactor: number): void => {
-  const mode = TextureCamera.getMutable(avatarPreview.cameraEntity)
-    ?.mode as PerspectiveMode
-  mode.perspective.fieldOfView = zoomFactor * 1.5 + 0.3
+  const mode: OrthographicMode = TextureCamera.getMutable(
+    avatarPreview.cameraEntity
+  )?.mode as OrthographicMode
+
+  mode.orthographic.verticalRange = zoomFactor * 10 + 10
+  // mode.perspective.fieldOfView = zoomFactor * 1.5 + 0.3
 }
 
 export const getAvatarPreviewQuaternion = (): Quaternion => {
@@ -60,10 +64,10 @@ export const playPreviewEmote = (emoteURN: EquippedEmote): void => {
 }
 
 export const AVATAR_CAMERA_POSITION: Record<string, Vector3> = {
-  BODY: Vector3.create(8, 2.5, 8 - 6),
-  TOP: Vector3.create(8, 3.5, 8 - 3),
+  BODY: Vector3.create(8, 2.3, 8 - 6),
+  TOP: Vector3.create(8, 3.3, 8 - 3),
   FEET: Vector3.create(8, 1, 8 - 4),
-  UPPER_BODY: Vector3.create(8, 2.75, 8 - 3.5),
+  UPPER_BODY: Vector3.create(8, 2.6, 8 - 3.5),
   PANTS: Vector3.create(8, 1.75, 8 - 3.5)
 }
 
@@ -150,8 +154,8 @@ export function createAvatarPreview(): void {
     layer: 1,
     clearColor: Color4.create(0.4, 0.4, 1.0, 0),
     mode: {
-      $case: 'perspective',
-      perspective: { fieldOfView: 1 }
+      $case: 'orthographic',
+      orthographic: { verticalRange: 6 }
     },
     volume: 1
   })

@@ -96,6 +96,7 @@ export function BackpackNavBar({
             onClick={() => {
               const backpackState = store.getState().backpack
               if (backpackState.loadingPage) return
+              setAvatarPreviewCameraToWearableCategory(null)
               store.dispatch(changeSectionAction(BACKPACK_SECTION.OUTFITS))
             }}
           />

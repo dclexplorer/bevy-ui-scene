@@ -51,9 +51,11 @@ export function getOutfitSetupFromWearables(
     (acc: OutfitSetupWearables, wearableURN: URNWithoutTokenId) => {
       const entityMetadata = catalystWearables[wearableURN]
       const data =
-        (entityMetadata as WearableEntityMetadata).data ??
+        (entityMetadata as WearableEntityMetadata)?.data ??
         (entityMetadata as EmoteEntityMetadata)?.emoteDataADR74
-      acc[data.category as WearableCategory] = wearableURN
+      if (data?.category) {
+        acc[data?.category as WearableCategory] = wearableURN
+      }
       return acc
     },
     { ...EMPTY_OUTFIT.wearables }

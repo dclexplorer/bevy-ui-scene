@@ -2,7 +2,6 @@ import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Callback, Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { ButtonText } from '../../../components/button-text'
-import Canvas from '../../../components/canvas/Canvas'
 import { type UIController } from '../../../controllers/ui.controller'
 import {
   LEFT_PANEL_WIDTH_FACTOR,
@@ -76,7 +75,13 @@ export default class WarningPopUp {
     }
 
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+      >
         <UiEntity
           uiTransform={{
             width: '100%',
@@ -212,7 +217,7 @@ export default class WarningPopUp {
             />
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 }

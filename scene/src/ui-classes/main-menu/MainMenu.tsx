@@ -6,7 +6,6 @@ import { ButtonTextIcon } from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_BLACK } from '../../utils/constants'
 import { type AtlasIcon } from '../../utils/definitions'
-import Canvas from '../../components/canvas/Canvas'
 import { ProfileButton } from '../profile/profile-button'
 import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
@@ -23,8 +22,11 @@ const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
 
 export default class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
+  public isOpen = (): boolean => this.open
   private readonly uiController: UIController
   private readonly profileButton: ProfileButton
+  private open: boolean = false
+
   readonly backpackIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Backpack off'
@@ -83,9 +85,11 @@ export default class MainMenu {
     this.closeButtonColor = ALMOST_BLACK
     playPreviewEmote('')
     disposeOutfitsCatalog()
+    this.open = false
   }
 
   show(page: MenuPage): void {
+    this.open = true
     this.uiController.settingsPage.updateButtons()
     this.activePage = page
     this.uiController.isMainMenuVisible = true
@@ -138,7 +142,13 @@ export default class MainMenu {
     const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1
 
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: '100%',
+          positionType: 'absolute'
+        }}
+      >
         <DeleteOutfitDialog />
         <UiEntity
           uiTransform={{
@@ -357,7 +367,7 @@ export default class MainMenu {
             />
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 }

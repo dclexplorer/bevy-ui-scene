@@ -1,8 +1,5 @@
-import { BevyApi } from '../bevy-api'
-import { type SystemAction } from '../bevy-api/interface'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { Canvas } from '../components/canvas'
 import { getCanvasScaleRatio } from '../service/canvas-ratio'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR, RARITY_COLORS } from '../components/color-palette'
@@ -34,8 +31,8 @@ import { BACKPACK_SECTION } from '../state/backpack/state'
 import { store } from '../state/store'
 import { changeSectionAction } from '../state/backpack/actions'
 import { CloseButton } from '../components/close-button'
-import { sleep } from '../utils/dcl-utils'
 import { isFalsy } from '../utils/function-utils'
+import { listenSystemAction } from '../service/system-actions-emitter'
 
 const state: any = {
   visible: false,
@@ -51,9 +48,13 @@ export async function initEmotesWheel({
     getPlayer()?.emotes ?? DEFAULT_EMOTES
   ).map((e) => getURNWithoutTokenId(e as URN) as EquippedEmote)
 
+  const switchIfPressed = (pressed: boolean): void => {
+    if (pressed) switchEmotesWheelVisibility()
+  }
+
   await fetchEmotesData(...equippedEmotes)
 
-  listen().catch(console.error)
+  listenSystemAction('Emote', switchIfPressed)
 
   engine.addSystem(() => {
     const cmd = inputSystem.getInputCommand(
@@ -69,24 +70,12 @@ export async function initEmotesWheel({
       }
     }
   })
-
-  async function listen(): Promise<void> {
-    await sleep(0)
-    awaitStream(await BevyApi.getSystemActionStream()).catch(console.error)
-  }
 }
 
 export function switchEmotesWheelVisibility(): void {
   state.visible = !state.visible
 }
 
-async function awaitStream(stream: SystemAction[]): Promise<void> {
-  for await (const actionInfo of stream) {
-    if (actionInfo.action === 'Emote' && actionInfo.pressed) {
-      switchEmotesWheelVisibility()
-    }
-  }
-}
 export function renderEmotesWheel(): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const equippedEmotes: EquippedEmote[] = (getPlayer()?.emotes ?? []).map(
@@ -105,10 +94,14 @@ export function renderEmotesWheel(): ReactElement {
 
   return (
     state.visible && (
-      <Canvas
+      <UiEntity
         uiTransform={{
           alignItems: 'center',
-          justifyContent: 'center'
+          alignSelf: 'center',
+          justifyContent: 'center',
+          positionType: 'absolute',
+          width: '100%',
+          height: '100%'
         }}
       >
         <UiEntity
@@ -226,7 +219,7 @@ Press <b>[Alt + num]</b> to run emote`,
             textWrap: 'wrap'
           }}
         />
-      </Canvas>
+      </UiEntity>
     )
   )
 }

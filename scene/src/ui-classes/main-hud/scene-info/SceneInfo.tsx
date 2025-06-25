@@ -4,13 +4,11 @@ import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { store } from 'src/state/store'
 import type { PlaceFromApi } from 'src/ui-classes/scene-info-card/SceneInfoCard.types'
 import { ButtonIcon } from '../../../components/button-icon'
-import Canvas from '../../../components/canvas/Canvas'
+
 import type { UIController } from '../../../controllers/ui.controller'
 import {
   ALMOST_WHITE,
   ALPHA_BLACK_PANEL,
-  LEFT_PANEL_MIN_WIDTH,
-  LEFT_PANEL_WIDTH_FACTOR,
   ROUNDED_TEXTURE_BACKGROUND,
   SELECTED_BUTTON_COLOR,
   UNSELECTED_TEXT_WHITE
@@ -23,6 +21,7 @@ import {
 import type { HomeScene, LiveSceneInfo } from 'src/bevy-api/interface'
 import { BevyApi } from 'src/bevy-api'
 import { setHome } from 'src/state/sceneInfo/actions'
+import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 
 export default class SceneInfo {
   private readonly uiController: UIController
@@ -240,38 +239,24 @@ export default class SceneInfo {
     const sceneCoords = store.getState().scene.explorerPlayerParcelAction
     if (sceneCoords === undefined) return null
 
-    let leftPosition: number
-    if ((canvasInfo.width * 2.5) / 100 < 45) {
-      leftPosition = 45 + (canvasInfo.width * 1) / 100
-    } else {
-      leftPosition = (canvasInfo.width * 3.4) / 100
-    }
-
-    let panelWidth: number
-
-    if (canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR < LEFT_PANEL_MIN_WIDTH) {
-      panelWidth = LEFT_PANEL_MIN_WIDTH
-    } else {
-      panelWidth = canvasInfo.width * LEFT_PANEL_WIDTH_FACTOR
-    }
+    this.fontSize = Math.floor(48 * getCanvasScaleRatio())
 
     return (
-      <Canvas>
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          padding: '2%',
+          height: '10%'
+        }}
+      >
         <UiEntity
           uiTransform={{
-            width: panelWidth,
+            width: '100%',
             height: 'auto',
             minHeight: this.fontSize * 3.5,
             justifyContent: 'center',
             alignItems: 'center',
-            flexDirection: 'column',
-            position: {
-              left: this.uiController.mainHud.isSideBarVisible
-                ? leftPosition
-                : canvasInfo.width * 0.01,
-              top: canvasInfo.width * 0.01
-            },
-            positionType: 'absolute'
+            flexDirection: 'column'
           }}
           uiBackground={{
             ...ROUNDED_TEXTURE_BACKGROUND,
@@ -633,7 +618,7 @@ export default class SceneInfo {
             </UiEntity>
           </UiEntity>
         </UiEntity>
-      </Canvas>
+      </UiEntity>
     )
   }
 
