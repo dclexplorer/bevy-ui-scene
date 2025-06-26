@@ -298,17 +298,25 @@ function Overview(): ReactElement {
             )
           )}
       </UiEntity>
-      {profileData.links?.length > 0 && [
-        <UiEntity
-          uiTransform={{
-            margin: { top: '5%' }
-          }}
-          uiText={{
-            value: '<b>LINKS</b>',
-            fontSize: getCanvasScaleRatio() * 30
-          }}
-        />,
-        state.editing && (
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          flexDirection: 'column',
+          alignItems: 'flex-start'
+        }}
+      >
+        {(state.editing || profileData?.links?.length) && (
+          <UiEntity
+            uiTransform={{
+              margin: { top: '5%' }
+            }}
+            uiText={{
+              value: '<b>LINKS</b>',
+              fontSize: getCanvasScaleRatio() * 30
+            }}
+          />
+        )}
+        {state.editing && (
           <UiEntity
             uiText={{
               value:
@@ -316,13 +324,43 @@ function Overview(): ReactElement {
               fontSize: getCanvasScaleRatio() * 30
             }}
           />
-        ),
-        <UiEntity uiTransform={{ flexDirection: 'row' }}>
-          {profileData.links.map((link: { title: string; url: string }) => (
-            <ProfileLink link={link} editing={state.editing} />
-          ))}
+        )}
+        <UiEntity
+          uiTransform={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            width: '100%'
+          }}
+        >
+          {profileData?.links?.length &&
+            profileData.links.map((link: { title: string; url: string }) => (
+              <ProfileLink link={link} editing={state.editing} />
+            ))}
+          {state.editing &&
+            (!profileData?.links || profileData?.links?.length < 5) && (
+              <Button
+                onMouseDown={() => {
+                  store.dispatch(
+                    pushPopupAction({
+                      type: HUD_POPUP_TYPE.ADD_LINK
+                    })
+                  )
+                }}
+                value={'<b>+</b> ADD'}
+                fontSize={getCanvasScaleRatio() * 32}
+                uiBackground={{ color: COLOR.WHITE_OPACITY_1 }}
+                uiTransform={{
+                  borderRadius: getCanvasScaleRatio() * 15,
+                  borderWidth: 0,
+                  borderColor: COLOR.BLACK_TRANSPARENT,
+                  margin: { left: '2%' },
+                  flexShrink: 0
+                }}
+              />
+            )}
         </UiEntity>
-      ]}
+      </UiEntity>
+
       {state.editing && (
         <UiEntity
           uiTransform={{
@@ -401,7 +439,8 @@ function ProfileLink({
         margin: getCanvasScaleRatio() * 10,
         borderRadius: getCanvasScaleRatio() * 20,
         borderColor: COLOR.BLACK_TRANSPARENT,
-        borderWidth: 0
+        borderWidth: 0,
+        flexShrink: 0
       }}
       uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
       onMouseDown={() => {
