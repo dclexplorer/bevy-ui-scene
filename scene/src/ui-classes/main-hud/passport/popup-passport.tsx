@@ -269,7 +269,8 @@ function Overview(): ReactElement {
           flex: 1,
           flexWrap: 'wrap',
           width: '100%',
-          margin: { top: '2%' }
+          margin: { top: '2%', bottom: '2%' },
+          zIndex: 2
         }}
       >
         {!state.editing &&
@@ -284,13 +285,18 @@ function Overview(): ReactElement {
             )
           )}
         {state.editing &&
-          editablePropertyKeys.map((propertyKey: keyof ViewAvatarData) => (
-            <ProfilePropertyField
-              propertyKey={propertyKey ?? ''}
-              profileData={profileData}
-              editing={state.editing}
-            />
-          ))}
+          editablePropertyKeys.map(
+            (propertyKey: keyof ViewAvatarData, index) => (
+              <ProfilePropertyField
+                propertyKey={propertyKey ?? ''}
+                profileData={profileData}
+                editing={state.editing}
+                uiTransform={{
+                  zIndex: editablePropertyKeys.length + 99 - index
+                }}
+              />
+            )
+          )}
       </UiEntity>
       {profileData.links?.length > 0 && [
         <UiEntity
@@ -323,7 +329,8 @@ function Overview(): ReactElement {
             flexDirection: 'row',
             width: '100%',
             padding: { top: '1%' },
-            justifyContent: 'flex-end'
+            justifyContent: 'flex-end',
+            zIndex: 0
           }}
         >
           <TopBorder

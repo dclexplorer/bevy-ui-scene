@@ -32,6 +32,7 @@ function DropdownStyled(props: {
   scroll?: boolean
   options: string[]
   disabled?: boolean
+  listMaxHeight?: number
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -113,17 +114,19 @@ function DropdownStyled(props: {
             color: Color4.Black()
           }}
         />
-
+        {/* LIST */}
         <UiEntity
           uiTransform={{
             display: props.isOpen ? 'flex' : 'none',
             width: '100%',
-            height: scroll
+            height: props.listMaxHeight
+              ? props.listMaxHeight
+              : scroll
               ? props.options.length >= 4
                 ? props.fontSize * 2.1 * 4
                 : props.fontSize * props.options.length * 2.1
               : undefined,
-
+            maxHeight: props.listMaxHeight,
             positionType: 'absolute',
             position: { left: 0, top: 2.5 * props.fontSize },
             zIndex: isTruthy(props.uiTransform?.zIndex)

@@ -215,6 +215,7 @@ export function ProfilePropertyField({
           value={profileData[propertyKey] ?? ''}
           onChange={onChange}
           disabled={disabled}
+          listMaxHeight={getCanvasScaleRatio() * 800}
         />
       )
     }

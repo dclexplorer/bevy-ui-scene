@@ -14,6 +14,7 @@ export type DropdownComponentProps = {
   onChange: (value: any) => void
   scroll?: boolean
   disabled?: boolean
+  listMaxHeight?: number
 }
 
 export type DropdownState = Record<
@@ -33,7 +34,8 @@ export function DropdownComponent({
   fontSize = getCanvasScaleRatio() * 32,
   onChange = noop,
   scroll = false,
-  disabled = false
+  disabled = false,
+  listMaxHeight
 }: DropdownComponentProps): ReactElement {
   state[dropdownId] = state[dropdownId] ?? {
     open: false,
@@ -73,6 +75,7 @@ export function DropdownComponent({
       }
       options={options}
       disabled={disabled}
+      listMaxHeight={listMaxHeight}
     />
   )
 }
