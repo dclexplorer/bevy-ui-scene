@@ -46,6 +46,7 @@ import {
 } from './profile-property-input'
 import { ButtonIcon } from '../../../components/button-icon'
 import { TopBorder } from '../../../components/bottom-border'
+import { CopyButton } from '../../../components/copy-button'
 
 const COPY_ICON_SIZE = 40
 
@@ -53,7 +54,6 @@ export type PassportPopupState = {
   loadingProfile: boolean
   savingProfile: boolean
   pristineProfileData: ViewAvatarData
-  copying: null | string
   editing: boolean
   editable: boolean
 }
@@ -63,7 +63,6 @@ const state: PassportPopupState = {
   editable: true,
   loadingProfile: true,
   savingProfile: false,
-  copying: null,
   pristineProfileData: cloneDeep(EMPTY_PROFILE_DATA)
 }
 
@@ -495,8 +494,6 @@ function ProfileLink({
   )
 }
 
-const _applyMiddleEllipsis = memoize(applyMiddleEllipsis)
-
 function AddressRow({
   address,
   fontSize
@@ -513,7 +510,7 @@ function AddressRow({
     >
       <UiEntity
         uiText={{
-          value: _applyMiddleEllipsis(address),
+          value: applyMiddleEllipsis(address),
           fontSize,
           textAlign: 'middle-left',
           color: COLOR.INACTIVE
@@ -595,43 +592,6 @@ function NameRow({
         />
       )}
     </UiEntity>
-  )
-}
-
-function CopyButton({
-  fontSize,
-  text,
-  elementId
-}: {
-  fontSize: number
-  text: string
-  elementId: string
-}): ReactElement {
-  return (
-    <UiEntity
-      uiTransform={{
-        width: fontSize,
-        height: fontSize,
-        margin: { left: '5%' },
-        flexShrink: 0,
-        flexGrow: 0
-      }}
-      uiBackground={{
-        ...getBackgroundFromAtlas({
-          atlasName: 'icons',
-          spriteName: 'CopyIcon'
-        }),
-        color: state.copying === elementId ? COLOR.WHITE : COLOR.WHITE_OPACITY_2
-      }}
-      onMouseDown={() => {
-        executeTask(async () => {
-          state.copying = elementId
-          copyToClipboard({ text }).catch(console.error)
-          await sleep(200)
-          state.copying = null
-        })
-      }}
-    />
   )
 }
 

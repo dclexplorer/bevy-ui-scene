@@ -71,6 +71,7 @@ export const COLOR = {
   WHITE_OPACITY_1: Color4.create(1, 1, 1, 0.1),
   TEXT_COLOR,
   TEXT_COLOR_WHITE: Color4.fromHexString('#f4f4f4'),
+  TEXT_COLOR_GREY: Color4.fromHexString('#889AA4FF'),
   TEXT_COLOR_LIGHT_GREY: Color4.fromHexString('#C6C6C6FF'),
   INACTIVE: Color4.fromHexString('#d8d8d8'),
 

@@ -1,16 +1,34 @@
 import type { Popup } from '../../../components/popup-stack'
-import ReactEcs, { UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { Button, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../../components/color-palette'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
-import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
+import {
+  BORDER_RADIUS_F,
+  getBackgroundFromAtlas
+} from '../../../utils/ui-utils'
 import { noop } from '../../../utils/function-utils'
 import { store } from '../../../state/store'
-import { closeLastPopupAction } from '../../../state/hud/actions'
+import {
+  closeLastPopupAction,
+  pushPopupAction
+} from '../../../state/hud/actions'
 import { AvatarCircle } from '../../../components/avatar-circle'
 import { getPlayer } from '@dcl/sdk/src/players'
 import { getAddressColor } from '../chat-and-logs/ColorByAddress'
+import { Row } from '../../../components/layout'
+import { applyMiddleEllipsis } from '../../../utils/urn-utils'
+import { CopyButton } from '../../../components/copy-button'
+import { RoundedButton } from '../../../components/rounded-button'
+import { ButtonTextIcon } from '../../../components/button-text-icon'
+import { Color4 } from '@dcl/sdk/math'
+import { BottomBorder, TopBorder } from '../../../components/bottom-border'
+import { BevyApi } from '../../../bevy-api'
+import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 
 export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
+  if (!getPlayer()) return null
+  const profileData = store.getState().hud?.profileData
+  if (!profileData) return null
   return (
     <UiEntity
       uiTransform={{
@@ -62,6 +80,124 @@ export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
               alignSelf: 'center'
             }}
             isGuest={!!getPlayer()?.isGuest}
+          />
+          <Row uiTransform={{ justifyContent: 'center', width: '100%' }}>
+            <UiEntity
+              uiText={{
+                value: `<b>${getPlayer()?.name}</b>`,
+                color: getAddressColor(getPlayer()?.userId as string),
+                fontSize: getCanvasScaleRatio() * 48
+              }}
+            />
+            {profileData.hasClaimedName && (
+              <UiEntity
+                uiTransform={{
+                  width: getCanvasScaleRatio() * 50,
+                  height: getCanvasScaleRatio() * 50,
+                  flexShrink: 0,
+                  alignSelf: 'center'
+                }}
+                uiBackground={getBackgroundFromAtlas({
+                  atlasName: 'icons',
+                  spriteName: 'Verified'
+                })}
+              />
+            )}
+          </Row>
+          <UiEntity
+            uiText={{
+              value: 'WALLET ADDRESS',
+              color: COLOR.TEXT_COLOR_GREY,
+              fontSize: getCanvasScaleRatio() * 38
+            }}
+          />
+          <Row
+            uiTransform={{
+              justifyContent: 'center'
+            }}
+          >
+            <UiEntity
+              uiText={{
+                value: applyMiddleEllipsis(getPlayer()?.userId as string),
+                color: COLOR.TEXT_COLOR_LIGHT_GREY,
+                fontSize: getCanvasScaleRatio() * 38
+              }}
+            />
+            <CopyButton
+              fontSize={getCanvasScaleRatio() * 42}
+              text={getPlayer()?.userId as string}
+              elementId={'copy-profile-address'}
+              uiTransform={{
+                margin: { left: 0 }
+              }}
+            />
+          </Row>
+          <UiEntity
+            uiTransform={{
+              width: '80%',
+              borderColor: COLOR.WHITE_OPACITY_1,
+              borderWidth: getCanvasScaleRatio() * 6,
+              borderRadius: getCanvasScaleRatio() * 20,
+              alignSelf: 'center',
+              margin: { top: '4%' }
+            }}
+            uiText={{
+              value: 'VIEW PROFILE',
+              fontSize: getCanvasScaleRatio() * 52
+            }}
+            onMouseDown={() => {
+              closeDialog()
+              store.dispatch(
+                pushPopupAction({
+                  type: HUD_POPUP_TYPE.PASSPORT,
+                  data: getPlayer()?.userId
+                })
+              )
+            }}
+          />
+          <Row uiTransform={{ margin: { top: '5%' } }}>
+            <BottomBorder color={COLOR.WHITE_OPACITY_1} />
+          </Row>
+          <ButtonTextIcon
+            onMouseDown={() => {
+              BevyApi.logout()
+              closeDialog()
+              // TODO review feature
+              /*this.uiController.loadingAndLogin.startLoading()
+              this.uiController.loadingAndLogin.setStatus('sign-in-or-guest')*/
+            }}
+            uiTransform={{
+              width: '80%',
+              height: getCanvasScaleRatio() * 150,
+              justifyContent: 'flex-start',
+              alignSelf: 'center'
+            }}
+            value={'<b>SIGN OUT</b>'}
+            fontSize={getCanvasScaleRatio() * 48}
+            icon={{
+              atlasName: 'icons',
+              spriteName: 'LogoutIcon'
+            }}
+          />
+
+          <ButtonTextIcon
+            onMouseDown={() => {
+              // TODO BevyApi.exit() ?
+            }}
+            uiTransform={{
+              width: '80%',
+              height: getCanvasScaleRatio() * 150,
+              justifyContent: 'flex-start',
+              alignSelf: 'center'
+            }}
+            value={'<b>EXIT</b>'}
+            fontSize={getCanvasScaleRatio() * 48}
+            icon={{
+              atlasName: 'icons',
+              spriteName: 'ExitIcn'
+            }}
+            fontColor={Color4.Red()}
+            iconColor={Color4.Red()}
           />
         </UiEntity>
       </UiEntity>
