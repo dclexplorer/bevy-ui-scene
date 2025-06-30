@@ -1,11 +1,11 @@
 import { getCanvasScaleRatio } from '../service/canvas-ratio'
-import ReactEcs, { UiEntity, UiTransformProps } from '@dcl/sdk/react-ecs'
+import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR } from './color-palette'
 import { isSystemMessage } from './chat-message/ChatMessage'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { getAddressColor } from '../ui-classes/main-hud/chat-and-logs/ColorByAddress'
-import { Color4 } from '@dcl/sdk/math'
+import { type Color4 } from '@dcl/sdk/math'
 import { ZERO_ADDRESS } from '../utils/constants'
 
 export function AvatarCircle({
@@ -32,7 +32,7 @@ export function AvatarCircle({
         /*      margin:
         props.message.sender_address === myPlayer.userId
           ? { left: canvasInfo.width * 0.005 }
-          : { right: canvasInfo.width * 0.005 },*/
+          : { right: canvasInfo.width * 0.005 }, */
         borderRadius: 999,
         borderWidth: getCanvasScaleRatio() * 3,
         borderColor: addressColor,

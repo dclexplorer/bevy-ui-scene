@@ -1,5 +1,5 @@
-import { UiTransformProps } from '@dcl/sdk/react-ecs'
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 
 export function Row({
   uiTransform,

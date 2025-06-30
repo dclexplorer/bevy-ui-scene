@@ -9,7 +9,7 @@ import selectableValues from './passport-field-selectable-values.json'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import { store } from '../../../state/store'
 import { updateHudStateAction } from '../../../state/hud/actions'
-import { ViewAvatarData } from '../../../state/hud/state'
+import { type ViewAvatarData } from '../../../state/hud/state'
 
 export const editablePropertyKeys: string[] = [
   'country',

@@ -27,7 +27,7 @@ export type NameDefinition = {
   tokenId: string
 }
 
-const namesCache: Map<string, NameDefinition[]> = new Map()
+const namesCache = new Map<string, NameDefinition[]>()
 
 export async function fetchAllUserNames({
   userId

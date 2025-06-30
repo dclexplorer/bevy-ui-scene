@@ -11,7 +11,7 @@ import {
   EMPTY_PROFILE_DATA,
   HUD_POPUP_TYPE,
   type HUDPopup,
-  ViewAvatarData
+  type ViewAvatarData
 } from '../../../state/hud/state'
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { Content } from '../../main-menu/backpack-page/BackpackPage'

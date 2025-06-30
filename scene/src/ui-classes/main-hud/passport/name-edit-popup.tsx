@@ -9,7 +9,7 @@ import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { cloneDeep, noop } from '../../../utils/function-utils'
 import { type Popup } from '../../../components/popup-stack'
-import { Tab, TabComponent } from '../../../components/tab-component'
+import { type Tab, TabComponent } from '../../../components/tab-component'
 import {
   fetchAllUserNames,
   NameDefinition
@@ -54,7 +54,7 @@ const EditNameContent = () => {
       const nameDefinitions = await fetchAllUserNames({
         userId: profileData.userId
       })
-      const names = nameDefinitions.map((n) => n.name).concat('') as string[]
+      const names = nameDefinitions.map((n) => n.name).concat('')
       const activeTab = nameDefinitions.length ? 0 : 1
       const tabs = nameDefinitions.length
         ? cloneDeep(NAME_EDIT_TABS).map((tabDefinition, index) => {
@@ -66,7 +66,7 @@ const EditNameContent = () => {
       setTabs(tabs)
       setSelectableNames(names)
       setSelectedName(
-        names.indexOf(profileData.name) === -1 ? '' : profileData.name
+        !names.includes(profileData.name) ? '' : profileData.name
       )
       setLoading(false)
       setCustomName(profileData.hasClaimedName ? '' : profileData.name)
@@ -76,7 +76,7 @@ const EditNameContent = () => {
   }, [])
   const onSave = (selectedName: string) => {
     console.log('onSave', selectedName)
-    const hasClaimedName = selectableNames.indexOf(selectedName) !== -1
+    const hasClaimedName = selectableNames.includes(selectedName)
     executeTask(async () => {
       setLoading(true)
       let failed = false
@@ -153,7 +153,7 @@ const EditNameContent = () => {
           <UniqueNameForm
             selectableNames={selectableNames}
             selectedName={selectedName}
-            onChange={(value: string) => setSelectedName(value)}
+            onChange={(value: string) => { setSelectedName(value); }}
             disabled={loading}
             onSave={onSave}
           />
@@ -161,7 +161,7 @@ const EditNameContent = () => {
         {!loading && activeTab === 1 && (
           <NameForm
             value={customName}
-            onChange={(value: string) => setCustomName(value)}
+            onChange={(value: string) => { setCustomName(value); }}
             disabled={loading}
             onSave={onSave}
           />

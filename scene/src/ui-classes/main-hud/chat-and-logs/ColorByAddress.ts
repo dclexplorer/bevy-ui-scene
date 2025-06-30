@@ -1,4 +1,4 @@
-import { RGBAColor, type RGBColor } from '../../../bevy-api/interface'
+import { type RGBAColor, type RGBColor } from '../../../bevy-api/interface'
 import USER_NAME_COLORS from './UserNameColors.json'
 import { ZERO_ADDRESS } from '../../../utils/constants'
 import { getHashNumber } from '../../../service/string-hash-number'

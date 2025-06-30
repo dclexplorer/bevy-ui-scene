@@ -87,12 +87,12 @@ function AddProfileLinkContent({ fontSize }: { fontSize: number }) {
           },
           margin: { top: '5%' }
         }}
-        onChange={(title) => setTitle(title)}
+        onChange={(title) => { setTitle(title); }}
         placeholder={'Enter Link Title (E.G. Instagram)'}
         uiBackground={{ color: COLOR.WHITE }}
       />
       <Input
-        onChange={(url) => setUrl(url)}
+        onChange={(url) => { setUrl(url); }}
         fontSize={fontSize}
         uiTransform={{
           height: getCanvasScaleRatio() * 100,

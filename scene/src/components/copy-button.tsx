@@ -1,10 +1,10 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR } from './color-palette'
 import { executeTask } from '@dcl/sdk/ecs'
 import { copyToClipboard } from '~system/RestrictedActions'
 import { sleep } from '../utils/dcl-utils'
-import { UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 const state: { copyingElementId: string | null } = {
   copyingElementId: null
 }

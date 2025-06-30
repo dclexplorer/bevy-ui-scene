@@ -35,7 +35,7 @@ export function TabComponent({
             color: active ? COLOR.WHITE : COLOR.INACTIVE,
             fontSize
           }}
-          onMouseDown={() => onClickTab(index)}
+          onMouseDown={() => { onClickTab(index); }}
         >
           {active && <BottomBorder color={COLOR.LINK_COLOR} />}
         </UiEntity>

@@ -1,5 +1,5 @@
 import { cloneDeep } from '../../utils/function-utils'
-import { NameDefinition } from '../../utils/passport-promise-utils'
+import { type NameDefinition } from '../../utils/passport-promise-utils'
 
 export const HUD_STORE_ID = 'hud'
 
