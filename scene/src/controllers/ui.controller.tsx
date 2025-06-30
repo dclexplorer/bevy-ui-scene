@@ -26,6 +26,17 @@ import { Color4 } from '@dcl/sdk/math'
 import { type ReactElement } from '@dcl/react-ecs'
 import { Canvas } from '../components/canvas'
 import { store } from '../state/store'
+import { BevyApi } from '../bevy-api'
+
+let loadingAndLogin: any = null
+
+export function logout() {
+  if (!loadingAndLogin) return
+
+  BevyApi.logout()
+  loadingAndLogin.startLoading()
+  loadingAndLogin.setStatus('sign-in-or-guest')
+}
 
 export class UIController {
   public isPhotosVisible: boolean = false
@@ -60,7 +71,7 @@ export class UIController {
 
   constructor(gameController: GameController) {
     this.gameController = gameController
-    this.loadingAndLogin = new LoadingAndLogin(this)
+    this.loadingAndLogin = loadingAndLogin = new LoadingAndLogin(this)
     this.mainHud = new MainHud(this)
     this.menu = new MainMenu(this)
     this.settingsPage = new SettingsPage(this)

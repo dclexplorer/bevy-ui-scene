@@ -18,12 +18,11 @@ import { getAddressColor } from '../chat-and-logs/ColorByAddress'
 import { Row } from '../../../components/layout'
 import { applyMiddleEllipsis } from '../../../utils/urn-utils'
 import { CopyButton } from '../../../components/copy-button'
-import { RoundedButton } from '../../../components/rounded-button'
 import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { Color4 } from '@dcl/sdk/math'
 import { BottomBorder, TopBorder } from '../../../components/bottom-border'
-import { BevyApi } from '../../../bevy-api'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
+import { logout } from '../../../controllers/ui.controller'
 
 export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
   if (!getPlayer()) return null
@@ -160,11 +159,8 @@ export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
           </Row>
           <ButtonTextIcon
             onMouseDown={() => {
-              BevyApi.logout()
               closeDialog()
-              // TODO review feature
-              /*this.uiController.loadingAndLogin.startLoading()
-              this.uiController.loadingAndLogin.setStatus('sign-in-or-guest')*/
+              logout()
             }}
             uiTransform={{
               width: '80%',
