@@ -12,8 +12,10 @@ import { SceneInfo } from './scene-info'
 import { switchEmotesWheelVisibility } from '../../emotes-wheel/emotes-wheel'
 import { type ReactElement } from '@dcl/react-ecs'
 import { store } from '../../state/store'
-import { updateHudStateAction } from '../../state/hud/actions'
+import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
 import { PopupStack } from '../../components/popup-stack'
+import { HUD_POPUP_TYPE } from '../../state/hud/state'
+import { getPlayer } from '@dcl/sdk/src/players'
 
 const ZERO_SIZE = {
   width: 0,
@@ -370,7 +372,13 @@ export default class MainHud {
               this.updateButtons()
             }}
             onMouseDown={() => {
-              this.uiController.profile.showCard()
+              store.dispatch(
+                pushPopupAction({
+                  type: HUD_POPUP_TYPE.PROFILE_MENU,
+                  data: getPlayer()?.userId
+                })
+              )
+              // this.uiController.profile.showCard()
             }}
             backgroundColor={this.walletBackground}
             icon={this.walletIcon}

@@ -21,12 +21,12 @@ import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
 import { memoize } from '../../utils/function-utils'
 import { ButtonIcon } from '../button-icon'
+import { AvatarCircle } from '../avatar-circle'
 
 const state: { hoveringMessageID: number; openMessageMenu: boolean } = {
   hoveringMessageID: 0,
   openMessageMenu: false
 }
-const _getAddressColor = memoize(getAddressColor)
 
 function ChatMessage(props: {
   uiTransform?: UiTransformProps
@@ -42,7 +42,7 @@ function ChatMessage(props: {
   }
   const defaultFontSize = getCanvasScaleRatio() * 36
   const playerName = props.message.name
-  const addressColor = _getAddressColor(props.message.sender_address) as Color4
+  const addressColor = getAddressColor(props.message.sender_address) as Color4
 
   const side = props.message.side
   const messageMargin = 12 * getCanvasScaleRatio()
@@ -72,53 +72,16 @@ function ChatMessage(props: {
         }
       }}
     >
-      <UiEntity
-        uiTransform={{
-          width: getCanvasScaleRatio() * 64,
-          height: getCanvasScaleRatio() * 64,
-          justifyContent: 'center',
-          alignItems: 'center',
-          margin:
-            props.message.sender_address === myPlayer.userId
-              ? { left: canvasInfo.width * 0.005 }
-              : { right: canvasInfo.width * 0.005 },
-          borderRadius: 999,
-          borderWidth: getCanvasScaleRatio() * 3,
-          borderColor: addressColor
-        }}
-        uiBackground={{
-          color: { ...addressColor, a: 0.3 }
-        }}
-      >
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: '100%'
-          }}
-          uiBackground={
-            isSystemMessage(props.message)
-              ? getBackgroundFromAtlas({
-                  atlasName: 'icons',
-                  spriteName: 'DdlIconColor'
-                })
-              : props.message.isGuest
-              ? {
-                  ...getBackgroundFromAtlas({
-                    atlasName: 'icons', // TODO review to use guest real avatar profile image, for which avatarTexture don't work, review how unity explorer does for guests
-                    spriteName: 'Members'
-                  }),
-                  color: COLOR.WHITE_OPACITY_2
-                }
-              : {
-                  textureMode: 'stretch',
-                  avatarTexture: {
-                    userId: props.message.sender_address
-                  }
-                }
-          }
-        />
-      </UiEntity>
-
+      <AvatarCircle
+        userId={
+          isSystemMessage(props.message)
+            ? ZERO_ADDRESS
+            : props.message.sender_address
+        }
+        circleColor={getAddressColor(props.message.sender_address)}
+        uiTransform={{}}
+        isGuest={props.message.isGuest}
+      />
       <UiEntity
         uiTransform={{
           width: '70%',

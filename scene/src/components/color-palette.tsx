@@ -48,6 +48,7 @@ export const COLOR_PRESETS: Record<string, Color4[]> = {
   hairColor: HAIR_COLOR_PRESETS,
   eyesColor: EYE_COLOR_PRESETS
 }
+const TEXT_COLOR = Color4.fromHexString('#2B272AFF')
 export const COLOR = {
   ACTIVE_COLOR,
   LINK_COLOR,
@@ -68,7 +69,7 @@ export const COLOR = {
   WHITE_OPACITY_2: Color4.create(1, 1, 1, 0.2),
   WHITE_OPACITY_5: Color4.create(1, 1, 1, 0.5),
   WHITE_OPACITY_1: Color4.create(1, 1, 1, 0.1),
-  TEXT_COLOR: Color4.fromHexString('#2B272AFF'),
+  TEXT_COLOR,
   TEXT_COLOR_WHITE: Color4.fromHexString('#f4f4f4'),
   TEXT_COLOR_LIGHT_GREY: Color4.fromHexString('#C6C6C6FF'),
   INACTIVE: Color4.fromHexString('#d8d8d8'),
@@ -81,6 +82,7 @@ export const COLOR = {
   BLACK: Color4.Black(),
   RED: Color4.Red(),
   URL_POPUP_BACKGROUND: Color4.fromHexString('#51157F'),
+  BLACK_POPUP_BACKGROUND: TEXT_COLOR,
   STATUS_ACTIVE: Color4.fromHexString('#3cd523')
 }
 export const RARITY_COLORS: Record<RarityName, Color4> = {
