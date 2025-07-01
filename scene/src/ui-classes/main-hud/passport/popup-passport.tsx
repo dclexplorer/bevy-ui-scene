@@ -15,9 +15,13 @@ import {
 } from '../../../state/hud/state'
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { Content } from '../../main-menu/backpack-page/BackpackPage'
-import { AvatarPreviewElement } from '../../../components/backpack/AvatarPreviewElement'
+import {
+  AvatarPreviewElement,
+  resetAvatarPreviewZoom
+} from '../../../components/backpack/AvatarPreviewElement'
 import {
   createAvatarPreview,
+  setAvatarPreviewCameraToWearableCategory,
   updateAvatarPreview
 } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
@@ -31,7 +35,10 @@ import { type URN, type URNWithoutTokenId } from '../../../utils/definitions'
 import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../../bevy-api/interface'
-import { type WearableCategory } from '../../../service/categories'
+import {
+  WEARABLE_CATEGORY_DEFINITIONS,
+  type WearableCategory
+} from '../../../service/categories'
 import { TabComponent } from '../../../components/tab-component'
 import { type Popup } from '../../../components/popup-stack'
 import {
@@ -98,6 +105,10 @@ export function setupPassportPopup(): void {
           wearables,
           convertToPBAvatarBase(avatarData) as PBAvatarBase,
           avatarData.avatar.forceRender as WearableCategory[]
+        )
+        resetAvatarPreviewZoom()
+        setAvatarPreviewCameraToWearableCategory(
+          WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
         )
         state.loadingProfile = false
       })
@@ -199,12 +210,6 @@ function ProfileContent(): ReactElement {
           {
             text: 'OVERVIEW',
             active: true
-          },
-          {
-            text: 'BADGES'
-          },
-          {
-            text: 'PHOTOS'
           }
         ]}
         fontSize={getCanvasScaleRatio() * 32}

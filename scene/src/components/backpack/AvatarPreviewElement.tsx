@@ -14,6 +14,7 @@ import {
 } from './AvatarPreview'
 import {
   engine,
+  executeTask,
   GltfContainerLoadingState,
   LoadingState,
   PrimaryPointerInfo,
@@ -27,6 +28,8 @@ import {
 } from '../../service/custom-cursor-service'
 import { type AtlasIcon } from '../../utils/definitions'
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { sleep } from '../../utils/dcl-utils'
+import { memoize } from '../../utils/function-utils'
 
 const ROTATION_FACTOR = -0.5
 const state = {
@@ -40,7 +43,20 @@ const ROTATE_ICON: AtlasIcon = {
   atlasName: 'icons',
   spriteName: 'RotateIcn'
 }
+const getScrollVector = memoize(_getScrollVector)
+export function resetAvatarPreviewZoom() {
+  console.log('resetAvatarPreviewZoom')
+  let _listeZoom = state.listenZoom
+  state.listenZoom = false
 
+  state.zoomFactor = 0.5
+
+  setAvatarPreviewZoom()
+  executeTask(async () => {
+    await sleep(200)
+    state.listenZoom = _listeZoom
+  })
+}
 export function setAvatarPreviewZoom(): void {
   for (const [, scroll, transform] of engine.getEntitiesWith(
     UiScrollResult,
@@ -82,6 +98,7 @@ export function AvatarPreviewElement({
           }}
           uiBackground={{
             videoTexture: { videoPlayerEntity: getAvatarCamera() },
+            textureMode: 'stretch',
             color:
               loadingState?.currentState === LoadingState.LOADING
                 ? Color4.create(1, 1, 1, 0.5)
@@ -97,7 +114,7 @@ export function AvatarPreviewElement({
               overflow: 'scroll',
               scrollPosition: state.listenZoom
                 ? undefined
-                : Vector2.create(0, state.zoomFactor),
+                : getScrollVector(state.zoomFactor),
               scrollVisible: 'hidden'
             }}
             onMouseDown={() => {
@@ -216,4 +233,7 @@ function AvatarPreviewZoomSystem(): void {
   if (state.listenZoom) {
     setAvatarPreviewZoom()
   }
+}
+function _getScrollVector(positionY: number): Vector2 {
+  return Vector2.create(0, positionY)
 }

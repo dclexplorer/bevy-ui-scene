@@ -49,8 +49,7 @@ export const setAvatarPreviewZoomFactor = (zoomFactor: number): void => {
     avatarPreview.cameraEntity
   )?.mode as OrthographicMode
 
-  mode.orthographic.verticalRange = zoomFactor * 10 + 10
-  // mode.perspective.fieldOfView = zoomFactor * 1.5 + 0.3
+  mode.orthographic.verticalRange = zoomFactor * 10 + 10 * 0.3
 }
 
 export const getAvatarPreviewQuaternion = (): Quaternion => {
