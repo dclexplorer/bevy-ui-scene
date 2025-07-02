@@ -109,57 +109,59 @@ export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
               />
             )}
           </Row>
-          <UiEntity
-            uiText={{
-              value: 'WALLET ADDRESS',
-              color: COLOR.TEXT_COLOR_GREY,
-              fontSize: getCanvasScaleRatio() * 38
-            }}
-          />
-          <Row
-            uiTransform={{
-              justifyContent: 'center'
-            }}
-          >
+          {getPlayer()?.isGuest === false && [
             <UiEntity
               uiText={{
-                value: applyMiddleEllipsis(getPlayer()?.userId as string),
-                color: COLOR.TEXT_COLOR_LIGHT_GREY,
+                value: 'WALLET ADDRESS',
+                color: COLOR.TEXT_COLOR_GREY,
                 fontSize: getCanvasScaleRatio() * 38
               }}
-            />
-            <CopyButton
-              fontSize={getCanvasScaleRatio() * 42}
-              text={getPlayer()?.userId as string}
-              elementId={'copy-profile-address'}
+            />,
+            <Row
               uiTransform={{
-                margin: { left: 0 }
+                justifyContent: 'center'
+              }}
+            >
+              <UiEntity
+                uiText={{
+                  value: applyMiddleEllipsis(getPlayer()?.userId as string),
+                  color: COLOR.TEXT_COLOR_LIGHT_GREY,
+                  fontSize: getCanvasScaleRatio() * 38
+                }}
+              />
+              <CopyButton
+                fontSize={getCanvasScaleRatio() * 42}
+                text={getPlayer()?.userId as string}
+                elementId={'copy-profile-address'}
+                uiTransform={{
+                  margin: { left: 0 }
+                }}
+              />
+            </Row>,
+            <UiEntity
+              uiTransform={{
+                width: '80%',
+                borderColor: COLOR.WHITE_OPACITY_1,
+                borderWidth: getCanvasScaleRatio() * 6,
+                borderRadius: getCanvasScaleRatio() * 20,
+                alignSelf: 'center',
+                margin: { top: '4%' }
+              }}
+              uiText={{
+                value: 'VIEW PROFILE',
+                fontSize: getCanvasScaleRatio() * 52
+              }}
+              onMouseDown={() => {
+                closeDialog()
+                store.dispatch(
+                  pushPopupAction({
+                    type: HUD_POPUP_TYPE.PASSPORT,
+                    data: getPlayer()?.userId
+                  })
+                )
               }}
             />
-          </Row>
-          <UiEntity
-            uiTransform={{
-              width: '80%',
-              borderColor: COLOR.WHITE_OPACITY_1,
-              borderWidth: getCanvasScaleRatio() * 6,
-              borderRadius: getCanvasScaleRatio() * 20,
-              alignSelf: 'center',
-              margin: { top: '4%' }
-            }}
-            uiText={{
-              value: 'VIEW PROFILE',
-              fontSize: getCanvasScaleRatio() * 52
-            }}
-            onMouseDown={() => {
-              closeDialog()
-              store.dispatch(
-                pushPopupAction({
-                  type: HUD_POPUP_TYPE.PASSPORT,
-                  data: getPlayer()?.userId
-                })
-              )
-            }}
-          />
+          ]}
           <Row uiTransform={{ margin: { top: '5%' } }}>
             <BottomBorder color={COLOR.WHITE_OPACITY_1} />
           </Row>
