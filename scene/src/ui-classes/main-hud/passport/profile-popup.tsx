@@ -28,7 +28,7 @@ export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
   if (!getPlayer()) return null
   const profileData = store.getState().hud?.profileData
   if (!profileData) return null
-  console.log('shownPopup.data', shownPopup.data)
+
   return (
     <UiEntity
       uiTransform={{
