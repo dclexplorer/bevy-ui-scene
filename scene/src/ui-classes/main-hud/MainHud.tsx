@@ -282,7 +282,6 @@ export default class MainHud {
           flexDirection: 'row'
         }}
       >
-        {PopupStack()}
         <UiEntity
           uiTransform={{
             width: '4%',
@@ -375,7 +374,7 @@ export default class MainHud {
               store.dispatch(
                 pushPopupAction({
                   type: HUD_POPUP_TYPE.PROFILE_MENU,
-                  data: getPlayer()?.userId
+                  data: 'left'
                 })
               )
               // this.uiController.profile.showCard()

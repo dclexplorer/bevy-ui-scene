@@ -7,6 +7,10 @@ import {
 } from '../../../utils/constants'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { type UIController } from '../../../controllers/ui.controller'
+import { store } from '../../../state/store'
+import { pushPopupAction } from '../../../state/hud/actions'
+import { HUD_POPUP_TYPE } from '../../../state/hud/state'
+import { getPlayer } from '@dcl/sdk/src/players'
 
 export default class ProfileButton {
   private readonly name: string = 'BevyUser'
@@ -45,7 +49,13 @@ export default class ProfileButton {
             padding: { right: 10 }
           }}
           onMouseDown={() => {
-            this.showProfileCard()
+            // this.showProfileCard()
+            store.dispatch(
+              pushPopupAction({
+                type: HUD_POPUP_TYPE.PROFILE_MENU,
+                data: 'right'
+              })
+            )
           }}
           uiBackground={{
             ...ROUNDED_TEXTURE_BACKGROUND,

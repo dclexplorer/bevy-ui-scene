@@ -27,6 +27,7 @@ import { type ReactElement } from '@dcl/react-ecs'
 import { Canvas } from '../components/canvas'
 import { store } from '../state/store'
 import { BevyApi } from '../bevy-api'
+import { PopupStack } from '../components/popup-stack'
 
 let loadingAndLogin: any = null
 
@@ -124,6 +125,7 @@ export class UIController {
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
         {!this.isMainMenuVisible && renderEmotesWheel()}
+        {PopupStack()}
       </Canvas>
     )
   }

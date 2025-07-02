@@ -28,6 +28,7 @@ export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
   if (!getPlayer()) return null
   const profileData = store.getState().hud?.profileData
   if (!profileData) return null
+  console.log('shownPopup.data', shownPopup.data)
   return (
     <UiEntity
       uiTransform={{
@@ -56,7 +57,12 @@ export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
           borderColor: COLOR.TEXT_COLOR,
           alignItems: 'center',
           flexDirection: 'column',
-          padding: 0
+          padding: 0,
+          positionType: shownPopup.data === 'right' ? 'absolute' : undefined,
+          position: {
+            right: shownPopup.data === 'right' ? '4%' : undefined,
+            top: shownPopup.data === 'right' ? '7%' : undefined
+          }
         }}
         onMouseDown={noop}
         uiBackground={{
