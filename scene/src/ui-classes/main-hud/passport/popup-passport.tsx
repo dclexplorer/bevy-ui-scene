@@ -26,7 +26,6 @@ import {
 } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
-import { copyToClipboard } from '~system/RestrictedActions'
 import {
   applyMiddleEllipsis,
   getURNWithoutTokenId
@@ -43,7 +42,8 @@ import { TabComponent } from '../../../components/tab-component'
 import { type Popup } from '../../../components/popup-stack'
 import {
   fetchAllUserNames,
-  fetchProfileData
+  fetchProfileData,
+  saveProfileData
 } from '../../../utils/passport-promise-utils'
 import { Label } from '@dcl/sdk/react-ecs'
 import Icon from '../../../components/icon/Icon'
@@ -91,6 +91,9 @@ export function setupPassportPopup(): void {
         const profileData = await fetchProfileData({ userId })
         const [avatarData] = profileData.avatars
         const names = await fetchAllUserNames({ userId })
+
+        console.log('avatarData', avatarData)
+
         store.dispatch(
           updateHudStateAction({
             profileData: avatarData as ViewAvatarData,
@@ -231,7 +234,8 @@ function Overview(): ReactElement {
         borderWidth: 0,
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        opacity: state.savingProfile ? 0.5 : 1
       }}
       uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
     >
@@ -302,132 +306,142 @@ function Overview(): ReactElement {
             )
           )}
       </UiEntity>
-      <UiEntity
-        uiTransform={{
-          width: '100%',
-          flexDirection: 'column',
-          alignItems: 'flex-start'
-        }}
-      >
-        {(state.editing || profileData?.links?.length) && (
-          <UiEntity
-            uiTransform={{
-              margin: { top: '5%' }
-            }}
-            uiText={{
-              value: '<b>LINKS</b>',
-              fontSize: getCanvasScaleRatio() * 30
-            }}
-          />
-        )}
-        {state.editing && (
-          <UiEntity
-            uiText={{
-              value:
-                'Add a maximum of 5 links to promote your personal website or social networks.',
-              fontSize: getCanvasScaleRatio() * 30
-            }}
-          />
-        )}
-        <UiEntity
-          uiTransform={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            width: '100%'
-          }}
-        >
-          {profileData?.links?.length &&
-            profileData.links.map((link: { title: string; url: string }) => (
-              <ProfileLink link={link} editing={state.editing} />
-            ))}
-          {state.editing &&
-            (!profileData?.links || profileData?.links?.length < 5) && (
-              <Button
-                onMouseDown={() => {
-                  store.dispatch(
-                    pushPopupAction({
-                      type: HUD_POPUP_TYPE.ADD_LINK
-                    })
-                  )
-                }}
-                value={'<b>+</b> ADD'}
-                fontSize={getCanvasScaleRatio() * 32}
-                uiBackground={{ color: COLOR.WHITE_OPACITY_1 }}
-                uiTransform={{
-                  borderRadius: getCanvasScaleRatio() * 15,
-                  borderWidth: 0,
-                  borderColor: COLOR.BLACK_TRANSPARENT,
-                  margin: { left: '2%' },
-                  flexShrink: 0
-                }}
-              />
-            )}
-        </UiEntity>
-      </UiEntity>
-
-      {state.editing && (
-        <UiEntity
-          uiTransform={{
-            flexDirection: 'row',
-            width: '100%',
-            padding: { top: '1%' },
-            justifyContent: 'flex-end',
-            zIndex: 0
-          }}
-        >
-          <TopBorder
-            color={COLOR.WHITE_OPACITY_2}
-            uiTransform={{
-              height: 1
-            }}
-          />
-          <Button
-            uiTransform={{
-              borderRadius: getCanvasScaleRatio() * 10,
-              borderColor: COLOR.BLACK_TRANSPARENT,
-              borderWidth: 0,
-              width: getCanvasScaleRatio() * 150,
-              margin: { right: '1%' }
-            }}
-            uiBackground={{
-              color: COLOR.WHITE_OPACITY_1
-            }}
-            onMouseDown={() => {
-              state.editing = false
-              store.dispatch(
-                updateHudStateAction({
-                  profileData: cloneDeep(state.pristineProfileData)
-                })
-              )
-            }}
-            disabled={state.savingProfile || state.loadingProfile}
-            value={'CANCEL'}
-          />
-          <Button
-            uiTransform={{
-              borderRadius: getCanvasScaleRatio() * 10,
-              borderColor: COLOR.BLACK_TRANSPARENT,
-              borderWidth: 0,
-              width: getCanvasScaleRatio() * 150
-            }}
-            disabled={state.savingProfile || state.loadingProfile}
-            value={'SAVE'}
-            onMouseDown={() => {
-              executeTask(async () => {
-                // TODO we are mocking async save request, replace with appropriate BevyApi or implement own signed fetch
-                state.savingProfile = true
-                await sleep(1000)
-                state.savingProfile = false
-                state.editing = false
-              })
-            }}
-          />
-        </UiEntity>
-      )}
+      <LinksSection />
+      <BottomBar />
     </UiEntity>
   )
 }
 
+function LinksSection() {
+  const profileData = store.getState().hud.profileData
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '100%',
+        flexDirection: 'column',
+        alignItems: 'flex-start'
+      }}
+    >
+      {(state.editing || profileData?.links?.length >= 0) && (
+        <UiEntity
+          uiTransform={{
+            margin: { top: '5%' }
+          }}
+          uiText={{
+            value: '<b>LINKS</b>',
+            fontSize: getCanvasScaleRatio() * 30
+          }}
+        />
+      )}
+
+      {state.editing && (
+        <UiEntity
+          uiText={{
+            value:
+              'Add a maximum of 5 links to promote your personal website or social networks.',
+            fontSize: getCanvasScaleRatio() * 30
+          }}
+        />
+      )}
+      <UiEntity
+        uiTransform={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          width: '100%'
+        }}
+      >
+        {profileData?.links?.length >= 0 &&
+          profileData.links.map((link: { title: string; url: string }) => (
+            <ProfileLink link={link} editing={state.editing} />
+          ))}
+        {state.editing &&
+          (!profileData?.links || profileData?.links?.length < 5) && (
+            <Button
+              onMouseDown={() => {
+                store.dispatch(
+                  pushPopupAction({
+                    type: HUD_POPUP_TYPE.ADD_LINK
+                  })
+                )
+              }}
+              disabled={state.savingProfile}
+              value={'<b>+</b> ADD'}
+              fontSize={getCanvasScaleRatio() * 32}
+              uiBackground={{ color: COLOR.WHITE_OPACITY_1 }}
+              uiTransform={{
+                borderRadius: getCanvasScaleRatio() * 15,
+                borderWidth: 0,
+                borderColor: COLOR.BLACK_TRANSPARENT,
+                margin: { left: '2%' },
+                flexShrink: 0
+              }}
+            />
+          )}
+      </UiEntity>
+    </UiEntity>
+  )
+}
+function BottomBar(): ReactElement | null {
+  if (!state.editing) return null
+  return (
+    <UiEntity
+      uiTransform={{
+        flexDirection: 'row',
+        width: '100%',
+        padding: { top: '1%' },
+        justifyContent: 'flex-end',
+        zIndex: 0
+      }}
+    >
+      <TopBorder
+        color={COLOR.WHITE_OPACITY_2}
+        uiTransform={{
+          height: 1
+        }}
+      />
+      <Button
+        uiTransform={{
+          borderRadius: getCanvasScaleRatio() * 10,
+          borderColor: COLOR.BLACK_TRANSPARENT,
+          borderWidth: 0,
+          width: getCanvasScaleRatio() * 150,
+          margin: { right: '1%' }
+        }}
+        uiBackground={{
+          color: COLOR.WHITE_OPACITY_1
+        }}
+        onMouseDown={() => {
+          state.editing = false
+          store.dispatch(
+            updateHudStateAction({
+              profileData: cloneDeep(state.pristineProfileData)
+            })
+          )
+        }}
+        disabled={state.savingProfile || state.loadingProfile}
+        value={'CANCEL'}
+      />
+      <Button
+        uiTransform={{
+          borderRadius: getCanvasScaleRatio() * 10,
+          borderColor: COLOR.BLACK_TRANSPARENT,
+          borderWidth: 0,
+          width: getCanvasScaleRatio() * 150
+        }}
+        disabled={state.savingProfile || state.loadingProfile}
+        value={'SAVE'}
+        onMouseDown={() => {
+          executeTask(async () => {
+            state.savingProfile = true
+            await saveProfileData(store.getState().hud.profileData)
+            state.savingProfile = false
+            state.editing = false
+          })
+        }}
+      />
+    </UiEntity>
+  )
+}
 function ProfileLink({
   link,
   editing

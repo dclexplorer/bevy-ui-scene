@@ -20,6 +20,7 @@ export const editablePropertyKeys: string[] = [
   'sexualOrientation',
   'profession',
   'birthdate',
+  'employmentStatus',
   'realName',
   'hobbies'
 ]

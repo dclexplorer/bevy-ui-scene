@@ -231,7 +231,7 @@ export function Content({
         justifyContent: 'center',
         alignItems: 'flex-start',
         width: getContentWidth(),
-        height: getContentHeight(),
+        height: getContentHeight() * 1.1,
         pointerFilter: 'block'
       }}
     >
