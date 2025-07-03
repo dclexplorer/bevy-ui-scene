@@ -7,22 +7,24 @@ import Icon from './icon/Icon'
 
 export function CloseButton({
   uiTransform,
-  onClick = noop
+  onClick = noop,
+  size = 80
 }: {
   uiTransform?: UiTransformProps
   onClick: Callback
+  size?: number
 }): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   return (
     <UiEntity
       uiTransform={{
         borderWidth: 1,
-        borderRadius: canvasScaleRatio * 20,
+        borderRadius: (canvasScaleRatio * size) / 4,
         borderColor: Color4.Black(),
         positionType: 'absolute',
         position: { top: 0, right: 0 },
-        width: canvasScaleRatio * 80,
-        height: canvasScaleRatio * 80,
+        width: canvasScaleRatio * size,
+        height: canvasScaleRatio * size,
         justifyContent: 'center',
         alignItems: 'center',
         ...uiTransform
@@ -35,6 +37,7 @@ export function CloseButton({
       <Icon
         icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
         uiTransform={{}}
+        iconSize={size / 3}
       />
     </UiEntity>
   )

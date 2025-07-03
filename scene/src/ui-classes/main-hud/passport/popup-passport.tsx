@@ -55,6 +55,7 @@ import { ButtonIcon } from '../../../components/button-icon'
 import { TopBorder } from '../../../components/bottom-border'
 import { CopyButton } from '../../../components/copy-button'
 import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
+import { CloseButton } from '../../../components/close-button'
 
 const COPY_ICON_SIZE = 40
 
@@ -186,6 +187,16 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
               fontSize={getCanvasScaleRatio() * 32}
             />
           )}
+          <CloseButton
+            uiTransform={{
+              position: {
+                top: 0,
+                right: 0
+              },
+              positionType: 'absolute'
+            }}
+            onClick={() => closeDialog()}
+          />
         </UiEntity>
       </Content>
     </UiEntity>
