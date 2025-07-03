@@ -78,24 +78,24 @@ function fromViewAvatarDataToProfileExtra(
   profileData: ViewAvatarData
 ): ProfileExtra {
   const profileExtras: ProfileExtra = {
-    description: profileData.description,
-    country: profileData.country,
-    language: profileData.language,
-    gender: profileData.gender,
-    relationshipStatus: profileData.relationshipStatus,
-    sexualOrientation: profileData.sexualOrientation,
-    employmentStatus: profileData.employmentStatus,
-    pronouns: profileData.pronouns,
-    profession: profileData.profession,
-    birthdate: profileData.birthdate,
-    hobbies: profileData.hobbies,
-    links: cloneDeep(profileData.links),
-    tutorialStep: profileData.tutorialStep,
+    description: profileData.description ?? 'No intro.',
+    country: profileData.country ?? '',
+    language: profileData.language ?? '',
+    gender: profileData.gender ?? '',
+    relationshipStatus: profileData.relationshipStatus ?? '',
+    sexualOrientation: profileData.sexualOrientation ?? '',
+    employmentStatus: profileData.employmentStatus ?? '',
+    pronouns: profileData.pronouns ?? '',
+    profession: profileData.profession ?? '',
+    birthdate: profileData.birthdate ?? 0,
+    hobbies: profileData.hobbies ?? '',
+    links: cloneDeep(profileData.links ?? []),
+    tutorialStep: profileData.tutorialStep ?? 0,
     blocked: profileData.blocked ?? [],
     interests: profileData.interests ?? [],
     realName: profileData.realName ?? '',
     unclaimedName: profileData.unclaimedName ?? '',
-    email: profileData.email
+    email: profileData.email ?? ''
   }
 
   return profileExtras as ProfileExtra

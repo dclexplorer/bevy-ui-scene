@@ -31,7 +31,7 @@ import {
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
 import { type URN, type URNWithoutTokenId } from '../../../utils/definitions'
-import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
+import { convertToPBAvatarBase } from '../../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../../bevy-api/interface'
 import {
@@ -54,6 +54,8 @@ import {
 import { ButtonIcon } from '../../../components/button-icon'
 import { TopBorder } from '../../../components/bottom-border'
 import { CopyButton } from '../../../components/copy-button'
+import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
+import { getPlayer } from '@dcl/sdk/players'
 
 const COPY_ICON_SIZE = 40
 
@@ -117,6 +119,23 @@ export function setupPassportPopup(): void {
       })
     }
   })
+
+  const avatarTracker = createOrGetAvatarsTracker()
+  avatarTracker.onMouseOver((userId) => {
+    console.log('onMouseOver', userId)
+  })
+  avatarTracker.onClick((userId) => {
+    console.log('onClick', userId)
+
+    store.dispatch(
+      pushPopupAction({
+        type: HUD_POPUP_TYPE.PASSPORT,
+        data: userId
+      })
+    )
+  })
+
+  //TODO add pointer event on Avatars identityAvatar component
 }
 
 export const PopupPassport: Popup = ({ shownPopup }) => {
