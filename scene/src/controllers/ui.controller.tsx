@@ -31,7 +31,7 @@ import { PopupStack } from '../components/popup-stack'
 
 let loadingAndLogin: any = null
 
-export function logout() {
+export function logout(): void {
   if (!loadingAndLogin) return
 
   BevyApi.logout()

@@ -10,7 +10,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { ALMOST_WHITE, ZERO_ADDRESS } from '../../utils/constants'
-import { BORDER_RADIUS_F, getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { BORDER_RADIUS_F } from '../../utils/ui-utils'
 import {
   CHAT_SIDE,
   type ChatMessageDefinition,
@@ -42,7 +42,6 @@ function ChatMessage(props: {
   }
   const defaultFontSize = getCanvasScaleRatio() * 36
   const playerName = props.message.name
-  const addressColor = getAddressColor(props.message.sender_address) as Color4
 
   const side = props.message.side
   const messageMargin = 12 * getCanvasScaleRatio()

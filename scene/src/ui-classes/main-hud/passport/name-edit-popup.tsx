@@ -1,4 +1,4 @@
-import ReactEcs, { Button, ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../../state/store'
 import { COLOR } from '../../../components/color-palette'
 import {
@@ -10,10 +10,7 @@ import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { cloneDeep, noop } from '../../../utils/function-utils'
 import { type Popup } from '../../../components/popup-stack'
 import { type Tab, TabComponent } from '../../../components/tab-component'
-import {
-  fetchAllUserNames,
-  NameDefinition
-} from '../../../utils/passport-promise-utils'
+import { fetchAllUserNames } from '../../../utils/passport-promise-utils'
 import useEffect = ReactEcs.useEffect
 import { executeTask } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../../../utils/dcl-utils'
@@ -24,9 +21,6 @@ import { BevyApi } from '../../../bevy-api'
 
 const { useState } = ReactEcs
 
-const state = {
-  rememberDomain: false
-}
 const NAME_EDIT_TABS = [
   { text: 'UNIQUE NAME' },
   { text: 'NON-UNIQUE USERNAME' }
@@ -34,7 +28,7 @@ const NAME_EDIT_TABS = [
 
 const BUTTON_TEXT_COLOR = { ...COLOR.WHITE }
 
-const EditNameContent = () => {
+const EditNameContent = (): ReactElement => {
   const profileData = store.getState().hud.profileData
   const [selectableNames, setSelectableNames] = useState<string[]>([''])
   const [selectedName, setSelectedName] = useState<string>(
@@ -65,16 +59,14 @@ const EditNameContent = () => {
       setActiveTab(activeTab)
       setTabs(tabs)
       setSelectableNames(names)
-      setSelectedName(
-        !names.includes(profileData.name) ? '' : profileData.name
-      )
+      setSelectedName(!names.includes(profileData.name) ? '' : profileData.name)
       setLoading(false)
       setCustomName(profileData.hasClaimedName ? '' : profileData.name)
 
       console.log('activeTab', activeTab)
     })
   }, [])
-  const onSave = (selectedName: string) => {
+  const onSave = (selectedName: string): void => {
     console.log('onSave', selectedName)
     const hasClaimedName = selectableNames.includes(selectedName)
     executeTask(async () => {
@@ -153,7 +145,9 @@ const EditNameContent = () => {
           <UniqueNameForm
             selectableNames={selectableNames}
             selectedName={selectedName}
-            onChange={(value: string) => { setSelectedName(value); }}
+            onChange={(value: string) => {
+              setSelectedName(value)
+            }}
             disabled={loading}
             onSave={onSave}
           />
@@ -161,7 +155,9 @@ const EditNameContent = () => {
         {!loading && activeTab === 1 && (
           <NameForm
             value={customName}
-            onChange={(value: string) => { setCustomName(value); }}
+            onChange={(value: string) => {
+              setCustomName(value)
+            }}
             disabled={loading}
             onSave={onSave}
           />
@@ -207,7 +203,7 @@ export const NameForm = ({
   onChange?: (value: string) => void
   onSave?: (value: string) => void
   value?: string
-}) => {
+}): ReactElement => {
   const [textValue, setTextValue] = useState(value)
   return (
     <UiEntity uiTransform={{ flexDirection: 'column', width: '100%' }}>
@@ -300,7 +296,7 @@ export const UniqueNameForm = ({
   disabled?: boolean
   onChange?: (value: string) => void
   onSave?: (selectedName: string) => void
-}) => {
+}): ReactElement => {
   return (
     <UiEntity
       uiTransform={{ flexDirection: 'column', width: '100%', zIndex: 1 }}
@@ -371,7 +367,7 @@ export const UniqueNameForm = ({
   )
 }
 
-export const NameEditPopup: Popup = ({ shownPopup }) => {
+export const NameEditPopup: Popup = () => {
   return (
     <UiEntity
       uiTransform={{

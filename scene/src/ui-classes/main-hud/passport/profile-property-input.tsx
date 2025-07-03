@@ -186,7 +186,7 @@ export function ProfilePropertyField({
           }}
           disabled={disabled}
           uiBackground={{
-            color: Color4.White()
+            color: COLOR.WHITE
           }}
           fontSize={getCanvasScaleRatio() * 28}
           value={profileData[propertyKey]}

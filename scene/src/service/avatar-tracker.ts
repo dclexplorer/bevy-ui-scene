@@ -1,18 +1,22 @@
 import {
   engine,
-  Entity,
+  type Entity,
   Transform,
   pointerEventsSystem,
   MeshCollider,
   MeshRenderer,
   Material,
   InputAction,
-  PBPointerEventsResult
+  type PBPointerEventsResult
 } from '@dcl/sdk/ecs'
 import { onEnterScene, onLeaveScene, getPlayer } from '@dcl/sdk/players'
 import { Color4 } from '@dcl/sdk/math'
-import { PBAvatarBase, PBAvatarEquippedData } from '@dcl/ecs/dist/components'
-import { TransformType } from '@dcl/ecs'
+import {
+  type PBAvatarBase,
+  type PBAvatarEquippedData
+} from '@dcl/ecs/dist/components'
+import { type TransformType } from '@dcl/ecs'
+
 type GetPlayerDataRes = {
   entity: Entity
   name: string
@@ -24,42 +28,48 @@ type GetPlayerDataRes = {
   forceRender: PBAvatarEquippedData['forceRender']
   position: TransformType['position'] | undefined
 }
-export const createOrGetAvatarsTracker = () => {
+
+export const createOrGetAvatarsTracker = (): {
+  onClick: (fn: (userId: string) => void) => () => void
+  onMouseOver: (fn: (userId: string) => void) => () => void
+} => {
   const callbacks: Record<string, Array<(userId: string) => void>> = {
     onClick: [],
     onMouseOver: []
   }
 
-  const avatarProxies: Record<string, Entity> = {}
+  // Use Map instead of Record
+  const avatarProxies = new Map<string, Entity>()
 
   onEnterScene((player) => {
-    //TODO REVIEW: consider excluding own player avatar
+    // TODO REVIEW: consider excluding own player avatar
     if (player.isGuest) {
       return
     }
 
-    if (!avatarProxies[player.userId]) {
+    if (!avatarProxies.has(player.userId)) {
       const proxy = createAvatarProxy(player.userId)
-      avatarProxies[player.userId] = proxy
+      avatarProxies.set(player.userId, proxy)
     }
   })
 
   onLeaveScene((userId) => {
-    const proxy = avatarProxies[userId]
+    const proxy = avatarProxies.get(userId)
     if (proxy) {
       engine.removeEntity(proxy)
-      delete avatarProxies[userId]
+      avatarProxies.delete(userId)
     }
   })
+
   let timer = 0
   engine.addSystem((dt) => {
     timer += dt
     if (timer < 0.2) return
     timer = 0
-    for (const userId in avatarProxies) {
+    for (const [userId, proxyEntity] of avatarProxies.entries()) {
       const playerData: GetPlayerDataRes | null = getPlayer({ userId })
       if (playerData?.position) {
-        const transform = Transform.getMutable(avatarProxies[userId])
+        const transform = Transform.getMutable(proxyEntity)
         transform.position = playerData.position
       }
     }
@@ -70,14 +80,14 @@ export const createOrGetAvatarsTracker = () => {
     onMouseOver
   }
 
-  function onClick(fn: (userId: string) => void) {
+  function onClick(fn: (userId: string) => void): () => void {
     callbacks.onClick.push(fn)
     return () => {
       callbacks.onClick = callbacks.onClick.filter((f) => f !== fn)
     }
   }
 
-  function onMouseOver(fn: (userId: string) => void) {
+  function onMouseOver(fn: (userId: string) => void): () => void {
     callbacks.onMouseOver.push(fn)
     return () => {
       callbacks.onMouseOver = callbacks.onMouseOver.filter((f) => f !== fn)
@@ -110,7 +120,9 @@ export const createOrGetAvatarsTracker = () => {
         }
       },
       (event: PBPointerEventsResult) => {
-        callbacks.onClick.forEach((fn) => fn(userId))
+        callbacks.onClick.forEach((fn) => {
+          fn(userId)
+        })
       }
     )
 
@@ -119,7 +131,9 @@ export const createOrGetAvatarsTracker = () => {
         entity
       },
       (event: PBPointerEventsResult) => {
-        callbacks.onMouseOver.forEach((fn) => fn(userId))
+        callbacks.onMouseOver.forEach((fn) => {
+          fn(userId)
+        })
       }
     )
 

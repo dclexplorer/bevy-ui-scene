@@ -13,9 +13,7 @@ import { switchEmotesWheelVisibility } from '../../emotes-wheel/emotes-wheel'
 import { type ReactElement } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
-import { PopupStack } from '../../components/popup-stack'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
-import { getPlayer } from '@dcl/sdk/src/players'
 
 const ZERO_SIZE = {
   width: 0,

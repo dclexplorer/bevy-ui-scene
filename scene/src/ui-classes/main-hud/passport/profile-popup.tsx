@@ -1,5 +1,5 @@
 import type { Popup } from '../../../components/popup-stack'
-import ReactEcs, { Button, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../../components/color-palette'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import {
@@ -20,14 +20,13 @@ import { applyMiddleEllipsis } from '../../../utils/urn-utils'
 import { CopyButton } from '../../../components/copy-button'
 import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { Color4 } from '@dcl/sdk/math'
-import { BottomBorder, TopBorder } from '../../../components/bottom-border'
+import { BottomBorder } from '../../../components/bottom-border'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import { logout } from '../../../controllers/ui.controller'
 
 export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
   if (!getPlayer()) return null
-  const profileData = store.getState().hud?.profileData
-  if (!profileData) return null
+  const profileData = store.getState().hud.profileData
 
   return (
     <UiEntity

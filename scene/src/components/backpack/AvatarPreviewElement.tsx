@@ -44,8 +44,8 @@ const ROTATE_ICON: AtlasIcon = {
   spriteName: 'RotateIcn'
 }
 const getScrollVector = memoize(_getScrollVector)
-export function resetAvatarPreviewZoom() {
-  let _listeZoom = state.listenZoom
+export function resetAvatarPreviewZoom(): void {
+  const _listeZoom = state.listenZoom
   state.listenZoom = false
 
   state.zoomFactor = 0.5

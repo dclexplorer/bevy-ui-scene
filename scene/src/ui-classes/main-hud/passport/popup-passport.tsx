@@ -55,7 +55,6 @@ import { ButtonIcon } from '../../../components/button-icon'
 import { TopBorder } from '../../../components/bottom-border'
 import { CopyButton } from '../../../components/copy-button'
 import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
-import { getPlayer } from '@dcl/sdk/players'
 
 const COPY_ICON_SIZE = 40
 
@@ -135,7 +134,7 @@ export function setupPassportPopup(): void {
     )
   })
 
-  //TODO add pointer event on Avatars identityAvatar component
+  // TODO add pointer event on Avatars identityAvatar component
 }
 
 export const PopupPassport: Popup = ({ shownPopup }) => {
@@ -331,7 +330,7 @@ function Overview(): ReactElement {
   )
 }
 
-function LinksSection() {
+function LinksSection(): ReactElement {
   const profileData = store.getState().hud.profileData
   return (
     <UiEntity
@@ -374,7 +373,7 @@ function LinksSection() {
             <ProfileLink link={link} editing={state.editing} />
           ))}
         {state.editing &&
-          (!profileData?.links || profileData?.links?.length < 5) && (
+          (!profileData.links?.length || profileData.links?.length < 5) && (
             <Button
               onMouseDown={() => {
                 store.dispatch(

@@ -2,8 +2,7 @@ import type { Vector2 } from '@dcl/sdk/math'
 import type { URN, URNWithoutTokenId } from '../utils/definitions'
 import { type WearableCategory } from '../service/categories'
 import { type ChatMessageDefinition } from '../components/chat-message/ChatMessage.types'
-import { Profile } from '../ui-classes/profile'
-import { ProfileExtra } from '../utils/passport-promise-utils'
+import { type ProfileExtra } from '../utils/passport-promise-utils'
 
 export type ExplorerSetting = {
   name: string

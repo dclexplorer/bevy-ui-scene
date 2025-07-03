@@ -3,7 +3,7 @@ import { CATALYST_BASE_URL_FALLBACK } from './constants'
 import { fetchJsonOrTryFallback } from './promise-utils'
 import { type Avatar } from '@dcl/schemas'
 import { cloneDeep } from './function-utils'
-import { ViewAvatarData } from '../state/hud/state'
+import { type ViewAvatarData } from '../state/hud/state'
 import { BevyApi } from '../bevy-api'
 
 export type ProfileResponse = {
@@ -68,7 +68,9 @@ export type ProfileExtra = {
   email: string
 }
 
-export const saveProfileData = async (profileData: ViewAvatarData) => {
+export const saveProfileData = async (
+  profileData: ViewAvatarData
+): Promise<void> => {
   await BevyApi.setAvatar({
     profileExtras: fromViewAvatarDataToProfileExtra(profileData)
   })
@@ -98,5 +100,5 @@ function fromViewAvatarDataToProfileExtra(
     email: profileData.email ?? ''
   }
 
-  return profileExtras as ProfileExtra
+  return profileExtras
 }

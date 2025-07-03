@@ -119,13 +119,13 @@ function DropdownStyled(props: {
           uiTransform={{
             display: props.isOpen ? 'flex' : 'none',
             width: '100%',
-            height: props.listMaxHeight
-              ? props.listMaxHeight
-              : scroll
-              ? props.options.length >= 4
-                ? props.fontSize * 2.1 * 4
-                : props.fontSize * props.options.length * 2.1
-              : undefined,
+            height:
+              props.listMaxHeight ??
+              (scroll
+                ? props.options.length >= 4
+                  ? props.fontSize * 2.1 * 4
+                  : props.fontSize * props.options.length * 2.1
+                : undefined),
             maxHeight: props.listMaxHeight,
             positionType: 'absolute',
             position: { left: 0, top: 2.5 * props.fontSize },

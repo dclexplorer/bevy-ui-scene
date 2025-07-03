@@ -2,11 +2,10 @@ import { getCanvasScaleRatio } from '../service/canvas-ratio'
 import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR } from './color-palette'
-import { isSystemMessage } from './chat-message/ChatMessage'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import { getAddressColor } from '../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 import { type Color4 } from '@dcl/sdk/math'
 import { ZERO_ADDRESS } from '../utils/constants'
+import { type ReactElement } from '@dcl/react-ecs'
 
 export function AvatarCircle({
   userId,
@@ -18,10 +17,10 @@ export function AvatarCircle({
   circleColor: Color4
   uiTransform: UiTransformProps
   isGuest: boolean
-}) {
+}): ReactElement | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
-  const addressColor = circleColor || getAddressColor(userId)
+  const addressColor = circleColor
   return (
     <UiEntity
       uiTransform={{

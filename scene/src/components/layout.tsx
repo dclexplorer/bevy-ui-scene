@@ -7,7 +7,7 @@ export function Row({
 }: {
   uiTransform?: UiTransformProps
   children?: ReactElement
-}) {
+}): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -28,7 +28,7 @@ export function Column({
 }: {
   uiTransform: UiTransformProps
   children: ReactElement
-}) {
+}): ReactElement {
   return (
     <UiEntity
       uiTransform={{

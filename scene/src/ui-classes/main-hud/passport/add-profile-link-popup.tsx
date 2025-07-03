@@ -1,4 +1,4 @@
-import ReactEcs, { Button, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import type { Popup } from '../../../components/popup-stack'
 import { COLOR } from '../../../components/color-palette'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
@@ -59,7 +59,11 @@ export const AddProfileLinkPopup: Popup = ({ shownPopup }) => {
   }
 }
 
-function AddProfileLinkContent({ fontSize }: { fontSize: number }) {
+function AddProfileLinkContent({
+  fontSize
+}: {
+  fontSize: number
+}): ReactElement {
   const [title, setTitle] = useState<string>('')
   const [url, setUrl] = useState<string>('')
 
@@ -87,12 +91,16 @@ function AddProfileLinkContent({ fontSize }: { fontSize: number }) {
           },
           margin: { top: '5%' }
         }}
-        onChange={(title) => { setTitle(title); }}
+        onChange={(title) => {
+          setTitle(title)
+        }}
         placeholder={'Enter Link Title (E.G. Instagram)'}
         uiBackground={{ color: COLOR.WHITE }}
       />
       <Input
-        onChange={(url) => { setUrl(url); }}
+        onChange={(url) => {
+          setUrl(url)
+        }}
         fontSize={fontSize}
         uiTransform={{
           height: getCanvasScaleRatio() * 100,
@@ -152,7 +160,7 @@ function AddProfileLinkContent({ fontSize }: { fontSize: number }) {
           disabled={!(isValidURL(url) && title)}
           onMouseDown={() => {
             const newProfileData = cloneDeep(store.getState().hud.profileData)
-            newProfileData.links = newProfileData.links || []
+            newProfileData.links = newProfileData.links ?? []
             newProfileData.links.push({ url, title })
 
             store.dispatch(
