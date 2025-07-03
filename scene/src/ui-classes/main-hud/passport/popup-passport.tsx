@@ -195,7 +195,9 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
               },
               positionType: 'absolute'
             }}
-            onClick={() => closeDialog()}
+            onClick={() => {
+              closeDialog()
+            }}
           />
         </UiEntity>
       </Content>
