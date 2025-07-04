@@ -20,6 +20,7 @@ import { Input } from '@dcl/sdk/react-ecs'
 import { BevyApi } from '../../../bevy-api'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import useEffect = ReactEcs.useEffect
+import { SetAvatarData } from '../../../bevy-api/interface'
 
 const { useState } = ReactEcs
 
@@ -73,18 +74,21 @@ const EditNameContent = (): ReactElement => {
     executeTask(async () => {
       setLoading(true)
       let failed = false
-      await BevyApi.setAvatar({
+      const avatarPayload: SetAvatarData = {
         base: {
           ...store.getState().backpack.outfitSetup.base,
           name: selectedName
         },
         hasClaimedName
-      }).catch((error) => {
+      }
+
+      await BevyApi.setAvatar(avatarPayload).catch((error) => {
         console.error('onSave error', error)
+
         store.dispatch(
           pushPopupAction({
             type: HUD_POPUP_TYPE.ERROR,
-            data: error.toString()
+            data: error
           })
         )
         failed = true

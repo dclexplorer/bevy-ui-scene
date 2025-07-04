@@ -8,13 +8,10 @@ import { noop } from '../../utils/function-utils'
 import Icon from '../../components/icon/Icon'
 import { Color4 } from '@dcl/sdk/math'
 import { type Popup } from '../../components/popup-stack'
-
-const state = {
-  rememberDomain: false
-}
+const { useEffect, useState } = ReactEcs
 
 export const ErrorPopup: Popup = ({ shownPopup }) => {
-  const message = shownPopup.data
+  const error = shownPopup.data
 
   return (
     <UiEntity
@@ -34,77 +31,134 @@ export const ErrorPopup: Popup = ({ shownPopup }) => {
         closeDialog()
       }}
     >
+      <ErrorContent error={error} />
+    </UiEntity>
+  )
+}
+
+function ErrorContent({ error }: { error: unknown }) {
+  const [errorDetails, setErrorDetails] = useState<string>('')
+
+  useEffect(() => {
+    extractErrorDetails(error)
+  }, [error])
+
+  return (
+    <UiEntity
+      uiTransform={{
+        width: getCanvasScaleRatio() * 1200,
+        height: getCanvasScaleRatio() * 750,
+        borderRadius: BORDER_RADIUS_F,
+        borderWidth: 0,
+        borderColor: COLOR.WHITE,
+        alignItems: 'center',
+        flexDirection: 'column',
+        padding: '1%'
+      }}
+      onMouseDown={noop}
+      uiBackground={{
+        color: COLOR.WHITE
+      }}
+    >
+      <Icon
+        uiTransform={{
+          positionType: 'absolute',
+          position: { top: '4%' }
+        }}
+        icon={{ spriteName: 'BugIcon', atlasName: 'icons' }}
+        iconSize={getCanvasScaleRatio() * 96}
+        iconColor={COLOR.RED}
+      />
+
       <UiEntity
         uiTransform={{
-          width: getCanvasScaleRatio() * 1200,
-          height: getCanvasScaleRatio() * 750,
+          margin: { top: '8%' },
           borderRadius: BORDER_RADIUS_F,
           borderWidth: 0,
-          borderColor: COLOR.WHITE,
-          alignItems: 'center',
-          flexDirection: 'column',
-          padding: '1%'
-        }}
-        onMouseDown={noop}
-        uiBackground={{
-          color: COLOR.WHITE
+          borderColor: COLOR.RED,
+          width: '90%',
+          height: '60%',
+          overflow: 'scroll',
+          scrollVisible: 'both'
         }}
       >
-        <Icon
-          uiTransform={{
-            positionType: 'absolute',
-            position: { top: '4%' }
-          }}
-          icon={{ spriteName: 'BugIcon', atlasName: 'icons' }}
-          iconSize={getCanvasScaleRatio() * 96}
-          iconColor={COLOR.RED}
-        />
-
         <UiEntity
+          uiTransform={{ width: '100%', height: '100%' }}
           uiText={{
-            value: `<b>Error Message:<b/>\n${message}`,
+            value: `<b>Error Details:</b>\n${errorDetails}`,
             color: COLOR.RED,
             textWrap: 'wrap',
             fontSize: getCanvasScaleRatio() * 42
           }}
+        />
+      </UiEntity>
+
+      <UiEntity
+        uiTransform={{
+          position: { left: '0%', top: '5%' },
+          alignItems: 'space-between',
+          justifyContent: 'center'
+        }}
+      >
+        <Button
           uiTransform={{
-            margin: { top: '8%' },
-            borderRadius: BORDER_RADIUS_F,
+            margin: '2%',
+            width: getCanvasScaleRatio() * 400,
+            borderRadius: BORDER_RADIUS_F / 2,
             borderWidth: 0,
-            borderColor: COLOR.RED,
-            width: '90%'
+            borderColor: Color4.White()
+          }}
+          value={'OK'}
+          variant={'secondary'}
+          uiBackground={{ color: COLOR.TEXT_COLOR }}
+          color={Color4.White()}
+          fontSize={getCanvasScaleRatio() * 28}
+          onMouseDown={() => {
+            closeDialog()
           }}
         />
-        <UiEntity
-          uiTransform={{
-            position: { left: '0%', top: '5%' },
-            alignItems: 'space-between',
-            justifyContent: 'center'
-          }}
-        >
-          <Button
-            uiTransform={{
-              margin: '2%',
-              width: getCanvasScaleRatio() * 400,
-              borderRadius: BORDER_RADIUS_F / 2,
-              borderWidth: 0,
-              borderColor: Color4.White()
-            }}
-            value={'OK'}
-            variant={'secondary'}
-            uiBackground={{ color: COLOR.TEXT_COLOR }}
-            color={Color4.White()}
-            fontSize={getCanvasScaleRatio() * 28}
-            onMouseDown={() => {
-              closeDialog()
-            }}
-          />
-        </UiEntity>
       </UiEntity>
     </UiEntity>
   )
 
-  function closeDialog(): void {
-    store.dispatch(closeLastPopupAction())
+  async function extractErrorDetails(err: any) {
+    let message = ''
+
+    if (typeof err === 'string') {
+      message = err
+    } else if (err instanceof Error || err instanceof Object) {
+      message = (err as any).message || err.toString()
+
+      if ((err as any).data) {
+        message += `\n\nData:\n${JSON.stringify((err as any).data, null, 2)}`
+      }
+
+      if ((err as any).body) {
+        message += `\n\nBody:\n${JSON.stringify((err as any).body, null, 2)}`
+      }
+
+      if ((err as any).response?.data) {
+        message += `\n\nResponse data:\n${JSON.stringify(
+          (err as any).response.data,
+          null,
+          2
+        )}`
+      }
+
+      if (err.stack) {
+        message += `\n\nStack:\n${err.stack}`
+      }
+
+      setErrorDetails(message)
+    } else if (err && typeof err === 'object') {
+      // fallback: dump whole object
+      setErrorDetails(JSON.stringify(err, null, 2))
+    } else {
+      setErrorDetails(String(err))
+    }
   }
+}
+
+function closeDialog(): void {
+  store.dispatch(closeLastPopupAction())
 }

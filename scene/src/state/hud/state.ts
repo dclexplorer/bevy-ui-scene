@@ -52,7 +52,7 @@ export enum HUD_POPUP_TYPE {
 
 export type HUDPopup = {
   type: HUD_POPUP_TYPE
-  data?: string
+  data?: unknown
 }
 
 export type HudState = {
