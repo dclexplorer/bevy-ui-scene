@@ -46,7 +46,8 @@ export enum HUD_POPUP_TYPE {
   PASSPORT,
   NAME_EDIT,
   ADD_LINK,
-  PROFILE_MENU
+  PROFILE_MENU,
+  ERROR
 }
 
 export type HUDPopup = {

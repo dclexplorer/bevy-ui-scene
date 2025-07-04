@@ -3,6 +3,7 @@ import { store } from '../../../state/store'
 import { COLOR } from '../../../components/color-palette'
 import {
   closeLastPopupAction,
+  pushPopupAction,
   updateHudStateAction
 } from '../../../state/hud/actions'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
@@ -11,13 +12,14 @@ import { cloneDeep, noop } from '../../../utils/function-utils'
 import { type Popup } from '../../../components/popup-stack'
 import { type Tab, TabComponent } from '../../../components/tab-component'
 import { fetchAllUserNames } from '../../../utils/passport-promise-utils'
-import useEffect = ReactEcs.useEffect
 import { executeTask } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../../../utils/dcl-utils'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { Input } from '@dcl/sdk/react-ecs'
 import { BevyApi } from '../../../bevy-api'
+import { HUD_POPUP_TYPE } from '../../../state/hud/state'
+import useEffect = ReactEcs.useEffect
 
 const { useState } = ReactEcs
 
@@ -67,7 +69,6 @@ const EditNameContent = (): ReactElement => {
     })
   }, [])
   const onSave = (selectedName: string): void => {
-    console.log('onSave', selectedName)
     const hasClaimedName = selectableNames.includes(selectedName)
     executeTask(async () => {
       setLoading(true)
@@ -79,8 +80,13 @@ const EditNameContent = (): ReactElement => {
         },
         hasClaimedName
       }).catch((error) => {
-        // TODO consider showing an informative "error" popup
         console.error('onSave error', error)
+        store.dispatch(
+          pushPopupAction({
+            type: HUD_POPUP_TYPE.ERROR,
+            data: error.toString()
+          })
+        )
         failed = true
       })
       setLoading(false)
