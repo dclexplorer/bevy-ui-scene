@@ -260,6 +260,7 @@ export const NameForm = ({
             margin: { right: '5%' },
             opacity: disabled ? 0.5 : 1
           }}
+          fontSize={getCanvasScaleRatio() * 40}
           uiBackground={{
             color: COLOR.WHITE_OPACITY_1
           }}
@@ -278,6 +279,7 @@ export const NameForm = ({
             borderColor: COLOR.BLACK_TRANSPARENT,
             borderWidth: 0
           }}
+          fontSize={getCanvasScaleRatio() * 40}
           value={'SAVE'}
           disabled={disabled || !textValue?.length || isInvalidName(textValue)}
           onMouseDown={() => {
@@ -344,8 +346,10 @@ export const UniqueNameForm = ({
             borderWidth: 0,
             width: '40%',
             margin: { right: '5%' },
+            height: getCanvasScaleRatio() * 100,
             opacity: disabled ? 0.5 : 1
           }}
+          fontSize={getCanvasScaleRatio() * 40}
           uiBackground={{
             color: COLOR.WHITE_OPACITY_1
           }}
@@ -362,8 +366,13 @@ export const UniqueNameForm = ({
             width: '40%',
             borderRadius: getCanvasScaleRatio() * 20,
             borderColor: COLOR.BLACK_TRANSPARENT,
-            borderWidth: 0
+            borderWidth: 0,
+            height: getCanvasScaleRatio() * 100,
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center'
           }}
+          fontSize={getCanvasScaleRatio() * 40}
           value={'SAVE'}
           disabled={
             disabled || selectedName === store.getState().hud.profileData.name

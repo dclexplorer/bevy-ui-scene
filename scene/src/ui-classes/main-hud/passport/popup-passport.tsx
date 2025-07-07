@@ -56,6 +56,7 @@ import { TopBorder } from '../../../components/bottom-border'
 import { CopyButton } from '../../../components/copy-button'
 import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
 import { CloseButton } from '../../../components/close-button'
+import { listenSystemAction } from '../../../service/system-actions-emitter'
 
 const COPY_ICON_SIZE = 40
 
@@ -65,6 +66,7 @@ export type PassportPopupState = {
   pristineProfileData: ViewAvatarData
   editing: boolean
   editable: boolean
+  mouseOverAvatar: string | null
 }
 
 const state: PassportPopupState = {
@@ -72,7 +74,8 @@ const state: PassportPopupState = {
   editable: true,
   loadingProfile: true,
   savingProfile: false,
-  pristineProfileData: cloneDeep(EMPTY_PROFILE_DATA)
+  pristineProfileData: cloneDeep(EMPTY_PROFILE_DATA),
+  mouseOverAvatar: null
 }
 
 /**
@@ -122,11 +125,9 @@ export function setupPassportPopup(): void {
 
   const avatarTracker = createOrGetAvatarsTracker()
   avatarTracker.onMouseOver((userId) => {
-    console.log('onMouseOver', userId)
+    state.mouseOverAvatar = userId
   })
   avatarTracker.onClick((userId) => {
-    console.log('onClick', userId)
-
     store.dispatch(
       pushPopupAction({
         type: HUD_POPUP_TYPE.PASSPORT,
@@ -135,7 +136,19 @@ export function setupPassportPopup(): void {
     )
   })
 
-  // TODO add pointer event on Avatars identityAvatar component
+  listenSystemAction('ShowProfile', (pressed: boolean) => {
+    if (pressed) {
+      store.dispatch(
+        pushPopupAction({
+          type: HUD_POPUP_TYPE.PASSPORT,
+          data: state.mouseOverAvatar
+        })
+      )
+      // TODO we should remove use of avatarTracker and use only ShowProfile action
+      // TODO be aware that system action ShowProfile is not triggered when camera is unlocked (mouse cursor visible)
+      // TODO avatarTracker.onMouseOver is a system that continuosly put an entity on avatar position, review if we can optimize to check if mouse is over avatar when ShowProfile, instead of continuously checking
+    }
+  })
 }
 
 export const PopupPassport: Popup = ({ shownPopup }) => {
