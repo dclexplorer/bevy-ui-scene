@@ -127,19 +127,19 @@ function ErrorContent({ error }: { error: unknown }) {
     if (typeof err === 'string') {
       message = err
     } else if (err instanceof Error || err instanceof Object) {
-      message = (err as any).message || err.toString()
+      message = (err).message || err.toString()
 
-      if ((err as any).data) {
-        message += `\n\nData:\n${JSON.stringify((err as any).data, null, 2)}`
+      if ((err).data) {
+        message += `\n\nData:\n${JSON.stringify((err).data, null, 2)}`
       }
 
-      if ((err as any).body) {
-        message += `\n\nBody:\n${JSON.stringify((err as any).body, null, 2)}`
+      if ((err).body) {
+        message += `\n\nBody:\n${JSON.stringify((err).body, null, 2)}`
       }
 
-      if ((err as any).response?.data) {
+      if ((err).response?.data) {
         message += `\n\nResponse data:\n${JSON.stringify(
-          (err as any).response.data,
+          (err).response.data,
           null,
           2
         )}`
