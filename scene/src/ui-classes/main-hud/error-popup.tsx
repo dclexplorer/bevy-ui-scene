@@ -1,4 +1,4 @@
-import ReactEcs, { Button, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { COLOR } from '../../components/color-palette'
 import { closeLastPopupAction } from '../../state/hud/actions'
@@ -36,11 +36,11 @@ export const ErrorPopup: Popup = ({ shownPopup }) => {
   )
 }
 
-function ErrorContent({ error }: { error: unknown }) {
+function ErrorContent({ error }: { error: unknown }): ReactElement {
   const [errorDetails, setErrorDetails] = useState<string>('')
 
   useEffect(() => {
-    extractErrorDetails(error)
+    extractErrorDetails(error).catch(console.error)
   }, [error])
 
   return (
@@ -121,25 +121,25 @@ function ErrorContent({ error }: { error: unknown }) {
     </UiEntity>
   )
 
-  async function extractErrorDetails(err: any) {
+  async function extractErrorDetails(err: any): Promise<void> {
     let message = ''
 
     if (typeof err === 'string') {
       message = err
     } else if (err instanceof Error || err instanceof Object) {
-      message = (err).message || err.toString()
+      message = err.message || err.toString()
 
-      if ((err).data) {
-        message += `\n\nData:\n${JSON.stringify((err).data, null, 2)}`
+      if (err.data) {
+        message += `\n\nData:\n${JSON.stringify(err.data, null, 2)}`
       }
 
-      if ((err).body) {
-        message += `\n\nBody:\n${JSON.stringify((err).body, null, 2)}`
+      if (err.body) {
+        message += `\n\nBody:\n${JSON.stringify(err.body, null, 2)}`
       }
 
-      if ((err).response?.data) {
+      if (err.response?.data) {
         message += `\n\nResponse data:\n${JSON.stringify(
-          (err).response.data,
+          err.response.data,
           null,
           2
         )}`

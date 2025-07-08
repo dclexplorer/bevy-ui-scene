@@ -31,7 +31,7 @@ import {
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
 import { type URN, type URNWithoutTokenId } from '../../../utils/definitions'
-import { convertToPBAvatarBase } from '../../../utils/dcl-utils'
+import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../../bevy-api/interface'
 import {
@@ -57,6 +57,7 @@ import { CopyButton } from '../../../components/copy-button'
 import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
 import { CloseButton } from '../../../components/close-button'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
+import { getPlayer } from '@dcl/sdk/players'
 
 const COPY_ICON_SIZE = 40
 
@@ -96,7 +97,7 @@ export function setupPassportPopup(): void {
         const profileData = await fetchProfileData({ userId })
         const [avatarData] = profileData.avatars
         const names = await fetchAllUserNames({ userId })
-
+        state.editable = userId === getPlayer()?.userId
         console.log('avatarData', avatarData)
 
         store.dispatch(
@@ -125,28 +126,27 @@ export function setupPassportPopup(): void {
 
   const avatarTracker = createOrGetAvatarsTracker()
   avatarTracker.onMouseOver((userId) => {
-    state.mouseOverAvatar = userId
+    executeTask(async () => {
+      await sleep(0)
+      state.mouseOverAvatar = userId
+    })
   })
-  avatarTracker.onClick((userId) => {
-    store.dispatch(
-      pushPopupAction({
-        type: HUD_POPUP_TYPE.PASSPORT,
-        data: userId
-      })
-    )
+  avatarTracker.onMouseLeave(() => {
+    executeTask(async () => {
+      await sleep(0)
+      state.mouseOverAvatar = null
+    })
   })
 
   listenSystemAction('ShowProfile', (pressed: boolean) => {
-    if (pressed) {
+    if (pressed && state.mouseOverAvatar !== null) {
       store.dispatch(
         pushPopupAction({
           type: HUD_POPUP_TYPE.PASSPORT,
           data: state.mouseOverAvatar
         })
       )
-      // TODO we should remove use of avatarTracker and use only ShowProfile action
       // TODO be aware that system action ShowProfile is not triggered when camera is unlocked (mouse cursor visible)
-      // TODO avatarTracker.onMouseOver is a system that continuosly put an entity on avatar position, review if we can optimize to check if mouse is over avatar when ShowProfile, instead of continuously checking
     }
   })
 }

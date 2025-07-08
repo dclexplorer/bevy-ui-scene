@@ -58,7 +58,9 @@ export async function initEmotesWheel({
 
   new Array(10).fill(null).forEach((_, index) => {
     listenSystemAction(`QuickEmote${(index + 1) % 10}`, () => {
-      triggerEmote({ predefinedEmote: equippedEmotes[index] })
+      triggerEmote({ predefinedEmote: equippedEmotes[index] }).catch(
+        console.error
+      )
     })
   })
 

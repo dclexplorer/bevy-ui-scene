@@ -32,10 +32,12 @@ type GetPlayerDataRes = {
 export const createOrGetAvatarsTracker = (): {
   onClick: (fn: (userId: string) => void) => () => void
   onMouseOver: (fn: (userId: string) => void) => () => void
+  onMouseLeave: (fn: (userId: string) => void) => () => void
 } => {
   const callbacks: Record<string, Array<(userId: string) => void>> = {
     onClick: [],
-    onMouseOver: []
+    onMouseOver: [],
+    onMouseLeave: []
   }
 
   // Use Map instead of Record
@@ -43,7 +45,7 @@ export const createOrGetAvatarsTracker = (): {
 
   onEnterScene((player) => {
     // TODO REVIEW: consider excluding own player avatar
-    if (player.isGuest) {
+    if (player.isGuest || player.userId === getPlayer()?.userId) {
       return
     }
 
@@ -77,7 +79,8 @@ export const createOrGetAvatarsTracker = (): {
 
   return {
     onClick,
-    onMouseOver
+    onMouseOver,
+    onMouseLeave
   }
 
   function onClick(fn: (userId: string) => void): () => void {
@@ -94,13 +97,21 @@ export const createOrGetAvatarsTracker = (): {
     }
   }
 
-  function createAvatarProxy(userId: string): Entity {
+  function onMouseLeave(fn: (userId: string) => void): () => void {
+    callbacks.onMouseLeave.push(fn)
+    return () => {
+      callbacks.onMouseLeave = callbacks.onMouseLeave.filter((f) => f !== fn)
+    }
+  }
+
+  function createAvatarProxy(userId: string, hoverText?: string): Entity {
     const wrapper = engine.addEntity()
     const entity = engine.addEntity()
     Transform.create(wrapper, {})
+
     Transform.create(entity, {
       position: { x: 0, y: 1, z: 0 },
-      scale: { x: 0.5, y: 1.8, z: 0.5 },
+      scale: { x: 1, y: 2, z: 1 },
       parent: wrapper
     })
 
@@ -116,7 +127,7 @@ export const createOrGetAvatarsTracker = (): {
         entity,
         opts: {
           button: InputAction.IA_POINTER,
-          hoverText: 'View Passport'
+          hoverText
         }
       },
       (event: PBPointerEventsResult) => {
@@ -132,6 +143,17 @@ export const createOrGetAvatarsTracker = (): {
       },
       (event: PBPointerEventsResult) => {
         callbacks.onMouseOver.forEach((fn) => {
+          fn(userId)
+        })
+      }
+    )
+
+    pointerEventsSystem.onPointerHoverLeave(
+      {
+        entity
+      },
+      (event: PBPointerEventsResult) => {
+        callbacks.onMouseLeave.forEach((fn) => {
           fn(userId)
         })
       }

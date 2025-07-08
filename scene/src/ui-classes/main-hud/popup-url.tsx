@@ -17,7 +17,7 @@ const state = {
 }
 
 export const PopupUrl: Popup = ({ shownPopup }) => {
-  const URL = shownPopup.data
+  const URL: string = shownPopup.data as string
   if (shownPopup?.type !== HUD_POPUP_TYPE.URL) return null
 
   return (
@@ -117,7 +117,7 @@ export const PopupUrl: Popup = ({ shownPopup }) => {
             onMouseUp={() => {
               state.rememberDomain = false
               closeDialog()
-              openExternalUrl({ url: URL as string }).catch(console.error)
+              openExternalUrl({ url: URL }).catch(console.error)
               // TODO save domain on localStorage or bevy api ? Review with @rob
             }}
           />
