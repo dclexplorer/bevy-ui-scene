@@ -11,6 +11,7 @@
     {
       "type": "friendRequestAccepted",
       "username": "Vitsky",
+      "userId": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
       "message": "Vitsky accepted your friend request.",
       "timeAgo": "15 hours ago",
       "icon": "friend_accept"
@@ -18,6 +19,7 @@
     {
       "type": "friendRequestAccepted",
       "username": "AudioHotLab",
+      "userId": "0xd6c957f9a6411f35d01baae2658758f277408878",
       "message": "AudioHotLab accepted your friend request.",
       "timeAgo": "18 hours ago",
       "icon": "friend_accept"
@@ -49,6 +51,7 @@
     {
       "type": "friendRequestReceived",
       "username": "PiZzArte",
+      "userId": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
       "message": "PiZzArte wants to be your friend!",
       "timeAgo": "3 months ago",
       "icon": "friend_request"
@@ -56,6 +59,7 @@
     {
       "type": "friendRequestReceived",
       "username": "Bano#9227",
+      "userId": "0xd6c957f9a6411f35d01baae2658758f277408878",
       "message": "Bano#9227 wants to be your friend!",
       "timeAgo": "3 months ago",
       "icon": "friend_request"
@@ -87,6 +91,7 @@
     {
       "type": "friendRequestReceived",
       "username": "MetaGamiMall",
+      "userId": "0x7c93102120b2cb4cdd052d2c5eb3dcd2b7e36bfe",
       "message": "MetaGamiMall wants to be your friend!",
       "timeAgo": "3 months ago",
       "icon": "friend_request"
@@ -102,6 +107,7 @@
     {
       "type": "friendRequestReceived",
       "username": "laurenmae",
+      "userId": "0xcaa92dc06a4107f17ef4ea13b621aa8fc2d66a7f",
       "message": "laurenmae wants to be your friend!",
       "timeAgo": "4 days ago",
       "icon": "friend_request"
@@ -109,6 +115,7 @@
     {
       "type": "friendRequestReceived",
       "username": "Diyad#d5de",
+      "userId": "0x17e1f2e03b617b35772cbeaaeb4e7aa8a34f9b4c",
       "message": "Diyad#d5de wants to be your friend!",
       "timeAgo": "12 days ago",
       "icon": "friend_request"

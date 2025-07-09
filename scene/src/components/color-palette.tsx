@@ -83,8 +83,12 @@ export const COLOR = {
   BLACK: Color4.Black(),
   RED: Color4.Red(),
   URL_POPUP_BACKGROUND: Color4.fromHexString('#51157F'),
+  NOTIFICATIONS_MENU: Color4.fromHexString('#212222FF'),
+  NOTIFICATION_ITEM: Color4.fromHexString('#313131FF'),
   BLACK_POPUP_BACKGROUND: TEXT_COLOR,
-  STATUS_ACTIVE: Color4.fromHexString('#3cd523')
+  STATUS_ACTIVE: Color4.fromHexString('#3cd523'),
+  NOTIFICATION_FRIEND: Color4.fromHexString('#ED3E82FF'),
+  NOTIFICATION_GIFT: Color4.fromHexString('#FF8648FF')
 }
 export const RARITY_COLORS: Record<RarityName, Color4> = {
   base: Color4.fromHexString('#a09ba8'),
