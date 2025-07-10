@@ -88,7 +88,9 @@ export const COLOR = {
   BLACK_POPUP_BACKGROUND: TEXT_COLOR,
   STATUS_ACTIVE: Color4.fromHexString('#3cd523'),
   NOTIFICATION_FRIEND: Color4.fromHexString('#ED3E82FF'),
-  NOTIFICATION_GIFT: Color4.fromHexString('#FF8648FF')
+  NOTIFICATION_GIFT: Color4.fromHexString('#FF8648FF'),
+  NOTIFICATION_EVENT: Color4.fromHexString('#4386EDFF'),
+  NOTIFICATION_BADGE: Color4.fromHexString('#edcb43')
 }
 export const RARITY_COLORS: Record<RarityName, Color4> = {
   base: Color4.fromHexString('#a09ba8'),

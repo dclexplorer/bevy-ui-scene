@@ -110,6 +110,8 @@ function NotificationsContent(): ReactElement {
                   flexDirection: 'column',
                   width: '80%',
                   alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
+                  alignSelf: 'flex-start',
                   margin: { left: '3%' }
                 }}
               >
@@ -117,7 +119,9 @@ function NotificationsContent(): ReactElement {
                   uiTransform={{
                     alignItems: 'flex-start',
                     flexWrap: 'wrap',
-                    width: '100%'
+                    width: '100%',
+                    margin: 0,
+                    padding: 0
                   }}
                   uiText={{
                     value: `<b>${getTitleFromNotification(notification)}</b>`,
@@ -129,12 +133,13 @@ function NotificationsContent(): ReactElement {
                   uiTransform={{
                     alignItems: 'flex-start',
                     flexWrap: 'wrap',
-                    width: '100%'
+                    width: '100%',
+                    margin: { top: getCanvasScaleRatio() * -30 }
                   }}
                   uiText={{
                     value: getDescriptionFromNotification(notification),
                     textAlign: 'top-left',
-                    fontSize: getCanvasScaleRatio() * 32
+                    fontSize: getCanvasScaleRatio() * 28
                   }}
                 />
               </UiEntity>
@@ -248,6 +253,12 @@ function getColorForNotificationType(type: string): Color4 {
   if (type === 'friendRequestReceived' || type === 'friendRequestAccepted') {
     return COLOR.NOTIFICATION_FRIEND
   }
+  if (type === 'event') {
+    return COLOR.NOTIFICATION_EVENT
+  }
+  if (type === 'badgeUnlocked') {
+    return COLOR.NOTIFICATION_BADGE
+  }
   return COLOR.NOTIFICATION_GIFT
 }
 function getIconForNotificationType(type: string): AtlasIcon {
@@ -263,7 +274,19 @@ function getIconForNotificationType(type: string): AtlasIcon {
       atlasName: 'icons'
     }
   }
+  if (type === 'badgeUnlocked') {
+    return {
+      spriteName: 'StarSolid',
+      atlasName: 'icons'
+    }
+  }
+  if (type === 'event') {
+    return {
+      spriteName: 'PublishIcon',
 
+      atlasName: 'icons'
+    }
+  }
   return {
     spriteName: 'GiftIcn',
     atlasName: 'icons'
