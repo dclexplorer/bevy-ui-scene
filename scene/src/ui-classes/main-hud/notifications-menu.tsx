@@ -1,21 +1,30 @@
-import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { COLOR } from '../../components/color-palette'
 import { closeLastPopupAction } from '../../state/hud/actions'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-import { BORDER_RADIUS_F } from '../../utils/ui-utils'
+
 import { noop } from '../../utils/function-utils'
 import Icon from '../../components/icon/Icon'
 import { Color4 } from '@dcl/sdk/math'
 import { type Popup } from '../../components/popup-stack'
-import notificationsMockData from './notifications-mock.json'
+import notificationsMockData from './notifications_full_log_complete.json'
 import { AtlasIcon } from '../../utils/definitions'
 import { AvatarCircle } from '../../components/avatar-circle'
 import { getAddressColor } from './chat-and-logs/ColorByAddress'
-import { FriendRequestNotification, Notification } from './notification-types'
+import {
+  EventNotification,
+  isEventNotification,
+  Notification
+} from './notification-types'
+import { executeTask } from '@dcl/sdk/ecs'
+import { Authenticator } from '@dcl/crypto'
+import { signedFetch } from '~system/SignedFetch'
+import { sleep } from '../../utils/dcl-utils'
+import { BevyApi } from '../../bevy-api'
+import { NotificationItem } from './notification-renderer'
 
 const { useEffect, useState } = ReactEcs
-
 export const NotificationsMenu: Popup = (): ReactElement | null => {
   return (
     <UiEntity
@@ -43,8 +52,37 @@ export const NotificationsMenu: Popup = (): ReactElement | null => {
 function NotificationsContent(): ReactElement {
   const [errorDetails, setErrorDetails] = useState<string>('')
   const [notifications, setNotifications] = useState<Notification[]>([])
+  const [loadingNotifications, setLoadingNotifications] =
+    useState<boolean>(true)
+
   useEffect(() => {
-    setNotifications(notificationsMockData.notifications as Notification[])
+    ;(async () => {
+      try {
+        setLoadingNotifications(true)
+        const result = await signedFetch({
+          //   url: 'http://localhost:5001/notifications',
+          url: 'https://notifications.decentraland.org/notifications',
+          init: {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'GET'
+          }
+        })
+
+        const notifications = JSON.parse(result.body).notifications.filter(
+          (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
+        )
+        console.log('setLoadingNotifications', notifications)
+
+        setNotifications(
+          dedupeEventNotifications(
+            notificationsMockData.notifications as Notification[]
+          ).filter(
+            (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
+          )
+        )
+        setLoadingNotifications(false)
+      } catch (error) {}
+    })()
   }, [])
 
   return (
@@ -89,238 +127,50 @@ function NotificationsContent(): ReactElement {
       >
         {notifications.map((notification) => {
           return (
-            <UiEntity
-              uiTransform={{
-                height: getCanvasScaleRatio() * 200,
-                width: getCanvasScaleRatio() * 740,
-                borderWidth: 0,
-                borderColor: COLOR.WHITE,
-                borderRadius: getCanvasScaleRatio() * 20,
-                flexShrink: 0,
-                margin: { bottom: '2%', left: '2%' },
-                flexDirection: 'row',
-                alignItems: 'center',
-                padding: { left: '5%' }
-              }}
-              uiBackground={{ color: COLOR.NOTIFICATION_ITEM }}
-            >
-              <NotificationThumbnail notification={notification} />
-              <UiEntity
-                uiTransform={{
-                  flexDirection: 'column',
-                  width: '80%',
-                  alignItems: 'flex-start',
-                  justifyContent: 'flex-start',
-                  alignSelf: 'flex-start',
-                  margin: { left: '3%' }
-                }}
-              >
-                <UiEntity
-                  uiTransform={{
-                    alignItems: 'flex-start',
-                    flexWrap: 'wrap',
-                    width: '100%',
-                    margin: 0,
-                    padding: 0
-                  }}
-                  uiText={{
-                    value: `<b>${getTitleFromNotification(notification)}</b>`,
-                    textAlign: 'top-left',
-                    fontSize: getCanvasScaleRatio() * 32
-                  }}
-                />
-                <UiEntity
-                  uiTransform={{
-                    alignItems: 'flex-start',
-                    flexWrap: 'wrap',
-                    width: '100%',
-                    margin: { top: getCanvasScaleRatio() * -30 }
-                  }}
-                  uiText={{
-                    value: getDescriptionFromNotification(notification),
-                    textAlign: 'top-left',
-                    fontSize: getCanvasScaleRatio() * 28
-                  }}
-                />
-              </UiEntity>
-            </UiEntity>
+            <NotificationItem
+              notification={notification}
+              key={notification.id}
+            />
           )
         })}
       </UiEntity>
     </UiEntity>
   )
 }
-function NotificationThumbnail({
-  notification
-}: {
-  notification: Notification
-}): ReactElement {
-  return (
-    <UiEntity
-      uiTransform={{
-        height: getCanvasScaleRatio() * 130,
-        width: getCanvasScaleRatio() * 130,
-        borderColor: COLOR.BLACK_TRANSPARENT,
-        borderWidth: 0,
-        borderRadius: getCanvasScaleRatio() * 30
-      }}
-    >
-      {(notification as FriendRequestNotification).userId ? (
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: '100%'
-          }}
-        >
-          <AvatarCircle
-            userId={(notification as FriendRequestNotification).userId}
-            circleColor={getAddressColor(
-              (notification as FriendRequestNotification).userId
-            )}
-            uiTransform={{
-              width: '100%',
-              height: '100%'
-            }}
-            isGuest={false}
-          />
-          <NotificationIcon notification={notification} />
-        </UiEntity>
-      ) : (
-        <UiEntity
-          uiTransform={{
-            positionType: 'absolute',
-            width: '100%',
-            height: '100%'
-          }}
-          uiBackground={
-            notification.type === 'event' ||
-            notification.type === 'itemReceived' ||
-            notification.type === 'giftReceived' ||
-            notification.type === 'badgeUnlocked'
-              ? {
-                  textureMode: 'stretch',
-                  texture: {
-                    src: notification.imageUrl
-                  }
-                }
-              : {
-                  color: COLOR.WHITE_OPACITY_1
-                }
-          }
-        >
-          <NotificationIcon notification={notification} />
-        </UiEntity>
-      )}
-    </UiEntity>
-  )
-}
+
 function closeDialog(): void {
   store.dispatch(closeLastPopupAction())
 }
-function NotificationIcon({
-  notification
-}: {
-  notification: Notification
-}): ReactElement {
-  return (
-    <UiEntity
-      uiTransform={{
-        positionType: 'absolute',
-        position: { right: '-25%', bottom: '-25%' },
-        borderRadius: getCanvasScaleRatio() * 999,
-        borderWidth: getCanvasScaleRatio() * 6,
-        borderColor: COLOR.TEXT_COLOR,
-        width: getCanvasScaleRatio() * 60,
-        height: getCanvasScaleRatio() * 60,
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}
-      uiBackground={{
-        color: getColorForNotificationType(notification.type)
-      }}
-    >
-      <Icon
-        uiTransform={{
-          flexShrink: 0
-        }}
-        icon={getIconForNotificationType(notification.type)}
-        iconSize={getCanvasScaleRatio() * 40}
-      />
-    </UiEntity>
-  )
-}
-function getColorForNotificationType(type: string): Color4 {
-  if (type === 'friendRequestReceived' || type === 'friendRequestAccepted') {
-    return COLOR.NOTIFICATION_FRIEND
-  }
-  if (type === 'event') {
-    return COLOR.NOTIFICATION_EVENT
-  }
-  if (type === 'badgeUnlocked') {
-    return COLOR.NOTIFICATION_BADGE
-  }
-  return COLOR.NOTIFICATION_GIFT
-}
-function getIconForNotificationType(type: string): AtlasIcon {
-  if (type === 'giftReceived') {
-    return {
-      spriteName: 'GiftIcn',
-      atlasName: 'icons'
-    }
-  }
-  if (type === 'friendRequestReceived' || type === 'friendRequestAccepted') {
-    return {
-      spriteName: 'Members',
-      atlasName: 'icons'
-    }
-  }
-  if (type === 'badgeUnlocked') {
-    return {
-      spriteName: 'StarSolid',
-      atlasName: 'icons'
-    }
-  }
-  if (type === 'event') {
-    return {
-      spriteName: 'PublishIcon',
+function dedupeEventNotifications(
+  notifications: Notification[]
+): Notification[] {
+  const eventNotifications: EventNotification[] = notifications.filter(
+    isEventNotification
+  ) as EventNotification[]
 
-      atlasName: 'icons'
+  const latestByName = new Map<string, EventNotification>()
+
+  for (const notification of eventNotifications) {
+    const name = notification.metadata.name
+
+    const existing = latestByName.get(name)
+    if (!existing) {
+      latestByName.set(name, notification)
+    } else {
+      if (new Date(notification.timestamp) > new Date(existing.timestamp)) {
+        latestByName.set(name, notification)
+      }
     }
   }
-  return {
-    spriteName: 'GiftIcn',
-    atlasName: 'icons'
-  }
-}
 
-function getTitleFromNotification(notification: Notification): string {
-  if (notification.type === 'event') {
-    return 'Event started'
-  } else if (notification.type === 'giftReceived') {
-    return 'New Item Received!'
-  } else if (notification.type === 'friendRequestReceived') {
-    return 'Friend Request Received!'
-  } else if (notification.type === 'friendRequestAccepted') {
-    return 'Friend Request Accepted!'
-  } else if (notification.type === 'badgeUnlocked') {
-    return 'New Badge Unlocked!'
-  }
-  return ''
-}
+  const deduped: EventNotification[] = (
+    notifications as EventNotification[]
+  ).filter((n: EventNotification) => {
+    if (!isEventNotification(n)) return true
 
-function getDescriptionFromNotification(notification: Notification): string {
-  if (notification.type === 'event') {
-    return notification.message
-  } else if (notification.type === 'giftReceived') {
-    return `You've received ${notification.itemName}. ${notification.message}`
-  } else if (notification.type === 'friendRequestReceived') {
-    return `${notification.username} wants to be your friend!`
-  } else if (notification.type === 'friendRequestAccepted') {
-    return `${notification.username} accepted your friend request.`
-  } else if (notification.type === 'badgeUnlocked') {
-    return `You unlocked the badge "${notification.badgeName}".`
-  } else if (notification.type === 'itemReceived') {
-    return `You received the item "${notification.itemName}". ${notification.message}`
-  }
-  return ''
+    const latest = latestByName.get(n.metadata.name)
+    return latest?.id === n.id
+  })
+
+  return deduped
 }
