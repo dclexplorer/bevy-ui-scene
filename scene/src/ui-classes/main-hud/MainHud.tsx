@@ -142,8 +142,6 @@ export default class MainHud {
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatsAndLogs()
     this.friends = new Friends(uiController)
-
-    setupNotifications().catch(console.error)
   }
 
   voiceChatDown(): void {

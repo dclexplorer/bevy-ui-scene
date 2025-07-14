@@ -28,6 +28,7 @@ import { Canvas } from '../components/canvas'
 import { store } from '../state/store'
 import { BevyApi } from '../bevy-api'
 import { PopupStack } from '../components/popup-stack'
+import { setupNotifications } from '../ui-classes/main-hud/notifications-menu'
 
 let loadingAndLogin: any = null
 
@@ -104,6 +105,8 @@ export class UIController {
 
         void this.backpackPage.init()
       })().catch(console.error)
+
+      setupNotifications().catch(console.error)
     })
 
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))

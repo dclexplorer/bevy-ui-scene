@@ -14,13 +14,32 @@ export type ExplorerSetting = {
   value: number
 }
 
+export type SignedFetchMetaRealm = {
+  hostname: string
+  protocol: string
+  server_name: string
+}
+export type SignedFetchMeta = {
+  origin?: string
+  scene_id?: string
+  parcel?: string
+  tld?: string
+  network?: string
+  is_guest?: boolean
+  realm: SignedFetchMetaRealm
+  signer: string
+}
+export type JsonStringified<T> = string & { __jsonBrand: T } // TODO
+export type SignedFetchMetaJson = JsonStringified<SignedFetchMeta>
+
 export type KernelFetch = {
   url: string
   init?: {
-    method: 'PATCH' | 'POST' | 'GET' | 'DELETE'
+    method: 'PATCH' | 'POST' | 'GET' | 'DELETE' | 'PUT'
     headers: Record<string, string>
     body?: string
   }
+  meta?: SignedFetchMetaJson
 }
 
 export type KernelFetchRespose = {
