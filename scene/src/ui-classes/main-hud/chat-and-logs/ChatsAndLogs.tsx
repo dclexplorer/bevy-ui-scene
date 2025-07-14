@@ -50,6 +50,7 @@ import {
 } from '../../../state/hud/actions'
 import { type AppState } from '../../../state/types'
 import { getUserData } from '~system/UserIdentity'
+
 type Box = {
   position: { x: number; y: number }
   size: { x: number; y: number }
@@ -187,7 +188,10 @@ export default class ChatAndLogs {
           ? Date.now() + 1
           : Date.now(),
       name,
-      side: getNextMessageSide(state.shownMessages),
+      side:
+        message.sender_address === getPlayer()?.userId
+          ? CHAT_SIDE.RIGHT
+          : CHAT_SIDE.LEFT,
       hasMentionToMe: messageHasMentionToMe(message.message),
       isGuest: playerData ? playerData.isGuest : true
     }
@@ -197,24 +201,6 @@ export default class ChatAndLogs {
     } else {
       state.shownMessages.push(chatMessage)
       scrollToBottom()
-    }
-
-    function getNextMessageSide(
-      messages: ChatMessageRepresentation[]
-    ): CHAT_SIDE {
-      const previousMessage: ChatMessageRepresentation =
-        messages[messages.length - 1]
-
-      return isTruthy(previousMessage) &&
-        previousMessage.sender_address !== message.sender_address
-        ? getSwitchedSide(previousMessage)
-        : previousMessage?.side ?? CHAT_SIDE.LEFT
-
-      function getSwitchedSide(message: ChatMessageRepresentation): CHAT_SIDE {
-        return message.side === CHAT_SIDE.LEFT
-          ? CHAT_SIDE.RIGHT
-          : CHAT_SIDE.LEFT
-      }
     }
   }
 
@@ -441,12 +427,16 @@ function HeaderArea(): ReactElement {
         }}
       />
       <Icon
-        uiTransform={{ margin: { left: '4%' }, zIndex: 3 }}
-        iconSize={28}
+        uiTransform={{ margin: { left: '4%' }, zIndex: 3, flexShrink: 0 }}
+        iconSize={getCanvasScaleRatio() * 48}
         icon={{ spriteName: 'DdlIconColor', atlasName: 'icons' }}
       />
       <Label
-        uiTransform={{ zIndex: 3 }}
+        uiTransform={{
+          zIndex: 3,
+          width: '100%'
+        }}
+        textAlign={'top-left'}
         value={'Nearby'}
         fontSize={fontSize}
         color={COLOR.INACTIVE}

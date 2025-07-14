@@ -29,6 +29,7 @@ const RENDER_NOTIFICATION_TYPES: NotificationType[] = [
   'events_starts_soon',
   'social_service_friendship_request',
   'social_service_friendship_accepted'
+
   // TODO add all other notification types that can be rendered
 ]
 
