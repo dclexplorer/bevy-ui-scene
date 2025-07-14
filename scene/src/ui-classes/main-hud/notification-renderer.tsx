@@ -98,6 +98,22 @@ export function NotificationItem({
           }}
         />
       </UiEntity>
+      {!notification.read && (
+        <UiEntity
+          uiTransform={{
+            positionType: 'absolute',
+            position: { right: '2%' },
+            width: getCanvasScaleRatio() * 20,
+            height: getCanvasScaleRatio() * 20,
+            borderColor: COLOR.BLACK_TRANSPARENT,
+            borderWidth: 0,
+            borderRadius: 999
+          }}
+          uiBackground={{
+            color: COLOR.RED
+          }}
+        />
+      )}
     </UiEntity>
   )
 }

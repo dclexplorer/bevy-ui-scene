@@ -8,7 +8,6 @@ import {
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { noop } from '../../utils/function-utils'
 import { type Popup } from '../../components/popup-stack'
-import notificationsMockData from './notifications_full_log_complete.json'
 import {
   EventNotification,
   isEventNotification,
@@ -18,31 +17,35 @@ import { signedFetch } from '~system/SignedFetch'
 import { NotificationItem } from './notification-renderer'
 const { useEffect, useState } = ReactEcs
 
-export async function preLoadNotifications() {
-  const result = await signedFetch({
-    //   url: 'http://localhost:5001/notifications',
-    url: 'https://notifications.decentraland.org/notifications',
-    init: {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'GET'
-    }
-  })
-  const notifications = JSON.parse(result.body).notifications.filter(
-    (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
-  )
-  const filteredNotifications = dedupeEventNotifications(
-    notificationsMockData.notifications as Notification[]
-  ).filter((n: Notification) => n.type !== 'credits_reminder_do_not_miss_out')
+export async function setupNotifications() {
+  fetchNotificationCount().catch(console.error)
 
-  const unreadNotifications = filteredNotifications.filter(
-    (n) => n.read === false
-  ).length
-  console.log('unreadNotifications', unreadNotifications)
-  store.dispatch(
-    updateHudStateAction({
-      unreadNotifications
+  async function fetchNotificationCount() {
+    const result = await signedFetch({
+      //   url: 'http://localhost:5001/notifications',
+      url: 'https://notifications.decentraland.org/notifications',
+      init: {
+        headers: { 'Content-Type': 'application/json' },
+        method: 'GET'
+      }
     })
-  )
+    const notifications = JSON.parse(result.body).notifications.filter(
+      (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
+    )
+    const filteredNotifications = dedupeEventNotifications(
+      notifications as Notification[]
+    )
+
+    const unreadNotifications = filteredNotifications.filter(
+      (n) => n.read === false
+    ).length
+
+    store.dispatch(
+      updateHudStateAction({
+        unreadNotifications
+      })
+    )
+  }
 }
 
 export const NotificationsMenu: Popup = (): ReactElement | null => {
@@ -91,14 +94,33 @@ function NotificationsContent(): ReactElement {
           (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
         )
         const filteredNotifications = dedupeEventNotifications(
-          notificationsMockData.notifications as Notification[]
-        ).filter(
-          (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
+          notifications as Notification[]
         )
         setNotifications(filteredNotifications)
         setLoadingNotifications(false)
+
+        markAllRead(notifications)
       } catch (error) {
         console.error(error)
+      }
+
+      function markAllRead(notifications: Notification[]) {
+        const unreadNotifications = notifications.filter(
+          (n: Notification) => n.read === false
+        )
+
+        signedFetch({
+          url: `https:/notifications.decentraland.org/notifications/read`,
+          init: {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'PUT',
+            body: JSON.stringify({
+              notificationIds: unreadNotifications.map(
+                (n: Notification) => n.id
+              )
+            })
+          }
+        }).catch(console.error)
       }
     })()
   }, [])
