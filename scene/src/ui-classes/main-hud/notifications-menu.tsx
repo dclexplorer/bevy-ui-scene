@@ -67,21 +67,19 @@ function NotificationsContent(): ReactElement {
             method: 'GET'
           }
         })
-
         const notifications = JSON.parse(result.body).notifications.filter(
           (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
         )
-        console.log('setLoadingNotifications', notifications)
-
-        setNotifications(
-          dedupeEventNotifications(
-            notificationsMockData.notifications as Notification[]
-          ).filter(
-            (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
-          )
+        const filteredNotifications = dedupeEventNotifications(
+          notificationsMockData.notifications as Notification[]
+        ).filter(
+          (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
         )
+        setNotifications(filteredNotifications)
         setLoadingNotifications(false)
-      } catch (error) {}
+      } catch (error) {
+        console.error(error)
+      }
     })()
   }, [])
 
