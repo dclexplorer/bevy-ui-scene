@@ -14,7 +14,6 @@ import { type ReactElement } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
-import { setupNotifications } from './notifications-menu'
 
 const ZERO_SIZE = {
   width: 0,

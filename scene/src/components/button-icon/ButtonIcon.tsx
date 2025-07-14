@@ -90,6 +90,7 @@ function ButtonIcon(props: {
         <Label
           value={props.notifications?.toString() ?? '0'}
           textAlign="middle-center"
+          fontSize={getCanvasScaleRatio() * 20}
           uiTransform={{ width: '100%', height: '100%' }}
         />
       </UiEntity>
