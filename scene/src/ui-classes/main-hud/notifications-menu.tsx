@@ -99,28 +99,31 @@ function NotificationsContent(): ReactElement {
         setNotifications(filteredNotifications)
         setLoadingNotifications(false)
 
-        markAllRead(notifications)
+        // TODO markAllRead(notifications)
       } catch (error) {
         console.error(error)
       }
 
       function markAllRead(notifications: Notification[]) {
+        // TODO fix: shows "invalid type"
         const unreadNotifications = notifications.filter(
           (n: Notification) => n.read === false
         )
-
-        signedFetch({
-          url: `https:/notifications.decentraland.org/notifications/read`,
-          init: {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'PUT',
-            body: JSON.stringify({
-              notificationIds: unreadNotifications.map(
-                (n: Notification) => n.id
-              )
-            })
-          }
-        }).catch(console.error)
+        console.log('unreadNotifications', unreadNotifications)
+        if (unreadNotifications.length > 0) {
+          signedFetch({
+            url: `https:/notifications.decentraland.org/notifications/read`,
+            init: {
+              headers: { 'Content-Type': 'application/json' },
+              method: 'PUT',
+              body: JSON.stringify({
+                notificationIds: unreadNotifications.map(
+                  (n: Notification) => n.id
+                )
+              })
+            }
+          }).catch(console.error)
+        }
       }
     })()
   }, [])
