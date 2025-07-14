@@ -1,30 +1,50 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { COLOR } from '../../components/color-palette'
-import { closeLastPopupAction } from '../../state/hud/actions'
+import {
+  closeLastPopupAction,
+  updateHudStateAction
+} from '../../state/hud/actions'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-
 import { noop } from '../../utils/function-utils'
-import Icon from '../../components/icon/Icon'
-import { Color4 } from '@dcl/sdk/math'
 import { type Popup } from '../../components/popup-stack'
 import notificationsMockData from './notifications_full_log_complete.json'
-import { AtlasIcon } from '../../utils/definitions'
-import { AvatarCircle } from '../../components/avatar-circle'
-import { getAddressColor } from './chat-and-logs/ColorByAddress'
 import {
   EventNotification,
   isEventNotification,
   Notification
 } from './notification-types'
-import { executeTask } from '@dcl/sdk/ecs'
-import { Authenticator } from '@dcl/crypto'
 import { signedFetch } from '~system/SignedFetch'
-import { sleep } from '../../utils/dcl-utils'
-import { BevyApi } from '../../bevy-api'
 import { NotificationItem } from './notification-renderer'
-
 const { useEffect, useState } = ReactEcs
+
+export async function preLoadNotifications() {
+  const result = await signedFetch({
+    //   url: 'http://localhost:5001/notifications',
+    url: 'https://notifications.decentraland.org/notifications',
+    init: {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'GET'
+    }
+  })
+  const notifications = JSON.parse(result.body).notifications.filter(
+    (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
+  )
+  const filteredNotifications = dedupeEventNotifications(
+    notificationsMockData.notifications as Notification[]
+  ).filter((n: Notification) => n.type !== 'credits_reminder_do_not_miss_out')
+
+  const unreadNotifications = filteredNotifications.filter(
+    (n) => n.read === false
+  ).length
+  console.log('unreadNotifications', unreadNotifications)
+  store.dispatch(
+    updateHudStateAction({
+      unreadNotifications
+    })
+  )
+}
+
 export const NotificationsMenu: Popup = (): ReactElement | null => {
   return (
     <UiEntity

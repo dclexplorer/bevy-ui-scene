@@ -61,6 +61,7 @@ export type HudState = {
   shownPopups: HUDPopup[]
   profileData: ViewAvatarData
   names: NameDefinition[]
+  unreadNotifications: number
 }
 
 export type HudStateUpdateParams = {
@@ -68,11 +69,13 @@ export type HudStateUpdateParams = {
   shownPopup?: HUDPopup[]
   profileData?: ViewAvatarData
   names?: NameDefinition[]
+  unreadNotifications?: number
 }
 
 export const hudInitialState: HudState = {
   chatOpen: true,
   shownPopups: [],
   profileData: cloneDeep(EMPTY_PROFILE_DATA),
-  names: []
+  names: [],
+  unreadNotifications: 0
 }

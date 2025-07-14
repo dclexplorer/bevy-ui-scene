@@ -14,6 +14,7 @@ import { type ReactElement } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
+import { preLoadNotifications } from './notifications-menu'
 
 const ZERO_SIZE = {
   width: 0,
@@ -141,6 +142,8 @@ export default class MainHud {
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatsAndLogs()
     this.friends = new Friends(uiController)
+
+    preLoadNotifications().catch(console.error)
   }
 
   voiceChatDown(): void {
@@ -406,6 +409,7 @@ export default class MainHud {
             hintText={'Notifications'}
             showHint={this.bellHint}
             iconSize={buttonIconSize}
+            notifications={store.getState().hud.unreadNotifications}
           />
 
           <UiEntity
