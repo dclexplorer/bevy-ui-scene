@@ -13,26 +13,29 @@ import {
   isEventNotification,
   Notification
 } from './notification-types'
-import { signedFetch } from '~system/SignedFetch'
 import { NotificationItem } from './notification-renderer'
 import { BevyApi } from '../../bevy-api'
-import { getRealm } from '~system/Runtime'
 import { SignedFetchMeta, SignedFetchMetaJson } from '../../bevy-api/interface'
 const { useEffect, useState } = ReactEcs
 const meta = JSON.stringify({} as SignedFetchMeta) as SignedFetchMetaJson
+
+const NOTIFICATIONS_BASE_URL =
+  'https://notifications.decentraland.org/notifications'
+
 export async function setupNotifications() {
   fetchNotificationCount().catch(console.error)
 
   async function fetchNotificationCount() {
     const result = await BevyApi.kernelFetch({
       // url: 'http://localhost:5001/notifications',
-      url: 'https://notifications.decentraland.org/notifications',
+      url: NOTIFICATIONS_BASE_URL,
       init: {
         headers: { 'Content-Type': 'application/json' },
         method: 'GET'
       },
       meta
     })
+
     const notifications = JSON.parse(result.body).notifications.filter(
       (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
     )
@@ -87,8 +90,7 @@ function NotificationsContent(): ReactElement {
       try {
         setLoadingNotifications(true)
         const result = await BevyApi.kernelFetch({
-          //   url: 'http://localhost:5001/notifications',
-          url: 'https://notifications.decentraland.org/notifications',
+          url: NOTIFICATIONS_BASE_URL,
           init: {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -104,20 +106,19 @@ function NotificationsContent(): ReactElement {
         setNotifications(filteredNotifications)
         setLoadingNotifications(false)
 
-        // TODO markAllRead(notifications)
+        markAllRead(notifications)
       } catch (error) {
         console.error(error)
       }
 
       function markAllRead(notifications: Notification[]) {
-        // TODO fix: shows "invalid type"
         const unreadNotifications = notifications.filter(
           (n: Notification) => n.read === false
         )
         console.log('unreadNotifications', unreadNotifications)
         if (unreadNotifications.length > 0) {
           BevyApi.kernelFetch({
-            url: `https:/notifications.decentraland.org/notifications/read`,
+            url: `${NOTIFICATIONS_BASE_URL}/read`,
             init: {
               headers: { 'Content-Type': 'application/json' },
               method: 'PUT',
