@@ -21,6 +21,16 @@ const meta = JSON.stringify({} as SignedFetchMeta) as SignedFetchMetaJson
 
 const NOTIFICATIONS_BASE_URL =
   'https://notifications.decentraland.org/notifications'
+export type NotificationType = Notification['type']
+
+const RENDER_NOTIFICATION_TYPES: NotificationType[] = [
+  'events_started',
+  'events_starts_soon',
+  'events_starts_soon',
+  'social_service_friendship_request',
+  'social_service_friendship_accepted'
+  // TODO add all other notification types that can be rendered
+]
 
 export async function setupNotifications() {
   fetchNotificationCount().catch(console.error)
@@ -98,7 +108,7 @@ function NotificationsContent(): ReactElement {
           meta
         })
         const notifications = JSON.parse(result.body).notifications.filter(
-          (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
+          (n: Notification) => RENDER_NOTIFICATION_TYPES.includes(n.type)
         )
         const filteredNotifications = dedupeEventNotifications(
           notifications as Notification[]
@@ -130,6 +140,7 @@ function NotificationsContent(): ReactElement {
             },
             meta
           }).catch(console.error)
+          store.dispatch(updateHudStateAction({ unreadNotifications: 0 }))
         }
       }
     })()
