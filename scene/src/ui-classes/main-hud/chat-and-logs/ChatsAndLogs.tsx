@@ -28,7 +28,7 @@ import {
   type ChatMessageDefinition,
   type ChatMessageRepresentation
 } from '../../../components/chat-message/ChatMessage.types'
-import { isTruthy, memoize } from '../../../utils/function-utils'
+import { memoize } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import { copyToClipboard, setUiFocus } from '~system/RestrictedActions'

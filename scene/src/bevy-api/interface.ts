@@ -26,8 +26,8 @@ export type SignedFetchMeta = {
   tld?: string
   network?: string
   is_guest?: boolean
-  realm: SignedFetchMetaRealm
-  signer: string
+  realm?: SignedFetchMetaRealm
+  signer?: string
 }
 export type JsonStringified<T> = string & { __jsonBrand: T } // TODO
 export type SignedFetchMetaJson = JsonStringified<SignedFetchMeta>
@@ -39,7 +39,7 @@ export type KernelFetch = {
     headers: Record<string, string>
     body?: string
   }
-  meta?: SignedFetchMetaJson
+  meta?: string
 }
 
 export type KernelFetchRespose = {

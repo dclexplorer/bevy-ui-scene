@@ -9,15 +9,19 @@ import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { noop } from '../../utils/function-utils'
 import { type Popup } from '../../components/popup-stack'
 import {
-  EventNotification,
+  type EventNotification,
   isEventNotification,
-  Notification
+  type Notification
 } from './notification-types'
 import { NotificationItem } from './notification-renderer'
 import { BevyApi } from '../../bevy-api'
-import { SignedFetchMeta, SignedFetchMetaJson } from '../../bevy-api/interface'
+import { type SignedFetchMeta } from '../../bevy-api/interface'
+import { executeTask } from '@dcl/sdk/ecs'
+import { Label } from '@dcl/sdk/react-ecs'
+import { Color4 } from '@dcl/sdk/math'
 const { useEffect, useState } = ReactEcs
-const meta = JSON.stringify({} as SignedFetchMeta) as SignedFetchMetaJson
+const emptyMeta: SignedFetchMeta = {}
+const meta: string = JSON.stringify(emptyMeta)
 
 const NOTIFICATIONS_BASE_URL =
   'https://notifications.decentraland.org/notifications'
@@ -41,14 +45,14 @@ const RENDER_NOTIFICATION_TYPES: NotificationType[] = [
   'scene_event_milestone',
   'crowd_event_milestone',
   'xp_event_milestone',
-  'nft_milestone'*/
+  'nft_milestone' */
   // TODO add all other notification types that can be rendered
 ]
 
-export async function setupNotifications() {
+export async function setupNotifications(): Promise<void> {
   fetchNotificationCount().catch(console.error)
 
-  async function fetchNotificationCount() {
+  async function fetchNotificationCount(): Promise<void> {
     const result = await BevyApi.kernelFetch({
       // url: 'http://localhost:5001/notifications',
       url: `${NOTIFICATIONS_BASE_URL}?limit=50`,
@@ -68,7 +72,7 @@ export async function setupNotifications() {
     )
 
     const unreadNotifications = filteredNotifications.filter(
-      (n) => n.read === false
+      (n) => !n.read
     ).length
 
     store.dispatch(
@@ -104,13 +108,16 @@ export const NotificationsMenu: Popup = (): ReactElement | null => {
 }
 
 function NotificationsContent(): ReactElement {
-  const [errorDetails, setErrorDetails] = useState<string>('')
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loadingNotifications, setLoadingNotifications] =
     useState<boolean>(true)
 
+  const t = (Date.now() % 2000) / 1000 // TODO move to a singleton service with getLoadingAlphaWhiteColor() using a system
+
+  const loadingAlpha = t < 1 ? t : 2 - t
+
   useEffect(() => {
-    ;(async () => {
+    executeTask(async () => {
       try {
         setLoadingNotifications(true)
         const result = await BevyApi.kernelFetch({
@@ -135,9 +142,9 @@ function NotificationsContent(): ReactElement {
         console.error(error)
       }
 
-      function markAllRead(notifications: Notification[]) {
+      function markAllRead(notifications: Notification[]): void {
         const unreadNotifications = notifications.filter(
-          (n: Notification) => n.read === false
+          (n: Notification) => !n.read
         )
         if (unreadNotifications.length > 0) {
           BevyApi.kernelFetch({
@@ -156,7 +163,7 @@ function NotificationsContent(): ReactElement {
           store.dispatch(updateHudStateAction({ unreadNotifications: 0 }))
         }
       }
-    })()
+    })
   }, [])
 
   return (
@@ -199,6 +206,14 @@ function NotificationsContent(): ReactElement {
           overflow: 'scroll'
         }}
       >
+        {loadingNotifications && (
+          <Label
+            fontSize={getCanvasScaleRatio() * 32}
+            value={'Loading notifications ...'}
+            color={Color4.create(1, 1, 1, loadingAlpha)}
+          />
+        )}
+
         {notifications.map((notification) => {
           return (
             <NotificationItem

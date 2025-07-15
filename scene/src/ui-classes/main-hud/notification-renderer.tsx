@@ -1,27 +1,19 @@
 import {
-  FriendshipNotification,
+  type FriendshipNotification,
   isEventNotification,
   isFriendshipNotification,
-  Notification,
-  UserProfile
+  type Notification,
+  type UserProfile
 } from './notification-types'
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../components/color-palette'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import Icon from '../../components/icon/Icon'
-import { Color4 } from '@dcl/sdk/math'
-import { AtlasIcon } from '../../utils/definitions'
+import { type Color4 } from '@dcl/sdk/math'
+import { type AtlasIcon } from '../../utils/definitions'
 import { AvatarCircle } from '../../components/avatar-circle'
 import { getAddressColor } from './chat-and-logs/ColorByAddress'
 import { rgbToHex } from '../../utils/ui-utils'
-
-type NotificationRenderer = ({
-  notification
-}: {
-  notification: Notification
-}) => ReactElement | null
-
-const EmptyRenderer: NotificationRenderer = () => null
 
 export function NotificationItem({
   notification
@@ -180,32 +172,25 @@ function getDescriptionFromNotification(notification: Notification): string {
       return `<color=${hexColor}>${protagonist.name}</color> wants to be your friend.`
     }
   }
-  switch (notification.type) {
-    case 'credits_reminder_do_not_miss_out':
-      return `Click to claim your credits!`
-    case 'events_started':
-    case 'events_starts_soon':
-      return notification.metadata?.description ?? ''
-    case 'social_service_friendship_accepted':
-
-    case 'social_service_friendship_request':
-
-    default:
-      return ''
+  if (isEventNotification(notification)) {
+    return notification.metadata?.description ?? ''
   }
+  return ''
 }
 
 function getColorForNotificationType(notification: Notification): Color4 {
-  const { type } = notification
   if (isFriendshipNotification(notification as FriendshipNotification)) {
     return COLOR.NOTIFICATION_FRIEND
   }
+
   if (isEventNotification(notification)) {
     return COLOR.NOTIFICATION_EVENT
   }
+
   if (notification.type === 'badges_awarded') {
     return COLOR.NOTIFICATION_BADGE
   }
+
   return COLOR.NOTIFICATION_GIFT
 }
 
@@ -268,12 +253,12 @@ function NotificationThumbnail({
             userId={
               getFriendshipNotificationProtagonist(
                 notification as FriendshipNotification
-              )!.address
+              ).address
             }
             circleColor={getAddressColor(
               getFriendshipNotificationProtagonist(
                 notification as FriendshipNotification
-              )!.address
+              ).address
             )}
             uiTransform={{
               width: '100%',

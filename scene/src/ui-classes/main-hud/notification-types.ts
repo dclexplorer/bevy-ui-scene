@@ -1,4 +1,4 @@
-export interface BaseNotification {
+export type BaseNotification = {
   id: string
   type: string
   address: string
@@ -8,15 +8,15 @@ export interface BaseNotification {
 }
 
 // Credits reminder
-export interface CreditsReminderNotification extends BaseNotification {
+export type CreditsReminderNotification = {
   type: 'credits_reminder_do_not_miss_out'
   metadata: {
     link: string
   }
-}
+} & BaseNotification
 
 // Events
-export interface EventStartedNotification extends BaseNotification {
+export type EventStartedNotification = {
   type: 'events_started'
   metadata: {
     link: string
@@ -25,9 +25,9 @@ export interface EventStartedNotification extends BaseNotification {
     title: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface EventStartsSoonNotification extends BaseNotification {
+export type EventStartsSoonNotification = {
   type: 'events_starts_soon'
   metadata: {
     link: string
@@ -38,9 +38,9 @@ export interface EventStartsSoonNotification extends BaseNotification {
     endsAt: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface EventEndedNotification extends BaseNotification {
+export type EventEndedNotification = {
   type: 'events_ended'
   metadata: {
     link: string
@@ -49,71 +49,71 @@ export interface EventEndedNotification extends BaseNotification {
     title: string
     description: string
   }
-}
+} & BaseNotification
 
 // Social
-export interface FriendshipAcceptedNotification extends BaseNotification {
+export type FriendshipAcceptedNotification = {
   type: 'social_service_friendship_accepted'
   metadata: {
     sender: UserProfile
     receiver: UserProfile
     requestId: string
   }
-}
+} & BaseNotification
 
-export interface FriendshipRequestNotification extends BaseNotification {
+export type FriendshipRequestNotification = {
   type: 'social_service_friendship_request'
   metadata: {
     sender: UserProfile
     receiver: UserProfile
     requestId: string
   }
-}
+} & BaseNotification
 
-export interface WearablesDropNotification extends BaseNotification {
+export type WearablesDropNotification = {
   type: 'wearables_drop'
   metadata: {
     itemName: string
     image: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface NameClaimNotification extends BaseNotification {
+export type NameClaimNotification = {
   type: 'name_claim'
   metadata: {
     name: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface CrowdEventMilestoneNotification extends BaseNotification {
+export type CrowdEventMilestoneNotification = {
   type: 'crowd_event_milestone'
   metadata: {
     eventName: string
     milestone: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface SceneEventMilestoneNotification extends BaseNotification {
+export type SceneEventMilestoneNotification = {
   type: 'scene_event_milestone'
   metadata: {
     sceneName: string
     milestone: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface XpEventMilestoneNotification extends BaseNotification {
+export type XpEventMilestoneNotification = {
   type: 'xp_event_milestone'
   metadata: {
     milestone: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface NftMilestoneNotification extends BaseNotification {
+export type NftMilestoneNotification = {
   type: 'nft_milestone'
   metadata: {
     contractAddress: string
@@ -121,18 +121,18 @@ export interface NftMilestoneNotification extends BaseNotification {
     milestone: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface DaoProposalPublishedNotification extends BaseNotification {
+export type DaoProposalPublishedNotification = {
   type: 'dao_proposal_published'
   metadata: {
     proposalId: string
     title: string
     link: string
   }
-}
+} & BaseNotification
 
-export interface DaoProposalFinishNotification extends BaseNotification {
+export type DaoProposalFinishNotification = {
   type: 'dao_proposal_finish'
   metadata: {
     proposalId: string
@@ -140,61 +140,61 @@ export interface DaoProposalFinishNotification extends BaseNotification {
     result: string
     link: string
   }
-}
+} & BaseNotification
 
-export interface DaoVoteReminderNotification extends BaseNotification {
+export type DaoVoteReminderNotification = {
   type: 'dao_vote_reminder'
   metadata: {
     proposalId: string
     title: string
     link: string
   }
-}
+} & BaseNotification
 
-export interface ChallengeCompletedNotification extends BaseNotification {
+export type ChallengeCompletedNotification = {
   type: 'challenge_completed'
   metadata: {
     challengeId: string
     title: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface QuestCompletedNotification extends BaseNotification {
+export type QuestCompletedNotification = {
   type: 'quest_completed'
   metadata: {
     questId: string
     title: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface BadgesAwardedNotification extends BaseNotification {
+export type BadgesAwardedNotification = {
   type: 'badges_awarded'
   metadata: {
     badgeName: string
     badgeImage: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface XpRewardNotification extends BaseNotification {
+export type XpRewardNotification = {
   type: 'xp_reward'
   metadata: {
     amount: number
     description: string
   }
-}
+} & BaseNotification
 
-export interface RankChangedNotification extends BaseNotification {
+export type RankChangedNotification = {
   type: 'rank_changed'
   metadata: {
     newRank: string
     description: string
   }
-}
+} & BaseNotification
 
-export interface UserProfile {
+export type UserProfile = {
   name: string
   address: string
   hasClaimedName: boolean

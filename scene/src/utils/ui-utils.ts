@@ -348,7 +348,7 @@ export function rgbToHex(
 ): string {
   const { r, g, b, a } = rgb
 
-  const toHex = (value: number) => {
+  const toHex = (value: number): string => {
     const scaled = Math.round(value * 255)
     return scaled.toString(16).padStart(2, '0')
   }

@@ -20,6 +20,18 @@ export async function init(retry: boolean): Promise<void> {
 
     /*    store.dispatch(
       pushPopupAction({
+        type: HUD_POPUP_TYPE.NOTIFICATIONS_MENU
+      })
+    ) */
+
+    /*    store.dispatch(
+      pushPopupAction({
+        type: HUD_POPUP_TYPE.ERROR,
+        data: 'This is the error description'
+      })
+    ) */
+    /*    store.dispatch(
+      pushPopupAction({
         type: HUD_POPUP_TYPE.PROFILE_MENU,
         data: getPlayer()?.userId
       })
