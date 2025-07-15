@@ -98,7 +98,6 @@ export function setupPassportPopup(): void {
         const [avatarData] = profileData.avatars
         const names = await fetchAllUserNames({ userId })
         state.editable = userId === getPlayer()?.userId
-        console.log('avatarData', avatarData)
 
         store.dispatch(
           updateHudStateAction({
@@ -329,6 +328,7 @@ function Overview(): ReactElement {
           _getVisibleProperties(profileData).map(
             (propertyKey: keyof ViewAvatarData) => (
               <ProfilePropertyField
+                uiTransform={{ width: '25%' }}
                 propertyKey={propertyKey ?? ''}
                 profileData={profileData}
                 editing={state.editing}
@@ -344,7 +344,8 @@ function Overview(): ReactElement {
                 profileData={profileData}
                 editing={state.editing}
                 uiTransform={{
-                  zIndex: editablePropertyKeys.length + 99 - index
+                  zIndex: editablePropertyKeys.length + 99 - index,
+                  width: '25%'
                 }}
               />
             )
@@ -610,7 +611,12 @@ function NameRow({
     >
       <StatusIcon fontSize={fontSize} />
       <UiEntity
-        uiText={{ value: name, fontSize, textAlign: 'middle-left' }}
+        uiText={{
+          value: name,
+          fontSize,
+          textAlign: 'middle-left',
+          textWrap: 'nowrap'
+        }}
         uiTransform={{
           alignSelf: 'flex-start',
           padding: 0,

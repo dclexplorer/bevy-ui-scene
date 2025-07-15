@@ -88,7 +88,6 @@ export function ProfilePropertyField({
     <UiEntity
       uiTransform={{
         flexDirection: 'column',
-        width: '25%',
         alignItems: 'flex-start',
         margin: { top: getCanvasScaleRatio() * 30 },
         ...uiTransform
@@ -144,12 +143,15 @@ export function ProfilePropertyField({
             margin: {
               top: getCanvasScaleRatio() * -20,
               left: getCanvasScaleRatio() * 30
-            }
+            },
+            width: '100%'
           }}
           uiText={{
             value: formatProfileValue(propertyKey),
             fontSize: getCanvasScaleRatio() * 30,
-            color: COLOR.TEXT_COLOR_LIGHT_GREY
+            color: COLOR.TEXT_COLOR_LIGHT_GREY,
+            textWrap: 'wrap',
+            textAlign: 'top-left'
           }}
         />
       )}
