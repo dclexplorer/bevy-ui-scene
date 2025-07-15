@@ -29,7 +29,19 @@ const RENDER_NOTIFICATION_TYPES: NotificationType[] = [
   'events_starts_soon',
   'social_service_friendship_request',
   'social_service_friendship_accepted'
-
+  /*  'dao_proposal_published',
+  'dao_proposal_finish',
+  'dao_vote_reminder',
+  'name_claim',
+  'wearables_drop',
+  'xp_reward',
+  'badges_awarded',
+  'rank_changed',
+  'badges_awarded',
+  'scene_event_milestone',
+  'crowd_event_milestone',
+  'xp_event_milestone',
+  'nft_milestone'*/
   // TODO add all other notification types that can be rendered
 ]
 
@@ -39,7 +51,7 @@ export async function setupNotifications() {
   async function fetchNotificationCount() {
     const result = await BevyApi.kernelFetch({
       // url: 'http://localhost:5001/notifications',
-      url: NOTIFICATIONS_BASE_URL,
+      url: `${NOTIFICATIONS_BASE_URL}?limit=50`,
       init: {
         headers: { 'Content-Type': 'application/json' },
         method: 'GET'
@@ -48,8 +60,9 @@ export async function setupNotifications() {
     })
 
     const notifications = JSON.parse(result.body).notifications.filter(
-      (n: Notification) => n.type !== 'credits_reminder_do_not_miss_out'
+      (n: Notification) => RENDER_NOTIFICATION_TYPES.includes(n.type)
     )
+
     const filteredNotifications = dedupeEventNotifications(
       notifications as Notification[]
     )
@@ -101,7 +114,7 @@ function NotificationsContent(): ReactElement {
       try {
         setLoadingNotifications(true)
         const result = await BevyApi.kernelFetch({
-          url: NOTIFICATIONS_BASE_URL,
+          url: `${NOTIFICATIONS_BASE_URL}?limit=50`,
           init: {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -126,7 +139,6 @@ function NotificationsContent(): ReactElement {
         const unreadNotifications = notifications.filter(
           (n: Notification) => n.read === false
         )
-        console.log('unreadNotifications', unreadNotifications)
         if (unreadNotifications.length > 0) {
           BevyApi.kernelFetch({
             url: `${NOTIFICATIONS_BASE_URL}/read`,

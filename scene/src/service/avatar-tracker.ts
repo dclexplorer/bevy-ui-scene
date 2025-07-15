@@ -44,7 +44,6 @@ export const createOrGetAvatarsTracker = (): {
   const avatarProxies = new Map<string, Entity>()
 
   onEnterScene((player) => {
-    // TODO REVIEW: consider excluding own player avatar
     if (player.isGuest || player.userId === getPlayer()?.userId) {
       return
     }

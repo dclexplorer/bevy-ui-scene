@@ -196,8 +196,9 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
           ]}
           {state.loadingProfile && (
             <Label
-              value={'Loading ...'}
+              value={'Loading Avatar Passport ...'}
               fontSize={getCanvasScaleRatio() * 32}
+              color={COLOR.TEXT_COLOR_GREY}
             />
           )}
           <CloseButton
@@ -244,7 +245,6 @@ function ProfileContent(): ReactElement {
           hasClaimedName: profileData.hasClaimedName
         })}
         {AddressRow({
-          // TODO review if need to check isGuest (not available in catalyst remote profile)
           address: profileData.userId,
           fontSize: getCanvasScaleRatio() * 28
         })}
