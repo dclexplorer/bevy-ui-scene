@@ -126,6 +126,7 @@ export type BevyApiInterface = {
   getSystemActionStream: () => Promise<SystemAction[]>
   getChatStream: () => Promise<ChatMessageDefinition[]>
   sendChat: (message: string, channel?: string) => void
+  quit: () => void
 }
 
 // system api module

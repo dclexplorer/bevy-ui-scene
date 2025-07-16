@@ -23,6 +23,7 @@ import { Color4 } from '@dcl/sdk/math'
 import { BottomBorder } from '../../../components/bottom-border'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import { logout } from '../../../controllers/ui.controller'
+import { BevyApi } from '../../../bevy-api'
 
 export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
   if (!getPlayer()) return null
@@ -185,7 +186,7 @@ export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
 
           <ButtonTextIcon
             onMouseDown={() => {
-              // TODO BevyApi.exit() ?
+              BevyApi.quit()
             }}
             uiTransform={{
               width: '80%',
