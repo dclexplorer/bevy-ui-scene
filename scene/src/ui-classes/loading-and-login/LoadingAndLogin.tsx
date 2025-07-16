@@ -1,4 +1,4 @@
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Callback, UiEntity } from '@dcl/sdk/react-ecs'
 import { openExternalUrl } from '~system/RestrictedActions'
@@ -15,6 +15,9 @@ import {
 } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { noop } from '../../utils/function-utils'
+import { store } from '../../state/store'
+import { pushPopupAction } from '../../state/hud/actions'
+import { HUD_POPUP_TYPE } from '../../state/hud/state'
 
 type StatusType =
   | 'loading'
@@ -68,7 +71,7 @@ export default class LoadingAndLogin {
   }
 
   startLoading(): void {
-    this.status = 'sign-in-or-guest'
+    this.status = 'loading'
     this.updateLayout()
     this.isVisible = true
   }
@@ -186,14 +189,25 @@ export default class LoadingAndLogin {
               this.finishLoading()
             })
             .catch((error) => {
-              this.uiController.warningPopUp.message = error.message
+              console.error(error)
+              // TODO consider removing commented code along with related code
+
+              /*  this.uiController.warningPopUp.message = error.message
               this.uiController.warningPopUp.tittle =
                 'Error logging in with previous account:'
               this.uiController.warningPopUp.action = () => {
                 this.setStatus('sign-in-or-guest')
               }
               this.uiController.warningPopUp.icon = 'WarningColor'
-              this.uiController.warningPopUp.show()
+              this.uiController.warningPopUp.show()*/
+
+              store.dispatch(
+                pushPopupAction({
+                  type: HUD_POPUP_TYPE.ERROR,
+                  data: error
+                })
+              )
+              this.setStatus('sign-in-or-guest')
             })
         }
         this.secondButtonText = 'USE DIFFERENT ACCOUNT'

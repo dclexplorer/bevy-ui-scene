@@ -53,8 +53,6 @@ export async function init(retry: boolean): Promise<void> {
         type: HUD_POPUP_TYPE.NAME_EDIT
       })
     ) */
-
-    console.log('shownPopups', store.getState().hud.shownPopups)
   })
 
   const { description, url } = await BevyApi.checkForUpdate()
