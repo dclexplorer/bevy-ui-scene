@@ -22,6 +22,7 @@ import {
 import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { DropdownStyled } from '../../../components/dropdown-styled'
 import { Slider } from '../../../components/slider'
+import { COLOR } from '../../../components/color-palette'
 
 type SettingCategory =
   | 'general'
@@ -615,6 +616,12 @@ export default class SettingsPage {
                   )
                 }
               })}
+            <UiEntity
+              uiTransform={{
+                width: '100%',
+                height: canvasInfo.height * 0.2
+              }}
+            />
             {/* <UiEntity
               uiTransform={{
                 width: '100%',
