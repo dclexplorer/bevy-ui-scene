@@ -87,7 +87,8 @@ export async function init(retry: boolean): Promise<void> {
   store.dispatch(loadSettingsFromExplorer(explorerSettings))
 
   const previousLogin = await BevyApi.getPreviousLogin()
-  if (previousLogin.userId !== null) {
+
+  if (previousLogin.userId !== null && previousLogin.userId !== undefined) {
     gameInstance.uiController.loadingAndLogin.setStatus('reuse-login-or-new')
   } else {
     gameInstance.uiController.loadingAndLogin.setStatus('sign-in-or-guest')

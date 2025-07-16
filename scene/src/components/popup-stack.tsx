@@ -1,4 +1,4 @@
-import { type ReactElement } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../state/store'
 import { HUD_POPUP_TYPE, type HUDPopup } from '../state/hud/state'
 import { PopupUrl } from '../ui-classes/main-hud/popup-url'
@@ -25,11 +25,15 @@ const popupComponents: Record<number, Popup> = {
   [HUD_POPUP_TYPE.NOTIFICATIONS_MENU as number]: NotificationsMenu
 }
 
-export function PopupStack(): ReactElement[] {
-  return store
-    .getState()
-    .hud.shownPopups.map(
-      (shownPopup: HUDPopup) =>
-        popupComponents[shownPopup.type]({ shownPopup }) as ReactElement
-    )
+export function PopupStack(): ReactElement | null {
+  const shownPopups = store.getState().hud.shownPopups
+  if (!shownPopups) return null
+  return (
+    <UiEntity uiTransform={{ zIndex: 99999, width: '100%', height: '100%' }}>
+      {shownPopups.map(
+        (shownPopup: HUDPopup) =>
+          popupComponents[shownPopup.type]({ shownPopup }) as ReactElement
+      )}
+    </UiEntity>
+  )
 }

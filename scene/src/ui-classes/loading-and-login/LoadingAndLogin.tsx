@@ -1,4 +1,4 @@
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Callback, UiEntity } from '@dcl/sdk/react-ecs'
 import { openExternalUrl } from '~system/RestrictedActions'
@@ -18,6 +18,7 @@ import { noop } from '../../utils/function-utils'
 import { store } from '../../state/store'
 import { pushPopupAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
+import { showErrorPopup } from '../../service/error-popup-service'
 
 type StatusType =
   | 'loading'
@@ -119,25 +120,24 @@ export default class LoadingAndLogin {
         this.codeText = ''
         this.firstButtonText = 'START WITH ACCOUNT'
         this.firstButtonAction = () => {
-          const { code: getCode, success: getSuccess } = BevyApi.loginNew()
-          getCode
-            .then(async (code) => {
+          executeTask(async () => {
+            try {
+              const loginNewREsponse = BevyApi.loginNew()
+              const { code: getCode, success: getSuccess } = loginNewREsponse
+              getCode.catch(showErrorPopup)
+              getSuccess.catch(console.error)
+
+              const code = await getCode
+
               this.codeText = code.toString()
               this.setStatus('secure-step')
               await getSuccess
 
               this.finishLoading()
-            })
-            .catch((error) => {
-              // TODO: handle the error properly
-              // console.error('Error logging in with new account:', error)
-              this.uiController.warningPopUp.message = error
-              this.uiController.warningPopUp.tittle =
-                'Error logging in with new account:'
-              this.uiController.warningPopUp.action = () => {}
-              this.uiController.warningPopUp.icon = 'WarningColor'
-              this.uiController.warningPopUp.show()
-            })
+            } catch (error) {
+              console.error(error)
+            }
+          })
         }
         this.secondButtonText = 'EXPLORE AS GUEST'
         this.secondButtonAction = () => {
