@@ -2,11 +2,17 @@ import {
   type FriendshipNotification,
   isEventNotification,
   isFriendshipNotification,
+  isItemNotification,
+  ItemSoldNotification,
   type Notification,
   type UserProfile
 } from './notification-types'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { COLOR } from '../../components/color-palette'
+import {
+  COLOR,
+  RARITY_COLORS,
+  RARITY_HEX_COLORS
+} from '../../components/color-palette'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import Icon from '../../components/icon/Icon'
 import { type Color4 } from '@dcl/sdk/math'
@@ -14,6 +20,9 @@ import { type AtlasIcon } from '../../utils/definitions'
 import { AvatarCircle } from '../../components/avatar-circle'
 import { getAddressColor } from './chat-and-logs/ColorByAddress'
 import { rgbToHex } from '../../utils/ui-utils'
+import { RarityName } from '../../utils/item-definitions'
+import { RGBColor } from '../../bevy-api/interface'
+import { ImageCircle } from '../../components/image-circle'
 
 export function NotificationItem({
   notification
@@ -155,6 +164,8 @@ function getTitleFromNotification(notification: Notification): string {
       return 'Friend request accepted'
     case 'social_service_friendship_request':
       return 'Friend request received'
+    case 'item_sold':
+      return 'Item sold'
     default:
       return ''
   }
@@ -170,12 +181,24 @@ function getDescriptionFromNotification(notification: Notification): string {
       return `<color=${hexColor}>${protagonist.name}</color> accepted your friend request.`
     } else if (notification.type === 'social_service_friendship_request') {
       return `<color=${hexColor}>${protagonist.name}</color> wants to be your friend.`
+    } else if (notification.type === 'item_sold') {
     }
   }
-  if (isEventNotification(notification)) {
-    return notification.metadata?.description ?? ''
+
+  if (notification.metadata?.nftName) {
+    const itemSoldNotification: ItemSoldNotification =
+      notification as ItemSoldNotification
+
+    return (
+      notification.metadata.description.replace(
+        notification.metadata.nftName,
+        `<color=${
+          RARITY_HEX_COLORS[itemSoldNotification.metadata.rarity as RarityName]
+        }>${notification.metadata.nftName}</>`
+      ) ?? ''
+    )
   }
-  return ''
+  return notification.metadata.description ?? ''
 }
 
 function getColorForNotificationType(notification: Notification): Color4 {
@@ -242,6 +265,22 @@ function NotificationThumbnail({
         borderRadius: getCanvasScaleRatio() * 30
       }}
     >
+      {isItemNotification(notification) && (
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            height: '100%'
+          }}
+        >
+          <ImageCircle
+            image={notification.metadata.image}
+            circleColor={
+              RARITY_COLORS[notification.metadata.rarity as RarityName]
+            }
+            uiTransform={{ width: '100%', height: '100%' }}
+          />
+        </UiEntity>
+      )}
       {isFriendshipNotification(notification as FriendshipNotification) ? (
         <UiEntity
           uiTransform={{
@@ -278,7 +317,8 @@ function NotificationThumbnail({
           uiBackground={
             (notification.type === 'events_started' ||
               notification.type === 'events_ended' ||
-              notification.type === 'events_starts_soon') &&
+              notification.type === 'events_starts_soon' ||
+              notification.type === 'item_sold') &&
             notification.metadata.image
               ? {
                   textureMode: 'stretch',

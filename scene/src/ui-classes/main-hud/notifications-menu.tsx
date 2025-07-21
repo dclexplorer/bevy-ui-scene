@@ -30,7 +30,8 @@ export type NotificationType = Notification['type']
 const RENDER_NOTIFICATION_TYPES: NotificationType[] = [
   'events_started',
   'events_starts_soon',
-  'events_starts_soon'
+  'events_starts_soon',
+  'item_sold'
   /* 'social_service_friendship_request',
   'social_service_friendship_accepted'
    'dao_proposal_published',

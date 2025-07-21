@@ -1,3 +1,5 @@
+import { RarityName } from '../../utils/item-definitions'
+
 export type BaseNotification = {
   id: string
   type: string
@@ -6,6 +8,21 @@ export type BaseNotification = {
   timestamp: string
   read: boolean
 }
+
+export type ItemSoldNotification = {
+  type: 'item_sold'
+  metadata: {
+    category: string
+    description: string
+    image: string
+    link: string
+    network: string
+    nftName: string
+    rarity: RarityName
+    seller: string
+    title: string
+  }
+} & BaseNotification
 
 // Credits reminder
 export type CreditsReminderNotification = {
@@ -222,6 +239,7 @@ export type Notification =
   | BadgesAwardedNotification
   | XpRewardNotification
   | RankChangedNotification
+  | ItemSoldNotification
 export type FriendshipNotification =
   | FriendshipAcceptedNotification
   | FriendshipRequestNotification
@@ -236,6 +254,9 @@ export function isFriendshipNotification(
     notification.type === 'social_service_friendship_accepted' ||
     notification.type === 'social_service_friendship_request'
   )
+}
+export function isItemNotification(notification: Notification): boolean {
+  return notification.type === 'item_sold'
 }
 export function isEventNotification(notification: Notification): boolean {
   return (

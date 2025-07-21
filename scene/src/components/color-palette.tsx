@@ -92,14 +92,26 @@ export const COLOR = {
   NOTIFICATION_EVENT: Color4.fromHexString('#4386EDFF'),
   NOTIFICATION_BADGE: Color4.fromHexString('#edcb43')
 }
+export const RARITY_HEX_COLORS: Record<RarityName, string> = {
+  base: '#a09ba8',
+  common: '#73d3d3',
+  uncommon: '#ff8362',
+  rare: '#34ce76',
+  epic: '#438fff',
+  legendary: '#a14bf3',
+  exotic: '#A2DE23',
+  mythic: '#ff4bed',
+  unique: '#fea217'
+}
+
 export const RARITY_COLORS: Record<RarityName, Color4> = {
-  base: Color4.fromHexString('#a09ba8'),
-  common: Color4.fromHexString('#73d3d3'),
-  uncommon: Color4.fromHexString('#ff8362'),
-  rare: Color4.fromHexString('#34ce76'),
-  epic: Color4.fromHexString('#438fff'),
-  legendary: Color4.fromHexString('#a14bf3'),
-  exotic: Color4.fromHexString('#a2de23'),
-  mythic: Color4.fromHexString('#ff4bed'),
-  unique: Color4.fromHexString('#fea217')
+  base: Color4.fromHexString(RARITY_HEX_COLORS['base']),
+  common: Color4.fromHexString(RARITY_HEX_COLORS['common']),
+  uncommon: Color4.fromHexString(RARITY_HEX_COLORS['uncommon']),
+  rare: Color4.fromHexString(RARITY_HEX_COLORS['rare']),
+  epic: Color4.fromHexString(RARITY_HEX_COLORS['epic']),
+  legendary: Color4.fromHexString(RARITY_HEX_COLORS['legendary']),
+  exotic: Color4.fromHexString(RARITY_HEX_COLORS['exotic']),
+  mythic: Color4.fromHexString(RARITY_HEX_COLORS['mythic']),
+  unique: Color4.fromHexString(RARITY_HEX_COLORS['unique'])
 }
