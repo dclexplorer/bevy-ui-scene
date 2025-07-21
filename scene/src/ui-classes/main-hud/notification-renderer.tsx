@@ -3,7 +3,7 @@ import {
   isEventNotification,
   isFriendshipNotification,
   isItemNotification,
-  ItemSoldNotification,
+  isRewardNotification,
   type Notification,
   type UserProfile
 } from './notification-types'
@@ -81,7 +81,7 @@ export function NotificationItem({
           uiText={{
             value: getDescriptionFromNotification(notification),
             textAlign: 'top-left',
-            fontSize: getCanvasScaleRatio() * 28
+            fontSize: getCanvasScaleRatio() * 30
           }}
         />
         <UiEntity
@@ -94,7 +94,7 @@ export function NotificationItem({
           uiText={{
             value: formatTimeAgoFromTimestamp(notification.timestamp),
             textAlign: 'top-left',
-            fontSize: getCanvasScaleRatio() * 28,
+            fontSize: getCanvasScaleRatio() * 30,
             color: COLOR.TEXT_COLOR_LIGHT_GREY
           }}
         />
@@ -185,16 +185,15 @@ function getDescriptionFromNotification(notification: Notification): string {
     }
   }
 
-  if (notification.metadata?.nftName) {
-    const itemSoldNotification: ItemSoldNotification =
-      notification as ItemSoldNotification
-
+  if (notification.metadata?.nftName || notification.metadata?.tokenName) {
+    const nftName =
+      notification.metadata.nftName ?? notification.metadata.tokenName
+    const rarity =
+      notification.metadata.rarity ?? notification.metadata.tokenRarity
     return (
       notification.metadata.description.replace(
-        notification.metadata.nftName,
-        `<color=${
-          RARITY_HEX_COLORS[itemSoldNotification.metadata.rarity as RarityName]
-        }>${notification.metadata.nftName}</>`
+        nftName,
+        `<color=${RARITY_HEX_COLORS[rarity as RarityName]}>${nftName}<color/>`
       ) ?? ''
     )
   }
@@ -275,8 +274,9 @@ function NotificationThumbnailContent({
 }: {
   notification: Notification
 }): ReactElement {
-  if (isItemNotification(notification))
+  if (isItemNotification(notification) || isRewardNotification(notification)) {
     return <ItemNotificationThumbnail notification={notification} />
+  }
   if (isFriendshipNotification(notification))
     return (
       <FriendshipNotificationThumbnail
@@ -321,6 +321,8 @@ function ItemNotificationThumbnail({
 }: {
   notification: Notification
 }): ReactElement {
+  const rarity: RarityName =
+    notification.metadata.rarity ?? notification.metadata.tokenRarity
   return (
     <UiEntity
       uiTransform={{
@@ -329,8 +331,8 @@ function ItemNotificationThumbnail({
       }}
     >
       <ImageCircle
-        image={notification.metadata.image}
-        circleColor={RARITY_COLORS[notification.metadata.rarity as RarityName]}
+        image={notification.metadata.image ?? notification.metadata.tokenImage}
+        circleColor={RARITY_COLORS[rarity] ?? COLOR.BLACK_TRANSPARENT}
         uiTransform={{ width: '100%', height: '100%' }}
       />
     </UiEntity>

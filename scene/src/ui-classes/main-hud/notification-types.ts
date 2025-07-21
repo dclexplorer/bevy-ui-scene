@@ -211,6 +211,38 @@ export type RankChangedNotification = {
   }
 } & BaseNotification
 
+export type RewardAssignmentNotification = {
+  type: 'reward_assignment'
+  metadata: {
+    title: string
+    description: string
+    image: string
+    link: string
+    beneficiary: string
+    tokenName: string
+    tokenImage: string
+    tokenRarity: string
+    tokenCategory: string
+    campaignId: string
+    campaignName: string
+  }
+} & BaseNotification
+export type RewardInProgressNotification = {
+  type: 'reward_in_progress'
+  metadata: {
+    title: string
+    description: string
+    image: string
+    link: string
+    beneficiary: string
+    tokenName: string
+    tokenImage: string
+    tokenRarity: string
+    tokenCategory: string
+    campaignId: string
+    campaignName: string
+  }
+} & BaseNotification
 export type UserProfile = {
   name: string
   address: string
@@ -240,6 +272,9 @@ export type Notification =
   | XpRewardNotification
   | RankChangedNotification
   | ItemSoldNotification
+  | RewardAssignmentNotification
+  | RewardInProgressNotification
+
 export type FriendshipNotification =
   | FriendshipAcceptedNotification
   | FriendshipRequestNotification
@@ -251,6 +286,12 @@ export function isFriendshipNotification(notification: Notification): boolean {
   return (
     notification.type === 'social_service_friendship_accepted' ||
     notification.type === 'social_service_friendship_request'
+  )
+}
+export function isRewardNotification(notification: Notification): boolean {
+  return (
+    notification.type === 'reward_in_progress' ||
+    notification.type === 'reward_assignment'
   )
 }
 export function isItemNotification(notification: Notification): boolean {

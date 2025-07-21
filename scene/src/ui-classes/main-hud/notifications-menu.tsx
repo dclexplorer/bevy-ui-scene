@@ -31,7 +31,9 @@ const RENDER_NOTIFICATION_TYPES: NotificationType[] = [
   'events_started',
   'events_starts_soon',
   'events_starts_soon',
-  'item_sold'
+  'item_sold',
+  'reward_assignment',
+  'reward_in_progress'
   /* 'social_service_friendship_request',
   'social_service_friendship_accepted'
    'dao_proposal_published',
@@ -68,7 +70,7 @@ export async function setupNotifications(): Promise<void> {
       (n: Notification) => RENDER_NOTIFICATION_TYPES.includes(n.type)
     )
 
-    const filteredNotifications = dedupeEventNotifications(
+    const filteredNotifications = dedupeSameNameNotifications(
       notifications as Notification[]
     )
 
@@ -129,10 +131,12 @@ function NotificationsContent(): ReactElement {
           },
           meta
         })
+
         const notifications = JSON.parse(result.body).notifications.filter(
           (n: Notification) => RENDER_NOTIFICATION_TYPES.includes(n.type)
         )
-        const filteredNotifications = dedupeEventNotifications(
+
+        const filteredNotifications = dedupeSameNameNotifications(
           notifications as Notification[]
         )
         setNotifications(filteredNotifications)
@@ -231,36 +235,37 @@ function NotificationsContent(): ReactElement {
 function closeDialog(): void {
   store.dispatch(closeLastPopupAction())
 }
-function dedupeEventNotifications(
+
+function dedupeSameNameNotifications(
   notifications: Notification[]
 ): Notification[] {
-  const eventNotifications: EventNotification[] = notifications.filter(
-    isEventNotification
-  ) as EventNotification[]
-
-  const latestByName = new Map<string, EventNotification>()
-
-  for (const notification of eventNotifications) {
-    const name = notification.metadata.name
-
-    const existing = latestByName.get(name)
+  const latestByKey = new Map<string, Notification>()
+  for (const notification of notifications) {
+    const key = getNotificationKey(notification)
+    const existing = latestByKey.get(key)
     if (!existing) {
-      latestByName.set(name, notification)
+      latestByKey.set(key, notification)
     } else {
       if (new Date(notification.timestamp) > new Date(existing.timestamp)) {
-        latestByName.set(name, notification)
+        latestByKey.set(key, notification)
       }
     }
   }
-
-  const deduped: EventNotification[] = (
-    notifications as EventNotification[]
-  ).filter((n: EventNotification) => {
-    if (!isEventNotification(n)) return true
-
-    const latest = latestByName.get(n.metadata.name)
-    return latest?.id === n.id
-  })
+  const deduped: Notification[] = (notifications as Notification[]).filter(
+    (n: Notification) => {
+      //    if (!isEventNotification(n)) return true
+      const latest = latestByKey.get(getNotificationKey(n))
+      return latest?.id === n.id
+    }
+  )
 
   return deduped
+
+  function getNotificationKey(notification: Notification) {
+    return (
+      notification.metadata.name ??
+      notification.metadata.tokenName ??
+      notification.metadata.id
+    ) //each id is different, then this one won't be deduped
+  }
 }
