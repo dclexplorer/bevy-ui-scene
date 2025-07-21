@@ -17,8 +17,6 @@ export function ImageCircle({
 
   if (canvasInfo === null) return null
 
-  const addressColor = circleColor
-
   return (
     <UiEntity
       uiTransform={{
@@ -28,11 +26,11 @@ export function ImageCircle({
         alignItems: 'center',
         borderRadius: 999,
         borderWidth: getCanvasScaleRatio() * 3,
-        borderColor: addressColor,
+        borderColor: circleColor,
         ...uiTransform
       }}
       uiBackground={{
-        color: { ...addressColor, a: 0.3 }
+        color: { ...circleColor, a: 0.3 }
       }}
     >
       <UiEntity
@@ -47,7 +45,6 @@ export function ImageCircle({
           }
         }}
       />
-      AvatarCircle
     </UiEntity>
   )
 }

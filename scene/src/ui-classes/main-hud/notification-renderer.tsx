@@ -265,75 +265,107 @@ function NotificationThumbnail({
         borderRadius: getCanvasScaleRatio() * 30
       }}
     >
-      {isItemNotification(notification) && (
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: '100%'
-          }}
-        >
-          <ImageCircle
-            image={notification.metadata.image}
-            circleColor={
-              RARITY_COLORS[notification.metadata.rarity as RarityName]
+      <NotificationThumbnailContent notification={notification} />
+    </UiEntity>
+  )
+}
+
+function NotificationThumbnailContent({
+  notification
+}: {
+  notification: Notification
+}): ReactElement {
+  if (isItemNotification(notification))
+    return <ItemNotificationThumbnail notification={notification} />
+  if (isFriendshipNotification(notification))
+    return (
+      <FriendshipNotificationThumbnail
+        notification={notification as FriendshipNotification}
+      />
+    )
+  return <GenericNotificationThumbnail notification={notification} />
+}
+
+function GenericNotificationThumbnail({
+  notification
+}: {
+  notification: Notification
+}) {
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        width: '100%',
+        height: '100%'
+      }}
+      uiBackground={
+        notification.metadata.image
+          ? {
+              textureMode: 'stretch',
+              texture: {
+                src: notification.metadata.image
+              }
             }
-            uiTransform={{ width: '100%', height: '100%' }}
-          />
-        </UiEntity>
-      )}
-      {isFriendshipNotification(notification as FriendshipNotification) ? (
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: '100%'
-          }}
-        >
-          <AvatarCircle
-            userId={
-              getFriendshipNotificationProtagonist(
-                notification as FriendshipNotification
-              ).address
+          : {
+              color: COLOR.WHITE_OPACITY_1
             }
-            circleColor={getAddressColor(
-              getFriendshipNotificationProtagonist(
-                notification as FriendshipNotification
-              ).address
-            )}
-            uiTransform={{
-              width: '100%',
-              height: '100%'
-            }}
-            isGuest={false}
-          />
-          <NotificationIcon notification={notification} />
-        </UiEntity>
-      ) : (
-        <UiEntity
-          uiTransform={{
-            positionType: 'absolute',
-            width: '100%',
-            height: '100%'
-          }}
-          uiBackground={
-            (notification.type === 'events_started' ||
-              notification.type === 'events_ended' ||
-              notification.type === 'events_starts_soon' ||
-              notification.type === 'item_sold') &&
-            notification.metadata.image
-              ? {
-                  textureMode: 'stretch',
-                  texture: {
-                    src: notification.metadata.image
-                  }
-                }
-              : {
-                  color: COLOR.WHITE_OPACITY_1
-                }
-          }
-        >
-          <NotificationIcon notification={notification} />
-        </UiEntity>
-      )}
+      }
+    >
+      <NotificationIcon notification={notification} />
+    </UiEntity>
+  )
+}
+
+function ItemNotificationThumbnail({
+  notification
+}: {
+  notification: Notification
+}): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '100%',
+        height: '100%'
+      }}
+    >
+      <ImageCircle
+        image={notification.metadata.image}
+        circleColor={RARITY_COLORS[notification.metadata.rarity as RarityName]}
+        uiTransform={{ width: '100%', height: '100%' }}
+      />
+    </UiEntity>
+  )
+}
+function FriendshipNotificationThumbnail({
+  notification
+}: {
+  notification: FriendshipNotification
+}): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '100%',
+        height: '100%'
+      }}
+    >
+      <AvatarCircle
+        userId={
+          getFriendshipNotificationProtagonist(
+            notification as FriendshipNotification
+          ).address
+        }
+        circleColor={getAddressColor(
+          getFriendshipNotificationProtagonist(
+            notification as FriendshipNotification
+          ).address
+        )}
+        uiTransform={{
+          width: '100%',
+          height: '100%'
+        }}
+        isGuest={false}
+      />
+      <NotificationIcon notification={notification} />
     </UiEntity>
   )
 }

@@ -247,9 +247,7 @@ export type EventNotification =
   | EventEndedNotification
   | EventStartedNotification
   | EventStartsSoonNotification
-export function isFriendshipNotification(
-  notification: FriendshipNotification
-): boolean {
+export function isFriendshipNotification(notification: Notification): boolean {
   return (
     notification.type === 'social_service_friendship_accepted' ||
     notification.type === 'social_service_friendship_request'
