@@ -25,7 +25,7 @@ export async function setupNotifications(): Promise<void> {
   fetchNotificationCount().catch(console.error)
 
   while (true) {
-    await sleep(10000)
+    await sleep(20000)
     fetchNotificationCount().catch(console.error)
   }
 
