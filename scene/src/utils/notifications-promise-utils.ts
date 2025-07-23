@@ -2,11 +2,22 @@ import { BevyApi } from '../bevy-api'
 import {
   Notification,
   NOTIFICATIONS_BASE_URL,
+  NOTIFICATIONS_LOCAL_BASE_URL,
+  NOTIFICATIONS_TEST_BASE_URL,
   RENDER_NOTIFICATION_TYPES
 } from '../ui-classes/main-hud/notification-types'
 import type { SignedFetchMeta } from '../bevy-api/interface'
+import { getRealm } from '~system/Runtime'
+import { LOCAL_PREVIEW_REALM_NAME } from './constants'
+import { fetchJsonOrTryFallback } from './promise-utils'
 const emptyMeta: SignedFetchMeta = {}
 const meta: string = JSON.stringify(emptyMeta)
+
+const state = {
+  baseURL: NOTIFICATIONS_BASE_URL,
+  initialized: false
+}
+
 export async function fetchNotifications(
   {
     from = 0,
@@ -16,9 +27,24 @@ export async function fetchNotifications(
     limit?: number
   } = { from: 0, limit: 50 }
 ) {
+  if (!state.initialized) {
+    const { realmInfo } = await getRealm({})
+    if (realmInfo?.realmName === LOCAL_PREVIEW_REALM_NAME) {
+      try {
+        await fetch(`${NOTIFICATIONS_LOCAL_BASE_URL}/status`)
+        state.baseURL = NOTIFICATIONS_LOCAL_BASE_URL
+      } catch (error) {
+        console.log(
+          `${NOTIFICATIONS_LOCAL_BASE_URL} not available, setting ${NOTIFICATIONS_TEST_BASE_URL}`
+        )
+        state.baseURL = NOTIFICATIONS_TEST_BASE_URL
+      }
+    }
+    state.initialized = true
+  }
   const result = await BevyApi.kernelFetch({
     // url: 'http://localhost:5001/notifications',
-    url: `${NOTIFICATIONS_BASE_URL}?limit=${limit}&from=${from}`,
+    url: `${state.baseURL}?limit=${limit}&from=${from}`,
     init: {
       headers: { 'Content-Type': 'application/json' },
       method: 'GET'

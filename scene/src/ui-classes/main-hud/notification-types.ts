@@ -307,7 +307,10 @@ export function isEventNotification(notification: Notification): boolean {
 }
 export const NOTIFICATIONS_BASE_URL =
   'https://notifications.decentraland.org/notifications'
-// TODO depending on the realm use zone or org, if local try localhost:5001 if available
+export const NOTIFICATIONS_TEST_BASE_URL =
+  'https://notifications.decentraland.zone/notifications'
+export const NOTIFICATIONS_LOCAL_BASE_URL =
+  'http://localhost:5001/notifications'
 
 export const RENDER_NOTIFICATION_TYPES: Notification['type'][] = [
   'events_started',
