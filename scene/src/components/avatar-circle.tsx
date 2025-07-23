@@ -19,7 +19,7 @@ export function AvatarCircle({
   circleColor: Color4
   uiTransform: UiTransformProps
   isGuest: boolean
-  onMouseDown: () => void
+  onMouseDown?: () => void
 }): ReactElement | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
