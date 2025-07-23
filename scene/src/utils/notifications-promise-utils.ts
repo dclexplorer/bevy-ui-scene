@@ -9,7 +9,6 @@ import {
 import type { SignedFetchMeta } from '../bevy-api/interface'
 import { getRealm } from '~system/Runtime'
 import { LOCAL_PREVIEW_REALM_NAME } from './constants'
-import { fetchJsonOrTryFallback } from './promise-utils'
 const emptyMeta: SignedFetchMeta = {}
 const meta: string = JSON.stringify(emptyMeta)
 
@@ -26,7 +25,7 @@ export async function fetchNotifications(
     from?: number | string
     limit?: number
   } = { from: 0, limit: 50 }
-) {
+): Promise<Notification[]> {
   if (!state.initialized) {
     const { realmInfo } = await getRealm({})
     if (realmInfo?.realmName === LOCAL_PREVIEW_REALM_NAME) {
@@ -77,17 +76,15 @@ function dedupeSameKindNotifications(
       }
     }
   }
-  const deduped: Notification[] = (notifications).filter(
-    (n: Notification) => {
-      //    if (!isEventNotification(n)) return true
-      const latest = latestByKey.get(getNotificationKey(n))
-      return latest?.id === n.id
-    }
-  )
+  const deduped: Notification[] = notifications.filter((n: Notification) => {
+    //    if (!isEventNotification(n)) return true
+    const latest = latestByKey.get(getNotificationKey(n))
+    return latest?.id === n.id
+  })
 
   return deduped
 
-  function getNotificationKey(notification: Notification) {
+  function getNotificationKey(notification: Notification): string {
     return (
       notification.metadata.name ??
       notification.metadata.tokenName ??

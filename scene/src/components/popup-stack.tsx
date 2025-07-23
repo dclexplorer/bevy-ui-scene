@@ -27,7 +27,7 @@ const popupComponents: Record<number, Popup> = {
 
 export function PopupStack(): ReactElement | null {
   const shownPopups = store.getState().hud.shownPopups
-  if (!shownPopups) return null
+  if (!shownPopups.length) return null
   return (
     <UiEntity uiTransform={{ zIndex: 99999, width: '100%', height: '100%' }}>
       {shownPopups.map(

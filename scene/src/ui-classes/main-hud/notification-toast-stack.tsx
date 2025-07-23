@@ -1,6 +1,5 @@
 import { type Notification } from './notification-types'
-import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-
+import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { Column } from '../../components/layout'
 import { NotificationItem } from './notification-renderer'
 import { executeTask } from '@dcl/sdk/ecs'
@@ -40,8 +39,8 @@ export function NotificationToastStack(): ReactElement | null {
     </Column>
   )
 }
-export function initRealTimeNotifications() {
-  executeTask(async () => {
+export function initRealTimeNotifications(): void {
+  executeTask(async (): Promise<never> => {
     while (true) {
       await sleep(5000)
 
@@ -63,14 +62,14 @@ export function initRealTimeNotifications() {
         from: Number(lastNotification?.timestamp ?? Date.now()) + 1
       })
 
-      if (nextNotification) {
+      if (nextNotification !== undefined) {
         pushNotificationToast(nextNotification)
       }
     }
   })
 }
 
-export function pushNotificationToast(notification: Notification) {
+export function pushNotificationToast(notification: Notification): void {
   state.toasts.push({
     ...notification,
     localTimestamp: Date.now()

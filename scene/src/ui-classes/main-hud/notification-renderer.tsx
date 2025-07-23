@@ -184,7 +184,6 @@ function getDescriptionFromNotification(notification: Notification): string {
       return `<color=${hexColor}>${protagonist.name}</color> accepted your friend request.`
     } else if (notification.type === 'social_service_friendship_request') {
       return `<color=${hexColor}>${protagonist.name}</color> wants to be your friend.`
-    } else if (notification.type === 'item_sold') {
     }
   }
 
@@ -295,7 +294,7 @@ function GenericNotificationThumbnail({
   notification
 }: {
   notification: Notification
-}) {
+}): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -356,15 +355,9 @@ function FriendshipNotificationThumbnail({
       }}
     >
       <AvatarCircle
-        userId={
-          getFriendshipNotificationProtagonist(
-            notification
-          ).address
-        }
+        userId={getFriendshipNotificationProtagonist(notification).address}
         circleColor={getAddressColor(
-          getFriendshipNotificationProtagonist(
-            notification
-          ).address
+          getFriendshipNotificationProtagonist(notification).address
         )}
         uiTransform={{
           width: '100%',

@@ -22,7 +22,6 @@ import {
 import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { DropdownStyled } from '../../../components/dropdown-styled'
 import { Slider } from '../../../components/slider'
-import { COLOR } from '../../../components/color-palette'
 
 type SettingCategory =
   | 'general'
