@@ -20,9 +20,9 @@ import { type AtlasIcon } from '../../utils/definitions'
 import { AvatarCircle } from '../../components/avatar-circle'
 import { getAddressColor } from './chat-and-logs/ColorByAddress'
 import { rgbToHex } from '../../utils/ui-utils'
-import { RarityName } from '../../utils/item-definitions'
+import { type RarityName } from '../../utils/item-definitions'
 import { ImageCircle } from '../../components/image-circle'
-import { UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 
 export function NotificationItem({
   notification,
@@ -358,12 +358,12 @@ function FriendshipNotificationThumbnail({
       <AvatarCircle
         userId={
           getFriendshipNotificationProtagonist(
-            notification as FriendshipNotification
+            notification
           ).address
         }
         circleColor={getAddressColor(
           getFriendshipNotificationProtagonist(
-            notification as FriendshipNotification
+            notification
           ).address
         )}
         uiTransform={{

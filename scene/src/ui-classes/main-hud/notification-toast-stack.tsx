@@ -1,5 +1,5 @@
-import { Notification } from './notification-types'
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import { type Notification } from './notification-types'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 
 import { Column } from '../../components/layout'
 import { NotificationItem } from './notification-renderer'

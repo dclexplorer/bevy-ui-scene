@@ -105,13 +105,13 @@ export const RARITY_HEX_COLORS: Record<RarityName, string> = {
 }
 
 export const RARITY_COLORS: Record<RarityName, Color4> = {
-  base: Color4.fromHexString(RARITY_HEX_COLORS['base']),
-  common: Color4.fromHexString(RARITY_HEX_COLORS['common']),
-  uncommon: Color4.fromHexString(RARITY_HEX_COLORS['uncommon']),
-  rare: Color4.fromHexString(RARITY_HEX_COLORS['rare']),
-  epic: Color4.fromHexString(RARITY_HEX_COLORS['epic']),
-  legendary: Color4.fromHexString(RARITY_HEX_COLORS['legendary']),
-  exotic: Color4.fromHexString(RARITY_HEX_COLORS['exotic']),
-  mythic: Color4.fromHexString(RARITY_HEX_COLORS['mythic']),
-  unique: Color4.fromHexString(RARITY_HEX_COLORS['unique'])
+  base: Color4.fromHexString(RARITY_HEX_COLORS.base),
+  common: Color4.fromHexString(RARITY_HEX_COLORS.common),
+  uncommon: Color4.fromHexString(RARITY_HEX_COLORS.uncommon),
+  rare: Color4.fromHexString(RARITY_HEX_COLORS.rare),
+  epic: Color4.fromHexString(RARITY_HEX_COLORS.epic),
+  legendary: Color4.fromHexString(RARITY_HEX_COLORS.legendary),
+  exotic: Color4.fromHexString(RARITY_HEX_COLORS.exotic),
+  mythic: Color4.fromHexString(RARITY_HEX_COLORS.mythic),
+  unique: Color4.fromHexString(RARITY_HEX_COLORS.unique)
 }

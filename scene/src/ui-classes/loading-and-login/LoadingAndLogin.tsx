@@ -199,7 +199,7 @@ export default class LoadingAndLogin {
                 this.setStatus('sign-in-or-guest')
               }
               this.uiController.warningPopUp.icon = 'WarningColor'
-              this.uiController.warningPopUp.show()*/
+              this.uiController.warningPopUp.show() */
 
               store.dispatch(
                 pushPopupAction({

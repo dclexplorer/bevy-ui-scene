@@ -1,6 +1,6 @@
 import { BevyApi } from '../bevy-api'
 import {
-  Notification,
+  type Notification,
   NOTIFICATIONS_BASE_URL,
   NOTIFICATIONS_LOCAL_BASE_URL,
   NOTIFICATIONS_TEST_BASE_URL,
@@ -77,7 +77,7 @@ function dedupeSameKindNotifications(
       }
     }
   }
-  const deduped: Notification[] = (notifications as Notification[]).filter(
+  const deduped: Notification[] = (notifications).filter(
     (n: Notification) => {
       //    if (!isEventNotification(n)) return true
       const latest = latestByKey.get(getNotificationKey(n))
@@ -92,6 +92,6 @@ function dedupeSameKindNotifications(
       notification.metadata.name ??
       notification.metadata.tokenName ??
       notification.metadata.id
-    ) //each id is different, then this one won't be deduped
+    ) // each id is different, then this one won't be deduped
   }
 }

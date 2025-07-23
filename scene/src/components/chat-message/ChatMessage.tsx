@@ -1,6 +1,6 @@
 import { getPlayer } from '@dcl/sdk/src/players'
 
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 
 import ReactEcs, {
   type Key,
@@ -22,6 +22,9 @@ import { COLOR } from '../color-palette'
 import { memoize } from '../../utils/function-utils'
 import { ButtonIcon } from '../button-icon'
 import { AvatarCircle } from '../avatar-circle'
+import { pushPopupAction } from '../../state/hud/actions'
+import { HUD_POPUP_TYPE } from '../../state/hud/state'
+import { store } from '../../state/store'
 
 const state: { hoveringMessageID: number; openMessageMenu: boolean } = {
   hoveringMessageID: 0,
@@ -80,6 +83,14 @@ function ChatMessage(props: {
         circleColor={getAddressColor(props.message.sender_address)}
         uiTransform={{}}
         isGuest={props.message.isGuest}
+        onMouseDown={() => {
+          store.dispatch(
+            pushPopupAction({
+              type: HUD_POPUP_TYPE.PASSPORT,
+              data: props.message.sender_address
+            })
+          )
+        }}
       />
       <UiEntity
         uiTransform={{

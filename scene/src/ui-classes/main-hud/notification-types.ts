@@ -1,4 +1,4 @@
-import { RarityName } from '../../utils/item-definitions'
+import { type RarityName } from '../../utils/item-definitions'
 
 export type BaseNotification = {
   id: string
@@ -312,7 +312,7 @@ export const NOTIFICATIONS_TEST_BASE_URL =
 export const NOTIFICATIONS_LOCAL_BASE_URL =
   'http://localhost:5001/notifications'
 
-export const RENDER_NOTIFICATION_TYPES: Notification['type'][] = [
+export const RENDER_NOTIFICATION_TYPES: Array<Notification['type']> = [
   'events_started',
   'events_starts_soon',
   'events_starts_soon',

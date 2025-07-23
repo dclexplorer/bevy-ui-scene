@@ -6,17 +6,20 @@ import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { type Color4 } from '@dcl/sdk/math'
 import { ZERO_ADDRESS } from '../utils/constants'
 import { type ReactElement } from '@dcl/react-ecs'
+import { noop } from '../utils/function-utils'
 
 export function AvatarCircle({
   userId,
   circleColor,
   uiTransform,
-  isGuest
+  isGuest,
+  onMouseDown = noop
 }: {
   userId: string
   circleColor: Color4
   uiTransform: UiTransformProps
   isGuest: boolean
+  onMouseDown: () => void
 }): ReactElement | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -40,6 +43,7 @@ export function AvatarCircle({
       uiBackground={{
         color: { ...addressColor, a: 0.3 }
       }}
+      onMouseDown={onMouseDown}
     >
       <UiEntity
         uiTransform={{
