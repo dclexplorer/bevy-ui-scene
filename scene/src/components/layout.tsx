@@ -27,7 +27,7 @@ export function Column({
   children
 }: {
   uiTransform: UiTransformProps
-  children: ReactElement
+  children?: ReactElement
 }): ReactElement {
   return (
     <UiEntity

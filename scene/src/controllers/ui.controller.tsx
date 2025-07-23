@@ -29,6 +29,10 @@ import { store } from '../state/store'
 import { BevyApi } from '../bevy-api'
 import { PopupStack } from '../components/popup-stack'
 import { setupNotifications } from '../ui-classes/main-hud/notifications-menu'
+import {
+  initRealTimeNotifications,
+  NotificationToastStack
+} from '../ui-classes/main-hud/notification-toast-stack'
 
 let loadingAndLogin: any = null
 
@@ -108,7 +112,7 @@ export class UIController {
 
       setupNotifications().catch(console.error)
     })
-
+    initRealTimeNotifications()
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
 
@@ -128,6 +132,7 @@ export class UIController {
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
         {!this.isMainMenuVisible && renderEmotesWheel()}
+        {NotificationToastStack()}
         {PopupStack()}
       </Canvas>
     )

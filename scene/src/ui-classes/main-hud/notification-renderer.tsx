@@ -21,14 +21,16 @@ import { AvatarCircle } from '../../components/avatar-circle'
 import { getAddressColor } from './chat-and-logs/ColorByAddress'
 import { rgbToHex } from '../../utils/ui-utils'
 import { RarityName } from '../../utils/item-definitions'
-import { RGBColor } from '../../bevy-api/interface'
 import { ImageCircle } from '../../components/image-circle'
+import { UiTransformProps } from '@dcl/sdk/react-ecs'
 
 export function NotificationItem({
-  notification
+  notification,
+  uiTransform
 }: {
   notification: Notification
   key?: any
+  uiTransform?: UiTransformProps
 }): ReactElement | null {
   return (
     <UiEntity
@@ -42,7 +44,8 @@ export function NotificationItem({
         margin: { bottom: '2%', left: '2%' },
         flexDirection: 'row',
         alignItems: 'center',
-        padding: { left: '5%' }
+        padding: { left: '5%' },
+        ...uiTransform
       }}
       uiBackground={{ color: COLOR.NOTIFICATION_ITEM }}
     >
@@ -261,7 +264,9 @@ function NotificationThumbnail({
         width: getCanvasScaleRatio() * 130,
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 0,
-        borderRadius: getCanvasScaleRatio() * 30
+        borderRadius: getCanvasScaleRatio() * 30,
+        flexShrink: 0,
+        flexGrow: 0
       }}
     >
       <NotificationThumbnailContent notification={notification} />

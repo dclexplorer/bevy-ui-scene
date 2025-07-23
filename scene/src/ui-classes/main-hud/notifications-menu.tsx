@@ -8,71 +8,29 @@ import {
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { noop } from '../../utils/function-utils'
 import { type Popup } from '../../components/popup-stack'
-import {
-  type EventNotification,
-  isEventNotification,
-  type Notification
-} from './notification-types'
+import { type Notification, NOTIFICATIONS_BASE_URL } from './notification-types'
 import { NotificationItem } from './notification-renderer'
 import { BevyApi } from '../../bevy-api'
 import { type SignedFetchMeta } from '../../bevy-api/interface'
 import { executeTask } from '@dcl/sdk/ecs'
 import { Label } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
+import { fetchNotifications } from '../../utils/notifications-promise-utils'
+import { sleep } from '../../utils/dcl-utils'
 const { useEffect, useState } = ReactEcs
 const emptyMeta: SignedFetchMeta = {}
 const meta: string = JSON.stringify(emptyMeta)
 
-const NOTIFICATIONS_BASE_URL =
-  'https://notifications.decentraland.org/notifications'
-export type NotificationType = Notification['type']
-
-const RENDER_NOTIFICATION_TYPES: NotificationType[] = [
-  'events_started',
-  'events_starts_soon',
-  'events_starts_soon',
-  'item_sold',
-  'reward_assignment',
-  'reward_in_progress'
-  /* 'social_service_friendship_request',
-  'social_service_friendship_accepted'
-   'dao_proposal_published',
-  'dao_proposal_finish',
-  'dao_vote_reminder',
-  'name_claim',
-  'wearables_drop',
-  'xp_reward',
-  'badges_awarded',
-  'rank_changed',
-  'badges_awarded',
-  'scene_event_milestone',
-  'crowd_event_milestone',
-  'xp_event_milestone',
-  'nft_milestone' */
-  // TODO add all other notification types that can be rendered
-]
-
 export async function setupNotifications(): Promise<void> {
   fetchNotificationCount().catch(console.error)
 
+  while (true) {
+    await sleep(10000)
+    fetchNotificationCount().catch(console.error)
+  }
+
   async function fetchNotificationCount(): Promise<void> {
-    const result = await BevyApi.kernelFetch({
-      // url: 'http://localhost:5001/notifications',
-      url: `${NOTIFICATIONS_BASE_URL}?limit=50`,
-      init: {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'GET'
-      },
-      meta
-    })
-
-    const notifications = JSON.parse(result.body).notifications.filter(
-      (n: Notification) => RENDER_NOTIFICATION_TYPES.includes(n.type)
-    )
-
-    const filteredNotifications = dedupeSameNameNotifications(
-      notifications as Notification[]
-    )
+    const filteredNotifications = await fetchNotifications()
 
     const unreadNotifications = filteredNotifications.filter(
       (n) => !n.read
@@ -123,21 +81,10 @@ function NotificationsContent(): ReactElement {
     executeTask(async () => {
       try {
         setLoadingNotifications(true)
-        const result = await BevyApi.kernelFetch({
-          url: `${NOTIFICATIONS_BASE_URL}?limit=50`,
-          init: {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'GET'
-          },
-          meta
-        })
-
-        const notifications = JSON.parse(result.body).notifications.filter(
-          (n: Notification) => RENDER_NOTIFICATION_TYPES.includes(n.type)
-        )
-
-        const filteredNotifications = dedupeSameNameNotifications(
-          notifications as Notification[]
+        const filteredNotifications = await fetchNotifications()
+        console.log(
+          'filteredNotifications',
+          filteredNotifications[filteredNotifications.length - 1]
         )
         setNotifications(filteredNotifications)
         setLoadingNotifications(false)
@@ -234,38 +181,4 @@ function NotificationsContent(): ReactElement {
 
 function closeDialog(): void {
   store.dispatch(closeLastPopupAction())
-}
-
-function dedupeSameNameNotifications(
-  notifications: Notification[]
-): Notification[] {
-  const latestByKey = new Map<string, Notification>()
-  for (const notification of notifications) {
-    const key = getNotificationKey(notification)
-    const existing = latestByKey.get(key)
-    if (!existing) {
-      latestByKey.set(key, notification)
-    } else {
-      if (new Date(notification.timestamp) > new Date(existing.timestamp)) {
-        latestByKey.set(key, notification)
-      }
-    }
-  }
-  const deduped: Notification[] = (notifications as Notification[]).filter(
-    (n: Notification) => {
-      //    if (!isEventNotification(n)) return true
-      const latest = latestByKey.get(getNotificationKey(n))
-      return latest?.id === n.id
-    }
-  )
-
-  return deduped
-
-  function getNotificationKey(notification: Notification) {
-    return (
-      notification.metadata.name ??
-      notification.metadata.tokenName ??
-      notification.metadata.id
-    ) //each id is different, then this one won't be deduped
-  }
 }

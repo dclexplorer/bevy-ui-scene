@@ -7,6 +7,7 @@ export type BaseNotification = {
   metadata: any
   timestamp: string
   read: boolean
+  localTimestamp?: number
 }
 
 export type ItemSoldNotification = {
@@ -304,3 +305,31 @@ export function isEventNotification(notification: Notification): boolean {
     notification.type === 'events_starts_soon'
   )
 }
+export const NOTIFICATIONS_BASE_URL =
+  'https://notifications.decentraland.org/notifications'
+// TODO depending on the realm use zone or org, if local try localhost:5001 if available
+
+export const RENDER_NOTIFICATION_TYPES: Notification['type'][] = [
+  'events_started',
+  'events_starts_soon',
+  'events_starts_soon',
+  'item_sold',
+  'reward_assignment',
+  'reward_in_progress'
+  /* 'social_service_friendship_request',
+  'social_service_friendship_accepted'
+   'dao_proposal_published',
+  'dao_proposal_finish',
+  'dao_vote_reminder',
+  'name_claim',
+  'wearables_drop',
+  'xp_reward',
+  'badges_awarded',
+  'rank_changed',
+  'badges_awarded',
+  'scene_event_milestone',
+  'crowd_event_milestone',
+  'xp_event_milestone',
+  'nft_milestone' */
+  // TODO add all other notification types that can be rendered
+]
