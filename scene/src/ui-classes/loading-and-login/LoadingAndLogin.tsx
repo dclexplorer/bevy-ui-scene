@@ -237,7 +237,7 @@ export default class LoadingAndLogin {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-
+    if (store.getState().hud.loggedIn) return null
     const LOGO_SIZE: number = canvasInfo.height * 0.1
 
     // FONT SIZES
@@ -262,6 +262,7 @@ export default class LoadingAndLogin {
           positionType: 'absolute',
           zIndex: 9999
         }}
+        onMouseDown={noop}
       >
         {this.isVisible && (
           <UiEntity

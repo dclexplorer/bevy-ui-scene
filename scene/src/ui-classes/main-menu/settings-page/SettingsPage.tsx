@@ -22,6 +22,7 @@ import {
 import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { DropdownStyled } from '../../../components/dropdown-styled'
 import { Slider } from '../../../components/slider'
+import { noop } from '../../../utils/function-utils'
 
 type SettingCategory =
   | 'general'
@@ -29,6 +30,7 @@ type SettingCategory =
   | 'graphics'
   | 'gameplay'
   | 'performance'
+  | 'permissions'
 
 export default class SettingsPage {
   private readonly uiController: UIController
@@ -40,21 +42,19 @@ export default class SettingsPage {
 
   private readonly toggleStatus: boolean = false
 
-  // private dataArray: settingData[] = []
-  // private settingsToSave: settingData[] = []
   private dropdownOpenedSettingName: string = ''
   private dropdownIndexEntered: number = -1
   private backgroundIcon: string = 'assets/images/menu/general-img.png.png'
-  // private generalTextColor: Color4 = ALMOST_WHITE
   private graphicsTextColor: Color4 = ALMOST_BLACK
   private audioTextColor: Color4 = ALMOST_BLACK
   private gameplayTextColor: Color4 = ALMOST_BLACK
+  private permissionsTextColor: Color4 = ALMOST_BLACK
   private performanceTextColor: Color4 = ALMOST_BLACK
   private restoreTextColor: Color4 = Color4.Red()
-  // private generalBackgroundColor: Color4 = ORANGE
   private graphicsBackgroundColor: Color4 = ALMOST_WHITE
   private audioBackgroundColor: Color4 = ALMOST_WHITE
   private gameplayBackgroundColor: Color4 = ALMOST_WHITE
+  private permissionsBackgroundColor: Color4 = ALMOST_WHITE
   private performanceBackgroundColor: Color4 = ALMOST_WHITE
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
   private buttonClicked: SettingCategory = 'performance'
@@ -93,6 +93,7 @@ export default class SettingsPage {
     } else {
       // this.dataArray = []
       this.buttonClicked = button
+      this.settingsInfoDescription = ''
       this.updateButtons()
     }
   }
@@ -117,6 +118,11 @@ export default class SettingsPage {
     this.gameplayTextColor = ALMOST_WHITE
   }
 
+  permissionsEnter(): void {
+    this.permissionsBackgroundColor = ORANGE
+    this.permissionsTextColor = ALMOST_WHITE
+  }
+
   performanceEnter(): void {
     this.performanceBackgroundColor = ORANGE
     this.performanceTextColor = ALMOST_WHITE
@@ -128,15 +134,18 @@ export default class SettingsPage {
   }
 
   updateButtons(): void {
+    console.log('updateButtons')
     // this.generalBackgroundColor = ALMOST_WHITE
     this.graphicsBackgroundColor = ALMOST_WHITE
     this.audioBackgroundColor = ALMOST_WHITE
     this.gameplayBackgroundColor = ALMOST_WHITE
+    this.permissionsBackgroundColor = ALMOST_WHITE
     this.performanceBackgroundColor = ALMOST_WHITE
     // this.generalTextColor = ALMOST_BLACK
     this.graphicsTextColor = ALMOST_BLACK
     this.audioTextColor = ALMOST_BLACK
     this.gameplayTextColor = ALMOST_BLACK
+    this.permissionsTextColor = ALMOST_BLACK
     this.performanceTextColor = ALMOST_BLACK
     this.restoreTextColor = Color4.Red()
     this.restoreBackgroundColor = ALMOST_WHITE
@@ -162,6 +171,9 @@ export default class SettingsPage {
         this.performanceEnter()
         this.backgroundIcon = 'assets/images/menu/general-img.png.png'
         break
+      case 'permissions':
+        this.permissionsEnter()
+        this.backgroundIcon = 'assets/images/menu/general-img.png.png'
     }
   }
 
@@ -170,54 +182,6 @@ export default class SettingsPage {
   }
 
   controllerSystem(): void {
-    // just for debug purpose
-    // const currentEntities = new Set<Entity>()
-
-    // for (const [entity, uiTransform] of engine.getEntitiesWith(UiTransform)) {
-    //   const currentElementId = uiTransform.elementId ?? ''
-    //   if (currentElementId.length === 0) continue
-
-    //   currentEntities.add(entity)
-    //   // Handle new entities
-    //   if (!this.entityStates.has(entity)) {
-    //     console.log(
-    //       `New entity detected: ${entity} (elementId: ${currentElementId})`
-    //     )
-    //     this.entityStates.set(entity, {
-    //       value: uiTransform.rightOf,
-    //       elementId: currentElementId
-    //     })
-    //     continue
-    //   }
-
-    //   const previousState = this.entityStates.get(entity)!
-    //   const currentValue = uiTransform.rightOf ?? 0
-
-    //   // Check for elementId changes
-    //   if (previousState.elementId !== currentElementId) {
-    //     console.log(
-    //       `Entity ${entity} elementId changed from "${previousState.elementId}" to "${currentElementId}"`
-    //     )
-    //     previousState.elementId = currentElementId
-    //   }
-
-    //   // Check for value changes
-    //   if (previousState.value !== currentValue) {
-    //     console.log(
-    //       `Entity ${entity} (${currentElementId}) value changed from ${previousState.value} to ${currentValue}`
-    //     )
-    //     previousState.value = currentValue
-    //   }
-    // }
-
-    // // Check for removed entities
-    // for (const [entity, state] of this.entityStates) {
-    //   if (!currentEntities.has(entity)) {
-    //     console.log(`Entity ${entity} (${state.elementId}) was removed`)
-    //     this.entityStates.delete(entity)
-    //   }
-    // }
-
     const settings = Object.values(store.getState().settings.explorerSettings)
     for (const [, pos, uiTransform] of engine.getEntitiesWith(
       UiScrollResult,
@@ -276,12 +240,14 @@ export default class SettingsPage {
           // position:{top: 0, left: 0, right: 0, bottom: 0},
           flexDirection: 'column',
           justifyContent: 'flex-start',
-          alignItems: 'center'
+          alignItems: 'center',
+          pointerFilter: 'block'
         }}
         uiBackground={{
           textureMode: 'stretch',
           texture: { src: 'assets/images/menu/Background.png' }
         }}
+        onMouseDown={noop}
       >
         {/* Icon Background */}
         <UiEntity
@@ -311,6 +277,7 @@ export default class SettingsPage {
           uiBackground={{
             color: { ...Color4.Black(), a: 0.7 }
           }}
+          onMouseDown={noop}
         >
           <UiEntity
             uiTransform={{
@@ -424,6 +391,30 @@ export default class SettingsPage {
               }}
               backgroundColor={this.gameplayBackgroundColor}
             />
+
+            <ButtonTextIcon
+              uiTransform={{
+                margin: { left: 10, right: 10 },
+
+                padding: { left: 10, right: 10 },
+                width: 'auto'
+              }}
+              iconColor={this.permissionsTextColor}
+              icon={{ atlasName: 'icons', spriteName: 'Lock' }}
+              value={'Permissions'}
+              fontSize={fontSize}
+              fontColor={this.permissionsTextColor}
+              onMouseEnter={() => {
+                this.permissionsEnter()
+              }}
+              onMouseLeave={() => {
+                this.updateButtons()
+              }}
+              onMouseDown={() => {
+                this.setButtonClicked('permissions')
+              }}
+              backgroundColor={this.permissionsBackgroundColor}
+            />
           </UiEntity>
 
           <UiEntity
@@ -492,6 +483,7 @@ export default class SettingsPage {
             },
             color: { ...Color4.Black(), a: 0.7 }
           }}
+          onMouseDown={noop}
         >
           <UiEntity
             uiTransform={{
@@ -507,7 +499,11 @@ export default class SettingsPage {
                 // color: { ...Color4.Blue(), a: 0.1 }
               }
             }
+            onMouseDown={noop}
           >
+            {this.buttonClicked === 'permissions' && (
+              <UiEntity uiText={{ value: 'PERMISSIONS', fontSize: 50 }} />
+            )}
             {Object.values(store.getState().settings.explorerSettings)
               .filter(
                 (setting) =>
@@ -621,15 +617,6 @@ export default class SettingsPage {
                 height: canvasInfo.height * 0.2
               }}
             />
-            {/* <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 400,
-                flexDirection: 'column',
-                alignItems: 'flex-start'
-              }}
-              uiBackground={{ color: ALMOST_WHITE }}
-            /> */}
           </UiEntity>
 
           <UiEntity

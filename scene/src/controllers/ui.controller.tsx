@@ -33,6 +33,7 @@ import {
   initRealTimeNotifications,
   NotificationToastStack
 } from '../ui-classes/main-hud/notification-toast-stack'
+import { updateHudStateAction } from '../state/hud/actions'
 
 let loadingAndLogin: any = null
 
@@ -108,11 +109,11 @@ export class UIController {
         })
 
         void this.backpackPage.init()
+        store.dispatch(updateHudStateAction({ loggedIn: true }))
+        setupNotifications().catch(console.error)
+        initRealTimeNotifications()
       })().catch(console.error)
-
-      setupNotifications().catch(console.error)
     })
-    initRealTimeNotifications()
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
 
