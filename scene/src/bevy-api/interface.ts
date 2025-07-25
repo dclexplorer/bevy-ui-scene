@@ -3,6 +3,15 @@ import type { URN, URNWithoutTokenId } from '../utils/definitions'
 import { type WearableCategory } from '../service/categories'
 import { type ChatMessageDefinition } from '../components/chat-message/ChatMessage.types'
 import { type ProfileExtra } from '../utils/passport-promise-utils'
+import {
+  GetPermanentPermissionsArgs,
+  PermanentPermissionItem,
+  PermissionRequest,
+  PermissionTypeItem,
+  PermissionUsed,
+  SetPermanentPermissionArgs,
+  SetSinglePermissionArgs
+} from './permission-definitions'
 
 export type ExplorerSetting = {
   name: string
@@ -127,6 +136,14 @@ export type BevyApiInterface = {
   getChatStream: () => Promise<ChatMessageDefinition[]>
   sendChat: (message: string, channel?: string) => void
   quit: () => void
+  getPermissionRequestStream: () => Promise<PermissionRequest[]>
+  getPermissionUsedStream: () => Promise<PermissionUsed[]>
+  setSinglePermission: (arg0: SetSinglePermissionArgs) => void
+  getPermanentPermissions: (
+    arg0: GetPermanentPermissionsArgs
+  ) => PermanentPermissionItem[]
+  setPermanentPermission: (arg0: SetPermanentPermissionArgs) => void
+  getPermissionTypes: () => PermissionTypeItem[]
 }
 
 // system api module

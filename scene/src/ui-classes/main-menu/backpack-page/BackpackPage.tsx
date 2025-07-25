@@ -196,7 +196,11 @@ export default class BackpackPage {
   }
 }
 
-function MainContent({ children }: { children?: ReactElement }): ReactElement {
+export function MainContent({
+  children
+}: {
+  children?: ReactElement
+}): ReactElement {
   return (
     <UiEntity
       onMouseEnter={() => {}}

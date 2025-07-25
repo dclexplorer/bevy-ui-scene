@@ -23,6 +23,8 @@ import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { DropdownStyled } from '../../../components/dropdown-styled'
 import { Slider } from '../../../components/slider'
 import { noop } from '../../../utils/function-utils'
+import { PermissionLegend, PermissionsForm } from './permissions-form'
+import { PERMISSION_DEFINITIONS } from '../../../bevy-api/permission-definitions'
 
 type SettingCategory =
   | 'general'
@@ -57,7 +59,7 @@ export default class SettingsPage {
   private permissionsBackgroundColor: Color4 = ALMOST_WHITE
   private performanceBackgroundColor: Color4 = ALMOST_WHITE
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
-  private buttonClicked: SettingCategory = 'performance'
+  private buttonClicked: SettingCategory = 'permissions'
 
   // private settingsInfoTitle: string = ''
   private settingsInfoDescription: string = ''
@@ -461,219 +463,230 @@ export default class SettingsPage {
         </UiEntity>
 
         {/* Content */}
-        <UiEntity
-          uiTransform={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '80%',
-            margin: canvasInfo.height * 0.05,
-            flexGrow: 1
-          }}
-          uiBackground={{
-            textureMode: 'nine-slices',
-            texture: {
-              src: 'assets/images/backgrounds/rounded.png'
-            },
-            textureSlices: {
-              top: 0.25,
-              bottom: 0.25,
-              left: 0.25,
-              right: 0.25
-            },
-            color: { ...Color4.Black(), a: 0.7 }
-          }}
-          onMouseDown={noop}
-        >
+        {this.buttonClicked === 'permissions' && (
+          <PermissionsForm permissionDefinitions={PERMISSION_DEFINITIONS} />
+        )}
+        {this.buttonClicked !== 'permissions' && (
           <UiEntity
             uiTransform={{
-              width: '45%',
-              height: canvasInfo.height * 0.7,
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              overflow: 'scroll',
-              scrollVisible: 'vertical'
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '80%',
+              margin: canvasInfo.height * 0.05,
+              flexGrow: 1
             }}
-            uiBackground={
-              {
-                // color: { ...Color4.Blue(), a: 0.1 }
-              }
-            }
+            uiBackground={{
+              textureMode: 'nine-slices',
+              texture: {
+                src: 'assets/images/backgrounds/rounded.png'
+              },
+              textureSlices: {
+                top: 0.25,
+                bottom: 0.25,
+                left: 0.25,
+                right: 0.25
+              },
+              color: { ...Color4.Black(), a: 0.7 }
+            }}
             onMouseDown={noop}
           >
-            {this.buttonClicked === 'permissions' && (
-              <UiEntity uiText={{ value: 'PERMISSIONS', fontSize: 50 }} />
-            )}
-            {Object.values(store.getState().settings.explorerSettings)
-              .filter(
-                (setting) =>
-                  setting.category.toLowerCase() === this.buttonClicked
-              )
-              .map((setting, index) => {
-                const namedVariants = setting.namedVariants ?? []
-                if (namedVariants.length > 0) {
-                  return (
-                    <UiEntity
-                      uiTransform={{
-                        // display:
-                        //   setting.category.toLowerCase() === this.buttonClicked
-                        //     ? 'flex'
-
-                        //     : 'none',
-                        width: sliderWidth,
-                        height: sliderHeight,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        elementId: `setting-${setting.name}-${index}-parent`,
-                        zIndex: 999999
-                      }}
-                      onMouseEnter={() => {
-                        this.settingsInfoDescription =
-                          setting.namedVariants[
-                            store.getState().settings.newValues[setting.name] ??
-                              setting.value
-                          ].description
-                      }}
-                      onMouseLeave={() => {
-                        this.dropdownIndexEntered = -1
-                      }}
-                    >
-                      <DropdownStyled
-                        uiTransform={{ width: '100%' }}
-                        options={setting.namedVariants.map(
-                          (variant) => variant.name
-                        )}
-                        entered={this.dropdownIndexEntered}
-                        fontSize={fontSize}
-                        isOpen={this.dropdownOpenedSettingName === setting.name}
-                        onMouseDown={() => {
-                          if (this.dropdownOpenedSettingName === setting.name) {
-                            this.dropdownOpenedSettingName = ''
-                          } else {
-                            this.dropdownOpenedSettingName = setting.name
-                          }
-                        }}
-                        onOptionMouseDown={(
-                          selectedIndex: number,
-                          title: string
-                        ) => {
-                          this.selectOption(selectedIndex, title)
-                          this.dropdownOpenedSettingName = ''
-                        }}
-                        onOptionMouseEnter={(selectedIndex: number) => {
-                          this.dropdownIndexEntered = selectedIndex
-                          this.settingsInfoDescription =
-                            setting.namedVariants[
-                              this.dropdownIndexEntered
-                            ].description
-                        }}
-                        onOptionMouseLeave={() => {
-                          this.dropdownIndexEntered = -1
-                        }}
-                        title={setting.name}
-                        value={
-                          store.getState().settings.newValues[setting.name] ??
-                          setting.value
-                        }
-                      />
-                    </UiEntity>
-                  )
-                } else {
-                  return (
-                    <Slider
-                      title={setting.name}
-                      fontSize={fontSize}
-                      value={`${
-                        store.getState().settings.newValues[setting.name] ??
-                        setting.value
-                      }`}
-                      uiTransform={{
-                        width: sliderWidth,
-                        height: sliderHeight,
-                        elementId: `setting-${setting.name}-${index}-parent`
-                        // display:
-                        //   setting.category.toLowerCase() === this.buttonClicked
-                        //     ? 'flex'
-                        //     : 'none'
-                      }}
-                      sliderSize={sliderWidth * 2}
-                      id={`setting-${setting.name}`}
-                      position={sliderValueToPercentage(
-                        setting.value,
-                        setting.minValue,
-                        setting.maxValue
-                      )}
-                      onMouseEnter={() => {
-                        this.settingsInfoDescription = setting.description
-                      }}
-                    />
-                  )
+            {
+              <UiEntity
+                uiTransform={{
+                  width: '45%',
+                  height: canvasInfo.height * 0.7,
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  overflow: 'scroll',
+                  scrollVisible: 'vertical',
+                  flexShrink: 0
+                }}
+                uiBackground={
+                  {
+                    // color: { ...Color4.Blue(), a: 0.1 }
+                  }
                 }
-              })}
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: canvasInfo.height * 0.2
-              }}
-            />
-          </UiEntity>
-
-          <UiEntity
-            uiTransform={{
-              width: '40%',
-              height: canvasInfo.height * 0.7,
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              margin: { left: '5%' }
-              // overflow: 'scroll',
-              // scrollVisible: 'hidden',
-            }}
-            uiBackground={
-              {
-                // color: { ...Color4.Red(), a: 0.1 }
-              }
-            }
-          >
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: '100%',
-                flexDirection: 'column',
-                alignItems: 'flex-start'
-              }}
-              // uiBackground={{ color: Color4.Black() }}
-            >
-              <Label value={'Settings Info:'} fontSize={fontSize * 1.5} />
-              <UiEntity
-                uiTransform={{
-                  width: '100%',
-                  height: 1,
-                  flexDirection: 'column',
-                  alignItems: 'flex-start'
-                }}
-                uiBackground={{ color: ALMOST_WHITE }}
-              />
-              <UiEntity
-                uiTransform={{
-                  width: '100%',
-                  height: '50%',
-                  // height: 300,
-                  flexDirection: 'column',
-                  alignItems: 'flex-start'
-                }}
+                onMouseDown={noop}
               >
-                <Label
-                  uiTransform={{ width: '100%', height: 'auto' }}
-                  value={this.settingsInfoDescription}
-                  fontSize={fontSize}
-                  textWrap="wrap"
-                  textAlign="top-left"
+                {Object.values(store.getState().settings.explorerSettings)
+                  .filter(
+                    (setting) =>
+                      setting.category.toLowerCase() === this.buttonClicked
+                  )
+                  .map((setting, index) => {
+                    const namedVariants = setting.namedVariants ?? []
+                    if (namedVariants.length > 0) {
+                      return (
+                        <UiEntity
+                          uiTransform={{
+                            // display:
+                            //   setting.category.toLowerCase() === this.buttonClicked
+                            //     ? 'flex'
+
+                            //     : 'none',
+                            width: sliderWidth,
+                            height: sliderHeight,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            elementId: `setting-${setting.name}-${index}-parent`,
+                            zIndex: 999999
+                          }}
+                          onMouseEnter={() => {
+                            this.settingsInfoDescription =
+                              setting.namedVariants[
+                                store.getState().settings.newValues[
+                                  setting.name
+                                ] ?? setting.value
+                              ].description
+                          }}
+                          onMouseLeave={() => {
+                            this.dropdownIndexEntered = -1
+                          }}
+                        >
+                          <DropdownStyled
+                            uiTransform={{ width: '100%' }}
+                            options={setting.namedVariants.map(
+                              (variant) => variant.name
+                            )}
+                            entered={this.dropdownIndexEntered}
+                            fontSize={fontSize}
+                            isOpen={
+                              this.dropdownOpenedSettingName === setting.name
+                            }
+                            onMouseDown={() => {
+                              if (
+                                this.dropdownOpenedSettingName === setting.name
+                              ) {
+                                this.dropdownOpenedSettingName = ''
+                              } else {
+                                this.dropdownOpenedSettingName = setting.name
+                              }
+                            }}
+                            onOptionMouseDown={(
+                              selectedIndex: number,
+                              title: string
+                            ) => {
+                              this.selectOption(selectedIndex, title)
+                              this.dropdownOpenedSettingName = ''
+                            }}
+                            onOptionMouseEnter={(selectedIndex: number) => {
+                              this.dropdownIndexEntered = selectedIndex
+                              this.settingsInfoDescription =
+                                setting.namedVariants[
+                                  this.dropdownIndexEntered
+                                ].description
+                            }}
+                            onOptionMouseLeave={() => {
+                              this.dropdownIndexEntered = -1
+                            }}
+                            title={setting.name}
+                            value={
+                              store.getState().settings.newValues[
+                                setting.name
+                              ] ?? setting.value
+                            }
+                          />
+                        </UiEntity>
+                      )
+                    } else {
+                      return (
+                        <Slider
+                          title={setting.name}
+                          fontSize={fontSize}
+                          value={`${
+                            store.getState().settings.newValues[setting.name] ??
+                            setting.value
+                          }`}
+                          uiTransform={{
+                            width: sliderWidth,
+                            height: sliderHeight,
+                            elementId: `setting-${setting.name}-${index}-parent`
+                            // display:
+                            //   setting.category.toLowerCase() === this.buttonClicked
+                            //     ? 'flex'
+                            //     : 'none'
+                          }}
+                          sliderSize={sliderWidth * 2}
+                          id={`setting-${setting.name}`}
+                          position={sliderValueToPercentage(
+                            setting.value,
+                            setting.minValue,
+                            setting.maxValue
+                          )}
+                          onMouseEnter={() => {
+                            this.settingsInfoDescription = setting.description
+                          }}
+                        />
+                      )
+                    }
+                  })}
+                <UiEntity
+                  uiTransform={{
+                    width: '100%',
+                    height: canvasInfo.height * 0.2
+                  }}
                 />
+              </UiEntity>
+            }
+
+            <UiEntity
+              uiTransform={{
+                width: '40%',
+                height: canvasInfo.height * 0.7,
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                margin: { left: '5%' }
+                // overflow: 'scroll',
+                // scrollVisible: 'hidden',
+              }}
+              uiBackground={
+                {
+                  // color: { ...Color4.Red(), a: 0.1 }
+                }
+              }
+            >
+              <UiEntity
+                uiTransform={{
+                  width: '100%',
+                  height: '100%',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start'
+                }}
+                // uiBackground={{ color: Color4.Black() }}
+              >
+                <Label value={'Settings Info:'} fontSize={fontSize * 1.5} />
+                <UiEntity
+                  uiTransform={{
+                    width: '100%',
+                    height: 1,
+                    flexDirection: 'column',
+                    alignItems: 'flex-start'
+                  }}
+                  uiBackground={{ color: ALMOST_WHITE }}
+                />
+                <UiEntity
+                  uiTransform={{
+                    width: '100%',
+                    height: '50%',
+                    // height: 300,
+                    flexDirection: 'column',
+                    alignItems: 'flex-start'
+                  }}
+                >
+                  <Label
+                    uiTransform={{ width: '100%', height: 'auto' }}
+                    value={this.settingsInfoDescription}
+                    fontSize={fontSize}
+                    textWrap="wrap"
+                    textAlign="top-left"
+                  />
+                </UiEntity>
               </UiEntity>
             </UiEntity>
           </UiEntity>
-        </UiEntity>
+        )}
       </UiEntity>
     )
   }
