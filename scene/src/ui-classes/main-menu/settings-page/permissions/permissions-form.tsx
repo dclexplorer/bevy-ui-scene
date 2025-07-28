@@ -1,40 +1,32 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import {
-  type PermissionDefinition,
-  type PermissionValue
-} from '../../../bevy-api/permission-definitions'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
-import { Column, Row } from '../../../components/layout'
-import { BottomBorder } from '../../../components/bottom-border'
-import { COLOR } from '../../../components/color-palette'
-import Icon from '../../../components/icon/Icon'
-import { type UiTransformProps } from '@dcl/sdk/react-ecs'
-import { type Color4 } from '@dcl/sdk/math'
-import { noop } from '../../../utils/function-utils'
-import { Content } from '../backpack-page/BackpackPage'
-import { DropdownComponent } from '../../../components/dropdown-component'
+import { type PermissionDefinition } from '../../../../bevy-api/permission-definitions'
+import { getCanvasScaleRatio } from '../../../../service/canvas-ratio'
+import { Column, Row } from '../../../../components/layout'
+import { COLOR } from '../../../../components/color-palette'
+
+import { noop } from '../../../../utils/function-utils'
+import { Content } from '../../backpack-page/BackpackPage'
+import { DropdownComponent } from '../../../../components/dropdown-component'
 import useState = ReactEcs.useState
 import useEffect = ReactEcs.useEffect
-import { BevyApi } from '../../../bevy-api'
-
+import { BevyApi } from '../../../../bevy-api'
 import { executeTask } from '@dcl/sdk/ecs'
-
-import { getCurrentScene } from '../../../service/player-scenes'
+import { getCurrentScene } from '../../../../service/player-scenes'
 import {
   getCompletePermissionsMatrix,
   type PermissionResult
-} from './permissions-map'
+} from '../permissions-map'
+import { PermissionLegend } from './permission-legend'
+import { PermissionRowField } from './permission-row-field'
 
 const FONT_SMALL_UNIT = 30
 const FONT_MEDIUM_UNIT = 40
 const FONT_BIG_UNIT = 50
 
 export const PermissionsForm = ({
-  permissionDefinitions,
-  onHoverPermission = noop
+  permissionDefinitions
 }: {
   permissionDefinitions: PermissionDefinition[]
-  onHoverPermission?: (permissionType: string) => void
 }): ReactElement | null => {
   const [hoveredPermission, setHoveredPermission] = useState<string | null>(
     null
@@ -95,7 +87,8 @@ export const PermissionsForm = ({
             uiTransform={{
               alignItems: 'center',
               justifyContent: 'flex-start',
-              margin: { bottom: '3%' }
+              margin: { bottom: '3%' },
+              zIndex: 2
             }}
           >
             <UiEntity
@@ -109,7 +102,6 @@ export const PermissionsForm = ({
             <DropdownComponent
               dropdownId={'select-current-scene'}
               uiTransform={{
-                zIndex: 2,
                 width: getCanvasScaleRatio() * 400,
                 alignSelf: 'center'
               }}
@@ -192,7 +184,6 @@ export const PermissionsForm = ({
                   </UiEntity>,
                   <PermissionRowField
                     onMouseEnter={() => {
-                      console.log('x')
                       setHoveredPermission(permissionDefinition.permissionType)
                     }}
                     onMouseLeave={() => {
@@ -258,201 +249,5 @@ export const PermissionsForm = ({
         </Column>
       </UiEntity>
     </Content>
-  )
-}
-
-function PermissionRowField({
-  permissionDefinition,
-  value,
-  onMouseEnter = noop,
-  onMouseLeave = noop
-}: {
-  permissionDefinition: PermissionDefinition
-  value: PermissionResult
-  onMouseEnter?: () => void
-  onMouseLeave?: () => void
-}): ReactElement {
-  return (
-    <Row
-      uiTransform={{
-        width: '95%',
-        padding: { right: '10%' }
-      }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      <UiEntity
-        uiText={{
-          value: permissionDefinition.label,
-          textAlign: 'top-left',
-          fontSize: getCanvasScaleRatio() * 40
-        }}
-        uiTransform={{ width: '100%' }}
-      />
-      <PermissionBox
-        value={value.scene.allow}
-        uiTransform={{ margin: '5%' }}
-        active={value.source === 'Scene'}
-      />
-      <PermissionBox
-        value={value.realm.allow}
-        uiTransform={{ margin: '5%' }}
-        active={value.source === 'Realm'}
-      />
-      <PermissionBox
-        value={value.global.allow}
-        uiTransform={{ margin: '5%' }}
-        active={value.source === 'Global'}
-      />
-      <BottomBorder color={COLOR.WHITE_OPACITY_1} />
-    </Row>
-  )
-}
-
-const POSSIBLE_PERMISSION_VALUES: PermissionValue[] = [
-  null,
-  'Allow',
-  'Ask',
-  'Deny'
-]
-
-function PermissionBox({
-  value,
-  uiTransform,
-  active
-}: {
-  value: PermissionValue
-  uiTransform?: UiTransformProps
-  active?: boolean
-}): ReactElement {
-  const [currentValue, setValue] = useState(value)
-  const switchValue: () => void = () => {
-    console.log('switchValue', currentValue)
-    if (
-      POSSIBLE_PERMISSION_VALUES.indexOf(currentValue) ===
-      POSSIBLE_PERMISSION_VALUES.length - 1
-    ) {
-      setValue(POSSIBLE_PERMISSION_VALUES[0])
-    } else {
-      setValue(
-        POSSIBLE_PERMISSION_VALUES[
-          POSSIBLE_PERMISSION_VALUES.indexOf(currentValue) + 1
-        ]
-      )
-    }
-  }
-  return (
-    <UiEntity
-      uiTransform={{
-        padding: getCanvasScaleRatio() * 5,
-        ...(active
-          ? {
-              borderColor: COLOR.ACTIVE_BACKGROUND_COLOR,
-              borderRadius: getCanvasScaleRatio() * 18,
-              borderWidth: 1
-            }
-          : {}),
-        ...uiTransform
-      }}
-      onMouseDown={switchValue}
-    >
-      <Icon
-        iconSize={getCanvasScaleRatio() * 48}
-        icon={{
-          spriteName: 'check-off',
-          atlasName: 'backpack'
-        }}
-      />
-      <Icon
-        uiTransform={{
-          positionType: 'absolute',
-          position: {
-            left: getCanvasScaleRatio() * 5,
-            top: getCanvasScaleRatio() * 5
-          },
-          zIndex: 2
-        }}
-        iconSize={getCanvasScaleRatio() * 48}
-        icon={{
-          spriteName: getSpritePerValue(currentValue),
-          atlasName: 'icons'
-        }}
-        iconColor={getSpriteColorPerValue(currentValue)}
-      />
-    </UiEntity>
-  )
-
-  function getSpritePerValue(value: PermissionValue): string {
-    if (value === 'Ask') {
-      return 'Support'
-    } else if (value === 'Deny') {
-      return 'CloseIcon'
-    } else if (value === 'Allow') {
-      return 'Check'
-    }
-    return 'LeftArrow'
-  }
-
-  function getSpriteColorPerValue(value: PermissionValue): Color4 {
-    if (value === 'Ask') {
-      return COLOR.ORANGE
-    } else if (value === 'Deny') {
-      return COLOR.RED
-    } else if (value === 'Allow') {
-      return COLOR.GREEN
-    }
-    return COLOR.TEXT_COLOR_GREY
-  }
-}
-
-export function PermissionLegend({
-  uiTransform
-}: {
-  uiTransform?: UiTransformProps
-}): ReactElement {
-  const fontSize = getCanvasScaleRatio() * 32
-  return (
-    <UiEntity uiTransform={{ ...uiTransform }}>
-      <UiEntity>
-        <UiEntity
-          uiText={{
-            value: 'Inherit',
-            fontSize,
-            textAlign: 'middle-center'
-          }}
-        />
-        <PermissionBox value={null} />
-      </UiEntity>
-      <UiEntity>
-        <UiEntity
-          uiText={{
-            value: 'Ask',
-            fontSize,
-            textAlign: 'middle-center'
-          }}
-        />
-        <PermissionBox value={'Ask'} />
-      </UiEntity>
-      <UiEntity>
-        <UiEntity
-          uiText={{
-            value: 'Allow',
-            fontSize,
-            textAlign: 'middle-center'
-          }}
-        />
-        <PermissionBox value={'Allow'} />
-      </UiEntity>
-      <UiEntity>
-        <UiEntity
-          uiText={{
-            value: 'Deny',
-            fontSize,
-            textAlign: 'middle-center'
-          }}
-        />
-        <PermissionBox value={'Deny'} />
-      </UiEntity>
-    </UiEntity>
   )
 }

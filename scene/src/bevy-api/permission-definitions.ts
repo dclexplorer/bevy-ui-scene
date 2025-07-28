@@ -116,7 +116,12 @@ export const PERMISSION_DEFINITIONS: PermissionDefinition[] = [
 export type PermissionLevel = 'Realm' | 'Scene' | 'Global'
 export const PERMISSION_LEVELS: PermissionLevel[] = ['Scene', 'Realm', 'Global']
 export type PermissionValue = 'Allow' | 'Deny' | 'Ask' | null
-
+export const POSSIBLE_PERMISSION_VALUES: PermissionValue[] = [
+  null,
+  'Allow',
+  'Ask',
+  'Deny'
+]
 export type PermissionRequest = {
   ty: string
   additional: string | undefined

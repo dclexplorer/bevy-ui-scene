@@ -23,7 +23,7 @@ import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { DropdownStyled } from '../../../components/dropdown-styled'
 import { Slider } from '../../../components/slider'
 import { noop } from '../../../utils/function-utils'
-import { PermissionsForm } from './permissions-form'
+import { PermissionsForm } from './permissions/permissions-form'
 import { PERMISSION_DEFINITIONS } from '../../../bevy-api/permission-definitions'
 
 type SettingCategory =
