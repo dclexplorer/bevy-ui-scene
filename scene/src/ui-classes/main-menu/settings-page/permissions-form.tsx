@@ -1,31 +1,30 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import {
-  PERMISSION_DEFINITIONS,
-  PermissionDefinition,
-  PermissionTypeItem,
-  PermissionValue
+  type PermissionDefinition,
+  type PermissionValue
 } from '../../../bevy-api/permission-definitions'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { Column, Row } from '../../../components/layout'
 import { BottomBorder } from '../../../components/bottom-border'
 import { COLOR } from '../../../components/color-palette'
 import Icon from '../../../components/icon/Icon'
-import { Label, UiTransformProps } from '@dcl/sdk/react-ecs'
-import { Color4 } from '@dcl/sdk/math'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type Color4 } from '@dcl/sdk/math'
 import { noop } from '../../../utils/function-utils'
-import { Content, MainContent } from '../backpack-page/BackpackPage'
+import { Content } from '../backpack-page/BackpackPage'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import useState = ReactEcs.useState
-const BLUE_BORDER = {
-  borderWidth: 1,
-  borderRadius: 0,
-  borderColor: COLOR.BLUE
-}
-const WHITE_BORDER = {
-  borderWidth: 1,
-  borderRadius: 0,
-  borderColor: COLOR.WHITE
-}
+import useEffect = ReactEcs.useEffect
+import { BevyApi } from '../../../bevy-api'
+
+import { executeTask } from '@dcl/sdk/ecs'
+
+import { getCurrentScene } from '../../../service/player-scenes'
+import {
+  getCompletePermissionsMatrix,
+  type PermissionResult
+} from './permissions-map'
+
 const FONT_SMALL_UNIT = 30
 const FONT_MEDIUM_UNIT = 40
 const FONT_BIG_UNIT = 50
@@ -36,7 +35,7 @@ export const PermissionsForm = ({
 }: {
   permissionDefinitions: PermissionDefinition[]
   onHoverPermission?: (permissionType: string) => void
-}): ReactElement => {
+}): ReactElement | null => {
   const [hoveredPermission, setHoveredPermission] = useState<string | null>(
     null
   )
@@ -48,11 +47,28 @@ export const PermissionsForm = ({
   const FONTSIZE_MEDIUM = getCanvasScaleRatio() * FONT_MEDIUM_UNIT
   const sceneOptions = ['', 'Current Scene']
   const selectedOption = 'Current Scene'
-  const onPermissionMouseLeave = (permissionType: string) => {
+  const onPermissionMouseLeave = (permissionType: string): void => {
     if (!(hoveredPermission && hoveredPermission !== permissionType)) {
       setHoveredPermission(null)
     }
   }
+  const [permissionsResults, setPermissionsResults] = useState<Record<
+    string,
+    PermissionResult
+  > | null>(null)
+
+  useEffect(() => {
+    executeTask(async () => {
+      const liveSceneInfo = await BevyApi.liveSceneInfo()
+      const currentScene = await getCurrentScene(liveSceneInfo)
+      console.log('currentScene', currentScene)
+      const completePermissionsMatrix = await getCompletePermissionsMatrix(
+        currentScene.hash
+      )
+      setPermissionsResults(completePermissionsMatrix)
+    })
+  }, [])
+  if (!permissionsResults) return null
   return (
     <Content>
       <UiEntity
@@ -179,26 +195,32 @@ export const PermissionsForm = ({
                       console.log('x')
                       setHoveredPermission(permissionDefinition.permissionType)
                     }}
-                    onMouseLeave={() =>
+                    onMouseLeave={() => {
                       onPermissionMouseLeave(
                         permissionDefinition.permissionType
                       )
-                    }
+                    }}
                     permissionDefinition={permissionDefinition}
+                    value={
+                      permissionsResults[permissionDefinition.permissionType]
+                    }
                   />
                 ]
               } else {
                 return (
                   <PermissionRowField
-                    onMouseEnter={() =>
+                    onMouseEnter={() => {
                       setHoveredPermission(permissionDefinition.permissionType)
-                    }
-                    onMouseLeave={() =>
+                    }}
+                    onMouseLeave={() => {
                       onPermissionMouseLeave(
                         permissionDefinition.permissionType
                       )
-                    }
+                    }}
                     permissionDefinition={permissionDefinition}
+                    value={
+                      permissionsResults[permissionDefinition.permissionType]
+                    }
                   />
                 )
               }
@@ -241,10 +263,12 @@ export const PermissionsForm = ({
 
 function PermissionRowField({
   permissionDefinition,
+  value,
   onMouseEnter = noop,
   onMouseLeave = noop
 }: {
   permissionDefinition: PermissionDefinition
+  value: PermissionResult
   onMouseEnter?: () => void
   onMouseLeave?: () => void
 }): ReactElement {
@@ -266,12 +290,20 @@ function PermissionRowField({
         uiTransform={{ width: '100%' }}
       />
       <PermissionBox
-        value={'Ask'}
+        value={value.scene.allow}
         uiTransform={{ margin: '5%' }}
-        active={true}
+        active={value.source === 'Scene'}
       />
-      <PermissionBox value={'Deny'} uiTransform={{ margin: '5%' }} />
-      <PermissionBox value={'Allow'} uiTransform={{ margin: '5%' }} />
+      <PermissionBox
+        value={value.realm.allow}
+        uiTransform={{ margin: '5%' }}
+        active={value.source === 'Realm'}
+      />
+      <PermissionBox
+        value={value.global.allow}
+        uiTransform={{ margin: '5%' }}
+        active={value.source === 'Global'}
+      />
       <BottomBorder color={COLOR.WHITE_OPACITY_1} />
     </Row>
   )
@@ -292,9 +324,9 @@ function PermissionBox({
   value: PermissionValue
   uiTransform?: UiTransformProps
   active?: boolean
-}) {
+}): ReactElement {
   const [currentValue, setValue] = useState(value)
-  const switchValue = () => {
+  const switchValue: () => void = () => {
     console.log('switchValue', currentValue)
     if (
       POSSIBLE_PERMISSION_VALUES.indexOf(currentValue) ===

@@ -97,7 +97,9 @@ export class UIController {
       const waitFor = getWaitFor(sleep)
 
       ;(async () => {
+        store.dispatch(updateHudStateAction({ loggedIn: true }))
         // TODO review with bevy-explorer dev or protocol why getPlayer().emotes is empty at first
+
         await waitFor(() => (getPlayer()?.emotes?.length ?? 0) > 0, 3000)
 
         void initEmotesWheel({
@@ -109,7 +111,7 @@ export class UIController {
         })
 
         void this.backpackPage.init()
-        store.dispatch(updateHudStateAction({ loggedIn: true }))
+
         setupNotifications().catch(console.error)
         initRealTimeNotifications()
       })().catch(console.error)

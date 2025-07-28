@@ -23,7 +23,7 @@ import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { DropdownStyled } from '../../../components/dropdown-styled'
 import { Slider } from '../../../components/slider'
 import { noop } from '../../../utils/function-utils'
-import { PermissionLegend, PermissionsForm } from './permissions-form'
+import { PermissionsForm } from './permissions-form'
 import { PERMISSION_DEFINITIONS } from '../../../bevy-api/permission-definitions'
 
 type SettingCategory =
@@ -59,7 +59,7 @@ export default class SettingsPage {
   private permissionsBackgroundColor: Color4 = ALMOST_WHITE
   private performanceBackgroundColor: Color4 = ALMOST_WHITE
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
-  private buttonClicked: SettingCategory = 'permissions'
+  private buttonClicked: SettingCategory = 'permissions' // TODO revert to default category
 
   // private settingsInfoTitle: string = ''
   private settingsInfoDescription: string = ''

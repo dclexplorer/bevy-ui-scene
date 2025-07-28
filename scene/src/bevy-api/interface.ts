@@ -4,13 +4,13 @@ import { type WearableCategory } from '../service/categories'
 import { type ChatMessageDefinition } from '../components/chat-message/ChatMessage.types'
 import { type ProfileExtra } from '../utils/passport-promise-utils'
 import {
-  GetPermanentPermissionsArgs,
-  PermanentPermissionItem,
-  PermissionRequest,
-  PermissionTypeItem,
-  PermissionUsed,
-  SetPermanentPermissionArgs,
-  SetSinglePermissionArgs
+  type GetPermanentPermissionsArgs,
+  type PermanentPermissionItem,
+  type PermissionRequest,
+  type PermissionTypeItem,
+  type PermissionUsed,
+  type SetPermanentPermissionArgs,
+  type SetSinglePermissionArgs
 } from './permission-definitions'
 
 export type ExplorerSetting = {
@@ -141,7 +141,7 @@ export type BevyApiInterface = {
   setSinglePermission: (arg0: SetSinglePermissionArgs) => void
   getPermanentPermissions: (
     arg0: GetPermanentPermissionsArgs
-  ) => PermanentPermissionItem[]
+  ) => Promise<PermanentPermissionItem[]>
   setPermanentPermission: (arg0: SetPermanentPermissionArgs) => void
   getPermissionTypes: () => PermissionTypeItem[]
 }
