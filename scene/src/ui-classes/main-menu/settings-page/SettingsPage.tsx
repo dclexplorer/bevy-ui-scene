@@ -298,7 +298,8 @@ export default class SettingsPage {
               uiText={{
                 value: 'Settings',
                 textAlign: 'middle-left',
-                fontSize: 30
+                fontSize: 30,
+                textWrap: 'nowrap'
               }}
             />
 
@@ -425,40 +426,42 @@ export default class SettingsPage {
               height: 'auto'
             }}
           >
-            <ButtonTextIcon
-              uiTransform={{
-                margin: { left: 10, right: 10 },
-                padding: { left: 10, right: 10 },
-                width: 'auto'
-              }}
-              iconColor={this.restoreTextColor}
-              icon={{ atlasName: 'icons', spriteName: 'RotateIcn' }}
-              value={'RESET TO DEFAULT'}
-              fontSize={fontSize}
-              fontColor={this.restoreTextColor}
-              onMouseEnter={() => {
-                this.restoreEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                // this.uiController.settings
-                //   .filter(
-                //     (setting) =>
-                //       setting.category.toLowerCase() === this.buttonClicked
-                //   )
-                //   .forEach((setting) => {
-                //     console.log(
-                //       'setting: ',
-                //       setting.name,
-                //       'value: ',
-                //       setting.value
-                //     )
-                //   })
-              }}
-              backgroundColor={this.restoreBackgroundColor}
-            />
+            {this.buttonClicked !== 'permissions' && (
+              <ButtonTextIcon
+                uiTransform={{
+                  margin: { left: 10, right: 10 },
+                  padding: { left: 10, right: 10 },
+                  width: 'auto'
+                }}
+                iconColor={this.restoreTextColor}
+                icon={{ atlasName: 'icons', spriteName: 'RotateIcn' }}
+                value={'RESET TO DEFAULT'}
+                fontSize={fontSize}
+                fontColor={this.restoreTextColor}
+                onMouseEnter={() => {
+                  this.restoreEnter()
+                }}
+                onMouseLeave={() => {
+                  this.updateButtons()
+                }}
+                onMouseDown={() => {
+                  // this.uiController.settings
+                  //   .filter(
+                  //     (setting) =>
+                  //       setting.category.toLowerCase() === this.buttonClicked
+                  //   )
+                  //   .forEach((setting) => {
+                  //     console.log(
+                  //       'setting: ',
+                  //       setting.name,
+                  //       'value: ',
+                  //       setting.value
+                  //     )
+                  //   })
+                }}
+                backgroundColor={this.restoreBackgroundColor}
+              />
+            )}
           </UiEntity>
         </UiEntity>
 
