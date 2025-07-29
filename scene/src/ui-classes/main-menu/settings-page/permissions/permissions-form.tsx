@@ -8,10 +8,12 @@ import { noop } from '../../../../utils/function-utils'
 import { Content } from '../../backpack-page/BackpackPage'
 import { DropdownComponent } from '../../../../components/dropdown-component'
 import useState = ReactEcs.useState
-import useEffect = ReactEcs.useEffect
 import { BevyApi } from '../../../../bevy-api'
 import { executeTask } from '@dcl/sdk/ecs'
-import { getCurrentScene } from '../../../../service/player-scenes'
+import {
+  filterSelectableScenes,
+  getCurrentScene
+} from '../../../../service/player-scenes'
 import {
   getCompletePermissionsMatrix,
   type PermissionResult
@@ -19,6 +21,8 @@ import {
 import { PermissionLegend } from './permission-legend'
 import { PermissionRowField } from './permission-row-field'
 import { getRealm } from '~system/Runtime'
+import useEffect = ReactEcs.useEffect
+import { LiveSceneInfo } from '../../../../bevy-api/interface'
 
 const FONT_SMALL_UNIT = 30
 const FONT_MEDIUM_UNIT = 40
@@ -29,6 +33,7 @@ export const PermissionsForm = ({
 }: {
   permissionDefinitions: PermissionDefinition[]
 }): ReactElement | null => {
+  const [loading, setLoading] = useState(true)
   const [hoveredPermission, setHoveredPermission] = useState<string | null>(
     null
   )
@@ -38,8 +43,10 @@ export const PermissionsForm = ({
   const FONTSIZE_SMALL = getCanvasScaleRatio() * FONT_SMALL_UNIT
   const FONTSIZE_BIG = getCanvasScaleRatio() * FONT_BIG_UNIT
   const FONTSIZE_MEDIUM = getCanvasScaleRatio() * FONT_MEDIUM_UNIT
-  const sceneOptions = ['', 'Current Scene']
-  const selectedOption = 'Current Scene'
+  const [sceneOptions, setSceneOptions] = useState<
+    { label: string; value: any }[]
+  >([{ label: '', value: null }])
+  const [selectedScene, setSelectedSceneHash] = useState<string | null>(null)
   const onPermissionMouseLeave = (permissionType: string): void => {
     if (!(hoveredPermission && hoveredPermission !== permissionType)) {
       setHoveredPermission(null)
@@ -54,23 +61,48 @@ export const PermissionsForm = ({
   const [changes, setChanges] = useState<number>(0)
 
   useEffect(() => {
+    setLoading(true)
     executeTask(async () => {
-      const liveSceneInfo = await BevyApi.liveSceneInfo()
-      const currentScene = await getCurrentScene(liveSceneInfo)
-      setSceneHash(currentScene.hash)
+      const liveSceneInfo = (await BevyApi.liveSceneInfo()).filter(
+        filterSelectableScenes
+      )
+      console.log('liveSceneInfo.length', liveSceneInfo.length)
+      const playerScene = await getCurrentScene(liveSceneInfo)
+      console.log('playerScene.title', playerScene.title)
+      setSceneOptions(
+        liveSceneInfo.map((sceneInfo) => ({
+          label: sceneInfo.title,
+          value: sceneInfo.hash
+        }))
+      )
+      const selectedSceneItem =
+        selectedScene === null
+          ? playerScene
+          : (liveSceneInfo.find(
+              (s) => s.hash === selectedScene
+            ) as LiveSceneInfo)
+      setSelectedSceneHash(selectedSceneItem.hash)
+
+      setSceneHash(selectedSceneItem.hash)
       const { realmInfo } = await getRealm({})
       setRealmURL(realmInfo!.baseUrl as string)
       const completePermissionsMatrix = await getCompletePermissionsMatrix(
-        currentScene.hash
+        selectedSceneItem.hash
+      )
+      console.log(
+        'completePermissionsMatrix.MovePlayer',
+        completePermissionsMatrix.MovePlayer
       )
       setPermissionsResults(completePermissionsMatrix)
+      setLoading(false)
     })
   }, [changes])
+
   const onChangeRow = () => {
     setChanges(changes + 1)
   }
 
-  if (!permissionsResults) return null
+  if (!permissionsResults || loading) return null
   return (
     <Content>
       <UiEntity
@@ -116,8 +148,11 @@ export const PermissionsForm = ({
                 alignSelf: 'center'
               }}
               options={sceneOptions}
-              value={selectedOption}
-              onChange={noop}
+              value={selectedScene}
+              onChange={(value) => {
+                setSelectedSceneHash(value)
+                setChanges(changes + 1)
+              }}
             />
           </Row>
           <Column
@@ -135,6 +170,7 @@ export const PermissionsForm = ({
               ) {
                 return [
                   <UiEntity
+                    key={permissionDefinition.permissionType}
                     uiText={{
                       value: `<b>${permissionDefinition.section}</b>`,
                       fontSize: FONTSIZE_BIG,

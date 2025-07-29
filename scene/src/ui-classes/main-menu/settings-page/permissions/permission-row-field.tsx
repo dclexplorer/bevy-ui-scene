@@ -73,6 +73,7 @@ export function PermissionRowField({
         }}
         uiTransform={{ width: '100%' }}
       />
+
       <PermissionBox
         value={value.scene.allow}
         uiTransform={{ margin: '5%' }}

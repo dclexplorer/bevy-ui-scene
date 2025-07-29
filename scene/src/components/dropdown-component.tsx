@@ -8,7 +8,7 @@ import { timers } from '@dcl-sdk/utils'
 export type DropdownComponentProps = {
   dropdownId: string // TODO refactor with useState when  it's available
   uiTransform: UiTransformProps
-  options: any[]
+  options: { value: any; label: string }[]
   value: any
   fontSize?: number
   onChange: (value: any) => void
@@ -28,7 +28,7 @@ const state: DropdownState = {}
 
 export function DropdownComponent({
   dropdownId,
-  options,
+  options = [{ label: '', value: null }],
   value = null,
   uiTransform,
   fontSize = getCanvasScaleRatio() * 32,
@@ -53,7 +53,7 @@ export function DropdownComponent({
         }
       }}
       onOptionMouseDown={(index) => {
-        onChange(options[index])
+        onChange(options[index].value)
         state[dropdownId].open = false
       }}
       onOptionMouseEnter={(index) => {
@@ -67,7 +67,7 @@ export function DropdownComponent({
       }}
       title={''}
       fontSize={fontSize}
-      value={options.indexOf(value)}
+      value={options.findIndex((o) => o.value === value)}
       entered={
         state[dropdownId].entered !== null
           ? state[dropdownId].entered ?? -1

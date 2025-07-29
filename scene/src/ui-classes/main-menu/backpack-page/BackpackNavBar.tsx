@@ -6,6 +6,7 @@ import { ITEMS_CATALOG_PAGE_SIZE } from '../../../utils/backpack-constants'
 import { getPlayer } from '@dcl/sdk/src/players'
 import {
   SORT_OPTIONS,
+  SORT_OPTIONS_MAP,
   SORT_OPTIONS_PARAMS,
   ZERO_ADDRESS
 } from '../../../utils/constants'
@@ -172,7 +173,7 @@ export function BackpackNavBar({
                 width: canvasScaleRatio * 280,
                 alignSelf: 'flex-end'
               }}
-              options={SORT_OPTIONS}
+              options={SORT_OPTIONS_MAP}
               value={
                 SORT_OPTIONS[
                   SORT_OPTIONS_PARAMS.findIndex(([orderBy, orderDirection]) => {

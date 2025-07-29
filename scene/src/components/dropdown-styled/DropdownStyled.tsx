@@ -14,23 +14,20 @@ import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 
 function DropdownStyled(props: {
   isOpen: boolean
-  // Events
   onMouseDown: Callback
   onListMouseLeave?: Callback
   onOptionMouseDown: (index: number, title: string) => void
   onOptionMouseEnter: (index: number) => void
   onOptionMouseLeave: (index: number) => void
-  // Shape
   uiTransform?: UiTransformProps
   backgroundColor?: Color4
-  // Text
   title: string
   fontSize: number
   fontColor?: Color4
   value: number
   entered: number
   scroll?: boolean
-  options: string[]
+  options: { value: any; label: string }[]
   disabled?: boolean
   listMaxHeight?: number
 }): ReactEcs.JSX.Element | null {
@@ -93,7 +90,7 @@ function DropdownStyled(props: {
             height: props.fontSize * 2.2
           }}
           uiText={{
-            value: props.options[props.value],
+            value: props.options[props.value]?.label ?? '<unselectable value>',
             fontSize: props.fontSize,
             color: props.fontColor ?? ALMOST_BLACK,
             textAlign: 'middle-left'
@@ -162,7 +159,7 @@ function DropdownStyled(props: {
             >
               {props.options.map((option, index) => (
                 <UiEntity
-                  key={option}
+                  key={option.value}
                   uiTransform={{
                     width: '100%',
                     height: 'auto',
@@ -205,7 +202,7 @@ function DropdownStyled(props: {
                         height: '100%'
                       }}
                       uiText={{
-                        value: option,
+                        value: option.label,
                         fontSize: props.fontSize,
                         color: ALMOST_BLACK,
                         textAlign: 'middle-left'

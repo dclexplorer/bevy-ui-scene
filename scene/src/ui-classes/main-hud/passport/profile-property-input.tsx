@@ -10,7 +10,20 @@ import { DropdownComponent } from '../../../components/dropdown-component'
 import { store } from '../../../state/store'
 import { updateHudStateAction } from '../../../state/hud/actions'
 import { type ViewAvatarData } from '../../../state/hud/state'
-
+type SelectablePropertyKey = keyof typeof selectableValues
+const selectableValuesMap: any = Object.keys(selectableValues).reduce(
+  // TODO fix any's
+  (acc: any, currentKey: any): any => {
+    acc[currentKey as any] = selectableValues[
+      currentKey as SelectablePropertyKey
+    ].map((s) => ({
+      value: s,
+      label: s
+    }))
+    return acc
+  },
+  {}
+)
 export const editablePropertyKeys: string[] = [
   'country',
   'language',
@@ -198,8 +211,6 @@ export function ProfilePropertyField({
       )
     }
 
-    type SelectablePropertyKey = keyof typeof selectableValues
-
     if (type === INPUT_TYPE.DROPDOWN && propertyKey in selectableValues) {
       return (
         <DropdownComponent
@@ -214,7 +225,7 @@ export function ProfilePropertyField({
             borderWidth: 0
           }}
           scroll={true}
-          options={selectableValues[propertyKey as SelectablePropertyKey]}
+          options={selectableValuesMap[propertyKey as SelectablePropertyKey]}
           value={profileData[propertyKey] ?? ''}
           onChange={onChange}
           disabled={disabled}

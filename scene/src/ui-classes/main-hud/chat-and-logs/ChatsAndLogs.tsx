@@ -134,6 +134,7 @@ export default class ChatAndLogs {
     ): Promise<void> => {
       for await (const chatMessage of stream) {
         if (chatMessage.message.indexOf('␑') === 0) return
+        console.log('chatMessage', chatMessage)
         this.pushMessage(chatMessage).catch(console.error)
         if (!this.isOpen()) {
           state.unreadMessages++

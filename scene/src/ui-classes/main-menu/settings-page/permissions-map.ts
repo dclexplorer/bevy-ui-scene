@@ -55,6 +55,7 @@ export async function getCompletePermissionsMatrix(
     level: 'Scene',
     value: sceneHash
   })
+  console.log('scenePermissions', sceneHash, scenePermissions)
   const completeScenePermissions: PermissionItem[] = PERMISSION_DEFINITIONS.map(
     (permissionDefinition) => {
       const foundPermission = scenePermissions.find(

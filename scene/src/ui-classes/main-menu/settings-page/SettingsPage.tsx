@@ -550,9 +550,10 @@ export default class SettingsPage {
                         >
                           <DropdownStyled
                             uiTransform={{ width: '100%' }}
-                            options={setting.namedVariants.map(
-                              (variant) => variant.name
-                            )}
+                            options={setting.namedVariants.map((variant) => ({
+                              label: variant.name,
+                              value: variant.name
+                            }))}
                             entered={this.dropdownIndexEntered}
                             fontSize={fontSize}
                             isOpen={

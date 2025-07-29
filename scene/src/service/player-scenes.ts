@@ -18,10 +18,22 @@ export function getPlayerParcel(): { x: number; y: number } {
 export async function getCurrentScene(
   liveSceneInfo?: LiveSceneInfo[]
 ): Promise<LiveSceneInfo> {
-  const _liveSceneInfo = liveSceneInfo ?? (await BevyApi.liveSceneInfo())
+  const _liveSceneInfo =
+    liveSceneInfo ??
+    (await BevyApi.liveSceneInfo()).filter(filterSelectableScenes)
   const currentParcel = getPlayerParcel()
   const currentScene = _liveSceneInfo.find((s) =>
-    s.parcels.find((p) => p.x === currentParcel.x && p.y !== currentParcel.y)
+    s.parcels.find((p) => p.x === currentParcel.x && p.y === currentParcel.y)
   )
+  if (!currentScene) {
+    //TODO REVIEW TO IMPROVE: look for the closer one
+    return _liveSceneInfo[0]
+  }
   return currentScene as LiveSceneInfo
+}
+
+export function filterSelectableScenes(sceneInfo: LiveSceneInfo) {
+  return (
+    sceneInfo.title !== 'UI Scene' && sceneInfo.title.indexOf('Road at') === -1
+  )
 }

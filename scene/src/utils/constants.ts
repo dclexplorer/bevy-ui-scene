@@ -578,6 +578,10 @@ export const SORT_OPTIONS = [
   'Name A-Z',
   'Name Z-A'
 ]
+export const SORT_OPTIONS_MAP = SORT_OPTIONS.map((O) => ({
+  value: O,
+  label: O
+}))
 export const SORT_OPTIONS_PARAMS = [
   [ITEMS_ORDER_BY.DATE, ITEMS_ORDER_DIRECTION.DESC],
   [ITEMS_ORDER_BY.DATE, ITEMS_ORDER_DIRECTION.ASC],

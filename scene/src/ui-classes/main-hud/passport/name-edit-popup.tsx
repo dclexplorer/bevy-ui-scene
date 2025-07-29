@@ -33,7 +33,9 @@ const BUTTON_TEXT_COLOR = { ...COLOR.WHITE }
 
 const EditNameContent = (): ReactElement => {
   const profileData = store.getState().hud.profileData
-  const [selectableNames, setSelectableNames] = useState<string[]>([''])
+  const [selectableNames, setSelectableNames] = useState<
+    { value: string; label: string }[]
+  >([{ value: '', label: '' }])
   const [selectedName, setSelectedName] = useState<string>(
     profileData.name ?? ''
   )
@@ -61,7 +63,7 @@ const EditNameContent = (): ReactElement => {
 
       setActiveTab(activeTab)
       setTabs(tabs)
-      setSelectableNames(names)
+      setSelectableNames(names.map((n) => ({ value: n, label: n })))
       setSelectedName(!names.includes(profileData.name) ? '' : profileData.name)
       setLoading(false)
       setCustomName(profileData.hasClaimedName ? '' : profileData.name)
@@ -70,7 +72,9 @@ const EditNameContent = (): ReactElement => {
     })
   }, [])
   const onSave = (selectedName: string): void => {
-    const hasClaimedName = selectableNames.includes(selectedName)
+    const hasClaimedName = !!selectableNames.find(
+      (s) => s.value === selectedName
+    )
     executeTask(async () => {
       setLoading(true)
       let failed = false
@@ -303,7 +307,7 @@ export const UniqueNameForm = ({
   onChange = noop,
   onSave = noop
 }: {
-  selectableNames: string[]
+  selectableNames: { value: any; label: string }[]
   selectedName: string
   disabled?: boolean
   onChange?: (value: string) => void
