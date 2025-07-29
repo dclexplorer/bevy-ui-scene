@@ -95,6 +95,7 @@ export function PermissionRowField({
         active={value.source === 'Global'}
         debounce={500}
         onChange={onChangeGlobal}
+        required={true}
       />
       <BottomBorder color={COLOR.WHITE_OPACITY_1} />
     </Row>

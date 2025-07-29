@@ -12,28 +12,35 @@ import useState = ReactEcs.useState
 import { noop } from '../../../../utils/function-utils'
 import { useDebounce } from '../../../../hooks/use-debounce'
 import useEffect = ReactEcs.useEffect
-
+const REQUIRED_POSSIBLE_PERMISSION_VALUES = POSSIBLE_PERMISSION_VALUES.filter(
+  (i) => i !== null
+)
 export function PermissionBox({
   value,
   uiTransform,
   active,
   onChange = noop,
-  debounce = 0
+  debounce = 0,
+  required = false
 }: {
   value: PermissionValue
   uiTransform?: UiTransformProps
   active?: boolean
   onChange?: (value: PermissionValue) => void
   debounce?: number
+  required?: boolean
 }): ReactElement {
   const [currentValue, setValue] = useState(value)
+  const possiblePermissionValues = required
+    ? REQUIRED_POSSIBLE_PERMISSION_VALUES
+    : POSSIBLE_PERMISSION_VALUES
   const switchValue: () => void = () => {
     const nextValue =
-      POSSIBLE_PERMISSION_VALUES.indexOf(currentValue) ===
-      POSSIBLE_PERMISSION_VALUES.length - 1
-        ? POSSIBLE_PERMISSION_VALUES[0]
-        : POSSIBLE_PERMISSION_VALUES[
-            POSSIBLE_PERMISSION_VALUES.indexOf(currentValue) + 1
+      possiblePermissionValues.indexOf(currentValue) ===
+      possiblePermissionValues.length - 1
+        ? possiblePermissionValues[0]
+        : possiblePermissionValues[
+            possiblePermissionValues.indexOf(currentValue) + 1
           ]
     setValue(nextValue)
     if (!debounce) onChange(nextValue)
