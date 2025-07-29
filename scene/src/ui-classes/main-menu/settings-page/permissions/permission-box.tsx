@@ -52,17 +52,12 @@ export function PermissionBox({
     <UiEntity
       uiTransform={{
         padding: getCanvasScaleRatio() * 5,
-        ...(active
-          ? {
-              borderColor: COLOR.ACTIVE_BACKGROUND_COLOR,
-              borderRadius: getCanvasScaleRatio() * 18,
-              borderWidth: 1
-            }
-          : {}),
+        borderColor: active
+          ? COLOR.ACTIVE_BACKGROUND_COLOR
+          : COLOR.BLACK_TRANSPARENT,
+        borderRadius: getCanvasScaleRatio() * 18,
+        borderWidth: 1,
         ...uiTransform
-      }}
-      uiBackground={{
-        color: active ? COLOR.ACTIVE_BACKGROUND_COLOR : COLOR.BLACK_TRANSPARENT // TODO remove if change on borderRadius is fixed, now it disappears
       }}
       onMouseDown={switchValue}
     >
