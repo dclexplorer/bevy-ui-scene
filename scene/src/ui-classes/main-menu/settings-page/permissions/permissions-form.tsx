@@ -18,6 +18,7 @@ import {
 } from '../permissions-map'
 import { PermissionLegend } from './permission-legend'
 import { PermissionRowField } from './permission-row-field'
+import { getRealm } from '~system/Runtime'
 
 const FONT_SMALL_UNIT = 30
 const FONT_MEDIUM_UNIT = 40
@@ -44,22 +45,31 @@ export const PermissionsForm = ({
       setHoveredPermission(null)
     }
   }
+  const [sceneHash, setSceneHash] = useState<string>('')
+  const [realmURL, setRealmURL] = useState<string>('')
   const [permissionsResults, setPermissionsResults] = useState<Record<
     string,
     PermissionResult
   > | null>(null)
+  const [changes, setChanges] = useState<number>(0)
 
   useEffect(() => {
     executeTask(async () => {
       const liveSceneInfo = await BevyApi.liveSceneInfo()
       const currentScene = await getCurrentScene(liveSceneInfo)
-      console.log('currentScene', currentScene)
+      setSceneHash(currentScene.hash)
+      const { realmInfo } = await getRealm({})
+      setRealmURL(realmInfo!.baseUrl as string)
       const completePermissionsMatrix = await getCompletePermissionsMatrix(
         currentScene.hash
       )
       setPermissionsResults(completePermissionsMatrix)
     })
-  }, [])
+  }, [changes])
+  const onChangeRow = () => {
+    setChanges(changes + 1)
+  }
+
   if (!permissionsResults) return null
   return (
     <Content>
@@ -195,9 +205,14 @@ export const PermissionsForm = ({
                     value={
                       permissionsResults[permissionDefinition.permissionType]
                     }
+                    sceneHash={sceneHash}
+                    realmURL={realmURL}
+                    onChange={onChangeRow}
                   />
                 ]
               } else {
+                // TODO review if we can remove duplicated code
+
                 return (
                   <PermissionRowField
                     onMouseEnter={() => {
@@ -212,6 +227,9 @@ export const PermissionsForm = ({
                     value={
                       permissionsResults[permissionDefinition.permissionType]
                     }
+                    sceneHash={sceneHash}
+                    realmURL={realmURL}
+                    onChange={onChangeRow}
                   />
                 )
               }

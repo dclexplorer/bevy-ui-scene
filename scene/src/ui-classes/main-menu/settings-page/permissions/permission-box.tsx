@@ -9,34 +9,45 @@ import { COLOR } from '../../../../components/color-palette'
 import Icon from '../../../../components/icon/Icon'
 import type { Color4 } from '@dcl/sdk/math'
 import useState = ReactEcs.useState
+import { noop } from '../../../../utils/function-utils'
+import { useDebounce } from '../../../../hooks/use-debounce'
+import useEffect = ReactEcs.useEffect
 
 export function PermissionBox({
   value,
   uiTransform,
   active,
-  onChange
+  onChange = noop,
+  debounce = 0
 }: {
   value: PermissionValue
   uiTransform?: UiTransformProps
   active?: boolean
-  onChange?: (value: string) => void
+  onChange?: (value: PermissionValue) => void
+  debounce?: number
 }): ReactElement {
   const [currentValue, setValue] = useState(value)
   const switchValue: () => void = () => {
-    console.log('switchValue', currentValue)
-    if (
+    const nextValue =
       POSSIBLE_PERMISSION_VALUES.indexOf(currentValue) ===
       POSSIBLE_PERMISSION_VALUES.length - 1
-    ) {
-      setValue(POSSIBLE_PERMISSION_VALUES[0])
-    } else {
-      setValue(
-        POSSIBLE_PERMISSION_VALUES[
-          POSSIBLE_PERMISSION_VALUES.indexOf(currentValue) + 1
-        ]
-      )
-    }
+        ? POSSIBLE_PERMISSION_VALUES[0]
+        : POSSIBLE_PERMISSION_VALUES[
+            POSSIBLE_PERMISSION_VALUES.indexOf(currentValue) + 1
+          ]
+    setValue(nextValue)
+    if (!debounce) onChange(nextValue)
   }
+  const debouncedValue = useDebounce(currentValue)
+  const [changedOnce, setchangedOnce] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (debounce && (value !== debouncedValue || changedOnce)) {
+      onChange(debouncedValue)
+      setchangedOnce(true)
+    }
+  }, [debouncedValue])
+
   return (
     <UiEntity
       uiTransform={{
@@ -49,6 +60,9 @@ export function PermissionBox({
             }
           : {}),
         ...uiTransform
+      }}
+      uiBackground={{
+        color: active ? COLOR.ACTIVE_BACKGROUND_COLOR : COLOR.BLACK_TRANSPARENT // TODO remove if change on borderRadius is fixed, now it disappears
       }}
       onMouseDown={switchValue}
     >
