@@ -271,36 +271,55 @@ export const PermissionsForm = ({
               }
             })}
           </Column>
-          <PermissionLegend
-            uiTransform={{
-              margin: '2%',
-              width: '100%'
-            }}
-          />
         </Column>
-        <Column>
-          <UiEntity
-            uiText={{
-              value: hoveredPermissionDefinition
-                ? hoveredPermissionDefinition.label
-                : '',
-              fontSize: FONTSIZE_BIG,
-              textAlign: 'top-left'
-            }}
-            uiTransform={{ padding: { top: '5%' } }}
-          />
-          <UiEntity
-            uiText={{
-              value: hoveredPermissionDefinition
-                ? `This permission is requested when scene attemps to ${hoveredPermissionDefinition.activeDescription}`
-                : '',
-              fontSize: FONTSIZE_MEDIUM,
-              textAlign: 'top-left',
-              color: COLOR.TEXT_COLOR_LIGHT_GREY
-            }}
-            uiTransform={{ padding: { top: '5%' } }}
-          />
-        </Column>
+        {hoveredPermission && (
+          <Column>
+            <UiEntity
+              uiText={{
+                value: hoveredPermissionDefinition
+                  ? hoveredPermissionDefinition.label
+                  : '',
+                fontSize: FONTSIZE_BIG,
+                textAlign: 'top-left'
+              }}
+              uiTransform={{ padding: { top: '5%' } }}
+            />
+            <UiEntity
+              uiText={{
+                value: hoveredPermissionDefinition
+                  ? `This permission is requested when scene attemps to ${hoveredPermissionDefinition.activeDescription}`
+                  : '',
+                fontSize: FONTSIZE_MEDIUM,
+                textAlign: 'top-left',
+                color: COLOR.TEXT_COLOR_LIGHT_GREY
+              }}
+              uiTransform={{ padding: { top: '5%' } }}
+            />
+            <PermissionLegend />
+          </Column>
+        )}
+        {!hoveredPermission && (
+          <Column>
+            <UiEntity
+              uiText={{
+                value: 'Permissions',
+                fontSize: FONTSIZE_BIG,
+                textAlign: 'top-left'
+              }}
+              uiTransform={{ padding: { top: '5%' } }}
+            />
+            <UiEntity
+              uiText={{
+                value: `Choose how scenes can interact with your app. For each request, you can allow it, deny it, ask every time, or use your global preference\n`,
+                fontSize: FONTSIZE_MEDIUM,
+                textAlign: 'top-left',
+                color: COLOR.TEXT_COLOR_LIGHT_GREY
+              }}
+              uiTransform={{ padding: { top: '5%', bottom: '10%' } }}
+            />
+            <PermissionLegend />
+          </Column>
+        )}
       </UiEntity>
     </Content>
   )
