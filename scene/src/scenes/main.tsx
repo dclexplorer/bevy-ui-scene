@@ -5,6 +5,7 @@ import { loadSettingsFromExplorer } from '../state/settings/actions'
 import { store } from '../state/store'
 import { executeTask } from '@dcl/sdk/ecs'
 import { sleep } from '../utils/dcl-utils'
+import { updateHudStateAction } from '../state/hud/actions'
 
 let gameInstance: GameController
 
@@ -13,17 +14,15 @@ export async function init(retry: boolean): Promise<void> {
   gameInstance.uiController.loadingAndLogin.startLoading()
   // BevyApi.loginGuest()
   // gameInstance.uiController.loadingAndLogin.finishLoading()
-  // gameInstance.uiController.menu?.show('backpack')
-
+  // gameInstance.uiController.menu?.show('settings')
   executeTask(async () => {
     await sleep(100)
-
+    // store.dispatch(updateHudStateAction({ loggedIn: true }))
     /*    store.dispatch(
       pushPopupAction({
         type: HUD_POPUP_TYPE.NOTIFICATIONS_MENU
       })
     ) */
-
     /*    store.dispatch(
       pushPopupAction({
         type: HUD_POPUP_TYPE.ERROR,
