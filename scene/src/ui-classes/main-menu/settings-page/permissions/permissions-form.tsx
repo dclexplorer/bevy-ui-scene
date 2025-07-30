@@ -61,14 +61,11 @@ export const PermissionsForm = ({
   const [changes, setChanges] = useState<number>(0)
 
   useEffect(() => {
-    setLoading(true)
     executeTask(async () => {
       const liveSceneInfo = (await BevyApi.liveSceneInfo()).filter(
         filterSelectableScenes
       )
-      console.log('liveSceneInfo.length', liveSceneInfo.length)
       const playerScene = await getCurrentScene(liveSceneInfo)
-      console.log('playerScene.title', playerScene.title)
       setSceneOptions(
         liveSceneInfo.map((sceneInfo) => ({
           label: sceneInfo.title,
@@ -89,10 +86,7 @@ export const PermissionsForm = ({
       const completePermissionsMatrix = await getCompletePermissionsMatrix(
         selectedSceneItem.hash
       )
-      console.log(
-        'completePermissionsMatrix.MovePlayer',
-        completePermissionsMatrix.MovePlayer
-      )
+
       setPermissionsResults(completePermissionsMatrix)
       setLoading(false)
     })
@@ -151,6 +145,7 @@ export const PermissionsForm = ({
               value={selectedScene}
               onChange={(value) => {
                 setSelectedSceneHash(value)
+                setLoading(true)
                 setChanges(changes + 1)
               }}
             />

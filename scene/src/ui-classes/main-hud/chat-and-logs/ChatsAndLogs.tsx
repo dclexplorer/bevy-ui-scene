@@ -181,7 +181,7 @@ export default class ChatAndLogs {
         (await getUserData({ userId: message.sender_address }))?.data
           ?.displayName ??
         `Unknown*`
-    const chatMessage: ChatMessageRepresentation = {
+    const decoratedChatMessage: ChatMessageRepresentation = {
       ...message,
       timestamp:
         state.shownMessages[state.shownMessages.length - 1]?.timestamp ===
@@ -196,11 +196,12 @@ export default class ChatAndLogs {
       hasMentionToMe: messageHasMentionToMe(message.message),
       isGuest: playerData ? playerData.isGuest : true
     }
+    console.log('Decorated chatMessage', decoratedChatMessage)
 
     if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
-      state.newMessages.push(chatMessage)
+      state.newMessages.push(decoratedChatMessage)
     } else {
-      state.shownMessages.push(chatMessage)
+      state.shownMessages.push(decoratedChatMessage)
       scrollToBottom()
     }
   }

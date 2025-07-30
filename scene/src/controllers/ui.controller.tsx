@@ -34,6 +34,7 @@ import {
   NotificationToastStack
 } from '../ui-classes/main-hud/notification-toast-stack'
 import { updateHudStateAction } from '../state/hud/actions'
+import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-popups/permissions-popup-service'
 
 let loadingAndLogin: any = null
 
@@ -99,7 +100,7 @@ export class UIController {
       ;(async () => {
         store.dispatch(updateHudStateAction({ loggedIn: true }))
         // TODO review with bevy-explorer dev or protocol why getPlayer().emotes is empty at first
-
+        listenPermissionRequests()
         await waitFor(() => (getPlayer()?.emotes?.length ?? 0) > 0, 3000)
 
         void initEmotesWheel({
