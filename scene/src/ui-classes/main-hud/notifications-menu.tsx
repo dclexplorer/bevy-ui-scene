@@ -44,7 +44,7 @@ export async function setupNotifications(): Promise<void> {
   }
 }
 
-export const NotificationsMenu: Popup = (): ReactElement | null => {
+export const NotificationsMenu: Popup = (): ReactElement => {
   return (
     <UiEntity
       uiTransform={{

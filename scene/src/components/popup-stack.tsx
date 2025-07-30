@@ -8,6 +8,7 @@ import { AddProfileLinkPopup } from '../ui-classes/main-hud/passport/add-profile
 import { ProfileMenuPopup } from '../ui-classes/main-hud/passport/profile-popup'
 import { ErrorPopup } from '../ui-classes/main-hud/error-popup'
 import { NotificationsMenu } from '../ui-classes/main-hud/notifications-menu'
+import { PermissionRequestPopup } from '../ui-classes/main-hud/permissions-popups/permission-request-popup'
 
 export type PopupParameters = { shownPopup: HUDPopup }
 export type Popup = (
@@ -22,7 +23,8 @@ const popupComponents: Record<number, Popup> = {
   [HUD_POPUP_TYPE.ADD_LINK as number]: AddProfileLinkPopup,
   [HUD_POPUP_TYPE.PROFILE_MENU as number]: ProfileMenuPopup,
   [HUD_POPUP_TYPE.ERROR as number]: ErrorPopup,
-  [HUD_POPUP_TYPE.NOTIFICATIONS_MENU as number]: NotificationsMenu
+  [HUD_POPUP_TYPE.NOTIFICATIONS_MENU as number]: NotificationsMenu,
+  [HUD_POPUP_TYPE.PERMISSION_REQUEST as number]: PermissionRequestPopup
 }
 
 export function PopupStack(): ReactElement | null {

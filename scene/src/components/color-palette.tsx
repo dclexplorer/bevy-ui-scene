@@ -78,6 +78,7 @@ export const COLOR = {
   WHEEL_BASE_RARITY: Color4.fromHexString('#e1e1e1'),
   BLACK_TRANSPARENT: Color4.create(0, 0, 0, 0),
   MESSAGE_MENTION: Color4.fromHexString('#FD2D58'),
+  BUTTON_PRIMARY: Color4.fromHexString('#FD2D58'),
   MESSAGE_MENTION_BACKGROUND: Color4.fromHexString('#3A0F50'),
   WHITE: Color4.White(),
   BLACK: Color4.Black(),
