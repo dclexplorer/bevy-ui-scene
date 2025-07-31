@@ -15,6 +15,7 @@ import {
 import { Row } from '../../../components/layout'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import { ButtonTextIcon } from '../../../components/button-text-icon'
+import { RadioButton } from '../../../components/radio-button'
 
 const PERMISSION_REQUEST_OPTIONS = ['Once', ...PERMISSION_LEVELS].map((i) => ({
   label: i === 'Once' ? i : `Always for ${i}`,
@@ -42,7 +43,7 @@ export const PermissionRequestPopup: Popup = ({ shownPopup }) => {
       <UiEntity
         uiTransform={{
           width: getCanvasScaleRatio() * 1200,
-          height: getCanvasScaleRatio() * 750,
+          height: getCanvasScaleRatio() * 900,
           borderRadius: BORDER_RADIUS_F,
           borderWidth: 0,
           borderColor: COLOR.WHITE,
@@ -57,7 +58,8 @@ export const PermissionRequestPopup: Popup = ({ shownPopup }) => {
       >
         <Icon
           uiTransform={{
-            position: { top: '2%' }
+            position: { top: '2%' },
+            flexShrink: 0
           }}
           icon={{ spriteName: 'Lock', atlasName: 'icons' }}
           iconSize={getCanvasScaleRatio() * 96}
@@ -68,57 +70,44 @@ export const PermissionRequestPopup: Popup = ({ shownPopup }) => {
             value: `\nThe scene wants permission to ${PERMISSION_DEFINITIONS.find(
               (p) => p.permissionType === data.ty
             )?.activeDescription}\n${data.additional ?? ''}`,
-            fontSize: getCanvasScaleRatio() * 36
+            fontSize: getCanvasScaleRatio() * 42
           }}
         />
-        <Row uiTransform={{ width: '100%' }}>
-          <Row
+        <RadioButton
+          options={PERMISSION_REQUEST_OPTIONS}
+          value={'Once'}
+          fontSize={getCanvasScaleRatio() * 42}
+        />
+        <Row
+          uiTransform={{
+            width: '100%',
+            justifyContent: 'center',
+            margin: { top: '5%' }
+          }}
+        >
+          <ButtonTextIcon
+            icon={{ spriteName: 'Check', atlasName: 'icons' }}
+            iconSize={getCanvasScaleRatio() * 42}
             uiTransform={{
-              padding: 0,
-              margin: 0
+              width: '30%'
             }}
-          >
-            <DropdownComponent
-              dropdownId={`permission-request-${data.id}`}
-              uiTransform={{ width: '80%', position: { top: '-10%' } }}
-              options={PERMISSION_REQUEST_OPTIONS}
-              value={'Once'}
-              onChange={() => {}}
-            />
-            <ButtonTextIcon
-              icon={{ spriteName: 'Check', atlasName: 'icons' }}
-              iconSize={getCanvasScaleRatio() * 36}
-              uiTransform={{
-                width: '30%'
-              }}
-              backgroundColor={COLOR.BUTTON_PRIMARY}
-              fontSize={getCanvasScaleRatio() * 36}
-              value={'Allow'}
-              onMouseDown={noop}
-            />
-            <ButtonTextIcon
-              icon={{ spriteName: 'CloseIcon', atlasName: 'icons' }}
-              iconSize={getCanvasScaleRatio() * 36}
-              uiTransform={{
-                width: '30%',
-                margin: { left: '5%', right: '5%' }
-              }}
-              backgroundColor={COLOR.BUTTON_PRIMARY}
-              fontSize={getCanvasScaleRatio() * 36}
-              value={'Deny'}
-              onMouseDown={noop}
-            />
-          </Row>
-          {/*
-          // TODO, decide best behaviour for UX, leave the popup bellow menu ?
-          <UiEntity
+            backgroundColor={COLOR.BUTTON_PRIMARY}
+            fontSize={getCanvasScaleRatio() * 42}
+            value={'Allow'}
+            onMouseDown={noop}
+          />
+          <ButtonTextIcon
+            icon={{ spriteName: 'CloseIcon', atlasName: 'icons' }}
+            iconSize={getCanvasScaleRatio() * 42}
             uiTransform={{
-              borderWidth: 1,
-              borderRadius: getCanvasScaleRatio() * 20,
-              borderColor: COLOR.WHITE
+              width: '30%',
+              margin: { left: '5%', right: '5%' }
             }}
-            uiText={{ value: 'Manage Permissions' }}
-          />*/}
+            backgroundColor={COLOR.BUTTON_PRIMARY}
+            fontSize={getCanvasScaleRatio() * 42}
+            value={'Deny'}
+            onMouseDown={noop}
+          />
         </Row>
       </UiEntity>
     </UiEntity>

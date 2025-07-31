@@ -11,6 +11,7 @@ import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { COLOR } from '../color-palette'
 import { isTruthy, noop } from '../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { InputOption } from '../../utils/definitions'
 
 function DropdownStyled(props: {
   isOpen: boolean
@@ -27,7 +28,7 @@ function DropdownStyled(props: {
   value: number
   entered: number
   scroll?: boolean
-  options: { value: any; label: string }[]
+  options: InputOption[]
   disabled?: boolean
   listMaxHeight?: number
 }): ReactEcs.JSX.Element | null {

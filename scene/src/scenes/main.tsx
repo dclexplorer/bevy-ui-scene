@@ -11,13 +11,13 @@ let gameInstance: GameController
 
 export async function init(retry: boolean): Promise<void> {
   gameInstance = new GameController()
-  // gameInstance.uiController.loadingAndLogin.startLoading()
+  gameInstance.uiController.loadingAndLogin.startLoading()
   // BevyApi.loginGuest()
-  gameInstance.uiController.loadingAndLogin.finishLoading()
+  //gameInstance.uiController.loadingAndLogin.finishLoading()
   // gameInstance.uiController.menu?.show('settings')
   executeTask(async () => {
     await sleep(100)
-    store.dispatch(updateHudStateAction({ loggedIn: true }))
+    // store.dispatch(updateHudStateAction({ loggedIn: true }))
 
     /*    store.dispatch(
       pushPopupAction({

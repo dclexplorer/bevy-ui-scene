@@ -21,6 +21,7 @@ import { BevyApi } from '../../../bevy-api'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import useEffect = ReactEcs.useEffect
 import { type SetAvatarData } from '../../../bevy-api/interface'
+import { InputOption } from '../../../utils/definitions'
 
 const { useState } = ReactEcs
 
@@ -33,9 +34,9 @@ const BUTTON_TEXT_COLOR = { ...COLOR.WHITE }
 
 const EditNameContent = (): ReactElement => {
   const profileData = store.getState().hud.profileData
-  const [selectableNames, setSelectableNames] = useState<
-    { value: string; label: string }[]
-  >([{ value: '', label: '' }])
+  const [selectableNames, setSelectableNames] = useState<InputOption[]>([
+    { value: '', label: '' }
+  ])
   const [selectedName, setSelectedName] = useState<string>(
     profileData.name ?? ''
   )
@@ -307,7 +308,7 @@ export const UniqueNameForm = ({
   onChange = noop,
   onSave = noop
 }: {
-  selectableNames: { value: any; label: string }[]
+  selectableNames: InputOption[]
   selectedName: string
   disabled?: boolean
   onChange?: (value: string) => void

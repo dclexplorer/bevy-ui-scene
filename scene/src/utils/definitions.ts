@@ -139,3 +139,5 @@ export type FormattedURN = {
   itemId: string
 }
 export type EquippedEmote = URNWithoutTokenId | offchainEmoteURN | ``
+
+export type InputOption = { value: any; label: string }

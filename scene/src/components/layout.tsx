@@ -6,17 +6,20 @@ export function Row({
   uiTransform,
   children,
   onMouseEnter = noop,
-  onMouseLeave = noop
+  onMouseLeave = noop,
+  onMouseDown = noop
 }: {
   uiTransform?: UiTransformProps
   children?: ReactElement
   onMouseEnter?: () => void
   onMouseLeave?: () => void
+  onMouseDown?: () => void
 }): ReactElement {
   return (
     <UiEntity
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onMouseDown={onMouseDown}
       uiTransform={{
         flexDirection: 'row',
         alignItems: 'center',

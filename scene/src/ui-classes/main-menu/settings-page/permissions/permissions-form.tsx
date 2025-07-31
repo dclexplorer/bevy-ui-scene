@@ -23,6 +23,7 @@ import { PermissionRowField } from './permission-row-field'
 import { getRealm } from '~system/Runtime'
 import useEffect = ReactEcs.useEffect
 import { LiveSceneInfo } from '../../../../bevy-api/interface'
+import { InputOption } from '../../../../utils/definitions'
 
 const FONT_SMALL_UNIT = 30
 const FONT_MEDIUM_UNIT = 40
@@ -43,9 +44,9 @@ export const PermissionsForm = ({
   const FONTSIZE_SMALL = getCanvasScaleRatio() * FONT_SMALL_UNIT
   const FONTSIZE_BIG = getCanvasScaleRatio() * FONT_BIG_UNIT
   const FONTSIZE_MEDIUM = getCanvasScaleRatio() * FONT_MEDIUM_UNIT
-  const [sceneOptions, setSceneOptions] = useState<
-    { label: string; value: any }[]
-  >([{ label: '', value: null }])
+  const [sceneOptions, setSceneOptions] = useState<InputOption[]>([
+    { label: '', value: null }
+  ])
   const [selectedScene, setSelectedSceneHash] = useState<string | null>(null)
   const onPermissionMouseLeave = (permissionType: string): void => {
     if (!(hoveredPermission && hoveredPermission !== permissionType)) {
