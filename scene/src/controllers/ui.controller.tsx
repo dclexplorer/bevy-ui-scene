@@ -35,6 +35,7 @@ import {
 } from '../ui-classes/main-hud/notification-toast-stack'
 import { updateHudStateAction } from '../state/hud/actions'
 import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-popups/permissions-popup-service'
+import { getRealm } from '~system/Runtime'
 
 let loadingAndLogin: any = null
 
@@ -98,11 +99,20 @@ export class UIController {
       const waitFor = getWaitFor(sleep)
 
       ;(async () => {
-        store.dispatch(updateHudStateAction({ loggedIn: true }))
         // TODO review with bevy-explorer dev or protocol why getPlayer().emotes is empty at first
         listenPermissionRequests()
-        await waitFor(() => (getPlayer()?.emotes?.length ?? 0) > 0, 3000)
 
+        await waitFor(() => (getPlayer()?.emotes?.length ?? 0) > 0, 3000)
+        store.dispatch(
+          updateHudStateAction({
+            realmURL: (await getRealm({})).realmInfo!.baseUrl
+          })
+        )
+        store.dispatch(
+          updateHudStateAction({
+            loggedIn: true
+          })
+        )
         void initEmotesWheel({
           showBackpackMenu: () => {
             if (!this.isMainMenuVisible) {

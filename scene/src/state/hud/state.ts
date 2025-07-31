@@ -64,6 +64,7 @@ export type HudState = {
   names: NameDefinition[]
   unreadNotifications: number
   loggedIn: boolean
+  realmURL?: string
 }
 
 export type HudStateUpdateParams = {
@@ -73,6 +74,7 @@ export type HudStateUpdateParams = {
   names?: NameDefinition[]
   loggedIn?: boolean
   unreadNotifications?: number
+  realmURL?: string
 }
 
 export const hudInitialState: HudState = {
@@ -81,5 +83,6 @@ export const hudInitialState: HudState = {
   profileData: cloneDeep(EMPTY_PROFILE_DATA),
   names: [],
   loggedIn: false,
-  unreadNotifications: 0
+  unreadNotifications: 0,
+  realmURL: 'main'
 }
