@@ -27,9 +27,10 @@ import { BevyApi } from '../../../bevy-api'
 import {
   CHAT_SIDE,
   type ChatMessageDefinition,
-  type ChatMessageRepresentation
+  type ChatMessageRepresentation,
+  MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
-import { memoize } from '../../../utils/function-utils'
+import { memoize, noop } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import { copyToClipboard, setUiFocus } from '~system/RestrictedActions'
@@ -52,6 +53,7 @@ import {
 import { type AppState } from '../../../state/types'
 import { getUserData } from '~system/UserIdentity'
 import { PermissionUsed } from '../../../bevy-api/permission-definitions'
+import { Checkbox } from '../../../components/checkbox'
 
 type Box = {
   position: { x: number; y: number }
@@ -74,6 +76,11 @@ const state: {
   hoveringChat: boolean
   chatBox: Box
   inputFontSizeWorkaround: boolean
+  headerMenuOpen: boolean
+  filterMessages: {
+    [MESSAGE_TYPE.USER]: boolean
+    [MESSAGE_TYPE.SYSTEM]: boolean
+  }
 } = {
   mouseX: 0,
   mouseY: 0,
@@ -87,7 +94,12 @@ const state: {
   cameraPointerLocked: false,
   hoveringChat: false,
   chatBox: { position: { x: 0, y: 0 }, size: { x: 0, y: 0 } },
-  inputFontSizeWorkaround: false
+  inputFontSizeWorkaround: false,
+  headerMenuOpen: false,
+  filterMessages: {
+    [MESSAGE_TYPE.USER]: false,
+    [MESSAGE_TYPE.SYSTEM]: false
+  }
 }
 
 export default class ChatAndLogs {
@@ -181,7 +193,9 @@ export default class ChatAndLogs {
       // TODO check action store / type
       state.chatBox.position.x = store.getState().viewport.width * 0.03
       state.chatBox.position.y = store.getState().viewport.height * 0.2
-      state.chatBox.size.x = store.getState().viewport.width * 0.26
+      state.chatBox.size.x =
+        store.getState().viewport.width * 0.26 +
+        (state.headerMenuOpen ? store.getState().viewport.width * 0.12 : 0)
       state.chatBox.size.y = store.getState().viewport.height * 0.8
     })
 
@@ -202,11 +216,11 @@ export default class ChatAndLogs {
     }
     const playerData = getPlayer({ userId: message.sender_address })
     const name = isSystemMessage(message) ? `` : playerData?.name || `Unknown*`
+    const now = Date.now()
     const timestamp =
-      state.shownMessages[state.shownMessages.length - 1]?.timestamp ===
-      Date.now()
-        ? Date.now() + 1
-        : Date.now()
+      state.shownMessages[state.shownMessages.length - 1]?.timestamp === now
+        ? state.shownMessages[state.shownMessages.length - 1]?.timestamp + 1
+        : now
 
     const decoratedChatMessage: ChatMessageRepresentation = {
       ...message,
@@ -217,12 +231,15 @@ export default class ChatAndLogs {
           ? CHAT_SIDE.RIGHT
           : CHAT_SIDE.LEFT,
       hasMentionToMe: messageHasMentionToMe(message.message),
-      isGuest: playerData ? playerData.isGuest : true
+      isGuest: playerData ? playerData.isGuest : true,
+      messageType: isSystemMessage(message)
+        ? MESSAGE_TYPE.SYSTEM
+        : MESSAGE_TYPE.USER
     }
     if (!playerData?.name) {
       decorateAsyncMessageName(decoratedChatMessage).catch(console.error)
     }
-    console.log('Decorated chatMessage', decoratedChatMessage)
+    console.log('decoratedChatMessage', decoratedChatMessage)
 
     if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
       state.newMessages.push(decoratedChatMessage)
@@ -430,6 +447,7 @@ function ShowNewMessages(): ReactElement | null {
 
 function HeaderArea(): ReactElement {
   const fontSize = getCanvasScaleRatio() * 48
+
   return (
     <UiEntity
       uiTransform={{
@@ -497,6 +515,83 @@ function HeaderArea(): ReactElement {
           value={getChatMembers().length.toString()}
           fontSize={fontSize}
         />
+      </UiEntity>
+
+      <UiEntity
+        uiTransform={{
+          alignSelf: 'center',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          zIndex: 2,
+          width: getCanvasScaleRatio() * 120,
+          height: getCanvasScaleRatio() * 64,
+          flexShrink: 0,
+          margin: { right: '2%' }
+        }}
+        uiBackground={{ color: COLOR.TEXT_COLOR }}
+      >
+        <Icon
+          uiTransform={{
+            positionType: 'absolute',
+            zIndex: 10
+          }}
+          iconSize={getCanvasScaleRatio() * 48}
+          icon={{ spriteName: 'Menu', atlasName: 'icons' }}
+          onMouseDown={() => {
+            state.headerMenuOpen = !state.headerMenuOpen
+
+            if (state.headerMenuOpen) {
+              state.chatBox.size.x =
+                store.getState().viewport.width * 0.26 +
+                (state.headerMenuOpen
+                  ? store.getState().viewport.width * 0.12
+                  : 0)
+            }
+          }}
+        />
+        <UiEntity
+          uiTransform={{
+            positionType: 'absolute',
+            position: { left: '150%', top: '100%' },
+            height: getCanvasScaleRatio() * 200,
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            alignContent: 'flex-start',
+            alignSelf: 'flex-start',
+            padding: '10%',
+            opacity: state.headerMenuOpen ? 1 : 0
+          }}
+          uiBackground={{
+            color: state.headerMenuOpen
+              ? COLOR.DARK_OPACITY_5
+              : COLOR.BLACK_TRANSPARENT
+          }}
+        >
+          <Checkbox
+            uiTransform={{
+              alignSelf: 'flex-start'
+            }}
+            onChange={(value) => {
+              state.filterMessages[MESSAGE_TYPE.USER] = !value
+              scrollToBottom()
+            }}
+            value={!state.filterMessages[MESSAGE_TYPE.USER]}
+            label={'Show user messages'}
+          />
+          <Checkbox
+            uiTransform={{
+              alignSelf: 'flex-start'
+            }}
+            onChange={(value) => {
+              state.filterMessages[MESSAGE_TYPE.SYSTEM] = !value
+              scrollToBottom()
+            }}
+            value={!state.filterMessages[MESSAGE_TYPE.SYSTEM]}
+            label={'Show system messages'}
+          />
+        </UiEntity>
       </UiEntity>
       <UiEntity
         uiTransform={{
@@ -632,13 +727,19 @@ function ChatArea({
         padding: { left: '3%', right: '8%' }
       }}
     >
-      {messages.map((message) => (
-        <ChatMessage
-          message={message}
-          key={message.timestamp}
-          onMessageMenu={onMessageMenu}
-        />
-      ))}
+      {messages
+        .filter((m) =>
+          isSystemMessage(m)
+            ? !state.filterMessages[MESSAGE_TYPE.SYSTEM]
+            : !state.filterMessages[MESSAGE_TYPE.USER]
+        )
+        .map((message) => (
+          <ChatMessage
+            message={message}
+            key={message.timestamp}
+            onMessageMenu={onMessageMenu}
+          />
+        ))}
     </UiEntity>
   )
 }
