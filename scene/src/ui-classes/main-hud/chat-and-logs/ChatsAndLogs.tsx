@@ -20,7 +20,8 @@ import { ChatMessage } from '../../../components/chat-message'
 import {
   ALMOST_WHITE,
   MAX_ZINDEX,
-  ROUNDED_TEXTURE_BACKGROUND
+  ROUNDED_TEXTURE_BACKGROUND,
+  ZERO_ADDRESS
 } from '../../../utils/constants'
 import { BevyApi } from '../../../bevy-api'
 import {
@@ -50,6 +51,7 @@ import {
 } from '../../../state/hud/actions'
 import { type AppState } from '../../../state/types'
 import { getUserData } from '~system/UserIdentity'
+import { PermissionUsed } from '../../../bevy-api/permission-definitions'
 
 type Box = {
   position: { x: number; y: number }
@@ -135,14 +137,38 @@ export default class ChatAndLogs {
       for await (const chatMessage of stream) {
         if (chatMessage.message.indexOf('␑') === 0) return
         console.log('chatMessage', chatMessage)
-        this.pushMessage(chatMessage).catch(console.error)
+        this.pushMessage(chatMessage)
         if (!this.isOpen()) {
           state.unreadMessages++
         }
       }
     }
 
-    await awaitChatStream(await BevyApi.getChatStream())
+    const awaitUsedPermissionStream = async (
+      stream: PermissionUsed[]
+    ): Promise<void> => {
+      for await (const usedPermission of stream) {
+        const sceneName =
+          (await BevyApi.liveSceneInfo()).find(
+            (s) => s.hash === usedPermission.scene
+          )?.title || 'Unknown Scene'
+        const usedPermissionMessage: ChatMessageDefinition = {
+          sender_address: ZERO_ADDRESS,
+          channel: 'Nearby',
+          message: `"${sceneName}" scene ${
+            usedPermission.wasAllowed ? 'allowed' : 'denied'
+          } permission "${usedPermission.ty}" ${
+            usedPermission.additional ? `(${usedPermission.additional})` : ''
+          }`
+        }
+        this.pushMessage(usedPermissionMessage)
+      }
+    }
+
+    awaitChatStream(await BevyApi.getChatStream()).catch(console.error)
+    awaitUsedPermissionStream(await BevyApi.getPermissionUsedStream()).catch(
+      console.error
+    )
   }
 
   listenMouseHover(): void {
@@ -170,24 +196,21 @@ export default class ChatAndLogs {
     })
   }
 
-  async pushMessage(message: ChatMessageDefinition): Promise<void> {
+  pushMessage(message: ChatMessageDefinition): void {
     if (state.shownMessages.length >= BUFFER_SIZE) {
       state.shownMessages.shift()
     }
     const playerData = getPlayer({ userId: message.sender_address })
-    const name = isSystemMessage(message)
-      ? ``
-      : playerData?.name ||
-        (await getUserData({ userId: message.sender_address }))?.data
-          ?.displayName ||
-        `Unknown*`
+    const name = isSystemMessage(message) ? `` : playerData?.name || `Unknown*`
+    const timestamp =
+      state.shownMessages[state.shownMessages.length - 1]?.timestamp ===
+      Date.now()
+        ? Date.now() + 1
+        : Date.now()
+
     const decoratedChatMessage: ChatMessageRepresentation = {
       ...message,
-      timestamp:
-        state.shownMessages[state.shownMessages.length - 1]?.timestamp ===
-        Date.now()
-          ? Date.now() + 1
-          : Date.now(),
+      timestamp,
       name,
       side:
         message.sender_address === getPlayer()?.userId
@@ -196,6 +219,9 @@ export default class ChatAndLogs {
       hasMentionToMe: messageHasMentionToMe(message.message),
       isGuest: playerData ? playerData.isGuest : true
     }
+    if (!playerData?.name) {
+      decorateAsyncMessageName(decoratedChatMessage).catch(console.error)
+    }
     console.log('Decorated chatMessage', decoratedChatMessage)
 
     if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
@@ -203,6 +229,14 @@ export default class ChatAndLogs {
     } else {
       state.shownMessages.push(decoratedChatMessage)
       scrollToBottom()
+    }
+
+    async function decorateAsyncMessageName(
+      message: ChatMessageRepresentation
+    ) {
+      message.name =
+        (await getUserData({ userId: message.sender_address }))?.data
+          ?.displayName || `Unknown*`
     }
   }
 

@@ -18,6 +18,8 @@ import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { RadioButton } from '../../../components/radio-button'
 import useState = ReactEcs.useState
 import { BevyApi } from '../../../bevy-api'
+import useEffect = ReactEcs.useEffect
+import { executeTask } from '@dcl/sdk/ecs'
 
 const ONCE = 'Once'
 const PERMISSION_REQUEST_OPTIONS = [ONCE, ...PERMISSION_LEVELS].map((i) => ({
@@ -55,11 +57,21 @@ function PermissionRequestContent({
   data: PermissionRequest
 }): ReactElement {
   const [levelOption, setLevelOption] = useState(ONCE)
+  const [sceneName, setSceneName] = useState<string>('')
+  useEffect(() => {
+    executeTask(async () => {
+      const newSceneName =
+        (await BevyApi.liveSceneInfo()).find((s) => s.hash === data.scene)
+          ?.title || 'Unknown Scene'
+      setSceneName(newSceneName)
+    })
+  }, [])
   return (
     <UiEntity
       uiTransform={{
         width: getCanvasScaleRatio() * 1200,
-        height: getCanvasScaleRatio() * 900,
+        height: 'auto',
+        maxHeight: getCanvasScaleRatio() * 2000,
         borderRadius: BORDER_RADIUS_F,
         borderWidth: 0,
         borderColor: COLOR.WHITE,
@@ -82,11 +94,15 @@ function PermissionRequestContent({
         iconColor={COLOR.WHITE}
       />
       <UiEntity
+        uiTransform={{
+          width: '100%'
+        }}
         uiText={{
-          value: `\nThe scene wants permission to ${PERMISSION_DEFINITIONS.find(
+          value: `\nThe scene <b>${sceneName}</b> wants permission to ${PERMISSION_DEFINITIONS.find(
             (p) => p.permissionType === data.ty
           )?.activeDescription}\n${data.additional ?? ''}`,
-          fontSize: getCanvasScaleRatio() * 42
+          fontSize: getCanvasScaleRatio() * 42,
+          textWrap: 'wrap'
         }}
       />
       <RadioButton
