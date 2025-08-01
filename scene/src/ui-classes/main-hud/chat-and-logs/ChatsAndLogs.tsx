@@ -177,9 +177,9 @@ export default class ChatAndLogs {
     const playerData = getPlayer({ userId: message.sender_address })
     const name = isSystemMessage(message)
       ? ``
-      : playerData?.name ??
+      : playerData?.name ||
         (await getUserData({ userId: message.sender_address }))?.data
-          ?.displayName ??
+          ?.displayName ||
         `Unknown*`
     const decoratedChatMessage: ChatMessageRepresentation = {
       ...message,
