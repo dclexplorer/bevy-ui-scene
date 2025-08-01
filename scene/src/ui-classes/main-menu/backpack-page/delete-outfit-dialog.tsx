@@ -36,7 +36,7 @@ export function DeleteOutfitDialog(): ReactElement | null {
         justifyContent: 'center'
       }}
       uiBackground={{
-        color: Color4.create(0, 0, 0, 0.8)
+        color: COLOR.DARK_OPACITY_7
       }}
       onMouseDown={() => {
         closeDeleteOutfitDialog()
@@ -112,7 +112,7 @@ export function DeleteOutfitDialog(): ReactElement | null {
             variant={'primary'}
             fontSize={getCanvasScaleRatio() * 28}
             onMouseUp={() => {
-              state.confirmFn()
+              state.confirmFn() // TODO REVIEW: isn't this an antipattern? a function in state? other way ? use a callback with the info?
               state.shown = false
               state.confirmFn = noop
             }}

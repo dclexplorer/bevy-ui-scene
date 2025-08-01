@@ -56,6 +56,17 @@ export async function initEmotesWheel({
 
   listenSystemAction('Emote', switchIfPressed)
 
+  new Array(10).fill(null).forEach((_, index) => {
+    listenSystemAction(`QuickEmote${(index + 1) % 10}`, () => {
+      if (state.visible) {
+        triggerEmote({ predefinedEmote: equippedEmotes[index] }).catch(
+          console.error
+        )
+        state.visible = false
+      }
+    })
+  })
+
   engine.addSystem(() => {
     const cmd = inputSystem.getInputCommand(
       InputAction.IA_ANY,

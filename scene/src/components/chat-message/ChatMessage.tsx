@@ -1,6 +1,6 @@
 import { getPlayer } from '@dcl/sdk/src/players'
 
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 
 import ReactEcs, {
   type Key,
@@ -10,7 +10,7 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { ALMOST_WHITE, ZERO_ADDRESS } from '../../utils/constants'
-import { BORDER_RADIUS_F, getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { BORDER_RADIUS_F } from '../../utils/ui-utils'
 import {
   CHAT_SIDE,
   type ChatMessageDefinition,
@@ -21,12 +21,15 @@ import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
 import { memoize } from '../../utils/function-utils'
 import { ButtonIcon } from '../button-icon'
+import { AvatarCircle } from '../avatar-circle'
+import { pushPopupAction } from '../../state/hud/actions'
+import { HUD_POPUP_TYPE } from '../../state/hud/state'
+import { store } from '../../state/store'
 
 const state: { hoveringMessageID: number; openMessageMenu: boolean } = {
   hoveringMessageID: 0,
   openMessageMenu: false
 }
-const _getAddressColor = memoize(getAddressColor)
 
 function ChatMessage(props: {
   uiTransform?: UiTransformProps
@@ -42,7 +45,6 @@ function ChatMessage(props: {
   }
   const defaultFontSize = getCanvasScaleRatio() * 36
   const playerName = props.message.name
-  const addressColor = _getAddressColor(props.message.sender_address) as Color4
 
   const side = props.message.side
   const messageMargin = 12 * getCanvasScaleRatio()
@@ -72,53 +74,24 @@ function ChatMessage(props: {
         }
       }}
     >
-      <UiEntity
-        uiTransform={{
-          width: getCanvasScaleRatio() * 64,
-          height: getCanvasScaleRatio() * 64,
-          justifyContent: 'center',
-          alignItems: 'center',
-          margin:
-            props.message.sender_address === myPlayer.userId
-              ? { left: canvasInfo.width * 0.005 }
-              : { right: canvasInfo.width * 0.005 },
-          borderRadius: 999,
-          borderWidth: getCanvasScaleRatio() * 3,
-          borderColor: addressColor
+      <AvatarCircle
+        userId={
+          isSystemMessage(props.message)
+            ? ZERO_ADDRESS
+            : props.message.sender_address
+        }
+        circleColor={getAddressColor(props.message.sender_address)}
+        uiTransform={{}}
+        isGuest={props.message.isGuest}
+        onMouseDown={() => {
+          store.dispatch(
+            pushPopupAction({
+              type: HUD_POPUP_TYPE.PASSPORT,
+              data: props.message.sender_address
+            })
+          )
         }}
-        uiBackground={{
-          color: { ...addressColor, a: 0.3 }
-        }}
-      >
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: '100%'
-          }}
-          uiBackground={
-            isSystemMessage(props.message)
-              ? getBackgroundFromAtlas({
-                  atlasName: 'icons',
-                  spriteName: 'DdlIconColor'
-                })
-              : props.message.isGuest
-              ? {
-                  ...getBackgroundFromAtlas({
-                    atlasName: 'icons', // TODO review to use guest real avatar profile image, for which avatarTexture don't work, review how unity explorer does for guests
-                    spriteName: 'Members'
-                  }),
-                  color: COLOR.WHITE_OPACITY_2
-                }
-              : {
-                  textureMode: 'stretch',
-                  avatarTexture: {
-                    userId: props.message.sender_address
-                  }
-                }
-          }
-        />
-      </UiEntity>
-
+      />
       <UiEntity
         uiTransform={{
           width: '70%',

@@ -1,4 +1,5 @@
 import type { EquippedEmote, URN, URNWithoutTokenId } from './definitions'
+import { memoize } from './function-utils'
 
 export const BASE_MALE_URN: URNWithoutTokenId =
   'urn:decentraland:off-chain:base-avatars:BaseMale' as URNWithoutTokenId
@@ -52,3 +53,13 @@ export function getURNWithoutTokenId(
 function isOffChainOrIncomplete(urn: string): boolean {
   return urn.includes(':off-chain:') || urn.split(':').length < 6
 }
+
+function _applyMiddleEllipsis(address: string): string {
+  if (!address) return ''
+
+  const start = address.slice(0, 6) // '0x' + 4 chars
+  const end = address.slice(-4) // Last 4 chars
+
+  return `${start}…${end}`
+}
+export const applyMiddleEllipsis = memoize(_applyMiddleEllipsis)

@@ -1,6 +1,12 @@
 import { timers } from '@dcl-sdk/utils'
 import { getWaitFor } from './function-utils'
-import { type ComponentDefinition, engine } from '@dcl/sdk/ecs'
+import {
+  type ComponentDefinition,
+  engine,
+  type PBAvatarBase
+} from '@dcl/sdk/ecs'
+import { Color3 } from '@dcl/sdk/math'
+import { type Avatar } from '@dcl/schemas'
 
 export const sleep = async (delay: number): Promise<any> =>
   await new Promise((resolve) => timers.setTimeout(resolve as any, delay))
@@ -53,4 +59,27 @@ export function filterEntitiesWith(
   }
 
   return result.filter(check)
+}
+
+export function convertToPBAvatarBase(avatarData: Avatar): PBAvatarBase {
+  const avatarInfo = avatarData.avatar
+  return {
+    skinColor: Color3.create(
+      avatarInfo.skin.color.r,
+      avatarInfo.skin.color.g,
+      avatarInfo.skin.color.b
+    ),
+    eyesColor: Color3.create(
+      avatarInfo.eyes.color.r,
+      avatarInfo.eyes.color.g,
+      avatarInfo.eyes.color.b
+    ),
+    hairColor: Color3.create(
+      avatarInfo.hair.color.r,
+      avatarInfo.hair.color.g,
+      avatarInfo.hair.color.b
+    ),
+    bodyShapeUrn: avatarInfo.bodyShape,
+    name: avatarData.name
+  }
 }

@@ -87,7 +87,23 @@ export const OutfitsCatalog = (): ReactElement => {
               borderRadius: BORDER_RADIUS_F
             }}
           >
-            {state.selectedIndex === index && (
+            {state.selectedIndex === index && [
+              <ButtonIcon
+                icon={{ atlasName: 'backpack', spriteName: 'delete-icon' }}
+                iconSize={getCanvasScaleRatio() * 32}
+                uiTransform={{
+                  zIndex: 1,
+                  positionType: 'absolute',
+                  padding: '3%',
+                  position: { right: '2%', top: '2%' }
+                }}
+                uiBackground={{ color: Color4.Black() }}
+                onMouseDown={() => {
+                  showDeleteOutfitConfirmation(() => {
+                    deleteOutfitSlot(index)
+                  })
+                }}
+              />,
               <UiEntity
                 uiTransform={{
                   width: canvasScaleRatio * 360,
@@ -114,24 +130,8 @@ export const OutfitsCatalog = (): ReactElement => {
                     equipOutfit(viewSlot).catch(console.error)
                   }}
                 />
-                <ButtonIcon
-                  icon={{ atlasName: 'backpack', spriteName: 'delete-icon' }}
-                  iconSize={getCanvasScaleRatio() * 32}
-                  uiTransform={{
-                    zIndex: 99,
-                    positionType: 'absolute',
-                    padding: '3%',
-                    position: { right: '10%', top: '4%' }
-                  }}
-                  uiBackground={{ color: Color4.Black() }}
-                  onMouseDown={() => {
-                    showDeleteOutfitConfirmation(() => {
-                      deleteOutfitSlot(index)
-                    })
-                  }}
-                />
               </UiEntity>
-            )}
+            ]}
             <UiEntity
               uiTransform={{
                 width: canvasScaleRatio * 320,

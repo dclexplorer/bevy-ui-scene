@@ -67,6 +67,7 @@ export function CatalogItem(props: CatalogItemProps): ReactElement {
         height: 210 * canvasScaleRatio,
         margin: 10 * canvasScaleRatio,
         padding: 8 * canvasScaleRatio,
+        zIndex: isSelected ? 1 : 0,
         ...uiTransform
       }}
       onMouseDown={() => {
@@ -265,7 +266,7 @@ function SelectedItemOverlay({
           left: 24 * canvasScaleRatio,
           bottom: 24 * canvasScaleRatio
         },
-        zIndex: 2,
+        zIndex: 3,
         flexDirection: 'column',
         pointerFilter: 'none'
       }}

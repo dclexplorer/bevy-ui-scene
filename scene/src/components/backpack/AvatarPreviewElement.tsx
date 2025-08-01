@@ -14,6 +14,7 @@ import {
 } from './AvatarPreview'
 import {
   engine,
+  executeTask,
   GltfContainerLoadingState,
   LoadingState,
   PrimaryPointerInfo,
@@ -26,6 +27,9 @@ import {
   showMouseCursor
 } from '../../service/custom-cursor-service'
 import { type AtlasIcon } from '../../utils/definitions'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { sleep } from '../../utils/dcl-utils'
+import { memoize } from '../../utils/function-utils'
 
 const ROTATION_FACTOR = -0.5
 const state = {
@@ -39,7 +43,19 @@ const ROTATE_ICON: AtlasIcon = {
   atlasName: 'icons',
   spriteName: 'RotateIcn'
 }
+const getScrollVector = memoize(_getScrollVector)
+export function resetAvatarPreviewZoom(): void {
+  const _listeZoom = state.listenZoom
+  state.listenZoom = false
 
+  state.zoomFactor = 0.5
+
+  setAvatarPreviewZoom()
+  executeTask(async () => {
+    await sleep(200)
+    state.listenZoom = _listeZoom
+  })
+}
 export function setAvatarPreviewZoom(): void {
   for (const [, scroll, transform] of engine.getEntitiesWith(
     UiScrollResult,
@@ -52,7 +68,11 @@ export function setAvatarPreviewZoom(): void {
   }
 }
 
-export function AvatarPreviewElement(): ReactElement {
+export function AvatarPreviewElement({
+  uiTransform
+}: {
+  uiTransform?: UiTransformProps
+}): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   const loadingState = GltfContainerLoadingState.getOrNull(
     getAvatarPreviewEntity()
@@ -61,7 +81,8 @@ export function AvatarPreviewElement(): ReactElement {
     <UiEntity
       uiTransform={{
         height: getContentHeight(),
-        width: (540 / 1920) * getContentWidth() * 0.85
+        width: (540 / 1920) * getContentWidth() * 0.85,
+        ...uiTransform
       }}
     >
       {getAvatarCamera() === engine.RootEntity ? null : (
@@ -76,6 +97,7 @@ export function AvatarPreviewElement(): ReactElement {
           }}
           uiBackground={{
             videoTexture: { videoPlayerEntity: getAvatarCamera() },
+            textureMode: 'stretch',
             color:
               loadingState?.currentState === LoadingState.LOADING
                 ? Color4.create(1, 1, 1, 0.5)
@@ -84,6 +106,16 @@ export function AvatarPreviewElement(): ReactElement {
         >
           <UiEntity
             key="avatar-preview-zoom"
+            uiTransform={{
+              height: '100%',
+              width: '100%',
+              elementId: AVATAR_PREVIEW_ELEMENT_ID,
+              overflow: 'scroll',
+              scrollPosition: state.listenZoom
+                ? undefined
+                : getScrollVector(state.zoomFactor),
+              scrollVisible: 'hidden'
+            }}
             onMouseDown={() => {
               showMouseCursor(ROTATE_ICON)
             }}
@@ -106,16 +138,6 @@ export function AvatarPreviewElement(): ReactElement {
               setAvatarPreviewRotation(
                 Quaternion.multiply(initialQuaternionCopy, qY)
               )
-            }}
-            uiTransform={{
-              height: '100%',
-              width: '100%',
-              elementId: AVATAR_PREVIEW_ELEMENT_ID,
-              overflow: 'scroll',
-              scrollPosition: state.listenZoom
-                ? undefined
-                : Vector2.create(0, state.zoomFactor),
-              scrollVisible: 'hidden'
             }}
             onMouseEnter={() => (state.listenZoom = true)}
             onMouseLeave={() => (state.listenZoom = false)}
@@ -210,4 +232,7 @@ function AvatarPreviewZoomSystem(): void {
   if (state.listenZoom) {
     setAvatarPreviewZoom()
   }
+}
+function _getScrollVector(positionY: number): Vector2 {
+  return Vector2.create(0, positionY)
 }

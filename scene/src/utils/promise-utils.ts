@@ -197,6 +197,12 @@ export async function fetchJsonOrTryFallback(URL: string): Promise<any> {
   try {
     return await (await fetch(URL)).json()
   } catch (error) {
+    console.log(
+      'USING FALLBACK',
+      URL,
+      CATALYST_BASE_URL_FALLBACK,
+      URL.replace(realmBaseURL, CATALYST_BASE_URL_FALLBACK)
+    )
     return await (
       await fetch(URL.replace(realmBaseURL, CATALYST_BASE_URL_FALLBACK))
     ).json()

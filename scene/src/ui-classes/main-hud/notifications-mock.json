@@ -1,0 +1,124 @@
+{
+  "notifications": [
+    {
+      "type": "event",
+      "title": "Toxic Tuesday ✨🌸",
+      "message": "The event ✨🌸 Toxic Tuesday ✨🌸 has begun!",
+      "timeAgo": "8 hours ago",
+      "icon": "event",
+      "imageUrl": "https://picsum.photos/seed/event1/400/200"
+    },
+    {
+      "type": "friendRequestAccepted",
+      "username": "Vitsky",
+      "userId": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "message": "Vitsky accepted your friend request.",
+      "timeAgo": "15 hours ago",
+      "icon": "friend_accept"
+    },
+    {
+      "type": "friendRequestAccepted",
+      "username": "AudioHotLab",
+      "userId": "0xd6c957f9a6411f35d01baae2658758f277408878",
+      "message": "AudioHotLab accepted your friend request.",
+      "timeAgo": "18 hours ago",
+      "icon": "friend_accept"
+    },
+    {
+      "type": "event",
+      "title": "DJ Funky Tee @Makumba Social Club",
+      "message": "The event DJ Funky Tee @Makumba Social Club has begun!",
+      "timeAgo": "2 days ago",
+      "icon": "event",
+      "imageUrl": "https://picsum.photos/seed/event2/400/200"
+    },
+    {
+      "type": "event",
+      "title": "Live DJ Music and Dancing in the Unity Café",
+      "message": "The event Live DJ Music and Dancing in the Unity Café has begun!",
+      "timeAgo": "3 days ago",
+      "icon": "event",
+      "imageUrl": "https://picsum.photos/seed/event3/400/200"
+    },
+    {
+      "type": "event",
+      "title": "META BEAST ROAMING PARTY - SUMMER HOURS",
+      "message": "The event THE META BEAST ROAMING PARTY - SUMMER HOURS (FRI-9PM EST to 11PM EST) has begun!",
+      "timeAgo": "4 days ago",
+      "icon": "event",
+      "imageUrl": "https://picsum.photos/seed/event4/400/200"
+    },
+    {
+      "type": "friendRequestReceived",
+      "username": "PiZzArte",
+      "userId": "0x4b538e1e044922aec2f428ec7e17a99f44205ff9",
+      "message": "PiZzArte wants to be your friend!",
+      "timeAgo": "3 months ago",
+      "icon": "friend_request"
+    },
+    {
+      "type": "friendRequestReceived",
+      "username": "Bano#9227",
+      "userId": "0xd6c957f9a6411f35d01baae2658758f277408878",
+      "message": "Bano#9227 wants to be your friend!",
+      "timeAgo": "3 months ago",
+      "icon": "friend_request"
+    },
+    {
+      "type": "itemReceived",
+      "itemName": "Caustics Body Paint MVFW 2025",
+      "message": "This Caustics Body Paint MVFW 2025 is already in your backpack.",
+      "timeAgo": "3 months ago",
+      "icon": "item",
+      "imageUrl": "https://picsum.photos/seed/item1/400/400"
+    },
+    {
+      "type": "giftReceived",
+      "itemName": "Caustics Body Paint MVFW 2025",
+      "message": "You've received Caustics Body Paint MVFW 2025 for free. Try it out once it arrives!",
+      "timeAgo": "3 months ago",
+      "icon": "gift",
+      "imageUrl": "https://picsum.photos/seed/item2/400/400"
+    },
+    {
+      "type": "badgeUnlocked",
+      "badgeName": "Walkabout Wanderer",
+      "message": "New Badge Unlocked! Walkabout Wanderer",
+      "timeAgo": "3 months ago",
+      "icon": "badge",
+      "imageUrl": "https://picsum.photos/seed/badge1/200/200"
+    },
+    {
+      "type": "friendRequestReceived",
+      "username": "MetaGamiMall",
+      "userId": "0x7c93102120b2cb4cdd052d2c5eb3dcd2b7e36bfe",
+      "message": "MetaGamiMall wants to be your friend!",
+      "timeAgo": "3 months ago",
+      "icon": "friend_request"
+    },
+    {
+      "type": "event",
+      "title": "TRIPPING OUT",
+      "message": "The event TRIPPING OUT has begun!",
+      "timeAgo": "4 days ago",
+      "icon": "event",
+      "imageUrl": "https://picsum.photos/seed/event5/400/200"
+    },
+    {
+      "type": "friendRequestReceived",
+      "username": "laurenmae",
+      "userId": "0xcaa92dc06a4107f17ef4ea13b621aa8fc2d66a7f",
+      "message": "laurenmae wants to be your friend!",
+      "timeAgo": "4 days ago",
+      "icon": "friend_request"
+    },
+    {
+      "type": "friendRequestReceived",
+      "username": "Diyad#d5de",
+      "userId": "0x17e1f2e03b617b35772cbeaaeb4e7aa8a34f9b4c",
+      "message": "Diyad#d5de wants to be your friend!",
+      "timeAgo": "12 days ago",
+      "icon": "friend_request"
+    }
+  ]
+}

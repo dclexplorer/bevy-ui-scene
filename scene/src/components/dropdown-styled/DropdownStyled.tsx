@@ -6,15 +6,11 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import {
-  ALMOST_WHITE,
-  ALMOST_BLACK,
-  ORANGE,
-  ROUNDED_TEXTURE_BACKGROUND
-} from '../../utils/constants'
+import { ALMOST_WHITE, ALMOST_BLACK, ORANGE } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { COLOR } from '../color-palette'
-import { noop } from '../../utils/function-utils'
+import { isTruthy, noop } from '../../utils/function-utils'
+import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 
 function DropdownStyled(props: {
   isOpen: boolean
@@ -35,6 +31,8 @@ function DropdownStyled(props: {
   entered: number
   scroll?: boolean
   options: string[]
+  disabled?: boolean
+  listMaxHeight?: number
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -78,10 +76,12 @@ function DropdownStyled(props: {
           padding: { right: props.fontSize * 0.3 },
           justifyContent: 'space-between',
           alignItems: 'center',
+          borderRadius: getCanvasScaleRatio() * 30,
+          borderWidth: 0,
+          borderColor: COLOR.BLACK_TRANSPARENT,
           ...props.uiTransform
         }}
         uiBackground={{
-          ...ROUNDED_TEXTURE_BACKGROUND,
           color: ALMOST_WHITE
         }}
         onMouseDown={props.onMouseDown}
@@ -114,23 +114,29 @@ function DropdownStyled(props: {
             color: Color4.Black()
           }}
         />
-
+        {/* LIST */}
         <UiEntity
           uiTransform={{
             display: props.isOpen ? 'flex' : 'none',
             width: '100%',
-            height: scroll
-              ? props.options.length >= 4
-                ? props.fontSize * 2.1 * 4
-                : props.fontSize * props.options.length * 2.1
-              : undefined,
-
+            height:
+              props.listMaxHeight ??
+              (scroll
+                ? props.options.length >= 4
+                  ? props.fontSize * 2.1 * 4
+                  : props.fontSize * props.options.length * 2.1
+                : undefined),
+            maxHeight: props.listMaxHeight,
             positionType: 'absolute',
             position: { left: 0, top: 2.5 * props.fontSize },
-            zIndex: 2
+            zIndex: isTruthy(props.uiTransform?.zIndex)
+              ? (props.uiTransform?.zIndex ?? 0) + 2
+              : 2,
+            borderRadius: getCanvasScaleRatio() * 30,
+            borderWidth: 0,
+            borderColor: COLOR.BLACK_TRANSPARENT
           }}
           uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
             color: ALMOST_WHITE
           }}
           onMouseLeave={() => {

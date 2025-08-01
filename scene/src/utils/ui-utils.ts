@@ -13,6 +13,7 @@ import { mapJson } from '../json/map-data'
 import { socialJson } from '../json/social-data'
 import infoPanelJson from '../../assets/images/atlas/info-panel.json'
 import emotesJson from '../../assets/images/atlas/emotes.json'
+import { memoize } from './function-utils'
 export function getUvs(icon: AtlasIcon): number[] {
   let parsedJson: AtlasData | undefined
   switch (icon.atlasName) {
@@ -342,6 +343,30 @@ export function rgbToArray(
 ): number[] {
   return [rgb.r, rgb.g, rgb.b]
 }
+
+function _rgbToHex(
+  rgb: { r: number; g: number; b: number; a?: number } = { r: 0, g: 0, b: 0 }
+): string {
+  const { r, g, b, a } = rgb
+
+  const toHex = (value: number): string => {
+    const scaled = Math.round(value * 255)
+    return scaled.toString(16).padStart(2, '0')
+  }
+
+  const hexR = toHex(r)
+  const hexG = toHex(g)
+  const hexB = toHex(b)
+
+  let hexA = ''
+  if (a !== undefined) {
+    hexA = toHex(a)
+  }
+
+  return `#${hexR}${hexG}${hexB}${hexA}`
+}
+
+export const rgbToHex = memoize(_rgbToHex)
 
 export function parseCoordinates(
   input: string

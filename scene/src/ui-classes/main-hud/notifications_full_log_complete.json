@@ -1,0 +1,272 @@
+{
+  "notifications": [
+    {
+      "id": "518ba736-7944-48fc-8b2f-415ff9d290b6",
+      "type": "events_started",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=-77%2C77",
+        "name": "TRIPPING OUT ",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/994a1bb468092195.png",
+        "title": "Event started",
+        "description": "The event TRIPPING OUT  has begun!"
+      },
+      "timestamp": "1752170400066",
+      "read": false
+    },
+    {
+      "id": "99f80cd7-5e09-461d-86e1-a994b45802fe",
+      "type": "events_starts_soon",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=-77%2C77",
+        "name": "TRIPPING OUT ",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/994a1bb468092195.png",
+        "title": "Event starts in an hour",
+        "endsAt": "2025-08-28T20:00:00.000Z",
+        "startsAt": "2025-06-26T18:00:00.000Z",
+        "description": "The event TRIPPING OUT  starts in an hour."
+      },
+      "timestamp": "1752166800142",
+      "read": true
+    },
+    {
+      "id": "deec6e1a-a75b-4dbe-aefd-d8d76b9e2f23",
+      "type": "events_started",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=111%2C45&realm=greenscreen.dcl.eth",
+        "name": "💖✨ Toxic Tuesday ✨💖",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/ba81b61f685ad32c.png",
+        "title": "Event started",
+        "description": "The event 💖✨ Toxic Tuesday ✨💖 has begun!"
+      },
+      "timestamp": "1752013800065",
+      "read": true
+    },
+    {
+      "id": "032c989d-5c5b-4cff-b5d3-bd9818a48c33",
+      "type": "events_starts_soon",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=111%2C45&realm=greenscreen.dcl.eth",
+        "name": "💖✨ Toxic Tuesday ✨💖",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/ba81b61f685ad32c.png",
+        "title": "Event starts in an hour",
+        "endsAt": "2026-03-30T22:30:00.000Z",
+        "startsAt": "2025-07-08T22:30:00.000Z",
+        "description": "The event 💖✨ Toxic Tuesday ✨💖 starts in an hour."
+      },
+      "timestamp": "1752010200071",
+      "read": true
+    },
+    {
+      "id": "727217f8-f64d-409c-99a6-34564e30783d",
+      "type": "social_service_friendship_accepted",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "sender": {
+          "name": "Vitsky",
+          "address": "0x88a6f83fb620b8937ff4ac484f821ab704ed8895",
+          "hasClaimedName": true,
+          "profileImageUrl": "https://profile-images-bucket-43d0c58.s3.us-east-1.amazonaws.com/v1/entities/bafkreidexikqug3ovxwyvv46nmsgqvbkcldcoqnitepk2tgwiy4azjesve/face.png"
+        },
+        "receiver": {
+          "name": "pablo",
+          "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+          "hasClaimedName": true,
+          "profileImageUrl": "https://profile-images-bucket-43d0c58.s3.us-east-1.amazonaws.com/v1/entities/bafkreibplr4yzcwzvy5r2ggq457o5qzsqgdaxoyfxl3mkgmqrcn4ximxmu/face.png"
+        },
+        "requestId": "5045de26-3533-41d4-8aeb-4e93243de0f1"
+      },
+      "timestamp": "1751989970174",
+      "read": true
+    },
+    {
+      "id": "41c78d8f-1f1c-4291-b611-37ec1ef0c7df",
+      "type": "social_service_friendship_accepted",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "sender": {
+          "name": "AudioHotLab",
+          "address": "0x9f0673ef1fab4b30ce6d5633498b4d3d4392ea82",
+          "hasClaimedName": true,
+          "profileImageUrl": "https://profile-images-bucket-43d0c58.s3.us-east-1.amazonaws.com/v1/entities/bafkreifgcp5qsvrzkx6c2voow5sg7ebhqbliqrguoahlk6uuv2r5ztbd4m/face.png"
+        },
+        "receiver": {
+          "name": "pablo",
+          "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+          "hasClaimedName": true,
+          "profileImageUrl": "https://profile-images-bucket-43d0c58.s3.us-east-1.amazonaws.com/v1/entities/bafkreibplr4yzcwzvy5r2ggq457o5qzsqgdaxoyfxl3mkgmqrcn4ximxmu/face.png"
+        },
+        "requestId": "1bf9c2f9-b2bf-4d47-8516-04b241f9f01b"
+      },
+      "timestamp": "1751980909954",
+      "read": true
+    },
+    {
+      "id": "f1bacd16-2770-46fc-a3f6-9152940e2ff1",
+      "type": "events_started",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=84%2C40",
+        "name": "DJ Funky Tee @Makumba Social Club",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/add1d135685ac0df.png",
+        "title": "Event started",
+        "description": "The event DJ Funky Tee @Makumba Social Club has begun!"
+      },
+      "timestamp": "1751806800054",
+      "read": true
+    },
+    {
+      "id": "8198a6a0-64e0-4ab7-bad2-d880bb3d5f80",
+      "type": "events_starts_soon",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=84%2C40",
+        "name": "DJ Funky Tee @Makumba Social Club",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/add1d135685ac0df.png",
+        "title": "Event starts in an hour",
+        "endsAt": "2025-09-07T15:00:00.000Z",
+        "startsAt": "2025-07-06T13:00:00.000Z",
+        "description": "The event DJ Funky Tee @Makumba Social Club starts in an hour."
+      },
+      "timestamp": "1751803200154",
+      "read": false
+    },
+    {
+      "id": "c1a5b537-c720-4f79-80e4-48316237e2b1",
+      "type": "events_started",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=14%2C100&realm=main",
+        "name": "Live DJ Music and Dancing in the Unity Café",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/3b8e6fc467ba2a56.png",
+        "title": "Event started",
+        "description": "The event Live DJ Music and Dancing in the Unity Café has begun!"
+      },
+      "timestamp": "1751734800415",
+      "read": true
+    },
+    {
+      "id": "2d398c60-48f7-42d4-8bf0-1f9b2f65d2d9",
+      "type": "events_starts_soon",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=14%2C100&realm=main",
+        "name": "Live DJ Music and Dancing in the Unity Café",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/3b8e6fc467ba2a56.png",
+        "title": "Event starts in an hour",
+        "endsAt": "2025-08-30T18:00:00.000Z",
+        "startsAt": "2025-06-21T17:00:00.000Z",
+        "description": "The event Live DJ Music and Dancing in the Unity Café starts in an hour."
+      },
+      "timestamp": "1751731200475",
+      "read": true
+    },
+    {
+      "id": "f96f1f1d-b3ab-44e5-a05c-1cbfac437c1c",
+      "type": "events_started",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=-22%2C137&realm=main",
+        "name": "THE META BEAST ROAMING PARTY -  SUMMER HOURS  (FRI-9PM EST to 11PM EST)",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/510ac8ff6851ab74.png",
+        "title": "Event started",
+        "description": "The event THE META BEAST ROAMING PARTY -  SUMMER HOURS  (FRI-9PM EST to 11PM EST) has begun!"
+      },
+      "timestamp": "1751677200354",
+      "read": true
+    },
+    {
+      "id": "c9b048ac-4ab2-44e5-ad95-1263898b6c59",
+      "type": "events_starts_soon",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=-22%2C137&realm=main",
+        "name": "THE META BEAST ROAMING PARTY -  SUMMER HOURS  (FRI-9PM EST to 11PM EST)",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/510ac8ff6851ab74.png",
+        "title": "Event starts in an hour",
+        "endsAt": "2025-09-06T03:00:00.000Z",
+        "startsAt": "2025-01-04T01:00:00.000Z",
+        "description": "The event THE META BEAST ROAMING PARTY -  SUMMER HOURS  (FRI-9PM EST to 11PM EST) starts in an hour."
+      },
+      "timestamp": "1751673600428",
+      "read": true
+    },
+    {
+      "id": "9a12e913-a9db-4cf9-a21c-43115a54fe30",
+      "type": "social_service_friendship_request",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "sender": {
+          "name": "laurenmae",
+          "address": "0x0ad3a9dea3221930c9a1c0a59c1597536681521d",
+          "hasClaimedName": true,
+          "profileImageUrl": "https://profile-images-bucket-43d0c58.s3.us-east-1.amazonaws.com/v1/entities/bafkreiht54hs4axfkgtjiutf2uxi62si5juseseb7rbkqni6utqmlusl2e/face.png"
+        },
+        "receiver": {
+          "name": "pablo",
+          "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+          "hasClaimedName": true,
+          "profileImageUrl": "https://profile-images-bucket-43d0c58.s3.us-east-1.amazonaws.com/v1/entities/bafkreidw3omxe6xxs2cbfkixm2whfntt4vcgitt2du3y7z2yzblvhtvoae/face.png"
+        },
+        "requestId": "aac587a8-cd67-4667-8eac-7f4fc76c705c"
+      },
+      "timestamp": "1751563398928",
+      "read": true
+    },
+    {
+      "id": "c2f4f98a-fd8c-4c0b-b631-0c1ef6fa9f7b",
+      "type": "social_service_friendship_request",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "sender": {
+          "name": "Diyao",
+          "address": "0x371e1de3d5faad620f84dfe4f84252667cb0d5de",
+          "hasClaimedName": false,
+          "profileImageUrl": "https://profile-images-bucket-43d0c58.s3.us-east-1.amazonaws.com/v1/entities/bafkreihbysjnqomurnsn74zp4bf4pejdjn23gwynloncbgcfyx7amqxiai/face.png"
+        },
+        "receiver": {
+          "name": "pablo",
+          "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+          "hasClaimedName": true,
+          "profileImageUrl": "https://profile-images-bucket-43d0c58.s3.us-east-1.amazonaws.com/v1/entities/bafkreibojziuvobhretxawggtvrsnhz46l6gbxpuwyriaruvshmsbvghyi/face.png"
+        },
+        "requestId": "8ca8cce8-d3ea-4ce2-9287-a364bf097aa2"
+      },
+      "timestamp": "1750937546505",
+      "read": true
+    },
+    {
+      "id": "b4a5fee5-4074-4388-adb2-f932636f56f0",
+      "type": "events_started",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=86%2C56",
+        "name": "CUMBIA TOWN  - 3rd Saturdays (5am UTC ) = 3rd Fridays (10pm PST / California West Coast)",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/0524f9d96661904b.png",
+        "title": "Event started",
+        "description": "The event CUMBIA TOWN  - 3rd Saturdays (5am UTC ) = 3rd Fridays (10pm PST / California West Coast) has begun!"
+      },
+      "timestamp": "1750482000061",
+      "read": true
+    },
+    {
+      "id": "9ad140a6-597f-47c0-9789-29a0328d05ae",
+      "type": "events_starts_soon",
+      "address": "0x598f8af1565003ae7456dac280a18ee826df7a2c",
+      "metadata": {
+        "link": "https://play.decentraland.org/?position=86%2C56",
+        "name": "CUMBIA TOWN  - 3rd Saturdays (5am UTC ) = 3rd Fridays (10pm PST / California West Coast)",
+        "image": "https://events-assets-099ac00.decentraland.org/poster/0524f9d96661904b.png",
+        "title": "Event starts in an hour",
+        "endsAt": "2025-08-16T09:00:00.000Z",
+        "startsAt": "2024-11-16T05:00:00.000Z",
+        "description": "The event CUMBIA TOWN  - 3rd Saturdays (5am UTC ) = 3rd Fridays (10pm PST / California West Coast) starts in an hour."
+      },
+      "timestamp": "1750478400100",
+      "read": true
+    }
+  ]
+}

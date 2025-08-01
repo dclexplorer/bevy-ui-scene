@@ -12,7 +12,9 @@ import { SceneInfo } from './scene-info'
 import { switchEmotesWheelVisibility } from '../../emotes-wheel/emotes-wheel'
 import { type ReactElement } from '@dcl/react-ecs'
 import { store } from '../../state/store'
-import { updateHudStateAction } from '../../state/hud/actions'
+import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
+import { HUD_POPUP_TYPE } from '../../state/hud/state'
+
 const ZERO_SIZE = {
   width: 0,
   height: 0
@@ -283,7 +285,8 @@ export default class MainHud {
             width: '4%',
             minWidth: 45,
             height: '100%',
-            position: { left: 0, top: 0 }
+            position: { left: 0, top: 0 },
+            zIndex: 1
           }}
           // onMouseEnter={() => (this.isSideBarVisible = true)}
           // onMouseLeave={() => (this.isSideBarVisible = false)}
@@ -366,7 +369,13 @@ export default class MainHud {
               this.updateButtons()
             }}
             onMouseDown={() => {
-              this.uiController.profile.showCard()
+              store.dispatch(
+                pushPopupAction({
+                  type: HUD_POPUP_TYPE.PROFILE_MENU,
+                  data: 'left'
+                })
+              )
+              // this.uiController.profile.showCard()
             }}
             backgroundColor={this.walletBackground}
             icon={this.walletIcon}
@@ -384,6 +393,12 @@ export default class MainHud {
               this.updateButtons()
             }}
             onMouseDown={() => {
+              // TODO notificacions popup
+              store.dispatch(
+                pushPopupAction({
+                  type: HUD_POPUP_TYPE.NOTIFICATIONS_MENU
+                })
+              )
               console.log('clicked')
             }}
             backgroundColor={this.bellBackground}
@@ -391,6 +406,7 @@ export default class MainHud {
             hintText={'Notifications'}
             showHint={this.bellHint}
             iconSize={buttonIconSize}
+            notifications={store.getState().hud.unreadNotifications}
           />
 
           <UiEntity

@@ -2,6 +2,7 @@ import type { Vector2 } from '@dcl/sdk/math'
 import type { URN, URNWithoutTokenId } from '../utils/definitions'
 import { type WearableCategory } from '../service/categories'
 import { type ChatMessageDefinition } from '../components/chat-message/ChatMessage.types'
+import { type ProfileExtra } from '../utils/passport-promise-utils'
 
 export type ExplorerSetting = {
   name: string
@@ -13,13 +14,32 @@ export type ExplorerSetting = {
   value: number
 }
 
+export type SignedFetchMetaRealm = {
+  hostname: string
+  protocol: string
+  server_name: string
+}
+export type SignedFetchMeta = {
+  origin?: string
+  scene_id?: string
+  parcel?: string
+  tld?: string
+  network?: string
+  is_guest?: boolean
+  realm?: SignedFetchMetaRealm
+  signer?: string
+}
+export type JsonStringified<T> = string & { __jsonBrand: T } // TODO
+export type SignedFetchMetaJson = JsonStringified<SignedFetchMeta>
+
 export type KernelFetch = {
   url: string
   init?: {
-    method: 'PATCH' | 'POST' | 'GET' | 'DELETE'
+    method: 'PATCH' | 'POST' | 'GET' | 'DELETE' | 'PUT'
     headers: Record<string, string>
     body?: string
   }
+  meta?: string
 }
 
 export type KernelFetchRespose = {
@@ -36,6 +56,7 @@ type PBAvatarEquippedData = {
   forceRender: WearableCategory[]
 }
 export type RGBColor = { r: number; g: number; b: number }
+export type RGBAColor = { r: number; g: number; b: number; a: number }
 export type PBAvatarBase = {
   name: string
   skinColor?: RGBColor
@@ -47,6 +68,8 @@ export type PBAvatarBase = {
 export type SetAvatarData = {
   base?: PBAvatarBase
   equip?: PBAvatarEquippedData
+  hasClaimedName?: boolean
+  profileExtras?: ProfileExtra
 }
 
 export type LiveSceneInfo = {
@@ -103,6 +126,7 @@ export type BevyApiInterface = {
   getSystemActionStream: () => Promise<SystemAction[]>
   getChatStream: () => Promise<ChatMessageDefinition[]>
   sendChat: (message: string, channel?: string) => void
+  quit: () => void
 }
 
 // system api module

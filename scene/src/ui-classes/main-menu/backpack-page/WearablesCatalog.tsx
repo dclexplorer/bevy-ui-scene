@@ -134,7 +134,7 @@ function WearableCatalogNavBar(): ReactElement {
   const mustShowColor = categoryHasColor(backpackState.activeWearableCategory)
 
   return (
-    <UiEntity uiTransform={{ flexDirection: 'row', width: '100%' }}>
+    <UiEntity uiTransform={{ flexDirection: 'row', width: '100%', zIndex: 1 }}>
       <NavButton
         active={backpackState.activeWearableCategory === null}
         icon={{ spriteName: 'all', atlasName: 'backpack' }}

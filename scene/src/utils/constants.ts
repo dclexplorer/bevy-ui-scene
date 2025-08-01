@@ -590,3 +590,4 @@ export const MAX_ZINDEX = 98303
 export const CATALYST_BASE_URL_FALLBACK = 'https://peer.decentraland.org'
 export const LOCAL_STORAGE_OUTFITS_KEY = 'outfits'
 export const DOUBLE_CLICK_DELAY = 400
+export const LOCAL_PREVIEW_REALM_NAME = 'LocalPreview'
