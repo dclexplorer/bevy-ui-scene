@@ -22,8 +22,8 @@ import { PermissionLegend } from './permission-legend'
 import { PermissionRowField } from './permission-row-field'
 import { getRealm } from '~system/Runtime'
 import useEffect = ReactEcs.useEffect
-import { LiveSceneInfo } from '../../../../bevy-api/interface'
-import { InputOption } from '../../../../utils/definitions'
+import { type LiveSceneInfo } from '../../../../bevy-api/interface'
+import { type InputOption } from '../../../../utils/definitions'
 
 const FONT_SMALL_UNIT = 30
 const FONT_MEDIUM_UNIT = 40
@@ -83,7 +83,9 @@ export const PermissionsForm = ({
 
       setSceneHash(selectedSceneItem.hash)
       const { realmInfo } = await getRealm({})
-      setRealmURL(realmInfo!.baseUrl as string)
+
+      setRealmURL(realmInfo?.baseUrl ?? 'main') // TODO REVIEW
+
       const completePermissionsMatrix = await getCompletePermissionsMatrix(
         selectedSceneItem.hash
       )
@@ -93,7 +95,7 @@ export const PermissionsForm = ({
     })
   }, [changes])
 
-  const onChangeRow = () => {
+  const onChangeRow = (): void => {
     setChanges(changes + 1)
   }
 

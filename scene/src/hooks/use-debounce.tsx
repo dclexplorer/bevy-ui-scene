@@ -3,7 +3,7 @@ import useEffect = ReactEcs.useEffect
 import useState = ReactEcs.useState
 import { timers } from '@dcl-sdk/utils'
 
-export function useDebounce(value: any, delay: number = 1000) {
+export function useDebouncedValue(value: any, delay: number = 1000): any {
   const [debouncedValue, setDebouncedValue] = useState(value)
 
   useEffect(() => {

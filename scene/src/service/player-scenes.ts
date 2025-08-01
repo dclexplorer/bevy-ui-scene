@@ -26,14 +26,12 @@ export async function getCurrentScene(
     s.parcels.find((p) => p.x === currentParcel.x && p.y === currentParcel.y)
   )
   if (!currentScene) {
-    //TODO REVIEW TO IMPROVE: look for the closer one
+    // TODO REVIEW TO IMPROVE: look for the closer one
     return _liveSceneInfo[0]
   }
-  return currentScene as LiveSceneInfo
+  return currentScene
 }
 
-export function filterSelectableScenes(sceneInfo: LiveSceneInfo) {
-  return (
-    sceneInfo.title !== 'UI Scene' && sceneInfo.title.indexOf('Road at') === -1
-  )
+export function filterSelectableScenes(sceneInfo: LiveSceneInfo): boolean {
+  return sceneInfo.title !== 'UI Scene' && !sceneInfo.title.includes('Road at')
 }

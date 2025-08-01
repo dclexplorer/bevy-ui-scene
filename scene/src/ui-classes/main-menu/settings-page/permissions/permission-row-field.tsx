@@ -29,9 +29,9 @@ export function PermissionRowField({
   onMouseLeave?: () => void
   onChange?: () => void
 }): ReactElement {
-  const onChangeScene = (_value: PermissionValue) => {
+  const onChangeScene = (_value: PermissionValue): void => {
     BevyApi.setPermanentPermission({
-      //TODO review if it should be a promise
+      // TODO review if it should be a promise
       value: sceneHash,
       level: 'Scene',
       ty: value.type,
@@ -39,7 +39,7 @@ export function PermissionRowField({
     })
     onChange()
   }
-  const onChangeRealm = (_value: PermissionValue) => {
+  const onChangeRealm = (_value: PermissionValue): void => {
     BevyApi.setPermanentPermission({
       value: realmURL,
       level: 'Realm',
@@ -48,7 +48,7 @@ export function PermissionRowField({
     })
     onChange()
   }
-  const onChangeGlobal = (_value: PermissionValue) => {
+  const onChangeGlobal = (_value: PermissionValue): void => {
     BevyApi.setPermanentPermission({
       level: 'Global',
       ty: value.type,

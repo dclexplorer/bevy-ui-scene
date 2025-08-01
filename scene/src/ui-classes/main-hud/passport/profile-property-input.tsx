@@ -14,12 +14,12 @@ type SelectablePropertyKey = keyof typeof selectableValues
 const selectableValuesMap: any = Object.keys(selectableValues).reduce(
   // TODO fix any's
   (acc: any, currentKey: any): any => {
-    acc[currentKey as any] = selectableValues[
-      currentKey as SelectablePropertyKey
-    ].map((s) => ({
-      value: s,
-      label: s
-    }))
+    acc[currentKey] = selectableValues[currentKey as SelectablePropertyKey].map(
+      (s) => ({
+        value: s,
+        label: s
+      })
+    )
     return acc
   },
   {}

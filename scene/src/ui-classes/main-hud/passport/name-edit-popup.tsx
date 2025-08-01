@@ -21,7 +21,7 @@ import { BevyApi } from '../../../bevy-api'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import useEffect = ReactEcs.useEffect
 import { type SetAvatarData } from '../../../bevy-api/interface'
-import { InputOption } from '../../../utils/definitions'
+import { type InputOption } from '../../../utils/definitions'
 
 const { useState } = ReactEcs
 

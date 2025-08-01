@@ -4,7 +4,7 @@ import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { noop } from '../utils/function-utils'
 import { timers } from '@dcl-sdk/utils'
-import { InputOption } from '../utils/definitions'
+import { type InputOption } from '../utils/definitions'
 
 export type DropdownComponentProps = {
   dropdownId: string // TODO refactor with useState when  it's available

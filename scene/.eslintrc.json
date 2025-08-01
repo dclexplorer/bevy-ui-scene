@@ -17,7 +17,8 @@
         "allowNullableBoolean": true,
         "allowAny": true
       }
-    ]
+    ],
+    "@typescript-eslint/prefer-nullish-coalescing": "off"
   },
   "ignorePatterns": ["node_modules"]
 }

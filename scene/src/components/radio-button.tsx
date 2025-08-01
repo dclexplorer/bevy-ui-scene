@@ -1,8 +1,8 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Column, Row } from './layout'
-import { Callback, UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { COLOR } from './color-palette'
-import { InputOption } from '../utils/definitions'
+import { type InputOption } from '../utils/definitions'
 import { getCanvasScaleRatio } from '../service/canvas-ratio'
 import useState = ReactEcs.useState
 import { noop } from '../utils/function-utils'
@@ -54,7 +54,7 @@ export function RadioCircle({
   active: boolean
   uiTransform?: UiTransformProps
   fontSize?: number
-}) {
+}): ReactElement {
   return (
     <UiEntity
       uiTransform={{

@@ -10,7 +10,7 @@ import Icon from '../../../../components/icon/Icon'
 import type { Color4 } from '@dcl/sdk/math'
 import useState = ReactEcs.useState
 import { noop } from '../../../../utils/function-utils'
-import { useDebounce } from '../../../../hooks/use-debounce'
+import { useDebouncedValue } from '../../../../hooks/use-debounce'
 import useEffect = ReactEcs.useEffect
 const REQUIRED_POSSIBLE_PERMISSION_VALUES = POSSIBLE_PERMISSION_VALUES.filter(
   (i) => i !== null
@@ -45,7 +45,7 @@ export function PermissionBox({
     setValue(nextValue)
     if (!debounce) onChange(nextValue)
   }
-  const debouncedValue = useDebounce(currentValue)
+  const debouncedValue = useDebouncedValue(currentValue)
   const [changedOnce, setchangedOnce] = useState<boolean>(false)
 
   useEffect(() => {

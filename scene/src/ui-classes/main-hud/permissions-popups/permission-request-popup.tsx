@@ -1,6 +1,6 @@
-import { Popup } from '../../../components/popup-stack'
+import { type Popup } from '../../../components/popup-stack'
 import { COLOR } from '../../../components/color-palette'
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../../state/store'
 import { closeLastPopupAction } from '../../../state/hud/actions'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
@@ -10,8 +10,8 @@ import Icon from '../../../components/icon/Icon'
 import {
   PERMISSION_DEFINITIONS,
   PERMISSION_LEVELS,
-  PermissionLevel,
-  PermissionRequest
+  type PermissionLevel,
+  type PermissionRequest
 } from '../../../bevy-api/permission-definitions'
 import { Row } from '../../../components/layout'
 import { ButtonTextIcon } from '../../../components/button-text-icon'
@@ -161,7 +161,10 @@ function PermissionRequestContent({
     </UiEntity>
   )
 
-  function getPermissionValue(data: PermissionRequest, level: PermissionLevel) {
+  function getPermissionValue(
+    data: PermissionRequest,
+    level: PermissionLevel
+  ): string | undefined {
     if (level === 'Scene') {
       return data.scene
     } else if (level === 'Global') {
@@ -175,5 +178,3 @@ function PermissionRequestContent({
 function closeDialog(): void {
   store.dispatch(closeLastPopupAction())
 }
-
-function FetchPopupContent() {}

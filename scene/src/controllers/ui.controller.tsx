@@ -100,12 +100,12 @@ export class UIController {
 
       ;(async () => {
         // TODO review with bevy-explorer dev or protocol why getPlayer().emotes is empty at first
-        listenPermissionRequests()
+        listenPermissionRequests().catch(console.error)
 
         await waitFor(() => (getPlayer()?.emotes?.length ?? 0) > 0, 3000)
         store.dispatch(
           updateHudStateAction({
-            realmURL: (await getRealm({})).realmInfo!.baseUrl
+            realmURL: (await getRealm({})).realmInfo?.baseUrl ?? 'main' // TODO REVIEW
           })
         )
         store.dispatch(

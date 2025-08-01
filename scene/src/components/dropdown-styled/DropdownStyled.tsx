@@ -11,7 +11,7 @@ import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { COLOR } from '../color-palette'
 import { isTruthy, noop } from '../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
-import { InputOption } from '../../utils/definitions'
+import { type InputOption } from '../../utils/definitions'
 
 function DropdownStyled(props: {
   isOpen: boolean

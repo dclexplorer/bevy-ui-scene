@@ -7,7 +7,6 @@ import {
   type GetPermanentPermissionsArgs,
   type PermanentPermissionItem,
   type PermissionRequest,
-  type PermissionTypeItem,
   type PermissionUsed,
   type SetPermanentPermissionArgs,
   type SetSinglePermissionArgs
@@ -143,7 +142,7 @@ export type BevyApiInterface = {
     arg0: GetPermanentPermissionsArgs
   ) => Promise<PermanentPermissionItem[]>
   setPermanentPermission: (arg0: SetPermanentPermissionArgs) => void
-  getPermissionTypes: () => PermissionTypeItem[]
+  getPermissionTypes: any
 }
 
 // system api module
