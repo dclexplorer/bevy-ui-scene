@@ -1,6 +1,6 @@
 import { getPlayer } from '@dcl/sdk/src/players'
 
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 
 import ReactEcs, {
   type Key,
@@ -25,6 +25,11 @@ import { AvatarCircle } from '../avatar-circle'
 import { pushPopupAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { store } from '../../state/store'
+import { nameAddressMap } from '../../service/chat-members'
+
+const LINK_TYPE = {
+  USER: 'user'
+}
 
 const state: { hoveringMessageID: number; openMessageMenu: boolean } = {
   hoveringMessageID: 0,
@@ -49,6 +54,20 @@ function ChatMessage(props: {
   const side = props.message.side
   const messageMargin = 12 * getCanvasScaleRatio()
 
+  const chatMessageOnMouseDownCallback: any = (event: any) => {
+    console.log('event', event, event?.hit?.meshName)
+    if (event?.hit?.meshName) {
+      const [type, value] = event?.hit?.meshName.split(':')
+      if (type === LINK_TYPE.USER) {
+        store.dispatch(
+          pushPopupAction({
+            type: HUD_POPUP_TYPE.PASSPORT,
+            data: value
+          })
+        )
+      }
+    }
+  }
   return (
     <UiEntity
       uiTransform={{
@@ -145,12 +164,13 @@ function ChatMessage(props: {
           value={
             isSystemMessage(props.message)
               ? `<i>${props.message.message}</i>`
-              : decorateNamesWithLinkColor(props.message.message)
+              : decorateMessageWithLinks(props.message.message)
           }
           fontSize={defaultFontSize}
           color={ALMOST_WHITE}
           textWrap="wrap"
           textAlign={`middle-left`}
+          onMouseDown={chatMessageOnMouseDownCallback}
         />
         <Label
           uiTransform={{
@@ -204,7 +224,13 @@ export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
   return messageData.sender_address === ZERO_ADDRESS
 }
 
-export function decorateNamesWithLinkColor(message: string): string {
-  // 00B1FE
-  return message.replace(/(@\w+)/g, `<color=#00B1FE>$1</color>`)
+const NAME_MENTION_REGEXP = /@\w+(#\w+)?/g
+
+export function decorateMessageWithLinks(message: string): string {
+  return message.replace(NAME_MENTION_REGEXP, (...[match]) => {
+    const foundNameAddress = nameAddressMap.get(match.replace('@', ''))
+    return foundNameAddress
+      ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}:${foundNameAddress}>${match}</link></color></b>`
+      : `<b>${match}</b>`
+  })
 }
