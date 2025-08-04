@@ -161,11 +161,9 @@ export const PermissionsForm = ({
             }}
           >
             {permissionDefinitions.map((permissionDefinition, index) => {
-              if (
+              return [
                 permissionDefinitions[index - 1]?.section !==
-                permissionDefinition.section
-              ) {
-                return [
+                  permissionDefinition.section && (
                   <UiEntity
                     key={permissionDefinition.permissionType}
                     uiText={{
@@ -224,48 +222,24 @@ export const PermissionsForm = ({
                         }}
                       />
                     </UiEntity>
-                  </UiEntity>,
-                  <PermissionRowField
-                    onMouseEnter={() => {
-                      setHoveredPermission(permissionDefinition.permissionType)
-                    }}
-                    onMouseLeave={() => {
-                      onPermissionMouseLeave(
-                        permissionDefinition.permissionType
-                      )
-                    }}
-                    permissionDefinition={permissionDefinition}
-                    value={
-                      permissionsResults[permissionDefinition.permissionType]
-                    }
-                    sceneHash={sceneHash}
-                    realmURL={realmURL}
-                    onChange={onChangeRow}
-                  />
-                ]
-              } else {
-                // TODO review if we can remove duplicated code
-
-                return (
-                  <PermissionRowField
-                    onMouseEnter={() => {
-                      setHoveredPermission(permissionDefinition.permissionType)
-                    }}
-                    onMouseLeave={() => {
-                      onPermissionMouseLeave(
-                        permissionDefinition.permissionType
-                      )
-                    }}
-                    permissionDefinition={permissionDefinition}
-                    value={
-                      permissionsResults[permissionDefinition.permissionType]
-                    }
-                    sceneHash={sceneHash}
-                    realmURL={realmURL}
-                    onChange={onChangeRow}
-                  />
-                )
-              }
+                  </UiEntity>
+                ),
+                <PermissionRowField
+                  onMouseEnter={() => {
+                    setHoveredPermission(permissionDefinition.permissionType)
+                  }}
+                  onMouseLeave={() => {
+                    onPermissionMouseLeave(permissionDefinition.permissionType)
+                  }}
+                  permissionDefinition={permissionDefinition}
+                  value={
+                    permissionsResults[permissionDefinition.permissionType]
+                  }
+                  sceneHash={sceneHash}
+                  realmURL={realmURL}
+                  onChange={onChangeRow}
+                />
+              ].filter((i) => i)
             })}
           </Column>
         </Column>
