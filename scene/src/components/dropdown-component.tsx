@@ -5,9 +5,9 @@ import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { noop } from '../utils/function-utils'
 import { timers } from '@dcl-sdk/utils'
 import { type InputOption } from '../utils/definitions'
+import useState = ReactEcs.useState
 
 export type DropdownComponentProps = {
-  dropdownId: string // TODO refactor with useState when  it's available
   uiTransform: UiTransformProps
   options: InputOption[]
   value: any
@@ -28,7 +28,6 @@ export type DropdownState = Record<
 const state: DropdownState = {}
 
 export function DropdownComponent({
-  dropdownId,
   options = [{ label: '', value: null }],
   value = null,
   uiTransform,
@@ -38,42 +37,36 @@ export function DropdownComponent({
   disabled = false,
   listMaxHeight
 }: DropdownComponentProps): ReactElement {
-  state[dropdownId] = state[dropdownId] ?? {
-    open: false,
-    entered: null
-  }
+  const [open, setOpen] = useState(false)
+  const [entered, setEntered] = useState<number | null>(null)
 
   return (
     <DropdownStyled
       scroll={scroll}
       uiTransform={uiTransform}
-      isOpen={state[dropdownId].open}
+      isOpen={open}
       onMouseDown={() => {
         if (!disabled) {
-          state[dropdownId].open = !state[dropdownId].open
+          setOpen(!open)
         }
       }}
       onOptionMouseDown={(index) => {
         onChange(options[index].value)
-        state[dropdownId].open = false
+        setOpen(false)
       }}
       onOptionMouseEnter={(index) => {
-        state[dropdownId].entered = index
+        setEntered(index)
       }}
       onOptionMouseLeave={(index) => {}}
       onListMouseLeave={() => {
         timers.setTimeout(() => {
-          state[dropdownId].entered = null
+          setEntered(null)
         }, 100)
       }}
       title={''}
       fontSize={fontSize}
       value={options.findIndex((o) => o.value === value)}
-      entered={
-        state[dropdownId].entered !== null
-          ? state[dropdownId].entered ?? -1
-          : -1
-      }
+      entered={entered !== null ? entered ?? -1 : -1}
       options={options}
       disabled={disabled}
       listMaxHeight={listMaxHeight}

@@ -319,7 +319,6 @@ export const UniqueNameForm = ({
       uiTransform={{ flexDirection: 'column', width: '100%', zIndex: 1 }}
     >
       <DropdownComponent
-        dropdownId={'unique-name-selector'}
         uiTransform={{
           width: '97%',
           zIndex: 999999,

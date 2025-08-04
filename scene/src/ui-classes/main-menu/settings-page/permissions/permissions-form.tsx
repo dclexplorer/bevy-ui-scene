@@ -139,7 +139,6 @@ export const PermissionsForm = ({
               }}
             />
             <DropdownComponent
-              dropdownId={'select-current-scene'}
               uiTransform={{
                 width: getCanvasScaleRatio() * 400,
                 alignSelf: 'center'

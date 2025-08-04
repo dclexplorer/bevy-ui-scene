@@ -214,7 +214,6 @@ export function ProfilePropertyField({
     if (type === INPUT_TYPE.DROPDOWN && propertyKey in selectableValues) {
       return (
         <DropdownComponent
-          dropdownId={propertyKey}
           uiTransform={{
             width: '97%',
             zIndex: 999999,

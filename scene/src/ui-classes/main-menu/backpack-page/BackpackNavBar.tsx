@@ -167,7 +167,6 @@ export function BackpackNavBar({
               }}
             />
             <DropdownComponent
-              dropdownId={'sort'}
               uiTransform={{
                 position: { top: '-10%' },
                 width: canvasScaleRatio * 280,
