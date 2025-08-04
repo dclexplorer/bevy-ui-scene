@@ -54,6 +54,7 @@ import { type AppState } from '../../../state/types'
 import { getUserData } from '~system/UserIdentity'
 import { PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
+import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
 
 type Box = {
   position: { x: number; y: number }
@@ -188,13 +189,14 @@ export default class ChatAndLogs {
     })
 
     store.subscribe((action) => {
-      // TODO check action store / type
-      state.chatBox.position.x = store.getState().viewport.width * 0.03
-      state.chatBox.position.y = store.getState().viewport.height * 0.2
-      state.chatBox.size.x =
-        store.getState().viewport.width * 0.26 +
-        (state.headerMenuOpen ? store.getState().viewport.width * 0.12 : 0)
-      state.chatBox.size.y = store.getState().viewport.height * 0.8
+      if (action.type === VIEWPORT_ACTION.UPDATE_VIEWPORT) {
+        state.chatBox.position.x = store.getState().viewport.width * 0.03
+        state.chatBox.position.y = store.getState().viewport.height * 0.2
+        state.chatBox.size.x =
+          store.getState().viewport.width * 0.26 +
+          (state.headerMenuOpen ? store.getState().viewport.width * 0.12 : 0)
+        state.chatBox.size.y = store.getState().viewport.height * 0.8
+      }
     })
 
     engine.addSystem(() => {
