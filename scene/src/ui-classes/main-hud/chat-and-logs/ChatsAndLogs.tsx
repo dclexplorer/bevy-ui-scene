@@ -108,7 +108,6 @@ export default class ChatAndLogs {
     this.listenMouseHover()
     listenSystemAction('Chat', (pressed) => {
       if (pressed) {
-        // TODO we should not focus if the input already has the focus, need  a way to check if it's already focused
         focusChatInput(true)
       }
     })
