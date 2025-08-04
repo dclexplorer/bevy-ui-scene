@@ -109,7 +109,7 @@ export default class ChatAndLogs {
     listenSystemAction('Chat', (pressed) => {
       if (pressed) {
         // TODO we should not focus if the input already has the focus, need  a way to check if it's already focused
-        focusChatInput()
+        focusChatInput(true)
       }
     })
 
@@ -148,7 +148,6 @@ export default class ChatAndLogs {
     ): Promise<void> => {
       for await (const chatMessage of stream) {
         if (chatMessage.message.indexOf('␑') === 0) return
-        console.log('chatMessage', chatMessage)
         this.pushMessage(chatMessage)
         if (!this.isOpen()) {
           state.unreadMessages++
@@ -681,18 +680,9 @@ function InputArea(): ReactElement | null {
           placeholder="Press ENTER to chat"
           placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
           onSubmit={sendChatMessage}
+          onMouseDown={() => focusChatInput()}
         />
       )}
-      <UiEntity
-        uiTransform={{
-          width: '100%',
-          height: '100%',
-          positionType: 'absolute'
-        }}
-        onMouseDown={() => {
-          focusChatInput()
-        }}
-      />
     </UiEntity>
   )
 }
@@ -759,8 +749,8 @@ function scrollToBottom(): void {
   state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
 }
 
-function focusChatInput(): void {
-  setUiFocus({ elementId: 'chat-input' }).catch(console.error)
+function focusChatInput(uiFocus: boolean = false): void {
+  if (uiFocus) setUiFocus({ elementId: 'chat-input' }).catch(console.error)
   store.dispatch(updateHudStateAction({ chatOpen: true }))
   scrollToBottom()
 }
