@@ -143,6 +143,8 @@ export const PermissionsForm = ({
                 width: getCanvasScaleRatio() * 400,
                 alignSelf: 'center'
               }}
+              listMaxHeight={getCanvasScaleRatio() * 1000}
+              scroll={true}
               options={sceneOptions}
               value={selectedScene}
               onChange={(value) => {
