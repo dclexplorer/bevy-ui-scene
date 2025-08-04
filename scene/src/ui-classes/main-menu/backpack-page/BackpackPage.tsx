@@ -65,7 +65,7 @@ export default class BackpackPage {
     return (
       <MainContent>
         <BackpackNavBar canvasScaleRatio={canvasScaleRatio} />
-        <Content>
+        <ResponsiveContent>
           <AvatarPreviewElement />
           <UiEntity
             uiTransform={{
@@ -95,7 +95,7 @@ export default class BackpackPage {
               <OutfitsCatalog />
             )}
           </UiEntity>
-        </Content>
+        </ResponsiveContent>
       </MainContent>
     )
   }
@@ -222,8 +222,7 @@ export function MainContent({
   )
 }
 
-// TODO REVIEW: refactor, maybe move outside and change name to : <ResponsiveRatioBox,AspectRatioContainer, AdaptiveContent... getCanvasScaleRatio() should be renamed too
-export function Content({
+export function ResponsiveContent({
   children
 }: {
   children?: ReactElement

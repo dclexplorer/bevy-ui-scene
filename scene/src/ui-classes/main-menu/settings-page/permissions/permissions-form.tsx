@@ -5,7 +5,7 @@ import { Column, Row } from '../../../../components/layout'
 import { COLOR } from '../../../../components/color-palette'
 
 import { noop } from '../../../../utils/function-utils'
-import { Content } from '../../backpack-page/BackpackPage'
+import { ResponsiveContent } from '../../backpack-page/BackpackPage'
 import { DropdownComponent } from '../../../../components/dropdown-component'
 import useState = ReactEcs.useState
 import { BevyApi } from '../../../../bevy-api'
@@ -101,7 +101,7 @@ export const PermissionsForm = ({
 
   if (!permissionsResults || loading) return null
   return (
-    <Content>
+    <ResponsiveContent>
       <UiEntity
         uiTransform={{
           width: '80%',
@@ -319,6 +319,6 @@ export const PermissionsForm = ({
           </Column>
         )}
       </UiEntity>
-    </Content>
+    </ResponsiveContent>
   )
 }

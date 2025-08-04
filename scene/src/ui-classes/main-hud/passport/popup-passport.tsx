@@ -14,7 +14,7 @@ import {
   type ViewAvatarData
 } from '../../../state/hud/state'
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
-import { Content } from '../../main-menu/backpack-page/BackpackPage'
+import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
 import {
   AvatarPreviewElement,
   resetAvatarPreviewZoom
@@ -169,7 +169,7 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
         closeDialog()
       }}
     >
-      <Content>
+      <ResponsiveContent>
         <UiEntity
           uiTransform={{
             width: '80%',
@@ -213,7 +213,7 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
             }}
           />
         </UiEntity>
-      </Content>
+      </ResponsiveContent>
     </UiEntity>
   )
 
