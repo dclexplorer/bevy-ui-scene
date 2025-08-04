@@ -29,7 +29,8 @@ import { nameAddressMap } from '../../service/chat-members'
 
 const LINK_TYPE = {
   USER: 'user',
-  URL: 'url'
+  URL: 'url',
+  LOCATION: 'location'
 }
 
 const state: { hoveringMessageID: number; openMessageMenu: boolean } = {
@@ -59,6 +60,7 @@ function ChatMessage(props: {
     console.log('event', event, event?.hit?.meshName)
     if (event?.hit?.meshName) {
       const [type, value] = event?.hit?.meshName.split('::')
+      console.log('type,value', type, value)
       if (type === LINK_TYPE.USER) {
         store.dispatch(
           pushPopupAction({
@@ -71,6 +73,14 @@ function ChatMessage(props: {
         store.dispatch(
           pushPopupAction({
             type: HUD_POPUP_TYPE.URL,
+            data: value
+          })
+        )
+      } else if (type === LINK_TYPE.LOCATION) {
+        console.log('LOCATION')
+        store.dispatch(
+          pushPopupAction({
+            type: HUD_POPUP_TYPE.TELEPORT,
             data: value
           })
         )
@@ -235,8 +245,18 @@ export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
 
 const NAME_MENTION_REGEXP = /@\w+(#\w+)?/g
 const URL_REGEXP = /https:\/\/[^\s"',]+/g
+const LOCATION_REGEXP = /\d+,\s?\d+/g
+export const decorateMessageWithLinks = compose(
+  replaceNameTags,
+  replaceURLTags,
+  replaceLocationTags
+)
 
-export const decorateMessageWithLinks = compose(replaceNameTags, replaceURLTags)
+export function replaceLocationTags(message: string) {
+  return message.replace(LOCATION_REGEXP, function (...[match]) {
+    return `<b><color=#00B1FE><link=${LINK_TYPE.LOCATION}::${match}>${match}</link></color></b>`
+  })
+}
 
 export function replaceURLTags(message: string) {
   return message.replace(URL_REGEXP, function (...[match]) {
