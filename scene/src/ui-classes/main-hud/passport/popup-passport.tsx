@@ -89,7 +89,6 @@ export function setupPassportPopup(): void {
       action.type === HUD_ACTION.PUSH_POPUP &&
       (action.payload as HUDPopup).type === HUD_POPUP_TYPE.PASSPORT
     ) {
-      // TODO review if a passport can be opened when other passport is open (popups are stackable), then we should check last popup type/data to update avatarPreview and profileData
       state.loadingProfile = true
       executeTask(async () => {
         const shownPopup = action.payload as HUDPopup
@@ -138,6 +137,7 @@ export function setupPassportPopup(): void {
   })
 
   listenSystemAction('ShowProfile', (pressed: boolean) => {
+    console.log('ShowProfile', pressed)
     if (pressed && state.mouseOverAvatar !== null) {
       store.dispatch(
         pushPopupAction({
