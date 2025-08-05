@@ -79,15 +79,18 @@ export const PermissionsForm = ({
           : (liveSceneInfo.find(
               (s) => s.hash === selectedScene
             ) as LiveSceneInfo)
-      setSelectedSceneHash(selectedSceneItem.hash)
 
-      setSceneHash(selectedSceneItem.hash)
+      if (selectedSceneItem) {
+        setSelectedSceneHash(selectedSceneItem.hash)
+        setSceneHash(selectedSceneItem.hash)
+      }
+
       const { realmInfo } = await getRealm({})
 
       setRealmURL(realmInfo?.baseUrl ?? 'main') // TODO REVIEW
 
       const completePermissionsMatrix = await getCompletePermissionsMatrix(
-        selectedSceneItem.hash
+        selectedSceneItem?.hash
       )
 
       setPermissionsResults(completePermissionsMatrix)

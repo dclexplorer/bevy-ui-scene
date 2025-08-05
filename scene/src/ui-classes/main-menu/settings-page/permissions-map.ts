@@ -13,7 +13,7 @@ export type PermissionResult = PermissionItem & {
   global: PermissionItem
 }
 export async function getCompletePermissionsMatrix(
-  sceneHash: string
+  sceneHash: string | undefined
 ): Promise<Record<string, PermissionResult>> {
   const globalPermissions = await BevyApi.getPermanentPermissions({
     level: 'Global'

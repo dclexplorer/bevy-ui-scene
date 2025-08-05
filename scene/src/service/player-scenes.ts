@@ -17,7 +17,7 @@ export function getPlayerParcel(): { x: number; y: number } {
 
 export async function getCurrentScene(
   liveSceneInfo?: LiveSceneInfo[]
-): Promise<LiveSceneInfo> {
+): Promise<LiveSceneInfo | undefined> {
   const _liveSceneInfo =
     liveSceneInfo ??
     (await BevyApi.liveSceneInfo()).filter(filterSelectableScenes)
@@ -25,11 +25,30 @@ export async function getCurrentScene(
   const currentScene = _liveSceneInfo.find((s) =>
     s.parcels.find((p) => p.x === currentParcel.x && p.y === currentParcel.y)
   )
-  if (!currentScene) {
-    // TODO REVIEW TO IMPROVE: look for the closer one
-    return _liveSceneInfo[0]
+  if (!currentScene && _liveSceneInfo?.length) {
+    return _liveSceneInfo.reduce((closestScene, scene) => {
+      const closestDistance = getClosestParcelDistance(
+        currentParcel,
+        closestScene.parcels
+      )
+      const currentDistance = getClosestParcelDistance(
+        currentParcel,
+        scene.parcels
+      )
+      return currentDistance < closestDistance ? scene : closestScene
+    })
   }
+
   return currentScene
+
+  function getClosestParcelDistance(
+    from: { x: number; y: number },
+    parcels: { x: number; y: number }[]
+  ): number {
+    return Math.min(
+      ...parcels.map((p) => Math.hypot(p.x - from.x, p.y - from.y))
+    )
+  }
 }
 
 export function filterSelectableScenes(sceneInfo: LiveSceneInfo): boolean {
