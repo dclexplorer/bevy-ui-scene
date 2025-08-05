@@ -31,7 +31,7 @@ import {
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
 import { type URN, type URNWithoutTokenId } from '../../../utils/definitions'
-import { convertToPBAvatarBase, waitFor } from '../../../utils/dcl-utils'
+import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../../bevy-api/interface'
 import {
@@ -122,32 +122,29 @@ export function setupPassportPopup(): void {
     }
   })
 
+  const avatarTracker = createOrGetAvatarsTracker()
+  avatarTracker.onMouseOver((userId) => {
+    executeTask(async () => {
+      await sleep(0)
+      state.mouseOverAvatar = userId
+    })
+  })
+  avatarTracker.onMouseLeave(() => {
+    executeTask(async () => {
+      await sleep(0)
+      state.mouseOverAvatar = null
+    })
+  })
+
   listenSystemAction('ShowProfile', (pressed: boolean) => {
-    if (pressed) {
-      executeTask(async () => {
-        // TODO THIS IS A WORKAROUND, THERE SHOULD BE BETTER WAYS TO GET userId from ShowProfile action
-        const avatarTracker = createOrGetAvatarsTracker()
-        const disposeCallback = avatarTracker.onMouseOver((userId) => {
-          state.mouseOverAvatar = userId
+    console.log('ShowProfile', pressed)
+    if (pressed && state.mouseOverAvatar !== null) {
+      store.dispatch(
+        pushPopupAction({
+          type: HUD_POPUP_TYPE.PASSPORT,
+          data: state.mouseOverAvatar
         })
-        await waitFor(() => state.mouseOverAvatar !== null)
-
-        if (
-          getPlayer({ userId: state.mouseOverAvatar as string })?.isGuest ===
-          false
-        ) {
-          store.dispatch(
-            pushPopupAction({
-              type: HUD_POPUP_TYPE.PASSPORT,
-              data: state.mouseOverAvatar
-            })
-          )
-        }
-        state.mouseOverAvatar = null
-        disposeCallback()
-        avatarTracker.dispose()
-      })
-
+      )
       // TODO be aware that system action ShowProfile is not triggered when camera is unlocked (mouse cursor visible)
     }
   })
