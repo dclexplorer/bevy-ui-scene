@@ -7,13 +7,15 @@ import {
   MeshRenderer,
   Material,
   InputAction,
-  type PBPointerEventsResult
+  type PBPointerEventsResult,
+  PlayerIdentityData
 } from '@dcl/sdk/ecs'
 import { onEnterScene, onLeaveScene, getPlayer } from '@dcl/sdk/players'
 import { Color4 } from '@dcl/sdk/math'
 import {
   type PBAvatarBase,
-  type PBAvatarEquippedData
+  type PBAvatarEquippedData,
+  PBPlayerIdentityData
 } from '@dcl/ecs/dist/components'
 import { type TransformType } from '@dcl/ecs'
 
@@ -33,6 +35,7 @@ export const createOrGetAvatarsTracker = (): {
   onClick: (fn: (userId: string) => void) => () => void
   onMouseOver: (fn: (userId: string) => void) => () => void
   onMouseLeave: (fn: (userId: string) => void) => () => void
+  dispose: () => void
 } => {
   const callbacks: Record<string, Array<(userId: string) => void>> = {
     onClick: [],
@@ -40,27 +43,38 @@ export const createOrGetAvatarsTracker = (): {
     onMouseLeave: []
   }
 
-  // Use Map instead of Record
   const avatarProxies = new Map<string, Entity>()
-
+  for (const [, data] of engine.getEntitiesWith(PlayerIdentityData)) {
+    const playerIdentity: PBPlayerIdentityData = data
+    if (
+      !avatarProxies.has(playerIdentity.address) &&
+      playerIdentity.address !== getPlayer()?.userId
+    ) {
+      const proxy = createAvatarProxy(playerIdentity.address, `Show Profile`)
+      avatarProxies.set(playerIdentity.address, proxy)
+    }
+  }
   onEnterScene((player) => {
-    if (player.isGuest || player.userId === getPlayer()?.userId) {
+    if (player.userId === getPlayer()?.userId) {
       return
     }
 
     if (!avatarProxies.has(player.userId)) {
-      const proxy = createAvatarProxy(player.userId)
+      const proxy = createAvatarProxy(player.userId, 'Show Profile')
       avatarProxies.set(player.userId, proxy)
     }
   })
 
-  onLeaveScene((userId) => {
+  onLeaveScene(disposeAvatarProxy)
+
+  function disposeAvatarProxy(userId: string) {
     const proxy = avatarProxies.get(userId)
     if (proxy) {
+      pointerEventsSystem.removeOnPointerDown(proxy)
       engine.removeEntity(proxy)
       avatarProxies.delete(userId)
     }
-  })
+  }
 
   let timer = 0
   engine.addSystem((dt) => {
@@ -79,7 +93,15 @@ export const createOrGetAvatarsTracker = (): {
   return {
     onClick,
     onMouseOver,
-    onMouseLeave
+    onMouseLeave,
+    dispose
+  }
+
+  function dispose(): void {
+    ;[...avatarProxies.keys()].forEach((userId) => {
+      disposeAvatarProxy(userId)
+    })
+    callbacks.onClick = callbacks.onMouseOver = callbacks.onMouseLeave = []
   }
 
   function onClick(fn: (userId: string) => void): () => void {
@@ -110,7 +132,7 @@ export const createOrGetAvatarsTracker = (): {
 
     Transform.create(entity, {
       position: { x: 0, y: 1, z: 0 },
-      scale: { x: 1, y: 2, z: 1 },
+      scale: { x: 1, y: 2.1, z: 1 },
       parent: wrapper
     })
 

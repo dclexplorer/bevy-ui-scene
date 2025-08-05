@@ -123,29 +123,16 @@ export function setupPassportPopup(): void {
   })
 
   const avatarTracker = createOrGetAvatarsTracker()
-  avatarTracker.onMouseOver((userId) => {
-    executeTask(async () => {
-      await sleep(0)
-      state.mouseOverAvatar = userId
-    })
-  })
-  avatarTracker.onMouseLeave(() => {
-    executeTask(async () => {
-      await sleep(0)
-      state.mouseOverAvatar = null
-    })
-  })
-
-  listenSystemAction('ShowProfile', (pressed: boolean) => {
-    console.log('ShowProfile', pressed)
-    if (pressed && state.mouseOverAvatar !== null) {
+  avatarTracker.onClick((userId) => {
+    //TODO THIS IS WORKAROUND UNTIL ShowProfile provides better way to get userId
+    if (getPlayer({ userId })?.isGuest === false) {
+      //TODO it should work with Guests, but instead of opening passport, should open a profile menu
       store.dispatch(
         pushPopupAction({
           type: HUD_POPUP_TYPE.PASSPORT,
-          data: state.mouseOverAvatar
+          data: userId
         })
       )
-      // TODO be aware that system action ShowProfile is not triggered when camera is unlocked (mouse cursor visible)
     }
   })
 }

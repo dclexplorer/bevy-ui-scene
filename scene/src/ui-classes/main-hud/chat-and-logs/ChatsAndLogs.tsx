@@ -663,28 +663,7 @@ function InputArea(): ReactElement | null {
         ...ROUNDED_TEXTURE_BACKGROUND,
         color: { ...Color4.Black(), a: 0.4 }
       }}
-    >
-      {state.inputFontSizeWorkaround && (
-        <Input
-          uiTransform={{
-            elementId: 'chat-input',
-            padding: { left: '1%' },
-            width: '100%',
-            height: '100%',
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          textAlign="middle-center"
-          fontSize={inputFontSize}
-          color={ALMOST_WHITE}
-          placeholder="Press ENTER to chat"
-          placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
-          onSubmit={sendChatMessage}
-          onMouseDown={() => focusChatInput()}
-        />
-      )}
-    </UiEntity>
+    ></UiEntity>
   )
 }
 
