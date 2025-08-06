@@ -2,8 +2,8 @@ import { type Coords } from '@dcl/sdk/ecs'
 import type { AtlasIcon, AtlasData, Sprite, FormattedURN } from './definitions'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
 import backpackJson from '../../assets/images/atlas/backpack.json'
+import iconsJson from '../../assets/images/atlas/icons.json'
 import { navbarJson } from '../json/navbar-data'
-import { iconsJson } from '../json/icons-data'
 import { contextJson } from '../json/context-data'
 import { toggleJson } from '../json/toggle-data'
 import { profileJson } from '../json/profile-data'
@@ -30,7 +30,7 @@ export function getUvs(icon: AtlasIcon): number[] {
       parsedJson = navbarJson
       break
     case 'icons':
-      parsedJson = iconsJson
+      parsedJson = iconsJson as AtlasData
       break
     case 'context':
       parsedJson = contextJson
