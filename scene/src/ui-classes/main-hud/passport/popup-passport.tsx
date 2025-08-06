@@ -178,7 +178,7 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
                 flexGrow: 0
               }}
             />,
-            <ProfileContent />
+            <PassportContent />
           ]}
           {state.loadingProfile && (
             <Label
@@ -213,7 +213,7 @@ function getVisibleProperties(profileData: ViewAvatarData): string[] {
   return editablePropertyKeys.filter((key) => key && !!profileData[key])
 }
 
-function ProfileContent(): ReactElement {
+function PassportContent(): ReactElement {
   const profileData = store.getState().hud.profileData
   return (
     <UiEntity
