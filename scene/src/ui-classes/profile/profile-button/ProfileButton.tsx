@@ -10,6 +10,7 @@ import { type UIController } from '../../../controllers/ui.controller'
 import { store } from '../../../state/store'
 import { pushPopupAction } from '../../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
+import { getPlayer } from '@dcl/sdk/players'
 
 export default class ProfileButton {
   private readonly name: string = 'BevyUser'
@@ -52,7 +53,9 @@ export default class ProfileButton {
             store.dispatch(
               pushPopupAction({
                 type: HUD_POPUP_TYPE.PROFILE_MENU,
-                data: 'right'
+                data: {
+                  align: 'right'
+                }
               })
             )
           }}

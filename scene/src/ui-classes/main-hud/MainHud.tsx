@@ -372,7 +372,9 @@ export default class MainHud {
               store.dispatch(
                 pushPopupAction({
                   type: HUD_POPUP_TYPE.PROFILE_MENU,
-                  data: 'left'
+                  data: {
+                    align: 'left'
+                  }
                 })
               )
               // this.uiController.profile.showCard()
