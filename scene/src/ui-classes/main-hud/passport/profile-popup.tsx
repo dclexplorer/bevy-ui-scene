@@ -10,7 +10,8 @@ import { noop } from '../../../utils/function-utils'
 import { store } from '../../../state/store'
 import {
   closeLastPopupAction,
-  pushPopupAction
+  pushPopupAction,
+  updateHudStateAction
 } from '../../../state/hud/actions'
 import { AvatarCircle } from '../../../components/avatar-circle'
 import { getPlayer } from '@dcl/sdk/src/players'
@@ -21,11 +22,35 @@ import { CopyButton } from '../../../components/copy-button'
 import { ButtonTextIcon } from '../../../components/button-text-icon'
 import { Color4 } from '@dcl/sdk/math'
 import { BottomBorder } from '../../../components/bottom-border'
-import { HUD_POPUP_TYPE, ViewAvatarData } from '../../../state/hud/state'
+import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import { logout } from '../../../controllers/ui.controller'
 import { BevyApi } from '../../../bevy-api'
 import { GetPlayerDataRes } from '../../../utils/definitions'
+import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
+import { engine, executeTask, PrimaryPointerInfo } from '@dcl/sdk/ecs'
+import useEffect = ReactEcs.useEffect
+import useState = ReactEcs.useState
+import { UiTransformProps } from '@dcl/sdk/react-ecs'
+import { focusChatInput } from '../chat-and-logs/ChatsAndLogs'
+import { sleep } from '../../../utils/dcl-utils'
+
 const MOUSE = 'mouse'
+
+export function setupProfilePopups(): void {
+  const avatarTracker = createOrGetAvatarsTracker()
+  avatarTracker.onClick((userId) => {
+    //TODO THIS IS WORKAROUND UNTIL ShowProfile provides better way to get userId
+    if (getPlayer({ userId })?.isGuest === false) {
+      //TODO it should work with Guests, but instead of opening passport, should open a profile menu
+      store.dispatch(
+        pushPopupAction({
+          type: HUD_POPUP_TYPE.PROFILE_MENU,
+          data: { userId }
+        })
+      )
+    }
+  })
+}
 
 export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
   return (
@@ -59,25 +84,63 @@ export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
   )
 }
 
-function ProfileContent({ data }: { data: { align: string; userId: string } }) {
-  const player = getPlayer({ userId: data.userId })
-  const alignment = data.align ?? MOUSE
+function ProfileContent({
+  data
+}: {
+  data: { align?: string; userId?: string }
+}) {
+  const player = getPlayer(data.userId ? { userId: data.userId } : undefined)
+  const [coords, setCoords] = useState({ x: 0, y: 0 })
+  const width = getCanvasScaleRatio() * 800
+
+  useEffect(() => {
+    if (data.align === 'left') {
+      setCoords({
+        x: store.getState().viewport.width * 0.045,
+        y: store.getState().viewport.height * 0.018
+      })
+    } else if (data.align === 'right') {
+      setCoords({
+        x:
+          store.getState().viewport.width -
+          width -
+          store.getState().viewport.width * 0.01,
+        y: store.getState().viewport.height * 0.07
+      })
+    } else {
+      const { screenCoordinates } = PrimaryPointerInfo.get(engine.RootEntity)
+      const isOnHalfRightOfScreen =
+        (screenCoordinates?.x ?? 0) > store.getState().viewport.width / 2
+      const isOnHalfBottomOfScreen =
+        (screenCoordinates?.y ?? 0) > store.getState().viewport.height / 2
+
+      const mouseY = isOnHalfBottomOfScreen // TODO, in reality, it should flex grow to up
+        ? (screenCoordinates?.y ?? 0) - getCanvasScaleRatio() * 1000
+        : screenCoordinates?.y ?? 0
+
+      setCoords({
+        x: isOnHalfRightOfScreen
+          ? (screenCoordinates?.x ?? 0) - width
+          : screenCoordinates?.x ?? 0,
+        y: mouseY
+      })
+    }
+  }, [])
 
   if (!player) return null
   return (
     <UiEntity
       uiTransform={{
-        width: getCanvasScaleRatio() * 800,
+        width,
         borderRadius: BORDER_RADIUS_F,
         borderWidth: 0,
         borderColor: COLOR.TEXT_COLOR,
-        alignItems: 'center',
         flexDirection: 'column',
         padding: 0,
-        positionType: alignment === 'right' ? 'absolute' : undefined,
+        positionType: 'absolute',
         position: {
-          right: alignment === 'right' ? '4%' : undefined,
-          top: alignment === 'right' ? '7%' : undefined
+          left: coords.x,
+          top: coords.y
         }
       }}
       onMouseDown={noop}
@@ -100,7 +163,9 @@ function ProfileContent({ data }: { data: { align: string; userId: string } }) {
             uiTransform={{ height: 1 }}
           />
         </Row>
-        {!data.userId && OwnProfileButtons()}
+        {data.userId
+          ? ProfileButtons({ player })
+          : OwnProfileButtons({ player })}
       </UiEntity>
     </UiEntity>
   )
@@ -213,19 +278,60 @@ function ProfileHeader({
       : [])
   ]
 }
-function OwnProfileButtons(): ReactElement[] {
+const BORDER_RED = {
+  borderRadius: 0,
+  borderWidth: 1,
+  borderColor: COLOR.RED
+}
+
+const PROFILE_BUTTON_TRANSFORM: UiTransformProps = {
+  width: '80%',
+  height: getCanvasScaleRatio() * 64,
+  justifyContent: 'flex-start',
+  alignSelf: 'center'
+}
+function ProfileButtons({
+  player
+}: {
+  player: GetPlayerDataRes
+}): ReactElement[] {
+  return [
+    <ButtonTextIcon
+      uiTransform={PROFILE_BUTTON_TRANSFORM}
+      value={'<b>Mention</b>'}
+      onMouseDown={() => {
+        executeTask(async () => {
+          closeDialog()
+          store.dispatch(
+            updateHudStateAction({
+              chatInput: store.getState().hud.chatInput + ` @${player.name} `
+            })
+          )
+          await sleep(100)
+          focusChatInput(true)
+        })
+      }}
+      icon={{
+        atlasName: 'icons',
+        spriteName: '@'
+      }}
+      fontSize={getCanvasScaleRatio() * 42}
+    />
+  ]
+}
+
+function OwnProfileButtons({
+  player
+}: {
+  player: GetPlayerDataRes
+}): ReactElement[] {
   return [
     <ButtonTextIcon
       onMouseDown={() => {
         closeDialog()
         logout()
       }}
-      uiTransform={{
-        width: '80%',
-        height: getCanvasScaleRatio() * 150,
-        justifyContent: 'flex-start',
-        alignSelf: 'center'
-      }}
+      uiTransform={PROFILE_BUTTON_TRANSFORM}
       value={'<b>SIGN OUT</b>'}
       fontSize={getCanvasScaleRatio() * 42}
       icon={{
@@ -238,12 +344,7 @@ function OwnProfileButtons(): ReactElement[] {
       onMouseDown={() => {
         BevyApi.quit()
       }}
-      uiTransform={{
-        width: '80%',
-        height: getCanvasScaleRatio() * 150,
-        justifyContent: 'flex-start',
-        alignSelf: 'center'
-      }}
+      uiTransform={PROFILE_BUTTON_TRANSFORM}
       value={'<b>EXIT</b>'}
       fontSize={getCanvasScaleRatio() * 42}
       icon={{

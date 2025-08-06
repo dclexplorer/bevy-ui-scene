@@ -14,6 +14,7 @@ import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
 import { initSystemActionsEmitter } from '../service/system-actions-emitter'
 import { setupPassportPopup } from '../ui-classes/main-hud/passport/popup-passport'
+import { setupProfilePopups } from '../ui-classes/main-hud/passport/profile-popup'
 
 export class GameController {
   uiController: UIController
@@ -22,6 +23,7 @@ export class GameController {
     engine.addSystem(this.positionSystem.bind(this))
     initSystemActionsEmitter()
     setupPassportPopup()
+    setupProfilePopups()
     // this.getFavorites().catch((reason)=>console.error(reason))
   }
 

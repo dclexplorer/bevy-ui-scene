@@ -121,20 +121,6 @@ export function setupPassportPopup(): void {
       })
     }
   })
-
-  const avatarTracker = createOrGetAvatarsTracker()
-  avatarTracker.onClick((userId) => {
-    //TODO THIS IS WORKAROUND UNTIL ShowProfile provides better way to get userId
-    if (getPlayer({ userId })?.isGuest === false) {
-      //TODO it should work with Guests, but instead of opening passport, should open a profile menu
-      store.dispatch(
-        pushPopupAction({
-          type: HUD_POPUP_TYPE.PASSPORT,
-          data: userId
-        })
-      )
-    }
-  })
 }
 
 export const PopupPassport: Popup = ({ shownPopup }) => {

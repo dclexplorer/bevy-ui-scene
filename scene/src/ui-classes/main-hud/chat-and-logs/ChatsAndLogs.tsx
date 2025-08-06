@@ -55,6 +55,7 @@ import { getUserData } from '~system/UserIdentity'
 import { PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
 import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
+import { ChatInput } from './chat-input'
 
 type Box = {
   position: { x: number; y: number }
@@ -637,10 +638,9 @@ function HeaderArea(): ReactElement {
   )
 }
 
-function InputArea(): ReactElement | null {
-  const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-  if (canvasInfo === null) return null
+function InputArea(): ReactElement {
   const inputFontSize = Math.floor(getCanvasScaleRatio() * 36)
+
   return (
     <UiEntity
       uiTransform={{
@@ -653,8 +653,8 @@ function InputArea(): ReactElement | null {
         alignItems: 'center',
         flexDirection: 'row',
         margin: {
-          top: canvasInfo.height * 0.005,
-          bottom: canvasInfo.height * 0.005
+          top: store.getState().viewport.height * 0.005,
+          bottom: store.getState().viewport.height * 0.005
         },
         position: { bottom: inputFontSize * 0.1 },
         padding: inputFontSize * 0.4
@@ -663,7 +663,11 @@ function InputArea(): ReactElement | null {
         ...ROUNDED_TEXTURE_BACKGROUND,
         color: { ...Color4.Black(), a: 0.4 }
       }}
-    ></UiEntity>
+    >
+      {state.inputFontSizeWorkaround && (
+        <ChatInput inputFontSize={inputFontSize} onSubmit={sendChatMessage} />
+      )}
+    </UiEntity>
   )
 }
 
@@ -729,7 +733,7 @@ function scrollToBottom(): void {
   state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
 }
 
-function focusChatInput(uiFocus: boolean = false): void {
+export function focusChatInput(uiFocus: boolean = false): void {
   if (uiFocus) setUiFocus({ elementId: 'chat-input' }).catch(console.error)
   store.dispatch(updateHudStateAction({ chatOpen: true }))
   scrollToBottom()

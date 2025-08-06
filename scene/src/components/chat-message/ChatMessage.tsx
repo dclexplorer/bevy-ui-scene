@@ -64,8 +64,10 @@ function ChatMessage(props: {
       if (type === LINK_TYPE.USER) {
         store.dispatch(
           pushPopupAction({
-            type: HUD_POPUP_TYPE.PASSPORT,
-            data: value
+            type: HUD_POPUP_TYPE.PROFILE_MENU,
+            data: {
+              userId: value
+            }
           })
         )
       } else if (type === LINK_TYPE.URL) {
@@ -124,8 +126,10 @@ function ChatMessage(props: {
         onMouseDown={() => {
           store.dispatch(
             pushPopupAction({
-              type: HUD_POPUP_TYPE.PASSPORT,
-              data: props.message.sender_address
+              type: HUD_POPUP_TYPE.PROFILE_MENU,
+              data: {
+                userId: props.message.sender_address
+              }
             })
           )
         }}
@@ -173,6 +177,16 @@ function ChatMessage(props: {
                 : (getAddressColor(props.message.sender_address) as Color4)
             }
             textAlign={`middle-left`}
+            onMouseDown={() => {
+              store.dispatch(
+                pushPopupAction({
+                  type: HUD_POPUP_TYPE.PROFILE_MENU,
+                  data: {
+                    userId: props.message.sender_address
+                  }
+                })
+              )
+            }}
           />
         )}
         {/* TEXT */}
