@@ -2,13 +2,14 @@ import { type Popup } from '../../../components/popup-stack'
 import { COLOR } from '../../../components/color-palette'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../../state/store'
-import { closeLastPopupAction } from '../../../state/hud/actions'
+import { closeLastPopupAction, HUD_ACTION } from '../../../state/hud/actions'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { noop } from '../../../utils/function-utils'
 import Icon from '../../../components/icon/Icon'
 import {
   PERMISSION_DEFINITIONS,
+  PERMISSION_LEVEL,
   PERMISSION_LEVELS,
   type PermissionLevel,
   type PermissionRequest
@@ -20,6 +21,7 @@ import useState = ReactEcs.useState
 import { BevyApi } from '../../../bevy-api'
 import useEffect = ReactEcs.useEffect
 import { executeTask } from '@dcl/sdk/ecs'
+import { getCompletePermissionsMatrix } from '../../main-menu/settings-page/permissions-map'
 
 const ONCE = 'Once'
 const PERMISSION_REQUEST_OPTIONS = [ONCE, ...PERMISSION_LEVELS].map((i) => ({
@@ -65,6 +67,24 @@ function PermissionRequestContent({
           ?.title || 'Unknown Scene'
       setSceneName(newSceneName)
     })
+
+    //listen permission change, if this permission is allowed now, auto-close the dialog
+    const unsubscribe = store.subscribe((action, previousState) => {
+      executeTask(async () => {
+        if (action.type === HUD_ACTION.CLOSE_LAST_POPUP) {
+          const permissionsMatrix = await getCompletePermissionsMatrix(
+            data.scene
+          )
+
+          if (permissionsMatrix[data.ty].allow === PERMISSION_LEVEL.ALLOW) {
+            closeDialog()
+          }
+        }
+      })
+    })
+    return () => {
+      unsubscribe()
+    }
   }, [])
   return (
     <UiEntity
