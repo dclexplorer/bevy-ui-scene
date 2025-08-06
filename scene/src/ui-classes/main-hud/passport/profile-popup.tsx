@@ -53,6 +53,7 @@ export function setupProfilePopups(): void {
 }
 
 export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
+  console.log('ProfileMenuPopup', shownPopup)
   return (
     <UiEntity
       uiTransform={{
@@ -114,15 +115,13 @@ function ProfileContent({
       const isOnHalfBottomOfScreen =
         (screenCoordinates?.y ?? 0) > store.getState().viewport.height / 2
 
-      const mouseY = isOnHalfBottomOfScreen // TODO, in reality, it should flex grow to up
-        ? (screenCoordinates?.y ?? 0) - getCanvasScaleRatio() * 1000
-        : screenCoordinates?.y ?? 0
-
       setCoords({
         x: isOnHalfRightOfScreen
           ? (screenCoordinates?.x ?? 0) - width
           : screenCoordinates?.x ?? 0,
-        y: mouseY
+        y: isOnHalfBottomOfScreen
+          ? (screenCoordinates?.y ?? 0) - getCanvasScaleRatio() * 400
+          : screenCoordinates?.y ?? 0
       })
     }
   }, [])
