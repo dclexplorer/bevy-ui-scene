@@ -14,7 +14,10 @@ import type {
   URNWithoutTokenId
 } from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
-import { createAvatarPreview } from '../../../components/backpack/AvatarPreview'
+import {
+  createAvatarPreview,
+  updateAvatarPreview
+} from '../../../components/backpack/AvatarPreview'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
 import {
   BASE_MALE_URN,
@@ -129,7 +132,14 @@ export default class BackpackPage {
     store.dispatch(updateLoadingPage(true))
     store.dispatch(updateCacheKey())
     closeColorPicker()
-    createAvatarPreview()
+    if (!createAvatarPreview()) {
+      updateAvatarPreview(
+        store.getState().backpack.equippedWearables,
+        store.getState().backpack.outfitSetup.base,
+        store.getState().backpack.forceRender
+      )
+    }
+
     await waitFor(() => getPlayer() !== null)
     const player = getPlayer()
     const wearables: URNWithoutTokenId[] = (player?.wearables ?? []).map(
