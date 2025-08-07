@@ -224,6 +224,7 @@ export function InfoPanel({
                             hiddenCategory as WearableCategory
                           ]?.label.toUpperCase() ?? hiddenCategory.toUpperCase()
                         }</b>`}
+                        textWrap={'nowrap'}
                         fontSize={canvasScaleRatio * 20}
                       />
                     </UiEntity>
