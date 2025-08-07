@@ -64,7 +64,7 @@ function ChatMessage(props: {
           pushPopupAction({
             type: HUD_POPUP_TYPE.PROFILE_MENU,
             data: {
-              userId: value
+              player: getPlayer({ userId: value }) // TODO , better to get the message data, if mentioned player is not in scene, we cannot see the profile menu, we should add this decorated data to the message, adding a new field "mentionedPlayers"
             }
           })
         )
@@ -124,7 +124,7 @@ function ChatMessage(props: {
             pushPopupAction({
               type: HUD_POPUP_TYPE.PROFILE_MENU,
               data: {
-                userId: props.message.sender_address
+                player: props.message.player
               }
             })
           )
@@ -178,7 +178,7 @@ function ChatMessage(props: {
                 pushPopupAction({
                   type: HUD_POPUP_TYPE.PROFILE_MENU,
                   data: {
-                    userId: props.message.sender_address
+                    player: props.message.player
                   }
                 })
               )

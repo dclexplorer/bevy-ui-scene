@@ -45,7 +45,7 @@ export function setupProfilePopups(): void {
       store.dispatch(
         pushPopupAction({
           type: HUD_POPUP_TYPE.PROFILE_MENU,
-          data: { userId }
+          data: { player: getPlayer({ userId }) }
         })
       )
     }
@@ -87,13 +87,17 @@ export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
 function ProfileContent({
   data
 }: {
-  data: { align?: string; userId?: string }
+  data: { align?: string; player?: GetPlayerDataRes }
 }) {
-  const player = getPlayer(data.userId ? { userId: data.userId } : undefined)
   const [coords, setCoords] = useState({ x: 0, y: 0 })
   const width = getCanvasScaleRatio() * 800
-
+  const player = data.player
   useEffect(() => {
+    console.log('data', data)
+    if (!player) {
+      closeDialog()
+      return
+    }
     if (data.align === 'left') {
       setCoords({
         x: store.getState().viewport.width * 0.045,
@@ -161,7 +165,7 @@ function ProfileContent({
             uiTransform={{ height: 1 }}
           />
         </Row>
-        {data.userId
+        {player.userId !== getPlayer()?.userId
           ? ProfileButtons({ player })
           : OwnProfileButtons({ player })}
       </UiEntity>
@@ -259,7 +263,7 @@ function ProfileHeader({
               margin: { top: '4%' }
             }}
             uiText={{
-              value: 'VIEW PROFILE',
+              value: 'VIEW PASSPORT',
               fontSize: getCanvasScaleRatio() * 42
             }}
             onMouseDown={() => {

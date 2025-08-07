@@ -235,11 +235,13 @@ export default class ChatAndLogs {
       isGuest: playerData ? playerData.isGuest : true,
       messageType: isSystemMessage(message)
         ? MESSAGE_TYPE.SYSTEM
-        : MESSAGE_TYPE.USER
+        : MESSAGE_TYPE.USER,
+      player: getPlayer({ userId: message.sender_address })
     }
     if (!playerData?.name) {
       decorateAsyncMessageName(decoratedChatMessage).catch(console.error)
     }
+
     console.log('decoratedChatMessage', decoratedChatMessage)
 
     if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {

@@ -1,3 +1,5 @@
+import { GetPlayerDataRes } from '../../utils/definitions'
+
 export type ChatMessageDefinition = {
   sender_address: string
   message: string
@@ -18,4 +20,5 @@ export type ChatMessageRepresentation = ChatMessageDefinition & {
   hasMentionToMe: boolean
   isGuest: boolean
   messageType: MESSAGE_TYPE
+  player: GetPlayerDataRes | null
 }
