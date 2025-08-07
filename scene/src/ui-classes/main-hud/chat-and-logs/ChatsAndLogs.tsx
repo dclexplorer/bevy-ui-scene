@@ -100,7 +100,7 @@ const state: {
   headerMenuOpen: false,
   filterMessages: {
     [MESSAGE_TYPE.USER]: false,
-    [MESSAGE_TYPE.SYSTEM]: false
+    [MESSAGE_TYPE.SYSTEM]: true
   }
 }
 
