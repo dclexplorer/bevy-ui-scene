@@ -23,7 +23,7 @@ export const nameAddressMap = new Map<string, string>() //name,address
 
 export async function initChatMembersCount(): Promise<void> {
   while (true) {
-    state.players = [] //TODO REVIEW I don't like this thing I made, state.playes goes to empty every second
+    state.players = []
 
     for (const [, data] of engine.getEntitiesWith(PlayerIdentityData)) {
       // TODO review if there is better method... when chat channel is not scene? deprecated getConnectedPlayers?

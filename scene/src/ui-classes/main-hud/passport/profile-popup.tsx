@@ -129,7 +129,7 @@ function ProfileContent({
     }
   }, [])
 
-  if (!player) return null
+  if (!player || coords.x === 0) return null
   return (
     <UiEntity
       uiTransform={{
