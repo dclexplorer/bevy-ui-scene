@@ -69,11 +69,9 @@ function TeleportContent({ worldCoordinates }: { worldCoordinates: Vector2 }) {
           `<b>${result.metadata.display.title}</b>\n${result.metadata.display.description}\n\n`
         )
         const thumbnailFileName = result.metadata.display?.navmapThumbnail
-        console.log('thumbnailFileName', thumbnailFileName)
         const fileEntry = result.content.find(
           (f: any) => f.file === thumbnailFileName
         )
-        console.log('fileEntry', fileEntry)
         if (fileEntry) {
           setSceneThumbnail(
             `https://peer.decentraland.org/content/contents/${fileEntry.hash}`

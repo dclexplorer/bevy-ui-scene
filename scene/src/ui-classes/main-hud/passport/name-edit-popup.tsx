@@ -68,8 +68,6 @@ const EditNameContent = (): ReactElement => {
       setSelectedName(!names.includes(profileData.name) ? '' : profileData.name)
       setLoading(false)
       setCustomName(profileData.hasClaimedName ? '' : profileData.name)
-
-      console.log('activeTab', activeTab)
     })
   }, [])
   const onSave = (selectedName: string): void => {

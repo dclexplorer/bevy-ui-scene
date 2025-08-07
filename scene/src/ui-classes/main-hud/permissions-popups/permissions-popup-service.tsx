@@ -9,7 +9,6 @@ export const listenPermissionRequests = async (): Promise<void> => {
     stream: PermissionRequest[]
   ): Promise<void> => {
     for await (const permissionRequest of stream) {
-      console.log('permissionRequest', permissionRequest)
       store.dispatch(
         pushPopupAction({
           data: permissionRequest,

@@ -53,7 +53,6 @@ export function setupProfilePopups(): void {
 }
 
 export const ProfileMenuPopup: Popup = ({ shownPopup }) => {
-  console.log('ProfileMenuPopup', shownPopup)
   return (
     <UiEntity
       uiTransform={{

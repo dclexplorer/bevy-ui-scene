@@ -57,10 +57,8 @@ function ChatMessage(props: {
   const messageMargin = 12 * getCanvasScaleRatio()
 
   const chatMessageOnMouseDownCallback: any = (event: any) => {
-    console.log('event', event, event?.hit?.meshName)
     if (event?.hit?.meshName) {
       const [type, value] = event?.hit?.meshName.split('::')
-      console.log('type,value', type, value)
       if (type === LINK_TYPE.USER) {
         store.dispatch(
           pushPopupAction({
@@ -71,7 +69,6 @@ function ChatMessage(props: {
           })
         )
       } else if (type === LINK_TYPE.URL) {
-        console.log('value', value)
         store.dispatch(
           pushPopupAction({
             type: HUD_POPUP_TYPE.URL,
@@ -79,7 +76,6 @@ function ChatMessage(props: {
           })
         )
       } else if (type === LINK_TYPE.LOCATION) {
-        console.log('LOCATION')
         store.dispatch(
           pushPopupAction({
             type: HUD_POPUP_TYPE.TELEPORT,
