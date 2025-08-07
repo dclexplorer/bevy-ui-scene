@@ -56,15 +56,23 @@ function ChatMessage(props: {
   const side = props.message.side
   const messageMargin = 12 * getCanvasScaleRatio()
 
-  const chatMessageOnMouseDownCallback: any = (event: any) => {
+  const chatMessageOnMouseDownCallback: any = (
+    event: any,
+    message: ChatMessageRepresentation
+  ) => {
     if (event?.hit?.meshName) {
       const [type, value] = event?.hit?.meshName.split('::')
       if (type === LINK_TYPE.USER) {
+        let player =
+          getPlayer({ userId: value }) ??
+          message.mentionedPlayers[value] ??
+          null
+
         store.dispatch(
           pushPopupAction({
             type: HUD_POPUP_TYPE.PROFILE_MENU,
             data: {
-              player: getPlayer({ userId: value }) // TODO , better to get the message data, if mentioned player is not in scene, we cannot see the profile menu, we should add this decorated data to the message, adding a new field "mentionedPlayers"
+              player
             }
           })
         )
@@ -193,7 +201,7 @@ function ChatMessage(props: {
           value={
             isSystemMessage(props.message)
               ? `<i>${props.message.message}</i>`
-              : decorateMessageWithLinks(props.message.message)
+              : props.message.message
           }
           fontSize={defaultFontSize}
           color={ALMOST_WHITE}
@@ -253,7 +261,7 @@ export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
   return messageData.sender_address === ZERO_ADDRESS
 }
 
-const NAME_MENTION_REGEXP = /@\w+(#\w+)?/g
+export const NAME_MENTION_REGEXP = /@\w+(#\w+)?/g
 const URL_REGEXP = /https:\/\/[^\s"',]+/g
 const LOCATION_REGEXP = /\d+,\s?\d+/g
 export const decorateMessageWithLinks = compose(

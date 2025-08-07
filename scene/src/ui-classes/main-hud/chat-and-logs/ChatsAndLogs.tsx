@@ -34,13 +34,18 @@ import { memoize, noop } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import { copyToClipboard, setUiFocus } from '~system/RestrictedActions'
-import { isSystemMessage } from '../../../components/chat-message/ChatMessage'
+import {
+  decorateMessageWithLinks,
+  isSystemMessage,
+  NAME_MENTION_REGEXP
+} from '../../../components/chat-message/ChatMessage'
 import { COLOR } from '../../../components/color-palette'
 import { type ReactElement } from '@dcl/react-ecs'
 import Icon from '../../../components/icon/Icon'
 import {
   getChatMembers,
-  initChatMembersCount
+  initChatMembersCount,
+  nameAddressMap
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
@@ -56,6 +61,8 @@ import { PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
 import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
 import { ChatInput } from './chat-input'
+import { GetPlayerDataRes } from '../../../utils/definitions'
+import { getPlayersInScene, Player } from '~system/Players'
 
 type Box = {
   position: { x: number; y: number }
@@ -236,11 +243,11 @@ export default class ChatAndLogs {
       messageType: isSystemMessage(message)
         ? MESSAGE_TYPE.SYSTEM
         : MESSAGE_TYPE.USER,
-      player: getPlayer({ userId: message.sender_address })
+      player: getPlayer({ userId: message.sender_address }),
+      message: decorateMessageWithLinks(message.message),
+      mentionedPlayers: {}
     }
-    if (!playerData?.name) {
-      decorateAsyncMessageName(decoratedChatMessage).catch(console.error)
-    }
+    decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
 
     console.log('decoratedChatMessage', decoratedChatMessage)
 
@@ -251,12 +258,19 @@ export default class ChatAndLogs {
       scrollToBottom()
     }
 
-    async function decorateAsyncMessageName(
+    async function decorateAsyncMessageData(
       message: ChatMessageRepresentation
     ) {
-      message.name =
-        (await getUserData({ userId: message.sender_address }))?.data
-          ?.displayName || `Unknown*`
+      if (!message.name) {
+        message.name =
+          (await getUserData({ userId: message.sender_address }))?.data
+            ?.displayName || `Unknown*`
+      }
+
+      message.mentionedPlayers = {
+        ...message.mentionedPlayers,
+        ...(await getMentionedPlayersFromMessage(message.message))
+      }
     }
   }
 
@@ -777,4 +791,37 @@ function isVectorInBox(point: Vector2, box: Box): boolean {
 }
 export function messageHasMentionToMe(message: string): boolean {
   return message.includes(`@${getPlayer()?.name}`)
+}
+
+async function getMentionedPlayersFromMessage(
+  message: string
+): Promise<Record<string, GetPlayerDataRes>> {
+  const playersInScene = (await getPlayersInScene({})).players
+
+  playersInScene.forEach((player) => {
+    const playerData = getPlayer({ userId: player.userId })
+    if (playerData && !nameAddressMap.has(playerData.name)) {
+      nameAddressMap.set(playerData.name, player.userId)
+    }
+  })
+
+  const mentionedNames = message.match(NAME_MENTION_REGEXP)
+
+  return (
+    mentionedNames?.reduce((acc: Record<string, GetPlayerDataRes>, match) => {
+      const name = match.replace('@', '')
+      const address = nameAddressMap.get(name)
+
+      if (address) {
+        const player = getPlayer({
+          userId: address
+        })
+        if (player) {
+          acc[address] = player
+        }
+      }
+
+      return acc
+    }, {}) ?? {}
+  )
 }

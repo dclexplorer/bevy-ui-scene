@@ -21,4 +21,5 @@ export type ChatMessageRepresentation = ChatMessageDefinition & {
   isGuest: boolean
   messageType: MESSAGE_TYPE
   player: GetPlayerDataRes | null
+  mentionedPlayers: Record<string, GetPlayerDataRes>
 }
