@@ -19,7 +19,7 @@ export function getChatMembers(): Array<
   return state.players
 }
 
-export const nameAddressMap = new Map<string, string>() //name,address
+export const nameAddressMap = new Map<string, string>() // name,address
 
 export async function initChatMembersCount(): Promise<void> {
   while (true) {

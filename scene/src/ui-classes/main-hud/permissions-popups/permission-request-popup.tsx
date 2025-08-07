@@ -68,7 +68,7 @@ function PermissionRequestContent({
       setSceneName(newSceneName)
     })
 
-    //listen permission change, if this permission is allowed now, auto-close the dialog
+    // listen permission change, if this permission is allowed now, auto-close the dialog
     const unsubscribe = store.subscribe((action, previousState) => {
       executeTask(async () => {
         if (action.type === HUD_ACTION.CLOSE_LAST_POPUP) {

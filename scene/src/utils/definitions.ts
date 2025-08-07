@@ -1,7 +1,10 @@
 import { InputAction } from '@dcl/sdk/ecs'
 import { type Color4 } from '@dcl/sdk/math'
-import { Entity, TransformType } from '@dcl/ecs'
-import { PBAvatarBase, PBAvatarEquippedData } from '@dcl/ecs/dist/components'
+import { type Entity, type TransformType } from '@dcl/ecs'
+import {
+  type PBAvatarBase,
+  type PBAvatarEquippedData
+} from '@dcl/ecs/dist/components'
 
 export type SpriteFromAtlas = {
   sprite: string

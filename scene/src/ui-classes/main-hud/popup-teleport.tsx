@@ -1,4 +1,4 @@
-import ReactEcs, { Button, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { COLOR } from '../../components/color-palette'
 import { closeLastPopupAction } from '../../state/hud/actions'
@@ -7,13 +7,10 @@ import { BORDER_RADIUS_F } from '../../utils/ui-utils'
 import { noop } from '../../utils/function-utils'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import Icon from '../../components/icon/Icon'
-import { Color4, Vector2 } from '@dcl/sdk/math'
-import { Checkbox } from '../../components/checkbox'
-import { openExternalUrl } from '~system/RestrictedActions'
+import { Color4, type Vector2 } from '@dcl/sdk/math'
 import { type Popup } from '../../components/popup-stack'
 import { teleportTo } from '~system/RestrictedActions'
-import { convertMessageToObject } from '~system/EthereumController'
-import { getRealm, getSceneInformation } from '~system/Runtime'
+import { getRealm } from '~system/Runtime'
 import useEffect = ReactEcs.useEffect
 import useState = ReactEcs.useState
 import { fetchJsonOrTryFallback } from '../../utils/promise-utils'
@@ -24,7 +21,7 @@ const state = {
   rememberDomain: false
 }
 
-export const PopupTeleport: Popup = ({ shownPopup }) => {
+export const PopupTeleport: Popup = ({ shownPopup }): ReactElement | null => {
   const URL: string = shownPopup.data as string
   if (shownPopup?.type !== HUD_POPUP_TYPE.TELEPORT) return null
   const [x, y] = URL.replace(' ', '')
@@ -53,7 +50,11 @@ export const PopupTeleport: Popup = ({ shownPopup }) => {
     </UiEntity>
   )
 }
-function TeleportContent({ worldCoordinates }: { worldCoordinates: Vector2 }) {
+function TeleportContent({
+  worldCoordinates
+}: {
+  worldCoordinates: Vector2
+}): ReactElement {
   const [sceneTitle, setSceneTitle] = useState<string>('')
   const [sceneThumbnail, setSceneThumbnail] = useState<string | null>(null)
   useEffect(() => {

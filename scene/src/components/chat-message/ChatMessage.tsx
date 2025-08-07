@@ -1,6 +1,6 @@
 import { getPlayer } from '@dcl/sdk/src/players'
 
-import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 
 import ReactEcs, {
   type Key,
@@ -63,7 +63,7 @@ function ChatMessage(props: {
     if (event?.hit?.meshName) {
       const [type, value] = event?.hit?.meshName.split('::')
       if (type === LINK_TYPE.USER) {
-        let player =
+        const player =
           getPlayer({ userId: value }) ??
           message.mentionedPlayers[value] ??
           null
@@ -270,19 +270,19 @@ export const decorateMessageWithLinks = compose(
   replaceLocationTags
 )
 
-export function replaceLocationTags(message: string) {
+export function replaceLocationTags(message: string): string {
   return message.replace(LOCATION_REGEXP, function (...[match]) {
     return `<b><color=#00B1FE><link=${LINK_TYPE.LOCATION}::${match}>${match}</link></color></b>`
   })
 }
 
-export function replaceURLTags(message: string) {
+export function replaceURLTags(message: string): string {
   return message.replace(URL_REGEXP, function (...[match]) {
     return `<b><color=#00B1FE><link=${LINK_TYPE.URL}::${match}>${match}</link></color></b>`
   })
 }
 
-export function replaceNameTags(message: string) {
+export function replaceNameTags(message: string): string {
   return message.replace(NAME_MENTION_REGEXP, (...[match]) => {
     const foundNameAddress = nameAddressMap.get(match.replace('@', ''))
     return foundNameAddress

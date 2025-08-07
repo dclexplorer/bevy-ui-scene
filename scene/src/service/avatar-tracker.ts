@@ -15,7 +15,7 @@ import { Color4 } from '@dcl/sdk/math'
 import {
   type PBAvatarBase,
   type PBAvatarEquippedData,
-  PBPlayerIdentityData
+  type PBPlayerIdentityData
 } from '@dcl/ecs/dist/components'
 import { type TransformType } from '@dcl/ecs'
 
@@ -67,7 +67,7 @@ export const createOrGetAvatarsTracker = (): {
 
   onLeaveScene(disposeAvatarProxy)
 
-  function disposeAvatarProxy(userId: string) {
+  function disposeAvatarProxy(userId: string): void {
     const proxy = avatarProxies.get(userId)
     if (proxy) {
       pointerEventsSystem.removeOnPointerDown(proxy)

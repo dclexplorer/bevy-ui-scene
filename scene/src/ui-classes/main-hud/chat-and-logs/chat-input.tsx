@@ -1,4 +1,4 @@
-import { ReactEcs, ReactElement } from '@dcl/react-ecs'
+import { ReactEcs, type ReactElement } from '@dcl/react-ecs'
 import useState = ReactEcs.useState
 import { ALMOST_WHITE } from '../../../utils/constants'
 import { Input } from '@dcl/sdk/react-ecs'
@@ -31,7 +31,7 @@ export function ChatInput({
       })
     }
   }, [store.getState().hud.chatInput])
-  if (state.visible === false) return null
+  if (!state.visible) return null
   return (
     <Input
       uiTransform={{
@@ -61,7 +61,9 @@ export function ChatInput({
           })
         )
       }}
-      onMouseDown={() => focusChatInput()}
+      onMouseDown={() => {
+        focusChatInput()
+      }}
     />
   )
 }

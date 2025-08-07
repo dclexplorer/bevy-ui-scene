@@ -1,4 +1,4 @@
-import { GetPlayerDataRes } from '../../utils/definitions'
+import { type GetPlayerDataRes } from '../../utils/definitions'
 
 export type ChatMessageDefinition = {
   sender_address: string

@@ -31,7 +31,7 @@ import {
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
 import { type URN, type URNWithoutTokenId } from '../../../utils/definitions'
-import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
+import { convertToPBAvatarBase } from '../../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../../bevy-api/interface'
 import {
@@ -54,9 +54,7 @@ import {
 import { ButtonIcon } from '../../../components/button-icon'
 import { TopBorder } from '../../../components/bottom-border'
 import { CopyButton } from '../../../components/copy-button'
-import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
 import { CloseButton } from '../../../components/close-button'
-import { listenSystemAction } from '../../../service/system-actions-emitter'
 import { getPlayer } from '@dcl/sdk/players'
 
 const COPY_ICON_SIZE = 40

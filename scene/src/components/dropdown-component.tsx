@@ -25,7 +25,6 @@ export type DropdownState = Record<
     entered: number | null
   }
 >
-const state: DropdownState = {}
 
 export function DropdownComponent({
   options = [{ label: '', value: null }],

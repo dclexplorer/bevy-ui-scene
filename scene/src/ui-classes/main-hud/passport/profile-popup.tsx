@@ -1,5 +1,5 @@
 import type { Popup } from '../../../components/popup-stack'
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../../components/color-palette'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import {
@@ -25,23 +25,20 @@ import { BottomBorder } from '../../../components/bottom-border'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import { logout } from '../../../controllers/ui.controller'
 import { BevyApi } from '../../../bevy-api'
-import { GetPlayerDataRes } from '../../../utils/definitions'
+import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
 import { engine, executeTask, PrimaryPointerInfo } from '@dcl/sdk/ecs'
 import useEffect = ReactEcs.useEffect
 import useState = ReactEcs.useState
-import { UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { focusChatInput } from '../chat-and-logs/ChatsAndLogs'
 import { sleep } from '../../../utils/dcl-utils'
-
-const MOUSE = 'mouse'
 
 export function setupProfilePopups(): void {
   const avatarTracker = createOrGetAvatarsTracker()
   avatarTracker.onClick((userId) => {
-    //TODO THIS IS WORKAROUND UNTIL ShowProfile provides better way to get userId
+    // TODO THIS IS WORKAROUND UNTIL ShowProfile provides better way to get userId
     if (getPlayer({ userId })?.isGuest === false) {
-      //TODO it should work with Guests, but instead of opening passport, should open a profile menu
       store.dispatch(
         pushPopupAction({
           type: HUD_POPUP_TYPE.PROFILE_MENU,
@@ -88,7 +85,7 @@ function ProfileContent({
   data
 }: {
   data: { align?: string; player?: GetPlayerDataRes }
-}) {
+}): ReactElement | null {
   const [coords, setCoords] = useState({ x: 0, y: 0 })
   const width = getCanvasScaleRatio() * 800
   const player = data.player
@@ -178,11 +175,11 @@ function ProfileHeader({
 }: {
   player: GetPlayerDataRes
 }): ReactElement[] {
-  const hasClaimedName = player.name?.length && player.name?.indexOf('#') === -1
+  const hasClaimedName = !!(player.name?.length && player.name?.includes('#'))
   return [
     <AvatarCircle
-      userId={player.userId as string}
-      circleColor={getAddressColor(player.userId as string)}
+      userId={player.userId}
+      circleColor={getAddressColor(player.userId)}
       uiTransform={{
         width: getCanvasScaleRatio() * 200,
         height: getCanvasScaleRatio() * 200,
@@ -202,7 +199,7 @@ function ProfileHeader({
         uiTransform={{ margin: 0, padding: 0 }}
         uiText={{
           value: `<b>${player.name}</b>`,
-          color: getAddressColor(player.userId as string),
+          color: getAddressColor(player.userId),
           fontSize: getCanvasScaleRatio() * 48
         }}
       />
@@ -229,7 +226,7 @@ function ProfileHeader({
         }}
       />
     </Row>,
-    ...(player.isGuest === false
+    ...(!player.isGuest
       ? [
           <Row
             uiTransform={{
@@ -279,11 +276,6 @@ function ProfileHeader({
         ]
       : [])
   ]
-}
-const BORDER_RED = {
-  borderRadius: 0,
-  borderWidth: 1,
-  borderColor: COLOR.RED
 }
 
 const PROFILE_BUTTON_TRANSFORM: UiTransformProps = {

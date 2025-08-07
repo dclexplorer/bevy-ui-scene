@@ -9,7 +9,6 @@ import {
 } from '@dcl/sdk/ecs'
 import { Color4, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, {
-  Input,
   Label,
   UiEntity,
   type UiTransformProps
@@ -18,7 +17,6 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import { ChatMessage } from '../../../components/chat-message'
 
 import {
-  ALMOST_WHITE,
   MAX_ZINDEX,
   ROUNDED_TEXTURE_BACKGROUND,
   ZERO_ADDRESS
@@ -30,7 +28,7 @@ import {
   type ChatMessageRepresentation,
   MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
-import { memoize, noop } from '../../../utils/function-utils'
+import { memoize } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import { copyToClipboard, setUiFocus } from '~system/RestrictedActions'
@@ -57,12 +55,12 @@ import {
 } from '../../../state/hud/actions'
 import { type AppState } from '../../../state/types'
 import { getUserData } from '~system/UserIdentity'
-import { PermissionUsed } from '../../../bevy-api/permission-definitions'
+import { type PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
 import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
 import { ChatInput } from './chat-input'
-import { GetPlayerDataRes } from '../../../utils/definitions'
-import { getPlayersInScene, Player } from '~system/Players'
+import { type GetPlayerDataRes } from '../../../utils/definitions'
+import { getPlayersInScene } from '~system/Players'
 
 type Box = {
   position: { x: number; y: number }
@@ -260,7 +258,7 @@ export default class ChatAndLogs {
 
     async function decorateAsyncMessageData(
       message: ChatMessageRepresentation
-    ) {
+    ): Promise<void> {
       if (!message.name) {
         message.name =
           (await getUserData({ userId: message.sender_address }))?.data

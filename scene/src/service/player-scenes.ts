@@ -43,7 +43,7 @@ export async function getCurrentScene(
 
   function getClosestParcelDistance(
     from: { x: number; y: number },
-    parcels: { x: number; y: number }[]
+    parcels: Array<{ x: number; y: number }>
   ): number {
     return Math.min(
       ...parcels.map((p) => Math.hypot(p.x - from.x, p.y - from.y))
