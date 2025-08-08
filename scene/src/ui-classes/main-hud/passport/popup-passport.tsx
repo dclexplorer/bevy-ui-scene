@@ -28,10 +28,15 @@ import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import {
   applyMiddleEllipsis,
+  BASE_FEMALE_URN,
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
-import { type URN, type URNWithoutTokenId } from '../../../utils/definitions'
-import { convertToPBAvatarBase } from '../../../utils/dcl-utils'
+import {
+  GetPlayerDataRes,
+  type URN,
+  type URNWithoutTokenId
+} from '../../../utils/definitions'
+import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../../bevy-api/interface'
 import {
@@ -45,7 +50,6 @@ import {
   fetchProfileData,
   saveProfileData
 } from '../../../utils/passport-promise-utils'
-import { Label } from '@dcl/sdk/react-ecs'
 import Icon from '../../../components/icon/Icon'
 import {
   editablePropertyKeys,
@@ -54,8 +58,9 @@ import {
 import { ButtonIcon } from '../../../components/button-icon'
 import { TopBorder } from '../../../components/bottom-border'
 import { CopyButton } from '../../../components/copy-button'
-import { CloseButton } from '../../../components/close-button'
 import { getPlayer } from '@dcl/sdk/players'
+import { CloseButton } from '../../../components/close-button'
+import { Label } from '@dcl/sdk/react-ecs'
 
 const COPY_ICON_SIZE = 40
 
@@ -76,7 +81,7 @@ const state: PassportPopupState = {
   pristineProfileData: cloneDeep(EMPTY_PROFILE_DATA),
   mouseOverAvatar: null
 }
-
+const DEFAULT_RGB = { r: 1, g: 1, b: 1, a: 1 }
 /**
  * setupPassportPopup: executed one time when the explorer is initialized
  */
@@ -92,7 +97,23 @@ export function setupPassportPopup(): void {
         const shownPopup = action.payload as HUDPopup
         const userId: string = shownPopup.data as string
         const profileData = await fetchProfileData({ userId })
-        const [avatarData] = profileData.avatars
+        const player: GetPlayerDataRes = getPlayer() as GetPlayerDataRes
+        const [avatarData] = profileData?.avatars ?? [
+          {
+            ...EMPTY_PROFILE_DATA,
+            hasConnectedWeb3: true,
+            userId,
+            avatar: {
+              bodyShape: player.avatar?.bodyShapeUrn || BASE_FEMALE_URN,
+              wearables: player.wearables,
+              forceRender: player.forceRender ?? [],
+              emotes: player.emotes,
+              skin: { color: player.avatar?.skinColor ?? DEFAULT_RGB },
+              eyes: { color: player.avatar?.eyesColor ?? DEFAULT_RGB },
+              hair: { color: player.avatar?.hairColor ?? DEFAULT_RGB }
+            }
+          }
+        ]
         const names = await fetchAllUserNames({ userId })
         state.editable = userId === getPlayer()?.userId
 
@@ -109,12 +130,13 @@ export function setupPassportPopup(): void {
         updateAvatarPreview(
           wearables,
           convertToPBAvatarBase(avatarData) as PBAvatarBase,
-          avatarData.avatar.forceRender as WearableCategory[]
+          (avatarData.avatar.forceRender ?? []) as WearableCategory[]
         )
         resetAvatarPreviewZoom()
         setAvatarPreviewCameraToWearableCategory(
           WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
         )
+        await sleep(100)
         state.loadingProfile = false
       })
     }
@@ -436,6 +458,7 @@ function BottomBar(): ReactElement | null {
         }}
         disabled={state.savingProfile || state.loadingProfile}
         value={'CANCEL'}
+        fontSize={getCanvasScaleRatio() * 40}
       />
       <Button
         uiTransform={{
@@ -454,6 +477,7 @@ function BottomBar(): ReactElement | null {
             state.editing = false
           })
         }}
+        fontSize={getCanvasScaleRatio() * 40}
       />
     </UiEntity>
   )

@@ -71,7 +71,8 @@ const EditNameContent = (): ReactElement => {
     })
   }, [])
   const onSave = (selectedName: string): void => {
-    const hasClaimedName = !!selectableNames.find(
+    console.log('onSave', selectedName)
+    const hasClaimedName = !!(selectableNames ?? []).find(
       (s) => s.value === selectedName
     )
     executeTask(async () => {
@@ -349,7 +350,8 @@ export const UniqueNameForm = ({
             width: '40%',
             margin: { right: '5%' },
             height: getCanvasScaleRatio() * 100,
-            opacity: disabled ? 0.5 : 1
+            opacity: disabled ? 0.5 : 1,
+            flexShrink: 0
           }}
           fontSize={getCanvasScaleRatio() * 40}
           uiBackground={{
@@ -370,6 +372,7 @@ export const UniqueNameForm = ({
             borderColor: COLOR.BLACK_TRANSPARENT,
             borderWidth: 0,
             height: getCanvasScaleRatio() * 100,
+            flexShrink: 0,
             justifyContent: 'center',
             alignItems: 'center',
             alignContent: 'center'
