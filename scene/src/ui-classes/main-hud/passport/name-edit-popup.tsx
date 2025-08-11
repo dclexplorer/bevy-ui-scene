@@ -22,6 +22,7 @@ import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import useEffect = ReactEcs.useEffect
 import { type SetAvatarData } from '../../../bevy-api/interface'
 import { type InputOption } from '../../../utils/definitions'
+import { getPlayer } from '@dcl/sdk/players'
 
 const { useState } = ReactEcs
 
@@ -43,7 +44,9 @@ const EditNameContent = (): ReactElement => {
   const [customName, setCustomName] = useState<string>(profileData.name ?? '')
 
   const [loading, setLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState<number>(0)
+  const [activeTab, setActiveTab] = useState<number>(
+    selectableNames.find((s) => s.value === profileData.name) ? 0 : 1
+  )
   const [tabs, setTabs] = useState<Tab[]>(NAME_EDIT_TABS)
 
   useEffect((): void => {
@@ -55,7 +58,7 @@ const EditNameContent = (): ReactElement => {
         userId: profileData.userId
       })
       const names = nameDefinitions.map((n) => n.name).concat('')
-      const activeTab = nameDefinitions.length ? 0 : 1
+      const activeTab = names.length && names.includes(profileData.name) ? 0 : 1
       const tabs = nameDefinitions.length
         ? cloneDeep(NAME_EDIT_TABS).map((tabDefinition, index) => {
             return { ...tabDefinition, active: index === activeTab }
@@ -66,6 +69,7 @@ const EditNameContent = (): ReactElement => {
       setTabs(tabs)
       setSelectableNames(names.map((n) => ({ value: n, label: n })))
       setSelectedName(!names.includes(profileData.name) ? '' : profileData.name)
+      setCustomName(names.includes(profileData.name) ? '' : profileData.name)
       setLoading(false)
       setCustomName(profileData.hasClaimedName ? '' : profileData.name)
     })
@@ -245,6 +249,36 @@ export const NameForm = ({
         disabled={disabled}
         placeholder={'Write a name...'}
       />
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          positionType: 'absolute',
+          position: {
+            top: getCanvasScaleRatio() * 90
+          }
+        }}
+        uiText={{
+          value: `${textValue.length} / 15`,
+          color: COLOR.TEXT_COLOR_LIGHT_GREY,
+          fontSize: getCanvasScaleRatio() * 32,
+          textAlign: 'top-left'
+        }}
+      />
+      <UiEntity
+        uiTransform={{
+          width: '92%',
+          positionType: 'absolute',
+          position: {
+            top: getCanvasScaleRatio() * 18
+          }
+        }}
+        uiText={{
+          value: `#${(getPlayer()?.userId ?? '').slice(-4)}`,
+          color: COLOR.TEXT_COLOR_GREY,
+          fontSize: getCanvasScaleRatio() * 40,
+          textAlign: 'top-right'
+        }}
+      />
 
       <UiEntity
         uiTransform={{
@@ -301,6 +335,8 @@ export const NameForm = ({
 
   function isInvalidName(name: string): boolean {
     if (name.indexOf(' ') > 1) return true
+    if (name.length > 15) return true
+
     return false
   }
 }
