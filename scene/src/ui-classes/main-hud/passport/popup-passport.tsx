@@ -32,7 +32,7 @@ import {
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
 import {
-  GetPlayerDataRes,
+  type GetPlayerDataRes,
   type URN,
   type URNWithoutTokenId
 } from '../../../utils/definitions'

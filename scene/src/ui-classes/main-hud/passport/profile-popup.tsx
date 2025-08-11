@@ -236,7 +236,7 @@ function ProfileHeader({
           >
             <UiEntity
               uiText={{
-                value: applyMiddleEllipsis(player.userId as string),
+                value: applyMiddleEllipsis(player.userId),
                 color: COLOR.TEXT_COLOR_LIGHT_GREY,
                 fontSize: getCanvasScaleRatio() * 38
               }}
