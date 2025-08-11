@@ -44,6 +44,7 @@ function ButtonTextIcon(props: {
       {/* ICON */}
 
       <Icon
+        uiTransform={{ flexShrink: 0 }}
         iconSize={props.iconSize}
         icon={props.icon}
         iconColor={props.iconColor}
@@ -53,7 +54,8 @@ function ButtonTextIcon(props: {
         uiText={{
           value: props.value,
           fontSize: props.fontSize,
-          color: props.fontColor ?? Color4.White()
+          color: props.fontColor ?? Color4.White(),
+          textWrap: 'nowrap'
         }}
       ></UiEntity>
     </UiEntity>

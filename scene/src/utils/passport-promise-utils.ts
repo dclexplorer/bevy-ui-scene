@@ -3,8 +3,10 @@ import { CATALYST_BASE_URL_FALLBACK } from './constants'
 import { fetchJsonOrTryFallback } from './promise-utils'
 import { type Avatar } from '@dcl/schemas'
 import { cloneDeep } from './function-utils'
-import { type ViewAvatarData } from '../state/hud/state'
+import { HUD_POPUP_TYPE, type ViewAvatarData } from '../state/hud/state'
 import { BevyApi } from '../bevy-api'
+import { store } from '../state/store'
+import { pushPopupAction } from '../state/hud/actions'
 
 export type ProfileResponse = {
   timestamp: number
@@ -71,8 +73,18 @@ export type ProfileExtra = {
 export const saveProfileData = async (
   profileData: ViewAvatarData
 ): Promise<void> => {
+  const profileExtras = fromViewAvatarDataToProfileExtra(profileData)
+  console.log('profileExtras', profileExtras)
+
   await BevyApi.setAvatar({
-    profileExtras: fromViewAvatarDataToProfileExtra(profileData)
+    profileExtras
+  }).catch((error) => {
+    store.dispatch(
+      pushPopupAction({
+        type: HUD_POPUP_TYPE.ERROR,
+        data: error
+      })
+    )
   })
 }
 

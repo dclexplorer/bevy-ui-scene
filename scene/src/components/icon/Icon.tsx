@@ -6,12 +6,14 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
+import { noop } from '../../utils/function-utils'
 
 type IconProps = {
   icon: AtlasIcon
   uiTransform?: UiTransformProps
   iconSize?: PositionUnit
   iconColor?: Color4
+  onMouseDown?: () => void
 }
 
 const defaultIconProps: IconProps = {
@@ -19,7 +21,8 @@ const defaultIconProps: IconProps = {
   uiTransform: {
     flexDirection: 'row',
     alignItems: 'center'
-  }
+  },
+  onMouseDown: noop
 }
 
 function Icon(
@@ -37,6 +40,7 @@ function Icon(
         ...getBackgroundFromAtlas(props.icon),
         color: props.iconColor ?? Color4.White()
       }}
+      onMouseDown={props.onMouseDown}
     />
   )
 }

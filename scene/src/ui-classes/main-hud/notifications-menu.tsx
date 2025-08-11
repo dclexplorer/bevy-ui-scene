@@ -44,7 +44,7 @@ export async function setupNotifications(): Promise<void> {
   }
 }
 
-export const NotificationsMenu: Popup = (): ReactElement | null => {
+export const NotificationsMenu: Popup = (): ReactElement => {
   return (
     <UiEntity
       uiTransform={{
@@ -82,10 +82,6 @@ function NotificationsContent(): ReactElement {
       try {
         setLoadingNotifications(true)
         const filteredNotifications = await fetchNotifications()
-        console.log(
-          'filteredNotifications',
-          filteredNotifications[filteredNotifications.length - 1]
-        )
         setNotifications(filteredNotifications)
         setLoadingNotifications(false)
 

@@ -2,8 +2,9 @@ import Icon from './icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { getCanvasScaleRatio } from '../service/canvas-ratio'
+import useState = ReactEcs.useState
 export type CheckboxProps = {
-  onChange: () => void
+  onChange: (value: boolean) => void
   value: boolean
   label?: string
   uiTransform?: UiTransformProps
@@ -15,23 +16,25 @@ export const Checkbox = ({
   uiTransform
 }: CheckboxProps): ReactElement => {
   const canvasScaleRatio = getCanvasScaleRatio()
+  const [currentValue, setCurrentValue] = useState(value)
 
   return (
     <UiEntity
       uiTransform={{
-        alignSelf: 'center',
         ...uiTransform,
         alignItems: 'center',
         justifyContent: 'center'
       }}
       onMouseDown={() => {
-        onChange()
+        const newValue = !currentValue
+        setCurrentValue(newValue)
+        onChange(newValue)
       }}
     >
       <Icon
         iconSize={canvasScaleRatio * 32}
         icon={{
-          spriteName: value ? 'check-on' : 'check-off',
+          spriteName: currentValue ? 'check-on' : 'check-off',
           atlasName: 'backpack'
         }}
       />

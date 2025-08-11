@@ -13,17 +13,16 @@ export async function init(retry: boolean): Promise<void> {
   gameInstance.uiController.loadingAndLogin.startLoading()
   // BevyApi.loginGuest()
   // gameInstance.uiController.loadingAndLogin.finishLoading()
-  // gameInstance.uiController.menu?.show('backpack')
-
+  // gameInstance.uiController.menu?.show('settings')
   executeTask(async () => {
     await sleep(100)
-
+    // store.dispatch(updateHudStateAction({ loggedIn: true }))
+    // store.dispatch(updateHudStateAction({ realmURL: (await getRealm({})).realmInfo!.baseUrl}))
     /*    store.dispatch(
       pushPopupAction({
         type: HUD_POPUP_TYPE.NOTIFICATIONS_MENU
       })
     ) */
-
     /*    store.dispatch(
       pushPopupAction({
         type: HUD_POPUP_TYPE.ERROR,

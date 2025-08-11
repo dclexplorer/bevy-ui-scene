@@ -14,7 +14,7 @@ import {
   type ViewAvatarData
 } from '../../../state/hud/state'
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
-import { Content } from '../../main-menu/backpack-page/BackpackPage'
+import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
 import {
   AvatarPreviewElement,
   resetAvatarPreviewZoom
@@ -28,9 +28,14 @@ import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import {
   applyMiddleEllipsis,
+  BASE_FEMALE_URN,
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
-import { type URN, type URNWithoutTokenId } from '../../../utils/definitions'
+import {
+  type GetPlayerDataRes,
+  type URN,
+  type URNWithoutTokenId
+} from '../../../utils/definitions'
 import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
 import { executeTask } from '@dcl/sdk/ecs'
 import { type PBAvatarBase } from '../../../bevy-api/interface'
@@ -45,7 +50,6 @@ import {
   fetchProfileData,
   saveProfileData
 } from '../../../utils/passport-promise-utils'
-import { Label } from '@dcl/sdk/react-ecs'
 import Icon from '../../../components/icon/Icon'
 import {
   editablePropertyKeys,
@@ -54,10 +58,9 @@ import {
 import { ButtonIcon } from '../../../components/button-icon'
 import { TopBorder } from '../../../components/bottom-border'
 import { CopyButton } from '../../../components/copy-button'
-import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
-import { CloseButton } from '../../../components/close-button'
-import { listenSystemAction } from '../../../service/system-actions-emitter'
 import { getPlayer } from '@dcl/sdk/players'
+import { CloseButton } from '../../../components/close-button'
+import { Label } from '@dcl/sdk/react-ecs'
 
 const COPY_ICON_SIZE = 40
 
@@ -78,7 +81,7 @@ const state: PassportPopupState = {
   pristineProfileData: cloneDeep(EMPTY_PROFILE_DATA),
   mouseOverAvatar: null
 }
-
+const DEFAULT_RGB = { r: 1, g: 1, b: 1, a: 1 }
 /**
  * setupPassportPopup: executed one time when the explorer is initialized
  */
@@ -89,13 +92,29 @@ export function setupPassportPopup(): void {
       action.type === HUD_ACTION.PUSH_POPUP &&
       (action.payload as HUDPopup).type === HUD_POPUP_TYPE.PASSPORT
     ) {
-      // TODO review if a passport can be opened when other passport is open (popups are stackable), then we should check last popup type/data to update avatarPreview and profileData
+      state.editing = false
       state.loadingProfile = true
       executeTask(async () => {
         const shownPopup = action.payload as HUDPopup
         const userId: string = shownPopup.data as string
         const profileData = await fetchProfileData({ userId })
-        const [avatarData] = profileData.avatars
+        const player: GetPlayerDataRes = getPlayer() as GetPlayerDataRes
+        const [avatarData] = profileData?.avatars ?? [
+          {
+            ...EMPTY_PROFILE_DATA,
+            hasConnectedWeb3: true,
+            userId,
+            avatar: {
+              bodyShape: player.avatar?.bodyShapeUrn || BASE_FEMALE_URN,
+              wearables: player.wearables,
+              forceRender: player.forceRender ?? [],
+              emotes: player.emotes,
+              skin: { color: player.avatar?.skinColor ?? DEFAULT_RGB },
+              eyes: { color: player.avatar?.eyesColor ?? DEFAULT_RGB },
+              hair: { color: player.avatar?.hairColor ?? DEFAULT_RGB }
+            }
+          }
+        ]
         const names = await fetchAllUserNames({ userId })
         state.editable = userId === getPlayer()?.userId
 
@@ -112,40 +131,15 @@ export function setupPassportPopup(): void {
         updateAvatarPreview(
           wearables,
           convertToPBAvatarBase(avatarData) as PBAvatarBase,
-          avatarData.avatar.forceRender as WearableCategory[]
+          (avatarData.avatar.forceRender ?? []) as WearableCategory[]
         )
         resetAvatarPreviewZoom()
         setAvatarPreviewCameraToWearableCategory(
           WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
         )
+        await sleep(100)
         state.loadingProfile = false
       })
-    }
-  })
-
-  const avatarTracker = createOrGetAvatarsTracker()
-  avatarTracker.onMouseOver((userId) => {
-    executeTask(async () => {
-      await sleep(0)
-      state.mouseOverAvatar = userId
-    })
-  })
-  avatarTracker.onMouseLeave(() => {
-    executeTask(async () => {
-      await sleep(0)
-      state.mouseOverAvatar = null
-    })
-  })
-
-  listenSystemAction('ShowProfile', (pressed: boolean) => {
-    if (pressed && state.mouseOverAvatar !== null) {
-      store.dispatch(
-        pushPopupAction({
-          type: HUD_POPUP_TYPE.PASSPORT,
-          data: state.mouseOverAvatar
-        })
-      )
-      // TODO be aware that system action ShowProfile is not triggered when camera is unlocked (mouse cursor visible)
     }
   })
 }
@@ -169,7 +163,7 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
         closeDialog()
       }}
     >
-      <Content>
+      <ResponsiveContent>
         <UiEntity
           uiTransform={{
             width: '80%',
@@ -191,7 +185,7 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
                 flexGrow: 0
               }}
             />,
-            <ProfileContent />
+            <PassportContent />
           ]}
           {state.loadingProfile && (
             <Label
@@ -213,7 +207,7 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
             }}
           />
         </UiEntity>
-      </Content>
+      </ResponsiveContent>
     </UiEntity>
   )
 
@@ -226,7 +220,7 @@ function getVisibleProperties(profileData: ViewAvatarData): string[] {
   return editablePropertyKeys.filter((key) => key && !!profileData[key])
 }
 
-function ProfileContent(): ReactElement {
+function PassportContent(): ReactElement {
   const profileData = store.getState().hud.profileData
   return (
     <UiEntity
@@ -444,18 +438,21 @@ function BottomBar(): ReactElement | null {
           height: 1
         }}
       />
-      <Button
+      <UiEntity
         uiTransform={{
           borderRadius: getCanvasScaleRatio() * 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0,
-          width: getCanvasScaleRatio() * 150,
-          margin: { right: '1%' }
+          width: getCanvasScaleRatio() * 180,
+          margin: { right: '1%' },
+          opacity: state.savingProfile || state.loadingProfile ? 0.5 : 1,
+          flexShrink: 0
         }}
         uiBackground={{
           color: COLOR.WHITE_OPACITY_1
         }}
         onMouseDown={() => {
+          if (state.savingProfile || state.loadingProfile) return
           state.editing = false
           store.dispatch(
             updateHudStateAction({
@@ -463,25 +460,37 @@ function BottomBar(): ReactElement | null {
             })
           )
         }}
-        disabled={state.savingProfile || state.loadingProfile}
-        value={'CANCEL'}
+        uiText={{
+          value: 'CANCEL',
+          fontSize: getCanvasScaleRatio() * 40,
+          textWrap: 'nowrap'
+        }}
       />
-      <Button
+      <UiEntity
         uiTransform={{
           borderRadius: getCanvasScaleRatio() * 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0,
-          width: getCanvasScaleRatio() * 150
+          width: getCanvasScaleRatio() * 180,
+          flexShrink: 0,
+          opacity: state.savingProfile || state.loadingProfile ? 0.5 : 1
         }}
-        disabled={state.savingProfile || state.loadingProfile}
-        value={'SAVE'}
+        uiText={{
+          value: 'SAVE',
+          fontSize: getCanvasScaleRatio() * 40,
+          textWrap: 'nowrap'
+        }}
         onMouseDown={() => {
+          if (state.savingProfile || state.loadingProfile) return
           executeTask(async () => {
             state.savingProfile = true
             await saveProfileData(store.getState().hud.profileData)
             state.savingProfile = false
             state.editing = false
           })
+        }}
+        uiBackground={{
+          color: COLOR.BUTTON_PRIMARY
         }}
       />
     </UiEntity>

@@ -9,7 +9,6 @@ import {
 } from '@dcl/sdk/ecs'
 import { Color4, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, {
-  Input,
   Label,
   UiEntity,
   type UiTransformProps
@@ -18,27 +17,33 @@ import { getPlayer } from '@dcl/sdk/src/players'
 import { ChatMessage } from '../../../components/chat-message'
 
 import {
-  ALMOST_WHITE,
   MAX_ZINDEX,
-  ROUNDED_TEXTURE_BACKGROUND
+  ROUNDED_TEXTURE_BACKGROUND,
+  ZERO_ADDRESS
 } from '../../../utils/constants'
 import { BevyApi } from '../../../bevy-api'
 import {
   CHAT_SIDE,
   type ChatMessageDefinition,
-  type ChatMessageRepresentation
+  type ChatMessageRepresentation,
+  MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
 import { memoize } from '../../../utils/function-utils'
 import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import { copyToClipboard, setUiFocus } from '~system/RestrictedActions'
-import { isSystemMessage } from '../../../components/chat-message/ChatMessage'
+import {
+  decorateMessageWithLinks,
+  isSystemMessage,
+  NAME_MENTION_REGEXP
+} from '../../../components/chat-message/ChatMessage'
 import { COLOR } from '../../../components/color-palette'
 import { type ReactElement } from '@dcl/react-ecs'
 import Icon from '../../../components/icon/Icon'
 import {
   getChatMembers,
-  initChatMembersCount
+  initChatMembersCount,
+  nameAddressMap
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
@@ -50,6 +55,12 @@ import {
 } from '../../../state/hud/actions'
 import { type AppState } from '../../../state/types'
 import { getUserData } from '~system/UserIdentity'
+import { type PermissionUsed } from '../../../bevy-api/permission-definitions'
+import { Checkbox } from '../../../components/checkbox'
+import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
+import { ChatInput } from './chat-input'
+import { type GetPlayerDataRes } from '../../../utils/definitions'
+import { getPlayersInScene } from '~system/Players'
 
 type Box = {
   position: { x: number; y: number }
@@ -72,6 +83,11 @@ const state: {
   hoveringChat: boolean
   chatBox: Box
   inputFontSizeWorkaround: boolean
+  headerMenuOpen: boolean
+  filterMessages: {
+    [MESSAGE_TYPE.USER]: boolean
+    [MESSAGE_TYPE.SYSTEM]: boolean
+  }
 } = {
   mouseX: 0,
   mouseY: 0,
@@ -85,7 +101,12 @@ const state: {
   cameraPointerLocked: false,
   hoveringChat: false,
   chatBox: { position: { x: 0, y: 0 }, size: { x: 0, y: 0 } },
-  inputFontSizeWorkaround: false
+  inputFontSizeWorkaround: false,
+  headerMenuOpen: false,
+  filterMessages: {
+    [MESSAGE_TYPE.USER]: false,
+    [MESSAGE_TYPE.SYSTEM]: true
+  }
 }
 
 export default class ChatAndLogs {
@@ -94,8 +115,7 @@ export default class ChatAndLogs {
     this.listenMouseHover()
     listenSystemAction('Chat', (pressed) => {
       if (pressed) {
-        // TODO we should not focus if the input already has the focus, need  a way to check if it's already focused
-        focusChatInput()
+        focusChatInput(true)
       }
     })
 
@@ -134,14 +154,38 @@ export default class ChatAndLogs {
     ): Promise<void> => {
       for await (const chatMessage of stream) {
         if (chatMessage.message.indexOf('␑') === 0) return
-        this.pushMessage(chatMessage).catch(console.error)
+        this.pushMessage(chatMessage)
         if (!this.isOpen()) {
           state.unreadMessages++
         }
       }
     }
 
-    await awaitChatStream(await BevyApi.getChatStream())
+    const awaitUsedPermissionStream = async (
+      stream: PermissionUsed[]
+    ): Promise<void> => {
+      for await (const usedPermission of stream) {
+        const sceneName =
+          (await BevyApi.liveSceneInfo()).find(
+            (s) => s.hash === usedPermission.scene
+          )?.title || 'Unknown Scene'
+        const usedPermissionMessage: ChatMessageDefinition = {
+          sender_address: ZERO_ADDRESS,
+          channel: 'Nearby',
+          message: `"${sceneName}" scene ${
+            usedPermission.wasAllowed ? 'allowed' : 'denied'
+          } permission "${usedPermission.ty}" ${
+            usedPermission.additional ? `(${usedPermission.additional})` : ''
+          }`
+        }
+        this.pushMessage(usedPermissionMessage)
+      }
+    }
+
+    awaitChatStream(await BevyApi.getChatStream()).catch(console.error)
+    awaitUsedPermissionStream(await BevyApi.getPermissionUsedStream()).catch(
+      console.error
+    )
   }
 
   listenMouseHover(): void {
@@ -151,11 +195,14 @@ export default class ChatAndLogs {
     })
 
     store.subscribe((action) => {
-      // TODO check action store / type
-      state.chatBox.position.x = store.getState().viewport.width * 0.03
-      state.chatBox.position.y = store.getState().viewport.height * 0.2
-      state.chatBox.size.x = store.getState().viewport.width * 0.26
-      state.chatBox.size.y = store.getState().viewport.height * 0.8
+      if (action.type === VIEWPORT_ACTION.UPDATE_VIEWPORT) {
+        state.chatBox.position.x = store.getState().viewport.width * 0.03
+        state.chatBox.position.y = store.getState().viewport.height * 0.2
+        state.chatBox.size.x =
+          store.getState().viewport.width * 0.26 +
+          (state.headerMenuOpen ? store.getState().viewport.width * 0.12 : 0)
+        state.chatBox.size.y = store.getState().viewport.height * 0.8
+      }
     })
 
     engine.addSystem(() => {
@@ -169,38 +216,59 @@ export default class ChatAndLogs {
     })
   }
 
-  async pushMessage(message: ChatMessageDefinition): Promise<void> {
+  pushMessage(message: ChatMessageDefinition): void {
     if (state.shownMessages.length >= BUFFER_SIZE) {
       state.shownMessages.shift()
     }
     const playerData = getPlayer({ userId: message.sender_address })
-    const name = isSystemMessage(message)
-      ? ``
-      : playerData?.name ??
-        (await getUserData({ userId: message.sender_address }))?.data
-          ?.displayName ??
-        `Unknown*`
-    const chatMessage: ChatMessageRepresentation = {
+    const name = isSystemMessage(message) ? `` : playerData?.name || `Unknown*`
+    const now = Date.now()
+    const timestamp =
+      state.shownMessages[state.shownMessages.length - 1]?.timestamp === now
+        ? state.shownMessages[state.shownMessages.length - 1]?.timestamp + 1
+        : now
+
+    const decoratedChatMessage: ChatMessageRepresentation = {
       ...message,
-      timestamp:
-        state.shownMessages[state.shownMessages.length - 1]?.timestamp ===
-        Date.now()
-          ? Date.now() + 1
-          : Date.now(),
+      timestamp,
       name,
       side:
         message.sender_address === getPlayer()?.userId
           ? CHAT_SIDE.RIGHT
           : CHAT_SIDE.LEFT,
       hasMentionToMe: messageHasMentionToMe(message.message),
-      isGuest: playerData ? playerData.isGuest : true
+      isGuest: playerData ? playerData.isGuest : true,
+      messageType: isSystemMessage(message)
+        ? MESSAGE_TYPE.SYSTEM
+        : MESSAGE_TYPE.USER,
+      player: getPlayer({ userId: message.sender_address }),
+      message: decorateMessageWithLinks(message.message),
+      mentionedPlayers: {}
     }
+    decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
+
+    console.log('decoratedChatMessage', decoratedChatMessage)
 
     if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
-      state.newMessages.push(chatMessage)
+      state.newMessages.push(decoratedChatMessage)
     } else {
-      state.shownMessages.push(chatMessage)
+      state.shownMessages.push(decoratedChatMessage)
       scrollToBottom()
+    }
+
+    async function decorateAsyncMessageData(
+      message: ChatMessageRepresentation
+    ): Promise<void> {
+      if (!message.name) {
+        message.name =
+          (await getUserData({ userId: message.sender_address }))?.data
+            ?.displayName || `Unknown*`
+      }
+
+      message.mentionedPlayers = {
+        ...message.mentionedPlayers,
+        ...(await getMentionedPlayersFromMessage(message.message))
+      }
     }
   }
 
@@ -394,6 +462,7 @@ function ShowNewMessages(): ReactElement | null {
 
 function HeaderArea(): ReactElement {
   const fontSize = getCanvasScaleRatio() * 48
+
   return (
     <UiEntity
       uiTransform={{
@@ -462,6 +531,83 @@ function HeaderArea(): ReactElement {
           fontSize={fontSize}
         />
       </UiEntity>
+
+      <UiEntity
+        uiTransform={{
+          alignSelf: 'center',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          zIndex: 2,
+          width: getCanvasScaleRatio() * 120,
+          height: getCanvasScaleRatio() * 64,
+          flexShrink: 0,
+          margin: { right: '2%' }
+        }}
+        uiBackground={{ color: COLOR.TEXT_COLOR }}
+      >
+        <Icon
+          uiTransform={{
+            positionType: 'absolute',
+            zIndex: 10
+          }}
+          iconSize={getCanvasScaleRatio() * 48}
+          icon={{ spriteName: 'Menu', atlasName: 'icons' }}
+          onMouseDown={() => {
+            state.headerMenuOpen = !state.headerMenuOpen
+
+            if (state.headerMenuOpen) {
+              state.chatBox.size.x =
+                store.getState().viewport.width * 0.26 +
+                (state.headerMenuOpen
+                  ? store.getState().viewport.width * 0.12
+                  : 0)
+            }
+          }}
+        />
+        <UiEntity
+          uiTransform={{
+            positionType: 'absolute',
+            position: { left: '150%', top: '100%' },
+            height: getCanvasScaleRatio() * 200,
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            alignContent: 'flex-start',
+            alignSelf: 'flex-start',
+            padding: '10%',
+            opacity: state.headerMenuOpen ? 1 : 0
+          }}
+          uiBackground={{
+            color: state.headerMenuOpen
+              ? COLOR.DARK_OPACITY_5
+              : COLOR.BLACK_TRANSPARENT
+          }}
+        >
+          <Checkbox
+            uiTransform={{
+              alignSelf: 'flex-start'
+            }}
+            onChange={(value) => {
+              state.filterMessages[MESSAGE_TYPE.USER] = !value
+              scrollToBottom()
+            }}
+            value={!state.filterMessages[MESSAGE_TYPE.USER]}
+            label={'Show user messages'}
+          />
+          <Checkbox
+            uiTransform={{
+              alignSelf: 'flex-start'
+            }}
+            onChange={(value) => {
+              state.filterMessages[MESSAGE_TYPE.SYSTEM] = !value
+              scrollToBottom()
+            }}
+            value={!state.filterMessages[MESSAGE_TYPE.SYSTEM]}
+            label={'Show system messages'}
+          />
+        </UiEntity>
+      </UiEntity>
       <UiEntity
         uiTransform={{
           alignSelf: 'flex-end',
@@ -506,10 +652,9 @@ function HeaderArea(): ReactElement {
   )
 }
 
-function InputArea(): ReactElement | null {
-  const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-  if (canvasInfo === null) return null
+function InputArea(): ReactElement {
   const inputFontSize = Math.floor(getCanvasScaleRatio() * 36)
+
   return (
     <UiEntity
       uiTransform={{
@@ -522,8 +667,8 @@ function InputArea(): ReactElement | null {
         alignItems: 'center',
         flexDirection: 'row',
         margin: {
-          top: canvasInfo.height * 0.005,
-          bottom: canvasInfo.height * 0.005
+          top: store.getState().viewport.height * 0.005,
+          bottom: store.getState().viewport.height * 0.005
         },
         position: { bottom: inputFontSize * 0.1 },
         padding: inputFontSize * 0.4
@@ -534,34 +679,8 @@ function InputArea(): ReactElement | null {
       }}
     >
       {state.inputFontSizeWorkaround && (
-        <Input
-          uiTransform={{
-            elementId: 'chat-input',
-            padding: { left: '1%' },
-            width: '100%',
-            height: '100%',
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          textAlign="middle-center"
-          fontSize={inputFontSize}
-          color={ALMOST_WHITE}
-          placeholder="Press ENTER to chat"
-          placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
-          onSubmit={sendChatMessage}
-        />
+        <ChatInput inputFontSize={inputFontSize} onSubmit={sendChatMessage} />
       )}
-      <UiEntity
-        uiTransform={{
-          width: '100%',
-          height: '100%',
-          positionType: 'absolute'
-        }}
-        onMouseDown={() => {
-          focusChatInput()
-        }}
-      />
     </UiEntity>
   )
 }
@@ -596,13 +715,19 @@ function ChatArea({
         padding: { left: '3%', right: '8%' }
       }}
     >
-      {messages.map((message) => (
-        <ChatMessage
-          message={message}
-          key={message.timestamp}
-          onMessageMenu={onMessageMenu}
-        />
-      ))}
+      {messages
+        .filter((m) =>
+          isSystemMessage(m)
+            ? !state.filterMessages[MESSAGE_TYPE.SYSTEM]
+            : !state.filterMessages[MESSAGE_TYPE.USER]
+        )
+        .map((message) => (
+          <ChatMessage
+            message={message}
+            key={message.timestamp}
+            onMessageMenu={onMessageMenu}
+          />
+        ))}
     </UiEntity>
   )
 }
@@ -622,8 +747,8 @@ function scrollToBottom(): void {
   state.autoScrollSwitch = state.autoScrollSwitch ? 0 : 1
 }
 
-function focusChatInput(): void {
-  setUiFocus({ elementId: 'chat-input' }).catch(console.error)
+export function focusChatInput(uiFocus: boolean = false): void {
+  if (uiFocus) setUiFocus({ elementId: 'chat-input' }).catch(console.error)
   store.dispatch(updateHudStateAction({ chatOpen: true }))
   scrollToBottom()
 }
@@ -664,4 +789,37 @@ function isVectorInBox(point: Vector2, box: Box): boolean {
 }
 export function messageHasMentionToMe(message: string): boolean {
   return message.includes(`@${getPlayer()?.name}`)
+}
+
+async function getMentionedPlayersFromMessage(
+  message: string
+): Promise<Record<string, GetPlayerDataRes>> {
+  const playersInScene = (await getPlayersInScene({})).players
+
+  playersInScene.forEach((player) => {
+    const playerData = getPlayer({ userId: player.userId })
+    if (playerData && !nameAddressMap.has(playerData.name)) {
+      nameAddressMap.set(playerData.name, player.userId)
+    }
+  })
+
+  const mentionedNames = message.match(NAME_MENTION_REGEXP)
+
+  return (
+    mentionedNames?.reduce((acc: Record<string, GetPlayerDataRes>, match) => {
+      const name = match.replace('@', '')
+      const address = nameAddressMap.get(name)
+
+      if (address) {
+        const player = getPlayer({
+          userId: address
+        })
+        if (player) {
+          acc[address] = player
+        }
+      }
+
+      return acc
+    }, {}) ?? {}
+  )
 }

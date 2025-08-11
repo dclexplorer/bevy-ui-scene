@@ -19,12 +19,19 @@ import {
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 import { getCanvasScaleRatio } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
-import { memoize } from '../../utils/function-utils'
+import { compose, memoize } from '../../utils/function-utils'
 import { ButtonIcon } from '../button-icon'
 import { AvatarCircle } from '../avatar-circle'
 import { pushPopupAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { store } from '../../state/store'
+import { nameAddressMap } from '../../service/chat-members'
+
+const LINK_TYPE = {
+  USER: 'user',
+  URL: 'url',
+  LOCATION: 'location'
+}
 
 const state: { hoveringMessageID: number; openMessageMenu: boolean } = {
   hoveringMessageID: 0,
@@ -49,6 +56,43 @@ function ChatMessage(props: {
   const side = props.message.side
   const messageMargin = 12 * getCanvasScaleRatio()
 
+  const chatMessageOnMouseDownCallback: any = (
+    event: any,
+    message: ChatMessageRepresentation
+  ) => {
+    if (event?.hit?.meshName) {
+      const [type, value] = event?.hit?.meshName.split('::')
+      if (type === LINK_TYPE.USER) {
+        const player =
+          getPlayer({ userId: value }) ??
+          message.mentionedPlayers[value] ??
+          null
+
+        store.dispatch(
+          pushPopupAction({
+            type: HUD_POPUP_TYPE.PROFILE_MENU,
+            data: {
+              player
+            }
+          })
+        )
+      } else if (type === LINK_TYPE.URL) {
+        store.dispatch(
+          pushPopupAction({
+            type: HUD_POPUP_TYPE.URL,
+            data: value
+          })
+        )
+      } else if (type === LINK_TYPE.LOCATION) {
+        store.dispatch(
+          pushPopupAction({
+            type: HUD_POPUP_TYPE.TELEPORT,
+            data: value
+          })
+        )
+      }
+    }
+  }
   return (
     <UiEntity
       uiTransform={{
@@ -86,8 +130,10 @@ function ChatMessage(props: {
         onMouseDown={() => {
           store.dispatch(
             pushPopupAction({
-              type: HUD_POPUP_TYPE.PASSPORT,
-              data: props.message.sender_address
+              type: HUD_POPUP_TYPE.PROFILE_MENU,
+              data: {
+                player: props.message.player
+              }
             })
           )
         }}
@@ -135,6 +181,16 @@ function ChatMessage(props: {
                 : (getAddressColor(props.message.sender_address) as Color4)
             }
             textAlign={`middle-left`}
+            onMouseDown={() => {
+              store.dispatch(
+                pushPopupAction({
+                  type: HUD_POPUP_TYPE.PROFILE_MENU,
+                  data: {
+                    player: props.message.player
+                  }
+                })
+              )
+            }}
           />
         )}
         {/* TEXT */}
@@ -145,12 +201,13 @@ function ChatMessage(props: {
           value={
             isSystemMessage(props.message)
               ? `<i>${props.message.message}</i>`
-              : decorateNamesWithLinkColor(props.message.message)
+              : props.message.message
           }
           fontSize={defaultFontSize}
           color={ALMOST_WHITE}
           textWrap="wrap"
           textAlign={`middle-left`}
+          onMouseDown={chatMessageOnMouseDownCallback}
         />
         <Label
           uiTransform={{
@@ -204,7 +261,32 @@ export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
   return messageData.sender_address === ZERO_ADDRESS
 }
 
-export function decorateNamesWithLinkColor(message: string): string {
-  // 00B1FE
-  return message.replace(/(@\w+)/g, `<color=#00B1FE>$1</color>`)
+export const NAME_MENTION_REGEXP = /@\w+(#\w+)?/g
+const URL_REGEXP = /https:\/\/[^\s"',]+/g
+const LOCATION_REGEXP = /\d+,\s?\d+/g
+export const decorateMessageWithLinks = compose(
+  replaceNameTags,
+  replaceURLTags,
+  replaceLocationTags
+)
+
+export function replaceLocationTags(message: string): string {
+  return message.replace(LOCATION_REGEXP, function (...[match]) {
+    return `<b><color=#00B1FE><link=${LINK_TYPE.LOCATION}::${match}>${match}</link></color></b>`
+  })
+}
+
+export function replaceURLTags(message: string): string {
+  return message.replace(URL_REGEXP, function (...[match]) {
+    return `<b><color=#00B1FE><link=${LINK_TYPE.URL}::${match}>${match}</link></color></b>`
+  })
+}
+
+export function replaceNameTags(message: string): string {
+  return message.replace(NAME_MENTION_REGEXP, (...[match]) => {
+    const foundNameAddress = nameAddressMap.get(match.replace('@', ''))
+    return foundNameAddress
+      ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${foundNameAddress}>${match}</link></color></b>`
+      : `<b>${match}</b>`
+  })
 }

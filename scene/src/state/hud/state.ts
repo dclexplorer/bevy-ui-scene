@@ -48,7 +48,8 @@ export enum HUD_POPUP_TYPE {
   ADD_LINK,
   PROFILE_MENU,
   ERROR,
-  NOTIFICATIONS_MENU
+  NOTIFICATIONS_MENU,
+  PERMISSION_REQUEST
 }
 
 export type HUDPopup = {
@@ -62,6 +63,11 @@ export type HudState = {
   profileData: ViewAvatarData
   names: NameDefinition[]
   unreadNotifications: number
+  loggedIn: boolean
+  realmURL?: string
+  chatOptionShowUserMessages: boolean
+  chatOptionShowSystemMessages: boolean
+  chatInput: string
 }
 
 export type HudStateUpdateParams = {
@@ -69,7 +75,12 @@ export type HudStateUpdateParams = {
   shownPopup?: HUDPopup[]
   profileData?: ViewAvatarData
   names?: NameDefinition[]
+  loggedIn?: boolean
   unreadNotifications?: number
+  realmURL?: string
+  chatOptionShowUserMessages?: boolean
+  chatOptionShowSystemMessages?: boolean
+  chatInput?: string
 }
 
 export const hudInitialState: HudState = {
@@ -77,5 +88,10 @@ export const hudInitialState: HudState = {
   shownPopups: [],
   profileData: cloneDeep(EMPTY_PROFILE_DATA),
   names: [],
-  unreadNotifications: 0
+  loggedIn: false,
+  unreadNotifications: 0,
+  realmURL: 'main',
+  chatOptionShowUserMessages: true,
+  chatOptionShowSystemMessages: false,
+  chatInput: ''
 }

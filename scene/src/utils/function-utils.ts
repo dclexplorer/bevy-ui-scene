@@ -89,3 +89,14 @@ export function createMediator(): Mediator {
     }
   }
 }
+
+export const compose = <T>(
+  fn1: (a: T) => T,
+  ...fns: Array<(a: T) => T>
+): ((a: T) => T) =>
+  fns.reduce<(a: T) => T>(
+    (prevFn, nextFn) =>
+      (value: T): T =>
+        prevFn(nextFn(value)),
+    fn1
+  )

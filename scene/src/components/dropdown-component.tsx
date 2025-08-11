@@ -4,11 +4,12 @@ import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { noop } from '../utils/function-utils'
 import { timers } from '@dcl-sdk/utils'
+import { type InputOption } from '../utils/definitions'
+import useState = ReactEcs.useState
 
 export type DropdownComponentProps = {
-  dropdownId: string // TODO refactor with useState when  it's available
   uiTransform: UiTransformProps
-  options: any[]
+  options: InputOption[]
   value: any
   fontSize?: number
   onChange: (value: any) => void
@@ -24,11 +25,9 @@ export type DropdownState = Record<
     entered: number | null
   }
 >
-const state: DropdownState = {}
 
 export function DropdownComponent({
-  dropdownId,
-  options,
+  options = [{ label: '', value: null }],
   value = null,
   uiTransform,
   fontSize = getCanvasScaleRatio() * 32,
@@ -37,42 +36,36 @@ export function DropdownComponent({
   disabled = false,
   listMaxHeight
 }: DropdownComponentProps): ReactElement {
-  state[dropdownId] = state[dropdownId] ?? {
-    open: false,
-    entered: null
-  }
+  const [open, setOpen] = useState(false)
+  const [entered, setEntered] = useState<number | null>(null)
 
   return (
     <DropdownStyled
       scroll={scroll}
       uiTransform={uiTransform}
-      isOpen={state[dropdownId].open}
+      isOpen={open}
       onMouseDown={() => {
         if (!disabled) {
-          state[dropdownId].open = !state[dropdownId].open
+          setOpen(!open)
         }
       }}
       onOptionMouseDown={(index) => {
-        onChange(options[index])
-        state[dropdownId].open = false
+        onChange(options[index].value)
+        setOpen(false)
       }}
       onOptionMouseEnter={(index) => {
-        state[dropdownId].entered = index
+        setEntered(index)
       }}
       onOptionMouseLeave={(index) => {}}
       onListMouseLeave={() => {
         timers.setTimeout(() => {
-          state[dropdownId].entered = null
+          setEntered(null)
         }, 100)
       }}
       title={''}
       fontSize={fontSize}
-      value={options.indexOf(value)}
-      entered={
-        state[dropdownId].entered !== null
-          ? state[dropdownId].entered ?? -1
-          : -1
-      }
+      value={options.findIndex((o) => o.value === value)}
+      entered={entered !== null ? entered ?? -1 : -1}
       options={options}
       disabled={disabled}
       listMaxHeight={listMaxHeight}

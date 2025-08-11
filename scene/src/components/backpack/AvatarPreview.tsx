@@ -115,8 +115,8 @@ export function updateAvatarPreview(
   mutableAvatarShape.forceRender = forceRender
 }
 
-export function createAvatarPreview(): void {
-  if (avatarPreview.cameraEntity !== engine.RootEntity) return
+export function createAvatarPreview(): boolean {
+  if (avatarPreview.cameraEntity !== engine.RootEntity) return false
   const avatarEntity: Entity = (avatarPreview.avatarEntity = engine.addEntity())
   const cameraEntity = (avatarPreview.cameraEntity = engine.addEntity())
   const playerData = getPlayer()
@@ -169,6 +169,7 @@ export function createAvatarPreview(): void {
     position: AVATAR_CAMERA_POSITION.BODY,
     rotation: Quaternion.fromEulerDegrees(4, 0, 0)
   })
+  return true
 }
 
 function getCameraPositionPerCategory(

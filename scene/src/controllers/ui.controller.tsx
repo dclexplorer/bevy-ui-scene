@@ -33,6 +33,9 @@ import {
   initRealTimeNotifications,
   NotificationToastStack
 } from '../ui-classes/main-hud/notification-toast-stack'
+import { updateHudStateAction } from '../state/hud/actions'
+import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-popups/permissions-popup-service'
+import { getRealm } from '~system/Runtime'
 
 let loadingAndLogin: any = null
 
@@ -97,8 +100,19 @@ export class UIController {
 
       ;(async () => {
         // TODO review with bevy-explorer dev or protocol why getPlayer().emotes is empty at first
-        await waitFor(() => (getPlayer()?.emotes?.length ?? 0) > 0, 3000)
+        listenPermissionRequests().catch(console.error)
 
+        await waitFor(() => (getPlayer()?.emotes?.length ?? 0) > 0, 3000)
+        store.dispatch(
+          updateHudStateAction({
+            realmURL: (await getRealm({})).realmInfo?.baseUrl ?? 'main' // TODO REVIEW
+          })
+        )
+        store.dispatch(
+          updateHudStateAction({
+            loggedIn: true
+          })
+        )
         void initEmotesWheel({
           showBackpackMenu: () => {
             if (!this.isMainMenuVisible) {
@@ -108,11 +122,11 @@ export class UIController {
         })
 
         void this.backpackPage.init()
-      })().catch(console.error)
 
-      setupNotifications().catch(console.error)
+        setupNotifications().catch(console.error)
+        initRealTimeNotifications()
+      })().catch(console.error)
     })
-    initRealTimeNotifications()
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
   }
 

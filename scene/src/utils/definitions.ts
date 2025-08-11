@@ -1,5 +1,10 @@
 import { InputAction } from '@dcl/sdk/ecs'
 import { type Color4 } from '@dcl/sdk/math'
+import { type Entity, type TransformType } from '@dcl/ecs'
+import {
+  type PBAvatarBase,
+  type PBAvatarEquippedData
+} from '@dcl/ecs/dist/components'
 
 export type SpriteFromAtlas = {
   sprite: string
@@ -139,3 +144,17 @@ export type FormattedURN = {
   itemId: string
 }
 export type EquippedEmote = URNWithoutTokenId | offchainEmoteURN | ``
+
+export type InputOption = { value: any; label: string }
+
+export type GetPlayerDataRes = {
+  entity: Entity
+  name: string
+  isGuest: boolean
+  userId: string
+  avatar?: PBAvatarBase
+  wearables: PBAvatarEquippedData['wearableUrns']
+  emotes: PBAvatarEquippedData['emoteUrns']
+  forceRender: PBAvatarEquippedData['forceRender']
+  position: TransformType['position'] | undefined
+}

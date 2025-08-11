@@ -16,6 +16,7 @@ import {
   disposeOutfitsCatalog
 } from '../../components/backpack/OutfitAvatar'
 import { DeleteOutfitDialog } from './backpack-page/delete-outfit-dialog'
+import { noop } from '../../utils/function-utils'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
@@ -148,6 +149,7 @@ export default class MainMenu {
           height: '100%',
           positionType: 'absolute'
         }}
+        onMouseDown={noop}
       >
         <DeleteOutfitDialog />
         <UiEntity

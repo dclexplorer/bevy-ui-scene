@@ -39,7 +39,6 @@ export default class PopUpAction {
   cancelAction(): void {
     if (this.cancel !== undefined) {
       this.cancel()
-      console.log('WARNING POP UP CANCEL ACTION PRESSED')
     }
     this.undefineButtons()
     this.hide()

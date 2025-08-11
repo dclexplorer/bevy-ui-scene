@@ -14,7 +14,10 @@ import type {
   URNWithoutTokenId
 } from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
-import { createAvatarPreview } from '../../../components/backpack/AvatarPreview'
+import {
+  createAvatarPreview,
+  updateAvatarPreview
+} from '../../../components/backpack/AvatarPreview'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
 import {
   BASE_MALE_URN,
@@ -50,6 +53,8 @@ import { updatePageGeneric } from './backpack-service'
 import { OutfitsCatalog } from './OutfitsCatalog'
 import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
 import { waitFor } from '../../../utils/dcl-utils'
+import { pushPopupAction } from '../../../state/hud/actions'
+import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 
 let originalAvatarJSON: string
 
@@ -65,7 +70,7 @@ export default class BackpackPage {
     return (
       <MainContent>
         <BackpackNavBar canvasScaleRatio={canvasScaleRatio} />
-        <Content>
+        <ResponsiveContent>
           <AvatarPreviewElement />
           <UiEntity
             uiTransform={{
@@ -95,7 +100,7 @@ export default class BackpackPage {
               <OutfitsCatalog />
             )}
           </UiEntity>
-        </Content>
+        </ResponsiveContent>
       </MainContent>
     )
   }
@@ -114,7 +119,14 @@ export default class BackpackPage {
         }
       }
       if (avatarHasChanged(avatarPayload)) {
-        await BevyApi.setAvatar(avatarPayload)
+        await BevyApi.setAvatar(avatarPayload).catch((error) => {
+          store.dispatch(
+            pushPopupAction({
+              type: HUD_POPUP_TYPE.ERROR,
+              data: error
+            })
+          )
+        })
       }
     } catch (error) {
       console.log('setAvatar error', error)
@@ -129,7 +141,14 @@ export default class BackpackPage {
     store.dispatch(updateLoadingPage(true))
     store.dispatch(updateCacheKey())
     closeColorPicker()
-    createAvatarPreview()
+    if (!createAvatarPreview()) {
+      updateAvatarPreview(
+        store.getState().backpack.equippedWearables,
+        store.getState().backpack.outfitSetup.base,
+        store.getState().backpack.forceRender
+      )
+    }
+
     await waitFor(() => getPlayer() !== null)
     const player = getPlayer()
     const wearables: URNWithoutTokenId[] = (player?.wearables ?? []).map(
@@ -196,7 +215,11 @@ export default class BackpackPage {
   }
 }
 
-function MainContent({ children }: { children?: ReactElement }): ReactElement {
+export function MainContent({
+  children
+}: {
+  children?: ReactElement
+}): ReactElement {
   return (
     <UiEntity
       onMouseEnter={() => {}}
@@ -218,8 +241,7 @@ function MainContent({ children }: { children?: ReactElement }): ReactElement {
   )
 }
 
-// TODO REVIEW: refactor, maybe move outside and change name to : <ResponsiveRatioBox,AspectRatioContainer, AdaptiveContent... getCanvasScaleRatio() should be renamed too
-export function Content({
+export function ResponsiveContent({
   children
 }: {
   children?: ReactElement

@@ -1,5 +1,6 @@
 import ReactEcs, { UiEntity } from '@dcl/react-ecs'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
+import { noop } from '../../../utils/function-utils'
 
 export default class ExplorePage {
   mainUi(): ReactEcs.JSX.Element | null {
@@ -16,6 +17,7 @@ export default class ExplorePage {
           textAlign: 'middle-center',
           fontSize: 50
         }}
+        onMouseDown={noop}
       ></UiEntity>
     )
   }

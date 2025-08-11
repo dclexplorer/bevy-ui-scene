@@ -14,6 +14,7 @@ import { type ReactElement } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
+import { getPlayer } from '@dcl/sdk/players'
 
 const ZERO_SIZE = {
   width: 0,
@@ -372,7 +373,10 @@ export default class MainHud {
               store.dispatch(
                 pushPopupAction({
                   type: HUD_POPUP_TYPE.PROFILE_MENU,
-                  data: 'left'
+                  data: {
+                    align: 'left',
+                    player: getPlayer()
+                  }
                 })
               )
               // this.uiController.profile.showCard()
