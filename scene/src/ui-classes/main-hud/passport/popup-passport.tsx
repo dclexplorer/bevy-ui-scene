@@ -92,6 +92,7 @@ export function setupPassportPopup(): void {
       action.type === HUD_ACTION.PUSH_POPUP &&
       (action.payload as HUDPopup).type === HUD_POPUP_TYPE.PASSPORT
     ) {
+      state.editing = false
       state.loadingProfile = true
       executeTask(async () => {
         const shownPopup = action.payload as HUDPopup
@@ -437,18 +438,21 @@ function BottomBar(): ReactElement | null {
           height: 1
         }}
       />
-      <Button
+      <UiEntity
         uiTransform={{
           borderRadius: getCanvasScaleRatio() * 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0,
-          width: getCanvasScaleRatio() * 150,
-          margin: { right: '1%' }
+          width: getCanvasScaleRatio() * 180,
+          margin: { right: '1%' },
+          opacity: state.savingProfile || state.loadingProfile ? 0.5 : 1,
+          flexShrink: 0
         }}
         uiBackground={{
           color: COLOR.WHITE_OPACITY_1
         }}
         onMouseDown={() => {
+          if (state.savingProfile || state.loadingProfile) return
           state.editing = false
           store.dispatch(
             updateHudStateAction({
@@ -456,20 +460,28 @@ function BottomBar(): ReactElement | null {
             })
           )
         }}
-        disabled={state.savingProfile || state.loadingProfile}
-        value={'CANCEL'}
-        fontSize={getCanvasScaleRatio() * 40}
+        uiText={{
+          value: 'CANCEL',
+          fontSize: getCanvasScaleRatio() * 40,
+          textWrap: 'nowrap'
+        }}
       />
-      <Button
+      <UiEntity
         uiTransform={{
           borderRadius: getCanvasScaleRatio() * 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0,
-          width: getCanvasScaleRatio() * 150
+          width: getCanvasScaleRatio() * 180,
+          flexShrink: 0,
+          opacity: state.savingProfile || state.loadingProfile ? 0.5 : 1
         }}
-        disabled={state.savingProfile || state.loadingProfile}
-        value={'SAVE'}
+        uiText={{
+          value: 'SAVE',
+          fontSize: getCanvasScaleRatio() * 40,
+          textWrap: 'nowrap'
+        }}
         onMouseDown={() => {
+          if (state.savingProfile || state.loadingProfile) return
           executeTask(async () => {
             state.savingProfile = true
             await saveProfileData(store.getState().hud.profileData)
@@ -477,7 +489,9 @@ function BottomBar(): ReactElement | null {
             state.editing = false
           })
         }}
-        fontSize={getCanvasScaleRatio() * 40}
+        uiBackground={{
+          color: COLOR.BUTTON_PRIMARY
+        }}
       />
     </UiEntity>
   )

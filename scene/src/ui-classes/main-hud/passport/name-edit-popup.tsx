@@ -262,7 +262,9 @@ export const NameForm = ({
             borderWidth: 0,
             width: '40%',
             margin: { right: '5%' },
-            opacity: disabled ? 0.5 : 1
+            height: getCanvasScaleRatio() * 100,
+            opacity: disabled ? 0.5 : 1,
+            flexShrink: 0
           }}
           fontSize={getCanvasScaleRatio() * 40}
           uiBackground={{
@@ -281,7 +283,10 @@ export const NameForm = ({
             width: '40%',
             borderRadius: getCanvasScaleRatio() * 20,
             borderColor: COLOR.BLACK_TRANSPARENT,
-            borderWidth: 0
+            borderWidth: 0,
+            height: getCanvasScaleRatio() * 100,
+            opacity: disabled ? 0.5 : 1,
+            flexShrink: 0
           }}
           fontSize={getCanvasScaleRatio() * 40}
           value={'SAVE'}
