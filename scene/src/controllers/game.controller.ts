@@ -15,6 +15,7 @@ import { UIController } from './ui.controller'
 import { initSystemActionsEmitter } from '../service/system-actions-emitter'
 import { setupPassportPopup } from '../ui-classes/main-hud/passport/popup-passport'
 import { setupProfilePopups } from '../ui-classes/main-hud/passport/profile-popup'
+import { getCurrentScene } from '../service/player-scenes'
 
 export class GameController {
   uiController: UIController
@@ -64,12 +65,7 @@ export class GameController {
     }
 
     const liveScenesInfo: LiveSceneInfo[] = await BevyApi.liveSceneInfo()
-    const currentScene = liveScenesInfo.find((scene) =>
-      scene.parcels.some(
-        (parcel) =>
-          parcel.x === explorerCoords.x && parcel.y === explorerCoords.z
-      )
-    )
+    const currentScene = await getCurrentScene(liveScenesInfo)
     store.dispatch(loadSceneFromBevyApi(currentScene))
     store.dispatch(loadPlaceFromApi(undefined))
     fetchPlaceFromCoords(explorerCoords)

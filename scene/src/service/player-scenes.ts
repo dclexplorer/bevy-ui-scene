@@ -20,7 +20,7 @@ export async function getCurrentScene(
 ): Promise<LiveSceneInfo | undefined> {
   const _liveSceneInfo =
     liveSceneInfo ??
-    (await BevyApi.liveSceneInfo()).filter(filterSelectableScenes)
+    ((await BevyApi.liveSceneInfo()) ?? []).filter(filterSelectableScenes)
   const currentParcel = getPlayerParcel()
   const currentScene = _liveSceneInfo.find((s) =>
     s.parcels.find((p) => p.x === currentParcel.x && p.y === currentParcel.y)
