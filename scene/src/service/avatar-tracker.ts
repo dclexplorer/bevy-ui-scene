@@ -26,7 +26,7 @@ type GetPlayerDataRes = {
   forceRender: PBAvatarEquippedData['forceRender']
   position: TransformType['position'] | undefined
 }
-// TODO AvatarModifierType.AMT_DISABLE_PASSPORTS
+
 export const createOrGetAvatarsTracker = (): {
   onClick: (fn: (userId: string) => void) => () => void
   onMouseOver: (fn: (userId: string) => void) => () => void

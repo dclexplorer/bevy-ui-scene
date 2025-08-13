@@ -27,7 +27,13 @@ import { logout } from '../../../controllers/ui.controller'
 import { BevyApi } from '../../../bevy-api'
 import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
-import { engine, executeTask, PrimaryPointerInfo } from '@dcl/sdk/ecs'
+import {
+  AvatarModifierArea,
+  AvatarModifierType,
+  engine,
+  executeTask,
+  PrimaryPointerInfo
+} from '@dcl/sdk/ecs'
 import useEffect = ReactEcs.useEffect
 import useState = ReactEcs.useState
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
@@ -39,6 +45,7 @@ export function setupProfilePopups(): void {
   avatarTracker.onClick((userId) => {
     // TODO THIS IS WORKAROUND UNTIL ShowProfile provides better way to get userId
     if (getPlayer({ userId })?.isGuest === false) {
+      // TODO AvatarModifierType.AMT_DISABLE_PASSPORTS
       store.dispatch(
         pushPopupAction({
           type: HUD_POPUP_TYPE.PROFILE_MENU,
