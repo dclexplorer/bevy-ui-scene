@@ -10,14 +10,14 @@ import ReactEcs, {
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { ALMOST_WHITE, ZERO_ADDRESS } from '../../utils/constants'
-import { BORDER_RADIUS_F } from '../../utils/ui-utils'
+
 import {
   CHAT_SIDE,
   type ChatMessageDefinition,
   type ChatMessageRepresentation
 } from './ChatMessage.types'
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getViewportHeight } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
 import { compose, memoize } from '../../utils/function-utils'
 import { ButtonIcon } from '../button-icon'
@@ -26,6 +26,7 @@ import { pushPopupAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { store } from '../../state/store'
 import { nameAddressMap } from '../../service/chat-members'
+import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 
 const LINK_TYPE = {
   USER: 'user',
@@ -50,11 +51,11 @@ function ChatMessage(props: {
   if (myPlayer === null) {
     return null
   }
-  const defaultFontSize = getCanvasScaleRatio() * 36
+  const defaultFontSize = getHudFontSize(getViewportHeight()).NORMAL
   const playerName = props.message.name
 
   const side = props.message.side
-  const messageMargin = 12 * getCanvasScaleRatio()
+  const messageMargin = defaultFontSize / 3
 
   const chatMessageOnMouseDownCallback: any = (
     event: any,
@@ -104,7 +105,7 @@ function ChatMessage(props: {
           bottom: messageMargin,
           top: messageMargin
         },
-        borderRadius: getCanvasScaleRatio() * BORDER_RADIUS_F * 4,
+        borderRadius: messageMargin,
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 0,
         ...props.uiTransform
@@ -125,7 +126,15 @@ function ChatMessage(props: {
             : props.message.sender_address
         }
         circleColor={getAddressColor(props.message.sender_address)}
-        uiTransform={{}}
+        uiTransform={{
+          width: defaultFontSize * 2,
+          height: defaultFontSize * 2,
+          margin: {
+            left: messageMargin,
+            right: messageMargin,
+            bottom: messageMargin
+          }
+        }}
         isGuest={props.message.isGuest}
         onMouseDown={() => {
           store.dispatch(
@@ -145,16 +154,16 @@ function ChatMessage(props: {
           height: '100%',
           justifyContent: 'center',
           alignItems: 'flex-start',
-          padding: 5,
+          padding: messageMargin,
           flexDirection: 'column',
           borderRadius: 10,
           ...(props.message.hasMentionToMe
             ? {
-                borderWidth: getCanvasScaleRatio() * 10,
+                borderWidth: messageMargin / 2,
                 borderColor: COLOR.MESSAGE_MENTION
               }
             : {
-                borderWidth: getCanvasScaleRatio() * 1,
+                borderWidth: messageMargin / 2,
                 borderColor: COLOR.BLACK_TRANSPARENT
               })
         }}
@@ -212,7 +221,7 @@ function ChatMessage(props: {
         <Label
           uiTransform={{
             width: '100%',
-            height: getCanvasScaleRatio() * 30
+            height: defaultFontSize
           }}
           value={formatTimestamp(props.message.timestamp)}
           fontSize={defaultFontSize * 0.7}
@@ -220,27 +229,25 @@ function ChatMessage(props: {
           textWrap="wrap"
           textAlign={`middle-left`}
         />
-        {
-          <ButtonIcon
-            onMouseDown={() => {
-              props.onMessageMenu(props.message.timestamp)
-            }}
-            uiTransform={{
-              positionType: 'absolute',
-              position: { right: '1%', top: '5%' },
-              width: getCanvasScaleRatio() * 48,
-              height: getCanvasScaleRatio() * 48,
-              margin: { right: getCanvasScaleRatio() * 10 },
-              display:
-                state.hoveringMessageID === props.message.timestamp
-                  ? 'flex'
-                  : 'none',
-              pointerFilter: 'block'
-            }}
-            icon={{ atlasName: 'icons', spriteName: 'Menu' }}
-            iconSize={getCanvasScaleRatio() * 32}
-          />
-        }
+        <ButtonIcon
+          onMouseDown={() => {
+            props.onMessageMenu(props.message.timestamp)
+          }}
+          uiTransform={{
+            positionType: 'absolute',
+            position: { right: '-5%', top: '8%' },
+            width: defaultFontSize,
+            height: defaultFontSize,
+            margin: { right: defaultFontSize },
+            display:
+              state.hoveringMessageID === props.message.timestamp
+                ? 'flex'
+                : 'none',
+            pointerFilter: 'block'
+          }}
+          icon={{ atlasName: 'icons', spriteName: 'Menu' }}
+          iconSize={defaultFontSize}
+        />
       </UiEntity>
     </UiEntity>
   )

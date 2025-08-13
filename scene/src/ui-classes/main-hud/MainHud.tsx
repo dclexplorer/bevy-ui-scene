@@ -15,6 +15,7 @@ import { store } from '../../state/store'
 import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { getPlayer } from '@dcl/sdk/players'
+import { getViewportHeight } from '../../service/canvas-ratio'
 
 const ZERO_SIZE = {
   width: 0,
@@ -283,7 +284,7 @@ export default class MainHud {
       >
         <UiEntity
           uiTransform={{
-            width: '4%',
+            width: getViewportHeight() * 0.05,
             minWidth: 45,
             height: '100%',
             position: { left: 0, top: 0 },
@@ -297,7 +298,7 @@ export default class MainHud {
 
         <UiEntity
           uiTransform={{
-            width: '25%',
+            width: getViewportHeight() * 0.4,
             height: '100%',
             flexDirection: 'column'
           }}
@@ -332,7 +333,9 @@ export default class MainHud {
     const buttonTransform = {
       height: buttonSize,
       width: buttonSize,
-      margin: buttonMargin
+      margin: buttonMargin,
+      flexShrink: 0,
+      flexGrow: 0
     }
     const buttonIconSize = buttonSize * 0.7
 

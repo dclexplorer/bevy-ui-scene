@@ -38,3 +38,7 @@ export const getContentHeight = (): number =>
   _getContentHeight(store.getState().viewport)
 export const getCanvasScaleRatio = (): number =>
   _getCanvasScaleRatio(store.getState().viewport)
+export const getViewportWidth = (): number =>
+  store.getState().viewport?.width ?? 0
+export const getViewportHeight = (): number =>
+  store.getState().viewport?.height ?? 0

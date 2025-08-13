@@ -29,7 +29,7 @@ import {
   MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
 import { memoize } from '../../../utils/function-utils'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getViewportHeight } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import { copyToClipboard, setUiFocus } from '~system/RestrictedActions'
 import {
@@ -61,6 +61,7 @@ import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
 import { ChatInput } from './chat-input'
 import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { getPlayersInScene } from '~system/Players'
+import { getHudFontSize } from '../scene-info/SceneInfo'
 
 type Box = {
   position: { x: number; y: number }
@@ -201,7 +202,7 @@ export default class ChatAndLogs {
         state.chatBox.size.x =
           store.getState().viewport.width * 0.26 +
           (state.headerMenuOpen ? store.getState().viewport.width * 0.12 : 0)
-        state.chatBox.size.y = store.getState().viewport.height * 0.8
+        state.chatBox.size.y = store.getState().viewport.height * 0.66
       }
     })
 
@@ -297,7 +298,7 @@ export default class ChatAndLogs {
     state.messageMenuTimestamp = timestamp
     state.messageMenuPositionTop =
       state.mouseY -
-      (UiCanvasInformation.getOrNull(engine.RootEntity)?.height ?? 0) * 0.25
+      (UiCanvasInformation.getOrNull(engine.RootEntity)?.height ?? 0) * 0.39
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -342,6 +343,7 @@ function MessageSubMenu({
 }: {
   canvasInfo: PBUiCanvasInformation
 }): ReactElement[] | null {
+  const fontSize = getHudFontSize(getViewportHeight()).NORMAL
   if (!state.messageMenuTimestamp) return null
 
   return [
@@ -365,8 +367,8 @@ function MessageSubMenu({
         positionType: 'absolute',
         position: {
           left:
-            canvasInfo.width *
-            (0.188 +
+            canvasInfo.height *
+            (0.3 +
               (state.shownMessages.find(
                 (m) => m.timestamp === state.messageMenuTimestamp
               )?.side ?? 0) *
@@ -390,7 +392,7 @@ function MessageSubMenu({
       <UiEntity
         uiTransform={{
           borderWidth: 1,
-          borderRadius: getCanvasScaleRatio() * 18,
+          borderRadius: fontSize,
           borderColor: COLOR.MENU_ITEM_BACKGROUND,
           alignItems: 'center',
           width: '100%',
@@ -416,10 +418,13 @@ function MessageSubMenu({
       >
         <Icon
           icon={{ spriteName: 'CopyIcon', atlasName: 'icons' }}
-          iconSize={getCanvasScaleRatio() * 32}
+          iconSize={fontSize}
         />
         <UiEntity
-          uiText={{ value: 'COPY', fontSize: getCanvasScaleRatio() * 32 }}
+          uiText={{
+            value: 'COPY',
+            fontSize: getHudFontSize(getViewportHeight()).NORMAL
+          }}
         />
       </UiEntity>
     </UiEntity>
@@ -450,7 +455,7 @@ function ShowNewMessages(): ReactElement | null {
     >
       <Label
         value={`+${state.newMessages.length}`}
-        fontSize={getCanvasScaleRatio() * 48}
+        fontSize={getHudFontSize(getViewportHeight()).NORMAL}
       />
       <Icon
         iconSize={20}
@@ -461,7 +466,7 @@ function ShowNewMessages(): ReactElement | null {
 }
 
 function HeaderArea(): ReactElement {
-  const fontSize = getCanvasScaleRatio() * 48
+  const fontSize = getHudFontSize(getViewportHeight()).NORMAL
 
   return (
     <UiEntity
@@ -474,7 +479,7 @@ function HeaderArea(): ReactElement {
         justifyContent: 'flex-start',
         flexShrink: 0,
         alignItems: 'center',
-        borderRadius: 10,
+        borderRadius: fontSize,
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 1,
         zIndex: 2
@@ -497,7 +502,7 @@ function HeaderArea(): ReactElement {
       />
       <Icon
         uiTransform={{ margin: { left: '4%' }, zIndex: 3, flexShrink: 0 }}
-        iconSize={getCanvasScaleRatio() * 48}
+        iconSize={fontSize * 1.5}
         icon={{ spriteName: 'DdlIconColor', atlasName: 'icons' }}
       />
       <Label
@@ -522,7 +527,7 @@ function HeaderArea(): ReactElement {
         }}
       >
         <Icon
-          iconSize={getCanvasScaleRatio() * 48}
+          iconSize={fontSize}
           icon={{ spriteName: 'Members', atlasName: 'icons' }}
         />
         <Label
@@ -539,8 +544,8 @@ function HeaderArea(): ReactElement {
           alignItems: 'center',
           justifyContent: 'flex-end',
           zIndex: 2,
-          width: getCanvasScaleRatio() * 120,
-          height: getCanvasScaleRatio() * 64,
+          width: fontSize * 2,
+          height: fontSize * 2,
           flexShrink: 0,
           margin: { right: '2%' }
         }}
@@ -548,10 +553,11 @@ function HeaderArea(): ReactElement {
       >
         <Icon
           uiTransform={{
+            zIndex: 10,
             positionType: 'absolute',
-            zIndex: 10
+            position: { top: '20%' }
           }}
-          iconSize={getCanvasScaleRatio() * 48}
+          iconSize={fontSize * 1.2}
           icon={{ spriteName: 'Menu', atlasName: 'icons' }}
           onMouseDown={() => {
             state.headerMenuOpen = !state.headerMenuOpen
@@ -568,8 +574,7 @@ function HeaderArea(): ReactElement {
         <UiEntity
           uiTransform={{
             positionType: 'absolute',
-            position: { left: '150%', top: '100%' },
-            height: getCanvasScaleRatio() * 200,
+            position: { left: '220%', top: '50%' },
             flexDirection: 'column',
             alignItems: 'flex-start',
             justifyContent: 'flex-start',
@@ -615,9 +620,10 @@ function HeaderArea(): ReactElement {
           alignItems: 'center',
           justifyContent: 'flex-end',
           zIndex: 2,
-          width: getCanvasScaleRatio() * 64,
-          height: getCanvasScaleRatio() * 64,
-          position: { top: '60%', right: '1%' },
+          width: fontSize * 2,
+          height: fontSize * 2,
+          position: { top: '100%', right: '1%' },
+          padding: '3%',
           borderRadius: 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0
@@ -633,18 +639,18 @@ function HeaderArea(): ReactElement {
           uiTransform={{
             positionType: 'absolute',
             zIndex: 9,
-            position: { top: -5 * getCanvasScaleRatio() }
+            position: { top: -0.15 * fontSize }
           }}
-          iconSize={getCanvasScaleRatio() * 48}
+          iconSize={fontSize * 1.5}
           icon={{ spriteName: 'DownArrow', atlasName: 'icons' }}
         />
         <Icon
           uiTransform={{
             positionType: 'absolute',
             zIndex: 10,
-            position: { top: 5 * getCanvasScaleRatio() }
+            position: { top: 0.15 * fontSize }
           }}
-          iconSize={getCanvasScaleRatio() * 48}
+          iconSize={fontSize * 1.5}
           icon={{ spriteName: 'DownArrow', atlasName: 'icons' }}
         />
       </UiEntity>
@@ -653,7 +659,7 @@ function HeaderArea(): ReactElement {
 }
 
 function InputArea(): ReactElement {
-  const inputFontSize = Math.floor(getCanvasScaleRatio() * 36)
+  const inputFontSize = getHudFontSize(getViewportHeight()).NORMAL
 
   return (
     <UiEntity
@@ -758,7 +764,7 @@ function _getScrollVector(positionY: number): Vector2 {
 }
 
 function getChatMaxHeight(): number {
-  return store.getState().viewport.height * 0.7
+  return getViewportHeight() * 0.58
 }
 
 function getChatScroll(): Vector2 | null {

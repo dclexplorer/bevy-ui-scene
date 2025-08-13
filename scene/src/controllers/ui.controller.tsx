@@ -36,7 +36,6 @@ import {
 import { updateHudStateAction } from '../state/hud/actions'
 import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-popups/permissions-popup-service'
 import { getRealm } from '~system/Runtime'
-import { MiniMap } from '../components/map/mini-map'
 
 let loadingAndLogin: any = null
 
@@ -149,7 +148,6 @@ export class UIController {
         {!this.isMainMenuVisible && renderEmotesWheel()}
         {NotificationToastStack()}
         {PopupStack()}
-        {MiniMap()}
       </Canvas>
     )
   }

@@ -57,6 +57,9 @@ export function getUvs(
     case 'emotes':
       parsedJson = emotesJson as AtlasData
       break
+    default:
+      parsedJson = undefined
+      break
   }
   if (!parsedJson) return []
 
@@ -425,15 +428,15 @@ export function rotate2D(
   angle = angle % 360
   // if (angle > 180)
   // angle -= 360;
-  let A = (angle * Math.PI) / 180
-  let CosA = Math.cos(A)
-  let SinA = Math.sin(A)
-  let cx = centerX
-  let cy = centerY
-  let X = x - cx
-  let Y = y - cy
-  let NX = X * CosA - Y * SinA
-  let NY = Y * CosA + X * SinA
+  const A = (angle * Math.PI) / 180
+  const CosA = Math.cos(A)
+  const SinA = Math.sin(A)
+  const cx = centerX
+  const cy = centerY
+  const X = x - cx
+  const Y = y - cy
+  const NX = X * CosA - Y * SinA
+  const NY = Y * CosA + X * SinA
   x = NX + cx
   y = NY + cy
 
@@ -441,10 +444,10 @@ export function rotate2D(
 }
 
 export function rotateUVs(angle: number): number[] {
-  let UV00 = rotate2D(angle, 0, 0, 0.5, 0.5)
-  let UV01 = rotate2D(angle, 0, 1, 0.5, 0.5)
-  let UV11 = rotate2D(angle, 1, 1, 0.5, 0.5)
-  let UV10 = rotate2D(angle, 1, 0, 0.5, 0.5)
+  const UV00 = rotate2D(angle, 0, 0, 0.5, 0.5)
+  const UV01 = rotate2D(angle, 0, 1, 0.5, 0.5)
+  const UV11 = rotate2D(angle, 1, 1, 0.5, 0.5)
+  const UV10 = rotate2D(angle, 1, 0, 0.5, 0.5)
 
   return [
     UV00[0],
