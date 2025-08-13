@@ -32,6 +32,7 @@ import {
   AvatarModifierType,
   engine,
   executeTask,
+  PointerLock,
   PrimaryPointerInfo
 } from '@dcl/sdk/ecs'
 import useEffect = ReactEcs.useEffect
@@ -39,13 +40,15 @@ import useState = ReactEcs.useState
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { focusChatInput } from '../chat-and-logs/ChatsAndLogs'
 import { sleep } from '../../../utils/dcl-utils'
+import { getAvatarCamera } from '../../../components/backpack/AvatarPreview'
 
 export function setupProfilePopups(): void {
   const avatarTracker = createOrGetAvatarsTracker()
   avatarTracker.onClick((userId) => {
-    // TODO THIS IS WORKAROUND UNTIL ShowProfile provides better way to get userId
     if (getPlayer({ userId })?.isGuest === false) {
       // TODO AvatarModifierType.AMT_DISABLE_PASSPORTS
+
+      PointerLock.getMutable(engine.CameraEntity).isPointerLocked = false
       store.dispatch(
         pushPopupAction({
           type: HUD_POPUP_TYPE.PROFILE_MENU,
