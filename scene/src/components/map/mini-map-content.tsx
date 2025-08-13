@@ -13,6 +13,8 @@ import {
   getViewportHeight
 } from '../../service/canvas-ratio'
 import { rotateUVs } from '../../utils/ui-utils'
+import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
+import { COLOR } from '../color-palette'
 let cameraEntity: Entity = engine.RootEntity
 
 export function MiniMapContent(): ReactElement {
@@ -46,8 +48,67 @@ export function MiniMapContent(): ReactElement {
       }}
     >
       <PlayerArrow mapSize={mapSize} />
+      {CardinalLabels()}
     </UiEntity>
   )
+}
+
+function CardinalLabels(): ReactElement[] {
+  const fontSize = getHudFontSize(getViewportHeight()).BIG
+  return [
+    <UiEntity
+      uiText={{
+        value: 'N',
+        fontSize,
+        textAlign: 'middle-center',
+        outlineColor: COLOR.TEXT_COLOR,
+        outlineWidth: fontSize / 10
+      }}
+      uiTransform={{
+        positionType: 'absolute',
+        position: { top: '-4%', left: '44%' }
+      }}
+    />,
+    <UiEntity
+      uiText={{
+        value: 'E',
+        fontSize,
+        textAlign: 'middle-center',
+        outlineColor: COLOR.TEXT_COLOR,
+        outlineWidth: fontSize / 10
+      }}
+      uiTransform={{
+        positionType: 'absolute',
+        position: { top: '40%', left: '86%' }
+      }}
+    />,
+    <UiEntity
+      uiText={{
+        value: 'S',
+        fontSize,
+        textAlign: 'middle-center',
+        outlineColor: COLOR.TEXT_COLOR,
+        outlineWidth: fontSize / 10
+      }}
+      uiTransform={{
+        positionType: 'absolute',
+        position: { bottom: '-3%', left: '44%' }
+      }}
+    />,
+    <UiEntity
+      uiText={{
+        value: 'W',
+        fontSize,
+        textAlign: 'middle-center',
+        outlineColor: COLOR.TEXT_COLOR,
+        outlineWidth: fontSize / 10
+      }}
+      uiTransform={{
+        positionType: 'absolute',
+        position: { top: '40%', left: 0 }
+      }}
+    />
+  ]
 }
 function PlayerArrow({ mapSize = 1000 }: { mapSize: number }): ReactElement {
   const ARROW_SIZE = getCanvasScaleRatio() * 50
