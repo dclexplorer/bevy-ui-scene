@@ -263,7 +263,7 @@ export const PermissionsForm = ({
             <UiEntity
               uiText={{
                 value: hoveredPermissionDefinition
-                  ? `This permission is requested when scene attemps to ${hoveredPermissionDefinition.activeDescription}`
+                  ? `This permission is requested when scene attempts to ${hoveredPermissionDefinition.activeDescription}`
                   : '',
                 fontSize: FONTSIZE_MEDIUM,
                 textAlign: 'top-left',
