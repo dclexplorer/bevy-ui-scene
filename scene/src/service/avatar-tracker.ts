@@ -8,7 +8,8 @@ import {
   Material,
   InputAction,
   type PBPointerEventsResult,
-  PlayerIdentityData
+  PlayerIdentityData,
+  ColliderLayer
 } from '@dcl/sdk/ecs'
 import { onEnterScene, onLeaveScene, getPlayer } from '@dcl/sdk/players'
 import { Color4 } from '@dcl/sdk/math'
@@ -137,7 +138,7 @@ export const createOrGetAvatarsTracker = (): {
     })
 
     MeshRenderer.setBox(entity)
-    MeshCollider.setBox(entity)
+    MeshCollider.setBox(entity, ColliderLayer.CL_POINTER)
 
     Material.setPbrMaterial(entity, {
       albedoColor: Color4.create(1, 1, 1, 0)
