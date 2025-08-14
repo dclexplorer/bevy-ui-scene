@@ -1,9 +1,15 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import useEffect = ReactEcs.useEffect
 import {
+  Billboard,
+  BillboardMode,
   CameraLayer,
+  CameraLayers,
   engine,
   type Entity,
+  Material,
+  MeshRenderer,
+  Texture,
   TextureCamera,
   Transform
 } from '@dcl/sdk/ecs'
@@ -15,11 +21,28 @@ import {
 import { rotateUVs } from '../../utils/ui-utils'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { COLOR } from '../color-palette'
+import {
+  fromParcelCoordsToPosition,
+  fromStringToCoords,
+  getPlacesAroundParcel,
+  getPlacesBetween,
+  loadCompleteMapPlaces,
+  Place
+} from '../../service/map-places'
+import { getPlayerParcel } from '../../service/player-scenes'
+import useState = ReactEcs.useState
+import Icon from '../icon/Icon'
+import { Label } from '@dcl/sdk/react-ecs'
 let cameraEntity: Entity = engine.RootEntity
-
+const MINIMAP_RADIO = 20
 export function MiniMapContent(): ReactElement {
   const mapSize = getViewportHeight() * 0.25
+  const [parcelsDescription, setParcelsDescription] =
+    useState<string>('Parcels around:')
 
+  useEffect(() => {
+    loadCompleteMapPlaces().catch(console.error)
+  }, [])
   useEffect(() => {
     try {
       if (cameraEntity === engine.RootEntity) return
@@ -31,6 +54,46 @@ export function MiniMapContent(): ReactElement {
       console.log(error)
     }
   })
+  useEffect(() => {
+    const playerParcel = getPlayerParcel()
+    const places = getPlacesBetween(
+      {
+        x: playerParcel.x - MINIMAP_RADIO,
+        y: playerParcel.y - MINIMAP_RADIO
+      },
+      {
+        x: playerParcel.x + MINIMAP_RADIO,
+        y: playerParcel.y + MINIMAP_RADIO
+      }
+    )
+    const placesAroundPlayerParcel = getPlacesAroundParcel(playerParcel, 10)
+
+    console.log(
+      'placesAroundPlayerParcel',
+      placesAroundPlayerParcel.length,
+      placesAroundPlayerParcel.map((p) => `${p.title} (${p.base_position})`)
+    )
+    console.log(
+      'playerPosition',
+      Math.floor(Transform.get(engine.PlayerEntity).position.x),
+      Math.floor(Transform.get(engine.PlayerEntity).position.z)
+    )
+
+    setParcelsDescription(`Player position: ${Math.floor(
+      Transform.get(engine.PlayerEntity).position.x
+    )},${Math.floor(Transform.get(engine.PlayerEntity).position.z)}
+   
+    ${placesAroundPlayerParcel.map(
+      (p) =>
+        `${p.title} (${p.base_position}) (${JSON.stringify(
+          fromParcelCoordsToPosition(fromStringToCoords(p.base_position))
+        )})\n`
+    )}
+    
+    `)
+
+    setVisiblePlaces(placesAroundPlayerParcel)
+  }, [getPlayerParcel()])
 
   return (
     <UiEntity
@@ -47,6 +110,24 @@ export function MiniMapContent(): ReactElement {
         }
       }}
     >
+      <UiEntity
+        uiTransform={{
+          margin: { left: '105%' },
+          positionType: 'absolute',
+
+          flexShrink: 0,
+          flexGrow: 0,
+          width: '100%',
+          height: '100%'
+        }}
+        uiText={{
+          value: parcelsDescription,
+          textAlign: 'top-left'
+        }}
+        uiBackground={{
+          color: COLOR.DARK_OPACITY_7
+        }}
+      />
       <PlayerArrow mapSize={mapSize} />
       {CardinalLabels()}
     </UiEntity>
@@ -112,6 +193,7 @@ function CardinalLabels(): ReactElement[] {
 }
 function PlayerArrow({ mapSize = 1000 }: { mapSize: number }): ReactElement {
   const ARROW_SIZE = getCanvasScaleRatio() * 50
+
   return (
     <UiEntity
       uiTransform={{
@@ -136,6 +218,35 @@ function PlayerArrow({ mapSize = 1000 }: { mapSize: number }): ReactElement {
     />
   )
 }
+const placeEntities: Entity[] = []
+
+function setVisiblePlaces(places: Place[]) {
+  placeEntities.forEach((placeEntity) => engine.removeEntity(placeEntity))
+  // TODO REVIEW: if it makes worth to translate places to 2D symbols, setVisiblePlaces
+  places.forEach((place) => {
+    const placeEntity = engine.addEntity()
+    placeEntities.push(placeEntity)
+    const [x, y] = place.base_position.split(',').map((s) => Number(s))
+    const parcelPosition = fromParcelCoordsToPosition({ x, y })
+
+    console.log('parcelPosition', parcelPosition)
+
+    Transform.create(placeEntity, {
+      position: fromParcelCoordsToPosition({ x, y }),
+      scale: Vector3.create(24, 24, 24),
+      rotation: Quaternion.fromEulerDegrees(90, 0, 0)
+    })
+
+    MeshRenderer.setPlane(placeEntity)
+
+    Material.setPbrMaterial(placeEntity, {
+      texture: Material.Texture.Common({
+        src: `assets/images/map/POI.png`
+      })
+    })
+  })
+}
+
 function getMinimapCamera(): Entity {
   if (cameraEntity === engine.RootEntity) {
     cameraEntity = engine.addEntity()

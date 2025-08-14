@@ -36,6 +36,7 @@ import {
 import { updateHudStateAction } from '../state/hud/actions'
 import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-popups/permissions-popup-service'
 import { getRealm } from '~system/Runtime'
+import { loadCompleteMapPlaces } from '../service/map-places'
 
 let loadingAndLogin: any = null
 

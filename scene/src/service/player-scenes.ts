@@ -1,6 +1,11 @@
-import { Transform, engine } from '@dcl/sdk/ecs'
+import { Transform, engine, Coords } from '@dcl/sdk/ecs'
 import { BevyApi } from '../bevy-api'
 import { type LiveSceneInfo } from '../bevy-api/interface'
+const state: {
+  playerParcel: Coords
+} = {
+  playerParcel: { x: 0, y: 0 }
+}
 
 export function getPlayerParcel(): { x: number; y: number } {
   const playerEntity = engine.PlayerEntity
@@ -12,7 +17,12 @@ export function getPlayerParcel(): { x: number; y: number } {
   const parcelX = Math.floor(worldX / 16)
   const parcelY = Math.floor(worldZ / 16)
 
-  return { x: parcelX, y: parcelY }
+  if (state.playerParcel.x === parcelX && state.playerParcel.y === parcelY) {
+    return state.playerParcel
+  } else {
+    state.playerParcel = { x: parcelX, y: parcelY }
+  }
+  return state.playerParcel
 }
 
 export async function getCurrentScene(
