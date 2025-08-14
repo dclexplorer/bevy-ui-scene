@@ -25,6 +25,7 @@ import { COLOR } from '../color-palette'
 import {
   fromParcelCoordsToPosition,
   fromStringToCoords,
+  getLoadedMapPlaces,
   getPlacesAroundParcel,
   getPlacesBetween,
   loadCompleteMapPlaces,
@@ -94,7 +95,7 @@ export function MiniMapContent(): ReactElement {
     `)
 
     setVisiblePlaces(placesAroundPlayerParcel)
-  }, [getPlayerParcel()])
+  }, [getPlayerParcel(), getLoadedMapPlaces()])
 
   return (
     <UiEntity
@@ -210,7 +211,7 @@ function PlayerArrow({ mapSize = 1000 }: { mapSize: number }): ReactElement {
         textureMode: 'stretch',
         uvs: rotateUVs(
           Quaternion.toEulerAngles(Transform.get(engine.CameraEntity).rotation)
-            .y + 90
+            .y
         ),
         texture: {
           src: 'assets/images/MapArrow.png'
@@ -266,7 +267,7 @@ function setVisiblePlaces(places: Place[]) {
 
     Transform.create(labelEntity, {
       parent: placeEntity,
-      position: Vector3.create(0, -20, 0)
+      position: Vector3.create(0, -24, 0)
     })
   })
 }
@@ -277,7 +278,7 @@ function getMinimapCamera(): Entity {
     cameraEntity = engine.addEntity()
     Transform.create(cameraEntity, {
       position: Vector3.create(0, 201, 0),
-      rotation: Quaternion.fromEulerDegrees(90, 0, 90)
+      rotation: Quaternion.fromEulerDegrees(90, 0, 0)
     })
 
     CameraLayer.create(cameraEntity, {
