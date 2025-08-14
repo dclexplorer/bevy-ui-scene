@@ -1,5 +1,15 @@
-import { Coords } from '@dcl/sdk/ecs'
-import { Vector3 } from '@dcl/sdk/math'
+import {
+  CameraLayers,
+  Coords,
+  engine,
+  Entity,
+  Material,
+  MeshRenderer,
+  TextShape,
+  Transform
+} from '@dcl/sdk/ecs'
+import { Quaternion, Vector3 } from '@dcl/sdk/math'
+import { COLOR } from '../components/color-palette'
 
 const state: {
   places: Record<string, any>
@@ -58,7 +68,7 @@ export const fromParcelCoordsToPosition = (
   options?: { parcelSize?: number; height?: number }
 ): { x: number; y: number; z: number } => {
   const size = options?.parcelSize ?? 16 // metros por parcela
-  const height = options?.height ?? 190 // Y fija (altura)
+  const height = options?.height ?? 200 // Y fija (altura)
 
   return Vector3.create(x * size + size / 2, height, y * size + size / 2)
 }

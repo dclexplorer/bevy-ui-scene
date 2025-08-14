@@ -14,7 +14,7 @@ import {
   TextureCamera,
   Transform
 } from '@dcl/sdk/ecs'
-import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
+import { Color3, Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
 import {
   getCanvasScaleRatio,
   getViewportHeight
@@ -35,9 +35,10 @@ import { getPlayerParcel } from '../../service/player-scenes'
 import useState = ReactEcs.useState
 import Icon from '../icon/Icon'
 import { Label } from '@dcl/sdk/react-ecs'
-
-let cameraEntity: Entity = engine.RootEntity
+import { getMapInfoCamera, getMinimapCamera } from './mini-map-camera'
+import { renderVisiblePlaces } from './mini-map-info-entities'
 const MINIMAP_RADIO = 20
+
 export function MiniMapContent(): ReactElement {
   const mapSize = getViewportHeight() * 0.25
   const [parcelsAroundIds, setParcelsAroundIds] = useState<string>('')
@@ -45,11 +46,18 @@ export function MiniMapContent(): ReactElement {
 
   useEffect(() => {
     try {
-      if (cameraEntity === engine.RootEntity) return
+      if (getMinimapCamera() === engine.RootEntity) return
       const playerGlobalTransform = Transform.get(engine.PlayerEntity)
-      const mutableCameraPosition = Transform.getMutable(cameraEntity).position
-      mutableCameraPosition.x = playerGlobalTransform.position.x
-      mutableCameraPosition.z = playerGlobalTransform.position.z
+      const mutableCameraPosition = Transform.getMutable(
+        getMinimapCamera()
+      ).position
+      const mutableInfoCameraPosition = Transform.getMutable(
+        getMapInfoCamera()
+      ).position
+      mutableCameraPosition.x = mutableInfoCameraPosition.x =
+        playerGlobalTransform.position.x
+      mutableCameraPosition.z = mutableInfoCameraPosition.z =
+        playerGlobalTransform.position.z
     } catch (error) {
       console.log(error)
     }
@@ -60,8 +68,7 @@ export function MiniMapContent(): ReactElement {
   }, [])
 
   useEffect(() => {
-    console.log('setVisiblePlaces >>>>>>>>>>>>')
-    setVisiblePlaces(parcelsAround)
+    renderVisiblePlaces(parcelsAround)
   }, [parcelsAroundIds])
 
   useEffect(() => {
@@ -89,7 +96,7 @@ export function MiniMapContent(): ReactElement {
         width: mapSize,
         height: mapSize,
         flexShrink: 0,
-        flexGrow: 1
+        flexGrow: 0
       }}
       uiBackground={{
         textureMode: 'stretch',
@@ -98,6 +105,22 @@ export function MiniMapContent(): ReactElement {
         }
       }}
     >
+      <UiEntity
+        uiTransform={{
+          width: mapSize,
+          height: mapSize,
+          flexShrink: 0,
+          flexGrow: 0,
+          positionType: 'absolute',
+          position: { top: 0, left: 0 }
+        }}
+        uiBackground={{
+          textureMode: 'stretch',
+          videoTexture: {
+            videoPlayerEntity: getMapInfoCamera()
+          }
+        }}
+      />
       <PlayerArrow mapSize={mapSize} />
       {CardinalLabels()}
     </UiEntity>
@@ -187,111 +210,4 @@ function PlayerArrow({ mapSize = 1000 }: { mapSize: number }): ReactElement {
       }}
     />
   )
-}
-const placeEntities: Entity[] = []
-
-function setVisiblePlaces(places: Place[]) {
-  placeEntities.forEach((placeEntity) => engine.removeEntity(placeEntity))
-  // TODO REVIEW: if it makes worth to translate places to 2D symbols, setVisiblePlaces
-  places.forEach((place) => {
-    const placeEntity = engine.addEntity()
-    placeEntities.push(placeEntity)
-
-    const centralParcel = getCentralParcel(place.positions ?? [])
-    const [x, y] = (centralParcel ?? '10,10').split(',').map((s) => Number(s))
-
-    Transform.create(placeEntity, {
-      position: fromParcelCoordsToPosition({ x, y }),
-      rotation: Quaternion.fromEulerDegrees(90, 0, 0)
-    })
-
-    const symbolEntity = engine.addEntity()
-
-    Transform.create(symbolEntity, {
-      parent: placeEntity,
-      scale: Vector3.create(24, 24, 24)
-    })
-
-    MeshRenderer.setPlane(symbolEntity)
-
-    Material.setPbrMaterial(symbolEntity, {
-      emissiveTexture: Material.Texture.Common({
-        src: `assets/images/map/POI.png`
-      }),
-      emissiveColor: COLOR.BLACK,
-      texture: Material.Texture.Common({
-        src: `assets/images/map/POI.png`
-      })
-    })
-
-    const labelEntity = engine.addEntity()
-    TextShape.create(labelEntity, {
-      text: `<b>${place.title}</b>`,
-      fontSize: 250,
-      textColor: COLOR.BLACK,
-      width: 16 * 4,
-      textWrapping: true
-    })
-
-    Transform.create(labelEntity, {
-      parent: placeEntity,
-      position: Vector3.create(0, -24, 0)
-    })
-  })
-}
-const PlaceAssets = {}
-
-function getMinimapCamera(): Entity {
-  if (cameraEntity === engine.RootEntity) {
-    cameraEntity = engine.addEntity()
-    Transform.create(cameraEntity, {
-      position: Vector3.create(0, 201, 0),
-      rotation: Quaternion.fromEulerDegrees(90, 0, 0)
-    })
-
-    CameraLayer.create(cameraEntity, {
-      layer: 0,
-      directionalLight: false,
-      showAvatars: false,
-      showSkybox: false,
-      showFog: false,
-      ambientBrightnessOverride: 5
-    })
-    TextureCamera.create(cameraEntity, {
-      width: 200,
-      height: 200,
-      layer: 0,
-      clearColor: Color4.create(0.4, 0.4, 1.0, 0),
-      mode: {
-        $case: 'orthographic',
-        orthographic: { verticalRange: 300 }
-      },
-      volume: 1
-    })
-  }
-
-  return cameraEntity
-}
-
-function getCentralParcel(parcelStrings: string[]): string | null {
-  if (parcelStrings.length === 0) return null
-
-  // Convertir "x,y" a objetos { x, y }
-  const parcels = parcelStrings.map((str) => {
-    const [x, y] = str.split(',').map(Number)
-    return { x, y }
-  })
-
-  // Calcular centroide
-  const avgX = parcels.reduce((sum, p) => sum + p.x, 0) / parcels.length
-  const avgY = parcels.reduce((sum, p) => sum + p.y, 0) / parcels.length
-
-  // Encontrar la parcela más cercana al centroide
-  const centralParcel = parcels.reduce((closest, p) => {
-    const dist = Math.hypot(p.x - avgX, p.y - avgY)
-    const closestDist = Math.hypot(closest.x - avgX, closest.y - avgY)
-    return dist < closestDist ? p : closest
-  })
-
-  return `${centralParcel.x},${centralParcel.y}`
 }
