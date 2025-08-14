@@ -71,7 +71,7 @@ export const loadCompleteMapPlaces = async () => {
   while (Object.keys(state.places).length < state.totalPlaces) {
     // TODO set ENV zone, org, etc.
     const response = await fetch(
-      `https://places.decentraland.org/api/map?offset=${offset}&limit=${LIMIT}`
+      `https://places.decentraland.org/api/places?offset=${offset}&limit=${LIMIT}&categories=poi`
     ).then((r) => r.json())
     const { data, ok, total } = response
     state.totalPlaces = total
