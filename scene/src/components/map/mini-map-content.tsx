@@ -35,16 +35,14 @@ import { getPlayerParcel } from '../../service/player-scenes'
 import useState = ReactEcs.useState
 import Icon from '../icon/Icon'
 import { Label } from '@dcl/sdk/react-ecs'
+
 let cameraEntity: Entity = engine.RootEntity
 const MINIMAP_RADIO = 20
 export function MiniMapContent(): ReactElement {
   const mapSize = getViewportHeight() * 0.25
-  const [parcelsDescription, setParcelsDescription] =
-    useState<string>('Parcels around:')
+  const [parcelsAroundIds, setParcelsAroundIds] = useState<string>('')
+  const [parcelsAround, setParcelsAround] = useState<Place[]>([])
 
-  useEffect(() => {
-    loadCompleteMapPlaces().catch(console.error)
-  }, [])
   useEffect(() => {
     try {
       if (cameraEntity === engine.RootEntity) return
@@ -56,6 +54,16 @@ export function MiniMapContent(): ReactElement {
       console.log(error)
     }
   })
+
+  useEffect(() => {
+    loadCompleteMapPlaces().catch(console.error)
+  }, [])
+
+  useEffect(() => {
+    console.log('setVisiblePlaces >>>>>>>>>>>>')
+    setVisiblePlaces(parcelsAround)
+  }, [parcelsAroundIds])
+
   useEffect(() => {
     const playerParcel = getPlayerParcel()
     const places = getPlacesBetween(
@@ -69,32 +77,10 @@ export function MiniMapContent(): ReactElement {
       }
     )
     const placesAroundPlayerParcel = getPlacesAroundParcel(playerParcel, 10)
-
-    console.log(
-      'placesAroundPlayerParcel',
-      placesAroundPlayerParcel.length,
-      placesAroundPlayerParcel.map((p) => `${p.title} (${p.base_position})`)
+    setParcelsAroundIds(
+      placesAroundPlayerParcel.map((p) => p.base_position).join(',')
     )
-    console.log(
-      'playerPosition',
-      Math.floor(Transform.get(engine.PlayerEntity).position.x),
-      Math.floor(Transform.get(engine.PlayerEntity).position.z)
-    )
-
-    setParcelsDescription(`Player position: ${Math.floor(
-      Transform.get(engine.PlayerEntity).position.x
-    )},${Math.floor(Transform.get(engine.PlayerEntity).position.z)}
-   
-    ${placesAroundPlayerParcel.map(
-      (p) =>
-        `${p.title} (${p.base_position}) (${JSON.stringify(
-          fromParcelCoordsToPosition(fromStringToCoords(p.base_position))
-        )})\n`
-    )}
-    
-    `)
-
-    setVisiblePlaces(placesAroundPlayerParcel)
+    setParcelsAround(placesAroundPlayerParcel)
   }, [getPlayerParcel(), getLoadedMapPlaces()])
 
   return (
@@ -112,24 +98,6 @@ export function MiniMapContent(): ReactElement {
         }
       }}
     >
-      <UiEntity
-        uiTransform={{
-          margin: { left: '105%' },
-          positionType: 'absolute',
-
-          flexShrink: 0,
-          flexGrow: 0,
-          width: '100%',
-          height: '100%'
-        }}
-        uiText={{
-          value: parcelsDescription,
-          textAlign: 'top-left'
-        }}
-        uiBackground={{
-          color: COLOR.DARK_OPACITY_7
-        }}
-      />
       <PlayerArrow mapSize={mapSize} />
       {CardinalLabels()}
     </UiEntity>
