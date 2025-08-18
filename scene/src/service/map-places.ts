@@ -1,5 +1,6 @@
 import { type Coords } from '@dcl/sdk/ecs'
 import { Vector3 } from '@dcl/sdk/math'
+import { getRealm } from '~system/Runtime'
 
 export type Place = {
   id: string
@@ -73,11 +74,17 @@ export const loadCompleteMapPlaces = async (): Promise<
   let offset = 0
   const LIMIT = 500
   if (state.done) return state.places
-
+  const realm = await getRealm({})
+  const realmBaseUrl = realm?.realmInfo?.baseUrl ?? ''
+  const isZone = realmBaseUrl.includes('.zone')
+  if (realm.realmInfo?.realmName.endsWith('.eth')) {
+    return state.places
+  }
   while (Object.keys(state.places).length < state.totalPlaces) {
-    // TODO REVIEW if to set ENV zone, org, etc.
     const response = await fetch(
-      `https://places.decentraland.org/api/places?offset=${offset}&limit=${LIMIT}&categories=poi`
+      `https://places.decentraland.${
+        isZone ? 'zone' : 'org'
+      }/api/places?offset=${offset}&limit=${LIMIT}&categories=poi`
     ).then(async (r) => await r.json())
     const { data, total } = response
     state.totalPlaces = total
