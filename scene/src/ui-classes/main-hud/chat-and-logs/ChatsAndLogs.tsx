@@ -54,7 +54,7 @@ import {
   updateHudStateAction
 } from '../../../state/hud/actions'
 import { type AppState } from '../../../state/types'
-import { getUserData, UserData } from '~system/UserIdentity'
+import { getUserData, type UserData } from '~system/UserIdentity'
 import { type PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
 import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
