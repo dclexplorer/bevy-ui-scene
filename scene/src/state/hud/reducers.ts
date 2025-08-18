@@ -7,6 +7,8 @@ export function reducer(state: HudState, action: HudActions): HudState {
       return { ...state, ...action.payload }
     case HUD_ACTION.PUSH_POPUP:
       return { ...state, shownPopups: [...state.shownPopups, action.payload] }
+    case HUD_ACTION.UNSHIFT_POPUP:
+      return { ...state, shownPopups: [action.payload, ...state.shownPopups] }
     case HUD_ACTION.CLOSE_LAST_POPUP:
       return {
         ...state,
