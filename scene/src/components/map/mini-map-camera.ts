@@ -7,7 +7,6 @@ import {
 } from '@dcl/sdk/ecs'
 import { Color3, Quaternion, Vector3 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
-import { getViewportHeight } from '../../service/canvas-ratio'
 import { getMapSize } from './mini-map-size'
 
 let cameraEntity: Entity = engine.RootEntity

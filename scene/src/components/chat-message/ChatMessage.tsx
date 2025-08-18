@@ -47,8 +47,7 @@ function ChatMessage(props: {
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
-  const myPlayer = getPlayer()
-  if (myPlayer === null) {
+  if (getPlayer() === null) {
     return null
   }
   const defaultFontSize = getHudFontSize(getViewportHeight()).NORMAL

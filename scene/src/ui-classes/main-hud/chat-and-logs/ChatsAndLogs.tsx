@@ -54,7 +54,6 @@ import {
   updateHudStateAction
 } from '../../../state/hud/actions'
 import { type AppState } from '../../../state/types'
-import { getUserData, type UserData } from '~system/UserIdentity'
 import { type PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
 import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
@@ -62,6 +61,8 @@ import { ChatInput } from './chat-input'
 import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { getPlayersInScene } from '~system/Players'
 import { getHudFontSize } from '../scene-info/SceneInfo'
+import { cleanMapPlaces } from '../../../service/map-places'
+import { fetchProfileData } from '../../../utils/passport-promise-utils'
 
 type Box = {
   position: { x: number; y: number }
@@ -69,7 +70,7 @@ type Box = {
 }
 
 const BUFFER_SIZE = 40
-
+const CHAT_WORLD_REGEXP = /^\/changerealm\s[\w.]+\.eth\s*$/
 const state: {
   mouseX: number
   mouseY: number
@@ -221,8 +222,9 @@ export default class ChatAndLogs {
     if (state.shownMessages.length >= BUFFER_SIZE) {
       state.shownMessages.shift()
     }
+
     const playerData = getPlayer({ userId: message.sender_address })
-    const name = isSystemMessage(message) ? `` : playerData?.name || `Unknown*`
+
     const now = Date.now()
     const timestamp =
       state.shownMessages[state.shownMessages.length - 1]?.timestamp === now
@@ -232,7 +234,7 @@ export default class ChatAndLogs {
     const decoratedChatMessage: ChatMessageRepresentation = {
       ...message,
       timestamp,
-      name,
+      name: isSystemMessage(message) ? `` : playerData?.name || `Unknown*`,
       side:
         message.sender_address === getPlayer()?.userId
           ? CHAT_SIDE.RIGHT
@@ -248,8 +250,6 @@ export default class ChatAndLogs {
     }
     decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
 
-    console.log('decoratedChatMessage', decoratedChatMessage)
-
     if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
       state.newMessages.push(decoratedChatMessage)
     } else {
@@ -257,18 +257,23 @@ export default class ChatAndLogs {
       scrollToBottom()
     }
 
+    if (CHAT_WORLD_REGEXP.test(message.message)) {
+      cleanMapPlaces()
+    }
+
     async function decorateAsyncMessageData(
       message: ChatMessageRepresentation
     ): Promise<void> {
-      const userData = (await getUserData({ userId: message.sender_address }))
-        ?.data
+      const profileData = await fetchProfileData({
+        userId: message.sender_address
+      })
+      const [avatarData] = profileData?.avatars ?? []
+      if (avatarData !== undefined) {
+        message.hasClaimedName = avatarData.hasClaimedName
+        message.name = avatarData.name ?? message.name ?? `Unknown*`
+      }
 
-      // TODO Review why hasClaimedName is not defined in UserData schema but received from server
-      message.hasClaimedName = (
-        userData as UserData & { hasClaimedName?: boolean }
-      )?.hasClaimedName
-      message.name = userData?.displayName ?? message.name ?? `Unknown*`
-      if (message.hasClaimedName === false) {
+      if (!message.hasClaimedName) {
         message.name = message.name + `#${message.sender_address.slice(-4)}`
       }
 

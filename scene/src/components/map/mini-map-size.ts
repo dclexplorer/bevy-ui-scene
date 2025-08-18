@@ -1,3 +1,3 @@
 import { getViewportHeight } from '../../service/canvas-ratio'
 
-export const getMapSize = () => getViewportHeight() * 0.25
+export const getMapSize = (): number => getViewportHeight() * 0.25
