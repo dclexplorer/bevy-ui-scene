@@ -54,7 +54,7 @@ import {
   updateHudStateAction
 } from '../../../state/hud/actions'
 import { type AppState } from '../../../state/types'
-import { getUserData } from '~system/UserIdentity'
+import { getUserData, UserData } from '~system/UserIdentity'
 import { type PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
 import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
@@ -260,10 +260,16 @@ export default class ChatAndLogs {
     async function decorateAsyncMessageData(
       message: ChatMessageRepresentation
     ): Promise<void> {
-      if (!message.name) {
-        message.name =
-          (await getUserData({ userId: message.sender_address }))?.data
-            ?.displayName || `Unknown*`
+      const userData = (await getUserData({ userId: message.sender_address }))
+        ?.data
+
+      // TODO Review why hasClaimedName is not defined in UserData schema but received from server
+      message.hasClaimedName = (
+        userData as UserData & { hasClaimedName?: boolean }
+      )?.hasClaimedName
+      message.name = userData?.displayName ?? message.name ?? `Unknown*`
+      if (message.hasClaimedName === false) {
+        message.name = message.name + `#${message.sender_address.slice(-4)}`
       }
 
       message.mentionedPlayers = {

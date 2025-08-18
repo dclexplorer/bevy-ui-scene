@@ -16,6 +16,7 @@ export enum MESSAGE_TYPE {
 export type ChatMessageRepresentation = ChatMessageDefinition & {
   timestamp: number
   name: string
+  hasClaimedName?: boolean
   side: CHAT_SIDE
   hasMentionToMe: boolean
   isGuest: boolean
