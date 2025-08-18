@@ -25,6 +25,9 @@ import { getViewportHeight } from '../../../service/canvas-ratio'
 import { MiniMapContent } from '../../../components/map/mini-map-content'
 import { memoize } from '../../../utils/function-utils'
 import { type ReactElement } from '@dcl/react-ecs'
+import { COLOR } from '../../../components/color-palette'
+import { updateHudStateAction } from '../../../state/hud/actions'
+import Icon from '../../../components/icon/Icon'
 
 export default class SceneInfo {
   private readonly uiController: UIController
@@ -270,7 +273,7 @@ export default class SceneInfo {
           }}
         >
           {this.SceneInfoHeader()}
-          <MiniMapContent />
+          {store.getState().hud.minimapOpen && <MiniMapContent />}
           <UiEntity
             uiTransform={{
               display: this.isMenuOpen ? 'flex' : 'none',
@@ -464,6 +467,7 @@ export default class SceneInfo {
   SceneInfoHeader(): ReactElement | null {
     const sceneCoords = store.getState().scene.explorerPlayerParcelAction
     if (sceneCoords === undefined) return null
+    const fontSize = this.fontSize
     return (
       <UiEntity
         uiTransform={{
@@ -474,6 +478,61 @@ export default class SceneInfo {
           flexDirection: 'row'
         }}
       >
+        <UiEntity
+          uiTransform={{
+            alignSelf: 'flex-end',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            zIndex: 2,
+            width: fontSize * 2,
+            height: fontSize * 2,
+            position: { top: '-25%' },
+            padding: '3%',
+            borderRadius: 10,
+            borderColor: COLOR.WHITE,
+            borderWidth: 0
+          }}
+          uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
+          onMouseDown={() => {
+            store.dispatch(
+              updateHudStateAction({
+                minimapOpen: !store.getState().hud.minimapOpen
+              })
+            )
+          }}
+        >
+          <Icon
+            uiTransform={{
+              positionType: 'absolute',
+              zIndex: 9,
+              position: { top: -0.15 * fontSize }
+            }}
+            iconColor={COLOR.WHITE}
+            iconSize={fontSize * 1.5}
+            icon={{
+              spriteName: store.getState().hud.minimapOpen
+                ? 'UpArrow'
+                : 'DownArrow',
+              atlasName: 'icons'
+            }}
+          />
+          <Icon
+            uiTransform={{
+              positionType: 'absolute',
+              zIndex: 10,
+              position: { top: 0.15 * fontSize }
+            }}
+            iconColor={COLOR.WHITE}
+            iconSize={fontSize * 1.5}
+            icon={{
+              spriteName: store.getState().hud.minimapOpen
+                ? 'UpArrow'
+                : 'DownArrow',
+              atlasName: 'icons'
+            }}
+          />
+        </UiEntity>
         {/* FOR DEBUG INFO OR MINIMAP */}
         {/* <ButtonIcon
               onMouseDown={() => {

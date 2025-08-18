@@ -198,7 +198,7 @@ export default class ChatAndLogs {
     store.subscribe((action) => {
       if (action.type === VIEWPORT_ACTION.UPDATE_VIEWPORT) {
         state.chatBox.position.x = store.getState().viewport.width * 0.03
-        state.chatBox.position.y = store.getState().viewport.height * 0.2
+        state.chatBox.position.y = store.getState().viewport.height * 0
         state.chatBox.size.x =
           store.getState().viewport.width * 0.26 +
           (state.headerMenuOpen ? store.getState().viewport.width * 0.12 : 0)
@@ -628,7 +628,7 @@ function HeaderArea(): ReactElement {
           zIndex: 2,
           width: fontSize * 2,
           height: fontSize * 2,
-          position: { top: '100%', right: '1%' },
+          position: { top: '50%', right: '1%' },
           padding: '3%',
           borderRadius: 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
@@ -770,7 +770,11 @@ function _getScrollVector(positionY: number): Vector2 {
 }
 
 function getChatMaxHeight(): number {
-  return getViewportHeight() * 0.58
+  if (store.getState().hud.minimapOpen) {
+    return getViewportHeight() * 0.58
+  } else {
+    return getViewportHeight() * 0.83
+  }
 }
 
 function getChatScroll(): Vector2 | null {
