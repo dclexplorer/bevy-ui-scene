@@ -1,25 +1,5 @@
-import {
-  CameraLayers,
-  Coords,
-  engine,
-  Entity,
-  Material,
-  MeshRenderer,
-  TextShape,
-  Transform
-} from '@dcl/sdk/ecs'
-import { Quaternion, Vector3 } from '@dcl/sdk/math'
-import { COLOR } from '../components/color-palette'
-
-const state: {
-  places: Record<string, any>
-  totalPlaces: number
-  done: boolean
-} = {
-  done: false,
-  places: {},
-  totalPlaces: Number.MAX_SAFE_INTEGER
-}
+import { type Coords } from '@dcl/sdk/ecs'
+import { Vector3 } from '@dcl/sdk/math'
 
 export type Place = {
   id: string
@@ -29,7 +9,20 @@ export type Place = {
   [key: string]: any
 }
 
-export const getPlacesAroundParcel = (parcel: Coords, parcelRadius: number) => {
+const state: {
+  places: Record<string, Place>
+  totalPlaces: number
+  done: boolean
+} = {
+  done: false,
+  places: {},
+  totalPlaces: Number.MAX_SAFE_INTEGER
+}
+
+export const getPlacesAroundParcel = (
+  parcel: Coords,
+  parcelRadius: number
+): Place[] => {
   const radiusSq = parcelRadius * parcelRadius
 
   return Object.values(getLoadedMapPlaces()).filter((place: Place) => {
@@ -48,7 +41,7 @@ export const getPlacesBetween = (coords1: Coords, coords2: Coords): Place[] => {
   return Object.keys(state.places)
     .filter((placeKey) => {
       const place = state.places[placeKey]
-      const [x, y] = place.base_position.split(',')
+      const [x, y] = place.base_position.split(',').map((n) => Number(n))
       if (
         x >= coords1.x &&
         x <= coords2.x &&
@@ -57,6 +50,7 @@ export const getPlacesBetween = (coords1: Coords, coords2: Coords): Place[] => {
       ) {
         return true
       }
+      return false
     })
     .map((placeKey) => state.places[placeKey])
 }
@@ -73,17 +67,19 @@ export const fromParcelCoordsToPosition = (
   return Vector3.create(x * size + size / 2, height, y * size + size / 2)
 }
 
-export const loadCompleteMapPlaces = async () => {
+export const loadCompleteMapPlaces = async (): Promise<
+  Record<string, Place>
+> => {
   let offset = 0
   const LIMIT = 500
   if (state.done) return state.places
 
   while (Object.keys(state.places).length < state.totalPlaces) {
-    // TODO set ENV zone, org, etc.
+    // TODO REVIEW if to set ENV zone, org, etc.
     const response = await fetch(
       `https://places.decentraland.org/api/places?offset=${offset}&limit=${LIMIT}&categories=poi`
-    ).then((r) => r.json())
-    const { data, ok, total } = response
+    ).then(async (r) => await r.json())
+    const { data, total } = response
     state.totalPlaces = total
     state.places = { ...state.places, ...data }
     offset += 500
@@ -100,7 +96,7 @@ export const loadCompleteMapPlaces = async () => {
 
   return state.places
 }
-export function fromStringToCoords(str: string) {
+export function fromStringToCoords(str: string): Coords {
   const [x, y] = str.split(',').map((n) => Number(n))
   return { x, y }
 }

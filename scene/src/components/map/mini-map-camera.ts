@@ -1,7 +1,7 @@
 import {
   CameraLayer,
   engine,
-  Entity,
+  type Entity,
   TextureCamera,
   Transform
 } from '@dcl/sdk/ecs'

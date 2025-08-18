@@ -1,20 +1,7 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import useEffect = ReactEcs.useEffect
-import {
-  Billboard,
-  BillboardMode,
-  CameraLayer,
-  CameraLayers,
-  engine,
-  type Entity,
-  Material,
-  MeshRenderer,
-  TextShape,
-  Texture,
-  TextureCamera,
-  Transform
-} from '@dcl/sdk/ecs'
-import { Color3, Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
+import { engine, Transform } from '@dcl/sdk/ecs'
+import { Quaternion } from '@dcl/sdk/math'
 import {
   getCanvasScaleRatio,
   getViewportHeight
@@ -23,21 +10,15 @@ import { rotateUVs } from '../../utils/ui-utils'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { COLOR } from '../color-palette'
 import {
-  fromParcelCoordsToPosition,
-  fromStringToCoords,
   getLoadedMapPlaces,
   getPlacesAroundParcel,
-  getPlacesBetween,
   loadCompleteMapPlaces,
-  Place
+  type Place
 } from '../../service/map-places'
 import { getPlayerParcel } from '../../service/player-scenes'
 import useState = ReactEcs.useState
-import Icon from '../icon/Icon'
-import { Label } from '@dcl/sdk/react-ecs'
 import { getMapInfoCamera, getMinimapCamera } from './mini-map-camera'
 import { renderVisiblePlaces } from './mini-map-info-entities'
-const MINIMAP_RADIO = 20
 
 export function MiniMapContent(): ReactElement {
   const mapSize = getViewportHeight() * 0.25
@@ -73,16 +54,6 @@ export function MiniMapContent(): ReactElement {
 
   useEffect(() => {
     const playerParcel = getPlayerParcel()
-    const places = getPlacesBetween(
-      {
-        x: playerParcel.x - MINIMAP_RADIO,
-        y: playerParcel.y - MINIMAP_RADIO
-      },
-      {
-        x: playerParcel.x + MINIMAP_RADIO,
-        y: playerParcel.y + MINIMAP_RADIO
-      }
-    )
     const placesAroundPlayerParcel = getPlacesAroundParcel(playerParcel, 10)
     setParcelsAroundIds(
       placesAroundPlayerParcel.map((p) => p.base_position).join(',')

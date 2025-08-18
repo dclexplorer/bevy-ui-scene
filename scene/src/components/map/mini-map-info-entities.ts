@@ -1,7 +1,7 @@
 import {
   CameraLayers,
   engine,
-  Entity,
+  type Entity,
   Material,
   MeshRenderer,
   TextShape,
@@ -9,7 +9,10 @@ import {
 } from '@dcl/sdk/ecs'
 import { Quaternion, Vector3 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
-import { fromParcelCoordsToPosition, Place } from '../../service/map-places'
+import {
+  fromParcelCoordsToPosition,
+  type Place
+} from '../../service/map-places'
 
 const placeEntities: Entity[] = []
 const infoEntity: Entity = engine.addEntity()
@@ -18,8 +21,10 @@ CameraLayers.create(infoEntity, {
   layers: [10]
 })
 
-export function renderVisiblePlaces(places: Place[]) {
-  placeEntities.forEach((placeEntity) => engine.removeEntity(placeEntity))
+export function renderVisiblePlaces(places: Place[]): void {
+  placeEntities.forEach((placeEntity) => {
+    engine.removeEntity(placeEntity)
+  })
   // TODO REVIEW: if it makes worth to translate places to 2D symbols, setVisiblePlaces
 
   places.forEach((place) => {

@@ -28,8 +28,6 @@ import { BevyApi } from '../../../bevy-api'
 import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
 import {
-  AvatarModifierArea,
-  AvatarModifierType,
   engine,
   executeTask,
   PointerLock,
@@ -40,7 +38,6 @@ import useState = ReactEcs.useState
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { focusChatInput } from '../chat-and-logs/ChatsAndLogs'
 import { sleep } from '../../../utils/dcl-utils'
-import { getAvatarCamera } from '../../../components/backpack/AvatarPreview'
 
 export function setupProfilePopups(): void {
   const avatarTracker = createOrGetAvatarsTracker()

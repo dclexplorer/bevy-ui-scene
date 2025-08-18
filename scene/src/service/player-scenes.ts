@@ -1,4 +1,4 @@
-import { Transform, engine, Coords } from '@dcl/sdk/ecs'
+import { Transform, engine, type Coords } from '@dcl/sdk/ecs'
 import { BevyApi } from '../bevy-api'
 import { type LiveSceneInfo } from '../bevy-api/interface'
 const state: {
