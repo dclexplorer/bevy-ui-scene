@@ -68,6 +68,10 @@ export const fromParcelCoordsToPosition = (
   return Vector3.create(x * size + size / 2, height, y * size + size / 2)
 }
 
+export const cleanMapPlaces = () => {
+  state.places = {}
+}
+
 export const loadCompleteMapPlaces = async (): Promise<
   Record<string, Place>
 > => {

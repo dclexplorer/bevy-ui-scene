@@ -7,6 +7,8 @@ import {
 } from '@dcl/sdk/ecs'
 import { Color3, Quaternion, Vector3 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
+import { getViewportHeight } from '../../service/canvas-ratio'
+import { getMapSize } from './mini-map-size'
 
 let cameraEntity: Entity = engine.RootEntity
 let infoCameraEntity: Entity = engine.RootEntity
@@ -62,10 +64,10 @@ export function getMinimapCamera(): Entity {
       ambientBrightnessOverride: 5,
       ambientColorOverride: Color3.White()
     })
-
+    const mapSize = getMapSize()
     TextureCamera.create(cameraEntity, {
-      width: 400,
-      height: 400,
+      width: mapSize,
+      height: mapSize,
       layer: 0,
       mode: {
         $case: 'orthographic',

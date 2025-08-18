@@ -17,11 +17,13 @@ import {
 } from '../../service/map-places'
 import { getPlayerParcel } from '../../service/player-scenes'
 import useState = ReactEcs.useState
+
 import { getMapInfoCamera, getMinimapCamera } from './mini-map-camera'
 import { renderVisiblePlaces } from './mini-map-info-entities'
+import { getMapSize } from './mini-map-size'
 
 export function MiniMapContent(): ReactElement {
-  const mapSize = getViewportHeight() * 0.25
+  const mapSize = getMapSize()
   const [parcelsAroundIds, setParcelsAroundIds] = useState<string>('')
   const [parcelsAround, setParcelsAround] = useState<Place[]>([])
 
@@ -58,6 +60,7 @@ export function MiniMapContent(): ReactElement {
     setParcelsAroundIds(
       placesAroundPlayerParcel.map((p) => p.base_position).join(',')
     )
+
     setParcelsAround(placesAroundPlayerParcel)
   }, [getPlayerParcel(), getLoadedMapPlaces()])
 

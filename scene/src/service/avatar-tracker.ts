@@ -88,7 +88,7 @@ export const createOrGetAvatarsTracker = (): {
       pointerEventsSystem.removeOnPointerDown(proxy)
       pointerEventsSystem.removeOnPointerHoverEnter(proxy)
       pointerEventsSystem.removeOnPointerHoverLeave(proxy)
-      engine.removeEntity(proxy)
+      engine.removeEntityWithChildren(proxy)
 
       avatarProxies.delete(userId)
     }

@@ -132,9 +132,9 @@ export const initOutfitsCatalog = async (): Promise<void> => {
 }
 
 export function disposeOutfitsCatalog(): void {
-  engine.removeEntity(catalogEntities.camera)
+  engine.removeEntityWithChildren(catalogEntities.camera)
   SLOTS.forEach((_, index) => {
-    engine.removeEntity(catalogEntities.avatars[index])
+    engine.removeEntityWithChildren(catalogEntities.avatars[index])
   })
 }
 

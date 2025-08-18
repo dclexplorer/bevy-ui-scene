@@ -23,7 +23,7 @@ CameraLayers.create(infoEntity, {
 
 export function renderVisiblePlaces(places: Place[]): void {
   placeEntities.forEach((placeEntity) => {
-    engine.removeEntity(placeEntity)
+    engine.removeEntityWithChildren(placeEntity)
   })
   // TODO REVIEW: if it makes worth to translate places to 2D symbols, setVisiblePlaces
 
