@@ -4,6 +4,7 @@ import {
   type Entity,
   Material,
   MeshRenderer,
+  TextAlignMode,
   TextShape,
   Transform
 } from '@dcl/sdk/ecs'
@@ -13,6 +14,7 @@ import {
   fromParcelCoordsToPosition,
   type Place
 } from '../../service/map-places'
+import { wrapText } from './mini-map-label-text'
 
 const placeEntities: Entity[] = []
 const infoEntity: Entity = engine.addEntity()
@@ -23,10 +25,13 @@ CameraLayers.create(infoEntity, {
 
 export function applyRotation(dg: number) {
   placeEntities.forEach((entity) => {
-    Object.assign(
-      Transform.getMutable(entity).rotation,
-      Quaternion.fromEulerDegrees(90, dg, 0)
-    )
+    const placeEntityTransform = Transform.getMutableOrNull(entity)
+    if (placeEntityTransform) {
+      Object.assign(
+        placeEntityTransform.rotation,
+        Quaternion.fromEulerDegrees(90, dg, 0)
+      )
+    }
   })
 }
 
@@ -42,7 +47,13 @@ export function renderVisiblePlaces(places: Place[]): void {
 
     const centralParcel = getCentralParcel(place.positions ?? [])
     const [x, y] = (centralParcel ?? '10,10').split(',').map((s) => Number(s))
-
+    const wrappedText = wrapText(place.title)
+    const linesMaxChars = wrappedText
+      .split('\n')
+      .reduce(
+        (acc, currentValue: string) => Math.max(acc, currentValue.length),
+        0
+      )
     Transform.create(placeEntity, {
       position: fromParcelCoordsToPosition({ x, y }),
       rotation: Quaternion.fromEulerDegrees(90, 0, 0),
@@ -71,17 +82,29 @@ export function renderVisiblePlaces(places: Place[]): void {
 
     const labelEntity = engine.addEntity()
     TextShape.create(labelEntity, {
-      text: `<b>${place.title}</b>`,
+      text: `<b>${wrappedText}</b>`,
       fontSize: 250,
       textColor: COLOR.WHITE,
-      outlineWidth: 20,
-      width: 16 * 4,
-      textWrapping: true
+      textAlign: TextAlignMode.TAM_TOP_CENTER
     })
 
     Transform.create(labelEntity, {
       parent: placeEntity,
-      position: Vector3.create(0, -24, 0)
+      position: Vector3.create(0, -12, 0)
+    })
+
+    const shadowBoxEntity = engine.addEntity()
+
+    MeshRenderer.setPlane(shadowBoxEntity)
+    const textHeight = wrappedText.split('\n').length * 24
+    Transform.create(shadowBoxEntity, {
+      parent: labelEntity,
+      position: Vector3.create(0, -textHeight / 2, 0),
+      scale: Vector3.create(linesMaxChars * 10 + 4, textHeight, 10)
+    })
+    Material.setBasicMaterial(shadowBoxEntity, {
+      diffuseColor: COLOR.DARK_OPACITY_2,
+      castShadows: false
     })
   })
 }
