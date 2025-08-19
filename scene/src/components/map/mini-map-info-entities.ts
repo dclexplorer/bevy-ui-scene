@@ -21,6 +21,15 @@ CameraLayers.create(infoEntity, {
   layers: [10]
 })
 
+export function applyRotation(dg: number) {
+  placeEntities.forEach((entity) => {
+    Object.assign(
+      Transform.getMutable(entity).rotation,
+      Quaternion.fromEulerDegrees(90, dg, 0)
+    )
+  })
+}
+
 export function renderVisiblePlaces(places: Place[]): void {
   placeEntities.forEach((placeEntity) => {
     engine.removeEntityWithChildren(placeEntity)
