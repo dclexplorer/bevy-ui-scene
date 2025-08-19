@@ -15,6 +15,7 @@ import {
   type Place
 } from '../../service/map-places'
 import { wrapText } from './mini-map-label-text'
+import { sleep } from '../../utils/dcl-utils'
 
 const placeEntities: Entity[] = []
 const infoEntity: Entity = engine.addEntity()
@@ -39,7 +40,7 @@ export function renderVisiblePlaces(places: Place[]): void {
   placeEntities.forEach((placeEntity) => {
     engine.removeEntityWithChildren(placeEntity)
   })
-  // TODO REVIEW: if it makes worth to translate places to 2D symbols, setVisiblePlaces
+  placeEntities.splice(0, placeEntities.length)
 
   places.forEach((place) => {
     const placeEntity = engine.addEntity()
@@ -54,6 +55,7 @@ export function renderVisiblePlaces(places: Place[]): void {
         (acc, currentValue: string) => Math.max(acc, currentValue.length),
         0
       )
+
     Transform.create(placeEntity, {
       position: fromParcelCoordsToPosition({ x, y }),
       rotation: Quaternion.fromEulerDegrees(90, 0, 0),
