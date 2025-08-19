@@ -21,6 +21,7 @@ import useState = ReactEcs.useState
 import { getMapInfoCamera, getMinimapCamera } from './mini-map-camera'
 import { renderVisiblePlaces } from './mini-map-info-entities'
 import { getMapSize } from './mini-map-size'
+import { getCardinalLabelPositions } from './mini-map-cardinals'
 
 export function MiniMapContent(): ReactElement {
   const mapSize = getMapSize()
@@ -117,6 +118,11 @@ export function MiniMapContent(): ReactElement {
 }
 
 function CardinalLabels(): ReactElement[] {
+  const labelPositions = getCardinalLabelPositions(
+    getMapSize(),
+    -Quaternion.toEulerAngles(Transform.get(engine.CameraEntity).rotation).y,
+    0
+  )
   const fontSize = getHudFontSize(getViewportHeight()).BIG
   return [
     <UiEntity
@@ -129,7 +135,10 @@ function CardinalLabels(): ReactElement[] {
       }}
       uiTransform={{
         positionType: 'absolute',
-        position: { top: '-4%', left: '44%' }
+        position: {
+          top: labelPositions.N.y - fontSize,
+          left: labelPositions.N.x - fontSize
+        }
       }}
     />,
     <UiEntity
@@ -142,7 +151,10 @@ function CardinalLabels(): ReactElement[] {
       }}
       uiTransform={{
         positionType: 'absolute',
-        position: { top: '40%', left: '86%' }
+        position: {
+          top: labelPositions.E.y - fontSize,
+          left: labelPositions.E.x - fontSize
+        }
       }}
     />,
     <UiEntity
@@ -155,7 +167,10 @@ function CardinalLabels(): ReactElement[] {
       }}
       uiTransform={{
         positionType: 'absolute',
-        position: { bottom: '-3%', left: '44%' }
+        position: {
+          top: labelPositions.S.y - fontSize,
+          left: labelPositions.S.x - fontSize
+        }
       }}
     />,
     <UiEntity
@@ -168,7 +183,10 @@ function CardinalLabels(): ReactElement[] {
       }}
       uiTransform={{
         positionType: 'absolute',
-        position: { top: '40%', left: 0 }
+        position: {
+          top: labelPositions.W.y - fontSize,
+          left: labelPositions.W.x - fontSize
+        }
       }}
     />
   ]
@@ -191,7 +209,10 @@ function PlayerArrow({ mapSize = 1000 }: { mapSize: number }): ReactElement {
         textureMode: 'stretch',
         uvs: rotateUVs(
           Quaternion.toEulerAngles(Transform.get(engine.PlayerEntity).rotation)
-            .y
+            .y -
+            Quaternion.toEulerAngles(
+              Transform.get(engine.CameraEntity).rotation
+            ).y
         ),
         texture: {
           src: 'assets/images/MapArrow.png'
