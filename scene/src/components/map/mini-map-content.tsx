@@ -117,14 +117,14 @@ export function MiniMapContent(): ReactElement {
   )
 }
 
-function CardinalLabels(): ReactElement[] {
+function CardinalLabels(): ReactElement {
   const labelPositions = getCardinalLabelPositions(
     getMapSize(),
     -Quaternion.toEulerAngles(Transform.get(engine.CameraEntity).rotation).y,
     0
   )
-  const fontSize = getHudFontSize(getViewportHeight()).BIG
-  return [
+  const fontSize = getHudFontSize(getViewportHeight()).NORMAL
+  return (
     <UiEntity
       uiText={{
         value: 'N',
@@ -138,58 +138,17 @@ function CardinalLabels(): ReactElement[] {
         position: {
           top: labelPositions.N.y - fontSize,
           left: labelPositions.N.x - fontSize
-        }
+        },
+        borderRadius: 99,
+        borderWidth: 0,
+
+        borderColor: COLOR.BLACK_TRANSPARENT
       }}
-    />,
-    <UiEntity
-      uiText={{
-        value: 'E',
-        fontSize,
-        textAlign: 'middle-center',
-        outlineColor: COLOR.TEXT_COLOR,
-        outlineWidth: fontSize / 10
-      }}
-      uiTransform={{
-        positionType: 'absolute',
-        position: {
-          top: labelPositions.E.y - fontSize,
-          left: labelPositions.E.x - fontSize
-        }
-      }}
-    />,
-    <UiEntity
-      uiText={{
-        value: 'S',
-        fontSize,
-        textAlign: 'middle-center',
-        outlineColor: COLOR.TEXT_COLOR,
-        outlineWidth: fontSize / 10
-      }}
-      uiTransform={{
-        positionType: 'absolute',
-        position: {
-          top: labelPositions.S.y - fontSize,
-          left: labelPositions.S.x - fontSize
-        }
-      }}
-    />,
-    <UiEntity
-      uiText={{
-        value: 'W',
-        fontSize,
-        textAlign: 'middle-center',
-        outlineColor: COLOR.TEXT_COLOR,
-        outlineWidth: fontSize / 10
-      }}
-      uiTransform={{
-        positionType: 'absolute',
-        position: {
-          top: labelPositions.W.y - fontSize,
-          left: labelPositions.W.x - fontSize
-        }
+      uiBackground={{
+        color: COLOR.BLACK
       }}
     />
-  ]
+  )
 }
 function PlayerArrow({ mapSize = 1000 }: { mapSize: number }): ReactElement {
   const ARROW_SIZE = getCanvasScaleRatio() * 50
