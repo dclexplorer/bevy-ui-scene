@@ -28,19 +28,34 @@ export function MiniMapContent(): ReactElement {
   const [parcelsAround, setParcelsAround] = useState<Place[]>([])
 
   useEffect(() => {
+    // TODO review if it makes sense to execute with less FPS to avoid calculations
     try {
       if (getMinimapCamera() === engine.RootEntity) return
       const playerGlobalTransform = Transform.get(engine.PlayerEntity)
-      const mutableCameraPosition = Transform.getMutable(
-        getMinimapCamera()
-      ).position
-      const mutableInfoCameraPosition = Transform.getMutable(
+      const minimapCameraTransform = Transform.getMutable(getMinimapCamera())
+
+      const mutableCameraPosition = minimapCameraTransform.position
+      const mutableInfoCameraTransform = Transform.getMutable(
         getMapInfoCamera()
-      ).position
+      )
+      const mutableInfoCameraPosition = mutableInfoCameraTransform.position
       mutableCameraPosition.x = mutableInfoCameraPosition.x =
         playerGlobalTransform.position.x
       mutableCameraPosition.z = mutableInfoCameraPosition.z =
         playerGlobalTransform.position.z
+
+      const cameraRotation = Quaternion.toEulerAngles(
+        Transform.get(engine.CameraEntity).rotation
+      )
+
+      Object.assign(
+        minimapCameraTransform.rotation,
+        Quaternion.fromEulerDegrees(90, cameraRotation.y, 0)
+      )
+      Object.assign(
+        mutableInfoCameraTransform.rotation,
+        Quaternion.fromEulerDegrees(90, cameraRotation.y, 0)
+      )
     } catch (error) {
       console.log(error)
     }
@@ -175,7 +190,7 @@ function PlayerArrow({ mapSize = 1000 }: { mapSize: number }): ReactElement {
       uiBackground={{
         textureMode: 'stretch',
         uvs: rotateUVs(
-          Quaternion.toEulerAngles(Transform.get(engine.CameraEntity).rotation)
+          Quaternion.toEulerAngles(Transform.get(engine.PlayerEntity).rotation)
             .y
         ),
         texture: {
