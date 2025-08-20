@@ -23,9 +23,18 @@ import {
   getMapInfoCamera,
   getMinimapCamera
 } from './mini-map-camera'
-import { applyRotation, renderVisiblePlaces } from './mini-map-info-entities'
+import {
+  applyRotation,
+  renderMinimapPlayers,
+  renderVisiblePlaces,
+  updatePlayerSymbolPositions
+} from './mini-map-info-entities'
 import { getMapSize } from './mini-map-size'
 import { getCardinalLabelPositions } from './mini-map-cardinals'
+import {
+  createOrGetAvatarsTracker,
+  getPlayerAvatarEntities
+} from '../../service/avatar-tracker'
 
 export function MiniMapContent(): ReactElement {
   const mapSize = getMapSize()
@@ -64,10 +73,22 @@ export function MiniMapContent(): ReactElement {
     } catch (error) {
       console.log(error)
     }
+    if (Date.now() % 3 === 0) {
+      updatePlayerSymbolPositions()
+    }
   })
 
   useEffect(() => {
     loadCompleteMapPlaces().catch(console.error)
+    renderMinimapPlayers(getPlayerAvatarEntities())
+    const avatarTracker = createOrGetAvatarsTracker()
+
+    avatarTracker.onEnterScene((userId) =>
+      renderMinimapPlayers(getPlayerAvatarEntities())
+    )
+    avatarTracker.onLeaveScene((userId) =>
+      renderMinimapPlayers(getPlayerAvatarEntities())
+    )
   }, [])
 
   useEffect(() => {

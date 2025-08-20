@@ -14,6 +14,7 @@ import {
   type PBPlayerIdentityData
 } from '@dcl/ecs/dist/components'
 import { type TransformType } from '@dcl/ecs'
+import { nameAddressMap } from './chat-members'
 
 type GetPlayerDataRes = {
   entity: Entity
@@ -26,20 +27,31 @@ type GetPlayerDataRes = {
   forceRender: PBAvatarEquippedData['forceRender']
   position: TransformType['position'] | undefined
 }
-
-export const createOrGetAvatarsTracker = (): {
-  onClick: (fn: (userId: string) => void) => () => void
-  onMouseOver: (fn: (userId: string) => void) => () => void
-  onMouseLeave: (fn: (userId: string) => void) => () => void
+export type UserIdCallback = (userId: string) => void
+export type UnListenFn = () => void
+export type AvatarTracker = {
+  onClick: (fn: UserIdCallback) => UnListenFn
+  onMouseOver: (fn: UserIdCallback) => UnListenFn
+  onMouseLeave: (fn: UserIdCallback) => UnListenFn
+  onEnterScene: (fn: UserIdCallback) => UnListenFn
+  onLeaveScene: (fn: UserIdCallback) => UnListenFn
   dispose: () => void
-} => {
+}
+
+let avatarTracker: AvatarTracker
+
+export const createOrGetAvatarsTracker = (): AvatarTracker => {
+  if (avatarTracker) return avatarTracker
+
   const callbacks: Record<string, Array<(userId: string) => void>> = {
     onClick: [],
     onMouseOver: [],
-    onMouseLeave: []
+    onMouseLeave: [],
+    onEnterScene: [],
+    onLeaveScene: []
   }
-
   const avatarProxies = new Map<string, Entity>()
+
   for (const [playerEntity, data] of engine.getEntitiesWith(
     PlayerIdentityData
   )) {
@@ -78,11 +90,12 @@ export const createOrGetAvatarsTracker = (): {
       )
       avatarProxies.set(player.userId, proxy)
     }
+    callbacks.onEnterScene.forEach((fn) => fn(player.userId))
   })
 
-  onLeaveScene(disposeAvatarProxy)
+  onLeaveScene(onLeaveSceneCallback)
 
-  function disposeAvatarProxy(userId: string): void {
+  function onLeaveSceneCallback(userId: string): void {
     const proxy = avatarProxies.get(userId)
     if (proxy) {
       pointerEventsSystem.removeOnPointerDown(proxy)
@@ -92,6 +105,7 @@ export const createOrGetAvatarsTracker = (): {
 
       avatarProxies.delete(userId)
     }
+    callbacks.onLeaveScene.forEach((fn) => fn(userId))
   }
 
   let timer = 0
@@ -108,16 +122,29 @@ export const createOrGetAvatarsTracker = (): {
     }
   })
 
-  return {
+  avatarTracker = {
     onClick,
     onMouseOver,
     onMouseLeave,
-    dispose
+    dispose,
+    onEnterScene: (fn: UserIdCallback) => {
+      callbacks.onEnterScene.push(fn)
+      return () => {
+        callbacks.onEnterScene = callbacks.onEnterScene.filter((f) => f !== fn)
+      }
+    },
+    onLeaveScene: (fn: UserIdCallback) => {
+      callbacks.onLeaveScene.push(fn)
+      return () => {
+        callbacks.onLeaveScene = callbacks.onLeaveScene.filter((f) => f !== fn)
+      }
+    }
   }
+  return avatarTracker
 
   function dispose(): void {
     ;[...avatarProxies.keys()].forEach((userId) => {
-      disposeAvatarProxy(userId)
+      onLeaveSceneCallback(userId)
     })
     callbacks.onClick = callbacks.onMouseOver = callbacks.onMouseLeave = []
   }
@@ -187,4 +214,14 @@ export const createOrGetAvatarsTracker = (): {
 
     return playerEntity
   }
+}
+
+export function getPlayerAvatarEntities(includeSelf?: boolean) {
+  const entities = []
+  for (const [entity, data] of engine.getEntitiesWith(PlayerIdentityData)) {
+    if (includeSelf || data.address !== getPlayer()?.userId) {
+      entities.push(entity)
+    }
+  }
+  return entities
 }

@@ -17,8 +17,18 @@ import {
 import { wrapText } from './mini-map-label-text'
 
 const placeEntities: Entity[] = []
-const infoEntity: Entity = engine.addEntity()
+const avatarSymbolEntities: {
+  avatarSymbolEntity: Entity
+  playerEntity: Entity
+}[] = []
 
+const infoEntity: Entity = engine.addEntity()
+const PLAYER_SYMBOL_SIZE = 16
+const POI_SYMBOL_SIZE = 24
+const MAP_PLAYER_SRC = `assets/images/map/MapPlayer.png`
+const POI_SRC = `assets/images/map/POI.png`
+const MAP_LABEL_FONTSIZE = 250
+const MAP_LABEL_Y_OFFSET = -12
 CameraLayers.create(infoEntity, {
   layers: [10]
 })
@@ -32,6 +42,55 @@ export function applyRotation(dg: number): void {
         Quaternion.fromEulerDegrees(90, dg, 0)
       )
     }
+  })
+}
+
+export function updatePlayerSymbolPositions() {
+  avatarSymbolEntities.forEach(({ avatarSymbolEntity, playerEntity }): void => {
+    const playerEntityTransform = Transform.getOrNull(playerEntity)
+    const mutableAvatarSymbolTransform =
+      Transform.getMutableOrNull(avatarSymbolEntity)
+    if (!playerEntityTransform || !mutableAvatarSymbolTransform) return
+    mutableAvatarSymbolTransform.position.x = playerEntityTransform.position.x
+    mutableAvatarSymbolTransform.position.z = playerEntityTransform.position.z
+  })
+}
+
+export function renderMinimapPlayers(playerEntities: Entity[]) {
+  avatarSymbolEntities.forEach((avatarEntities) => {
+    engine.removeEntityWithChildren(avatarEntities.avatarSymbolEntity)
+  })
+  avatarSymbolEntities.splice(0, avatarSymbolEntities.length)
+
+  playerEntities.forEach((playerEntity: Entity, index): void => {
+    const avatarSymbolEntity = engine.addEntity()
+    avatarSymbolEntities.push({ avatarSymbolEntity, playerEntity })
+    const playerEntityTransform = Transform.getMutableOrNull(playerEntity)
+    Transform.create(avatarSymbolEntity, {
+      position: Vector3.create(
+        playerEntityTransform?.position.x,
+        201 + index,
+        playerEntityTransform?.position.z
+      ),
+      scale: Vector3.create(
+        PLAYER_SYMBOL_SIZE,
+        PLAYER_SYMBOL_SIZE,
+        PLAYER_SYMBOL_SIZE
+      ),
+      rotation: Quaternion.fromEulerDegrees(90, 0, 0),
+      parent: infoEntity
+    })
+    MeshRenderer.setPlane(avatarSymbolEntity)
+    Material.setPbrMaterial(avatarSymbolEntity, {
+      emissiveTexture: Material.Texture.Common({
+        src: MAP_PLAYER_SRC
+      }),
+      emissiveColor: COLOR.BLACK,
+      texture: Material.Texture.Common({
+        src: MAP_PLAYER_SRC
+      }),
+      alphaTest: 1
+    })
   })
 }
 
@@ -65,18 +124,18 @@ export function renderVisiblePlaces(places: Place[]): void {
 
     Transform.create(symbolEntity, {
       parent: placeEntity,
-      scale: Vector3.create(24, 24, 24)
+      scale: Vector3.create(POI_SYMBOL_SIZE, POI_SYMBOL_SIZE, POI_SYMBOL_SIZE)
     })
 
     MeshRenderer.setPlane(symbolEntity)
 
     Material.setPbrMaterial(symbolEntity, {
       emissiveTexture: Material.Texture.Common({
-        src: `assets/images/map/POI.png`
+        src: POI_SRC
       }),
       emissiveColor: COLOR.BLACK,
       texture: Material.Texture.Common({
-        src: `assets/images/map/POI.png`
+        src: POI_SRC
       }),
       alphaTest: 1
     })
@@ -84,14 +143,14 @@ export function renderVisiblePlaces(places: Place[]): void {
     const labelEntity = engine.addEntity()
     TextShape.create(labelEntity, {
       text: `<b>${wrappedText}</b>`,
-      fontSize: 250,
+      fontSize: MAP_LABEL_FONTSIZE,
       textColor: COLOR.WHITE,
       textAlign: TextAlignMode.TAM_TOP_CENTER
     })
 
     Transform.create(labelEntity, {
       parent: placeEntity,
-      position: Vector3.create(0, -12, 0)
+      position: Vector3.create(0, MAP_LABEL_Y_OFFSET, 0)
     })
 
     const shadowBoxEntity = engine.addEntity()
