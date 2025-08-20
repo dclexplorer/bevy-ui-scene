@@ -45,13 +45,13 @@ export function getMapInfoCamera(): Entity {
 
   return infoCameraEntity
 }
-
+export const CAMERA_X_ANGLE = 89.9
 export function getMinimapCamera(): Entity {
   if (cameraEntity === engine.RootEntity) {
     cameraEntity = engine.addEntity()
     Transform.create(cameraEntity, {
       position: Vector3.create(0, 201, 0),
-      rotation: Quaternion.fromEulerDegrees(90, 0, 0)
+      rotation: Quaternion.fromEulerDegrees(CAMERA_X_ANGLE, 0, 0)
     })
 
     CameraLayer.create(cameraEntity, {

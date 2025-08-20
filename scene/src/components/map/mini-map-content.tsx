@@ -18,7 +18,11 @@ import {
 import { getPlayerParcel } from '../../service/player-scenes'
 import useState = ReactEcs.useState
 
-import { getMapInfoCamera, getMinimapCamera } from './mini-map-camera'
+import {
+  CAMERA_X_ANGLE,
+  getMapInfoCamera,
+  getMinimapCamera
+} from './mini-map-camera'
 import { applyRotation, renderVisiblePlaces } from './mini-map-info-entities'
 import { getMapSize } from './mini-map-size'
 import { getCardinalLabelPositions } from './mini-map-cardinals'
@@ -51,11 +55,11 @@ export function MiniMapContent(): ReactElement {
 
       Object.assign(
         minimapCameraTransform.rotation,
-        Quaternion.fromEulerDegrees(90, cameraRotation.y, 0)
+        Quaternion.fromEulerDegrees(CAMERA_X_ANGLE, cameraRotation.y, 0)
       )
       Object.assign(
         mutableInfoCameraTransform.rotation,
-        Quaternion.fromEulerDegrees(90, cameraRotation.y, 0)
+        Quaternion.fromEulerDegrees(CAMERA_X_ANGLE, cameraRotation.y, 0)
       )
       applyRotation(cameraRotation.y)
     } catch (error) {
