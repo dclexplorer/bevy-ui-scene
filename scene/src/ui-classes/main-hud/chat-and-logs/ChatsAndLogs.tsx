@@ -815,7 +815,7 @@ export function messageHasMentionToMe(message: string): boolean {
 async function getMentionedPlayersFromMessage(
   message: string
 ): Promise<Record<string, GetPlayerDataRes>> {
-  //TODO getPlayersInScene is deprecated, must use entities with component PlayerIdentityData instead
+  // TODO getPlayersInScene is deprecated, must use entities with component PlayerIdentityData instead
   const playersInScene = (await getPlayersInScene({})).players
 
   playersInScene.forEach((player) => {

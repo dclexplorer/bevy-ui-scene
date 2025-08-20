@@ -83,12 +83,12 @@ export function MiniMapContent(): ReactElement {
     renderMinimapPlayers(getPlayerAvatarEntities())
     const avatarTracker = createOrGetAvatarsTracker()
 
-    avatarTracker.onEnterScene((userId) =>
+    avatarTracker.onEnterScene((userId) => {
       renderMinimapPlayers(getPlayerAvatarEntities())
-    )
-    avatarTracker.onLeaveScene((userId) =>
+    })
+    avatarTracker.onLeaveScene((userId) => {
       renderMinimapPlayers(getPlayerAvatarEntities())
-    )
+    })
   }, [])
 
   useEffect(() => {

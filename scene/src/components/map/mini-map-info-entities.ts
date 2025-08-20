@@ -17,10 +17,10 @@ import {
 import { wrapText } from './mini-map-label-text'
 
 const placeEntities: Entity[] = []
-const avatarSymbolEntities: {
+const avatarSymbolEntities: Array<{
   avatarSymbolEntity: Entity
   playerEntity: Entity
-}[] = []
+}> = []
 
 const infoEntity: Entity = engine.addEntity()
 const PLAYER_SYMBOL_SIZE = 16
@@ -45,7 +45,7 @@ export function applyRotation(dg: number): void {
   })
 }
 
-export function updatePlayerSymbolPositions() {
+export function updatePlayerSymbolPositions(): void {
   avatarSymbolEntities.forEach(({ avatarSymbolEntity, playerEntity }): void => {
     const playerEntityTransform = Transform.getOrNull(playerEntity)
     const mutableAvatarSymbolTransform =
@@ -56,7 +56,7 @@ export function updatePlayerSymbolPositions() {
   })
 }
 
-export function renderMinimapPlayers(playerEntities: Entity[]) {
+export function renderMinimapPlayers(playerEntities: Entity[]): void {
   avatarSymbolEntities.forEach((avatarEntities) => {
     engine.removeEntityWithChildren(avatarEntities.avatarSymbolEntity)
   })

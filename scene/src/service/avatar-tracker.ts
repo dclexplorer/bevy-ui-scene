@@ -14,7 +14,6 @@ import {
   type PBPlayerIdentityData
 } from '@dcl/ecs/dist/components'
 import { type TransformType } from '@dcl/ecs'
-import { nameAddressMap } from './chat-members'
 
 type GetPlayerDataRes = {
   entity: Entity
@@ -41,7 +40,7 @@ export type AvatarTracker = {
 let avatarTracker: AvatarTracker
 
 export const createOrGetAvatarsTracker = (): AvatarTracker => {
-  if (avatarTracker) return avatarTracker
+  if (avatarTracker !== undefined) return avatarTracker
 
   const callbacks: Record<string, Array<(userId: string) => void>> = {
     onClick: [],
@@ -90,7 +89,9 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
       )
       avatarProxies.set(player.userId, proxy)
     }
-    callbacks.onEnterScene.forEach((fn) => fn(player.userId))
+    callbacks.onEnterScene.forEach((fn) => {
+      fn(player.userId)
+    })
   })
 
   onLeaveScene(onLeaveSceneCallback)
@@ -105,7 +106,9 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
 
       avatarProxies.delete(userId)
     }
-    callbacks.onLeaveScene.forEach((fn) => fn(userId))
+    callbacks.onLeaveScene.forEach((fn) => {
+      fn(userId)
+    })
   }
 
   let timer = 0
@@ -216,7 +219,7 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
   }
 }
 
-export function getPlayerAvatarEntities(includeSelf?: boolean) {
+export function getPlayerAvatarEntities(includeSelf?: boolean): Entity[] {
   const entities = []
   for (const [entity, data] of engine.getEntitiesWith(PlayerIdentityData)) {
     if (includeSelf || data.address !== getPlayer()?.userId) {
