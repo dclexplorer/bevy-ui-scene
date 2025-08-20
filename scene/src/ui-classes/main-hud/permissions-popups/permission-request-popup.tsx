@@ -120,7 +120,7 @@ function PermissionRequestContent({
         uiText={{
           value: `\nThe scene <b>${sceneName}</b> wants permission to ${PERMISSION_DEFINITIONS.find(
             (p) => p.permissionType === data.ty
-          )?.activeDescription}\n${data.additional ?? ''}`,
+          )?.passiveDescription}\n${data.additional ?? ''}`,
           fontSize: getCanvasScaleRatio() * 42,
           textWrap: 'wrap'
         }}

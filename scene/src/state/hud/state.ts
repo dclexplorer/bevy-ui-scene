@@ -68,6 +68,7 @@ export type HudState = {
   chatOptionShowUserMessages: boolean
   chatOptionShowSystemMessages: boolean
   chatInput: string
+  minimapOpen: boolean
 }
 
 export type HudStateUpdateParams = {
@@ -81,6 +82,7 @@ export type HudStateUpdateParams = {
   chatOptionShowUserMessages?: boolean
   chatOptionShowSystemMessages?: boolean
   chatInput?: string
+  minimapOpen?: boolean
 }
 
 export const hudInitialState: HudState = {
@@ -93,5 +95,6 @@ export const hudInitialState: HudState = {
   realmURL: 'main',
   chatOptionShowUserMessages: true,
   chatOptionShowSystemMessages: false,
-  chatInput: ''
+  chatInput: '',
+  minimapOpen: true
 }

@@ -14,7 +14,14 @@ import { socialJson } from '../json/social-data'
 import infoPanelJson from '../../assets/images/atlas/info-panel.json'
 import emotesJson from '../../assets/images/atlas/emotes.json'
 import { memoize } from './function-utils'
-export function getUvs(icon: AtlasIcon): number[] {
+
+type Degrees = 0 | 90 | 180 | 270
+
+export function getUvs(
+  icon: AtlasIcon,
+  rotation: Degrees = 0,
+  opts?: { flipX?: boolean; flipY?: boolean }
+): number[] {
   let parsedJson: AtlasData | undefined
   switch (icon.atlasName) {
     case 'profile':
@@ -50,35 +57,64 @@ export function getUvs(icon: AtlasIcon): number[] {
     case 'emotes':
       parsedJson = emotesJson as AtlasData
       break
+    default:
+      parsedJson = undefined
+      break
   }
-  if (parsedJson !== undefined) {
-    const spriteKey = icon.spriteName + '.png'
-    if (Object.prototype.hasOwnProperty.call(parsedJson.frames, spriteKey)) {
-      const sprite: Sprite = parsedJson.frames[spriteKey]
-      const A: Coords = {
-        x: sprite.frame.x / parsedJson.meta.size.w,
-        y: 1 - (sprite.frame.y + sprite.frame.h) / parsedJson.meta.size.h
-      }
-      const B: Coords = {
-        x: sprite.frame.x / parsedJson.meta.size.w,
-        y: 1 - sprite.frame.y / parsedJson.meta.size.h
-      }
-      const C: Coords = {
-        x: (sprite.frame.x + sprite.frame.w) / parsedJson.meta.size.w,
-        y: 1 - sprite.frame.y / parsedJson.meta.size.h
-      }
-      const D: Coords = {
-        x: (sprite.frame.x + sprite.frame.w) / parsedJson.meta.size.w,
-        y: 1 - (sprite.frame.y + sprite.frame.h) / parsedJson.meta.size.h
-      }
+  if (!parsedJson) return []
 
-      const finalUvs: number[] = [A.x, A.y, B.x, B.y, C.x, C.y, D.x, D.y]
-      return finalUvs
-    }
-  } else {
+  const spriteKey = icon.spriteName + '.png'
+  if (!Object.prototype.hasOwnProperty.call(parsedJson.frames, spriteKey))
     return []
+
+  const sprite: Sprite = parsedJson.frames[spriteKey]
+  const W = parsedJson.meta.size.w
+  const H = parsedJson.meta.size.h
+
+  // Esquinas normales (A=bottom-left, B=top-left, C=top-right, D=bottom-right)
+  let A: Coords = {
+    x: sprite.frame.x / W,
+    y: 1 - (sprite.frame.y + sprite.frame.h) / H
   }
-  return []
+  let B: Coords = { x: sprite.frame.x / W, y: 1 - sprite.frame.y / H }
+  let C: Coords = {
+    x: (sprite.frame.x + sprite.frame.w) / W,
+    y: 1 - sprite.frame.y / H
+  }
+  let D: Coords = {
+    x: (sprite.frame.x + sprite.frame.w) / W,
+    y: 1 - (sprite.frame.y + sprite.frame.h) / H
+  }
+
+  // Flips opcionales antes de la rotación
+  if (opts?.flipX) {
+    ;[A, D] = [D, A]
+    ;[B, C] = [C, B]
+  } // espejo horizontal (izq↔der)
+  if (opts?.flipY) {
+    ;[A, B] = [B, A]
+    ;[D, C] = [C, D]
+  } // espejo vertical (arriba↔abajo)
+
+  // Rotación por permutación (horaria)
+  let ordered: [Coords, Coords, Coords, Coords]
+  switch (rotation) {
+    case 0:
+      ordered = [A, B, C, D]
+      break
+    case 90:
+      ordered = [D, A, B, C]
+      break
+    case 180:
+      ordered = [C, D, A, B]
+      break
+    case 270:
+      ordered = [B, C, D, A]
+      break
+  }
+
+  const [a, b, c, d] = ordered
+  return [a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y]
 }
 
 export function getBackgroundFromAtlas(icon: AtlasIcon): UiBackgroundProps {
@@ -381,3 +417,46 @@ export function parseCoordinates(
 }
 // TODO replace old rounded texture with border radius where we can
 export const BORDER_RADIUS_F = 18
+
+export function rotate2D(
+  angle: number,
+  x: number,
+  y: number,
+  centerX: number,
+  centerY: number
+): [number, number] {
+  angle = angle % 360
+  // if (angle > 180)
+  // angle -= 360;
+  const A = (angle * Math.PI) / 180
+  const CosA = Math.cos(A)
+  const SinA = Math.sin(A)
+  const cx = centerX
+  const cy = centerY
+  const X = x - cx
+  const Y = y - cy
+  const NX = X * CosA - Y * SinA
+  const NY = Y * CosA + X * SinA
+  x = NX + cx
+  y = NY + cy
+
+  return [x, y]
+}
+
+export function rotateUVs(angle: number): number[] {
+  const UV00 = rotate2D(angle, 0, 0, 0.5, 0.5)
+  const UV01 = rotate2D(angle, 0, 1, 0.5, 0.5)
+  const UV11 = rotate2D(angle, 1, 1, 0.5, 0.5)
+  const UV10 = rotate2D(angle, 1, 0, 0.5, 0.5)
+
+  return [
+    UV00[0],
+    UV00[1],
+    UV01[0],
+    UV01[1],
+    UV11[0],
+    UV11[1],
+    UV10[0],
+    UV10[1]
+  ]
+}

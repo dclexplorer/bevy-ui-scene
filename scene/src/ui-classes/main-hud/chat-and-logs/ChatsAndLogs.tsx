@@ -29,7 +29,7 @@ import {
   MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
 import { memoize } from '../../../utils/function-utils'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getViewportHeight } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import { copyToClipboard, setUiFocus } from '~system/RestrictedActions'
 import {
@@ -54,13 +54,15 @@ import {
   updateHudStateAction
 } from '../../../state/hud/actions'
 import { type AppState } from '../../../state/types'
-import { getUserData } from '~system/UserIdentity'
 import { type PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
 import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
 import { ChatInput } from './chat-input'
 import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { getPlayersInScene } from '~system/Players'
+import { getHudFontSize } from '../scene-info/SceneInfo'
+import { cleanMapPlaces } from '../../../service/map-places'
+import { fetchProfileData } from '../../../utils/passport-promise-utils'
 
 type Box = {
   position: { x: number; y: number }
@@ -68,7 +70,7 @@ type Box = {
 }
 
 const BUFFER_SIZE = 40
-
+const CHAT_WORLD_REGEXP = /^\/changerealm\s[\w.]+\.eth\s*$/
 const state: {
   mouseX: number
   mouseY: number
@@ -197,11 +199,11 @@ export default class ChatAndLogs {
     store.subscribe((action) => {
       if (action.type === VIEWPORT_ACTION.UPDATE_VIEWPORT) {
         state.chatBox.position.x = store.getState().viewport.width * 0.03
-        state.chatBox.position.y = store.getState().viewport.height * 0.2
+        state.chatBox.position.y = store.getState().viewport.height * 0
         state.chatBox.size.x =
           store.getState().viewport.width * 0.26 +
           (state.headerMenuOpen ? store.getState().viewport.width * 0.12 : 0)
-        state.chatBox.size.y = store.getState().viewport.height * 0.8
+        state.chatBox.size.y = store.getState().viewport.height * 0.66
       }
     })
 
@@ -220,8 +222,9 @@ export default class ChatAndLogs {
     if (state.shownMessages.length >= BUFFER_SIZE) {
       state.shownMessages.shift()
     }
+
     const playerData = getPlayer({ userId: message.sender_address })
-    const name = isSystemMessage(message) ? `` : playerData?.name || `Unknown*`
+
     const now = Date.now()
     const timestamp =
       state.shownMessages[state.shownMessages.length - 1]?.timestamp === now
@@ -231,7 +234,7 @@ export default class ChatAndLogs {
     const decoratedChatMessage: ChatMessageRepresentation = {
       ...message,
       timestamp,
-      name,
+      name: isSystemMessage(message) ? `` : playerData?.name || `Unknown*`,
       side:
         message.sender_address === getPlayer()?.userId
           ? CHAT_SIDE.RIGHT
@@ -247,8 +250,6 @@ export default class ChatAndLogs {
     }
     decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
 
-    console.log('decoratedChatMessage', decoratedChatMessage)
-
     if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
       state.newMessages.push(decoratedChatMessage)
     } else {
@@ -256,13 +257,24 @@ export default class ChatAndLogs {
       scrollToBottom()
     }
 
+    if (CHAT_WORLD_REGEXP.test(message.message)) {
+      cleanMapPlaces()
+    }
+
     async function decorateAsyncMessageData(
       message: ChatMessageRepresentation
     ): Promise<void> {
-      if (!message.name) {
-        message.name =
-          (await getUserData({ userId: message.sender_address }))?.data
-            ?.displayName || `Unknown*`
+      const profileData = await fetchProfileData({
+        userId: message.sender_address
+      })
+      const [avatarData] = profileData?.avatars ?? []
+      if (avatarData !== undefined) {
+        message.hasClaimedName = avatarData.hasClaimedName
+        message.name = avatarData.name ?? message.name ?? `Unknown*`
+      }
+
+      if (!message.hasClaimedName) {
+        message.name = message.name + `#${message.sender_address.slice(-4)}`
       }
 
       message.mentionedPlayers = {
@@ -297,7 +309,7 @@ export default class ChatAndLogs {
     state.messageMenuTimestamp = timestamp
     state.messageMenuPositionTop =
       state.mouseY -
-      (UiCanvasInformation.getOrNull(engine.RootEntity)?.height ?? 0) * 0.25
+      (UiCanvasInformation.getOrNull(engine.RootEntity)?.height ?? 0) * 0.39
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -342,6 +354,7 @@ function MessageSubMenu({
 }: {
   canvasInfo: PBUiCanvasInformation
 }): ReactElement[] | null {
+  const fontSize = getHudFontSize(getViewportHeight()).NORMAL
   if (!state.messageMenuTimestamp) return null
 
   return [
@@ -365,8 +378,8 @@ function MessageSubMenu({
         positionType: 'absolute',
         position: {
           left:
-            canvasInfo.width *
-            (0.188 +
+            canvasInfo.height *
+            (0.3 +
               (state.shownMessages.find(
                 (m) => m.timestamp === state.messageMenuTimestamp
               )?.side ?? 0) *
@@ -390,7 +403,7 @@ function MessageSubMenu({
       <UiEntity
         uiTransform={{
           borderWidth: 1,
-          borderRadius: getCanvasScaleRatio() * 18,
+          borderRadius: fontSize,
           borderColor: COLOR.MENU_ITEM_BACKGROUND,
           alignItems: 'center',
           width: '100%',
@@ -416,10 +429,13 @@ function MessageSubMenu({
       >
         <Icon
           icon={{ spriteName: 'CopyIcon', atlasName: 'icons' }}
-          iconSize={getCanvasScaleRatio() * 32}
+          iconSize={fontSize}
         />
         <UiEntity
-          uiText={{ value: 'COPY', fontSize: getCanvasScaleRatio() * 32 }}
+          uiText={{
+            value: 'COPY',
+            fontSize: getHudFontSize(getViewportHeight()).NORMAL
+          }}
         />
       </UiEntity>
     </UiEntity>
@@ -450,7 +466,7 @@ function ShowNewMessages(): ReactElement | null {
     >
       <Label
         value={`+${state.newMessages.length}`}
-        fontSize={getCanvasScaleRatio() * 48}
+        fontSize={getHudFontSize(getViewportHeight()).NORMAL}
       />
       <Icon
         iconSize={20}
@@ -461,7 +477,7 @@ function ShowNewMessages(): ReactElement | null {
 }
 
 function HeaderArea(): ReactElement {
-  const fontSize = getCanvasScaleRatio() * 48
+  const fontSize = getHudFontSize(getViewportHeight()).NORMAL
 
   return (
     <UiEntity
@@ -474,7 +490,7 @@ function HeaderArea(): ReactElement {
         justifyContent: 'flex-start',
         flexShrink: 0,
         alignItems: 'center',
-        borderRadius: 10,
+        borderRadius: fontSize,
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 1,
         zIndex: 2
@@ -497,7 +513,7 @@ function HeaderArea(): ReactElement {
       />
       <Icon
         uiTransform={{ margin: { left: '4%' }, zIndex: 3, flexShrink: 0 }}
-        iconSize={getCanvasScaleRatio() * 48}
+        iconSize={fontSize * 1.5}
         icon={{ spriteName: 'DdlIconColor', atlasName: 'icons' }}
       />
       <Label
@@ -522,7 +538,7 @@ function HeaderArea(): ReactElement {
         }}
       >
         <Icon
-          iconSize={getCanvasScaleRatio() * 48}
+          iconSize={fontSize}
           icon={{ spriteName: 'Members', atlasName: 'icons' }}
         />
         <Label
@@ -539,8 +555,8 @@ function HeaderArea(): ReactElement {
           alignItems: 'center',
           justifyContent: 'flex-end',
           zIndex: 2,
-          width: getCanvasScaleRatio() * 120,
-          height: getCanvasScaleRatio() * 64,
+          width: fontSize * 2,
+          height: fontSize * 2,
           flexShrink: 0,
           margin: { right: '2%' }
         }}
@@ -548,10 +564,11 @@ function HeaderArea(): ReactElement {
       >
         <Icon
           uiTransform={{
+            zIndex: 10,
             positionType: 'absolute',
-            zIndex: 10
+            position: { top: '20%' }
           }}
-          iconSize={getCanvasScaleRatio() * 48}
+          iconSize={fontSize * 1.2}
           icon={{ spriteName: 'Menu', atlasName: 'icons' }}
           onMouseDown={() => {
             state.headerMenuOpen = !state.headerMenuOpen
@@ -568,8 +585,7 @@ function HeaderArea(): ReactElement {
         <UiEntity
           uiTransform={{
             positionType: 'absolute',
-            position: { left: '150%', top: '100%' },
-            height: getCanvasScaleRatio() * 200,
+            position: { left: '220%', top: '50%' },
             flexDirection: 'column',
             alignItems: 'flex-start',
             justifyContent: 'flex-start',
@@ -615,9 +631,10 @@ function HeaderArea(): ReactElement {
           alignItems: 'center',
           justifyContent: 'flex-end',
           zIndex: 2,
-          width: getCanvasScaleRatio() * 64,
-          height: getCanvasScaleRatio() * 64,
-          position: { top: '60%', right: '1%' },
+          width: fontSize * 2,
+          height: fontSize * 2,
+          position: { top: '50%', right: '1%' },
+          padding: '3%',
           borderRadius: 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0
@@ -633,18 +650,18 @@ function HeaderArea(): ReactElement {
           uiTransform={{
             positionType: 'absolute',
             zIndex: 9,
-            position: { top: -5 * getCanvasScaleRatio() }
+            position: { top: -0.15 * fontSize }
           }}
-          iconSize={getCanvasScaleRatio() * 48}
+          iconSize={fontSize * 1.5}
           icon={{ spriteName: 'DownArrow', atlasName: 'icons' }}
         />
         <Icon
           uiTransform={{
             positionType: 'absolute',
             zIndex: 10,
-            position: { top: 5 * getCanvasScaleRatio() }
+            position: { top: 0.15 * fontSize }
           }}
-          iconSize={getCanvasScaleRatio() * 48}
+          iconSize={fontSize * 1.5}
           icon={{ spriteName: 'DownArrow', atlasName: 'icons' }}
         />
       </UiEntity>
@@ -653,7 +670,7 @@ function HeaderArea(): ReactElement {
 }
 
 function InputArea(): ReactElement {
-  const inputFontSize = Math.floor(getCanvasScaleRatio() * 36)
+  const inputFontSize = getHudFontSize(getViewportHeight()).NORMAL
 
   return (
     <UiEntity
@@ -758,7 +775,11 @@ function _getScrollVector(positionY: number): Vector2 {
 }
 
 function getChatMaxHeight(): number {
-  return store.getState().viewport.height * 0.7
+  if (store.getState().hud.minimapOpen) {
+    return getViewportHeight() * 0.58
+  } else {
+    return getViewportHeight() * 0.83
+  }
 }
 
 function getChatScroll(): Vector2 | null {
@@ -794,6 +815,7 @@ export function messageHasMentionToMe(message: string): boolean {
 async function getMentionedPlayersFromMessage(
   message: string
 ): Promise<Record<string, GetPlayerDataRes>> {
+  // TODO getPlayersInScene is deprecated, must use entities with component PlayerIdentityData instead
   const playersInScene = (await getPlayersInScene({})).players
 
   playersInScene.forEach((player) => {

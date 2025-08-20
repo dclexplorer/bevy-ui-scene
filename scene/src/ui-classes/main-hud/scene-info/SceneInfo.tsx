@@ -21,7 +21,13 @@ import {
 import type { HomeScene, LiveSceneInfo } from 'src/bevy-api/interface'
 import { BevyApi } from 'src/bevy-api'
 import { setHome } from 'src/state/sceneInfo/actions'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getViewportHeight } from '../../../service/canvas-ratio'
+import { MiniMapContent } from '../../../components/map/mini-map-content'
+import { memoize } from '../../../utils/function-utils'
+import { type ReactElement } from '@dcl/react-ecs'
+import { COLOR } from '../../../components/color-palette'
+import { updateHudStateAction } from '../../../state/hud/actions'
+import Icon from '../../../components/icon/Icon'
 
 export default class SceneInfo {
   private readonly uiController: UIController
@@ -30,7 +36,7 @@ export default class SceneInfo {
   private realm: string | undefined
   private sceneCoords: Vector3 | undefined
   private place: PlaceFromApi | undefined
-  public fontSize: number = 16
+  public fontSize: number = getHudFontSize(getViewportHeight()).NORMAL
   private isExpanded: boolean = false
   private isMenuOpen: boolean = false
   private isHome: boolean = false
@@ -239,204 +245,40 @@ export default class SceneInfo {
     const sceneCoords = store.getState().scene.explorerPlayerParcelAction
     if (sceneCoords === undefined) return null
 
-    this.fontSize = Math.floor(48 * getCanvasScaleRatio())
+    this.fontSize = getHudFontSize(getViewportHeight()).NORMAL
 
     return (
       <UiEntity
         uiTransform={{
-          width: '100%',
-          padding: '2%',
-          height: '10%'
+          width: '70%'
         }}
       >
         <UiEntity
           uiTransform={{
             width: '100%',
-            height: 'auto',
-            minHeight: this.fontSize * 3.5,
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            height: '100%',
+            padding: {
+              left: getViewportHeight() * 0.01,
+              bottom: getViewportHeight() * 0.01
+            },
+            margin: {
+              top: getViewportHeight() * 0.005,
+              left: getViewportHeight() * 0.01
+            }
           }}
           uiBackground={{
             ...ROUNDED_TEXTURE_BACKGROUND,
             color: ALPHA_BLACK_PANEL
           }}
         >
-          <UiEntity
-            uiTransform={{
-              width: '100%',
-              height: 'auto',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexDirection: 'row'
-            }}
-          >
-            {/* FOR DEBUG INFO OR MINIMAP */}
-            {/* <ButtonIcon
-              onMouseDown={() => {
-                this.setExpanded(!this.isExpanded).catch((reason)=>{console.error(reason)})
-              }}
-              onMouseEnter={() => {
-                this.expandBackgroundColor = SELECTED_BUTTON_COLOR
-              }}
-              onMouseLeave={() => {
-                this.expandBackgroundColor = undefined
-              }}
-              uiTransform={{
-                width: this.fontSize * 2,
-                height: this.fontSize * 2,
-                margin: { left: this.fontSize * 0.5 }
-              }}
-              backgroundColor={this.expandBackgroundColor}
-              icon={this.expandIcon}
-            /> */}
-            <UiEntity
-              uiTransform={{
-                width: 'auto',
-                height: 'auto',
-                justifyContent: 'flex-start',
-                padding: this.fontSize * 0.5,
-                alignItems: 'flex-start',
-                flexDirection: 'column',
-                flexGrow: 1
-              }}
-            >
-              <Label
-                value={truncateWithoutBreakingWords(
-                  this.liveSceneInfo?.title ?? '',
-                  20
-                )}
-                fontSize={this.fontSize}
-                uiTransform={{
-                  display: this.liveSceneInfo?.title ? 'flex' : 'none',
-                  height: this.fontSize * 1.1
-                }}
-                textAlign="middle-left"
-              />
-              <UiEntity
-                uiTransform={{
-                  width: '100%',
-                  height: this.fontSize,
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                  margin: {
-                    left: this.fontSize * 0.25,
-                    top: this.fontSize * 0.25
-                  }
-                }}
-              >
-                <UiEntity
-                  uiTransform={{
-                    width: this.fontSize * 0.875,
-                    height: this.fontSize * 0.875
-                  }}
-                  uiBackground={{
-                    ...getBackgroundFromAtlas({
-                      atlasName: 'icons',
-                      spriteName: 'PinIcn'
-                    }),
-                    color: UNSELECTED_TEXT_WHITE
-                  }}
-                />
-                <Label
-                  value={
-                    sceneCoords.x.toString() + ',' + sceneCoords.z.toString()
-                  }
-                  fontSize={this.fontSize}
-                  uiTransform={{}}
-                />
-
-                <UiEntity
-                  uiTransform={{
-                    display:
-                      this.liveSceneInfo?.sdkVersion === 'sdk6'
-                        ? 'flex'
-                        : 'none',
-                    width: (this.fontSize * 0.875) / 0.41,
-                    height: this.fontSize * 0.875,
-                    margin: { left: this.fontSize * 0.5 }
-                  }}
-                  uiBackground={{
-                    ...getBackgroundFromAtlas({
-                      atlasName: 'icons',
-                      spriteName: 'Tag'
-                    })
-                  }}
-                />
-
-                <ButtonIcon
-                  uiTransform={{
-                    display: this.flagIcon !== undefined ? 'flex' : 'none',
-                    width: this.fontSize * 1.2,
-                    height: this.fontSize * 1.2,
-                    margin: { left: this.fontSize * 0.5 }
-                  }}
-                  icon={{
-                    atlasName: 'toggles',
-                    spriteName: this.flagIcon ?? ''
-                  }}
-                  iconSize={this.fontSize}
-                  onMouseEnter={() => {
-                    this.isFlagHintVisible = true
-                  }}
-                  onMouseLeave={() => {
-                    this.isFlagHintVisible = false
-                  }}
-                  hintText={this.flagHint}
-                  showHint={this.isFlagHintVisible}
-                  hintFontSize={this.fontSize * 0.75}
-                />
-                <ButtonIcon
-                  uiTransform={{
-                    display:
-                      this.liveSceneInfo?.isBroken === true ? 'flex' : 'none',
-                    width: this.fontSize * 1.2,
-                    height: this.fontSize * 1.2,
-                    margin: { left: this.fontSize * 0.5 }
-                  }}
-                  icon={{ atlasName: 'icons', spriteName: 'WarningError' }}
-                  iconSize={this.fontSize}
-                  onMouseEnter={() => {
-                    this.isBrokenHintVisible = true
-                  }}
-                  onMouseLeave={() => {
-                    this.isBrokenHintVisible = false
-                  }}
-                  hintText={'Scene is broken'}
-                  showHint={this.isBrokenHintVisible}
-                  hintFontSize={this.fontSize * 0.75}
-                />
-              </UiEntity>
-            </UiEntity>
-
-            <ButtonIcon
-              onMouseDown={() => {
-                this.setMenuOpen(!this.isMenuOpen)
-              }}
-              onMouseEnter={() => {
-                this.menuBackgroundColor = SELECTED_BUTTON_COLOR
-              }}
-              onMouseLeave={() => {
-                this.menuBackgroundColor = undefined
-              }}
-              uiTransform={{
-                width: this.fontSize * 2,
-                height: this.fontSize * 2,
-                margin: { right: this.fontSize * 0.5 }
-              }}
-              backgroundColor={this.menuBackgroundColor}
-              icon={{ atlasName: 'icons', spriteName: 'Menu' }}
-              iconSize={this.fontSize * 1.5}
-            />
-          </UiEntity>
-
+          {this.SceneInfoHeader()}
+          {store.getState().hud.minimapOpen && <MiniMapContent />}
           <UiEntity
             uiTransform={{
               display: this.isMenuOpen ? 'flex' : 'none',
-              minWidth: 150,
-              width: 150,
+              minWidth: getViewportHeight() * 0.25,
+              width: getViewportHeight() * 0.25,
               height: 'auto',
               justifyContent: 'center',
               alignItems: 'center',
@@ -618,6 +460,233 @@ export default class SceneInfo {
             </UiEntity>
           </UiEntity>
         </UiEntity>
+      </UiEntity>
+    )
+  }
+
+  SceneInfoHeader(): ReactElement | null {
+    const sceneCoords = store.getState().scene.explorerPlayerParcelAction
+    if (sceneCoords === undefined) return null
+    const fontSize = this.fontSize
+    return (
+      <UiEntity
+        uiTransform={{
+          width: '100%',
+          height: 'auto',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexDirection: 'row'
+        }}
+      >
+        <UiEntity
+          uiTransform={{
+            alignSelf: 'flex-end',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            zIndex: 2,
+            width: fontSize * 2,
+            height: fontSize * 2,
+            position: { top: '-25%' },
+            padding: '3%',
+            borderRadius: 10,
+            borderColor: COLOR.WHITE,
+            borderWidth: 0
+          }}
+          uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
+          onMouseDown={() => {
+            store.dispatch(
+              updateHudStateAction({
+                minimapOpen: !store.getState().hud.minimapOpen
+              })
+            )
+          }}
+        >
+          <Icon
+            uiTransform={{
+              positionType: 'absolute',
+              zIndex: 9,
+              position: { top: -0.15 * fontSize }
+            }}
+            iconColor={COLOR.WHITE}
+            iconSize={fontSize * 1.5}
+            icon={{
+              spriteName: store.getState().hud.minimapOpen
+                ? 'UpArrow'
+                : 'DownArrow',
+              atlasName: 'icons'
+            }}
+          />
+          <Icon
+            uiTransform={{
+              positionType: 'absolute',
+              zIndex: 10,
+              position: { top: 0.15 * fontSize }
+            }}
+            iconColor={COLOR.WHITE}
+            iconSize={fontSize * 1.5}
+            icon={{
+              spriteName: store.getState().hud.minimapOpen
+                ? 'UpArrow'
+                : 'DownArrow',
+              atlasName: 'icons'
+            }}
+          />
+        </UiEntity>
+        {/* FOR DEBUG INFO OR MINIMAP */}
+        {/* <ButtonIcon
+              onMouseDown={() => {
+                this.setExpanded(!this.isExpanded).catch((reason)=>{console.error(reason)})
+              }}
+              onMouseEnter={() => {
+                this.expandBackgroundColor = SELECTED_BUTTON_COLOR
+              }}
+              onMouseLeave={() => {
+                this.expandBackgroundColor = undefined
+              }}
+              uiTransform={{
+                width: this.fontSize * 2,
+                height: this.fontSize * 2,
+                margin: { left: this.fontSize * 0.5 }
+              }}
+              backgroundColor={this.expandBackgroundColor}
+              icon={this.expandIcon}
+            /> */}
+        <UiEntity
+          uiTransform={{
+            width: 'auto',
+            height: 'auto',
+            justifyContent: 'flex-start',
+            padding: this.fontSize * 0.5,
+            alignItems: 'flex-start',
+            flexDirection: 'column',
+            flexGrow: 1
+          }}
+        >
+          <Label
+            value={truncateWithoutBreakingWords(
+              this.liveSceneInfo?.title ?? '',
+              20
+            )}
+            fontSize={this.fontSize}
+            uiTransform={{
+              display: this.liveSceneInfo?.title ? 'flex' : 'none',
+              height: this.fontSize * 1.1
+            }}
+            textAlign="middle-left"
+          />
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              height: this.fontSize,
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              flexDirection: 'row',
+              margin: {
+                left: this.fontSize * 0.25,
+                top: this.fontSize * 0.25
+              }
+            }}
+          >
+            <UiEntity
+              uiTransform={{
+                width: this.fontSize * 0.875,
+                height: this.fontSize * 0.875
+              }}
+              uiBackground={{
+                ...getBackgroundFromAtlas({
+                  atlasName: 'icons',
+                  spriteName: 'PinIcn'
+                }),
+                color: UNSELECTED_TEXT_WHITE
+              }}
+            />
+            <Label
+              value={sceneCoords.x.toString() + ',' + sceneCoords.z.toString()}
+              fontSize={this.fontSize}
+              uiTransform={{}}
+            />
+
+            <UiEntity
+              uiTransform={{
+                display:
+                  this.liveSceneInfo?.sdkVersion === 'sdk6' ? 'flex' : 'none',
+                width: (this.fontSize * 0.875) / 0.41,
+                height: this.fontSize * 0.875,
+                margin: { left: this.fontSize * 0.5 }
+              }}
+              uiBackground={{
+                ...getBackgroundFromAtlas({
+                  atlasName: 'icons',
+                  spriteName: 'Tag'
+                })
+              }}
+            />
+
+            <ButtonIcon
+              uiTransform={{
+                display: this.flagIcon !== undefined ? 'flex' : 'none',
+                width: this.fontSize * 1.2,
+                height: this.fontSize * 1.2,
+                margin: { left: this.fontSize * 0.5 }
+              }}
+              icon={{
+                atlasName: 'toggles',
+                spriteName: this.flagIcon ?? ''
+              }}
+              iconSize={this.fontSize}
+              onMouseEnter={() => {
+                this.isFlagHintVisible = true
+              }}
+              onMouseLeave={() => {
+                this.isFlagHintVisible = false
+              }}
+              hintText={this.flagHint}
+              showHint={this.isFlagHintVisible}
+              hintFontSize={this.fontSize * 0.75}
+            />
+            <ButtonIcon
+              uiTransform={{
+                display:
+                  this.liveSceneInfo?.isBroken === true ? 'flex' : 'none',
+                width: this.fontSize * 1.2,
+                height: this.fontSize * 1.2,
+                margin: { left: this.fontSize * 0.5 }
+              }}
+              icon={{ atlasName: 'icons', spriteName: 'WarningError' }}
+              iconSize={this.fontSize}
+              onMouseEnter={() => {
+                this.isBrokenHintVisible = true
+              }}
+              onMouseLeave={() => {
+                this.isBrokenHintVisible = false
+              }}
+              hintText={'Scene is broken'}
+              showHint={this.isBrokenHintVisible}
+              hintFontSize={this.fontSize * 0.75}
+            />
+          </UiEntity>
+        </UiEntity>
+
+        <ButtonIcon
+          onMouseDown={() => {
+            this.setMenuOpen(!this.isMenuOpen)
+          }}
+          onMouseEnter={() => {
+            this.menuBackgroundColor = SELECTED_BUTTON_COLOR
+          }}
+          onMouseLeave={() => {
+            this.menuBackgroundColor = undefined
+          }}
+          uiTransform={{
+            width: this.fontSize * 2,
+            height: this.fontSize * 2,
+            margin: { right: this.fontSize * 0.5 }
+          }}
+          backgroundColor={this.menuBackgroundColor}
+          icon={{ atlasName: 'icons', spriteName: 'Menu' }}
+          iconSize={this.fontSize * 1.5}
+        />
       </UiEntity>
     )
   }
@@ -834,3 +903,15 @@ export default class SceneInfo {
     )
   }
 }
+
+const _getHudFontSize = (
+  viewportHeight: number = getViewportHeight()
+): { NORMAL: number; SMALL: number; BIG: number } => {
+  const NORMAL = viewportHeight * 0.015
+  return {
+    NORMAL,
+    SMALL: NORMAL * 0.65,
+    BIG: NORMAL * 1.5
+  }
+}
+export const getHudFontSize = memoize(_getHudFontSize)

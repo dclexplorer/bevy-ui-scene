@@ -3,15 +3,11 @@ import {
   type Entity,
   Transform,
   pointerEventsSystem,
-  MeshCollider,
-  MeshRenderer,
-  Material,
   InputAction,
   type PBPointerEventsResult,
   PlayerIdentityData
 } from '@dcl/sdk/ecs'
 import { onEnterScene, onLeaveScene, getPlayer } from '@dcl/sdk/players'
-import { Color4 } from '@dcl/sdk/math'
 import {
   type PBAvatarBase,
   type PBAvatarEquippedData,
@@ -30,50 +26,89 @@ type GetPlayerDataRes = {
   forceRender: PBAvatarEquippedData['forceRender']
   position: TransformType['position'] | undefined
 }
-
-export const createOrGetAvatarsTracker = (): {
-  onClick: (fn: (userId: string) => void) => () => void
-  onMouseOver: (fn: (userId: string) => void) => () => void
-  onMouseLeave: (fn: (userId: string) => void) => () => void
+export type UserIdCallback = (userId: string) => void
+export type UnListenFn = () => void
+export type AvatarTracker = {
+  onClick: (fn: UserIdCallback) => UnListenFn
+  onMouseOver: (fn: UserIdCallback) => UnListenFn
+  onMouseLeave: (fn: UserIdCallback) => UnListenFn
+  onEnterScene: (fn: UserIdCallback) => UnListenFn
+  onLeaveScene: (fn: UserIdCallback) => UnListenFn
   dispose: () => void
-} => {
+}
+
+let avatarTracker: AvatarTracker
+
+export const createOrGetAvatarsTracker = (): AvatarTracker => {
+  if (avatarTracker !== undefined) return avatarTracker
+
   const callbacks: Record<string, Array<(userId: string) => void>> = {
     onClick: [],
     onMouseOver: [],
-    onMouseLeave: []
+    onMouseLeave: [],
+    onEnterScene: [],
+    onLeaveScene: []
   }
-
   const avatarProxies = new Map<string, Entity>()
-  for (const [, data] of engine.getEntitiesWith(PlayerIdentityData)) {
+
+  for (const [playerEntity, data] of engine.getEntitiesWith(
+    PlayerIdentityData
+  )) {
     const playerIdentity: PBPlayerIdentityData = data
     if (
       !avatarProxies.has(playerIdentity.address) &&
       playerIdentity.address !== getPlayer()?.userId
     ) {
-      const proxy = createAvatarProxy(playerIdentity.address, `Show Profile`)
+      const proxy = createAvatarProxy(
+        playerIdentity.address,
+        playerEntity,
+        `Show Profile`
+      )
       avatarProxies.set(playerIdentity.address, proxy)
     }
   }
+
   onEnterScene((player) => {
     if (player.userId === getPlayer()?.userId) {
       return
     }
+    let playerEntity
+    for (const [_playerEntity, data] of engine.getEntitiesWith(
+      PlayerIdentityData
+    )) {
+      if (data.address === player.userId) {
+        playerEntity = _playerEntity
+      }
+    }
 
-    if (!avatarProxies.has(player.userId)) {
-      const proxy = createAvatarProxy(player.userId, 'Show Profile')
+    if (!avatarProxies.has(player.userId) && playerEntity) {
+      const proxy = createAvatarProxy(
+        player.userId,
+        playerEntity,
+        'Show Profile'
+      )
       avatarProxies.set(player.userId, proxy)
     }
+    callbacks.onEnterScene.forEach((fn) => {
+      fn(player.userId)
+    })
   })
 
-  onLeaveScene(disposeAvatarProxy)
+  onLeaveScene(onLeaveSceneCallback)
 
-  function disposeAvatarProxy(userId: string): void {
+  function onLeaveSceneCallback(userId: string): void {
     const proxy = avatarProxies.get(userId)
     if (proxy) {
       pointerEventsSystem.removeOnPointerDown(proxy)
-      engine.removeEntity(proxy)
+      pointerEventsSystem.removeOnPointerHoverEnter(proxy)
+      pointerEventsSystem.removeOnPointerHoverLeave(proxy)
+      engine.removeEntityWithChildren(proxy)
+
       avatarProxies.delete(userId)
     }
+    callbacks.onLeaveScene.forEach((fn) => {
+      fn(userId)
+    })
   }
 
   let timer = 0
@@ -90,16 +125,29 @@ export const createOrGetAvatarsTracker = (): {
     }
   })
 
-  return {
+  avatarTracker = {
     onClick,
     onMouseOver,
     onMouseLeave,
-    dispose
+    dispose,
+    onEnterScene: (fn: UserIdCallback) => {
+      callbacks.onEnterScene.push(fn)
+      return () => {
+        callbacks.onEnterScene = callbacks.onEnterScene.filter((f) => f !== fn)
+      }
+    },
+    onLeaveScene: (fn: UserIdCallback) => {
+      callbacks.onLeaveScene.push(fn)
+      return () => {
+        callbacks.onLeaveScene = callbacks.onLeaveScene.filter((f) => f !== fn)
+      }
+    }
   }
+  return avatarTracker
 
   function dispose(): void {
     ;[...avatarProxies.keys()].forEach((userId) => {
-      disposeAvatarProxy(userId)
+      onLeaveSceneCallback(userId)
     })
     callbacks.onClick = callbacks.onMouseOver = callbacks.onMouseLeave = []
   }
@@ -125,27 +173,14 @@ export const createOrGetAvatarsTracker = (): {
     }
   }
 
-  function createAvatarProxy(userId: string, hoverText?: string): Entity {
-    const wrapper = engine.addEntity()
-    const entity = engine.addEntity()
-    Transform.create(wrapper, {})
-
-    Transform.create(entity, {
-      position: { x: 0, y: 1, z: 0 },
-      scale: { x: 1, y: 2.1, z: 1 },
-      parent: wrapper
-    })
-
-    MeshRenderer.setBox(entity)
-    MeshCollider.setBox(entity)
-
-    Material.setPbrMaterial(entity, {
-      albedoColor: Color4.create(1, 1, 1, 0)
-    })
-
+  function createAvatarProxy(
+    userId: string,
+    playerEntity: Entity,
+    hoverText?: string
+  ): Entity {
     pointerEventsSystem.onPointerDown(
       {
-        entity,
+        entity: playerEntity,
         opts: {
           button: InputAction.IA_POINTER,
           hoverText
@@ -160,7 +195,7 @@ export const createOrGetAvatarsTracker = (): {
 
     pointerEventsSystem.onPointerHoverEnter(
       {
-        entity
+        entity: playerEntity
       },
       (event: PBPointerEventsResult) => {
         callbacks.onMouseOver.forEach((fn) => {
@@ -171,7 +206,7 @@ export const createOrGetAvatarsTracker = (): {
 
     pointerEventsSystem.onPointerHoverLeave(
       {
-        entity
+        entity: playerEntity
       },
       (event: PBPointerEventsResult) => {
         callbacks.onMouseLeave.forEach((fn) => {
@@ -180,6 +215,16 @@ export const createOrGetAvatarsTracker = (): {
       }
     )
 
-    return wrapper
+    return playerEntity
   }
+}
+
+export function getPlayerAvatarEntities(includeSelf?: boolean): Entity[] {
+  const entities = []
+  for (const [entity, data] of engine.getEntitiesWith(PlayerIdentityData)) {
+    if (includeSelf || data.address !== getPlayer()?.userId) {
+      entities.push(entity)
+    }
+  }
+  return entities
 }

@@ -1,7 +1,7 @@
 import { BevyApi } from '../../../bevy-api'
 import type { PermissionRequest } from '../../../bevy-api/permission-definitions'
 import { store } from '../../../state/store'
-import { pushPopupAction } from '../../../state/hud/actions'
+import { unshiftPopupAction } from '../../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 
 export const listenPermissionRequests = async (): Promise<void> => {
@@ -10,7 +10,7 @@ export const listenPermissionRequests = async (): Promise<void> => {
   ): Promise<void> => {
     for await (const permissionRequest of stream) {
       store.dispatch(
-        pushPopupAction({
+        unshiftPopupAction({
           data: permissionRequest,
           type: HUD_POPUP_TYPE.PERMISSION_REQUEST
         })
