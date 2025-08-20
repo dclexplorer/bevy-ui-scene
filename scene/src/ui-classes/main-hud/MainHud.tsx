@@ -400,7 +400,6 @@ export default class MainHud {
               this.updateButtons()
             }}
             onMouseDown={() => {
-              // TODO notificacions popup
               store.dispatch(
                 pushPopupAction({
                   type: HUD_POPUP_TYPE.NOTIFICATIONS_MENU

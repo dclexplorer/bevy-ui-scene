@@ -33,7 +33,6 @@ export function MiniMapContent(): ReactElement {
   const [parcelsAround, setParcelsAround] = useState<Place[]>([])
 
   useEffect(() => {
-    // TODO review if it makes sense to execute with less FPS to avoid calculations
     try {
       if (getMinimapCamera() === engine.RootEntity) return
       const playerGlobalTransform = Transform.get(engine.PlayerEntity)

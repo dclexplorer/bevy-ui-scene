@@ -15,7 +15,6 @@ import {
   type Place
 } from '../../service/map-places'
 import { wrapText } from './mini-map-label-text'
-import { sleep } from '../../utils/dcl-utils'
 
 const placeEntities: Entity[] = []
 const infoEntity: Entity = engine.addEntity()
@@ -24,8 +23,8 @@ CameraLayers.create(infoEntity, {
   layers: [10]
 })
 
-export function applyRotation(dg: number) {
-  placeEntities.forEach((entity) => {
+export function applyRotation(dg: number): void {
+  placeEntities.forEach((entity): void => {
     const placeEntityTransform = Transform.getMutableOrNull(entity)
     if (placeEntityTransform) {
       Object.assign(

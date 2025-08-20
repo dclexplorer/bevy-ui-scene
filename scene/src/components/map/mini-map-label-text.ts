@@ -1,10 +1,5 @@
 import { memoize } from '../../utils/function-utils'
 
-type WrapOptions = {
-  maxLines?: number
-  charPerLine?: number
-}
-
 function _wrapText(str: string): string {
   const MAX_LINES = 3
   const CHARS_PER_LINE = 16

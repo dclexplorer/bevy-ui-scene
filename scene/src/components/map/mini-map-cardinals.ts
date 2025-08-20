@@ -1,6 +1,6 @@
-type Cardinal = 'N' | 'E' | 'S' | 'W'
+import { type Coords } from '@dcl/sdk/ecs'
 
-interface CardinalPositions {
+type CardinalPositions = {
   N: { x: number; y: number }
   E: { x: number; y: number }
   S: { x: number; y: number }
@@ -29,13 +29,13 @@ export function getCardinalLabelPositions(
   // convertir grados a radianes
   const theta = (rotationDeg * Math.PI) / 180
 
-  const rotate = (x: number, y: number, angleRad: number) => {
+  const rotate = (x: number, y: number, angleRad: number): Coords => {
     const c = Math.cos(angleRad)
     const s = Math.sin(angleRad)
     return { x: x * c - y * s, y: x * s + y * c }
   }
 
-  const toSquareEdge = (dx: number, dy: number) => {
+  const toSquareEdge = (dx: number, dy: number): Coords => {
     const adx = Math.abs(dx)
     const ady = Math.abs(dy)
     const t = radius / Math.max(adx || 1e-9, ady || 1e-9)
