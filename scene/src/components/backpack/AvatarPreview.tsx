@@ -6,7 +6,8 @@ import {
   Transform,
   AvatarShape,
   type Entity,
-  type Orthographic
+  type Orthographic,
+  Perspective
 } from '@dcl/sdk/ecs'
 import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
 import { getPlayer } from '@dcl/sdk/src/players'
@@ -40,9 +41,13 @@ export const setAvatarPreviewRotation = (rotation: Quaternion): void => {
   Transform.getMutable(avatarPreview.avatarEntity).rotation = rotation
 }
 
-type OrthographicMode = {
+export type OrthographicMode = {
   $case: 'orthographic'
   orthographic: Orthographic
+}
+export type PerspectiveMode = {
+  $case: 'perspective'
+  perspective: Perspective
 }
 export const setAvatarPreviewZoomFactor = (zoomFactor: number): void => {
   const mode: OrthographicMode = TextureCamera.getMutable(

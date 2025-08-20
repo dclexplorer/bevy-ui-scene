@@ -534,7 +534,7 @@ export default class SettingsPage {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             elementId: `setting-${setting.name}-${index}-parent`,
-                            zIndex: 999999
+                            zIndex: 999999 - index
                           }}
                           onMouseEnter={() => {
                             this.settingsInfoDescription =

@@ -69,6 +69,7 @@ export type HudState = {
   chatOptionShowSystemMessages: boolean
   chatInput: string
   minimapOpen: boolean
+  mapModeActive: boolean
 }
 
 export type HudStateUpdateParams = {
@@ -83,6 +84,7 @@ export type HudStateUpdateParams = {
   chatOptionShowSystemMessages?: boolean
   chatInput?: string
   minimapOpen?: boolean
+  mapModeActive?: boolean
 }
 
 export const hudInitialState: HudState = {
@@ -96,5 +98,6 @@ export const hudInitialState: HudState = {
   chatOptionShowUserMessages: true,
   chatOptionShowSystemMessages: false,
   chatInput: '',
-  minimapOpen: true
+  minimapOpen: true,
+  mapModeActive: false
 }

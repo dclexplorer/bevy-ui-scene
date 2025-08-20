@@ -35,6 +35,7 @@ import {
   createOrGetAvatarsTracker,
   getPlayerAvatarEntities
 } from '../../service/avatar-tracker'
+import { activateMapCamera } from '../../service/map-camera'
 
 export function MiniMapContent(): ReactElement {
   const mapSize = getMapSize()
@@ -118,6 +119,9 @@ export function MiniMapContent(): ReactElement {
         videoTexture: {
           videoPlayerEntity: getMinimapCamera()
         }
+      }}
+      onMouseDown={() => {
+        activateMapCamera()
       }}
     >
       <UiEntity

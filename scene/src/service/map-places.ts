@@ -71,6 +71,7 @@ export const fromParcelCoordsToPosition = (
 export const cleanMapPlaces = (): void => {
   state.places = {}
 }
+export const isMapPlacesLoaded = () => state.done
 
 export const loadCompleteMapPlaces = async (): Promise<
   Record<string, Place>
@@ -95,14 +96,7 @@ export const loadCompleteMapPlaces = async (): Promise<
     state.places = { ...state.places, ...data }
     offset += 500
   }
-  console.log(
-    'Object.keys(state.places).length',
-    Object.keys(state.places).length
-  )
-  console.log(
-    'found genesis',
-    Object.values(state.places).find((p) => p.title.includes('Genesis'))
-  )
+
   state.done = true
 
   return state.places

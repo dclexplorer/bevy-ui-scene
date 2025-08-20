@@ -36,6 +36,7 @@ import {
 import { updateHudStateAction } from '../state/hud/actions'
 import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-popups/permissions-popup-service'
 import { getRealm } from '~system/Runtime'
+import { BigMap } from '../ui-classes/main-hud/big-map/big-map-view'
 
 let loadingAndLogin: any = null
 
@@ -135,6 +136,7 @@ export class UIController {
       <Canvas>
         {InteractableArea({ active: false })}
         {this.mainHud.mainUi()}
+
         {this.isMainMenuVisible && this.menu.mainUi()}
         {this.isProfileVisible && this.profile.mainUi()}
         {this.isFriendsVisible && this.friends.mainUi()}
@@ -146,6 +148,7 @@ export class UIController {
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
         {!this.isMainMenuVisible && renderEmotesWheel()}
+        {store.getState().hud.mapModeActive && BigMap()}
         {NotificationToastStack()}
         {PopupStack()}
       </Canvas>
