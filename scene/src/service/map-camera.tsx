@@ -27,8 +27,12 @@ const state: MapCameraState = {
   initialized: false,
   defaultMainCamera: null
 }
-
-const ISO_OFFSET = [6, 8, -6].map((n) => n * 50)
+const OFFSET_MAP_CAMERA = 500
+const ISO_OFFSET = [
+  OFFSET_MAP_CAMERA,
+  OFFSET_MAP_CAMERA * 1.5,
+  -OFFSET_MAP_CAMERA
+]
 let mapCamera: Entity
 
 export const getBigMapCameraEntity = () => mapCamera
