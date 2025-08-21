@@ -8,13 +8,7 @@ import {
   isMapPlacesLoaded,
   Place
 } from '../../../service/map-places'
-import {
-  DeepReadonlyObject,
-  engine,
-  executeTask,
-  PBTextureCamera,
-  TextureCamera
-} from '@dcl/sdk/ecs'
+import { engine, executeTask, Transform } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../../../utils/dcl-utils'
 import useState = ReactEcs.useState
 import { Vector3 } from '@dcl/sdk/math'
@@ -22,14 +16,10 @@ import { getCentralParcel } from '../../../components/map/mini-map-info-entities
 import Icon from '../../../components/icon/Icon'
 import {
   getCanvasScaleRatio,
-  getContentWidth,
   getViewportHeight,
   getViewportWidth
 } from '../../../service/canvas-ratio'
-import { perspectiveToScreenPosition } from '../../../service/perspective-to-screen'
-import { store } from '../../../state/store'
-import { PerspectiveMode } from '../../../components/backpack/AvatarPreview'
-import { getBigMapCameraEntity } from '../../../service/map-camera'
+import { worldToScreenPx } from '../../../service/perspective-to-screen'
 import { Label } from '@dcl/sdk/react-ecs'
 
 export const BigMap = (): ReactElement => {
@@ -53,17 +43,30 @@ function BigMapContent(): ReactElement {
       await waitFor(() => isMapPlacesLoaded())
       await sleep(2000)
       const _representations = Object.values(getLoadedMapPlaces()).map(
-        (place) => ({
-          ...place,
-          centralParcelCoords: fromParcelCoordsToPosition(
+        (place) => {
+          const centralParcelCoords = fromParcelCoordsToPosition(
             fromStringToCoords(
               getCentralParcel([
                 ...place.positions,
                 place.base_position
               ]) as string
-            )
+            ),
+            { height: 0 }
           )
-        })
+
+          if (place.title.toLowerCase().includes('golf')) {
+            console.log(
+              'golfcraft coords',
+              centralParcelCoords,
+              Math.floor(centralParcelCoords.x / 16),
+              Math.floor(centralParcelCoords.z / 16)
+            )
+          }
+          return {
+            ...place,
+            centralParcelCoords
+          }
+        }
       )
 
       setPlacesRepresentations(_representations)
@@ -83,19 +86,28 @@ function BigMapContent(): ReactElement {
       }}
     >
       {placesRepresentations.map((placeRepresentation) => {
-        const position = perspectiveToScreenPosition(
-          getBigMapCameraEntity(),
+        // TODO optimize, only calculate when camera position or rotation changes, and with throttle
+        const position = worldToScreenPx(
           placeRepresentation.centralParcelCoords,
+          Transform.get(engine.CameraEntity).position,
+          Transform.get(engine.CameraEntity).rotation,
+          (45 * 1.25 * Math.PI) / 180,
           getViewportWidth(),
           getViewportHeight(),
-          1
+          {
+            fovIsHorizontal: false,
+            forwardIsNegZ: false
+          }
         )
 
         return (
           <UiEntity
             uiTransform={{
               positionType: 'absolute',
-              position: { top: position.y, left: position.x }
+              position: {
+                left: position.left,
+                top: position.top
+              }
             }}
           >
             <Label
@@ -105,6 +117,7 @@ function BigMapContent(): ReactElement {
             <Icon
               icon={{ spriteName: 'POIIcn', atlasName: 'map' }}
               uiTransform={{
+                positionType: 'absolute',
                 width: getCanvasScaleRatio() * 50,
                 height: getCanvasScaleRatio() * 50
               }}
