@@ -89,7 +89,8 @@ function BigMapContent(): ReactElement {
         mapCameraTransform.position,
         mapCameraTransform.rotation,
         -(pointerInfo!.screenDelta!.x ?? 0),
-        -(pointerInfo!.screenDelta!.y ?? 0)
+        -(pointerInfo!.screenDelta!.y ?? 0),
+        2
       )
     }
   })
