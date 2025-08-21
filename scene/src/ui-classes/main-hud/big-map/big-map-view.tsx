@@ -8,7 +8,13 @@ import {
   isMapPlacesLoaded,
   Place
 } from '../../../service/map-places'
-import { engine, executeTask, Transform } from '@dcl/sdk/ecs'
+import {
+  engine,
+  executeTask,
+  PrimaryPointerInfo,
+  Transform,
+  VirtualCamera
+} from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../../../utils/dcl-utils'
 import useState = ReactEcs.useState
 import { Vector3 } from '@dcl/sdk/math'
@@ -19,8 +25,12 @@ import {
   getViewportHeight,
   getViewportWidth
 } from '../../../service/canvas-ratio'
-import { worldToScreenPx } from '../../../service/perspective-to-screen'
+import {
+  panCameraXZ,
+  worldToScreenPx
+} from '../../../service/perspective-to-screen'
 import { Label } from '@dcl/sdk/react-ecs'
+import { getBigMapCameraEntity } from '../../../service/map-camera'
 
 export const BigMap = (): ReactElement => {
   return (
@@ -34,6 +44,7 @@ export const BigMap = (): ReactElement => {
     </UiEntity>
   )
 }
+const state = { dragging: false }
 function BigMapContent(): ReactElement {
   const [placesRepresentations, setPlacesRepresentations] = useState<
     (Place & { centralParcelCoords: Vector3 })[]
@@ -54,14 +65,6 @@ function BigMapContent(): ReactElement {
             { height: 0 }
           )
 
-          if (place.title.toLowerCase().includes('golf')) {
-            console.log(
-              'golfcraft coords',
-              centralParcelCoords,
-              Math.floor(centralParcelCoords.x / 16),
-              Math.floor(centralParcelCoords.z / 16)
-            )
-          }
           return {
             ...place,
             centralParcelCoords
@@ -75,6 +78,22 @@ function BigMapContent(): ReactElement {
     executeTask(initBigMapFn)
   }, [])
 
+  useEffect(() => {
+    // TODO REVIEW consider using a system instead of useEffect and compare
+    if (state.dragging) {
+      const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
+      if (!pointerInfo?.screenDelta?.x && !pointerInfo?.screenDelta?.y) return
+      const mapCameraTransform = Transform.getMutable(getBigMapCameraEntity())
+
+      mapCameraTransform.position = panCameraXZ(
+        mapCameraTransform.position,
+        mapCameraTransform.rotation,
+        -(pointerInfo!.screenDelta!.x ?? 0),
+        -(pointerInfo!.screenDelta!.y ?? 0)
+      )
+    }
+  })
+
   return (
     <UiEntity
       uiTransform={{
@@ -82,7 +101,22 @@ function BigMapContent(): ReactElement {
         height: '100%'
       }}
       uiBackground={{
-        color: COLOR.DARK_OPACITY_2
+        color: COLOR.DARK_OPACITY_5
+      }}
+      onMouseDrag={(event) => {
+        state.dragging = true
+      }}
+      onMouseDragEnd={() => {
+        executeTask(async () => {
+          // TODO REVIEW: why onMouseDrag/onMouseDragLocked is called continuously, then I cannot set dragging to false
+          await sleep(1)
+          state.dragging = false
+        })
+        state.dragging = false
+      }}
+      onMouseUp={() => {
+        //TODO workaround when onMouseDragEnd is not triggered but should be
+        state.dragging = false
       }}
     >
       {placesRepresentations.map((placeRepresentation) => {
@@ -99,6 +133,7 @@ function BigMapContent(): ReactElement {
             forwardIsNegZ: false
           }
         )
+        if (state.dragging) return null
 
         return (
           <UiEntity

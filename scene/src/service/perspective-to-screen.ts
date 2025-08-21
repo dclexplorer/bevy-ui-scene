@@ -76,7 +76,7 @@ function rotateVecByQuat(v: Vector3, q: Quaternion): Vector3 {
   } as Vector3
 }
 
-function rotateVec3ByQuat(v: Vector3, q: Quaternion): Vector3 {
+export function rotateVec3ByQuat(v: Vector3, q: Quaternion): Vector3 {
   // v' = v + 2*q.w*(q.xyz × v) + 2*(q.xyz × (q.xyz × v))
   const cx1 = q.y * v.z - q.z * v.y
   const cy1 = q.z * v.x - q.x * v.z
@@ -155,4 +155,35 @@ export function worldToScreenPx(
 
   const onScreen = ndcX >= -1 && ndcX <= 1 && ndcY >= -1 && ndcY <= 1
   return { left, top, onScreen }
+}
+
+/**
+ * Panning en el plano XZ.
+ * - deltaX -> derecha/izquierda en pantalla
+ * - deltaY -> arriba/abajo en pantalla
+ * 'mpp' = metros por píxel (sensibilidad).
+ */
+export function panCameraXZ(
+  camPos: Vector3,
+  camRot: Quaternion,
+  deltaX: number,
+  deltaY: number,
+  mpp = 1
+): Vector3 {
+  // direcciones locales proyectadas al suelo
+  const right = rotateVec3ByQuat(Vector3.create(1, 0, 0), camRot)
+  const forward = rotateVec3ByQuat(Vector3.create(0, 0, 1), camRot)
+
+  const lenR = Math.hypot(right.x, right.z) || 1
+  const lenF = Math.hypot(forward.x, forward.z) || 1
+
+  const dirR = { x: right.x / lenR, z: right.z / lenR }
+  const dirF = { x: forward.x / lenF, z: forward.z / lenF }
+
+  // deltaY positivo (arrastrar abajo) → mover hacia atrás,
+  // por eso usamos "-deltaY"
+  const dx = dirR.x * deltaX * mpp + dirF.x * (-deltaY * mpp)
+  const dz = dirR.z * deltaX * mpp + dirF.z * (-deltaY * mpp)
+
+  return Vector3.create(camPos.x + dx, camPos.y, camPos.z + dz)
 }

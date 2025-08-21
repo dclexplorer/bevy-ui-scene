@@ -3,6 +3,7 @@ import {
   DeepReadonlyObject,
   engine,
   Entity,
+  executeTask,
   InputAction,
   InputModifier,
   MainCamera,
@@ -10,10 +11,12 @@ import {
   Transform,
   VirtualCamera
 } from '@dcl/sdk/ecs'
-import { Vector3 } from '@dcl/sdk/math'
+import { Quaternion, Vector3 } from '@dcl/sdk/math'
 import { updateHudStateAction } from '../state/hud/actions'
 import { store } from '../state/store'
 import { listenSystemAction } from './system-actions-emitter'
+import { sleep } from '../utils/dcl-utils'
+import { cloneDeep } from '../utils/function-utils'
 
 type MapCameraState = {
   initialized: boolean
@@ -45,6 +48,7 @@ export const activateMapCamera = () => {
         Vector3.create(...ISO_OFFSET)
       )
     })
+
     VirtualCamera.createOrReplace(mapCamera, {
       lookAtEntity: engine.PlayerEntity,
       defaultTransition: {
@@ -54,7 +58,21 @@ export const activateMapCamera = () => {
         }
       }
     })
+
     state.initialized = true
+
+    executeTask(async () => {
+      await sleep(2000)
+      const r = Transform.get(mapCamera).rotation
+      const q = Quaternion.create(r.x, r.y, r.z, r.w)
+      await sleep(1)
+      const vc = VirtualCamera.getMutable(mapCamera)
+      vc.lookAtEntity = undefined
+      Transform.getMutable(mapCamera).rotation = Quaternion.fromLookAt(
+        Transform.getMutable(mapCamera).position,
+        Transform.get(engine.PlayerEntity).position
+      )
+    })
   }
 
   MainCamera.createOrReplace(engine.CameraEntity, {
