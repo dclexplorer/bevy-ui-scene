@@ -187,3 +187,45 @@ export function panCameraXZ(
 
   return Vector3.create(camPos.x + dx, camPos.y, camPos.z + dz)
 }
+
+/**
+ * Convierte un click en pantalla a un punto en el plano Y=0.
+ *
+ * @param clickX coord x del click en px
+ * @param clickY coord y del click en px
+ * @param viewportW ancho canvas px
+ * @param viewportH alto canvas px
+ * @param camPos posicion de camara
+ * @param camRot rotacion de camara
+ * @param verticalFovRad FOV vertical en radianes
+ * @returns Vector3 en el plano Y=0 o null si el rayo no cruza
+ */
+export function screenToGround(
+  clickX: number,
+  clickY: number,
+  viewportW: number,
+  viewportH: number,
+  camPos: Vector3,
+  camRot: Quaternion,
+  verticalFovRad: number
+): Vector3 | null {
+  // coords normalizadas -1..1 (origen centro pantalla)
+  const ndcX = (clickX / viewportW) * 2 - 1
+  const ndcY = 1 - (clickY / viewportH) * 2
+
+  const aspect = viewportW / viewportH
+  const tanHalf = Math.tan(verticalFovRad / 2)
+
+  // rayo en espacio de cámara (antes de rotar)
+  const dirCam = Vector3.create(ndcX * aspect * tanHalf, ndcY * tanHalf, 1)
+
+  // rayo en espacio mundo
+  const dirWorld = rotateVec3ByQuat(dirCam, camRot)
+
+  // intersección con plano Y=0:
+  if (Math.abs(dirWorld.y) < 1e-6) return null
+  const t = -camPos.y / dirWorld.y
+  if (t < 0) return null // el plano está detrás de la cámara
+
+  return Vector3.create(camPos.x + dirWorld.x * t, 0, camPos.z + dirWorld.z * t)
+}

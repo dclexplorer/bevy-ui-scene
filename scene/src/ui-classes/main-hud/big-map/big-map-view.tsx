@@ -9,10 +9,13 @@ import {
   Place
 } from '../../../service/map-places'
 import {
+  EasingFunction,
   engine,
   executeTask,
+  Move,
   PrimaryPointerInfo,
   Transform,
+  Tween,
   VirtualCamera
 } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../../../utils/dcl-utils'
@@ -27,12 +30,13 @@ import {
 } from '../../../service/canvas-ratio'
 import {
   panCameraXZ,
+  screenToGround,
   worldToScreenPx
 } from '../../../service/perspective-to-screen'
 import { Label } from '@dcl/sdk/react-ecs'
-import { getBigMapCameraEntity } from '../../../service/map-camera'
+import { getBigMapCameraEntity, ISO_OFFSET } from '../../../service/map-camera'
 import { MapFilterBar } from '../../../components/map/map-filter-bar'
-
+const FOV = (45 * 1.25 * Math.PI) / 180
 export const BigMap = (): ReactElement => {
   return (
     <UiEntity
@@ -45,7 +49,7 @@ export const BigMap = (): ReactElement => {
     </UiEntity>
   )
 }
-const state = { dragging: false }
+const state = { dragging: false, moving: false }
 function BigMapContent(): ReactElement {
   const [placesRepresentations, setPlacesRepresentations] = useState<
     (Place & { centralParcelCoords: Vector3 })[]
@@ -111,15 +115,43 @@ function BigMapContent(): ReactElement {
       onMouseDragEnd={() => {
         executeTask(async () => {
           // TODO REVIEW: why onMouseDrag/onMouseDragLocked is called continuously, then I cannot set dragging to false
-          await sleep(1)
+          await sleep(0)
           state.dragging = false
         })
-        state.dragging = false
       }}
       onMouseUp={() => {
-        //TODO workaround when onMouseDragEnd is not triggered but should be
-        state.dragging = false
+        if (state.dragging) return
+        const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
+        if (!pointerInfo?.screenCoordinates) return
+
+        const mapCameraTransform = Transform.get(getBigMapCameraEntity())
+
+        const targetPosition: Vector3 = screenToGround(
+          pointerInfo.screenCoordinates.x,
+          pointerInfo.screenCoordinates.y,
+          getViewportWidth(),
+          getViewportHeight(),
+          mapCameraTransform.position,
+          mapCameraTransform.rotation,
+          FOV
+        ) as Vector3
+
+        Tween.createOrReplace(getBigMapCameraEntity(), {
+          mode: Tween.Mode.Move({
+            start: Vector3.clone(mapCameraTransform.position),
+            end: Vector3.add(targetPosition, Vector3.create(...ISO_OFFSET))
+          }),
+          duration: 500,
+          easingFunction: EasingFunction.EF_LINEAR
+        })
+
+        executeTask(async () => {
+          state.moving = true
+          await sleep(500)
+          state.moving = false
+        })
       }}
+      onMouseDown={() => {}}
     >
       {placesRepresentations.map((placeRepresentation) => {
         // TODO optimize, only calculate when camera position or rotation changes, and with throttle
@@ -127,7 +159,7 @@ function BigMapContent(): ReactElement {
           placeRepresentation.centralParcelCoords,
           Transform.get(engine.CameraEntity).position,
           Transform.get(engine.CameraEntity).rotation,
-          (45 * 1.25 * Math.PI) / 180,
+          FOV,
           getViewportWidth(),
           getViewportHeight(),
           {
@@ -135,7 +167,7 @@ function BigMapContent(): ReactElement {
             forwardIsNegZ: false
           }
         )
-        if (state.dragging) return null
+        if (state.dragging || state.moving) return null
 
         return (
           <UiEntity

@@ -28,7 +28,7 @@ const state: MapCameraState = {
   defaultMainCamera: null
 }
 const OFFSET_MAP_CAMERA = 500
-const ISO_OFFSET = [
+export const ISO_OFFSET = [
   OFFSET_MAP_CAMERA,
   OFFSET_MAP_CAMERA * 1.5,
   -OFFSET_MAP_CAMERA
