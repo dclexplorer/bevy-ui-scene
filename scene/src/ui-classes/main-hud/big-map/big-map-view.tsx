@@ -31,6 +31,7 @@ import {
 } from '../../../service/perspective-to-screen'
 import { Label } from '@dcl/sdk/react-ecs'
 import { getBigMapCameraEntity } from '../../../service/map-camera'
+import { MapFilterBar } from '../../../components/map/map-filter-bar'
 
 export const BigMap = (): ReactElement => {
   return (
@@ -120,6 +121,7 @@ function BigMapContent(): ReactElement {
         state.dragging = false
       }}
     >
+      <MapFilterBar />
       {placesRepresentations.map((placeRepresentation) => {
         // TODO optimize, only calculate when camera position or rotation changes, and with throttle
         const position = worldToScreenPx(

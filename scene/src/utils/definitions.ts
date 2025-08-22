@@ -128,6 +128,7 @@ export type Setting = {
 export type Atlas =
   | 'profile'
   | 'map'
+  | 'map2'
   | 'backpack'
   | 'navbar'
   | 'icons'

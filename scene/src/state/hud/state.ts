@@ -99,5 +99,5 @@ export const hudInitialState: HudState = {
   chatOptionShowSystemMessages: false,
   chatInput: '',
   minimapOpen: true,
-  mapModeActive: false
+  mapModeActive: true
 }
