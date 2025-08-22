@@ -121,7 +121,6 @@ function BigMapContent(): ReactElement {
         state.dragging = false
       }}
     >
-      <MapFilterBar />
       {placesRepresentations.map((placeRepresentation) => {
         // TODO optimize, only calculate when camera position or rotation changes, and with throttle
         const position = worldToScreenPx(
@@ -163,6 +162,7 @@ function BigMapContent(): ReactElement {
           </UiEntity>
         )
       })}
+      <MapFilterBar />
     </UiEntity>
   )
 }

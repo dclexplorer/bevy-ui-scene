@@ -13,6 +13,9 @@ export type PlaceType =
   | 'casino'
   | 'sports'
   | 'business'
+  | 'poi'
+  | 'event'
+
 export type FilterDefinition = {
   label: string
   spriteName: string
