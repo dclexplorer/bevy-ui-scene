@@ -49,7 +49,8 @@ export const BigMap = (): ReactElement => {
     </UiEntity>
   )
 }
-const state = { dragging: false, moving: false }
+const state = { dragging: false, moving: false, lastClickTime: 0 }
+
 function BigMapContent(): ReactElement {
   const [placesRepresentations, setPlacesRepresentations] = useState<
     (Place & { centralParcelCoords: Vector3 })[]
@@ -118,40 +119,44 @@ function BigMapContent(): ReactElement {
           await sleep(0)
           state.dragging = false
         })
+        state.dragging = false
       }}
-      onMouseUp={() => {
-        if (state.dragging) return
-        const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
-        if (!pointerInfo?.screenCoordinates) return
+      onMouseUp={() => {}}
+      onMouseDown={() => {
+        if (Date.now() - state.lastClickTime < 300) {
+          state.dragging = false
+          const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
+          if (!pointerInfo?.screenCoordinates) return
 
-        const mapCameraTransform = Transform.get(getBigMapCameraEntity())
+          const mapCameraTransform = Transform.get(getBigMapCameraEntity())
 
-        const targetPosition: Vector3 = screenToGround(
-          pointerInfo.screenCoordinates.x,
-          pointerInfo.screenCoordinates.y,
-          getViewportWidth(),
-          getViewportHeight(),
-          mapCameraTransform.position,
-          mapCameraTransform.rotation,
-          FOV
-        ) as Vector3
+          const targetPosition: Vector3 = screenToGround(
+            pointerInfo.screenCoordinates.x,
+            pointerInfo.screenCoordinates.y,
+            getViewportWidth(),
+            getViewportHeight(),
+            mapCameraTransform.position,
+            mapCameraTransform.rotation,
+            FOV
+          ) as Vector3
 
-        Tween.createOrReplace(getBigMapCameraEntity(), {
-          mode: Tween.Mode.Move({
-            start: Vector3.clone(mapCameraTransform.position),
-            end: Vector3.add(targetPosition, Vector3.create(...ISO_OFFSET))
-          }),
-          duration: 500,
-          easingFunction: EasingFunction.EF_LINEAR
-        })
+          Tween.createOrReplace(getBigMapCameraEntity(), {
+            mode: Tween.Mode.Move({
+              start: Vector3.clone(mapCameraTransform.position),
+              end: Vector3.add(targetPosition, Vector3.create(...ISO_OFFSET))
+            }),
+            duration: 500,
+            easingFunction: EasingFunction.EF_LINEAR
+          })
 
-        executeTask(async () => {
-          state.moving = true
-          await sleep(500)
-          state.moving = false
-        })
+          executeTask(async () => {
+            state.moving = true
+            await sleep(500)
+            state.moving = false
+          })
+        }
+        state.lastClickTime = Date.now()
       }}
-      onMouseDown={() => {}}
     >
       {placesRepresentations.map((placeRepresentation) => {
         // TODO optimize, only calculate when camera position or rotation changes, and with throttle
