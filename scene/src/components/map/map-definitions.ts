@@ -89,3 +89,20 @@ export const MAP_FILTER_DEFINITIONS: ReadonlyArray<FilterDefinition> = [
     spriteName: 'Business'
   }
 ]
+
+export const categories = [
+  { name: 'poi', count: 57, i18n: { en: '📍 Point of Interest' } },
+  { name: 'featured', count: 5, i18n: { en: '✨ Featured' } },
+  { name: 'game', count: 367, i18n: { en: '🎮 Game' } },
+  { name: 'casino', count: 19, i18n: { en: '♣️ Casino' } },
+  { name: 'social', count: 428, i18n: { en: '👥 Social' } },
+  { name: 'music', count: 274, i18n: { en: '🎵 Music' } },
+  { name: 'art', count: 783, i18n: { en: '🎨 Art' } },
+  { name: 'fashion', count: 79, i18n: { en: '👠 Fashion' } },
+  { name: 'crypto', count: 328, i18n: { en: '🪙 Crypto' } },
+  { name: 'education', count: 207, i18n: { en: '📚 Education' } },
+  { name: 'shop', count: 240, i18n: { en: '🛍️ Shop' } },
+  { name: 'sports', count: 31, i18n: { en: '⚽️ Sports' } },
+  { name: 'business', count: 36, i18n: { en: '🏢 Business' } },
+  { name: 'parkour', count: 4, i18n: { en: '🏃 Parkour' } }
+]

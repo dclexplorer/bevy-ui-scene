@@ -7,7 +7,8 @@ import {
   getLoadedMapPlaces,
   getPlacesAroundParcel,
   isMapPlacesLoaded,
-  Place
+  Place,
+  PlaceCategory
 } from '../../../service/map-places'
 import {
   EasingFunction,
@@ -53,7 +54,12 @@ export const BigMap = (): ReactElement => {
     </UiEntity>
   )
 }
-const state = { dragging: false, moving: false, lastClickTime: 0 }
+const state = {
+  dragging: false,
+  moving: false,
+  lastClickTime: 0,
+  filterCategories: ['poi']
+}
 export type PlaceRepresentation = Place & { centralParcelCoords: Vector3 }
 function BigMapContent(): ReactElement {
   const [placesRepresentations, setPlacesRepresentations] = useState<
@@ -74,10 +80,10 @@ function BigMapContent(): ReactElement {
 
   useEffect(() => {
     const initBigMapFn = async () => {
-      await waitFor(() => isMapPlacesLoaded())
       await sleep(2000)
-      const _representations = Object.values(getLoadedMapPlaces()).map(
-        (place) => {
+
+      const _representations = Object.values(getLoadedMapPlaces())
+        .map((place) => {
           const centralParcelCoords = fromParcelCoordsToPosition(
             fromStringToCoords(
               getCentralParcel([
@@ -92,14 +98,19 @@ function BigMapContent(): ReactElement {
             ...place,
             centralParcelCoords
           }
-        }
-      )
+        })
+        .filter((p: PlaceRepresentation) =>
+          p.categories.some((c: string) => state.filterCategories.includes(c))
+        )
       setAllRepresentations([playerRespresentation, ..._representations])
       setPlacesRepresentations(_representations)
     }
-
-    executeTask(initBigMapFn)
-  }, [])
+    console.log(
+      'updating place representations big map based on []',
+      Object.values(getLoadedMapPlaces()).length
+    )
+    initBigMapFn().catch(console.error)
+  }, [getLoadedMapPlaces()])
 
   useEffect(() => {
     // TODO REVIEW consider using a system instead of useEffect and compare
@@ -117,7 +128,9 @@ function BigMapContent(): ReactElement {
       )
     }
   })
+
   useEffect(() => {
+    console.log('updating UI big map based on player parcel')
     const foundPlayer = placesRepresentations.find(
       (p: PlaceRepresentation) => p.id === PLAYER_PLACE_ID
     )
@@ -145,7 +158,7 @@ function BigMapContent(): ReactElement {
         height: '100%'
       }}
       uiBackground={{
-        color: COLOR.DARK_OPACITY_5
+        color: COLOR.DARK_OPACITY_2
       }}
       onMouseDrag={(event) => {
         state.dragging = true
@@ -195,7 +208,7 @@ function BigMapContent(): ReactElement {
         state.lastClickTime = Date.now()
       }}
     >
-      {allRepresentations.map((placeRepresentation) => {
+      {placesRepresentations.map((placeRepresentation) => {
         // TODO optimize, only calculate when camera position or rotation changes, and with throttle
         const position = worldToScreenPx(
           placeRepresentation.centralParcelCoords,
@@ -220,6 +233,7 @@ function BigMapContent(): ReactElement {
                 top: position.top
               }
             }}
+            key={placeRepresentation.id}
           >
             <Label
               value={placeRepresentation.title}

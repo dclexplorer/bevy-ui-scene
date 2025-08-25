@@ -1,7 +1,9 @@
 import { type Coords } from '@dcl/sdk/ecs'
 import { Vector3 } from '@dcl/sdk/math'
 import { getRealm } from '~system/Runtime'
+import { sleep } from '../utils/dcl-utils'
 
+// TODO move types to map-definitions.ts
 export type Place = {
   id: string
   title: string
@@ -9,15 +11,25 @@ export type Place = {
   base_position: string
   [key: string]: any
 }
-
+export type PlaceCategory = {
+  name: string
+  count: number
+  i18n: {
+    [language: string]: string
+  }
+}
 const state: {
   places: Record<string, Place>
   totalPlaces: number
   done: boolean
+  categories: PlaceCategory[]
+  offset: number
 } = {
   done: false,
   places: {},
-  totalPlaces: Number.MAX_SAFE_INTEGER
+  totalPlaces: Number.MAX_SAFE_INTEGER,
+  categories: [],
+  offset: 0
 }
 
 export const getPlacesAroundParcel = (
@@ -72,11 +84,10 @@ export const cleanMapPlaces = (): void => {
   state.places = {}
 }
 export const isMapPlacesLoaded = () => state.done
-
+export const getPlaceCategories = () => state.categories
 export const loadCompleteMapPlaces = async (): Promise<
   Record<string, Place>
 > => {
-  let offset = 0
   const LIMIT = 500
   if (state.done) return state.places
   const realm = await getRealm({})
@@ -85,16 +96,78 @@ export const loadCompleteMapPlaces = async (): Promise<
   if (realm.realmInfo?.realmName.endsWith('.eth')) {
     return state.places
   }
-  while (Object.keys(state.places).length < state.totalPlaces) {
-    const response = await fetch(
-      `https://places.decentraland.${
-        isZone ? 'zone' : 'org'
-      }/api/places?offset=${offset}&limit=${LIMIT}&categories=poi`
-    ).then(async (r) => await r.json())
-    const { data, total } = response
-    state.totalPlaces = total
-    state.places = { ...state.places, ...data }
-    offset += 500
+  const PLACES_BASE_URL = `https://places.decentraland.${
+    isZone ? 'zone' : 'org'
+  }`
+
+  const DEFAULT_CATEGORIES: PlaceCategory[] = [
+    { name: 'poi', count: 57, i18n: { en: '📍 Point of Interest' } },
+    { name: 'featured', count: 5, i18n: { en: '✨ Featured' } },
+    { name: 'game', count: 367, i18n: { en: '🎮 Game' } },
+    { name: 'casino', count: 19, i18n: { en: '♣️ Casino' } },
+    { name: 'social', count: 428, i18n: { en: '👥 Social' } },
+    { name: 'music', count: 274, i18n: { en: '🎵 Music' } },
+    { name: 'art', count: 783, i18n: { en: '🎨 Art' } },
+    { name: 'fashion', count: 79, i18n: { en: '👠 Fashion' } },
+    { name: 'crypto', count: 328, i18n: { en: '🪙 Crypto' } },
+    { name: 'education', count: 207, i18n: { en: '📚 Education' } },
+    { name: 'shop', count: 240, i18n: { en: '🛍️ Shop' } },
+    { name: 'sports', count: 31, i18n: { en: '⚽️ Sports' } },
+    { name: 'business', count: 36, i18n: { en: '🏢 Business' } },
+    { name: 'parkour', count: 4, i18n: { en: '🏃 Parkour' } }
+  ]
+  const categories =
+    (await fetch(`${PLACES_BASE_URL}/api/categories`).then((res) => res.json()))
+      .data ?? DEFAULT_CATEGORIES
+  state.categories = categories
+  console.log('categories', categories)
+
+  for (let category of categories) {
+    let placesPerCategory: Record<string, Place> = {}
+    while (Object.values(placesPerCategory).length < category.count) {
+      const url = `${PLACES_BASE_URL}/api/places?offset=${state.offset}&limit=${LIMIT}&categories=${category.name}`
+      console.log(url)
+      const response = await fetch(url).then(async (r) => await r.json())
+      if (!response.data.length) {
+        console.log('response.data.length = 0', response)
+        break
+      }
+      console.log(
+        'response',
+        `state.offset ${state.offset} :: `,
+        `response.total ${response.total} ::`,
+        `category.count ${category.count} ::`,
+        `category.name ${category.name} ::`,
+        `response.data.length ${response.data.length} ::`,
+        `Object.keys(state.places).length ${
+          Object.values(state.places).length
+        } :: `
+      )
+
+      category.count = response.total ?? 0
+      placesPerCategory = {
+        ...placesPerCategory,
+        ...(response.data ?? []).reduce(
+          (acc: Record<string, Place>, current: Place) => {
+            acc[current.base_position] = current
+            return acc
+          },
+          {}
+        )
+      }
+
+      state.places = { ...state.places, ...placesPerCategory }
+      state.totalPlaces = Object.keys(state.places).length
+
+      state.offset += response.data.length ?? 0
+      await sleep(300)
+    }
+    state.offset = 0
+
+    console.log('category', category)
+
+    state.totalPlaces += category.count
+    await sleep(300)
   }
 
   state.done = true

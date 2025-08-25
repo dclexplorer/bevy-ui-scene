@@ -17,7 +17,10 @@ export function MapFilterBar(): ReactElement {
       }}
     >
       {MAP_FILTER_DEFINITIONS.map((filterDefinition) => (
-        <MapFilterBarButton filterDefinition={filterDefinition} />
+        <MapFilterBarButton
+          key={filterDefinition.id}
+          filterDefinition={filterDefinition}
+        />
       ))}
     </UiEntity>
   )
@@ -25,10 +28,12 @@ export function MapFilterBar(): ReactElement {
 
 export function MapFilterBarButton({
   filterDefinition,
-  fontSize = getViewportHeight() * 0.018
+  fontSize = getViewportHeight() * 0.018,
+  key
 }: {
   filterDefinition: FilterDefinition
   fontSize?: number
+  key?: string
 }) {
   const { spriteName, label, id } = filterDefinition
   return (
