@@ -5,6 +5,7 @@ import {
   fromParcelCoordsToPosition,
   fromStringToCoords,
   getLoadedMapPlaces,
+  getPlacesAroundParcel,
   isMapPlacesLoaded,
   Place
 } from '../../../service/map-places'
@@ -36,7 +37,10 @@ import {
 import { Label } from '@dcl/sdk/react-ecs'
 import { getBigMapCameraEntity, ISO_OFFSET } from '../../../service/map-camera'
 import { MapFilterBar } from '../../../components/map/map-filter-bar'
+import { getPlayerParcel } from '../../../service/player-scenes'
+import { getPlayer } from '@dcl/sdk/players'
 const FOV = (45 * 1.25 * Math.PI) / 180
+const PLAYER_PLACE_ID = 'player'
 export const BigMap = (): ReactElement => {
   return (
     <UiEntity
@@ -50,11 +54,24 @@ export const BigMap = (): ReactElement => {
   )
 }
 const state = { dragging: false, moving: false, lastClickTime: 0 }
-
+export type PlaceRepresentation = Place & { centralParcelCoords: Vector3 }
 function BigMapContent(): ReactElement {
   const [placesRepresentations, setPlacesRepresentations] = useState<
-    (Place & { centralParcelCoords: Vector3 })[]
+    PlaceRepresentation[]
   >([])
+  const initialPlayerParcel = getPlayerParcel()
+  const [playerRespresentation, setPlayerRespresentation] =
+    useState<PlaceRepresentation>({
+      id: PLAYER_PLACE_ID,
+      title: '',
+      positions: [],
+      base_position: `${initialPlayerParcel.x},${initialPlayerParcel.y}`,
+      centralParcelCoords: fromParcelCoordsToPosition(initialPlayerParcel)
+    })
+  const [allRepresentations, setAllRepresentations] = useState<
+    PlaceRepresentation[]
+  >([])
+
   useEffect(() => {
     const initBigMapFn = async () => {
       await waitFor(() => isMapPlacesLoaded())
@@ -77,7 +94,7 @@ function BigMapContent(): ReactElement {
           }
         }
       )
-
+      setAllRepresentations([playerRespresentation, ..._representations])
       setPlacesRepresentations(_representations)
     }
 
@@ -100,6 +117,26 @@ function BigMapContent(): ReactElement {
       )
     }
   })
+  useEffect(() => {
+    const foundPlayer = placesRepresentations.find(
+      (p: PlaceRepresentation) => p.id === PLAYER_PLACE_ID
+    )
+    const playerParcel = getPlayerParcel()
+    let _playerRepresentation: PlaceRepresentation = foundPlayer ?? {
+      id: PLAYER_PLACE_ID,
+      title: '',
+      positions: [],
+      base_position: `${playerParcel.x},${playerParcel.y}`,
+      centralParcelCoords: fromParcelCoordsToPosition(playerParcel)
+    }
+    if (foundPlayer) {
+      foundPlayer.centralParcelCoords = fromParcelCoordsToPosition(playerParcel)
+    } else {
+      placesRepresentations.unshift(_playerRepresentation)
+    }
+    setPlayerRespresentation(_playerRepresentation)
+    setAllRepresentations([_playerRepresentation, ...placesRepresentations])
+  }, [getPlayerParcel()])
 
   return (
     <UiEntity
@@ -146,7 +183,7 @@ function BigMapContent(): ReactElement {
               end: Vector3.add(targetPosition, Vector3.create(...ISO_OFFSET))
             }),
             duration: 500,
-            easingFunction: EasingFunction.EF_LINEAR
+            easingFunction: EasingFunction.EF_EASECUBIC
           })
 
           executeTask(async () => {
@@ -158,7 +195,7 @@ function BigMapContent(): ReactElement {
         state.lastClickTime = Date.now()
       }}
     >
-      {placesRepresentations.map((placeRepresentation) => {
+      {allRepresentations.map((placeRepresentation) => {
         // TODO optimize, only calculate when camera position or rotation changes, and with throttle
         const position = worldToScreenPx(
           placeRepresentation.centralParcelCoords,
@@ -189,7 +226,13 @@ function BigMapContent(): ReactElement {
               fontSize={getCanvasScaleRatio() * 50}
             />
             <Icon
-              icon={{ spriteName: 'POIIcn', atlasName: 'map' }}
+              icon={{
+                spriteName:
+                  placeRepresentation.id === PLAYER_PLACE_ID
+                    ? 'PlayersIcn'
+                    : 'POI',
+                atlasName: 'map2'
+              }}
               uiTransform={{
                 positionType: 'absolute',
                 width: getCanvasScaleRatio() * 50,
