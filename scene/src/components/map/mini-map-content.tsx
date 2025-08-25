@@ -101,7 +101,9 @@ export function MiniMapContent(): ReactElement {
     const placesAroundPlayerParcel = getPlacesAroundParcel(
       playerParcel,
       10
-    ).filter((p) => p.categories.some((c: string) => c === 'poi'))
+    ).filter((p) =>
+      p.categories.some((c: string) => c === 'poi' || c === 'player')
+    )
     setParcelsAroundIds(
       placesAroundPlayerParcel.map((p) => p.base_position).join(',')
     )

@@ -5,10 +5,7 @@ import {
   fromParcelCoordsToPosition,
   fromStringToCoords,
   getLoadedMapPlaces,
-  getPlacesAroundParcel,
-  isMapPlacesLoaded,
-  Place,
-  PlaceCategory
+  Place
 } from '../../../service/map-places'
 import {
   EasingFunction,
@@ -71,8 +68,11 @@ function BigMapContent(): ReactElement {
       id: PLAYER_PLACE_ID,
       title: '',
       positions: [],
+      categories: [PLAYER_PLACE_ID],
       base_position: `${initialPlayerParcel.x},${initialPlayerParcel.y}`,
-      centralParcelCoords: fromParcelCoordsToPosition(initialPlayerParcel)
+      centralParcelCoords: fromParcelCoordsToPosition(initialPlayerParcel, {
+        height: 0
+      })
     })
   const [allRepresentations, setAllRepresentations] = useState<
     PlaceRepresentation[]
@@ -100,7 +100,10 @@ function BigMapContent(): ReactElement {
           }
         })
         .filter((p: PlaceRepresentation) =>
-          p.categories.some((c: string) => state.filterCategories.includes(c))
+          p.categories.some(
+            (c: string) =>
+              state.filterCategories.includes(c) || c === PLAYER_PLACE_ID
+          )
         )
       setAllRepresentations([playerRespresentation, ..._representations])
       setPlacesRepresentations(_representations)
@@ -139,11 +142,17 @@ function BigMapContent(): ReactElement {
       id: PLAYER_PLACE_ID,
       title: '',
       positions: [],
+      categories: [PLAYER_PLACE_ID],
       base_position: `${playerParcel.x},${playerParcel.y}`,
-      centralParcelCoords: fromParcelCoordsToPosition(playerParcel)
+      centralParcelCoords: fromParcelCoordsToPosition(playerParcel, {
+        height: 0
+      })
     }
     if (foundPlayer) {
-      foundPlayer.centralParcelCoords = fromParcelCoordsToPosition(playerParcel)
+      foundPlayer.centralParcelCoords = fromParcelCoordsToPosition(
+        playerParcel,
+        { height: 0 }
+      )
     } else {
       placesRepresentations.unshift(_playerRepresentation)
     }
@@ -208,7 +217,7 @@ function BigMapContent(): ReactElement {
         state.lastClickTime = Date.now()
       }}
     >
-      {placesRepresentations.map((placeRepresentation) => {
+      {allRepresentations.map((placeRepresentation) => {
         // TODO optimize, only calculate when camera position or rotation changes, and with throttle
         const position = worldToScreenPx(
           placeRepresentation.centralParcelCoords,

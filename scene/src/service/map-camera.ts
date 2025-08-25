@@ -27,10 +27,10 @@ const state: MapCameraState = {
   initialized: false,
   defaultMainCamera: null
 }
-const OFFSET_MAP_CAMERA = 500
+const OFFSET_MAP_CAMERA = 300
 export const ISO_OFFSET = [
   OFFSET_MAP_CAMERA,
-  OFFSET_MAP_CAMERA * 1.5,
+  OFFSET_MAP_CAMERA * 2,
   -OFFSET_MAP_CAMERA
 ]
 let mapCamera: Entity
@@ -67,13 +67,25 @@ export const activateMapCamera = () => {
 
     executeTask(async () => {
       await sleep(2000)
-      const r = Transform.get(mapCamera).rotation
-      const q = Quaternion.create(r.x, r.y, r.z, r.w)
-      await sleep(1)
-      const vc = VirtualCamera.getMutable(mapCamera)
-      vc.lookAtEntity = undefined
+      VirtualCamera.getMutable(mapCamera).lookAtEntity = undefined
       Transform.getMutable(mapCamera).rotation = Quaternion.fromLookAt(
         Transform.getMutable(mapCamera).position,
+        Transform.get(engine.PlayerEntity).position
+      )
+    })
+  } else {
+    const mapCameraTransform = Transform.getMutable(mapCamera)
+    mapCameraTransform.position = Vector3.add(
+      Transform.get(engine.PlayerEntity).position,
+      Vector3.create(...ISO_OFFSET)
+    )
+
+    executeTask(async () => {
+      await sleep(2000)
+      VirtualCamera.getMutable(mapCamera).lookAtEntity = undefined
+
+      Transform.getMutable(mapCamera).rotation = Quaternion.fromLookAt(
+        Transform.get(mapCamera).position,
         Transform.get(engine.PlayerEntity).position
       )
     })
@@ -82,6 +94,8 @@ export const activateMapCamera = () => {
   MainCamera.createOrReplace(engine.CameraEntity, {
     virtualCameraEntity: mapCamera
   })
+  VirtualCamera.getMutable(mapCamera).lookAtEntity = engine.PlayerEntity
+
   InputModifier.createOrReplace(engine.PlayerEntity, {
     mode: InputModifier.Mode.Standard({
       disableAll: true
