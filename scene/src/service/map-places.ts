@@ -18,6 +18,17 @@ export type PlaceCategory = {
     [language: string]: string
   }
 }
+declare const localStorage: any
+const MAP_LOCALSTORAGE_KEY = 'map'
+
+const LOCALSTORAGE_SEPARATOR = '_::_'
+const [mapStorageDate, mapStoragePlaces] = (
+  localStorage.getItem(MAP_LOCALSTORAGE_KEY)?.split(LOCALSTORAGE_SEPARATOR) ?? [
+    '0',
+    '{}'
+  ]
+).map((d: string) => JSON.parse(d))
+console.log('mapStorageDate', mapStorageDate)
 const state: {
   places: Record<string, Place>
   totalPlaces: number
@@ -169,6 +180,13 @@ export const loadCompleteMapPlaces = async (): Promise<
 
     state.totalPlaces += category.count
     await sleep(300)
+  }
+
+  if (Object.values(state.places).length > 0) {
+    localStorage.setItem(
+      MAP_LOCALSTORAGE_KEY,
+      `${Date.now()}${LOCALSTORAGE_SEPARATOR}${JSON.stringify(state.places)}`
+    )
   }
 
   state.done = true
