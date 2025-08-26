@@ -47,6 +47,8 @@ export function logout(): void {
   loadingAndLogin.startLoading()
   loadingAndLogin.setStatus('sign-in-or-guest')
 }
+let uiControllerSingletonInstance: UIController
+export const getUiController = () => uiControllerSingletonInstance
 
 export class UIController {
   public isPhotosVisible: boolean = false
@@ -80,6 +82,7 @@ export class UIController {
   }
 
   constructor(gameController: GameController) {
+    uiControllerSingletonInstance = this
     this.gameController = gameController
     this.loadingAndLogin = loadingAndLogin = new LoadingAndLogin(this)
     this.mainHud = new MainHud(this)

@@ -1,9 +1,10 @@
 import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
 import Icon from '../icon/Icon'
-import { getViewportHeight } from '../../service/canvas-ratio'
+import { getViewportHeight, getViewportWidth } from '../../service/canvas-ratio'
 import { FilterDefinition, MAP_FILTER_DEFINITIONS } from './map-definitions'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
+import { getUiController } from '../../controllers/ui.controller'
 
 export function MapFilterBar(): ReactElement {
   return (
@@ -12,7 +13,7 @@ export function MapFilterBar(): ReactElement {
         flexDirection: 'row',
         alignSelf: 'flex-start',
         alignItems: 'flex-start',
-        width: '100%',
+        width: getViewportWidth() - getUiController().sceneCard.panelWidth, // TODO need to well define
         flexWrap: 'wrap'
       }}
     >

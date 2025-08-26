@@ -35,9 +35,14 @@ import {
 import { Label } from '@dcl/sdk/react-ecs'
 import { getBigMapCameraEntity, ISO_OFFSET } from '../../../service/map-camera'
 import { MapFilterBar } from '../../../components/map/map-filter-bar'
-import { getPlayerParcel } from '../../../service/player-scenes'
+import {
+  getPlayerParcel,
+  getVector3Parcel
+} from '../../../service/player-scenes'
 import { getPlayer } from '@dcl/sdk/players'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
+import { getUiController } from '../../../controllers/ui.controller'
+import { PlaceFromApi } from '../../scene-info-card/SceneInfoCard.types'
 const FOV = (45 * 1.25 * Math.PI) / 180
 const PLAYER_PLACE_ID = 'player'
 export const BigMap = (): ReactElement => {
@@ -216,6 +221,11 @@ function BigMapContent(): ReactElement {
             await sleep(500)
             state.moving = false
           })
+          const parcelVector3 = getVector3Parcel(targetPosition)
+
+          getUiController().sceneCard.showByCoords(
+            Vector3.create(parcelVector3.x, 0, parcelVector3.y)
+          )
         }
         state.lastClickTime = Date.now()
       }}
@@ -268,6 +278,14 @@ function BigMapContent(): ReactElement {
                 },
                 width: getCanvasScaleRatio() * 50,
                 height: getCanvasScaleRatio() * 50
+              }}
+              onMouseDown={() => {
+                const coords = fromStringToCoords(
+                  placeRepresentation.base_position
+                )
+                getUiController().sceneCard.showByCoords(
+                  Vector3.create(coords.x, 0, coords.y)
+                )
               }}
             />
 

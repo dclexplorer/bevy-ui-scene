@@ -51,6 +51,7 @@ import type {
   EventFromApi,
   PlaceFromApi
 } from './SceneInfoCard.types'
+import { getViewportHeight, getViewportWidth } from '../../service/canvas-ratio'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -307,16 +308,20 @@ export default class SceneInfoCard {
     this.shareBackgroundColor = SELECTED_BUTTON_COLOR
   }
 
+  isVisible(): boolean {
+    return !!this.place
+  }
+
+  panelWidth: number = getViewportHeight() * 0.4
+
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    let panelWidth: number
-
     if (canvasInfo.width / 4 < 360) {
-      panelWidth = 360
+      this.panelWidth = 360
     } else {
-      panelWidth = canvasInfo.width / 4
+      this.panelWidth = canvasInfo.width / 4
     }
 
     if (this.place === undefined) return null
@@ -330,7 +335,7 @@ export default class SceneInfoCard {
       >
         <UiEntity
           uiTransform={{
-            width: panelWidth,
+            width: this.panelWidth,
             height: '100%',
             justifyContent: 'flex-start',
             alignItems: 'center',
@@ -346,7 +351,10 @@ export default class SceneInfoCard {
           }}
         >
           <UiEntity
-            uiTransform={{ width: panelWidth, minHeight: panelWidth * 0.75 }}
+            uiTransform={{
+              width: this.panelWidth,
+              minHeight: this.panelWidth * 0.75
+            }}
             uiBackground={{
               textureMode: 'stretch',
               texture: {
@@ -365,7 +373,7 @@ export default class SceneInfoCard {
               width: '100%',
               overflow: 'scroll',
               scrollPosition: this.scrollPos,
-              maxHeight: canvasInfo.height - panelWidth * 0.75,
+              maxHeight: canvasInfo.height - this.panelWidth * 0.75,
               flexDirection: 'column'
             }}
             // uiBackground={{color:Color4.Red()}}
@@ -381,7 +389,8 @@ export default class SceneInfoCard {
               {this.sceneInfo()}
               {this.tabsBar()}
               {this.selectedTab === 'overview' && this.overviewContent()}
-              {this.selectedTab === 'photos' && this.photosContent(panelWidth)}
+              {this.selectedTab === 'photos' &&
+                this.photosContent(this.panelWidth)}
               {this.selectedTab === 'events' && this.eventsContent()}
             </UiEntity>
           </UiEntity>

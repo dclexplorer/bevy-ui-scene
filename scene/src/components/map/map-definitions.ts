@@ -29,6 +29,11 @@ export const MAP_FILTER_DEFINITIONS: ReadonlyArray<FilterDefinition> = [
     spriteName: 'MapPins'
   },
   {
+    id: 'poi',
+    label: 'POIs',
+    spriteName: 'POI'
+  },
+  {
     id: 'favorites',
     label: 'Favorites',
     spriteName: 'Favourite'
