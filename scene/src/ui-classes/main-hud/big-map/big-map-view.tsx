@@ -37,6 +37,7 @@ import { getBigMapCameraEntity, ISO_OFFSET } from '../../../service/map-camera'
 import { MapFilterBar } from '../../../components/map/map-filter-bar'
 import { getPlayerParcel } from '../../../service/player-scenes'
 import { getPlayer } from '@dcl/sdk/players'
+import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 const FOV = (45 * 1.25 * Math.PI) / 180
 const PLAYER_PLACE_ID = 'player'
 export const BigMap = (): ReactElement => {
@@ -242,14 +243,14 @@ function BigMapContent(): ReactElement {
               position: {
                 left: position.left,
                 top: position.top
-              }
+              },
+              flexDirection: 'column',
+              alignItems: 'center',
+              alignContent: 'center',
+              justifyContent: 'center'
             }}
             key={placeRepresentation.id}
           >
-            <Label
-              value={placeRepresentation.title}
-              fontSize={getCanvasScaleRatio() * 50}
-            />
             <Icon
               icon={{
                 spriteName:
@@ -260,8 +261,26 @@ function BigMapContent(): ReactElement {
               }}
               uiTransform={{
                 positionType: 'absolute',
+                alignSelf: 'center',
+                position: {
+                  top: -(getCanvasScaleRatio() * 50) / 4,
+                  left: -(getCanvasScaleRatio() * 50) / 4
+                },
                 width: getCanvasScaleRatio() * 50,
                 height: getCanvasScaleRatio() * 50
+              }}
+            />
+
+            <UiEntity
+              uiTransform={{
+                alignSelf: 'center',
+                alignItems: 'center',
+                alignContent: 'center'
+              }}
+              uiText={{
+                value: placeRepresentation.title,
+                fontSize: getCanvasScaleRatio() * 50,
+                textAlign: 'top-center'
               }}
             />
           </UiEntity>
