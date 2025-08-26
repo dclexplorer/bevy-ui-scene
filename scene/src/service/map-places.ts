@@ -99,6 +99,10 @@ export const getPlaceCategories = () => state.categories
 export const loadCompleteMapPlaces = async (): Promise<
   Record<string, Place>
 > => {
+  if (Date.now() - mapStorageDate < 10 * 1000 * 60 * 60) {
+    state.done = true
+    return state.places
+  }
   const LIMIT = 500
   if (state.done) return state.places
   const realm = await getRealm({})
