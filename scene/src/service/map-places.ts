@@ -96,6 +96,7 @@ export const loadCompleteMapPlaces = async (): Promise<
   if (realm.realmInfo?.realmName.endsWith('.eth')) {
     return state.places
   }
+  //TODO REVIEW if we should use realm /about
   const PLACES_BASE_URL = `https://places.decentraland.${
     isZone ? 'zone' : 'org'
   }`
