@@ -5,6 +5,9 @@ import { FilterDefinition, MAP_FILTER_DEFINITIONS } from './map-definitions'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
 import { getUiController } from '../../controllers/ui.controller'
+import { store } from '../../state/store'
+import { noop } from '../../utils/function-utils'
+import { updateHudStateAction } from '../../state/hud/actions'
 
 export function MapFilterBar(): ReactElement {
   return (
@@ -19,8 +22,18 @@ export function MapFilterBar(): ReactElement {
     >
       {MAP_FILTER_DEFINITIONS.map((filterDefinition) => (
         <MapFilterBarButton
+          active={store
+            .getState()
+            .hud.mapFilterCategories.includes(filterDefinition.id)}
           key={filterDefinition.id}
           filterDefinition={filterDefinition}
+          onClick={() => {
+            store.dispatch(
+              updateHudStateAction({
+                mapFilterCategories: [filterDefinition.id]
+              })
+            )
+          }}
         />
       ))}
     </UiEntity>
@@ -30,26 +43,31 @@ export function MapFilterBar(): ReactElement {
 export function MapFilterBarButton({
   filterDefinition,
   fontSize = getViewportHeight() * 0.018,
-  key
+  active = false,
+  key,
+  onClick = noop
 }: {
   filterDefinition: FilterDefinition
   fontSize?: number
+  active?: boolean
   key?: string
+  onClick?: () => void
 }) {
   const { spriteName, label, id } = filterDefinition
   return (
     <UiEntity
       uiTransform={{
         borderRadius: fontSize * 10,
-        borderColor: COLOR.BLACK_TRANSPARENT,
-        borderWidth: 0,
+        borderColor: COLOR.ACTIVE_BACKGROUND_COLOR,
+        borderWidth: active ? fontSize * 0.1 : 0,
         flexGrow: 0,
         flexShrink: 0,
         margin: '0.2%'
       }}
       uiBackground={{
-        color: Color4.White()
+        color: active ? COLOR.ACTIVE_BACKGROUND_COLOR : COLOR.WHITE
       }}
+      onMouseDown={onClick}
     >
       <Icon
         uiTransform={{
@@ -64,7 +82,7 @@ export function MapFilterBarButton({
           textWrap: 'nowrap',
           value: `<b> ${label.toUpperCase()}</b>`,
           fontSize,
-          color: COLOR.TEXT_COLOR
+          color: active ? COLOR.TEXT_COLOR_WHITE : COLOR.TEXT_COLOR
         }}
       />
     </UiEntity>

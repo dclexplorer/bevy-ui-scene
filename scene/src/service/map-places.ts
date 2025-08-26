@@ -100,6 +100,8 @@ export const loadCompleteMapPlaces = async (): Promise<
   Record<string, Place>
 > => {
   if (Date.now() - mapStorageDate < 10 * 1000 * 60 * 60) {
+    console.log('mapStoragePlaces', Object.values(mapStoragePlaces).length)
+    state.places = mapStoragePlaces
     state.done = true
     return state.places
   }

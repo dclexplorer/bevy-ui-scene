@@ -43,6 +43,7 @@ import { getPlayer } from '@dcl/sdk/players'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getUiController } from '../../../controllers/ui.controller'
 import { PlaceFromApi } from '../../scene-info-card/SceneInfoCard.types'
+import { store } from '../../../state/store'
 const FOV = (45 * 1.25 * Math.PI) / 180
 const PLAYER_PLACE_ID = 'player'
 export const BigMap = (): ReactElement => {
@@ -60,9 +61,9 @@ export const BigMap = (): ReactElement => {
 const state = {
   dragging: false,
   moving: false,
-  lastClickTime: 0,
-  filterCategories: ['poi']
+  lastClickTime: 0
 }
+const PLAYER_PLACE_LABEL = 'ME'
 export type PlaceRepresentation = Place & { centralParcelCoords: Vector3 }
 
 function BigMapContent(): ReactElement {
@@ -73,7 +74,7 @@ function BigMapContent(): ReactElement {
   const [playerRespresentation, setPlayerRespresentation] =
     useState<PlaceRepresentation>({
       id: PLAYER_PLACE_ID,
-      title: 'ME',
+      title: PLAYER_PLACE_LABEL,
       positions: [],
       categories: [PLAYER_PLACE_ID],
       base_position: `${initialPlayerParcel.x},${initialPlayerParcel.y}`,
@@ -87,8 +88,6 @@ function BigMapContent(): ReactElement {
 
   useEffect(() => {
     const initBigMapFn = async () => {
-      await sleep(2000)
-
       const _representations = Object.values(getLoadedMapPlaces())
         .map((place) => {
           const centralParcelCoords = fromParcelCoordsToPosition(
@@ -107,9 +106,8 @@ function BigMapContent(): ReactElement {
           }
         })
         .filter((p: PlaceRepresentation) =>
-          p.categories.some(
-            (c: string) =>
-              state.filterCategories.includes(c) || c === PLAYER_PLACE_ID
+          p.categories.some((c: string) =>
+            store.getState().hud.mapFilterCategories.includes(c)
           )
         )
       setAllRepresentations([playerRespresentation, ..._representations])
@@ -120,7 +118,7 @@ function BigMapContent(): ReactElement {
       Object.values(getLoadedMapPlaces()).length
     )
     initBigMapFn().catch(console.error)
-  }, [getLoadedMapPlaces()])
+  }, [getLoadedMapPlaces(), store.getState().hud.mapFilterCategories])
 
   useEffect(() => {
     // TODO REVIEW consider using a system instead of useEffect and compare
@@ -147,7 +145,7 @@ function BigMapContent(): ReactElement {
     const playerParcel = getPlayerParcel()
     let _playerRepresentation: PlaceRepresentation = foundPlayer ?? {
       id: PLAYER_PLACE_ID,
-      title: 'ME',
+      title: PLAYER_PLACE_LABEL,
       positions: [],
       categories: [PLAYER_PLACE_ID],
       base_position: `${playerParcel.x},${playerParcel.y}`,
@@ -230,80 +228,79 @@ function BigMapContent(): ReactElement {
         state.lastClickTime = Date.now()
       }}
     >
-      {allRepresentations.map((placeRepresentation) => {
-        // TODO optimize, only calculate when camera position or rotation changes, and with throttle
-        const position = worldToScreenPx(
-          placeRepresentation.centralParcelCoords,
-          Transform.get(engine.CameraEntity).position,
-          Transform.get(engine.CameraEntity).rotation,
-          FOV,
-          getViewportWidth(),
-          getViewportHeight(),
-          {
-            fovIsHorizontal: false,
-            forwardIsNegZ: false
-          }
-        )
-        if (state.dragging || state.moving) return null
-
-        return (
-          <UiEntity
-            uiTransform={{
-              positionType: 'absolute',
-              position: {
-                left: position.left,
-                top: position.top
-              },
-              flexDirection: 'column',
-              alignItems: 'center',
-              alignContent: 'center',
-              justifyContent: 'center'
-            }}
-            key={placeRepresentation.id}
-          >
-            <Icon
-              icon={{
-                spriteName:
-                  placeRepresentation.id === PLAYER_PLACE_ID
-                    ? 'PlayersIcn'
-                    : 'POI',
-                atlasName: 'map2'
-              }}
-              uiTransform={{
-                positionType: 'absolute',
-                alignSelf: 'center',
-                position: {
-                  top: -(getCanvasScaleRatio() * 50) / 4,
-                  left: -(getCanvasScaleRatio() * 50) / 4
-                },
-                width: getCanvasScaleRatio() * 50,
-                height: getCanvasScaleRatio() * 50
-              }}
-              onMouseDown={() => {
-                const coords = fromStringToCoords(
-                  placeRepresentation.base_position
-                )
-                getUiController().sceneCard.showByCoords(
-                  Vector3.create(coords.x, 0, coords.y)
-                )
-              }}
-            />
-
+      {!(state.dragging || state.moving) &&
+        allRepresentations.map((placeRepresentation) => {
+          // TODO optimize, only calculate when camera position or rotation changes, and with throttle
+          const position = worldToScreenPx(
+            placeRepresentation.centralParcelCoords,
+            Transform.get(engine.CameraEntity).position,
+            Transform.get(engine.CameraEntity).rotation,
+            FOV,
+            getViewportWidth(),
+            getViewportHeight(),
+            {
+              fovIsHorizontal: false,
+              forwardIsNegZ: false
+            }
+          )
+          return (
             <UiEntity
               uiTransform={{
-                alignSelf: 'center',
+                positionType: 'absolute',
+                position: {
+                  left: position.left,
+                  top: position.top
+                },
+                flexDirection: 'column',
                 alignItems: 'center',
-                alignContent: 'center'
+                alignContent: 'center',
+                justifyContent: 'center'
               }}
-              uiText={{
-                value: placeRepresentation.title,
-                fontSize: getCanvasScaleRatio() * 50,
-                textAlign: 'top-center'
-              }}
-            />
-          </UiEntity>
-        )
-      })}
+              key={placeRepresentation.id}
+            >
+              <Icon
+                icon={{
+                  spriteName:
+                    placeRepresentation.id === PLAYER_PLACE_ID
+                      ? 'PlayersIcn'
+                      : 'POI',
+                  atlasName: 'map2'
+                }}
+                uiTransform={{
+                  positionType: 'absolute',
+                  alignSelf: 'center',
+                  position: {
+                    top: -(getCanvasScaleRatio() * 50) / 4,
+                    left: -(getCanvasScaleRatio() * 50) / 4
+                  },
+                  width: getCanvasScaleRatio() * 50,
+                  height: getCanvasScaleRatio() * 50
+                }}
+                onMouseDown={() => {
+                  const coords = fromStringToCoords(
+                    placeRepresentation.base_position
+                  )
+                  getUiController().sceneCard.showByCoords(
+                    Vector3.create(coords.x, 0, coords.y)
+                  )
+                }}
+              />
+
+              {/* <UiEntity
+                uiTransform={{
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center'
+                }}
+                uiText={{
+                  value: placeRepresentation.title,
+                  fontSize: getCanvasScaleRatio() * 50,
+                  textAlign: 'top-center'
+                }}
+              />*/}
+            </UiEntity>
+          )
+        })}
       <MapFilterBar />
     </UiEntity>
   )

@@ -30,7 +30,7 @@ const state: MapCameraState = {
 const OFFSET_MAP_CAMERA = 300
 export const ISO_OFFSET = [
   OFFSET_MAP_CAMERA,
-  OFFSET_MAP_CAMERA * 2,
+  OFFSET_MAP_CAMERA * 3,
   -OFFSET_MAP_CAMERA
 ]
 let mapCamera: Entity

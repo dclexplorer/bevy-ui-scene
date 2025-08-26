@@ -144,7 +144,7 @@ export class UIController {
         {this.isProfileVisible && this.profile.mainUi()}
         {this.isFriendsVisible && this.friends.mainUi()}
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
-        {this.sceneInfoCardVisible && this.sceneCard.mainUi()}
+
         {this.isPhotosVisible && this.photosPanel.mainUi()}
         {/* Loading & Login */}
         {this.loadingAndLogin?.mainUi()}
@@ -152,6 +152,7 @@ export class UIController {
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
         {!this.isMainMenuVisible && renderEmotesWheel()}
         {store.getState().hud.mapModeActive && BigMap()}
+        {this.sceneInfoCardVisible && this.sceneCard.mainUi()}
         {NotificationToastStack()}
         {PopupStack()}
       </Canvas>
