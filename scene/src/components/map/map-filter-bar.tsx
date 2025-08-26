@@ -8,6 +8,7 @@ import { getUiController } from '../../controllers/ui.controller'
 import { store } from '../../state/store'
 import { noop } from '../../utils/function-utils'
 import { updateHudStateAction } from '../../state/hud/actions'
+import { Label } from '@dcl/sdk/react-ecs'
 
 export function MapFilterBar(): ReactElement {
   return (
@@ -16,10 +17,13 @@ export function MapFilterBar(): ReactElement {
         flexDirection: 'row',
         alignSelf: 'flex-start',
         alignItems: 'flex-start',
-        width: getViewportWidth() - getUiController().sceneCard.panelWidth, // TODO need to well define
+        width:
+          getViewportWidth() -
+          (getUiController().sceneCard.panelWidth ?? getViewportWidth() / 4), // TODO need to well define
         flexWrap: 'wrap'
       }}
     >
+      <Label value={getUiController().sceneCard.panelWidth.toString()} />
       {MAP_FILTER_DEFINITIONS.map((filterDefinition) => (
         <MapFilterBarButton
           active={store

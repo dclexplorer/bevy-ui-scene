@@ -100,6 +100,15 @@ export default class SceneInfoCard {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
+
+    const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
+    if (canvasInfo === null) return
+
+    if (canvasInfo.width / 4 < 360) {
+      this.panelWidth = 360
+    } else {
+      this.panelWidth = canvasInfo.width / 4
+    }
   }
 
   async update(): Promise<void> {
