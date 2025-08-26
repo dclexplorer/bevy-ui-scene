@@ -8,6 +8,7 @@ import {
   InputModifier,
   MainCamera,
   PBMainCamera,
+  PrimaryPointerInfo,
   Transform,
   VirtualCamera
 } from '@dcl/sdk/ecs'
@@ -16,16 +17,18 @@ import { updateHudStateAction } from '../state/hud/actions'
 import { store } from '../state/store'
 import { listenSystemAction } from './system-actions-emitter'
 import { sleep } from '../utils/dcl-utils'
-import { cloneDeep } from '../utils/function-utils'
+import { panCameraXZ } from './perspective-to-screen'
 
 type MapCameraState = {
   initialized: boolean
   defaultMainCamera: DeepReadonlyObject<PBMainCamera> | null
+  dragActive: boolean
 }
 
 const state: MapCameraState = {
   initialized: false,
-  defaultMainCamera: null
+  defaultMainCamera: null,
+  dragActive: false
 }
 const OFFSET_MAP_CAMERA = 300
 export const ISO_OFFSET = [
@@ -42,6 +45,7 @@ export const activateMapCamera = () => {
       if (store.getState().hud.mapModeActive && pressed) {
         console.log('Escape')
         deactivateMapCamera()
+        deactivateDragMapSystem()
       }
     })
     mapCamera = engine.addEntity()
@@ -121,3 +125,24 @@ export const deactivateMapCamera = () => {
     })
   })
 }
+
+export const activateDragMapSystem = () => (state.dragActive = true)
+export const deactivateDragMapSystem = () => (state.dragActive = false)
+
+engine.addSystem((dt) => {
+  if (state.dragActive) {
+    const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
+    if (!pointerInfo?.screenDelta?.x && !pointerInfo?.screenDelta?.y) return
+    const bigMapCameraEntity = getBigMapCameraEntity()
+    const mutableMapCameraTransform = Transform.getMutable(bigMapCameraEntity)
+    const mapCameraTransform = Transform.get(bigMapCameraEntity)
+
+    mutableMapCameraTransform.position = panCameraXZ(
+      mapCameraTransform.position,
+      mapCameraTransform.rotation,
+      -(pointerInfo!.screenDelta!.x ?? 0),
+      -(pointerInfo!.screenDelta!.y ?? 0),
+      2
+    )
+  }
+})

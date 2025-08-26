@@ -11,11 +11,9 @@ import {
   EasingFunction,
   engine,
   executeTask,
-  Move,
   PrimaryPointerInfo,
   Transform,
-  Tween,
-  VirtualCamera
+  Tween
 } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../../../utils/dcl-utils'
 import useState = ReactEcs.useState
@@ -28,22 +26,23 @@ import {
   getViewportWidth
 } from '../../../service/canvas-ratio'
 import {
-  panCameraXZ,
   screenToGround,
   worldToScreenPx
 } from '../../../service/perspective-to-screen'
-import { Label } from '@dcl/sdk/react-ecs'
-import { getBigMapCameraEntity, ISO_OFFSET } from '../../../service/map-camera'
+import {
+  activateDragMapSystem,
+  deactivateDragMapSystem,
+  getBigMapCameraEntity,
+  ISO_OFFSET
+} from '../../../service/map-camera'
 import { MapFilterBar } from '../../../components/map/map-filter-bar'
 import {
   getPlayerParcel,
   getVector3Parcel
 } from '../../../service/player-scenes'
-import { getPlayer } from '@dcl/sdk/players'
-import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getUiController } from '../../../controllers/ui.controller'
-import { PlaceFromApi } from '../../scene-info-card/SceneInfoCard.types'
 import { store } from '../../../state/store'
+
 const FOV = (45 * 1.25 * Math.PI) / 180
 const PLAYER_PLACE_ID = 'player'
 export const BigMap = (): ReactElement => {
@@ -121,23 +120,6 @@ function BigMapContent(): ReactElement {
   }, [getLoadedMapPlaces(), store.getState().hud.mapFilterCategories])
 
   useEffect(() => {
-    // TODO REVIEW consider using a system instead of useEffect and compare
-    if (state.dragging) {
-      const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
-      if (!pointerInfo?.screenDelta?.x && !pointerInfo?.screenDelta?.y) return
-      const mapCameraTransform = Transform.getMutable(getBigMapCameraEntity())
-
-      mapCameraTransform.position = panCameraXZ(
-        mapCameraTransform.position,
-        mapCameraTransform.rotation,
-        -(pointerInfo!.screenDelta!.x ?? 0),
-        -(pointerInfo!.screenDelta!.y ?? 0),
-        2
-      )
-    }
-  })
-
-  useEffect(() => {
     console.log('updating UI big map based on player parcel')
     const foundPlayer = placesRepresentations.find(
       (p: PlaceRepresentation) => p.id === PLAYER_PLACE_ID
@@ -177,6 +159,7 @@ function BigMapContent(): ReactElement {
       }}
       onMouseDrag={(event) => {
         state.dragging = true
+        activateDragMapSystem()
       }}
       onMouseDragEnd={() => {
         executeTask(async () => {
@@ -184,6 +167,8 @@ function BigMapContent(): ReactElement {
           await sleep(0)
           state.dragging = false
         })
+        deactivateDragMapSystem()
+
         state.dragging = false
       }}
       onMouseUp={() => {}}
