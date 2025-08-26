@@ -58,6 +58,7 @@ const state = {
   filterCategories: ['poi']
 }
 export type PlaceRepresentation = Place & { centralParcelCoords: Vector3 }
+
 function BigMapContent(): ReactElement {
   const [placesRepresentations, setPlacesRepresentations] = useState<
     PlaceRepresentation[]
@@ -160,6 +161,7 @@ function BigMapContent(): ReactElement {
     setAllRepresentations([_playerRepresentation, ...placesRepresentations])
   }, [getPlayerParcel()])
 
+  // TODO don't show genesis city points when in other realm/world/server
   return (
     <UiEntity
       uiTransform={{
