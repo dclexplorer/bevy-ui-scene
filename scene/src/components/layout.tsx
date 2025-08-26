@@ -1,15 +1,21 @@
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
-import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, {
+  type ReactElement,
+  UiBackgroundProps,
+  UiEntity
+} from '@dcl/react-ecs'
 import { noop } from '../utils/function-utils'
 
 export function Row({
   uiTransform,
+  uiBackground,
   children,
   onMouseEnter = noop,
   onMouseLeave = noop,
   onMouseDown = noop
 }: {
   uiTransform?: UiTransformProps
+  uiBackground?: UiBackgroundProps
   children?: ReactElement
   onMouseEnter?: () => void
   onMouseLeave?: () => void
@@ -26,6 +32,7 @@ export function Row({
         width: '100%',
         ...uiTransform
       }}
+      uiBackground={uiBackground}
     >
       {children}
     </UiEntity>

@@ -42,6 +42,7 @@ import {
 } from '../../../service/player-scenes'
 import { getUiController } from '../../../controllers/ui.controller'
 import { store } from '../../../state/store'
+import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
 
 const FOV = (45 * 1.25 * Math.PI) / 180
 const PLAYER_PLACE_ID = 'player'

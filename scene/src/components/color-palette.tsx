@@ -74,7 +74,7 @@ export const COLOR = {
   TEXT_COLOR_GREY: Color4.fromHexString('#889AA4FF'),
   TEXT_COLOR_LIGHT_GREY: Color4.fromHexString('#C6C6C6FF'),
   INACTIVE: Color4.fromHexString('#d8d8d8'),
-
+  PANEL_BACKGROUND_LIGHT: Color4.fromHexString('#e4e4e4'),
   WHEEL_BASE_RARITY: Color4.fromHexString('#e1e1e1'),
   BLACK_TRANSPARENT: Color4.create(0, 0, 0, 0),
   MESSAGE_MENTION: Color4.fromHexString('#FD2D58'),

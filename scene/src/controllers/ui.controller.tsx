@@ -37,6 +37,7 @@ import { updateHudStateAction } from '../state/hud/actions'
 import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-popups/permissions-popup-service'
 import { getRealm } from '~system/Runtime'
 import { BigMap } from '../ui-classes/main-hud/big-map/big-map-view'
+import { SceneCatalogPanel } from '../components/map/scene-catalog-panel'
 
 let loadingAndLogin: any = null
 
@@ -153,6 +154,7 @@ export class UIController {
         {!this.isMainMenuVisible && renderEmotesWheel()}
         {store.getState().hud.mapModeActive && BigMap()}
         {this.sceneInfoCardVisible && this.sceneCard.mainUi()}
+        {SceneCatalogPanel()}
         {NotificationToastStack()}
         {PopupStack()}
       </Canvas>

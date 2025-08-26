@@ -23,7 +23,6 @@ export function MapFilterBar(): ReactElement {
         flexWrap: 'wrap'
       }}
     >
-      <Label value={getUiController().sceneCard.panelWidth.toString()} />
       {MAP_FILTER_DEFINITIONS.map((filterDefinition) => (
         <MapFilterBarButton
           active={store
