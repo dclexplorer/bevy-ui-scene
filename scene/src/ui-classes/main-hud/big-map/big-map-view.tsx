@@ -67,7 +67,7 @@ function BigMapContent(): ReactElement {
   const [playerRespresentation, setPlayerRespresentation] =
     useState<PlaceRepresentation>({
       id: PLAYER_PLACE_ID,
-      title: '',
+      title: 'ME',
       positions: [],
       categories: [PLAYER_PLACE_ID],
       base_position: `${initialPlayerParcel.x},${initialPlayerParcel.y}`,
@@ -141,7 +141,7 @@ function BigMapContent(): ReactElement {
     const playerParcel = getPlayerParcel()
     let _playerRepresentation: PlaceRepresentation = foundPlayer ?? {
       id: PLAYER_PLACE_ID,
-      title: '',
+      title: 'ME',
       positions: [],
       categories: [PLAYER_PLACE_ID],
       base_position: `${playerParcel.x},${playerParcel.y}`,
