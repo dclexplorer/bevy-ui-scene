@@ -10,7 +10,6 @@ import { Column, Row } from '../layout'
 import { ListCard } from './list-card'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import Icon from '../icon/Icon'
-import { Label } from '@dcl/sdk/react-ecs'
 import { EMPTY_PLACE } from '../../utils/constants'
 import { Vector3 } from '@dcl/sdk/math'
 
@@ -88,6 +87,7 @@ function SceneCatalogContent(): ReactElement {
             <ListCard
               thumbnailSrc={place.image}
               active={activeCardPlace === place}
+              activeFooter={'Click again to show more info'}
               onMouseDown={() => {
                 if (activeCardPlace === place) {
                   const coords = fromStringToCoords(place.base_position)

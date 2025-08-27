@@ -10,9 +10,9 @@ export function Row({
   uiTransform,
   uiBackground,
   children,
-  onMouseEnter = noop,
-  onMouseLeave = noop,
-  onMouseDown = noop
+  onMouseEnter,
+  onMouseLeave,
+  onMouseDown
 }: {
   uiTransform?: UiTransformProps
   uiBackground?: UiBackgroundProps
@@ -42,18 +42,24 @@ export function Row({
 export function Column({
   uiTransform,
   children,
-  onMouseEnter = noop,
-  onMouseLeave = noop
+  onMouseEnter,
+  onMouseLeave,
+  onMouseDown,
+  uiBackground
 }: {
   uiTransform?: UiTransformProps
-  children?: ReactElement
+  children?: ReactElement | ReactElement[] | null[]
   onMouseEnter?: () => void
   onMouseLeave?: () => void
+  onMouseDown?: () => void
+  uiBackground?: UiBackgroundProps
 }): ReactElement {
   return (
     <UiEntity
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      uiBackground={uiBackground}
+      onMouseDown={onMouseDown}
       uiTransform={{
         flexDirection: 'column',
         ...uiTransform
