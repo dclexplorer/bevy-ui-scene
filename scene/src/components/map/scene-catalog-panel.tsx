@@ -4,7 +4,11 @@ import { COLOR } from '../color-palette'
 import useEffect = ReactEcs.useEffect
 import { store } from '../../state/store'
 import useState = ReactEcs.useState
-import { fromStringToCoords, Place } from '../../service/map-places'
+import {
+  fromParcelCoordsToPosition,
+  fromStringToCoords,
+  Place
+} from '../../service/map-places'
 import { executeTask } from '@dcl/sdk/ecs'
 import { Column, Row } from '../layout'
 import { ListCard } from './list-card'
@@ -12,6 +16,8 @@ import { getViewportHeight } from '../../service/canvas-ratio'
 import Icon from '../icon/Icon'
 import { EMPTY_PLACE } from '../../utils/constants'
 import { Vector3 } from '@dcl/sdk/math'
+import { displaceCamera } from '../../service/map-camera'
+import { getVector3Parcel } from '../../service/player-scenes'
 
 export function SceneCatalogPanel(): ReactElement {
   const width = getUiController().sceneCard.panelWidth
@@ -95,6 +101,8 @@ function SceneCatalogContent(): ReactElement {
                     Vector3.create(coords.x, 0, coords.y)
                   )
                 } else {
+                  const coords = fromStringToCoords(place.base_position)
+                  displaceCamera(fromParcelCoordsToPosition(coords))
                   setActiveCardPlace(place)
                 }
               }}

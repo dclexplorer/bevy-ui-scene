@@ -1,6 +1,7 @@
 import {
   CameraTransition,
   DeepReadonlyObject,
+  EasingFunction,
   engine,
   Entity,
   executeTask,
@@ -10,6 +11,7 @@ import {
   PBMainCamera,
   PrimaryPointerInfo,
   Transform,
+  Tween,
   VirtualCamera
 } from '@dcl/sdk/ecs'
 import { Quaternion, Vector3 } from '@dcl/sdk/math'
@@ -17,7 +19,11 @@ import { updateHudStateAction } from '../state/hud/actions'
 import { store } from '../state/store'
 import { listenSystemAction } from './system-actions-emitter'
 import { sleep } from '../utils/dcl-utils'
-import { panCameraXZ } from './perspective-to-screen'
+import { panCameraXZ, screenToGround } from './perspective-to-screen'
+import { getViewportHeight, getViewportWidth } from './canvas-ratio'
+import { getVector3Parcel } from './player-scenes'
+import { getUiController } from '../controllers/ui.controller'
+import { FOV } from '../ui-classes/main-hud/big-map/big-map-view'
 
 type MapCameraState = {
   initialized: boolean
@@ -111,7 +117,18 @@ export const activateMapCamera = () => {
     })
   )
 }
+export const displaceCamera = (targetPosition: Vector3) => {
+  const mapCameraTransform = Transform.get(getBigMapCameraEntity())
 
+  Tween.createOrReplace(getBigMapCameraEntity(), {
+    mode: Tween.Mode.Move({
+      start: Vector3.clone(mapCameraTransform.position),
+      end: Vector3.add(targetPosition, Vector3.create(...ISO_OFFSET))
+    }),
+    duration: 500,
+    easingFunction: EasingFunction.EF_EASECUBIC
+  })
+}
 export const deactivateMapCamera = () => {
   store.dispatch(
     updateHudStateAction({

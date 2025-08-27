@@ -32,6 +32,7 @@ import {
 import {
   activateDragMapSystem,
   deactivateDragMapSystem,
+  displaceCamera,
   getBigMapCameraEntity,
   ISO_OFFSET
 } from '../../../service/map-camera'
@@ -44,7 +45,7 @@ import { getUiController } from '../../../controllers/ui.controller'
 import { store } from '../../../state/store'
 import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
 
-const FOV = (45 * 1.25 * Math.PI) / 180
+export const FOV = (45 * 1.25 * Math.PI) / 180
 const PLAYER_PLACE_ID = 'player'
 export const BigMap = (): ReactElement => {
   return (
@@ -175,10 +176,9 @@ function BigMapContent(): ReactElement {
       onMouseUp={() => {}}
       onMouseDown={() => {
         if (Date.now() - state.lastClickTime < 300) {
-          state.dragging = false
           const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
           if (!pointerInfo?.screenCoordinates) return
-
+          state.dragging = false
           const mapCameraTransform = Transform.get(getBigMapCameraEntity())
 
           const targetPosition: Vector3 = screenToGround(
@@ -190,21 +190,13 @@ function BigMapContent(): ReactElement {
             mapCameraTransform.rotation,
             FOV
           ) as Vector3
-
-          Tween.createOrReplace(getBigMapCameraEntity(), {
-            mode: Tween.Mode.Move({
-              start: Vector3.clone(mapCameraTransform.position),
-              end: Vector3.add(targetPosition, Vector3.create(...ISO_OFFSET))
-            }),
-            duration: 500,
-            easingFunction: EasingFunction.EF_EASECUBIC
-          })
-
+          displaceCamera(targetPosition)
           executeTask(async () => {
             state.moving = true
             await sleep(500)
             state.moving = false
           })
+
           const parcelVector3 = getVector3Parcel(targetPosition)
 
           getUiController().sceneCard.showByCoords(

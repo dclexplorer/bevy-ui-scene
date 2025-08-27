@@ -15,6 +15,8 @@ export type PlaceType =
   | 'business'
   | 'poi'
   | 'event'
+  | 'parkour'
+  | 'live'
 
 export type FilterDefinition = {
   label: string
@@ -92,6 +94,11 @@ export const MAP_FILTER_DEFINITIONS: ReadonlyArray<FilterDefinition> = [
     id: 'business',
     label: 'Business',
     spriteName: 'Business'
+  },
+  {
+    id: 'parkour',
+    label: 'Parkour',
+    spriteName: 'Parkour'
   }
 ]
 
