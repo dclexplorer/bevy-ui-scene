@@ -3,15 +3,20 @@ import { Column, Row } from '../layout'
 import { UiTransformProps } from '@dcl/sdk/react-ecs'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
+import { noop } from '../../utils/function-utils'
 
 export type ListCardParams = {
   key?: any
   children?: ReactElement
   thumbnailSrc: string
+  onMouseDown?: () => void
+  active?: boolean
 }
 export function ListCard({
   thumbnailSrc,
-  children
+  children,
+  onMouseDown = noop,
+  active
 }: ListCardParams): ReactElement {
   return (
     <Row
@@ -19,11 +24,14 @@ export function ListCard({
         width: '98%',
         padding: '3%',
         margin: '1%',
-        borderWidth: 1,
+        borderWidth: 3,
         borderRadius: 0,
-        borderColor: COLOR.BLACK_TRANSPARENT
+        borderColor: active
+          ? COLOR.ACTIVE_BACKGROUND_COLOR
+          : COLOR.BLACK_TRANSPARENT
       }}
       uiBackground={{ color: COLOR.WHITE }}
+      onMouseDown={onMouseDown}
     >
       <Image
         src={thumbnailSrc}

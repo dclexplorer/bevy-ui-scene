@@ -31,8 +31,10 @@ import {
   ALMOST_BLACK,
   BLACK_TEXT,
   DCL_SNOW,
+  EMPTY_PLACE,
   EVENT_BACKGROUND_COLOR,
   GRAY_TEXT,
+  LOADING_PLACE,
   PANEL_BACKGROUND_COLOR,
   ROUNDED_TEXTURE_BACKGROUND,
   RUBY,
@@ -214,9 +216,11 @@ export default class SceneInfoCard {
   }
 
   async showByCoords(coords: Vector3): Promise<void> {
+    this.uiController.sceneInfoCardVisible = true
+    this.place = LOADING_PLACE
+
     const auxPlace = await fetchPlaceFromCoords(coords)
     await this.setPlace(auxPlace)
-    this.uiController.sceneInfoCardVisible = true
   }
 
   async showByState(): Promise<void> {
@@ -660,6 +664,7 @@ export default class SceneInfoCard {
             flexDirection: 'row-reverse'
           }}
           onMouseDown={() => {
+            if (this.place === LOADING_PLACE) return
             if (this.place === undefined) return
             const coord = parseCoordinates(this.place.base_position)
             if (coord !== null)
@@ -707,6 +712,7 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
+              if (this.place === LOADING_PLACE) return
               if (this.isLiked) {
                 this.setLikeStatus('null')
               } else {
@@ -738,6 +744,7 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
+              if (this.place === LOADING_PLACE) return
               if (this.isDisliked) {
                 this.setLikeStatus('null')
               } else {
@@ -769,6 +776,7 @@ export default class SceneInfoCard {
               this.resetBackgrounds()
             }}
             onMouseDown={() => {
+              if (this.place === LOADING_PLACE) return
               this.toggleFav()
             }}
           />
@@ -797,6 +805,7 @@ export default class SceneInfoCard {
                 this.resetBackgrounds()
               }}
               onMouseDown={() => {
+                if (this.place === LOADING_PLACE) return
                 this.isShareMenuOpen = !this.isShareMenuOpen
               }}
             />
@@ -842,6 +851,7 @@ export default class SceneInfoCard {
               />
               <ButtonTextIcon
                 onMouseDown={() => {
+                  if (this.place === LOADING_PLACE) return
                   void openExternalUrl({
                     url: `https://decentraland.org/play/?position=${this.place?.base_position}`
                   })

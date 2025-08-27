@@ -4,13 +4,15 @@ import { COLOR } from '../color-palette'
 import useEffect = ReactEcs.useEffect
 import { store } from '../../state/store'
 import useState = ReactEcs.useState
-import { Place } from '../../service/map-places'
+import { fromStringToCoords, Place } from '../../service/map-places'
 import { executeTask } from '@dcl/sdk/ecs'
 import { Column, Row } from '../layout'
 import { ListCard } from './list-card'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import Icon from '../icon/Icon'
 import { Label } from '@dcl/sdk/react-ecs'
+import { EMPTY_PLACE } from '../../utils/constants'
+import { Vector3 } from '@dcl/sdk/math'
 
 export function SceneCatalogPanel(): ReactElement {
   const width = getUiController().sceneCard.panelWidth
@@ -41,6 +43,7 @@ const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 function SceneCatalogContent(): ReactElement {
   const [list, setList] = useState<Place[]>([])
   const [currentPage, setCurrentPage] = useState<number>(0)
+  const [activeCardPlace, setActiveCardPlace] = useState<Place>(EMPTY_PLACE)
   useEffect(() => {
     // TODO select appropriate places server/source
     executeTask(async () => {
@@ -82,63 +85,82 @@ function SceneCatalogContent(): ReactElement {
       >
         {list.map((place) => {
           return (
-            <ListCard thumbnailSrc={place.image}>
-              <UiEntity
-                uiText={{
-                  textAlign: 'top-left',
-                  value: `<b>${place.title}</b>`,
-                  color: COLOR.TEXT_COLOR,
-                  fontSize: getViewportHeight() * 0.015
-                }}
-              />
-              <UiEntity
-                uiText={{
-                  textAlign: 'top-left',
-                  value: `Created by <b>${
-                    place.owner ?? place.contact_name
-                  }</b>`,
-                  color: COLOR.TEXT_COLOR,
-                  fontSize: getViewportHeight() * 0.015
-                }}
-              />
-              <Row
+            <ListCard
+              thumbnailSrc={place.image}
+              active={activeCardPlace === place}
+              onMouseDown={() => {
+                if (activeCardPlace === place) {
+                  const coords = fromStringToCoords(place.base_position)
+                  getUiController().sceneCard.showByCoords(
+                    Vector3.create(coords.x, 0, coords.y)
+                  )
+                } else {
+                  setActiveCardPlace(place)
+                }
+              }}
+            >
+              <Column
                 uiTransform={{
-                  margin: { left: '5%' }
+                  alignItems: 'flex-start'
                 }}
               >
-                <Icon
-                  icon={{ spriteName: 'LikeSolid', atlasName: 'map2' }}
-                  iconColor={COLOR.TEXT_COLOR}
-                  iconSize={getViewportHeight() * 0.015}
-                />
                 <UiEntity
-                  uiTransform={{
-                    width: 'auto'
-                  }}
                   uiText={{
                     textAlign: 'top-left',
-                    value: `${Math.floor(place.like_score * 100)}%`,
+                    value: `<b>${place.title}</b>`,
                     color: COLOR.TEXT_COLOR,
                     fontSize: getViewportHeight() * 0.015
                   }}
                 />
-                <Icon
-                  icon={{ spriteName: 'PlayersIcn', atlasName: 'map2' }}
-                  iconColor={COLOR.TEXT_COLOR}
-                  iconSize={getViewportHeight() * 0.015}
-                />
                 <UiEntity
-                  uiTransform={{
-                    width: 'auto'
-                  }}
                   uiText={{
                     textAlign: 'top-left',
-                    value: place.user_visits.toString(),
+                    value: `Created by <b>${
+                      place.owner ?? place.contact_name
+                    }</b>`,
                     color: COLOR.TEXT_COLOR,
                     fontSize: getViewportHeight() * 0.015
                   }}
                 />
-              </Row>
+                <Row
+                  uiTransform={{
+                    margin: { left: '5%' }
+                  }}
+                >
+                  <Icon
+                    icon={{ spriteName: 'LikeSolid', atlasName: 'map2' }}
+                    iconColor={COLOR.TEXT_COLOR}
+                    iconSize={getViewportHeight() * 0.015}
+                  />
+                  <UiEntity
+                    uiTransform={{
+                      width: 'auto'
+                    }}
+                    uiText={{
+                      textAlign: 'top-left',
+                      value: `${Math.floor(place.like_score * 100)}%`,
+                      color: COLOR.TEXT_COLOR,
+                      fontSize: getViewportHeight() * 0.015
+                    }}
+                  />
+                  <Icon
+                    icon={{ spriteName: 'PlayersIcn', atlasName: 'map2' }}
+                    iconColor={COLOR.TEXT_COLOR}
+                    iconSize={getViewportHeight() * 0.015}
+                  />
+                  <UiEntity
+                    uiTransform={{
+                      width: 'auto'
+                    }}
+                    uiText={{
+                      textAlign: 'top-left',
+                      value: place.user_visits.toString(),
+                      color: COLOR.TEXT_COLOR,
+                      fontSize: getViewportHeight() * 0.015
+                    }}
+                  />
+                </Row>
+              </Column>
             </ListCard>
           )
         })}

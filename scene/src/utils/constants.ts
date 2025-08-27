@@ -492,7 +492,7 @@ export const HELP_URL: string = 'https://decentraland.org/help/'
 export const DCL_EXPLORER_URL: string = 'https://dclexplorer.com/'
 
 export const EMPTY_PLACE: PlaceFromApi = {
-  id: 'id',
+  id: 'empty-place',
   title: 'Title',
   description: 'Description',
   image: 'https://peer.decentraland.org/content/contents/-',
@@ -523,6 +523,41 @@ export const EMPTY_PLACE: PlaceFromApi = {
   user_dislike: false,
   user_count: 0,
   user_visits: 298
+}
+export const LOADING_PLACE_TEXT = 'Loading...'
+export const LOADING_PLACE_ID = 'loading-place'
+export const LOADING_PLACE: PlaceFromApi = {
+  id: LOADING_PLACE_ID,
+  title: LOADING_PLACE_TEXT,
+  description: LOADING_PLACE_TEXT,
+  image: '',
+  owner: null,
+  positions: ['0,0'],
+  base_position: '0,0',
+  contact_name: '',
+  contact_email: null,
+  content_rating: 'RP',
+  disabled: false,
+  disabled_at: null,
+  created_at: '0000-00-00T19:05:10.218Z',
+  updated_at: '0000-00-00T19:05:10.218Z',
+  favorites: 0,
+  likes: 0,
+  dislikes: 0,
+  categories: [],
+  like_rate: 0,
+  highlighted: false,
+  highlighted_image: null,
+  world: false,
+  world_name: null,
+  deployed_at: '0000-00-00:40:12.047Z',
+  textsearch: '',
+  like_score: 0,
+  user_favorite: false,
+  user_like: false,
+  user_dislike: false,
+  user_count: 0,
+  user_visits: 0
 }
 export const TEXTURE_SLICES_05 = {
   top: 0.5,
