@@ -44,6 +44,8 @@ import {
 import { getUiController } from '../../../controllers/ui.controller'
 import { store } from '../../../state/store'
 import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
+import { dedupeById } from '../../../utils/function-utils'
+import { Label } from '@dcl/sdk/react-ecs'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 const PLAYER_PLACE_ID = 'player'
@@ -89,6 +91,7 @@ function BigMapContent(): ReactElement {
 
   useEffect(() => {
     const initBigMapFn = async () => {
+      console.log('initBigMapFn')
       const _representations = Object.values(getLoadedMapPlaces())
         .map((place) => {
           const centralParcelCoords = fromParcelCoordsToPosition(
@@ -111,8 +114,14 @@ function BigMapContent(): ReactElement {
             store.getState().hud.mapFilterCategories.includes(c)
           )
         )
-      setAllRepresentations([playerRespresentation, ..._representations])
+      console.log(
+        'SET_',
+        dedupeById([playerRespresentation, ..._representations])
+      )
       setPlacesRepresentations(_representations)
+      setAllRepresentations(
+        dedupeById([playerRespresentation, ..._representations])
+      )
     }
     console.log(
       'updating place representations big map based on []',
@@ -123,11 +132,9 @@ function BigMapContent(): ReactElement {
 
   useEffect(() => {
     console.log('updating UI big map based on player parcel')
-    const foundPlayer = placesRepresentations.find(
-      (p: PlaceRepresentation) => p.id === PLAYER_PLACE_ID
-    )
+
     const playerParcel = getPlayerParcel()
-    let _playerRepresentation: PlaceRepresentation = foundPlayer ?? {
+    let _playerRepresentation: PlaceRepresentation = {
       id: PLAYER_PLACE_ID,
       title: PLAYER_PLACE_LABEL,
       positions: [],
@@ -137,17 +144,16 @@ function BigMapContent(): ReactElement {
         height: 0
       })
     }
-    if (foundPlayer) {
-      foundPlayer.centralParcelCoords = fromParcelCoordsToPosition(
-        playerParcel,
-        { height: 0 }
-      )
-    } else {
-      placesRepresentations.unshift(_playerRepresentation)
-    }
+
     setPlayerRespresentation(_playerRepresentation)
-    setAllRepresentations([_playerRepresentation, ...placesRepresentations])
-  }, [getPlayerParcel()])
+    console.log(
+      'SET_2',
+      dedupeById([playerRespresentation, ...placesRepresentations])
+    )
+    setAllRepresentations(
+      dedupeById([_playerRepresentation, ...placesRepresentations])
+    )
+  }, [getPlayerParcel(), placesRepresentations])
 
   // TODO don't show genesis city points when in other realm/world/server
   return (
@@ -206,6 +212,7 @@ function BigMapContent(): ReactElement {
         state.lastClickTime = Date.now()
       }}
     >
+      <Label value={allRepresentations.length.toString()} />
       {!(state.dragging || state.moving) &&
         allRepresentations.map((placeRepresentation) => {
           // TODO optimize, only calculate when camera position or rotation changes, and with throttle
@@ -221,6 +228,7 @@ function BigMapContent(): ReactElement {
               forwardIsNegZ: false
             }
           )
+
           return (
             <UiEntity
               uiTransform={{

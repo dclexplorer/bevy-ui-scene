@@ -116,6 +116,8 @@ export const activateMapCamera = () => {
       mapModeActive: true
     })
   )
+
+  // TODO show symbols
 }
 export const displaceCamera = (targetPosition: Vector3) => {
   const mapCameraTransform = Transform.get(getBigMapCameraEntity())

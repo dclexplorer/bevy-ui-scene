@@ -153,8 +153,7 @@ export class UIController {
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
         {!this.isMainMenuVisible && renderEmotesWheel()}
         {store.getState().hud.mapModeActive && BigMap()}
-
-        {SceneCatalogPanel()}
+        {store.getState().hud.mapModeActive && SceneCatalogPanel()}
         {this.sceneInfoCardVisible && this.sceneCard.mainUi()}
         {NotificationToastStack()}
         {PopupStack()}
