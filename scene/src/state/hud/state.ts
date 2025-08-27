@@ -1,5 +1,7 @@
 import { cloneDeep } from '../../utils/function-utils'
 import { type NameDefinition } from '../../utils/passport-promise-utils'
+import { Place } from '../../service/map-places'
+import { EMPTY_PLACE } from '../../utils/constants'
 
 export const HUD_STORE_ID = 'hud'
 
@@ -71,6 +73,7 @@ export type HudState = {
   minimapOpen: boolean
   mapModeActive: boolean
   mapFilterCategories: string[]
+  placeListActiveItem: Place
 }
 
 export type HudStateUpdateParams = {
@@ -87,6 +90,7 @@ export type HudStateUpdateParams = {
   minimapOpen?: boolean
   mapModeActive?: boolean
   mapFilterCategories?: string[]
+  placeListActiveItem?: Place
 }
 
 export const hudInitialState: HudState = {
@@ -102,5 +106,6 @@ export const hudInitialState: HudState = {
   chatInput: '',
   minimapOpen: true,
   mapModeActive: false,
-  mapFilterCategories: ['poi']
+  mapFilterCategories: ['poi'],
+  placeListActiveItem: EMPTY_PLACE
 }

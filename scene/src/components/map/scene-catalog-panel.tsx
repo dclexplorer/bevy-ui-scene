@@ -18,6 +18,7 @@ import { EMPTY_PLACE } from '../../utils/constants'
 import { Vector3 } from '@dcl/sdk/math'
 import { displaceCamera } from '../../service/map-camera'
 import { getVector3Parcel } from '../../service/player-scenes'
+import { updateHudStateAction } from '../../state/hud/actions'
 
 export function SceneCatalogPanel(): ReactElement {
   const width = getUiController().sceneCard.panelWidth
@@ -48,7 +49,7 @@ const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 function SceneCatalogContent(): ReactElement {
   const [list, setList] = useState<Place[]>([])
   const [currentPage, setCurrentPage] = useState<number>(0)
-  const [activeCardPlace, setActiveCardPlace] = useState<Place>(EMPTY_PLACE)
+
   useEffect(() => {
     // TODO select appropriate places server/source
     executeTask(async () => {
@@ -92,10 +93,10 @@ function SceneCatalogContent(): ReactElement {
           return (
             <ListCard
               thumbnailSrc={place.image}
-              active={activeCardPlace === place}
+              active={store.getState().hud.placeListActiveItem === place}
               activeFooter={'Click again to show more info'}
               onMouseDown={() => {
-                if (activeCardPlace === place) {
+                if (store.getState().hud.placeListActiveItem === place) {
                   const coords = fromStringToCoords(place.base_position)
                   getUiController().sceneCard.showByCoords(
                     Vector3.create(coords.x, 0, coords.y)
@@ -103,7 +104,11 @@ function SceneCatalogContent(): ReactElement {
                 } else {
                   const coords = fromStringToCoords(place.base_position)
                   displaceCamera(fromParcelCoordsToPosition(coords))
-                  setActiveCardPlace(place)
+                  store.dispatch(
+                    updateHudStateAction({
+                      placeListActiveItem: place
+                    })
+                  )
                 }
               }}
             >
