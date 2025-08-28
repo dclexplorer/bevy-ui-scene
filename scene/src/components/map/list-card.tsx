@@ -13,25 +13,27 @@ export type ListCardParams = {
   onMouseDown?: () => void
   active?: boolean
   activeFooter?: string
+  uiTransform?: UiTransformProps
 }
 export function ListCard({
   thumbnailSrc,
   children,
   onMouseDown = noop,
   active,
-  activeFooter
+  activeFooter,
+  uiTransform
 }: ListCardParams): ReactElement {
   return (
     <Column
       uiTransform={{
         width: '98%',
-
         margin: '1%',
         borderWidth: 3,
         borderRadius: 0,
         borderColor: active
           ? COLOR.ACTIVE_BACKGROUND_COLOR
-          : COLOR.BLACK_TRANSPARENT
+          : COLOR.BLACK_TRANSPARENT,
+        ...uiTransform
       }}
       uiBackground={{ color: COLOR.WHITE }}
       onMouseDown={onMouseDown}

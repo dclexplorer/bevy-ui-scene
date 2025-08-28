@@ -129,6 +129,9 @@ function SceneCatalogContent(): ReactElement {
           list.map((place) => {
             return (
               <ListCard
+                uiTransform={{
+                  width: '93%'
+                }}
                 thumbnailSrc={place.image}
                 active={store.getState().hud.placeListActiveItem === place}
                 activeFooter={'Click again to show more info'}
