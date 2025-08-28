@@ -139,6 +139,9 @@ function SceneCatalogContent(): ReactElement {
           onChange={(_searchText) => {
             setSearchText(_searchText)
           }}
+          onSubmit={() => {
+            // TODO try to create recreateInputValue to revert the native behaviour that makes the input to be clear after pressing ENTER
+          }}
         />
       </Row>
       <Column
