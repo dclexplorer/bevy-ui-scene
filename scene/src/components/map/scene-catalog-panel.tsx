@@ -14,13 +14,10 @@ import { Column, Row } from '../layout'
 import { ListCard } from './list-card'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import Icon from '../icon/Icon'
-import { EMPTY_PLACE } from '../../utils/constants'
 import { Vector3 } from '@dcl/sdk/math'
 import { displaceCamera } from '../../service/map-camera'
-import { getVector3Parcel } from '../../service/player-scenes'
 import { updateHudStateAction } from '../../state/hud/actions'
-import { debounce } from '../../utils/dcl-utils'
-import { showErrorPopup } from '../../service/error-popup-service'
+import { Input } from '@dcl/sdk/react-ecs'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -33,17 +30,21 @@ async function fetchList({
   categories = ['poi'],
   currentPage = 0
 }: FetchParams): Promise<{ total: number; data: Place[] }> {
-  const queryParameters = [
-    ...categories.map((c) => ({
-      key: PLACE_URL_PARAM_CATEGORY,
-      value: c
-    }))
-  ]
+  const queryParameters = categories?.includes('all')
+    ? []
+    : [
+        ...categories.map((c) => ({
+          key: PLACE_URL_PARAM_CATEGORY,
+          value: c
+        }))
+      ]
   const url = `https://places.decentraland.org/api/places?offset=${
     currentPage * LIMIT
   }&limit=${LIMIT}&${queryParameters
     .map((q) => `${q.key}=${q.value}`)
-    .join('&')}`
+    .join(
+      '&'
+    )}&search=${searchText}&order_by=most_active&order=desc&with_realms_detail=true`
 
   console.log('url', url)
 
@@ -51,16 +52,6 @@ async function fetchList({
   console.log('places_response', response?.data.length)
   return response
 }
-const debouncedSearch = debounce(({ searchText, currentPage }: FetchParams) => {
-  fetchList({
-    searchText,
-    categories: store.getState().hud.mapFilterCategories,
-    currentPage
-  }).catch((error: any) => {
-    console.error(error)
-    showErrorPopup(error)
-  })
-}, 600)
 
 export function SceneCatalogPanel(): ReactElement {
   const width = getUiController().sceneCard.panelWidth
@@ -89,12 +80,13 @@ const PLACE_URL_PARAM_CATEGORY = 'categories'
 function SceneCatalogContent(): ReactElement {
   const [list, setList] = useState<Place[]>([])
   const [currentPage, setCurrentPage] = useState<number>(0)
+  const [searchText, setSearchText] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(true)
   useEffect(() => {
     // TODO select appropriate places server/source
     executeTask(async () => {
       const response = await fetchList({
-        searchText: '',
+        searchText,
         categories: store.getState().hud.mapFilterCategories,
         currentPage
       })
@@ -102,7 +94,7 @@ function SceneCatalogContent(): ReactElement {
       setList(response.data)
     })
   }, [store.getState().hud.mapFilterCategories])
-
+  const fontSize = getViewportHeight() * 0.015
   return (
     <Column
       uiTransform={{
@@ -115,7 +107,35 @@ function SceneCatalogContent(): ReactElement {
           borderColor: COLOR.GREEN,
           borderWidth: 1
         }}
-      ></Row>
+      >
+        <Input
+          uiTransform={{
+            width: '94%',
+            padding: fontSize / 2
+          }}
+          fontSize={fontSize}
+          placeholder={'Search'}
+          uiBackground={{
+            color: COLOR.WHITE
+          }}
+          value={searchText}
+          onSubmit={(searchText) => {
+            // TODO implement useDebouncedValue
+            setSearchText(searchText)
+            executeTask(async () => {
+              setList(
+                (
+                  await fetchList({
+                    searchText,
+                    currentPage,
+                    categories: store.getState().hud.mapFilterCategories
+                  })
+                ).data
+              )
+            })
+          }}
+        />
+      </Row>
       <Column
         uiTransform={{
           alignItems: 'flex-start',
@@ -162,7 +182,7 @@ function SceneCatalogContent(): ReactElement {
                       textAlign: 'top-left',
                       value: `<b>${place.title}</b>`,
                       color: COLOR.TEXT_COLOR,
-                      fontSize: getViewportHeight() * 0.015
+                      fontSize
                     }}
                   />
                   <UiEntity
@@ -172,7 +192,7 @@ function SceneCatalogContent(): ReactElement {
                         place.owner ?? place.contact_name
                       }</b>`,
                       color: COLOR.TEXT_COLOR,
-                      fontSize: getViewportHeight() * 0.015
+                      fontSize
                     }}
                   />
                   <Row
@@ -183,7 +203,7 @@ function SceneCatalogContent(): ReactElement {
                     <Icon
                       icon={{ spriteName: 'LikeSolid', atlasName: 'map2' }}
                       iconColor={COLOR.TEXT_COLOR}
-                      iconSize={getViewportHeight() * 0.015}
+                      iconSize={fontSize}
                     />
                     <UiEntity
                       uiTransform={{
@@ -193,13 +213,13 @@ function SceneCatalogContent(): ReactElement {
                         textAlign: 'top-left',
                         value: `${Math.floor(place.like_score * 100)}%`,
                         color: COLOR.TEXT_COLOR,
-                        fontSize: getViewportHeight() * 0.015
+                        fontSize
                       }}
                     />
                     <Icon
                       icon={{ spriteName: 'PlayersIcn', atlasName: 'map2' }}
                       iconColor={COLOR.TEXT_COLOR}
-                      iconSize={getViewportHeight() * 0.015}
+                      iconSize={fontSize}
                     />
                     <UiEntity
                       uiTransform={{
@@ -209,7 +229,7 @@ function SceneCatalogContent(): ReactElement {
                         textAlign: 'top-left',
                         value: place.user_visits.toString(),
                         color: COLOR.TEXT_COLOR,
-                        fontSize: getViewportHeight() * 0.015
+                        fontSize
                       }}
                     />
                   </Row>
