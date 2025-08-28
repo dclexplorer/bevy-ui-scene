@@ -18,6 +18,7 @@ import { Vector3 } from '@dcl/sdk/math'
 import { displaceCamera } from '../../service/map-camera'
 import { updateHudStateAction } from '../../state/hud/actions'
 import { Input } from '@dcl/sdk/react-ecs'
+import { useDebouncedValue } from '../../hooks/use-debounce'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -81,7 +82,23 @@ function SceneCatalogContent(): ReactElement {
   const [list, setList] = useState<Place[]>([])
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [searchText, setSearchText] = useState<string>('')
+  const debouncedSearchText = useDebouncedValue(searchText, 300)
   const [loading, setLoading] = useState<boolean>(true)
+  useEffect(() => {
+    executeTask(async () => {
+      setLoading(true)
+      setList(
+        (
+          await fetchList({
+            searchText: debouncedSearchText,
+            currentPage,
+            categories: store.getState().hud.mapFilterCategories
+          })
+        ).data
+      )
+      setLoading(false)
+    })
+  }, [debouncedSearchText])
   useEffect(() => {
     // TODO select appropriate places server/source
     executeTask(async () => {
@@ -119,20 +136,8 @@ function SceneCatalogContent(): ReactElement {
             color: COLOR.WHITE
           }}
           value={searchText}
-          onSubmit={(searchText) => {
-            // TODO implement useDebouncedValue
-            setSearchText(searchText)
-            executeTask(async () => {
-              setList(
-                (
-                  await fetchList({
-                    searchText,
-                    currentPage,
-                    categories: store.getState().hud.mapFilterCategories
-                  })
-                ).data
-              )
-            })
+          onChange={(_searchText) => {
+            setSearchText(_searchText)
           }}
         />
       </Row>
@@ -144,7 +149,11 @@ function SceneCatalogContent(): ReactElement {
           height: '100%'
         }}
       >
-        {loading && <UiEntity uiText={{ value: 'Loading...' }} />}
+        {loading && (
+          <UiEntity
+            uiText={{ value: 'Loading...', color: COLOR.TEXT_COLOR_GREY }}
+          />
+        )}
         {!loading &&
           list.map((place) => {
             return (
