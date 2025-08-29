@@ -92,7 +92,7 @@ export function SceneCatalogPanel(): ReactElement {
 const PLACE_URL_PARAM_CATEGORY = 'categories'
 
 function SceneCatalogContent(): ReactElement {
-  const [list, setList] = useState<Place[]>([])
+  const list = store.getState().hud.sceneList.data
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [searchText, setSearchText] = useState<string>('')
   const debouncedSearchText = useDebouncedValue(searchText, 300)
@@ -100,14 +100,15 @@ function SceneCatalogContent(): ReactElement {
   useEffect(() => {
     executeTask(async () => {
       setLoading(true)
-      setList(
-        (
-          await fetchList({
-            searchText: debouncedSearchText,
-            currentPage,
-            categories: store.getState().hud.mapFilterCategories
-          })
-        ).data
+      const listResponse = await fetchList({
+        searchText: debouncedSearchText,
+        currentPage,
+        categories: store.getState().hud.mapFilterCategories
+      })
+      store.dispatch(
+        updateHudStateAction({
+          sceneList: listResponse
+        })
       )
       setLoading(false)
     })
@@ -121,7 +122,11 @@ function SceneCatalogContent(): ReactElement {
         currentPage
       })
       setLoading(false)
-      setList(response.data)
+      store.dispatch(
+        updateHudStateAction({
+          sceneList: response
+        })
+      )
     })
   }, [store.getState().hud.mapFilterCategories])
   const fontSize = getViewportHeight() * 0.015
