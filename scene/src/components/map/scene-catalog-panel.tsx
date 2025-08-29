@@ -19,6 +19,7 @@ import { displaceCamera } from '../../service/map-camera'
 import { updateHudStateAction } from '../../state/hud/actions'
 import { Input } from '@dcl/sdk/react-ecs'
 import { useDebouncedValue } from '../../hooks/use-debounce'
+import { BevyApi } from '../../bevy-api'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -31,15 +32,17 @@ async function fetchList({
   categories = ['poi'],
   currentPage = 0
 }: FetchParams): Promise<{ total: number; data: Place[] }> {
-  const queryParameters = categories?.includes('all')
-    ? []
-    : [
-        ...categories.map((c) => ({
-          key: PLACE_URL_PARAM_CATEGORY,
-          value: c
-        }))
-      ]
-  const url = `https://places.decentraland.org/api/places?offset=${
+  const queryParameters =
+    categories?.includes('all') || categories?.includes('favorites')
+      ? []
+      : [
+          ...categories.map((c) => ({
+            key: PLACE_URL_PARAM_CATEGORY,
+            value: c
+          }))
+        ]
+
+  let url = `https://places.decentraland.org/api/places?offset=${
     currentPage * LIMIT
   }&limit=${LIMIT}&${queryParameters
     .map((q) => `${q.key}=${q.value}`)
@@ -47,10 +50,20 @@ async function fetchList({
       '&'
     )}&search=${searchText}&order_by=most_active&order=desc&with_realms_detail=true`
 
-  console.log('url', url)
+  if (categories?.includes('favorites')) {
+    url += `&only_favorites=true`
+  }
 
-  const response = await fetch(url).then((r) => r.json())
-  console.log('places_response', response?.data.length)
+  console.log('places_url', url)
+
+  const response = await BevyApi.kernelFetch({
+    url,
+    init: {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    },
+    meta: JSON.stringify({})
+  }).then((r) => JSON.parse(r.body))
   return response
 }
 

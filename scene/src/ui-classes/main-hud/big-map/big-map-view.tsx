@@ -93,7 +93,7 @@ function BigMapContent(): ReactElement {
   const [allRepresentations, setAllRepresentations] = useState<
     PlaceRepresentation[]
   >([])
-
+  // TODO maybe we should optimize to those that are out of screen, and show nothing while the camera is moving, especially with "all" filters
   useEffect(() => {
     const initBigMapFn = async () => {
       console.log('initBigMapFn')
@@ -150,10 +150,6 @@ function BigMapContent(): ReactElement {
     }
 
     setPlayerRespresentation(_playerRepresentation)
-    console.log(
-      'SET_2',
-      dedupeById([playerRespresentation, ...placesRepresentations])
-    )
     setAllRepresentations(
       dedupeById([_playerRepresentation, ...placesRepresentations])
     )
