@@ -47,6 +47,7 @@ import { dedupeById } from '../../../utils/function-utils'
 import { Label } from '@dcl/sdk/react-ecs'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
+
 const PLAYER_PLACE_ID = 'player'
 export const BigMap = (): ReactElement => {
   return (
@@ -98,30 +99,19 @@ function BigMapContent(): ReactElement {
     const initBigMapFn = async () => {
       console.log('initBigMapFn')
 
-      const _representations = Object.values(getLoadedMapPlaces())
-        .map((place) => {
-          const centralParcelCoords = fromParcelCoordsToPosition(
-            fromStringToCoords(
-              getCentralParcel([
-                ...place.positions,
-                place.base_position
-              ]) as string
-            ),
-            { height: 0 }
-          )
+      const _representations =
+        store.getState().hud.mapFilterCategories[0] === 'favorites'
+          ? []
+          : Object.values(getLoadedMapPlaces())
+              .map(decoratePlaceRepresentation)
+              .filter((p: PlaceRepresentation) =>
+                p.categories.some(
+                  (c: string) =>
+                    store.getState().hud.mapFilterCategories.includes(c) ||
+                    store.getState().hud.mapFilterCategories[0] === 'all'
+                )
+              )
 
-          return {
-            ...place,
-            centralParcelCoords
-          }
-        })
-        .filter((p: PlaceRepresentation) =>
-          p.categories.some(
-            (c: string) =>
-              store.getState().hud.mapFilterCategories.includes(c) ||
-              store.getState().hud.mapFilterCategories[0] === 'all'
-          )
-        )
       setPlacesRepresentations(_representations)
       setAllRepresentations(
         dedupeById([playerRespresentation, ..._representations])
@@ -133,7 +123,18 @@ function BigMapContent(): ReactElement {
     )
     initBigMapFn().catch(console.error)
   }, [getLoadedMapPlaces(), store.getState().hud.mapFilterCategories])
-
+  useEffect(() => {
+    if (store.getState().hud.mapFilterCategories[0] === 'favorites') {
+      setAllRepresentations(
+        dedupeById([
+          playerRespresentation,
+          ...store
+            .getState()
+            .hud.sceneList.data.map(decoratePlaceRepresentation)
+        ])
+      )
+    }
+  }, [store.getState().hud.sceneList])
   useEffect(() => {
     console.log('updating UI big map based on player parcel')
 
@@ -290,4 +291,18 @@ function BigMapContent(): ReactElement {
       <MapFilterBar />
     </UiEntity>
   )
+}
+
+function decoratePlaceRepresentation(place: Place): PlaceRepresentation {
+  const centralParcelCoords = fromParcelCoordsToPosition(
+    fromStringToCoords(
+      getCentralParcel([...place.positions, place.base_position]) as string
+    ),
+    { height: 0 }
+  )
+
+  return {
+    ...place,
+    centralParcelCoords
+  }
 }
