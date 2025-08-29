@@ -33,8 +33,7 @@ import {
   activateDragMapSystem,
   deactivateDragMapSystem,
   displaceCamera,
-  getBigMapCameraEntity,
-  ISO_OFFSET
+  getBigMapCameraEntity
 } from '../../../service/map-camera'
 import { MapFilterBar } from '../../../components/map/map-filter-bar'
 import {
@@ -68,8 +67,14 @@ const state = {
 }
 const PLAYER_PLACE_LABEL = 'ME'
 export type PlaceRepresentation = Place & { centralParcelCoords: Vector3 }
-
+export type OrderType =
+  | 'most_active'
+  | 'like_score'
+  | 'updated_at'
+  | 'created_at'
+  | null
 function BigMapContent(): ReactElement {
+  const [orderType, setOrderType] = useState<OrderType>(null)
   const [placesRepresentations, setPlacesRepresentations] = useState<
     PlaceRepresentation[]
   >([])
@@ -92,6 +97,7 @@ function BigMapContent(): ReactElement {
   useEffect(() => {
     const initBigMapFn = async () => {
       console.log('initBigMapFn')
+
       const _representations = Object.values(getLoadedMapPlaces())
         .map((place) => {
           const centralParcelCoords = fromParcelCoordsToPosition(
@@ -110,14 +116,12 @@ function BigMapContent(): ReactElement {
           }
         })
         .filter((p: PlaceRepresentation) =>
-          p.categories.some((c: string) =>
-            store.getState().hud.mapFilterCategories.includes(c)
+          p.categories.some(
+            (c: string) =>
+              store.getState().hud.mapFilterCategories.includes(c) ||
+              store.getState().hud.mapFilterCategories[0] === 'all'
           )
         )
-      console.log(
-        'SET_',
-        dedupeById([playerRespresentation, ..._representations])
-      )
       setPlacesRepresentations(_representations)
       setAllRepresentations(
         dedupeById([playerRespresentation, ..._representations])

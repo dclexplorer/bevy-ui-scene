@@ -72,14 +72,17 @@ export function MapFilterBarButton({
       }}
       onMouseDown={onClick}
     >
-      <Icon
-        uiTransform={{
-          alignSelf: 'center',
-          flexShrink: 0,
-          position: { left: '8%' }
-        }}
-        icon={{ spriteName, atlasName: 'map2' }}
-      />
+      {spriteName && (
+        <Icon
+          uiTransform={{
+            alignSelf: 'center',
+            flexShrink: 0,
+            position: { left: '8%' }
+          }}
+          iconSize={fontSize * 1.5}
+          icon={{ spriteName, atlasName: 'map2' }}
+        />
+      )}
       <UiEntity
         uiText={{
           textWrap: 'nowrap',

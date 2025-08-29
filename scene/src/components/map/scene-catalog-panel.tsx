@@ -118,13 +118,7 @@ function SceneCatalogContent(): ReactElement {
         width: '100%'
       }}
     >
-      <Row
-        uiTransform={{
-          borderRadius: 0,
-          borderColor: COLOR.GREEN,
-          borderWidth: 1
-        }}
-      >
+      <Row>
         <Input
           uiTransform={{
             width: '94%',

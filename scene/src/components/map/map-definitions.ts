@@ -20,7 +20,7 @@ export type PlaceType =
 
 export type FilterDefinition = {
   label: string
-  spriteName: string
+  spriteName: string | null
   id: PlaceType
 }
 
@@ -98,7 +98,7 @@ export const MAP_FILTER_DEFINITIONS: ReadonlyArray<FilterDefinition> = [
   {
     id: 'parkour',
     label: 'Parkour',
-    spriteName: 'Parkour'
+    spriteName: null
   }
 ]
 
