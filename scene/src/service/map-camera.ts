@@ -120,16 +120,30 @@ export const activateMapCamera = () => {
 
   // TODO show symbols
 }
+
 export const displaceCamera = (targetPosition: Vector3) => {
   const mapCameraTransform = Transform.get(getBigMapCameraEntity())
-
+  const DISPLACE_TIME = 500 //TODO review to calculate time by displacement
+  store.dispatch(
+    updateHudStateAction({
+      movingMap: true
+    })
+  )
   Tween.createOrReplace(getBigMapCameraEntity(), {
     mode: Tween.Mode.Move({
       start: Vector3.clone(mapCameraTransform.position),
       end: Vector3.add(targetPosition, Vector3.create(...ISO_OFFSET))
     }),
-    duration: 500,
+    duration: DISPLACE_TIME,
     easingFunction: EasingFunction.EF_EASECUBIC
+  })
+  executeTask(async () => {
+    await sleep(DISPLACE_TIME)
+    store.dispatch(
+      updateHudStateAction({
+        movingMap: false
+      })
+    )
   })
 }
 export const deactivateMapCamera = () => {

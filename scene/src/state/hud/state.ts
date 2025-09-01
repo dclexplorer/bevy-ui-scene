@@ -78,6 +78,7 @@ export type HudState = {
     total: number
     data: Place[]
   }
+  movingMap: boolean
 }
 
 export type HudStateUpdateParams = {
@@ -99,6 +100,7 @@ export type HudStateUpdateParams = {
     total: number
     data: Place[]
   }
+  movingMap?: boolean
 }
 
 export const hudInitialState: HudState = {
@@ -119,5 +121,6 @@ export const hudInitialState: HudState = {
   sceneList: {
     total: 0,
     data: []
-  }
+  },
+  movingMap: false
 }

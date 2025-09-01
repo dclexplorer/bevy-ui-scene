@@ -45,6 +45,7 @@ import { store } from '../../../state/store'
 import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
 import { dedupeById } from '../../../utils/function-utils'
 import { Label } from '@dcl/sdk/react-ecs'
+import { updateHudStateAction } from '../../../state/hud/actions'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
@@ -63,7 +64,6 @@ export const BigMap = (): ReactElement => {
 }
 const state = {
   dragging: false,
-  moving: false,
   lastClickTime: 0
 }
 const PLAYER_PLACE_LABEL = 'ME'
@@ -168,6 +168,11 @@ function BigMapContent(): ReactElement {
       }}
       onMouseDrag={(event) => {
         state.dragging = true
+        store.dispatch(
+          updateHudStateAction({
+            movingMap: true
+          })
+        )
         activateDragMapSystem()
       }}
       onMouseDragEnd={() => {
@@ -175,17 +180,27 @@ function BigMapContent(): ReactElement {
           // TODO REVIEW: why onMouseDrag/onMouseDragLocked is called continuously, then I cannot set dragging to false
           await sleep(0)
           state.dragging = false
+          store.dispatch(
+            updateHudStateAction({
+              movingMap: false
+            })
+          )
         })
         deactivateDragMapSystem()
-
         state.dragging = false
       }}
       onMouseUp={() => {}}
       onMouseDown={() => {
         if (Date.now() - state.lastClickTime < 300) {
+          state.lastClickTime = 0
           const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
           if (!pointerInfo?.screenCoordinates) return
           state.dragging = false
+          store.dispatch(
+            updateHudStateAction({
+              movingMap: true
+            })
+          )
           const mapCameraTransform = Transform.get(getBigMapCameraEntity())
 
           const targetPosition: Vector3 = screenToGround(
@@ -198,10 +213,14 @@ function BigMapContent(): ReactElement {
             FOV
           ) as Vector3
           displaceCamera(targetPosition)
+
           executeTask(async () => {
-            state.moving = true
             await sleep(500)
-            state.moving = false
+            store.dispatch(
+              updateHudStateAction({
+                movingMap: false
+              })
+            )
           })
 
           const parcelVector3 = getVector3Parcel(targetPosition)
@@ -213,8 +232,7 @@ function BigMapContent(): ReactElement {
         state.lastClickTime = Date.now()
       }}
     >
-      <Label value={allRepresentations.length.toString()} />
-      {!(state.dragging || state.moving) &&
+      {!store.getState().hud.movingMap &&
         allRepresentations.map((placeRepresentation) => {
           // TODO optimize, only calculate when camera position or rotation changes, and with throttle
           const position = worldToScreenPx(
