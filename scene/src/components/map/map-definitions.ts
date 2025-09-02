@@ -98,7 +98,7 @@ export const MAP_FILTER_DEFINITIONS: ReadonlyArray<FilterDefinition> = [
   {
     id: 'parkour',
     label: 'Parkour',
-    spriteName: null
+    spriteName: 'Games'
   }
 ]
 
@@ -118,3 +118,20 @@ export const categories = [
   { name: 'business', count: 36, i18n: { en: '🏢 Business' } },
   { name: 'parkour', count: 4, i18n: { en: '🏃 Parkour' } }
 ]
+
+export const mapSymbolPerPlaceCategory: Record<string, string> = {
+  poi: 'PinPOI',
+  art: 'PinArt',
+  business: 'PinBusiness',
+  casino: 'PinCasino',
+  crypto: 'PinCrypto',
+  education: `PinEducation`,
+  fashion: 'PinFashion',
+  favourite: 'PinFavourite',
+  game: 'PinGames',
+  music: 'PinMusic',
+  parkour: 'PinGames',
+  social: 'PinSocial',
+  shop: 'PinShop',
+  sports: 'PinSports'
+}

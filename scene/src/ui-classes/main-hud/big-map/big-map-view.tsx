@@ -43,14 +43,16 @@ import {
 import { getUiController } from '../../../controllers/ui.controller'
 import { store } from '../../../state/store'
 import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
-import { dedupeById } from '../../../utils/function-utils'
+import { dedupeById, memoize } from '../../../utils/function-utils'
 import { Label } from '@dcl/sdk/react-ecs'
 import { updateHudStateAction } from '../../../state/hud/actions'
 import { AtlasIcon } from '../../../utils/definitions'
+import { mapSymbolPerPlaceCategory } from '../../../components/map/map-definitions'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
 const PLAYER_PLACE_ID = 'player'
+const getRepresentationSprite = memoize(_getRepresentationSprite)
 export const BigMap = (): ReactElement => {
   return (
     <UiEntity
@@ -333,18 +335,6 @@ function BigMapContent(): ReactElement {
       <MapFilterBar />
     </UiEntity>
   )
-
-  function getRepresentationSprite(
-    placeRepresentation: PlaceRepresentation
-  ): AtlasIcon {
-    let spriteName =
-      placeRepresentation.id === PLAYER_PLACE_ID ? 'PlayersIcn' : 'POI'
-    if (placeRepresentation === activeRepresentation) {
-      spriteName = `GenericPinSelected`
-    }
-
-    return { spriteName, atlasName: 'map2' }
-  }
 }
 
 function decoratePlaceRepresentation(place: Place): PlaceRepresentation {
@@ -359,4 +349,28 @@ function decoratePlaceRepresentation(place: Place): PlaceRepresentation {
     ...place,
     centralParcelCoords
   }
+}
+
+function _getRepresentationSprite(
+  placeRepresentation: PlaceRepresentation
+): AtlasIcon {
+  let spriteName = ''
+  if (placeRepresentation.categories.includes('poi')) {
+    spriteName = 'PinPOI'
+  } else if (placeRepresentation.id === PLAYER_PLACE_ID) {
+    spriteName = 'PlayersIcn'
+  } else if (
+    placeRepresentation.id === store.getState().hud.placeListActiveItem.id
+  ) {
+    spriteName = `GenericPinSelected`
+  } else if (
+    placeRepresentation.categories.length === 1 &&
+    mapSymbolPerPlaceCategory[placeRepresentation.categories[0]]
+  ) {
+    spriteName = mapSymbolPerPlaceCategory[placeRepresentation.categories[0]]
+  } else {
+    spriteName = 'GenericPin'
+  }
+
+  return { spriteName, atlasName: 'map2' }
 }
