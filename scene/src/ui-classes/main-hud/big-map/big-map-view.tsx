@@ -46,6 +46,7 @@ import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
 import { dedupeById } from '../../../utils/function-utils'
 import { Label } from '@dcl/sdk/react-ecs'
 import { updateHudStateAction } from '../../../state/hud/actions'
+import { AtlasIcon } from '../../../utils/definitions'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
@@ -94,7 +95,11 @@ function BigMapContent(): ReactElement {
   const [allRepresentations, setAllRepresentations] = useState<
     PlaceRepresentation[]
   >([])
+  const [activeRepresentation, setActiveRepresentation] =
+    useState<PlaceRepresentation | null>(null)
   // TODO maybe we should optimize to those that are out of screen, and show nothing while the camera is moving, especially with "all" filters
+  // TODO review if it makes sense all the useEffect and their listenings
+
   useEffect(() => {
     const initBigMapFn = async () => {
       console.log('initBigMapFn')
@@ -114,7 +119,11 @@ function BigMapContent(): ReactElement {
 
       setPlacesRepresentations(_representations)
       setAllRepresentations(
-        dedupeById([playerRespresentation, ..._representations])
+        dedupeById([
+          playerRespresentation,
+          ...(activeRepresentation ? [activeRepresentation] : []),
+          ..._representations
+        ])
       )
     }
     console.log(
@@ -128,6 +137,7 @@ function BigMapContent(): ReactElement {
       setAllRepresentations(
         dedupeById([
           playerRespresentation,
+          ...(activeRepresentation ? [activeRepresentation] : []),
           ...store
             .getState()
             .hud.sceneList.data.map(decoratePlaceRepresentation)
@@ -152,9 +162,29 @@ function BigMapContent(): ReactElement {
 
     setPlayerRespresentation(_playerRepresentation)
     setAllRepresentations(
-      dedupeById([_playerRepresentation, ...placesRepresentations])
+      dedupeById([
+        _playerRepresentation,
+        ...(activeRepresentation ? [activeRepresentation] : []),
+        ...placesRepresentations
+      ])
     )
-  }, [getPlayerParcel(), placesRepresentations])
+  }, [getPlayerParcel(), placesRepresentations, activeRepresentation])
+
+  useEffect(() => {
+    if (!store.getState().hud.placeListActiveItem) {
+      setActiveRepresentation(null)
+      return
+    }
+
+    setActiveRepresentation(
+      decoratePlaceRepresentation(
+        allRepresentations.find(
+          (representation) =>
+            representation.id === store.getState().hud.placeListActiveItem.id
+        ) ?? store.getState().hud.placeListActiveItem
+      )
+    )
+  }, [store.getState().hud.placeListActiveItem])
 
   // TODO don't show genesis city points when in other realm/world/server
   return (
@@ -264,13 +294,7 @@ function BigMapContent(): ReactElement {
               key={placeRepresentation.id}
             >
               <Icon
-                icon={{
-                  spriteName:
-                    placeRepresentation.id === PLAYER_PLACE_ID
-                      ? 'PlayersIcn'
-                      : 'POI',
-                  atlasName: 'map2'
-                }}
+                icon={getRepresentationSprite(placeRepresentation)}
                 uiTransform={{
                   positionType: 'absolute',
                   alignSelf: 'center',
@@ -309,6 +333,18 @@ function BigMapContent(): ReactElement {
       <MapFilterBar />
     </UiEntity>
   )
+
+  function getRepresentationSprite(
+    placeRepresentation: PlaceRepresentation
+  ): AtlasIcon {
+    let spriteName =
+      placeRepresentation.id === PLAYER_PLACE_ID ? 'PlayersIcn' : 'POI'
+    if (placeRepresentation === activeRepresentation) {
+      spriteName = `GenericPinSelected`
+    }
+
+    return { spriteName, atlasName: 'map2' }
+  }
 }
 
 function decoratePlaceRepresentation(place: Place): PlaceRepresentation {
