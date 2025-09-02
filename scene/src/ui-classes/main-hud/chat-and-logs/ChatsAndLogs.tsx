@@ -199,11 +199,11 @@ export default class ChatAndLogs {
     store.subscribe((action) => {
       if (action.type === VIEWPORT_ACTION.UPDATE_VIEWPORT) {
         state.chatBox.position.x = store.getState().viewport.width * 0.03
-        state.chatBox.position.y = store.getState().viewport.height * 0
+        state.chatBox.position.y = 0
         state.chatBox.size.x =
           store.getState().viewport.width * 0.26 +
           (state.headerMenuOpen ? store.getState().viewport.width * 0.12 : 0)
-        state.chatBox.size.y = store.getState().viewport.height * 0.66
+        state.chatBox.size.y = store.getState().viewport.height
       }
     })
 
