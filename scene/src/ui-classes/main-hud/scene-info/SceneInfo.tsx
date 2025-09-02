@@ -565,12 +565,11 @@ export default class SceneInfo {
         >
           <Label
             value={truncateWithoutBreakingWords(
-              this.liveSceneInfo?.title ?? '',
+              this.liveSceneInfo?.title ?? `<i>empty scene</i>`,
               20
             )}
             fontSize={this.fontSize}
             uiTransform={{
-              display: this.liveSceneInfo?.title ? 'flex' : 'none',
               height: this.fontSize * 1.1
             }}
             textAlign="middle-left"

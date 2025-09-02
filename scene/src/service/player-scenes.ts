@@ -33,7 +33,8 @@ export function getPlayerParcel(): { x: number; y: number } {
 }
 
 export async function getCurrentScene(
-  liveSceneInfo?: LiveSceneInfo[]
+  liveSceneInfo?: LiveSceneInfo[],
+  fallbackToClosest: boolean = true
 ): Promise<LiveSceneInfo | undefined> {
   const _liveSceneInfo =
     liveSceneInfo ??
@@ -42,7 +43,7 @@ export async function getCurrentScene(
   const currentScene = _liveSceneInfo.find((s) =>
     s.parcels.find((p) => p.x === currentParcel.x && p.y === currentParcel.y)
   )
-  if (!currentScene && _liveSceneInfo?.length) {
+  if (!currentScene && _liveSceneInfo?.length && fallbackToClosest) {
     return _liveSceneInfo.reduce((closestScene, scene) => {
       const closestDistance = getClosestParcelDistance(
         currentParcel,
@@ -56,7 +57,7 @@ export async function getCurrentScene(
     })
   }
 
-  return currentScene
+  return currentScene ?? undefined
 
   function getClosestParcelDistance(
     from: { x: number; y: number },
