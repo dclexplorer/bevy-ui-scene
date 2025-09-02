@@ -20,6 +20,8 @@ import { updateHudStateAction } from '../../state/hud/actions'
 import { Input } from '@dcl/sdk/react-ecs'
 import { useDebouncedValue } from '../../hooks/use-debounce'
 import { BevyApi } from '../../bevy-api'
+import { SceneCatalogOrder } from '../../state/hud/state'
+import { waitFor } from '../../utils/dcl-utils'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -27,11 +29,20 @@ export type FetchParams = {
   categories?: string[]
   currentPage?: number
 }
+
+export const ORDER_OPTIONS: { orderKey: SceneCatalogOrder; label: string }[] = [
+  { orderKey: 'most_active', label: `MOST ACTIVE` },
+  { orderKey: 'like_score', label: `MOST LIKED` },
+  { orderKey: 'updated_at', label: `MOST FRESH` }
+]
+
 async function fetchList({
   searchText,
-  categories = ['poi'],
   currentPage = 0
 }: FetchParams): Promise<{ total: number; data: Place[] }> {
+  const categories = store.getState().hud.mapFilterCategories
+  const orderKey = store.getState().hud.sceneCatalogOrder
+
   const queryParameters =
     categories?.includes('all') || categories?.includes('favorites')
       ? []
@@ -48,13 +59,11 @@ async function fetchList({
     .map((q) => `${q.key}=${q.value}`)
     .join(
       '&'
-    )}&search=${searchText}&order_by=most_active&order=desc&with_realms_detail=true`
+    )}&search=${searchText}&order_by=${orderKey}&order=desc&with_realms_detail=true`
 
   if (categories?.includes('favorites')) {
     url += `&only_favorites=true`
   }
-
-  console.log('places_url', url)
 
   const response = await BevyApi.kernelFetch({
     url,
@@ -102,8 +111,7 @@ function SceneCatalogContent(): ReactElement {
       setLoading(true)
       const listResponse = await fetchList({
         searchText: debouncedSearchText,
-        currentPage,
-        categories: store.getState().hud.mapFilterCategories
+        currentPage
       })
       store.dispatch(
         updateHudStateAction({
@@ -112,7 +120,11 @@ function SceneCatalogContent(): ReactElement {
       )
       setLoading(false)
     })
-  }, [debouncedSearchText])
+  }, [
+    debouncedSearchText,
+    store.getState().hud.mapFilterCategories,
+    store.getState().hud.sceneCatalogOrder
+  ])
   useEffect(() => {
     // TODO select appropriate places server/source
     executeTask(async () => {
@@ -149,12 +161,51 @@ function SceneCatalogContent(): ReactElement {
           }}
           value={searchText}
           onChange={(_searchText) => {
-            setSearchText(_searchText)
+            executeTask(async () => {
+              await waitFor(() => loading === false)
+              setSearchText(_searchText)
+            })
           }}
           onSubmit={() => {
             // TODO try to create recreateInputValue to revert the native behaviour that makes the input to be clear after pressing ENTER
           }}
         />
+      </Row>
+      <Row>
+        {ORDER_OPTIONS.map(({ orderKey, label }) => {
+          return (
+            <UiEntity
+              uiBackground={{
+                color:
+                  store.getState().hud.sceneCatalogOrder === orderKey
+                    ? COLOR.ACTIVE_BACKGROUND_COLOR
+                    : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND
+              }}
+              uiTransform={{
+                margin: getViewportHeight() * 0.005,
+                borderWidth: 0,
+                borderColor: COLOR.BLACK_TRANSPARENT,
+                borderRadius: getViewportHeight() * 0.01
+              }}
+              uiText={{
+                fontSize: getViewportHeight() * 0.015,
+                value: `<b>${label}</b>`,
+                color:
+                  store.getState().hud.sceneCatalogOrder === orderKey
+                    ? COLOR.WHITE
+                    : COLOR.TEXT_COLOR
+              }}
+              onMouseDown={() => {
+                if (loading) return
+                store.dispatch(
+                  updateHudStateAction({
+                    sceneCatalogOrder: orderKey
+                  })
+                )
+              }}
+            />
+          )
+        })}
       </Row>
       <Column
         uiTransform={{

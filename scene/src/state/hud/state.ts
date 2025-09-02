@@ -58,7 +58,7 @@ export type HUDPopup = {
   type: HUD_POPUP_TYPE
   data?: unknown
 }
-
+export type SceneCatalogOrder = 'most_active' | 'like_score' | 'updated_at'
 export type HudState = {
   chatOpen: boolean
   shownPopups: HUDPopup[]
@@ -79,6 +79,7 @@ export type HudState = {
     data: Place[]
   }
   movingMap: boolean
+  sceneCatalogOrder: SceneCatalogOrder
 }
 
 export type HudStateUpdateParams = {
@@ -101,6 +102,7 @@ export type HudStateUpdateParams = {
     data: Place[]
   }
   movingMap?: boolean
+  sceneCatalogOrder?: SceneCatalogOrder
 }
 
 export const hudInitialState: HudState = {
@@ -122,5 +124,6 @@ export const hudInitialState: HudState = {
     total: 0,
     data: []
   },
-  movingMap: false
+  movingMap: false,
+  sceneCatalogOrder: `most_active`
 }
