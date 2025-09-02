@@ -567,7 +567,7 @@ export default class MainHud {
             }
             iconSize={buttonIconSize}
           />
-          <ButtonIcon
+          {/*        <ButtonIcon
             uiTransform={buttonTransform}
             onMouseEnter={() => {
               this.voiceChatEnter()
@@ -583,7 +583,7 @@ export default class MainHud {
             hintText={'Voice Chat'}
             showHint={this.voiceChatHint}
             iconSize={buttonIconSize}
-          />
+          />*/}
           <ButtonIcon
             uiTransform={buttonTransform}
             onMouseEnter={() => {
