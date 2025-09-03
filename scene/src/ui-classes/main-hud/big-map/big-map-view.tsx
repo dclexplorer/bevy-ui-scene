@@ -280,6 +280,14 @@ function BigMapContent(): ReactElement {
             }
           )
 
+          const sprite = getRepresentationSprite(placeRepresentation)
+          const sizeMultiplier =
+            placeRepresentation === activeRepresentation
+              ? 2
+              : sprite.spriteName === 'PinPOI'
+              ? 1.5
+              : 1
+
           return (
             <UiEntity
               uiTransform={{
@@ -296,16 +304,16 @@ function BigMapContent(): ReactElement {
               key={placeRepresentation.id}
             >
               <Icon
-                icon={getRepresentationSprite(placeRepresentation)}
+                icon={sprite}
                 uiTransform={{
                   positionType: 'absolute',
                   alignSelf: 'center',
                   position: {
-                    top: -(getCanvasScaleRatio() * 50) / 4,
-                    left: -(getCanvasScaleRatio() * 50) / 4
+                    top: -((getCanvasScaleRatio() * 50) / 4) * sizeMultiplier,
+                    left: -((getCanvasScaleRatio() * 50) / 4) * sizeMultiplier
                   },
-                  width: getCanvasScaleRatio() * 50,
-                  height: getCanvasScaleRatio() * 50
+                  width: getCanvasScaleRatio() * 50 * sizeMultiplier,
+                  height: getCanvasScaleRatio() * 50 * sizeMultiplier * 1.1
                 }}
                 onMouseDown={() => {
                   const coords = fromStringToCoords(
@@ -355,14 +363,12 @@ function _getRepresentationSprite(
   placeRepresentation: PlaceRepresentation
 ): AtlasIcon {
   let spriteName = ''
-  if (placeRepresentation.categories.includes('poi')) {
+  if (placeRepresentation.id === store.getState().hud.placeListActiveItem.id) {
+    spriteName = `GenericPinSelected`
+  } else if (placeRepresentation.categories.includes('poi')) {
     spriteName = 'PinPOI'
   } else if (placeRepresentation.id === PLAYER_PLACE_ID) {
     spriteName = 'PlayersIcn'
-  } else if (
-    placeRepresentation.id === store.getState().hud.placeListActiveItem.id
-  ) {
-    spriteName = `GenericPinSelected`
   } else if (
     placeRepresentation.categories.length === 1 &&
     mapSymbolPerPlaceCategory[placeRepresentation.categories[0]]
