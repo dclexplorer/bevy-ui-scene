@@ -53,7 +53,7 @@ import type {
   EventFromApi,
   PlaceFromApi
 } from './SceneInfoCard.types'
-import { getViewportHeight, getViewportWidth } from '../../service/canvas-ratio'
+import { getRightPanelWidth } from '../../service/canvas-ratio'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -105,12 +105,6 @@ export default class SceneInfoCard {
 
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return
-
-    if (canvasInfo.width / 4 < 360) {
-      this.panelWidth = 360
-    } else {
-      this.panelWidth = canvasInfo.width / 4
-    }
   }
 
   async update(): Promise<void> {
@@ -325,19 +319,13 @@ export default class SceneInfoCard {
     return !!this.place
   }
 
-  panelWidth: number = getViewportHeight() * 0.4
-
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    if (canvasInfo.width / 4 < 360) {
-      this.panelWidth = 360
-    } else {
-      this.panelWidth = canvasInfo.width / 4
-    }
-
     if (this.place === undefined) return null
+    const panelWidth = getRightPanelWidth()
+
     return (
       <UiEntity
         uiTransform={{
@@ -348,7 +336,7 @@ export default class SceneInfoCard {
       >
         <UiEntity
           uiTransform={{
-            width: this.panelWidth,
+            width: panelWidth,
             height: '100%',
             justifyContent: 'flex-start',
             alignItems: 'center',
@@ -365,8 +353,8 @@ export default class SceneInfoCard {
         >
           <UiEntity
             uiTransform={{
-              width: this.panelWidth,
-              minHeight: this.panelWidth * 0.75
+              width: panelWidth,
+              minHeight: panelWidth * 0.75
             }}
             uiBackground={{
               textureMode: 'stretch',
@@ -386,7 +374,7 @@ export default class SceneInfoCard {
               width: '100%',
               overflow: 'scroll',
               scrollPosition: this.scrollPos,
-              maxHeight: canvasInfo.height - this.panelWidth * 0.75,
+              maxHeight: canvasInfo.height - panelWidth * 0.75,
               flexDirection: 'column'
             }}
             // uiBackground={{color:Color4.Red()}}
@@ -402,8 +390,7 @@ export default class SceneInfoCard {
               {this.sceneInfo()}
               {this.tabsBar()}
               {this.selectedTab === 'overview' && this.overviewContent()}
-              {this.selectedTab === 'photos' &&
-                this.photosContent(this.panelWidth)}
+              {this.selectedTab === 'photos' && this.photosContent(panelWidth)}
               {this.selectedTab === 'events' && this.eventsContent()}
             </UiEntity>
           </UiEntity>

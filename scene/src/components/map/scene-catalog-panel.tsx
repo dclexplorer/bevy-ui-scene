@@ -12,7 +12,10 @@ import {
 import { executeTask } from '@dcl/sdk/ecs'
 import { Column, Row } from '../layout'
 import { ListCard } from './list-card'
-import { getViewportHeight } from '../../service/canvas-ratio'
+import {
+  getRightPanelWidth,
+  getViewportHeight
+} from '../../service/canvas-ratio'
 import Icon from '../icon/Icon'
 import { Vector3 } from '@dcl/sdk/math'
 import { displaceCamera } from '../../service/map-camera'
@@ -77,7 +80,7 @@ async function fetchList({
 }
 
 export function SceneCatalogPanel(): ReactElement {
-  const width = getUiController().sceneCard.panelWidth
+  const width = getRightPanelWidth()
 
   return (
     <UiEntity
