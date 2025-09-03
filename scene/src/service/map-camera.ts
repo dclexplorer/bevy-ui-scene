@@ -43,6 +43,7 @@ export const ISO_OFFSET = [
   OFFSET_MAP_CAMERA * (8 / 6),
   -OFFSET_MAP_CAMERA
 ]
+export const ISE_OFFSET_3 = Vector3.create(...ISO_OFFSET)
 let mapCamera: Entity
 
 export const getBigMapCameraEntity = () => mapCamera
@@ -60,7 +61,7 @@ export const activateMapCamera = () => {
     Transform.createOrReplace(mapCamera, {
       position: Vector3.add(
         Transform.get(engine.PlayerEntity).position,
-        Vector3.create(...ISO_OFFSET)
+        ISE_OFFSET_3
       )
     })
 

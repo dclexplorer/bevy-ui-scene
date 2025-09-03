@@ -262,7 +262,9 @@ function SceneCatalogContent(): ReactElement {
                     )
                   } else {
                     const coords = fromStringToCoords(place.base_position)
-                    displaceCamera(fromParcelCoordsToPosition(coords))
+                    displaceCamera(
+                      fromParcelCoordsToPosition(coords, { height: 0 })
+                    )
                     store.dispatch(
                       updateHudStateAction({
                         placeListActiveItem: place
