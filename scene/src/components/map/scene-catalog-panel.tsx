@@ -24,7 +24,8 @@ import { Input } from '@dcl/sdk/react-ecs'
 import { useDebouncedValue } from '../../hooks/use-debounce'
 import { BevyApi } from '../../bevy-api'
 import { SceneCatalogOrder } from '../../state/hud/state'
-import { waitFor } from '../../utils/dcl-utils'
+import { sleep, waitFor } from '../../utils/dcl-utils'
+import { setUiFocus } from '~system/RestrictedActions'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -78,7 +79,7 @@ async function fetchList({
   }).then((r) => JSON.parse(r.body))
   return response
 }
-
+let recreatingInputWorkaround = false
 export function SceneCatalogPanel(): ReactElement {
   const width = getRightPanelWidth()
 
@@ -151,28 +152,44 @@ function SceneCatalogContent(): ReactElement {
         width: '100%'
       }}
     >
-      <Row>
-        <Input
-          uiTransform={{
-            width: '94%',
-            padding: fontSize / 2
-          }}
-          fontSize={fontSize}
-          placeholder={'Search'}
-          uiBackground={{
-            color: COLOR.WHITE
-          }}
-          value={searchText}
-          onChange={(_searchText) => {
-            executeTask(async () => {
-              await waitFor(() => loading === false)
-              setSearchText(_searchText)
-            })
-          }}
-          onSubmit={() => {
-            // TODO try to create recreateInputValue to revert the native behaviour that makes the input to be clear after pressing ENTER
-          }}
-        />
+      <Row
+        uiTransform={{
+          height: fontSize * 2,
+          width: '94%',
+          padding: { top: fontSize, bottom: fontSize },
+          margin: { top: fontSize * 0.5 }
+        }}
+      >
+        {!recreatingInputWorkaround && (
+          <Input
+            uiTransform={{
+              elementId: 'sceneSearchInput',
+              width: '94%',
+              padding: fontSize / 2
+            }}
+            fontSize={fontSize}
+            placeholder={'Search'}
+            uiBackground={{
+              color: COLOR.WHITE
+            }}
+            value={searchText}
+            onChange={(_searchText) => {
+              executeTask(async () => {
+                await waitFor(() => loading === false)
+                setSearchText(_searchText)
+              })
+            }}
+            onSubmit={() => {
+              // TODO try to create recreateInputValue to revert the native behaviour that makes the input to be clear after pressing ENTER
+              recreatingInputWorkaround = true
+              executeTask(async () => {
+                await sleep(0)
+                recreatingInputWorkaround = false
+                setUiFocus({ elementId: 'sceneSearchInput' })
+              })
+            }}
+          />
+        )}
       </Row>
       <Row>
         {ORDER_OPTIONS.map(({ orderKey, label }) => {
@@ -220,7 +237,11 @@ function SceneCatalogContent(): ReactElement {
       >
         {loading && (
           <UiEntity
-            uiText={{ value: 'Loading...', color: COLOR.TEXT_COLOR_GREY }}
+            uiText={{
+              value: 'Loading...',
+              color: COLOR.TEXT_COLOR_GREY,
+              fontSize
+            }}
           />
         )}
         {!loading &&
