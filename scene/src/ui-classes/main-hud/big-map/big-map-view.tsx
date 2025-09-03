@@ -22,6 +22,7 @@ import { getCentralParcel } from '../../../components/map/mini-map-info-entities
 import Icon from '../../../components/icon/Icon'
 import {
   getCanvasScaleRatio,
+  getRightPanelWidth,
   getViewportHeight,
   getViewportWidth
 } from '../../../service/canvas-ratio'
@@ -236,7 +237,7 @@ function BigMapContent(): ReactElement {
           const mapCameraTransform = Transform.get(getBigMapCameraEntity())
 
           const targetPosition: Vector3 = screenToGround(
-            pointerInfo.screenCoordinates.x,
+            pointerInfo.screenCoordinates.x + getRightPanelWidth() / 2,
             pointerInfo.screenCoordinates.y,
             getViewportWidth(),
             getViewportHeight(),
