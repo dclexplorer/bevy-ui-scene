@@ -71,13 +71,19 @@ const state = {
   lastClickTime: 0
 }
 const PLAYER_PLACE_LABEL = 'ME'
-export type PlaceRepresentation = Place & { centralParcelCoords: Vector3 }
+export type PlaceRepresentation = Place & {
+  centralParcelCoords: Vector3
+  sprite: AtlasIcon
+  isActive: boolean
+}
 export type OrderType =
   | 'most_active'
   | 'like_score'
   | 'updated_at'
   | 'created_at'
   | null
+export const decoratePlaceRepresentation = memoize(_decoratePlaceRepresentation)
+
 function BigMapContent(): ReactElement {
   const [orderType, setOrderType] = useState<OrderType>(null)
   const [placesRepresentations, setPlacesRepresentations] = useState<
@@ -85,48 +91,73 @@ function BigMapContent(): ReactElement {
   >([])
   const initialPlayerParcel = getPlayerParcel()
   const [playerRespresentation, setPlayerRespresentation] =
-    useState<PlaceRepresentation>({
-      id: PLAYER_PLACE_ID,
-      title: PLAYER_PLACE_LABEL,
-      positions: [],
-      categories: [PLAYER_PLACE_ID],
-      base_position: `${initialPlayerParcel.x},${initialPlayerParcel.y}`,
-      centralParcelCoords: fromParcelCoordsToPosition(initialPlayerParcel, {
-        height: 0
-      })
-    })
+    useState<PlaceRepresentation>(
+      decoratePlaceRepresentation({
+        id: PLAYER_PLACE_ID,
+        title: PLAYER_PLACE_LABEL,
+        positions: [],
+        categories: [PLAYER_PLACE_ID],
+        base_position: `${initialPlayerParcel.x},${initialPlayerParcel.y}`
+      }) as PlaceRepresentation
+    )
   const [allRepresentations, setAllRepresentations] = useState<
     PlaceRepresentation[]
   >([])
-  const [activeRepresentation, setActiveRepresentation] =
-    useState<PlaceRepresentation | null>(null)
   // TODO maybe we should optimize to those that are out of screen, and show nothing while the camera is moving, especially with "all" filters
   // TODO review if it makes sense all the useEffect and their listenings
+
+  useEffect(() => {
+    store.dispatch(updateHudStateAction({ placeListActiveItem: null }))
+    const u1 = getUiController().sceneCard.onHide(() => {
+      store.dispatch(updateHudStateAction({ placeListActiveItem: null }))
+    })
+    const u2 = getUiController().sceneCard.onShow(() => {
+      console.log(
+        'placeListActiveItem: getUiController().sceneCard.place',
+        getUiController().sceneCard.place
+      )
+
+      store.dispatch(
+        updateHudStateAction({
+          placeListActiveItem: getUiController().sceneCard.place
+        })
+      )
+    })
+    return () => {
+      u1()
+      u2()
+    }
+  }, [])
 
   useEffect(() => {
     const initBigMapFn = async () => {
       console.log('initBigMapFn')
 
-      const _representations =
+      const _representations: PlaceRepresentation[] =
         store.getState().hud.mapFilterCategories[0] === 'favorites'
           ? []
-          : Object.values(getLoadedMapPlaces())
+          : (Object.values(getLoadedMapPlaces())
               .map(decoratePlaceRepresentation)
-              .filter((p: PlaceRepresentation) =>
-                p.categories.some(
-                  (c: string) =>
-                    store.getState().hud.mapFilterCategories.includes(c) ||
-                    store.getState().hud.mapFilterCategories[0] === 'all'
-                )
-              )
+              .filter(
+                (p) =>
+                  p?.categories.some(
+                    (c: string) =>
+                      store.getState().hud.mapFilterCategories.includes(c) ||
+                      store.getState().hud.mapFilterCategories[0] === 'all'
+                  )
+              ) as PlaceRepresentation[])
 
       setPlacesRepresentations(_representations)
       setAllRepresentations(
-        dedupeById([
-          playerRespresentation,
-          ...(activeRepresentation ? [activeRepresentation] : []),
-          ..._representations
-        ])
+        dedupeById(
+          [
+            playerRespresentation,
+            ..._representations,
+            decoratePlaceRepresentation(
+              store.getState().hud.placeListActiveItem
+            )
+          ].filter((p) => p) as PlaceRepresentation[]
+        )
       )
     }
     console.log(
@@ -138,56 +169,49 @@ function BigMapContent(): ReactElement {
   useEffect(() => {
     if (store.getState().hud.mapFilterCategories[0] === 'favorites') {
       setAllRepresentations(
-        dedupeById([
-          playerRespresentation,
-          ...(activeRepresentation ? [activeRepresentation] : []),
-          ...store
-            .getState()
-            .hud.sceneList.data.map(decoratePlaceRepresentation)
-        ])
+        dedupeById(
+          [
+            playerRespresentation,
+            ...store
+              .getState()
+              .hud.sceneList.data.map(decoratePlaceRepresentation),
+            decoratePlaceRepresentation(
+              store.getState().hud.placeListActiveItem
+            )
+          ].filter((p) => p) as PlaceRepresentation[]
+        )
       )
     }
   }, [store.getState().hud.sceneList])
   useEffect(() => {
-    console.log('updating UI big map based on player parcel')
-
     const playerParcel = getPlayerParcel()
-    let _playerRepresentation: PlaceRepresentation = {
-      id: PLAYER_PLACE_ID,
-      title: PLAYER_PLACE_LABEL,
-      positions: [],
-      categories: [PLAYER_PLACE_ID],
-      base_position: `${playerParcel.x},${playerParcel.y}`,
-      centralParcelCoords: fromParcelCoordsToPosition(playerParcel, {
-        height: 0
-      })
-    }
+    let _playerRepresentation: PlaceRepresentation =
+      decoratePlaceRepresentation({
+        id: PLAYER_PLACE_ID,
+        title: PLAYER_PLACE_LABEL,
+        positions: [],
+        categories: [PLAYER_PLACE_ID],
+        base_position: `${playerParcel.x},${playerParcel.y}`,
+        centralParcelCoords: fromParcelCoordsToPosition(playerParcel, {
+          height: 0
+        })
+      }) as PlaceRepresentation
 
     setPlayerRespresentation(_playerRepresentation)
     setAllRepresentations(
-      dedupeById([
-        _playerRepresentation,
-        ...(activeRepresentation ? [activeRepresentation] : []),
-        ...placesRepresentations
-      ])
-    )
-  }, [getPlayerParcel(), placesRepresentations, activeRepresentation])
-
-  useEffect(() => {
-    if (!store.getState().hud.placeListActiveItem) {
-      setActiveRepresentation(null)
-      return
-    }
-
-    setActiveRepresentation(
-      decoratePlaceRepresentation(
-        allRepresentations.find(
-          (representation) =>
-            representation.id === store.getState().hud.placeListActiveItem.id
-        ) ?? store.getState().hud.placeListActiveItem
+      dedupeById(
+        [
+          _playerRepresentation,
+          ...placesRepresentations.map(decoratePlaceRepresentation),
+          decoratePlaceRepresentation(store.getState().hud.placeListActiveItem)
+        ].filter((p) => p) as PlaceRepresentation[]
       )
     )
-  }, [store.getState().hud.placeListActiveItem])
+  }, [
+    getPlayerParcel(),
+    placesRepresentations,
+    store.getState().hud.placeListActiveItem
+  ])
 
   // TODO don't show genesis city points when in other realm/world/server
   return (
@@ -237,7 +261,7 @@ function BigMapContent(): ReactElement {
           const mapCameraTransform = Transform.get(getBigMapCameraEntity())
 
           const targetPosition: Vector3 = screenToGround(
-            pointerInfo.screenCoordinates.x + getRightPanelWidth() / 2,
+            pointerInfo.screenCoordinates.x, // TODO REVIEW + getRightPanelWidth() / 2, to move camera more centered
             pointerInfo.screenCoordinates.y,
             getViewportWidth(),
             getViewportHeight(),
@@ -257,7 +281,6 @@ function BigMapContent(): ReactElement {
           })
 
           const parcelVector3 = getVector3Parcel(targetPosition)
-
           getUiController().sceneCard.showByCoords(
             Vector3.create(parcelVector3.x, 0, parcelVector3.y)
           )
@@ -265,68 +288,70 @@ function BigMapContent(): ReactElement {
         state.lastClickTime = Date.now()
       }}
     >
-      {!store.getState().hud.movingMap &&
-        allRepresentations.map((placeRepresentation) => {
-          // TODO optimize, only calculate when camera position or rotation changes, and with throttle
-          const position = worldToScreenPx(
-            placeRepresentation.centralParcelCoords,
-            Transform.get(engine.CameraEntity).position,
-            Transform.get(engine.CameraEntity).rotation,
-            FOV,
-            getViewportWidth(),
-            getViewportHeight(),
-            {
-              fovIsHorizontal: false,
-              forwardIsNegZ: false
-            }
-          )
+      <UiEntity uiTransform={{ positionType: 'absolute', position: 0 }}>
+        {!store.getState().hud.movingMap &&
+          allRepresentations.map((placeRepresentation) => {
+            try {
+              // TODO optimize, only calculate when camera position or rotation changes, and with throttle
+              const position = worldToScreenPx(
+                placeRepresentation.centralParcelCoords,
+                Transform.get(engine.CameraEntity).position,
+                Transform.get(engine.CameraEntity).rotation,
+                FOV,
+                getViewportWidth(),
+                getViewportHeight(),
+                {
+                  fovIsHorizontal: false,
+                  forwardIsNegZ: false
+                }
+              )
 
-          const sprite = getRepresentationSprite(placeRepresentation)
-          const sizeMultiplier =
-            placeRepresentation === activeRepresentation
-              ? 2
-              : sprite.spriteName === 'PinPOI'
-              ? 1.5
-              : 1
+              const sizeMultiplier = placeRepresentation.isActive
+                ? 2
+                : placeRepresentation.sprite.spriteName === 'PinPOI'
+                ? 1.5
+                : 1
 
-          return (
-            <UiEntity
-              uiTransform={{
-                positionType: 'absolute',
-                position: {
-                  left: position.left,
-                  top: position.top
-                },
-                flexDirection: 'column',
-                alignItems: 'center',
-                alignContent: 'center',
-                justifyContent: 'center'
-              }}
-              key={placeRepresentation.id}
-            >
-              <Icon
-                icon={sprite}
-                uiTransform={{
-                  positionType: 'absolute',
-                  alignSelf: 'center',
-                  position: {
-                    top: -((getCanvasScaleRatio() * 50) / 4) * sizeMultiplier,
-                    left: -((getCanvasScaleRatio() * 50) / 4) * sizeMultiplier
-                  },
-                  width: getCanvasScaleRatio() * 50 * sizeMultiplier,
-                  height: getCanvasScaleRatio() * 50 * sizeMultiplier * 1.1
-                }}
-                onMouseDown={() => {
-                  const coords = fromStringToCoords(
-                    placeRepresentation.base_position
-                  )
-                  getUiController().sceneCard.showByCoords(
-                    Vector3.create(coords.x, 0, coords.y)
-                  )
-                }}
-              />
+              return (
+                <UiEntity
+                  uiTransform={{
+                    positionType: 'absolute',
+                    position: {
+                      left: position.left,
+                      top: position.top
+                    },
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                    justifyContent: 'center'
+                  }}
+                  key={placeRepresentation.id}
+                >
+                  <Icon
+                    icon={placeRepresentation.sprite}
+                    uiTransform={{
+                      positionType: 'absolute',
+                      alignSelf: 'center',
+                      position: {
+                        top:
+                          -((getCanvasScaleRatio() * 50) / 4) * sizeMultiplier,
+                        left:
+                          -((getCanvasScaleRatio() * 50) / 4) * sizeMultiplier
+                      },
+                      width: getCanvasScaleRatio() * 50 * sizeMultiplier,
+                      height: getCanvasScaleRatio() * 50 * sizeMultiplier * 1.1
+                    }}
+                    onMouseDown={() => {
+                      const coords = fromStringToCoords(
+                        placeRepresentation.base_position
+                      )
+                      getUiController().sceneCard.showByCoords(
+                        Vector3.create(coords.x, 0, coords.y)
+                      )
+                    }}
+                  />
 
-              {/* <UiEntity
+                  {/* <UiEntity
                 uiTransform={{
                   alignSelf: 'center',
                   alignItems: 'center',
@@ -338,15 +363,24 @@ function BigMapContent(): ReactElement {
                   textAlign: 'top-center'
                 }}
               />*/}
-            </UiEntity>
-          )
-        })}
+                </UiEntity>
+              )
+            } catch (error) {
+              console.error('ERROR IN MAP', error)
+              return null
+            }
+          })}
+      </UiEntity>
+
       <MapFilterBar />
     </UiEntity>
   )
 }
 
-function decoratePlaceRepresentation(place: Place): PlaceRepresentation {
+export function _decoratePlaceRepresentation(
+  place: Place | null | undefined
+): PlaceRepresentation | null {
+  if (place === null || place === undefined) return null
   const centralParcelCoords = fromParcelCoordsToPosition(
     fromStringToCoords(
       getCentralParcel([...place.positions, place.base_position]) as string
@@ -356,15 +390,18 @@ function decoratePlaceRepresentation(place: Place): PlaceRepresentation {
 
   return {
     ...place,
-    centralParcelCoords
+    centralParcelCoords,
+    sprite: getRepresentationSprite(place),
+    isActive: place.id === store.getState().hud.placeListActiveItem?.id
   }
 }
 
-function _getRepresentationSprite(
-  placeRepresentation: PlaceRepresentation
-): AtlasIcon {
+function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
   let spriteName = ''
-  if (placeRepresentation.id === store.getState().hud.placeListActiveItem.id) {
+  if (
+    store.getState().hud.placeListActiveItem &&
+    placeRepresentation.id === store.getState().hud.placeListActiveItem?.id
+  ) {
     spriteName = `GenericPinSelected`
   } else if (placeRepresentation.categories.includes('poi')) {
     spriteName = 'PinPOI'

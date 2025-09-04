@@ -42,7 +42,8 @@ export const ISO_OFFSET = [
   OFFSET_MAP_CAMERA,
   OFFSET_MAP_CAMERA * (8 / 6),
   -OFFSET_MAP_CAMERA
-]
+].map((i) => i * 2)
+
 export const ISE_OFFSET_3 = Vector3.create(...ISO_OFFSET)
 let mapCamera: Entity
 

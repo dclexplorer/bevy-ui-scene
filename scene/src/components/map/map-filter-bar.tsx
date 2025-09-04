@@ -63,14 +63,16 @@ export function MapFilterBarButton({
     <UiEntity
       uiTransform={{
         borderRadius: fontSize * 10,
-        borderColor: COLOR.ACTIVE_BACKGROUND_COLOR,
-        borderWidth: active ? fontSize * 0.1 : 0,
+        borderColor: active
+          ? COLOR.ACTIVE_BACKGROUND_COLOR
+          : COLOR.BLACK_TRANSPARENT,
+        borderWidth: fontSize * 0.2,
         flexGrow: 0,
         flexShrink: 0,
         margin: '0.2%'
       }}
       uiBackground={{
-        color: active ? COLOR.ACTIVE_BACKGROUND_COLOR : COLOR.WHITE
+        color: COLOR.WHITE
       }}
       onMouseDown={onClick}
     >
@@ -90,7 +92,7 @@ export function MapFilterBarButton({
           textWrap: 'nowrap',
           value: `<b> ${label.toUpperCase()}</b>`,
           fontSize,
-          color: active ? COLOR.TEXT_COLOR_WHITE : COLOR.TEXT_COLOR
+          color: COLOR.TEXT_COLOR
         }}
       />
     </UiEntity>

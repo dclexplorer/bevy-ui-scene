@@ -26,6 +26,8 @@ import { BevyApi } from '../../bevy-api'
 import { SceneCatalogOrder } from '../../state/hud/state'
 import { sleep, waitFor } from '../../utils/dcl-utils'
 import { setUiFocus } from '~system/RestrictedActions'
+import { EMPTY_PLACE } from '../../utils/constants'
+import { decoratePlaceRepresentation } from '../../ui-classes/main-hud/big-map/big-map-view'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -110,6 +112,17 @@ function SceneCatalogContent(): ReactElement {
   const [searchText, setSearchText] = useState<string>('')
   const debouncedSearchText = useDebouncedValue(searchText, 300)
   const [loading, setLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    if (!getUiController().sceneInfoCardVisible) {
+      store.dispatch(
+        updateHudStateAction({
+          placeListActiveItem: null
+        })
+      )
+    }
+  }, [])
+
   useEffect(() => {
     executeTask(async () => {
       setLoading(true)
@@ -180,7 +193,7 @@ function SceneCatalogContent(): ReactElement {
               })
             }}
             onSubmit={() => {
-              // TODO try to create recreateInputValue to revert the native behaviour that makes the input to be clear after pressing ENTER
+              //workaround to avoid clearing text when pressing ENTER
               recreatingInputWorkaround = true
               executeTask(async () => {
                 await sleep(0)
@@ -252,10 +265,14 @@ function SceneCatalogContent(): ReactElement {
                   width: '93%'
                 }}
                 thumbnailSrc={place.image}
-                active={store.getState().hud.placeListActiveItem === place}
+                active={
+                  store.getState().hud.placeListActiveItem?.id === place.id
+                }
                 activeFooter={'Click again to show more info'}
                 onMouseDown={() => {
-                  if (store.getState().hud.placeListActiveItem === place) {
+                  if (
+                    store.getState().hud.placeListActiveItem?.id === place.id
+                  ) {
                     const coords = fromStringToCoords(place.base_position)
                     getUiController().sceneCard.showByCoords(
                       Vector3.create(coords.x, 0, coords.y)

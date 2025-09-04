@@ -1,6 +1,7 @@
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4, Vector2, type Vector3 } from '@dcl/sdk/math'
 import ReactEcs, {
+  Callback,
   Label,
   UiEntity,
   type UiTransformProps
@@ -54,6 +55,10 @@ import type {
   PlaceFromApi
 } from './SceneInfoCard.types'
 import { getRightPanelWidth } from '../../service/canvas-ratio'
+import { updateHudStateAction } from '../../state/hud/actions'
+import { decoratePlaceRepresentation } from '../main-hud/big-map/big-map-view'
+import { Place } from '../../service/map-places'
+import { sleep } from '../../utils/dcl-utils'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -208,13 +213,29 @@ export default class SceneInfoCard {
         this.resetBackgrounds()
       })
   }
+  callbacks: { onHide: Callback[]; onShow: Callback[] } = {
+    onHide: [],
+    onShow: []
+  }
 
+  onHide(fn: Callback) {
+    this.callbacks.onHide.push(fn)
+    return () =>
+      (this.callbacks.onHide = this.callbacks.onHide.filter((i) => i !== fn))
+  }
+
+  onShow(fn: Callback) {
+    this.callbacks.onShow.push(fn)
+    return () =>
+      (this.callbacks.onShow = this.callbacks.onShow.filter((i) => i !== fn))
+  }
   async showByCoords(coords: Vector3): Promise<void> {
     this.uiController.sceneInfoCardVisible = true
     this.place = LOADING_PLACE
 
     const auxPlace = await fetchPlaceFromCoords(coords)
     await this.setPlace(auxPlace)
+    this.callbacks.onShow.forEach((f) => f())
   }
 
   async showByState(): Promise<void> {
@@ -243,6 +264,7 @@ export default class SceneInfoCard {
   hide(): void {
     this.uiController.sceneInfoCardVisible = false
     this.resetBackgrounds()
+    this.callbacks.onHide.forEach((f) => f())
   }
 
   resetBackgrounds(): void {
@@ -429,6 +451,14 @@ export default class SceneInfoCard {
           }}
           onMouseDown={() => {
             this.hide()
+            /* executeTask(async () => {
+              await sleep(10)
+              store.dispatch(
+                updateHudStateAction({
+                  placeListActiveItem: null
+                })
+              )
+            })*/
           }}
           backgroundColor={this.closeBackground}
           icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}

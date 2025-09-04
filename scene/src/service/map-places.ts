@@ -3,7 +3,7 @@ import { Vector3 } from '@dcl/sdk/math'
 import { getRealm } from '~system/Runtime'
 import { sleep } from '../utils/dcl-utils'
 
-// TODO move types to map-definitions.ts
+// TODO move types to map-definitions.ts and use already existent PlaceFromApi
 export type Place = {
   id: string
   title: string

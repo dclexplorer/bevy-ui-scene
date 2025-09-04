@@ -73,7 +73,7 @@ export type HudState = {
   minimapOpen: boolean
   mapModeActive: boolean
   mapFilterCategories: string[]
-  placeListActiveItem: Place
+  placeListActiveItem: Place | null
   sceneList: {
     total: number
     data: Place[]
@@ -96,7 +96,7 @@ export type HudStateUpdateParams = {
   minimapOpen?: boolean
   mapModeActive?: boolean
   mapFilterCategories?: string[]
-  placeListActiveItem?: Place
+  placeListActiveItem?: Place | null
   sceneList?: {
     total: number
     data: Place[]
@@ -119,7 +119,7 @@ export const hudInitialState: HudState = {
   minimapOpen: true,
   mapModeActive: false,
   mapFilterCategories: ['poi'],
-  placeListActiveItem: EMPTY_PLACE,
+  placeListActiveItem: null,
   sceneList: {
     total: 0,
     data: []
