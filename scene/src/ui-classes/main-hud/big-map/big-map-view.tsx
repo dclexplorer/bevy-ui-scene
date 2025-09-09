@@ -18,7 +18,7 @@ import {
 } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../../../utils/dcl-utils'
 import useState = ReactEcs.useState
-import { Vector3 } from '@dcl/sdk/math'
+import { Quaternion, Vector3 } from '@dcl/sdk/math'
 import { getCentralParcel } from '../../../components/map/mini-map-info-entities'
 import Icon from '../../../components/icon/Icon'
 import {
@@ -50,6 +50,8 @@ import { Label } from '@dcl/sdk/react-ecs'
 import { updateHudStateAction } from '../../../state/hud/actions'
 import { AtlasIcon } from '../../../utils/definitions'
 import { mapSymbolPerPlaceCategory } from '../../../components/map/map-definitions'
+import { MapBottomLeftBar } from '../../../components/map/map-bottom-left-bar'
+import { getHudFontSize } from '../scene-info/SceneInfo'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
@@ -283,8 +285,10 @@ function BigMapContent(): ReactElement {
               // TODO optimize, only calculate when camera position or rotation changes, and with throttle
               const position = worldToScreenPx(
                 placeRepresentation.centralParcelCoords,
-                Transform.get(getBigMapCameraEntity()).position,
-                Transform.get(getBigMapCameraEntity()).rotation,
+                Transform.getOrNull(getBigMapCameraEntity())?.position ??
+                  Vector3.Zero(),
+                Transform.getOrNull(getBigMapCameraEntity())?.rotation ??
+                  Quaternion.Zero(),
                 FOV,
                 getViewportWidth(),
                 getViewportHeight(),
@@ -311,20 +315,24 @@ function BigMapContent(): ReactElement {
                     flexDirection: 'column',
                     alignItems: 'center',
                     alignContent: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    zIndex: getZIndexForPlaceSymbol(placeRepresentation)
                   }}
                   key={placeRepresentation.id}
                 >
                   <Icon
                     icon={placeRepresentation.sprite}
+                    iconColor={
+                      placeRepresentation.id === PLAYER_PLACE_ID
+                        ? COLOR.RED
+                        : undefined
+                    }
                     uiTransform={{
                       positionType: 'absolute',
                       alignSelf: 'center',
                       position: {
-                        top:
-                          -((getCanvasScaleRatio() * 50) / 4) * sizeMultiplier,
-                        left:
-                          -((getCanvasScaleRatio() * 50) / 4) * sizeMultiplier
+                        top: -(getCanvasScaleRatio() * 50 * sizeMultiplier) / 2,
+                        left: -(getCanvasScaleRatio() * 50 * sizeMultiplier) / 2
                       },
                       width: getCanvasScaleRatio() * 50 * sizeMultiplier,
                       height: getCanvasScaleRatio() * 50 * sizeMultiplier * 1.1
@@ -338,6 +346,26 @@ function BigMapContent(): ReactElement {
                       )
                     }}
                   />
+                  {placeRepresentation.id === PLAYER_PLACE_ID && (
+                    <UiEntity
+                      uiTransform={{
+                        position: {
+                          top:
+                            (getCanvasScaleRatio() * 50 * sizeMultiplier) / 2,
+                          left: -getCanvasScaleRatio() * 100
+                        },
+
+                        alignSelf: 'center'
+                      }}
+                      uiText={{
+                        value: 'You are here',
+                        textAlign: 'top-center'
+                      }}
+                      uiBackground={{
+                        color: COLOR.DARK_OPACITY_5
+                      }}
+                    />
+                  )}
 
                   {/* <UiEntity
                 uiTransform={{
@@ -362,6 +390,7 @@ function BigMapContent(): ReactElement {
 
       <MapFilterBar />
       <MapStatusBar />
+      <MapBottomLeftBar />
     </UiEntity>
   )
 }
@@ -395,7 +424,7 @@ function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
   } else if (placeRepresentation.categories.includes('poi')) {
     spriteName = 'PinPOI'
   } else if (placeRepresentation.id === PLAYER_PLACE_ID) {
-    spriteName = 'PlayersIcn'
+    spriteName = 'CenterPlayerIcn'
   } else if (
     placeRepresentation.categories.length === 1 &&
     mapSymbolPerPlaceCategory[placeRepresentation.categories[0]]
@@ -447,4 +476,10 @@ function MapStatusBar(): ReactElement {
       }}
     />
   )
+}
+
+function getZIndexForPlaceSymbol(placeRepresentation: PlaceRepresentation) {
+  if (placeRepresentation.id === PLAYER_PLACE_ID) return 999
+  if (placeRepresentation.sprite.spriteName === 'PinPOI') return 2
+  return 0
 }

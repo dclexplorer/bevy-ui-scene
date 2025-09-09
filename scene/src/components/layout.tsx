@@ -5,14 +5,16 @@ import ReactEcs, {
   UiEntity
 } from '@dcl/react-ecs'
 import { noop } from '../utils/function-utils'
-
+import { PBUiText } from '@dcl/ecs'
+import { UiLabelProps } from '@dcl/react-ecs/dist/components/Label/types'
 export function Row({
   uiTransform,
   uiBackground,
   children,
   onMouseEnter,
   onMouseLeave,
-  onMouseDown
+  onMouseDown,
+  uiText
 }: {
   uiTransform?: UiTransformProps
   uiBackground?: UiBackgroundProps
@@ -20,6 +22,7 @@ export function Row({
   onMouseEnter?: () => void
   onMouseLeave?: () => void
   onMouseDown?: () => void
+  uiText?: UiLabelProps
 }): ReactElement {
   return (
     <UiEntity
@@ -33,6 +36,7 @@ export function Row({
         ...uiTransform
       }}
       uiBackground={uiBackground}
+      uiText={uiText}
     >
       {children}
     </UiEntity>
@@ -45,7 +49,8 @@ export function Column({
   onMouseEnter,
   onMouseLeave,
   onMouseDown,
-  uiBackground
+  uiBackground,
+  uiText
 }: {
   uiTransform?: UiTransformProps
   children?: ReactElement | ReactElement[] | null[]
@@ -53,6 +58,7 @@ export function Column({
   onMouseLeave?: () => void
   onMouseDown?: () => void
   uiBackground?: UiBackgroundProps
+  uiText?: UiLabelProps
 }): ReactElement {
   return (
     <UiEntity
@@ -64,6 +70,7 @@ export function Column({
         flexDirection: 'column',
         ...uiTransform
       }}
+      uiText={uiText}
     >
       {children}
     </UiEntity>
