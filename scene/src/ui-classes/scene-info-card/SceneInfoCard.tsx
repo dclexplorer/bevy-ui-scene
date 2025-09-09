@@ -351,70 +351,63 @@ export default class SceneInfoCard {
     return (
       <UiEntity
         uiTransform={{
-          width: '100%',
+          width: panelWidth,
           height: '100%',
-          positionType: 'absolute'
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          flexDirection: 'column',
+          position: {
+            right: 0,
+            top: 0
+          },
+          positionType: 'absolute',
+          pointerFilter: 'block'
+        }}
+        uiBackground={{
+          color: PANEL_BACKGROUND_COLOR
         }}
       >
         <UiEntity
           uiTransform={{
             width: panelWidth,
-            height: '100%',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            flexDirection: 'column',
-            position: {
-              right: 0,
-              top: 0
-            },
-            positionType: 'absolute'
+            minHeight: panelWidth * 0.75
           }}
           uiBackground={{
-            color: PANEL_BACKGROUND_COLOR
+            textureMode: 'stretch',
+            texture: {
+              src: this.place.image.replace(
+                'https://camera-reel-service.decentraland.org/api/images/',
+                'https://camera-reel-s3-bucket.decentraland.org/'
+              )
+            }
           }}
+        />
+
+        {this.topBar()}
+        {/* CONTENT */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            overflow: 'scroll',
+            scrollPosition: this.scrollPos,
+            maxHeight: canvasInfo.height - panelWidth * 0.75,
+            flexDirection: 'column'
+          }}
+          // uiBackground={{color:Color4.Red()}}
         >
           <UiEntity
             uiTransform={{
-              width: panelWidth,
-              minHeight: panelWidth * 0.75
+              width: '88%',
+              height: 'auto',
+              flexDirection: 'column',
+              margin: { left: '3%' }
             }}
-            uiBackground={{
-              textureMode: 'stretch',
-              texture: {
-                src: this.place.image.replace(
-                  'https://camera-reel-service.decentraland.org/api/images/',
-                  'https://camera-reel-s3-bucket.decentraland.org/'
-                )
-              }
-            }}
-          />
-
-          {this.topBar()}
-          {/* CONTENT */}
-          <UiEntity
-            uiTransform={{
-              width: '100%',
-              overflow: 'scroll',
-              scrollPosition: this.scrollPos,
-              maxHeight: canvasInfo.height - panelWidth * 0.75,
-              flexDirection: 'column'
-            }}
-            // uiBackground={{color:Color4.Red()}}
           >
-            <UiEntity
-              uiTransform={{
-                width: '88%',
-                height: 'auto',
-                flexDirection: 'column',
-                margin: { left: '3%' }
-              }}
-            >
-              {this.sceneInfo()}
-              {this.tabsBar()}
-              {this.selectedTab === 'overview' && this.overviewContent()}
-              {this.selectedTab === 'photos' && this.photosContent(panelWidth)}
-              {this.selectedTab === 'events' && this.eventsContent()}
-            </UiEntity>
+            {this.sceneInfo()}
+            {this.tabsBar()}
+            {this.selectedTab === 'overview' && this.overviewContent()}
+            {this.selectedTab === 'photos' && this.photosContent(panelWidth)}
+            {this.selectedTab === 'events' && this.eventsContent()}
           </UiEntity>
         </UiEntity>
       </UiEntity>

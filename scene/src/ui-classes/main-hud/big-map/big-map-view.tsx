@@ -113,14 +113,17 @@ function BigMapContent(): ReactElement {
       store.dispatch(updateHudStateAction({ placeListActiveItem: null }))
     })
     const u2 = getUiController().sceneCard.onShow(() => {
-      console.log(
-        'placeListActiveItem: getUiController().sceneCard.place',
-        getUiController().sceneCard.place
-      )
-
       store.dispatch(
         updateHudStateAction({
           placeListActiveItem: getUiController().sceneCard.place
+        })
+      )
+    })
+    executeTask(async () => {
+      await sleep(2000)
+      store.dispatch(
+        updateHudStateAction({
+          movingMap: false
         })
       )
     })
@@ -225,40 +228,31 @@ function BigMapContent(): ReactElement {
         color: COLOR.DARK_OPACITY_2
       }}
       onMouseDrag={(event) => {
-        state.dragging = true
-        store.dispatch(
-          updateHudStateAction({
-            movingMap: true
-          })
-        )
-        activateDragMapSystem()
+        if (!state.dragging && !store.getState().hud.movingMap) {
+          state.dragging = true
+          activateDragMapSystem()
+        }
       }}
       onMouseDragEnd={() => {
         executeTask(async () => {
+          if (!state.dragging) return
           // TODO REVIEW: why onMouseDrag/onMouseDragLocked is called continuously, then I cannot set dragging to false
-          await sleep(0)
+          await sleep(500)
           state.dragging = false
-          store.dispatch(
-            updateHudStateAction({
-              movingMap: false
-            })
-          )
         })
         deactivateDragMapSystem()
         state.dragging = false
       }}
-      onMouseUp={() => {}}
+      onMouseUp={() => {
+        state.dragging = false
+      }}
       onMouseDown={() => {
+        if (state.dragging || store.getState().hud.movingMap) return
         if (Date.now() - state.lastClickTime < 300) {
           state.lastClickTime = 0
           const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
           if (!pointerInfo?.screenCoordinates) return
-          state.dragging = false
-          store.dispatch(
-            updateHudStateAction({
-              movingMap: true
-            })
-          )
+
           const mapCameraTransform = Transform.get(getBigMapCameraEntity())
 
           const targetPosition: Vector3 = screenToGround(
@@ -270,16 +264,8 @@ function BigMapContent(): ReactElement {
             mapCameraTransform.rotation,
             FOV
           ) as Vector3
-          displaceCamera(targetPosition)
 
-          executeTask(async () => {
-            await sleep(500)
-            store.dispatch(
-              updateHudStateAction({
-                movingMap: false
-              })
-            )
-          })
+          displaceCamera(targetPosition)
 
           const parcelVector3 = getVector3Parcel(targetPosition)
           getUiController().sceneCard.showByCoords(
@@ -291,6 +277,7 @@ function BigMapContent(): ReactElement {
     >
       <UiEntity uiTransform={{ positionType: 'absolute', position: 0 }}>
         {!store.getState().hud.movingMap &&
+          !state.dragging &&
           allRepresentations.map((placeRepresentation) => {
             try {
               // TODO optimize, only calculate when camera position or rotation changes, and with throttle

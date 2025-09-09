@@ -28,6 +28,7 @@ import { sleep, waitFor } from '../../utils/dcl-utils'
 import { setUiFocus } from '~system/RestrictedActions'
 import { EMPTY_PLACE } from '../../utils/constants'
 import { decoratePlaceRepresentation } from '../../ui-classes/main-hud/big-map/big-map-view'
+import { noop } from '../../utils/function-utils'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -94,7 +95,8 @@ export function SceneCatalogPanel(): ReactElement {
         positionType: 'absolute',
         position: {
           right: 0
-        }
+        },
+        pointerFilter: 'block'
       }}
       uiBackground={{
         color: COLOR.PANEL_BACKGROUND_LIGHT
@@ -229,7 +231,7 @@ function SceneCatalogContent(): ReactElement {
                     : COLOR.TEXT_COLOR
               }}
               onMouseDown={() => {
-                if (loading) return
+                if (loading || store.getState().hud.movingMap) return
                 store.dispatch(
                   updateHudStateAction({
                     sceneCatalogOrder: orderKey

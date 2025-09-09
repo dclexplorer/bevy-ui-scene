@@ -124,6 +124,6 @@ export const hudInitialState: HudState = {
     total: 0,
     data: []
   },
-  movingMap: false,
+  movingMap: true,
   sceneCatalogOrder: `most_active`
 }
