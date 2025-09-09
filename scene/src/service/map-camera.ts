@@ -48,14 +48,19 @@ export const ISE_OFFSET_3 = Vector3.create(...ISO_OFFSET)
 let mapCamera: Entity
 
 export const getBigMapCameraEntity = () => mapCamera
+
+export const closeBigMapIfActive = () => {
+  if (store.getState().hud.mapModeActive) {
+    deactivateMapCamera()
+    deactivateDragMapSystem()
+    getUiController().sceneCard.hide()
+  }
+}
+
 export const activateMapCamera = () => {
   if (!state.initialized) {
     listenSystemAction('Cancel', (pressed) => {
-      if (store.getState().hud.mapModeActive && pressed) {
-        console.log('Escape')
-        deactivateMapCamera()
-        deactivateDragMapSystem()
-      }
+      if (pressed) closeBigMapIfActive()
     })
     mapCamera = engine.addEntity()
     state.defaultMainCamera = MainCamera.getOrNull(engine.CameraEntity)

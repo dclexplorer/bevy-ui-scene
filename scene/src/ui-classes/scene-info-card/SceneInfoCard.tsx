@@ -59,6 +59,7 @@ import { updateHudStateAction } from '../../state/hud/actions'
 import { decoratePlaceRepresentation } from '../main-hud/big-map/big-map-view'
 import { Place } from '../../service/map-places'
 import { sleep } from '../../utils/dcl-utils'
+import { closeBigMapIfActive } from '../../service/map-camera'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -677,8 +678,14 @@ export default class SceneInfoCard {
             if (this.place === LOADING_PLACE) return
             if (this.place === undefined) return
             const coord = parseCoordinates(this.place.base_position)
-            if (coord !== null)
-              void teleportTo({ worldCoordinates: { x: coord.x, y: coord.y } })
+            if (coord !== null) {
+              executeTask(async () => {
+                closeBigMapIfActive()
+                await teleportTo({
+                  worldCoordinates: { x: coord.x, y: coord.y }
+                })
+              })
+            }
           }}
           value={'JUMP IN'}
           backgroundColor={RUBY}
