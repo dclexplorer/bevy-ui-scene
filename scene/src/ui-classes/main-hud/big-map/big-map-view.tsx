@@ -80,7 +80,6 @@ export type PlaceRepresentation = Place & {
   centralParcelCoords: Vector3
   sprite: AtlasIcon
   isActive: boolean
-  isHome: boolean
 }
 export type OrderType =
   | 'most_active'
@@ -190,7 +189,11 @@ function BigMapContent(): ReactElement {
       Object.values(getLoadedMapPlaces()).length
     )
     initBigMapFn().catch(console.error)
-  }, [getLoadedMapPlaces(), store.getState().hud.mapFilterCategories])
+  }, [
+    getLoadedMapPlaces(),
+    store.getState().hud.mapFilterCategories,
+    store.getState().hud.homePlace
+  ])
   useEffect(() => {
     if (store.getState().hud.mapFilterCategories[0] === 'favorites') {
       setAllRepresentations(
@@ -346,7 +349,7 @@ function BigMapContent(): ReactElement {
                     iconColor={
                       placeRepresentation.id === PLAYER_PLACE_ID
                         ? COLOR.RED
-                        : placeRepresentation.isHome
+                        : isHomePlace(placeRepresentation)
                         ? COLOR.WHITE
                         : undefined
                     }
@@ -369,19 +372,24 @@ function BigMapContent(): ReactElement {
                       )
                     }}
                   />
-                  {placeRepresentation.id === PLAYER_PLACE_ID && (
+                  {(placeRepresentation.id === PLAYER_PLACE_ID ||
+                    isHomePlace(placeRepresentation)) && (
                     <UiEntity
                       uiTransform={{
                         position: {
                           top:
                             (getCanvasScaleRatio() * 50 * sizeMultiplier) / 2,
-                          left: -getCanvasScaleRatio() * 100
+                          left: isHomePlace(placeRepresentation)
+                            ? -getCanvasScaleRatio() * 50
+                            : -getCanvasScaleRatio() * 100
                         },
 
                         alignSelf: 'center'
                       }}
                       uiText={{
-                        value: 'You are here',
+                        value: isHomePlace(placeRepresentation)
+                          ? 'Home'
+                          : 'You are here',
                         textAlign: 'top-center'
                       }}
                       uiBackground={{
@@ -433,8 +441,7 @@ export function _decoratePlaceRepresentation(
     ...place,
     centralParcelCoords,
     sprite: getRepresentationSprite(place),
-    isActive: place.id === store.getState().hud.placeListActiveItem?.id,
-    isHome: place.id === store.getState().hud.homePlace?.id
+    isActive: place.id === store.getState().hud.placeListActiveItem?.id
   }
 }
 
@@ -509,5 +516,9 @@ function MapStatusBar(): ReactElement {
 function getZIndexForPlaceSymbol(placeRepresentation: PlaceRepresentation) {
   if (placeRepresentation.id === PLAYER_PLACE_ID) return 999
   if (placeRepresentation.sprite.spriteName === 'PinPOI') return 2
-  return 0
+  return 1
+}
+
+function isHomePlace(place: PlaceRepresentation | Place): boolean {
+  return place.id === store.getState().hud.homePlace?.id
 }
