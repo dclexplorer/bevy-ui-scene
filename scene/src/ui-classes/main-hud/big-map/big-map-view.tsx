@@ -48,10 +48,12 @@ import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
 import { dedupeById, memoize } from '../../../utils/function-utils'
 import { Label } from '@dcl/sdk/react-ecs'
 import { updateHudStateAction } from '../../../state/hud/actions'
-import { AtlasIcon } from '../../../utils/definitions'
+import { Atlas, AtlasIcon } from '../../../utils/definitions'
 import { mapSymbolPerPlaceCategory } from '../../../components/map/map-definitions'
 import { MapBottomLeftBar } from '../../../components/map/map-bottom-left-bar'
 import { getHudFontSize } from '../scene-info/SceneInfo'
+import { BevyApi } from '../../../bevy-api'
+import { fetchPlaceFromCoords } from '../../../utils/promise-utils'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
@@ -78,6 +80,7 @@ export type PlaceRepresentation = Place & {
   centralParcelCoords: Vector3
   sprite: AtlasIcon
   isActive: boolean
+  isHome: boolean
 }
 export type OrderType =
   | 'most_active'
@@ -128,7 +131,22 @@ function BigMapContent(): ReactElement {
           movingMap: false
         })
       )
+
+      try {
+        const home = await BevyApi.getHomeScene()
+        const homePlace = await fetchPlaceFromCoords(
+          Vector3.create(home.parcel.x, 0, home.parcel.y)
+        )
+        console.log('homePlace', homePlace)
+        if (homePlace)
+          store.dispatch(
+            updateHudStateAction({
+              homePlace
+            })
+          )
+      } catch (error) {}
     })
+
     return () => {
       u1()
       u2()
@@ -158,6 +176,7 @@ function BigMapContent(): ReactElement {
         dedupeById(
           [
             playerRespresentation,
+            decoratePlaceRepresentation(store.getState().hud.homePlace),
             ..._representations,
             decoratePlaceRepresentation(
               store.getState().hud.placeListActiveItem
@@ -178,6 +197,7 @@ function BigMapContent(): ReactElement {
         dedupeById(
           [
             playerRespresentation,
+            decoratePlaceRepresentation(store.getState().hud.homePlace),
             ...store
               .getState()
               .hud.sceneList.data.map(decoratePlaceRepresentation),
@@ -208,6 +228,7 @@ function BigMapContent(): ReactElement {
       dedupeById(
         [
           _playerRepresentation,
+          decoratePlaceRepresentation(store.getState().hud.homePlace),
           ...placesRepresentations.map(decoratePlaceRepresentation),
           decoratePlaceRepresentation(store.getState().hud.placeListActiveItem)
         ].filter((p) => p) as PlaceRepresentation[]
@@ -325,6 +346,8 @@ function BigMapContent(): ReactElement {
                     iconColor={
                       placeRepresentation.id === PLAYER_PLACE_ID
                         ? COLOR.RED
+                        : placeRepresentation.isHome
+                        ? COLOR.WHITE
                         : undefined
                     }
                     uiTransform={{
@@ -410,17 +433,22 @@ export function _decoratePlaceRepresentation(
     ...place,
     centralParcelCoords,
     sprite: getRepresentationSprite(place),
-    isActive: place.id === store.getState().hud.placeListActiveItem?.id
+    isActive: place.id === store.getState().hud.placeListActiveItem?.id,
+    isHome: place.id === store.getState().hud.homePlace?.id
   }
 }
 
 function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
   let spriteName = ''
+  let atlasName: Atlas = 'map2'
   if (
     store.getState().hud.placeListActiveItem &&
     placeRepresentation.id === store.getState().hud.placeListActiveItem?.id
   ) {
     spriteName = `GenericPinSelected`
+  } else if (placeRepresentation.id === store.getState().hud.homePlace?.id) {
+    spriteName = `HomeSolid`
+    // atlasName = 'icons'
   } else if (placeRepresentation.categories.includes('poi')) {
     spriteName = 'PinPOI'
   } else if (placeRepresentation.id === PLAYER_PLACE_ID) {
@@ -434,7 +462,7 @@ function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
     spriteName = 'GenericPin'
   }
 
-  return { spriteName, atlasName: 'map2' }
+  return { spriteName, atlasName }
 }
 
 function MapStatusBar(): ReactElement {
