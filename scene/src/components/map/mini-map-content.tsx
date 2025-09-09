@@ -20,6 +20,7 @@ import useState = ReactEcs.useState
 
 import {
   CAMERA_X_ANGLE,
+  disposeMiniMapCameraEntities,
   getMapInfoCamera,
   getMinimapCamera
 } from './mini-map-camera'
@@ -90,6 +91,10 @@ export function MiniMapContent(): ReactElement {
     avatarTracker.onLeaveScene((userId) => {
       renderMinimapPlayers(getPlayerAvatarEntities())
     })
+    return () => {
+      console.log('DISPOSE_MINIMAP')
+      disposeMiniMapCameraEntities()
+    }
   }, [])
 
   useEffect(() => {
