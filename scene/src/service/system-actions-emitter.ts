@@ -27,6 +27,7 @@ export function initSystemActionsEmitter(): void {
   async function awaitStream(stream: SystemAction[]): Promise<void> {
     for await (const actionInfo of stream) {
       systemActionsEmitter.publish(actionInfo.action, actionInfo.pressed)
+      console.log('actionInfo', actionInfo)
     }
   }
 }

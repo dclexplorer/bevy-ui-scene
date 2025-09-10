@@ -52,16 +52,11 @@ export const getBigMapCameraEntity = () => mapCamera
 export const closeBigMapIfActive = () => {
   if (store.getState().hud.mapModeActive) {
     deactivateMapCamera()
-    deactivateDragMapSystem()
-    getUiController().sceneCard.hide()
   }
 }
 
 export const activateMapCamera = () => {
   if (!state.initialized) {
-    listenSystemAction('Cancel', (pressed) => {
-      if (pressed) closeBigMapIfActive()
-    })
     mapCamera = engine.addEntity()
     state.defaultMainCamera = MainCamera.getOrNull(engine.CameraEntity)
     Transform.createOrReplace(mapCamera, {
@@ -165,6 +160,9 @@ export const deactivateMapCamera = () => {
       disableAll: false
     })
   })
+  deactivateDragMapSystem()
+  getUiController().sceneCard.hide()
+  // TODO REVIEW: dispose resources ?
 }
 
 export const activateDragMapSystem = () => (state.dragActive = true)

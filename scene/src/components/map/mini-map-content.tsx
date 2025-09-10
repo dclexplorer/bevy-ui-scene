@@ -37,6 +37,7 @@ import {
   getPlayerAvatarEntities
 } from '../../service/avatar-tracker'
 import { activateMapCamera } from '../../service/map-camera'
+import { getUiController } from '../../controllers/ui.controller'
 
 export function MiniMapContent(): ReactElement {
   const mapSize = getMapSize()
@@ -131,7 +132,7 @@ export function MiniMapContent(): ReactElement {
         }
       }}
       onMouseDown={() => {
-        activateMapCamera()
+        getUiController().menu?.show('map')
       }}
     >
       <UiEntity

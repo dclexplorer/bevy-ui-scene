@@ -27,7 +27,10 @@ import {
 import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
-import { type UIController } from '../../controllers/ui.controller'
+import {
+  getUiController,
+  type UIController
+} from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
   BLACK_TEXT,
@@ -362,7 +365,8 @@ export default class SceneInfoCard {
             top: 0
           },
           positionType: 'absolute',
-          pointerFilter: 'block'
+          pointerFilter: 'block',
+          zIndex: 1
         }}
         uiBackground={{
           color: PANEL_BACKGROUND_COLOR
@@ -680,6 +684,8 @@ export default class SceneInfoCard {
             const coord = parseCoordinates(this.place.base_position)
             if (coord !== null) {
               executeTask(async () => {
+                // TODO close menu
+                getUiController().menu.hide()
                 closeBigMapIfActive()
                 await teleportTo({
                   worldCoordinates: { x: coord.x, y: coord.y }

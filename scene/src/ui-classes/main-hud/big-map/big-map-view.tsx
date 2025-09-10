@@ -33,7 +33,9 @@ import {
 } from '../../../service/perspective-to-screen'
 import {
   activateDragMapSystem,
+  activateMapCamera,
   deactivateDragMapSystem,
+  deactivateMapCamera,
   displaceCamera,
   getBigMapCameraEntity
 } from '../../../service/map-camera'
@@ -68,6 +70,7 @@ export const BigMap = (): ReactElement => {
       }}
     >
       <BigMapContent />
+      <SceneCatalogPanel />
     </UiEntity>
   )
 }
@@ -112,7 +115,11 @@ function BigMapContent(): ReactElement {
   // TODO review if it makes sense all the useEffect and their listenings
 
   useEffect(() => {
-    store.dispatch(updateHudStateAction({ placeListActiveItem: null }))
+    activateMapCamera()
+
+    store.dispatch(
+      updateHudStateAction({ placeListActiveItem: null, movingMap: true })
+    )
     const u1 = getUiController().sceneCard.onHide(() => {
       store.dispatch(updateHudStateAction({ placeListActiveItem: null }))
     })
@@ -149,6 +156,7 @@ function BigMapContent(): ReactElement {
     return () => {
       u1()
       u2()
+      deactivateMapCamera()
     }
   }, [])
 

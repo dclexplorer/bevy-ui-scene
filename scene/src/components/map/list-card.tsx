@@ -52,7 +52,8 @@ export function ListCard({
             height: getViewportHeight() * 0.1 * 0.8,
             borderWidth: 0,
             borderRadius: 0, // TODO borderRadius doesn't work with image texture
-            borderColor: COLOR.BLACK_TRANSPARENT
+            borderColor: COLOR.BLACK_TRANSPARENT,
+            flexShrink: 0
           }}
         />
         <Column

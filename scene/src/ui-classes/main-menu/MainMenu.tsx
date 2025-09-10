@@ -17,6 +17,7 @@ import {
 } from '../../components/backpack/OutfitAvatar'
 import { DeleteOutfitDialog } from './backpack-page/delete-outfit-dialog'
 import { noop } from '../../utils/function-utils'
+import { BevyApi } from '../../bevy-api'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
@@ -87,9 +88,11 @@ export default class MainMenu {
     playPreviewEmote('')
     disposeOutfitsCatalog()
     this.open = false
+    BevyApi.showUi().catch(console.error)
   }
 
   show(page: MenuPage): void {
+    if (!this.open) BevyApi.showUi().catch(console.error)
     this.open = true
     this.uiController.settingsPage.updateButtons()
     this.activePage = page
@@ -147,7 +150,8 @@ export default class MainMenu {
         uiTransform={{
           width: '100%',
           height: '100%',
-          positionType: 'absolute'
+          positionType: 'absolute',
+          zIndex: 1
         }}
         onMouseDown={noop}
       >
@@ -160,7 +164,6 @@ export default class MainMenu {
             justifyContent: 'flex-start',
             alignItems: 'center'
           }}
-          uiBackground={{ color: Color4.create(0, 0, 0, 1) }}
         >
           <UiEntity
             uiTransform={{
@@ -168,7 +171,8 @@ export default class MainMenu {
               height: '6%',
               justifyContent: 'center',
               alignItems: 'center',
-              flexDirection: 'row'
+              flexDirection: 'row',
+              zIndex: 1
             }}
             uiBackground={{
               color: COLOR.MAIN_MENU_BACKGROUND
@@ -222,34 +226,6 @@ export default class MainMenu {
                 }
                 fontColor={
                   this.activePage === 'map'
-                    ? undefined
-                    : BUTTON_TEXT_COLOR_INACTIVE
-                }
-              />
-
-              <ButtonTextIcon
-                uiTransform={buttonTransform}
-                onMouseEnter={() => {
-                  this.exploreEnter()
-                }}
-                onMouseLeave={() => {
-                  this.updateButtons()
-                }}
-                onMouseDown={() => {
-                  this.show('explore')
-                }}
-                backgroundColor={this.exploreBackground}
-                icon={this.exploreIcon}
-                value={'<b>EXPLORE</b> [X]'}
-                fontSize={BUTTON_ICON_FONT_SIZE}
-                iconSize={ICON_SIZE}
-                iconColor={
-                  this.activePage === 'explore'
-                    ? undefined
-                    : BUTTON_TEXT_COLOR_INACTIVE
-                }
-                fontColor={
-                  this.activePage === 'explore'
                     ? undefined
                     : BUTTON_TEXT_COLOR_INACTIVE
                 }
@@ -330,7 +306,6 @@ export default class MainMenu {
               height: 'auto',
               flexGrow: 1
             }}
-            uiBackground={{ color: { ...Color4.Green(), a: 0.1 } }}
           >
             {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
             {this.activePage === 'explore' &&
@@ -346,7 +321,8 @@ export default class MainMenu {
               height: '8%',
               positionType: 'absolute',
               alignItems: 'center',
-              position: { right: buttonSize, top: 0 }
+              position: { right: buttonSize, top: 0 },
+              zIndex: 1
             }}
           >
             {this.profileButton.mainUi()}
