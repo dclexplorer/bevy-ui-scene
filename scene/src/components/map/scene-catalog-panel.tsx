@@ -26,9 +26,7 @@ import { BevyApi } from '../../bevy-api'
 import { SceneCatalogOrder } from '../../state/hud/state'
 import { sleep, waitFor } from '../../utils/dcl-utils'
 import { setUiFocus } from '~system/RestrictedActions'
-import { EMPTY_PLACE } from '../../utils/constants'
-import { decoratePlaceRepresentation } from '../../ui-classes/main-hud/big-map/big-map-view'
-import { noop } from '../../utils/function-utils'
+import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -299,8 +297,12 @@ function SceneCatalogContent(): ReactElement {
                 >
                   <UiEntity
                     uiText={{
+                      textWrap: 'wrap',
                       textAlign: 'top-left',
-                      value: `<b>${place.title}</b>`,
+                      value: `<b>${truncateWithoutBreakingWords(
+                        place.title,
+                        24
+                      )}</b>`,
                       color: COLOR.TEXT_COLOR,
                       fontSize
                     }}
@@ -308,9 +310,10 @@ function SceneCatalogContent(): ReactElement {
                   <UiEntity
                     uiText={{
                       textAlign: 'top-left',
-                      value: `Created by <b>${
-                        place.owner ?? place.contact_name
-                      }</b>`,
+                      value: `Created by <b>${truncateWithoutBreakingWords(
+                        place.owner ?? place.contact_name,
+                        12
+                      )}</b>`,
                       color: COLOR.TEXT_COLOR,
                       fontSize
                     }}
