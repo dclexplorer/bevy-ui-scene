@@ -357,13 +357,13 @@ export default class SceneInfoCard {
       <UiEntity
         uiTransform={{
           width: panelWidth,
-          height: '100%',
+          height: getUiController().menu.isOpen() ? '93.6%' : '100%',
           justifyContent: 'flex-start',
           alignItems: 'center',
           flexDirection: 'column',
           position: {
             right: 0,
-            top: 0
+            top: getUiController().menu.isOpen() ? '6.4%' : 0
           },
           positionType: 'absolute',
           pointerFilter: 'block',
