@@ -63,6 +63,7 @@ import { decoratePlaceRepresentation } from '../main-hud/big-map/big-map-view'
 import { Place } from '../../service/map-places'
 import { sleep } from '../../utils/dcl-utils'
 import { closeBigMapIfActive } from '../../service/map-camera'
+import { MAP_FILTER_DEFINITIONS } from '../../components/map/map-definitions'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -957,60 +958,9 @@ export default class SceneInfoCard {
     let title = ''
     let spriteName = ''
 
-    switch (type) {
-      case 'game':
-        title = 'GAME'
-        spriteName = 'GamesIcn'
-        break
-      case 'art':
-        title = 'ART'
-        spriteName = 'ArtIcn'
-        break
-      case 'crypto':
-        title = 'CRYPTO'
-        spriteName = 'CryptoIcn'
-        break
-      case 'social':
-        title = 'SOCIAL'
-        spriteName = 'SocialIcn'
-        break
-      case 'shop':
-        title = 'SHOP'
-        spriteName = 'ShopIcn'
-        break
-      case 'education':
-        title = 'EDUCATION'
-        spriteName = 'EducationIcn'
-        break
-      case 'music':
-        title = 'MUSIC'
-        spriteName = 'MusicIcn'
-        break
-      case 'fashion':
-        title = 'FASHION'
-        spriteName = 'FashionIcn'
-        break
-      case 'casino':
-        title = 'CASINO'
-        spriteName = 'CasinoIcn'
-        break
-      case 'sports':
-        title = 'SPORTS'
-        spriteName = 'SportsIcn'
-        break
-      case 'business':
-        title = 'BUSINESS'
-        spriteName = 'BusinessIcn'
-        break
-      case 'poi':
-        title = 'POINT OF INTEREST'
-        spriteName = 'POIIcn'
-        break
-      default:
-        title = 'UNKNOWN'
-        spriteName = 'UnknownIcon'
-        break
-    }
+    const filterDefinition = MAP_FILTER_DEFINITIONS.find((d) => d.id === type)
+    title = filterDefinition?.label ?? 'Unknown'
+    spriteName = filterDefinition?.spriteName ?? 'MapPins'
 
     return (
       <UiEntity
@@ -1039,7 +989,7 @@ export default class SceneInfoCard {
             margin: { right: this.fontSize / 4, left: this.fontSize / 4 }
           }}
           uiBackground={getBackgroundFromAtlas({
-            atlasName: 'map',
+            atlasName: 'map2',
             spriteName
           })}
         />
