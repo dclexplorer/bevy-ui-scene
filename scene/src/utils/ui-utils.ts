@@ -147,6 +147,7 @@ export function truncateWithoutBreakingWords(
   str: string,
   maxLength: number
 ): string {
+  if (!str) return str
   if (str.length <= maxLength) {
     return str
   }
