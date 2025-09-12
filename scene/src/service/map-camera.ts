@@ -44,7 +44,7 @@ export const ISO_OFFSET = [
   -OFFSET_MAP_CAMERA
 ].map((i) => i * 2)
 
-export const ISE_OFFSET_3 = Vector3.create(...ISO_OFFSET)
+export const ISO_OFFSET_3 = Vector3.create(...ISO_OFFSET)
 let mapCamera: Entity
 
 export const getBigMapCameraEntity = () => mapCamera
@@ -62,7 +62,7 @@ export const activateMapCamera = () => {
     Transform.createOrReplace(mapCamera, {
       position: Vector3.add(
         Transform.get(engine.PlayerEntity).position,
-        ISE_OFFSET_3
+        ISO_OFFSET_3
       )
     })
 
@@ -90,7 +90,7 @@ export const activateMapCamera = () => {
     const mapCameraTransform = Transform.getMutable(mapCamera)
     mapCameraTransform.position = Vector3.add(
       Transform.get(engine.PlayerEntity).position,
-      Vector3.create(...ISO_OFFSET)
+      ISO_OFFSET_3
     )
 
     executeTask(async () => {
@@ -134,7 +134,7 @@ export const displaceCamera = (targetPosition: Vector3) => {
   Tween.createOrReplace(getBigMapCameraEntity(), {
     mode: Tween.Mode.Move({
       start: Vector3.clone(mapCameraTransform.position),
-      end: Vector3.add(targetPosition, Vector3.create(...ISO_OFFSET))
+      end: Vector3.add(targetPosition, ISO_OFFSET_3)
     }),
     duration: DISPLACE_TIME,
     easingFunction: EasingFunction.EF_EASECUBIC

@@ -96,7 +96,9 @@ export default class MainMenu {
   }
 
   show(page: MenuPage): void {
-    if (!this.open) BevyApi.showUi().catch(console.error)
+    if (!this.open) {
+      BevyApi.showUi().catch(console.error)
+    }
     this.open = true
     this.uiController.settingsPage.updateButtons()
     this.activePage = page

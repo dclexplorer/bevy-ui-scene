@@ -114,8 +114,6 @@ function BigMapContent(): ReactElement {
   // TODO review if it makes sense all the useEffect and their listenings
 
   useEffect(() => {
-    activateMapCamera()
-
     store.dispatch(
       updateHudStateAction({ placeListActiveItem: null, movingMap: true })
     )
