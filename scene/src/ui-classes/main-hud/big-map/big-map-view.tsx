@@ -382,8 +382,7 @@ function BigMapContent(): ReactElement {
                     <UiEntity
                       uiTransform={{
                         position: {
-                          top:
-                            (getCanvasScaleRatio() * 50 * sizeMultiplier) / 2,
+                          top: 0,
                           left: isHomePlace(placeRepresentation)
                             ? -getCanvasScaleRatio() * 50
                             : -getCanvasScaleRatio() * 100
@@ -457,7 +456,7 @@ function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
   ) {
     spriteName = `GenericPinSelected`
   } else if (placeRepresentation.id === store.getState().hud.homePlace?.id) {
-    spriteName = `HomeSolid`
+    spriteName = `HomePin`
     // atlasName = 'icons'
   } else if (placeRepresentation.categories.includes('poi')) {
     spriteName = 'PinPOI'
