@@ -139,6 +139,7 @@ export class UIController {
     return (
       <Canvas>
         {InteractableArea({ active: false })}
+
         {this.mainHud.mainUi()}
 
         {this.isMainMenuVisible && this.menu.mainUi()}
@@ -152,6 +153,9 @@ export class UIController {
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
         {!this.isMainMenuVisible && renderEmotesWheel()}
+
+        {store.getState().hud.mapModeActive && BigMap()}
+        {store.getState().hud.mapModeActive && SceneCatalogPanel()}
 
         {this.sceneInfoCardVisible && this.sceneCard.mainUi()}
         {NotificationToastStack()}

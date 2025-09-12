@@ -70,7 +70,6 @@ export const BigMap = (): ReactElement => {
       }}
     >
       <BigMapContent />
-      <SceneCatalogPanel />
     </UiEntity>
   )
 }
@@ -335,7 +334,7 @@ function BigMapContent(): ReactElement {
                 : placeRepresentation.sprite.spriteName === 'PinPOI'
                 ? 1.5
                 : 1
-
+              const symbolSize = getCanvasScaleRatio() * 50 * sizeMultiplier
               return (
                 <UiEntity
                   uiTransform={{
@@ -365,11 +364,11 @@ function BigMapContent(): ReactElement {
                       positionType: 'absolute',
                       alignSelf: 'center',
                       position: {
-                        top: -(getCanvasScaleRatio() * 50 * sizeMultiplier) / 2,
-                        left: -(getCanvasScaleRatio() * 50 * sizeMultiplier) / 2
+                        top: -symbolSize * 1.1,
+                        left: -symbolSize / 2
                       },
-                      width: getCanvasScaleRatio() * 50 * sizeMultiplier,
-                      height: getCanvasScaleRatio() * 50 * sizeMultiplier * 1.1
+                      width: symbolSize,
+                      height: symbolSize * 1.1
                     }}
                     onMouseDown={() => {
                       const coords = fromStringToCoords(
@@ -426,8 +425,6 @@ function BigMapContent(): ReactElement {
             }
           })}
       </UiEntity>
-
-      <MapFilterBar />
       <MapStatusBar />
       <MapBottomLeftBar />
     </UiEntity>

@@ -9,7 +9,10 @@ import { type AtlasIcon } from '../../utils/definitions'
 import { ProfileButton } from '../profile/profile-button'
 import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import {
+  getCanvasScaleRatio,
+  getViewportHeight
+} from '../../service/canvas-ratio'
 import { playPreviewEmote } from '../../components/backpack/AvatarPreview'
 import {
   initOutfitsCatalog,
@@ -18,6 +21,7 @@ import {
 import { DeleteOutfitDialog } from './backpack-page/delete-outfit-dialog'
 import { noop } from '../../utils/function-utils'
 import { BevyApi } from '../../bevy-api'
+import { activateMapCamera } from '../../service/map-camera'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
@@ -99,7 +103,7 @@ export default class MainMenu {
     this.uiController.isMainMenuVisible = true
     this.updateButtons()
     this.uiController.show(page)
-    initOutfitsCatalog().catch(console.error)
+    initOutfitsCatalog().catch(console.error) // TODO review
   }
 
   updateButtons(): void {
@@ -149,7 +153,6 @@ export default class MainMenu {
       <UiEntity
         uiTransform={{
           width: '100%',
-          height: '100%',
           positionType: 'absolute',
           zIndex: 1
         }}
@@ -159,7 +162,6 @@ export default class MainMenu {
         <UiEntity
           uiTransform={{
             width: '100%',
-            height: '100%',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             alignItems: 'center'
@@ -168,7 +170,7 @@ export default class MainMenu {
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: '6%',
+              height: getMainMenuHeight(),
               justifyContent: 'center',
               alignItems: 'center',
               flexDirection: 'row',
@@ -304,8 +306,14 @@ export default class MainMenu {
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: 'auto',
+              height:
+                this.activePage === 'map'
+                  ? 'auto'
+                  : getViewportHeight() - getMainMenuHeight(),
               flexGrow: 1
+            }}
+            uiBackground={{
+              color: COLOR.WHITE_OPACITY_2
             }}
           >
             {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
@@ -319,10 +327,12 @@ export default class MainMenu {
           <UiEntity
             uiTransform={{
               width: 'auto',
-              height: '8%',
+              height: getMainMenuHeight(),
               positionType: 'absolute',
-              alignItems: 'center',
-              position: { right: buttonSize, top: 0 },
+              position: {
+                right: getCanvasScaleRatio() * 50,
+                top: getMainMenuHeight() * 0.1
+              },
               zIndex: 1
             }}
           >
@@ -349,4 +359,7 @@ export default class MainMenu {
       </UiEntity>
     )
   }
+}
+export function getMainMenuHeight() {
+  return getViewportHeight() * 0.06
 }

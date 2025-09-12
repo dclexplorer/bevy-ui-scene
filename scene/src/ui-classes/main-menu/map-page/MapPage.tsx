@@ -1,11 +1,36 @@
 import ReactEcs, { UiEntity } from '@dcl/react-ecs'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import { BigMap } from '../../main-hud/big-map/big-map-view'
+import useEffect = ReactEcs.useEffect
+
+import {
+  activateMapCamera,
+  closeBigMapIfActive
+} from '../../../service/map-camera'
+import { MapFilterBar } from '../../../components/map/map-filter-bar'
+import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
 
 export default class MapPage {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    return <BigMap />
+    return <MapPageContent />
   }
+}
+
+function MapPageContent() {
+  useEffect(() => {
+    activateMapCamera()
+    return () => closeBigMapIfActive()
+  }, [])
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '100%',
+        positionType: 'absolute',
+        position: { top: 0 }
+      }}
+    >
+      <MapFilterBar />
+    </UiEntity>
+  )
 }

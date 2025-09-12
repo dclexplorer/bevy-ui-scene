@@ -27,6 +27,7 @@ import { SceneCatalogOrder } from '../../state/hud/state'
 import { sleep, waitFor } from '../../utils/dcl-utils'
 import { setUiFocus } from '~system/RestrictedActions'
 import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
+import { getMainMenuHeight } from '../../ui-classes/main-menu/MainMenu'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -88,13 +89,15 @@ export function SceneCatalogPanel(): ReactElement {
     <UiEntity
       uiTransform={{
         width,
-        height: '100%',
+        height: getViewportHeight() - getMainMenuHeight(),
         alignSelf: 'flex-end',
         positionType: 'absolute',
         position: {
-          right: 0
+          right: 0,
+          top: getViewportHeight() * 0.06
         },
-        pointerFilter: 'block'
+        pointerFilter: 'block',
+        borderWidth: 5
       }}
       uiBackground={{
         color: COLOR.PANEL_BACKGROUND_LIGHT
