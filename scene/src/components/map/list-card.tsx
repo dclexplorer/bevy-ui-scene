@@ -23,17 +23,21 @@ export function ListCard({
   activeFooter,
   uiTransform
 }: ListCardParams): ReactElement {
+  const ROUNDED_BORDER_PROPS = {
+    borderWidth: 0,
+    borderRadius: getHudFontSize(getViewportHeight()).SMALL,
+    borderColor: COLOR.BLACK_TRANSPARENT
+  }
   return (
     <Column
       uiTransform={{
         width: '98%',
         margin: '1%',
-        borderWidth: 3,
-        borderRadius: 0,
+        ...uiTransform,
+        ...ROUNDED_BORDER_PROPS,
         borderColor: active
           ? COLOR.ACTIVE_BACKGROUND_COLOR
-          : COLOR.BLACK_TRANSPARENT,
-        ...uiTransform
+          : COLOR.BLACK_TRANSPARENT
       }}
       uiBackground={{ color: COLOR.WHITE }}
       onMouseDown={onMouseDown}
@@ -50,10 +54,8 @@ export function ListCard({
           uiTransform={{
             width: getViewportHeight() * 0.2 * 0.8,
             height: getViewportHeight() * 0.1 * 0.8,
-            borderWidth: 0,
-            borderRadius: 0, // TODO borderRadius doesn't work with image texture
-            borderColor: COLOR.BLACK_TRANSPARENT,
-            flexShrink: 0
+            flexShrink: 0,
+            ...ROUNDED_BORDER_PROPS
           }}
         />
         <Column
@@ -66,6 +68,9 @@ export function ListCard({
       </Row>
       {(active && activeFooter && (
         <UiEntity
+          uiTransform={{
+            position: { top: '-1%' }
+          }}
           uiBackground={{
             color: COLOR.ACTIVE_BACKGROUND_COLOR
           }}

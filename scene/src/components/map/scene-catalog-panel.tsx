@@ -28,6 +28,7 @@ import { sleep, waitFor } from '../../utils/dcl-utils'
 import { setUiFocus } from '~system/RestrictedActions'
 import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
 import { getMainMenuHeight } from '../../ui-classes/main-menu/MainMenu'
+import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -90,11 +91,10 @@ export function SceneCatalogPanel(): ReactElement {
       uiTransform={{
         width,
         height: getViewportHeight() - getMainMenuHeight(),
-        alignSelf: 'flex-end',
         positionType: 'absolute',
         position: {
-          right: 0,
-          top: getViewportHeight() * 0.06
+          right: -10,
+          top: getMainMenuHeight()
         },
         pointerFilter: 'block',
         borderWidth: 5
@@ -162,6 +162,7 @@ function SceneCatalogContent(): ReactElement {
     })
   }, [store.getState().hud.mapFilterCategories])
   const fontSize = getViewportHeight() * 0.015
+
   return (
     <Column
       uiTransform={{
@@ -170,18 +171,22 @@ function SceneCatalogContent(): ReactElement {
     >
       <Row
         uiTransform={{
-          height: fontSize * 2,
-          width: '94%',
-          padding: { top: fontSize, bottom: fontSize },
-          margin: { top: fontSize * 0.5 }
+          width: '100%',
+          padding: fontSize / 2
+        }}
+        uiBackground={{
+          color: COLOR.CATALOG_SEARCH_BACKGROUND
         }}
       >
         {!recreatingInputWorkaround && (
           <Input
             uiTransform={{
               elementId: 'sceneSearchInput',
-              width: '94%',
-              padding: fontSize / 2
+              width: '97.5%',
+              padding: fontSize / 2,
+              borderRadius: fontSize / 2,
+              borderWidth: 0,
+              borderColor: COLOR.BLACK_TRANSPARENT
             }}
             fontSize={fontSize}
             placeholder={'Search'}
@@ -207,7 +212,12 @@ function SceneCatalogContent(): ReactElement {
           />
         )}
       </Row>
-      <Row>
+      <Row
+        uiTransform={{
+          justifyContent: 'space-between',
+          width: '95%'
+        }}
+      >
         {ORDER_OPTIONS.map(({ orderKey, label }) => {
           return (
             <UiEntity
@@ -248,7 +258,7 @@ function SceneCatalogContent(): ReactElement {
           alignItems: 'flex-start',
           scrollVisible: 'vertical',
           overflow: 'scroll',
-          height: '100%'
+          height: '90%'
         }}
       >
         {loading && (
