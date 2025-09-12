@@ -22,12 +22,17 @@ declare const localStorage: any
 const MAP_LOCALSTORAGE_KEY = 'map'
 
 const LOCALSTORAGE_SEPARATOR = '_::_'
+const CACHE_TIME = 1000 * 60 * 60 * 10
+
+localStorage.clear()
+
 const [mapStorageDate, mapStoragePlaces] = (
   localStorage.getItem(MAP_LOCALSTORAGE_KEY)?.split(LOCALSTORAGE_SEPARATOR) ?? [
     '0',
     '{}'
   ]
 ).map((d: string) => JSON.parse(d))
+
 console.log('mapStorageDate', mapStorageDate)
 const state: {
   places: Record<string, Place>
@@ -99,13 +104,14 @@ export const getPlaceCategories = () => state.categories
 export const loadCompleteMapPlaces = async (): Promise<
   Record<string, Place>
 > => {
-  if (Date.now() - mapStorageDate < 10 * 1000 * 60 * 60) {
+  if (Date.now() - mapStorageDate < CACHE_TIME) {
     console.log('mapStoragePlaces', Object.values(mapStoragePlaces).length)
     state.places = mapStoragePlaces
     state.done = true
     return state.places
   }
-  const LIMIT = 500
+
+  const LIMIT = 100
   if (state.done) return state.places
   const realm = await getRealm({})
   const realmBaseUrl = realm?.realmInfo?.baseUrl ?? ''
@@ -143,24 +149,12 @@ export const loadCompleteMapPlaces = async (): Promise<
   for (let category of categories) {
     let placesPerCategory: Record<string, Place> = {}
     while (Object.values(placesPerCategory ?? {}).length < category.count) {
-      const url = `${PLACES_BASE_URL}/api/places?offset=${state.offset}&limit=${LIMIT}&categories=${category.name}`
-      console.log(url)
+      const url = `${PLACES_BASE_URL}/api/places?offset=${state.offset}&limit=${LIMIT}&categories=${category.name}&order_by=like_score`
       const response = await fetch(url).then(async (r) => await r.json())
       if (!response?.data?.length) {
         console.log('response.data.length = 0', response)
         break
       }
-      console.log(
-        'response',
-        `state.offset ${state.offset} :: `,
-        `response.total ${response.total} ::`,
-        `category.count ${category.count} ::`,
-        `category.name ${category.name} ::`,
-        `response.data.length ${response?.data?.length} ::`,
-        `Object.keys(state.places).length ${
-          Object.values(state.places).length
-        } :: `
-      )
 
       category.count = response.total ?? 0
       placesPerCategory = {
