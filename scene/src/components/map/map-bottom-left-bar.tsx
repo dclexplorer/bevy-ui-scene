@@ -98,7 +98,9 @@ export function MapBottomLeftBar(): ReactElement {
         uiTransform={{
           width: '100%',
           positionType: 'absolute',
-          position: { bottom: -getHudFontSize(getViewportHeight()).SMALL * 0.1 }
+          position: {
+            bottom: -getHudFontSize(getViewportHeight()).SMALL * 0.15
+          }
         }}
         uiText={{
           value: `${getPlayerParcel().x},${getPlayerParcel().y}`,

@@ -1,6 +1,4 @@
 import {
-  CameraTransition,
-  CinematicSettings,
   DeepReadonlyObject,
   EasingFunction,
   engine,
@@ -8,6 +6,7 @@ import {
   executeTask,
   InputAction,
   InputModifier,
+  inputSystem,
   MainCamera,
   PBMainCamera,
   PrimaryPointerInfo,
@@ -18,25 +17,24 @@ import {
 import { Quaternion, Vector3 } from '@dcl/sdk/math'
 import { updateHudStateAction } from '../state/hud/actions'
 import { store } from '../state/store'
-import { listenSystemAction } from './system-actions-emitter'
 import { sleep } from '../utils/dcl-utils'
-import { panCameraXZ, screenToGround } from './perspective-to-screen'
-import { getViewportHeight, getViewportWidth } from './canvas-ratio'
-import { getVector3Parcel } from './player-scenes'
+import { panCameraXZ } from './perspective-to-screen'
 import { getUiController } from '../controllers/ui.controller'
-import { FOV } from '../ui-classes/main-hud/big-map/big-map-view'
 
 type MapCameraState = {
   initialized: boolean
   defaultMainCamera: DeepReadonlyObject<PBMainCamera> | null
   dragActive: boolean
+  targetPosition: Vector3
 }
 
 const state: MapCameraState = {
   initialized: false,
   defaultMainCamera: null,
-  dragActive: false
+  dragActive: false,
+  targetPosition: Vector3.Zero()
 }
+
 const OFFSET_MAP_CAMERA = 300
 export const ISO_OFFSET = [
   OFFSET_MAP_CAMERA,
@@ -56,7 +54,33 @@ export const closeBigMapIfActive = () => {
 }
 
 export const activateMapCamera = () => {
+  engine.addSystem((dt: number) => {
+    const mapCameraPosition = Transform.getMutable(
+      getBigMapCameraEntity()
+    ).position
+    if (inputSystem.isPressed(InputAction.IA_FORWARD)) {
+      mapCameraPosition.z += dt * 300
+      mapCameraPosition.x -= dt * 300
+    }
+    if (inputSystem.isPressed(InputAction.IA_RIGHT)) {
+      mapCameraPosition.z += dt * 300
+      mapCameraPosition.x += dt * 300
+    }
+    if (inputSystem.isPressed(InputAction.IA_LEFT)) {
+      mapCameraPosition.z -= dt * 300
+      mapCameraPosition.x -= dt * 300
+    }
+    if (inputSystem.isPressed(InputAction.IA_BACKWARD)) {
+      mapCameraPosition.z -= dt * 300
+      mapCameraPosition.x += dt * 300
+    }
+  })
+
   if (!state.initialized) {
+    state.targetPosition = Vector3.clone(
+      Transform.get(engine.PlayerEntity).position
+    )
+
     mapCamera = engine.addEntity()
     state.defaultMainCamera = MainCamera.getOrNull(engine.CameraEntity)
     Transform.createOrReplace(mapCamera, {
@@ -126,11 +150,14 @@ export const activateMapCamera = () => {
 export const displaceCamera = (targetPosition: Vector3) => {
   const mapCameraTransform = Transform.get(getBigMapCameraEntity())
   const DISPLACE_TIME = 500 //TODO review to calculate time by displacement
-  store.dispatch(
-    updateHudStateAction({
-      movingMap: true
-    })
-  )
+  if (!store.getState().hud.movingMap) {
+    store.dispatch(
+      updateHudStateAction({
+        movingMap: true
+      })
+    )
+  }
+
   Tween.createOrReplace(getBigMapCameraEntity(), {
     mode: Tween.Mode.Move({
       start: Vector3.clone(mapCameraTransform.position),
