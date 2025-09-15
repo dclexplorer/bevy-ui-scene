@@ -158,6 +158,12 @@ export const displaceCamera = (targetPosition: Vector3) => {
     )
   }
 
+  store.dispatch(
+    updateHudStateAction({
+      mapTargetPosition: targetPosition
+    })
+  )
+
   Tween.createOrReplace(getBigMapCameraEntity(), {
     mode: Tween.Mode.Move({
       start: Vector3.clone(mapCameraTransform.position),
@@ -193,7 +199,23 @@ export const deactivateMapCamera = () => {
 }
 
 export const activateDragMapSystem = () => (state.dragActive = true)
-export const deactivateDragMapSystem = () => (state.dragActive = false)
+export const deactivateDragMapSystem = () => {
+  const mapTargetPosition = Vector3.subtract(
+    Transform.get(getBigMapCameraEntity()).position,
+    ISO_OFFSET_3
+  )
+  console.log(
+    'mapTargetPosition',
+    Transform.get(getBigMapCameraEntity()).position,
+    mapTargetPosition
+  )
+  store.dispatch(
+    updateHudStateAction({
+      mapTargetPosition
+    })
+  )
+  state.dragActive = false
+}
 
 engine.addSystem((dt) => {
   if (state.dragActive) {

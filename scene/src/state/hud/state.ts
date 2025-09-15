@@ -3,6 +3,7 @@ import { type NameDefinition } from '../../utils/passport-promise-utils'
 import { Place } from '../../service/map-places'
 import { EMPTY_PLACE } from '../../utils/constants'
 import { PlaceRepresentation } from '../../ui-classes/main-hud/big-map/big-map-view'
+import { Vector3 } from '@dcl/sdk/math'
 
 export const HUD_STORE_ID = 'hud'
 
@@ -82,6 +83,7 @@ export type HudState = {
   movingMap: boolean
   sceneCatalogOrder: SceneCatalogOrder
   homePlace: Place | null
+  mapTargetPosition: Vector3
 }
 
 export type HudStateUpdateParams = {
@@ -106,6 +108,7 @@ export type HudStateUpdateParams = {
   movingMap?: boolean
   sceneCatalogOrder?: SceneCatalogOrder
   homePlace?: Place
+  mapTargetPosition?: Vector3
 }
 
 export const hudInitialState: HudState = {
@@ -129,5 +132,6 @@ export const hudInitialState: HudState = {
   },
   movingMap: true,
   sceneCatalogOrder: `most_active`,
-  homePlace: null
+  homePlace: null,
+  mapTargetPosition: Vector3.Zero()
 }
