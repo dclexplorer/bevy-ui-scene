@@ -4,7 +4,7 @@ import { COLOR } from '../color-palette'
 import Icon from '../icon/Icon'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { Column } from '../layout'
-import { displaceCamera } from '../../service/map-camera'
+import { changeToPlanMode, displaceCamera } from '../../service/map-camera'
 import { Vector3 } from '@dcl/sdk/math'
 import { screenToGround } from '../../service/perspective-to-screen'
 import {
@@ -32,6 +32,31 @@ export function MapBottomLeftBar(): ReactElement {
         color: COLOR.DARK_OPACITY_5
       }}
     >
+      <Column
+        uiTransform={{
+          borderRadius: getHudFontSize(getViewportHeight()).SMALL,
+          borderColor: COLOR.WHITE,
+          borderWidth: 0,
+          width: getHudFontSize(getViewportHeight()).BIG * 2,
+          height: getHudFontSize(getViewportHeight()).BIG * 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: getHudFontSize(getViewportHeight()).SMALL
+        }}
+        uiBackground={{
+          color: COLOR.WHITE
+        }}
+        onMouseDown={changeToPlanMode}
+      >
+        <Icon
+          uiTransform={{
+            flexShrink: 0
+          }}
+          icon={{ spriteName: 'HomeSolid2', atlasName: 'map2' }}
+          iconSize={getHudFontSize(getViewportHeight()).BIG * 1.5}
+          iconColor={COLOR.TEXT_COLOR}
+        />
+      </Column>
       {store.getState().hud.homePlace && (
         <Column
           uiTransform={{

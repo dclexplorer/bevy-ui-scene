@@ -10,29 +10,41 @@ import {
   MainCamera,
   PBMainCamera,
   PrimaryPointerInfo,
+  Rotate,
   Transform,
   Tween,
+  TweenSequence,
+  TweenState,
   VirtualCamera
 } from '@dcl/sdk/ecs'
-import { Quaternion, Vector3 } from '@dcl/sdk/math'
+import { Quaternion, Vector2, Vector3 } from '@dcl/sdk/math'
 import { updateHudStateAction } from '../state/hud/actions'
 import { store } from '../state/store'
 import { sleep } from '../utils/dcl-utils'
 import { panCameraXZ } from './perspective-to-screen'
 import { getUiController } from '../controllers/ui.controller'
+import { fromParcelCoordsToPosition } from './map-places'
+import { createMoveTween, createRotateTween, createTween } from './tween'
+
+export enum MAP_VIEW_MODE {
+  BIRD,
+  PLAN
+}
 
 type MapCameraState = {
   initialized: boolean
   defaultMainCamera: DeepReadonlyObject<PBMainCamera> | null
   dragActive: boolean
   targetPosition: Vector3
+  mode: MAP_VIEW_MODE
 }
 
 const state: MapCameraState = {
   initialized: false,
   defaultMainCamera: null,
   dragActive: false,
-  targetPosition: Vector3.Zero()
+  targetPosition: Vector3.Zero(),
+  mode: MAP_VIEW_MODE.BIRD
 }
 
 const OFFSET_MAP_CAMERA = 300
@@ -41,6 +53,9 @@ export const ISO_OFFSET = [
   OFFSET_MAP_CAMERA * (8 / 6),
   -OFFSET_MAP_CAMERA
 ].map((i) => i * 2)
+
+export const PLAN_OFFSET = [0, OFFSET_MAP_CAMERA * (8 / 6), 0].map((i) => i * 2)
+export const PLAN_OFFSET_3 = Vector3.create(...PLAN_OFFSET)
 
 export const ISO_OFFSET_3 = Vector3.create(...ISO_OFFSET)
 let mapCamera: Entity
@@ -58,6 +73,7 @@ export const activateMapCamera = () => {
     const mapCameraPosition = Transform.getMutable(
       getBigMapCameraEntity()
     ).position
+
     if (inputSystem.isPressed(InputAction.IA_FORWARD)) {
       mapCameraPosition.z += dt * 300
       mapCameraPosition.x -= dt * 300
@@ -79,6 +95,11 @@ export const activateMapCamera = () => {
   if (!state.initialized) {
     state.targetPosition = Vector3.clone(
       Transform.get(engine.PlayerEntity).position
+    )
+    console.log(
+      'targetPosition coords',
+      Math.floor(state.targetPosition.x / 16),
+      Math.floor(state.targetPosition.z / 16)
     )
 
     mapCamera = engine.addEntity()
@@ -147,6 +168,71 @@ export const activateMapCamera = () => {
   // TODO show symbols
 }
 
+export const changeToPlanMode = () => {
+  const DISPLACE_TIME = 500 //TODO review to calculate time by displacement
+  const mapCameraTransform = Transform.get(getBigMapCameraEntity())
+
+  console.log('88,88', fromParcelCoordsToPosition({ x: 88, y: 88 }))
+  const cameraEndPosition = Vector3.add(state.targetPosition, PLAN_OFFSET_3)
+  console.log(
+    'targetPosition',
+    Math.floor(state.targetPosition.x / 16),
+    Math.floor(state.targetPosition.z / 16)
+  )
+  console.log(
+    'cameraStartPosition',
+    Math.floor(mapCameraTransform.position.x / 16),
+    Math.floor(mapCameraTransform.position.z / 16)
+  )
+  console.log(
+    'cameraEndPosition',
+    Math.floor(cameraEndPosition.x / 16),
+    Math.floor(cameraEndPosition.z / 16)
+  )
+
+  const endRotation = Quaternion.fromLookAt(
+    cameraEndPosition,
+    state.targetPosition
+  )
+  const mutableCameraTransform = Transform.getMutable(getBigMapCameraEntity())
+  /*
+  TweenSequence.createOrReplace(getBigMapCameraEntity(), {
+    // TODO create different RotateTween and MoveTween components to be able to apply at the same time
+    sequence: [
+      {
+        mode: Tween.Mode.Move({
+          start: Vector3.clone(mapCameraTransform.position),
+          end: cameraEndPosition
+        }),
+        duration: DISPLACE_TIME / 2,
+        easingFunction: EasingFunction.EF_EASECUBIC
+      },
+      {
+        mode: Tween.Mode.Rotate({
+          start: mapCameraTransform.rotation,
+          end: Quaternion.fromLookAt(cameraEndPosition, state.targetPosition)
+        }),
+        duration: DISPLACE_TIME / 2,
+        easingFunction: EasingFunction.EF_EASECUBIC
+      }
+    ]
+  })*/
+
+  createMoveTween(
+    Vector3.clone(mapCameraTransform.position),
+    cameraEndPosition,
+    DISPLACE_TIME / 1000,
+    mutableCameraTransform.position
+  )
+
+  createRotateTween(
+    mapCameraTransform.rotation,
+    endRotation,
+    DISPLACE_TIME / 1000,
+    mutableCameraTransform.rotation
+  )
+}
+
 export const displaceCamera = (targetPosition: Vector3) => {
   const mapCameraTransform = Transform.get(getBigMapCameraEntity())
   const DISPLACE_TIME = 500 //TODO review to calculate time by displacement
@@ -157,12 +243,6 @@ export const displaceCamera = (targetPosition: Vector3) => {
       })
     )
   }
-
-  store.dispatch(
-    updateHudStateAction({
-      mapTargetPosition: targetPosition
-    })
-  )
 
   Tween.createOrReplace(getBigMapCameraEntity(), {
     mode: Tween.Mode.Move({
@@ -179,6 +259,8 @@ export const displaceCamera = (targetPosition: Vector3) => {
         movingMap: false
       })
     )
+    state.targetPosition = Vector3.clone(targetPosition)
+    console.log('targetPosition place coords')
   })
 }
 export const deactivateMapCamera = () => {
@@ -200,19 +282,9 @@ export const deactivateMapCamera = () => {
 
 export const activateDragMapSystem = () => (state.dragActive = true)
 export const deactivateDragMapSystem = () => {
-  const mapTargetPosition = Vector3.subtract(
+  state.targetPosition = Vector3.subtract(
     Transform.get(getBigMapCameraEntity()).position,
     ISO_OFFSET_3
-  )
-  console.log(
-    'mapTargetPosition',
-    Transform.get(getBigMapCameraEntity()).position,
-    mapTargetPosition
-  )
-  store.dispatch(
-    updateHudStateAction({
-      mapTargetPosition
-    })
   )
   state.dragActive = false
 }
