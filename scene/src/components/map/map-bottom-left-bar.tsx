@@ -4,7 +4,7 @@ import { COLOR } from '../color-palette'
 import Icon from '../icon/Icon'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { Column } from '../layout'
-import { changeToPlanMode, displaceCamera } from '../../service/map-camera'
+import { orbitToTop, displaceCamera } from '../../service/map-camera'
 import { Vector3 } from '@dcl/sdk/math'
 import { screenToGround } from '../../service/perspective-to-screen'
 import {
@@ -46,7 +46,7 @@ export function MapBottomLeftBar(): ReactElement {
         uiBackground={{
           color: COLOR.WHITE
         }}
-        onMouseDown={changeToPlanMode}
+        onMouseDown={orbitToTop}
       >
         <Icon
           uiTransform={{
