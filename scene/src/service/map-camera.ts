@@ -35,16 +35,9 @@ type MapCameraState = {
   initialized: boolean
   defaultMainCamera: DeepReadonlyObject<PBMainCamera> | null
   dragActive: boolean
-  targetPosition: Vector3
+  targetPosition: Vector3.MutableVector3
   mode: MAP_VIEW_MODE
-}
-
-const state: MapCameraState = {
-  initialized: false,
-  defaultMainCamera: null,
-  dragActive: false,
-  targetPosition: Vector3.Zero(),
-  mode: MAP_VIEW_MODE.BIRD
+  targetCameraOffset: Vector3
 }
 
 const OFFSET_MAP_CAMERA = 300
@@ -56,9 +49,19 @@ export const ISO_OFFSET = [
 
 export const PLAN_OFFSET = [0, OFFSET_MAP_CAMERA * (8 / 6), 0].map((i) => i * 2)
 export const PLAN_OFFSET_3 = Vector3.create(...PLAN_OFFSET)
-
 export const ISO_OFFSET_3 = Vector3.create(...ISO_OFFSET)
+
+const state: MapCameraState = {
+  initialized: false,
+  defaultMainCamera: null,
+  dragActive: false,
+  targetPosition: Vector3.Zero(),
+  mode: MAP_VIEW_MODE.BIRD,
+  targetCameraOffset: ISO_OFFSET_3
+}
+
 let mapCamera: Entity
+let isKeyboardMoving = false
 
 export const getBigMapCameraEntity = () => mapCamera
 
@@ -70,25 +73,61 @@ export const closeBigMapIfActive = () => {
 
 export const activateMapCamera = () => {
   engine.addSystem((dt: number) => {
-    const mapCameraPosition = Transform.getMutable(
-      getBigMapCameraEntity()
-    ).position
+    const bigMapCameraEntity = getBigMapCameraEntity()
+    const cameraTransform = Transform.get(bigMapCameraEntity)
+    const moveSpeed = dt * 300
+
+    // Calculate movement directions based on camera rotation
+    const forward = Vector3.rotate(Vector3.Forward(), cameraTransform.rotation)
+    const right = Vector3.rotate(Vector3.Right(), cameraTransform.rotation)
+
+    // Project vectors onto XZ plane (ignore Y component for map movement)
+    const forwardXZ = Vector3.normalize(Vector3.create(forward.x, 0, forward.z))
+    const rightXZ = Vector3.normalize(Vector3.create(right.x, 0, right.z))
+
+    let movement = Vector3.Zero()
+    let hasInput = false
 
     if (inputSystem.isPressed(InputAction.IA_FORWARD)) {
-      mapCameraPosition.z += dt * 300
-      mapCameraPosition.x -= dt * 300
-    }
-    if (inputSystem.isPressed(InputAction.IA_RIGHT)) {
-      mapCameraPosition.z += dt * 300
-      mapCameraPosition.x += dt * 300
-    }
-    if (inputSystem.isPressed(InputAction.IA_LEFT)) {
-      mapCameraPosition.z -= dt * 300
-      mapCameraPosition.x -= dt * 300
+      movement = Vector3.add(movement, Vector3.scale(forwardXZ, moveSpeed))
+      hasInput = true
     }
     if (inputSystem.isPressed(InputAction.IA_BACKWARD)) {
-      mapCameraPosition.z -= dt * 300
-      mapCameraPosition.x += dt * 300
+      movement = Vector3.subtract(movement, Vector3.scale(forwardXZ, moveSpeed))
+      hasInput = true
+    }
+    if (inputSystem.isPressed(InputAction.IA_RIGHT)) {
+      movement = Vector3.add(movement, Vector3.scale(rightXZ, moveSpeed))
+      hasInput = true
+    }
+    if (inputSystem.isPressed(InputAction.IA_LEFT)) {
+      movement = Vector3.subtract(movement, Vector3.scale(rightXZ, moveSpeed))
+      hasInput = true
+    }
+
+    // Update movement state and store
+    if (hasInput && !isKeyboardMoving) {
+      isKeyboardMoving = true
+      if (!store.getState().hud.movingMap) {
+        store.dispatch(
+          updateHudStateAction({
+            movingMap: true
+          })
+        )
+      }
+    } else if (!hasInput && isKeyboardMoving) {
+      isKeyboardMoving = false
+      if (store.getState().hud.movingMap) {
+        store.dispatch(
+          updateHudStateAction({
+            movingMap: false
+          })
+        )
+      }
+    }
+
+    if (!Vector3.equals(movement, Vector3.Zero())) {
+      state.targetPosition = Vector3.add(state.targetPosition, movement)
     }
   })
 
@@ -179,6 +218,10 @@ export const changeToPlanMode = () => {
   )
   const mutableCameraTransform = Transform.getMutable(getBigMapCameraEntity())
 
+  // Update the target camera offset for plan mode
+  state.targetCameraOffset = PLAN_OFFSET_3
+  state.mode = MAP_VIEW_MODE.PLAN
+
   createMoveTween(
     Vector3.clone(mapCameraTransform.position),
     cameraEndPosition,
@@ -204,7 +247,6 @@ export const displaceCamera = (targetPosition: Vector3) => {
       })
     )
   }
-
   Tween.createOrReplace(getBigMapCameraEntity(), {
     mode: Tween.Mode.Move({
       start: Vector3.clone(mapCameraTransform.position),
@@ -243,27 +285,54 @@ export const deactivateMapCamera = () => {
 
 export const activateDragMapSystem = () => (state.dragActive = true)
 export const deactivateDragMapSystem = () => {
-  state.targetPosition = Vector3.subtract(
-    Transform.get(getBigMapCameraEntity()).position,
-    ISO_OFFSET_3
-  )
   state.dragActive = false
 }
 
 engine.addSystem((dt) => {
   if (state.dragActive) {
+    console.log('drag')
     const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
     if (!pointerInfo?.screenDelta?.x && !pointerInfo?.screenDelta?.y) return
     const bigMapCameraEntity = getBigMapCameraEntity()
-    const mutableMapCameraTransform = Transform.getMutable(bigMapCameraEntity)
     const mapCameraTransform = Transform.get(bigMapCameraEntity)
 
-    mutableMapCameraTransform.position = panCameraXZ(
-      mapCameraTransform.position,
-      mapCameraTransform.rotation,
-      -(pointerInfo!.screenDelta!.x ?? 0),
-      -(pointerInfo!.screenDelta!.y ?? 0),
-      2
+    // Calculate movement directions based on camera rotation
+    const forward = Vector3.rotate(
+      Vector3.Forward(),
+      mapCameraTransform.rotation
     )
+    const right = Vector3.rotate(Vector3.Right(), mapCameraTransform.rotation)
+
+    // Project vectors onto XZ plane (ignore Y component for map movement)
+    const forwardXZ = Vector3.normalize(Vector3.create(forward.x, 0, forward.z))
+    const rightXZ = Vector3.normalize(Vector3.create(right.x, 0, right.z))
+
+    // Convert screen delta to movement (inverted for natural drag feel)
+    const deltaX = -(pointerInfo!.screenDelta!.x ?? 0)
+    const deltaY = pointerInfo!.screenDelta!.y ?? 0
+
+    // Scale the movement
+    const movementScale = 2
+
+    // Apply movement based on camera orientation
+    const horizontalMovement = Vector3.scale(rightXZ, deltaX * movementScale)
+    const verticalMovement = Vector3.scale(forwardXZ, deltaY * movementScale)
+    const totalMovement = Vector3.add(horizontalMovement, verticalMovement)
+
+    state.targetPosition = Vector3.add(state.targetPosition, totalMovement)
   }
 }, 1_000_001)
+export const cameraPositionSystem = (dt: number) => {
+  if (state.initialized) {
+    const bigMapCameraEntity = getBigMapCameraEntity()
+    const mutableMapCameraTransform = Transform.getMutable(bigMapCameraEntity)
+    const targetCameraPosition = Vector3.add(
+      state.targetPosition,
+      state.targetCameraOffset
+    )
+
+    // Set camera position based on target position and camera offset
+    mutableMapCameraTransform.position = targetCameraPosition
+  }
+}
+engine.addSystem(cameraPositionSystem)

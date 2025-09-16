@@ -14,6 +14,9 @@ type IconProps = {
   iconSize?: PositionUnit
   iconColor?: Color4
   onMouseDown?: () => void
+  onMouseUp?: () => void
+  onMouseEnter?: () => void
+  onMouseLeave?: () => void
 }
 
 const defaultIconProps: IconProps = {
@@ -22,7 +25,10 @@ const defaultIconProps: IconProps = {
     flexDirection: 'row',
     alignItems: 'center'
   },
-  onMouseDown: noop
+  onMouseDown: noop,
+  onMouseUp: noop,
+  onMouseEnter: noop,
+  onMouseLeave: noop
 }
 
 function Icon(
