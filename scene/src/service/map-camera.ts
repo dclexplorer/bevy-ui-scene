@@ -25,6 +25,7 @@ import { panCameraXZ } from './perspective-to-screen'
 import { getUiController } from '../controllers/ui.controller'
 import { fromParcelCoordsToPosition } from './map-places'
 import { createMoveTween, createRotateTween, createTween } from './tween'
+import { listenSystemAction } from './system-actions-emitter'
 
 export enum MAP_VIEW_MODE {
   BIRD,
@@ -38,6 +39,7 @@ type MapCameraState = {
   targetPosition: Vector3.MutableVector3
   mode: MAP_VIEW_MODE
   targetCameraOffset: Vector3
+  transitioning: boolean
 }
 
 const OFFSET_MAP_CAMERA = 300
@@ -57,7 +59,8 @@ const state: MapCameraState = {
   dragActive: false,
   targetPosition: Vector3.Zero(),
   mode: MAP_VIEW_MODE.BIRD,
-  targetCameraOffset: ISO_OFFSET_3
+  targetCameraOffset: ISO_OFFSET_3,
+  transitioning: false
 }
 
 let mapCamera: Entity
@@ -75,7 +78,7 @@ export const activateMapCamera = () => {
   engine.addSystem((dt: number) => {
     const bigMapCameraEntity = getBigMapCameraEntity()
     const cameraTransform = Transform.get(bigMapCameraEntity)
-    const moveSpeed = dt * 300
+    const moveSpeed = dt * 600
 
     // Calculate movement directions based on camera rotation
     const forward = Vector3.rotate(Vector3.Forward(), cameraTransform.rotation)
@@ -132,6 +135,32 @@ export const activateMapCamera = () => {
   })
 
   if (!state.initialized) {
+    listenSystemAction('CameraZoomIn', () => {
+      const zoomFactor = 0.8 // Zoom in by 20%
+      const newOffset = Vector3.scale(state.targetCameraOffset, zoomFactor)
+
+      // Maintain minimum distance to prevent camera from going too close
+      const minDistance = 200
+      const offsetMagnitude = Vector3.length(newOffset)
+
+      if (offsetMagnitude > minDistance) {
+        state.targetCameraOffset = newOffset
+      }
+    })
+
+    listenSystemAction('CameraZoomOut', () => {
+      const zoomFactor = 1.25 // Zoom out by 25%
+      const newOffset = Vector3.scale(state.targetCameraOffset, zoomFactor)
+
+      // Maintain maximum distance to prevent camera from going too far
+      const maxDistance = 3000
+      const offsetMagnitude = Vector3.length(newOffset)
+
+      if (offsetMagnitude < maxDistance) {
+        state.targetCameraOffset = newOffset
+      }
+    })
+
     state.targetPosition = Vector3.clone(
       Transform.get(engine.PlayerEntity).position
     )
@@ -208,33 +237,44 @@ export const activateMapCamera = () => {
 }
 
 export const changeToPlanMode = () => {
-  const DISPLACE_TIME = 500 //TODO review to calculate time by displacement
-  const mapCameraTransform = Transform.get(getBigMapCameraEntity())
+  const DISPLACE_TIME = 500 // TODO review to calculate time by displacement
+  const bigMapCameraEntity = getBigMapCameraEntity()
+  const currentRotation = Transform.get(bigMapCameraEntity).rotation
 
+  state.transitioning = true
+
+  createMoveTween(
+    Vector3.clone(state.targetCameraOffset),
+    PLAN_OFFSET_3,
+    DISPLACE_TIME / 1000,
+    state.targetCameraOffset
+  )
   const cameraEndPosition = Vector3.add(state.targetPosition, PLAN_OFFSET_3)
   const endRotation = Quaternion.fromLookAt(
     cameraEndPosition,
     state.targetPosition
   )
-  const mutableCameraTransform = Transform.getMutable(getBigMapCameraEntity())
-
-  // Update the target camera offset for plan mode
-  state.targetCameraOffset = PLAN_OFFSET_3
-  state.mode = MAP_VIEW_MODE.PLAN
-
-  createMoveTween(
-    Vector3.clone(mapCameraTransform.position),
-    cameraEndPosition,
-    DISPLACE_TIME / 1000,
-    mutableCameraTransform.position
+  // Calculate rotation for top-down view with North facing up
+  const targetRotation = Quaternion.fromLookAt(
+    Vector3.add(state.targetPosition, PLAN_OFFSET_3),
+    state.targetPosition,
+    Vector3.Forward() // North direction as up vector
   )
 
   createRotateTween(
-    mapCameraTransform.rotation,
-    endRotation,
+    currentRotation,
+    targetRotation,
     DISPLACE_TIME / 1000,
-    mutableCameraTransform.rotation
+    Transform.getMutable(bigMapCameraEntity).rotation
   )
+
+  state.mode = MAP_VIEW_MODE.PLAN
+
+  // Clear transitioning state after animation completes
+  executeTask(async () => {
+    await sleep(DISPLACE_TIME)
+    state.transitioning = false
+  })
 }
 
 export const displaceCamera = (targetPosition: Vector3) => {
@@ -333,6 +373,14 @@ export const cameraPositionSystem = (dt: number) => {
 
     // Set camera position based on target position and camera offset
     mutableMapCameraTransform.position = targetCameraPosition
+
+    // Only set camera rotation if not transitioning (let tweens handle rotation during transitions)
+    if (!state.transitioning) {
+      mutableMapCameraTransform.rotation = Quaternion.fromLookAt(
+        targetCameraPosition,
+        state.targetPosition
+      )
+    }
   }
 }
 engine.addSystem(cameraPositionSystem)
