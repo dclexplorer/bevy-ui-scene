@@ -172,51 +172,12 @@ export const changeToPlanMode = () => {
   const DISPLACE_TIME = 500 //TODO review to calculate time by displacement
   const mapCameraTransform = Transform.get(getBigMapCameraEntity())
 
-  console.log('88,88', fromParcelCoordsToPosition({ x: 88, y: 88 }))
   const cameraEndPosition = Vector3.add(state.targetPosition, PLAN_OFFSET_3)
-  console.log(
-    'targetPosition',
-    Math.floor(state.targetPosition.x / 16),
-    Math.floor(state.targetPosition.z / 16)
-  )
-  console.log(
-    'cameraStartPosition',
-    Math.floor(mapCameraTransform.position.x / 16),
-    Math.floor(mapCameraTransform.position.z / 16)
-  )
-  console.log(
-    'cameraEndPosition',
-    Math.floor(cameraEndPosition.x / 16),
-    Math.floor(cameraEndPosition.z / 16)
-  )
-
   const endRotation = Quaternion.fromLookAt(
     cameraEndPosition,
     state.targetPosition
   )
   const mutableCameraTransform = Transform.getMutable(getBigMapCameraEntity())
-  /*
-  TweenSequence.createOrReplace(getBigMapCameraEntity(), {
-    // TODO create different RotateTween and MoveTween components to be able to apply at the same time
-    sequence: [
-      {
-        mode: Tween.Mode.Move({
-          start: Vector3.clone(mapCameraTransform.position),
-          end: cameraEndPosition
-        }),
-        duration: DISPLACE_TIME / 2,
-        easingFunction: EasingFunction.EF_EASECUBIC
-      },
-      {
-        mode: Tween.Mode.Rotate({
-          start: mapCameraTransform.rotation,
-          end: Quaternion.fromLookAt(cameraEndPosition, state.targetPosition)
-        }),
-        duration: DISPLACE_TIME / 2,
-        easingFunction: EasingFunction.EF_EASECUBIC
-      }
-    ]
-  })*/
 
   createMoveTween(
     Vector3.clone(mapCameraTransform.position),
