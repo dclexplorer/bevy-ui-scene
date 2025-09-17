@@ -57,11 +57,16 @@ import { getHudFontSize } from '../scene-info/SceneInfo'
 import { BevyApi } from '../../../bevy-api'
 import { fetchPlaceFromCoords } from '../../../utils/promise-utils'
 import { MapStatusBar } from './map-status-bar'
+import {
+  decoratePlaceRepresentation,
+  getZIndexForPlaceSymbol,
+  isHomePlace
+} from './place-decoration'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
-const PLAYER_PLACE_ID = 'player'
-const getRepresentationSprite = memoize(_getRepresentationSprite)
+export const PLAYER_PLACE_ID = 'player'
+
 export const BigMap = (): ReactElement => {
   return (
     <UiEntity
@@ -90,7 +95,6 @@ export type OrderType =
   | 'updated_at'
   | 'created_at'
   | null
-export const decoratePlaceRepresentation = memoize(_decoratePlaceRepresentation)
 
 function BigMapContent(): ReactElement {
   const [orderType, setOrderType] = useState<OrderType>(null)
@@ -427,60 +431,4 @@ function BigMapContent(): ReactElement {
       <MapBottomLeftBar />
     </UiEntity>
   )
-}
-
-export function _decoratePlaceRepresentation(
-  place: Place | null | undefined
-): PlaceRepresentation | null {
-  if (place === null || place === undefined) return null
-  const centralParcelCoords = fromParcelCoordsToPosition(
-    fromStringToCoords(
-      getCentralParcel([...place.positions, place.base_position]) as string
-    ),
-    { height: 0 }
-  )
-
-  return {
-    ...place,
-    centralParcelCoords,
-    sprite: getRepresentationSprite(place),
-    isActive: place.id === store.getState().hud.placeListActiveItem?.id
-  }
-}
-
-function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
-  let spriteName = ''
-  let atlasName: Atlas = 'map2'
-  if (
-    store.getState().hud.placeListActiveItem &&
-    placeRepresentation.id === store.getState().hud.placeListActiveItem?.id
-  ) {
-    spriteName = `GenericPinSelected`
-  } else if (placeRepresentation.id === store.getState().hud.homePlace?.id) {
-    spriteName = `HomePin`
-    // atlasName = 'icons'
-  } else if (placeRepresentation.categories.includes('poi')) {
-    spriteName = 'PinPOI'
-  } else if (placeRepresentation.id === PLAYER_PLACE_ID) {
-    spriteName = 'CenterPlayerIcn'
-  } else if (
-    placeRepresentation.categories.length === 1 &&
-    mapSymbolPerPlaceCategory[placeRepresentation.categories[0]]
-  ) {
-    spriteName = mapSymbolPerPlaceCategory[placeRepresentation.categories[0]]
-  } else {
-    spriteName = 'GenericPin'
-  }
-
-  return { spriteName, atlasName }
-}
-
-function getZIndexForPlaceSymbol(placeRepresentation: PlaceRepresentation) {
-  if (placeRepresentation.id === PLAYER_PLACE_ID) return 999
-  if (placeRepresentation.sprite.spriteName === 'PinPOI') return 2
-  return 1
-}
-
-function isHomePlace(place: PlaceRepresentation | Place): boolean {
-  return place.id === store.getState().hud.homePlace?.id
 }
