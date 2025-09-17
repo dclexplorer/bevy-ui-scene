@@ -22,17 +22,11 @@ import { getUiController } from '../controllers/ui.controller'
 import { createMoveTween, createRotateTween } from './tween'
 import { listenSystemAction } from './system-actions-emitter'
 
-export enum MAP_VIEW_MODE {
-  BIRD,
-  PLAN
-}
-
 type MapCameraState = {
   initialized: boolean
   defaultMainCamera: DeepReadonlyObject<PBMainCamera> | null
   dragActive: boolean
   targetPosition: Vector3.MutableVector3
-  mode: MAP_VIEW_MODE
   transitioning: boolean
   targetCameraDistance: number
   orbitYaw: number
@@ -56,7 +50,6 @@ const state: MapCameraState = {
 
   dragActive: false,
   targetPosition: Vector3.Zero(),
-  mode: MAP_VIEW_MODE.BIRD,
   transitioning: false,
   targetCameraDistance: Vector3.length(ISO_OFFSET_3),
   orbitYaw: Math.atan2(ISO_OFFSET_3.z, ISO_OFFSET_3.x),
@@ -274,8 +267,6 @@ export const orbitToTop = () => {
   const startDistance = state.targetCameraDistance
   const startPitch = state.orbitPitch
   const startYaw = state.orbitYaw
-
-  state.mode = MAP_VIEW_MODE.PLAN
 
   // Smoothly interpolate pitch, distance, and yaw over the duration
   executeTask(async () => {
