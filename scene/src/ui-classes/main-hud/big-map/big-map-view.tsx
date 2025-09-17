@@ -56,6 +56,7 @@ import { MapBottomLeftBar } from '../../../components/map/map-bottom-left-bar'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 import { BevyApi } from '../../../bevy-api'
 import { fetchPlaceFromCoords } from '../../../utils/promise-utils'
+import { MapStatusBar } from './map-status-bar'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
@@ -472,47 +473,6 @@ function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
   }
 
   return { spriteName, atlasName }
-}
-
-function MapStatusBar(): ReactElement {
-  const [coordsStr, setCoordsStr] = useState<string>('-,-')
-  useEffect(() => {
-    try {
-      const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
-      const mapCameraTransform = Transform.get(getBigMapCameraEntity())
-      const targetPosition: Vector3 = screenToGround(
-        pointerInfo!.screenCoordinates!.x, // TODO REVIEW + getRightPanelWidth() / 2, to move camera more centered
-        pointerInfo!.screenCoordinates!.y,
-        getViewportWidth(),
-        getViewportHeight(),
-        mapCameraTransform.position,
-        mapCameraTransform.rotation,
-        FOV
-      ) as Vector3
-
-      const { x, y } = getVector3Parcel(targetPosition)
-      const place = getPlacesAroundParcel({ x, y }, 0)
-      const parcelName = place[0]?.title ?? ''
-      setCoordsStr(`${x},${y} ${parcelName}`)
-    } catch (error) {}
-  })
-
-  return (
-    <UiEntity
-      uiTransform={{
-        positionType: 'absolute',
-        position: { bottom: 0 }
-      }}
-      uiText={{
-        value: coordsStr,
-        color: COLOR.WHITE,
-        fontSize: getViewportHeight() * 0.02
-      }}
-      uiBackground={{
-        color: COLOR.DARK_OPACITY_5
-      }}
-    />
-  )
 }
 
 function getZIndexForPlaceSymbol(placeRepresentation: PlaceRepresentation) {
