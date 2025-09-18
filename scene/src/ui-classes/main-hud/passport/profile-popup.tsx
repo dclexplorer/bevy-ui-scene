@@ -192,7 +192,7 @@ function ProfileHeader({
         height: getCanvasScaleRatio() * 200,
         alignSelf: 'center'
       }}
-      isGuest={!!player.isGuest}
+      isGuest={player.isGuest}
     />,
     <Row
       uiTransform={{

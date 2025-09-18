@@ -196,7 +196,7 @@ function SceneCatalogContent(): ReactElement {
             value={searchText}
             onChange={(_searchText) => {
               executeTask(async () => {
-                await waitFor(() => loading === false)
+                await waitFor(() => !loading)
                 setSearchText(_searchText)
               })
             }}
