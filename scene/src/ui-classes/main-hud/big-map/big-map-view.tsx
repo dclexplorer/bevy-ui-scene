@@ -64,7 +64,7 @@ import {
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
 export const PLAYER_PLACE_ID = 'player'
-
+const MAX_PINS_TO_SHOW = 600
 export const BigMap = (): ReactElement => {
   return (
     <UiEntity
@@ -177,19 +177,7 @@ function BigMapContent(): ReactElement {
                   )
               ) as PlaceRepresentation[])
 
-      setPlacesRepresentations(_representations)
-      setAllRepresentations(
-        dedupeById(
-          [
-            playerRespresentation,
-            decoratePlaceRepresentation(store.getState().hud.homePlace),
-            ..._representations,
-            decoratePlaceRepresentation(
-              store.getState().hud.placeListActiveItem
-            )
-          ].filter((p) => p) as PlaceRepresentation[]
-        )
-      )
+      setPlacesRepresentations(_representations.slice(0, MAX_PINS_TO_SHOW))
     }
     console.log(
       'updating place representations big map based on []',
@@ -313,9 +301,7 @@ function BigMapContent(): ReactElement {
       }}
     >
       <UiEntity uiTransform={{ positionType: 'absolute', position: 0 }}>
-        {!store.getState().hud.movingMap &&
-          !store.getState().hud.mapCameraIsOrbiting &&
-          !state.dragging &&
+        {mustShowPins() &&
           allRepresentations.map((placeRepresentation) => {
             try {
               // TODO optimize, only calculate when camera position or rotation changes, and with throttle
@@ -333,7 +319,7 @@ function BigMapContent(): ReactElement {
                   forwardIsNegZ: false
                 }
               )
-
+              if (!position.onScreen) return null
               const sizeMultiplier = placeRepresentation.isActive
                 ? 2
                 : placeRepresentation.sprite.spriteName === 'PinPOI'
@@ -432,5 +418,14 @@ function BigMapContent(): ReactElement {
       <MapStatusBar />
       <MapBottomLeftBar />
     </UiEntity>
+  )
+}
+
+function mustShowPins() {
+  return (
+    !store.getState().hud.transitioningToMap &&
+    !store.getState().hud.movingMap &&
+    !store.getState().hud.mapCameraIsOrbiting &&
+    !state.dragging
   )
 }
