@@ -63,6 +63,7 @@ export type HUDPopup = {
 export type SceneCatalogOrder = 'most_active' | 'like_score' | 'updated_at'
 export type HudState = {
   mapCameraIsOrbiting: boolean
+  transitioningToMap: boolean
   chatOpen: boolean
   shownPopups: HUDPopup[]
   profileData: ViewAvatarData
@@ -88,6 +89,7 @@ export type HudState = {
 }
 
 export type HudStateUpdateParams = {
+  transitioningToMap?: boolean
   chatOpen?: boolean
   shownPopup?: HUDPopup[]
   profileData?: ViewAvatarData
@@ -114,6 +116,7 @@ export type HudStateUpdateParams = {
 }
 
 export const hudInitialState: HudState = {
+  transitioningToMap: false,
   chatOpen: true,
   shownPopups: [],
   profileData: cloneDeep(EMPTY_PROFILE_DATA),

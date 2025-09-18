@@ -8,8 +8,10 @@ const systemActionsEmitter = createMediator()
 export function listenSystemAction(
   action: string,
   fn: (...args: any[]) => void
-): void {
+): () => void {
   systemActionsEmitter.subscribe(action, fn)
+
+  return (): void => unlistenSystemAction(action, fn)
 }
 
 export function unlistenSystemAction(action: string, fn: () => void): void {

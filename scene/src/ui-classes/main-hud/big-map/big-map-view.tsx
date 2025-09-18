@@ -5,16 +5,13 @@ import {
   fromParcelCoordsToPosition,
   fromStringToCoords,
   getLoadedMapPlaces,
-  getPlacesAroundParcel,
   Place
 } from '../../../service/map-places'
 import {
-  EasingFunction,
   engine,
   executeTask,
   PrimaryPointerInfo,
-  Transform,
-  Tween
+  Transform
 } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../../../utils/dcl-utils'
 import useState = ReactEcs.useState
@@ -34,6 +31,7 @@ import {
 import {
   activateDragMapSystem,
   activateMapCamera,
+  closeBigMapIfActive,
   deactivateDragMapSystem,
   deactivateMapCamera,
   displaceCamera,
@@ -158,7 +156,6 @@ function BigMapContent(): ReactElement {
     return () => {
       u1()
       u2()
-      deactivateMapCamera()
     }
   }, [])
 

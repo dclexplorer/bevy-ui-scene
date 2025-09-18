@@ -19,14 +19,16 @@ import { updateHudStateAction } from '../../state/hud/actions'
 import { store } from '../../state/store'
 import { sleep } from '../../utils/dcl-utils'
 import { getUiController } from '../../controllers/ui.controller'
-import { listenSystemAction } from '../system-actions-emitter'
+import {
+  listenSystemAction,
+  unlistenSystemAction
+} from '../system-actions-emitter'
 
 type MapCameraState = {
   initialized: boolean
   defaultMainCamera: DeepReadonlyObject<PBMainCamera> | null
   dragActive: boolean
   targetPosition: Vector3.MutableVector3
-  transitioning: boolean
   targetCameraDistance: number
   orbitYaw: number
   orbitPitch: number
@@ -44,7 +46,6 @@ export const PLAN_OFFSET_3 = Vector3.create(...PLAN_OFFSET)
 export const ISO_OFFSET_3 = Vector3.create(...ISO_OFFSET)
 
 const state: MapCameraState = {
-  transitioning: false, // TODO move to store
   dragActive: false, // TODO move to store, review different with MovingMap
   initialized: false,
   defaultMainCamera: null,
@@ -64,89 +65,73 @@ export const closeBigMapIfActive = () => {
     deactivateMapCamera()
   }
 }
+const TRANSITION_MS = 2000
+
+function zoomInHandler() {
+  const zoomFactor = 0.8
+  const minDistance = 200
+  const newDistance = state.targetCameraDistance * zoomFactor
+  if (newDistance > minDistance) {
+    state.targetCameraDistance = newDistance
+  }
+}
+
+function zoomOutHandler() {
+  const zoomFactor = 1.25
+  const maxDistance = 3000
+  const newDistance = state.targetCameraDistance * zoomFactor
+  if (newDistance < maxDistance) {
+    state.targetCameraDistance = newDistance
+  }
+}
 
 export const activateMapCamera = () => {
-  // TODO REVIEW IF THIS IS REMOVED AND ADDED AGAIN
-  console.log('ADD_SYSTEM_MAP_CAMERA')
+  mapCamera = mapCamera || engine.addEntity()
+
   engine.addSystem(mapInputHandlingSystem)
   engine.addSystem(cameraPositionSystem, 1_000_001)
   engine.addSystem(mapCameraMouseSystem, 1_000_001)
+  listenSystemAction('CameraZoomIn', zoomInHandler)
+  listenSystemAction('CameraZoomOut', zoomOutHandler)
 
-  if (!state.initialized) {
-    listenSystemAction('CameraZoomIn', () => {
-      const zoomFactor = 0.8 // Zoom in by 20%
-      const minDistance = 200
-      const newDistance = state.targetCameraDistance * zoomFactor
-      if (newDistance > minDistance) {
-        state.targetCameraDistance = newDistance
-      }
-    })
-
-    listenSystemAction('CameraZoomOut', () => {
-      const zoomFactor = 1.25 // Zoom out by 25%
-      const maxDistance = 3000
-      const newDistance = state.targetCameraDistance * zoomFactor
-      if (newDistance < maxDistance) {
-        state.targetCameraDistance = newDistance
-      }
-    })
-
-    state.targetPosition = Vector3.clone(
-      Transform.get(engine.PlayerEntity).position
-    )
-    console.log(
-      'targetPosition coords',
-      Math.floor(state.targetPosition.x / 16),
-      Math.floor(state.targetPosition.z / 16)
-    )
-
-    mapCamera = engine.addEntity()
-    state.defaultMainCamera = MainCamera.getOrNull(engine.CameraEntity)
-    Transform.createOrReplace(mapCamera, {
-      position: Vector3.add(
-        Transform.get(engine.PlayerEntity).position,
-        ISO_OFFSET_3
-      )
-    })
-
-    VirtualCamera.createOrReplace(mapCamera, {
-      lookAtEntity: engine.PlayerEntity,
-      defaultTransition: {
-        transitionMode: {
-          $case: 'time',
-          time: 2
-        }
-      }
-    })
-
-    state.initialized = true
-
-    executeTask(async () => {
-      await sleep(2000)
-      VirtualCamera.getMutable(mapCamera).lookAtEntity = undefined
-      Transform.getMutable(mapCamera).rotation = Quaternion.fromLookAt(
-        Transform.getMutable(mapCamera).position,
-        Transform.get(engine.PlayerEntity).position
-      )
-    })
-  } else {
-    const mapCameraTransform = Transform.getMutable(mapCamera)
-    mapCameraTransform.position = Vector3.add(
+  state.targetPosition = Vector3.clone(
+    Transform.get(engine.PlayerEntity).position
+  )
+  state.defaultMainCamera = MainCamera.getOrNull(engine.CameraEntity)
+  Transform.createOrReplace(mapCamera, {
+    position: Vector3.add(
       Transform.get(engine.PlayerEntity).position,
       ISO_OFFSET_3
     )
-
-    executeTask(async () => {
-      await sleep(2000)
-      VirtualCamera.getMutable(mapCamera).lookAtEntity = undefined
-
-      Transform.getMutable(mapCamera).rotation = Quaternion.fromLookAt(
-        Transform.get(mapCamera).position,
-        Transform.get(engine.PlayerEntity).position
-      )
+  })
+  store.dispatch(
+    updateHudStateAction({
+      transitioningToMap: true
     })
-  }
+  )
+  VirtualCamera.createOrReplace(mapCamera, {
+    lookAtEntity: engine.PlayerEntity,
+    defaultTransition: {
+      transitionMode: {
+        $case: 'time',
+        time: TRANSITION_MS / 1_000
+      }
+    }
+  })
 
+  executeTask(async () => {
+    await sleep(TRANSITION_MS)
+    VirtualCamera.getMutable(mapCamera).lookAtEntity = undefined
+    Transform.getMutable(mapCamera).rotation = Quaternion.fromLookAt(
+      Transform.getMutable(mapCamera).position,
+      Transform.get(engine.PlayerEntity).position
+    )
+    store.dispatch(
+      updateHudStateAction({
+        transitioningToMap: false
+      })
+    )
+  })
   MainCamera.createOrReplace(engine.CameraEntity, {
     virtualCameraEntity: mapCamera
   })
@@ -162,8 +147,6 @@ export const activateMapCamera = () => {
       mapModeActive: true
     })
   )
-
-  // TODO show symbols
 }
 
 export const orbitToTop = () => {
@@ -254,7 +237,8 @@ export const deactivateMapCamera = () => {
   })
   deactivateDragMapSystem()
   getUiController().sceneCard.hide()
-  // TODO REVIEW: dispose resources ?
+  unlistenSystemAction('CameraZoomIn', zoomInHandler)
+  unlistenSystemAction('CameraZoomOut', zoomOutHandler)
 }
 
 export const activateDragMapSystem = () => (state.dragActive = true)
@@ -272,7 +256,7 @@ function mapCameraMouseSystem(dt: number) {
       })
     )
   }
-  if (state.transitioning) return
+  if (store.getState().hud.transitioningToMap) return
 
   if (state.dragActive || isOrbiting) {
     const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
@@ -315,35 +299,33 @@ function mapCameraMouseSystem(dt: number) {
 }
 
 export const cameraPositionSystem = (dt: number) => {
-  if (state.initialized) {
-    const bigMapCameraEntity = getBigMapCameraEntity()
-    const mutableMapCameraTransform = Transform.getMutable(bigMapCameraEntity)
+  const bigMapCameraEntity = getBigMapCameraEntity()
+  const mutableMapCameraTransform = Transform.getMutable(bigMapCameraEntity)
 
-    // Compute offset from spherical coordinates (distance + yaw/pitch)
-    const cosPitch = Math.cos(state.orbitPitch)
-    const sinPitch = Math.sin(state.orbitPitch)
-    const offsetX =
-      state.targetCameraDistance * cosPitch * Math.cos(state.orbitYaw)
-    const offsetY = state.targetCameraDistance * sinPitch
-    const offsetZ =
-      state.targetCameraDistance * cosPitch * Math.sin(state.orbitYaw)
-    const offset = Vector3.create(offsetX, offsetY, offsetZ)
+  // Compute offset from spherical coordinates (distance + yaw/pitch)
+  const cosPitch = Math.cos(state.orbitPitch)
+  const sinPitch = Math.sin(state.orbitPitch)
+  const offsetX =
+    state.targetCameraDistance * cosPitch * Math.cos(state.orbitYaw)
+  const offsetY = state.targetCameraDistance * sinPitch
+  const offsetZ =
+    state.targetCameraDistance * cosPitch * Math.sin(state.orbitYaw)
+  const offset = Vector3.create(offsetX, offsetY, offsetZ)
 
-    const targetCameraPosition = Vector3.add(state.targetPosition, offset)
+  const targetCameraPosition = Vector3.add(state.targetPosition, offset)
 
-    // Set camera position based on target position and computed offset
-    mutableMapCameraTransform.position = targetCameraPosition
+  // Set camera position based on target position and computed offset
+  mutableMapCameraTransform.position = targetCameraPosition
 
-    // Only set camera rotation if not transitioning (let tweens handle rotation during transitions)
-    if (!state.transitioning) {
-      // Always keep world up to avoid roll/bank (Google Maps style)
-      const up = Vector3.create(0, 1, 0)
-      mutableMapCameraTransform.rotation = Quaternion.fromLookAt(
-        targetCameraPosition,
-        state.targetPosition,
-        up
-      )
-    }
+  // Only set camera rotation if not transitioning (let tweens handle rotation during transitions)
+  if (!store.getState().hud.transitioningToMap) {
+    // Always keep world up to avoid roll/bank (Google Maps style)
+    const up = Vector3.create(0, 1, 0)
+    mutableMapCameraTransform.rotation = Quaternion.fromLookAt(
+      targetCameraPosition,
+      state.targetPosition,
+      up
+    )
   }
 }
 
