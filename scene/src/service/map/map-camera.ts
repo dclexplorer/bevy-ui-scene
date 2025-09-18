@@ -158,9 +158,8 @@ export const orbitToTop = () => {
   const MIN_PITCH = 0.05
   const targetPitch = Math.max(MIN_PITCH, Math.min(MAX_PITCH, MAX_PITCH))
 
-  // Choose a stable heading (yaw) for plan view; adjust as needed for your world axes
-  // This simulates a slight user drag to a consistent heading without introducing roll
-  const targetYaw = 0 // e.g., heading aligned to your preferred "north-up" without banking
+  // Force a heading where world +Z ("north") is at the top of the screen in plan view
+  const targetYaw = -Math.PI / 2
 
   const startDistance = state.targetCameraDistance
   const startPitch = state.orbitPitch
@@ -170,6 +169,11 @@ export const orbitToTop = () => {
   executeTask(async () => {
     const startTime = Date.now()
     const lerp = (a: number, b: number, u: number) => a + (b - a) * u
+    const angleLerp = (a: number, b: number, u: number) => {
+      // shortest path interpolation handling wrap-around
+      const diff = Math.atan2(Math.sin(b - a), Math.cos(b - a))
+      return a + diff * u
+    }
     while (true) {
       const t = Math.min(1, (Date.now() - startTime) / DISPLACE_TIME)
       // ease in-out
@@ -180,7 +184,7 @@ export const orbitToTop = () => {
         MIN_PITCH,
         Math.min(MAX_PITCH, lerp(startPitch, targetPitch, te))
       )
-      state.orbitYaw = lerp(startYaw, targetYaw, te)
+      state.orbitYaw = angleLerp(startYaw, targetYaw, te)
 
       if (t >= 1) break
       await sleep(16)
