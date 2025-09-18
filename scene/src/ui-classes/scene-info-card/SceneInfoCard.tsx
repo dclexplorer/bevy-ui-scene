@@ -58,11 +58,7 @@ import type {
   PlaceFromApi
 } from './SceneInfoCard.types'
 import { getRightPanelWidth } from '../../service/canvas-ratio'
-import { updateHudStateAction } from '../../state/hud/actions'
-import { decoratePlaceRepresentation } from '../main-hud/big-map/big-map-view'
-import { Place } from '../../service/map-places'
-import { sleep } from '../../utils/dcl-utils'
-import { closeBigMapIfActive } from '../../service/map-camera'
+import { closeBigMapIfActive } from '../../service/map/map-camera'
 import { MAP_FILTER_DEFINITIONS } from '../../components/map/map-definitions'
 
 export default class SceneInfoCard {

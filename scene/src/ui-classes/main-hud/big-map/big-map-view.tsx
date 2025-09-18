@@ -38,7 +38,7 @@ import {
   deactivateMapCamera,
   displaceCamera,
   getBigMapCameraEntity
-} from '../../../service/map-camera'
+} from '../../../service/map/map-camera'
 import { MapFilterBar } from '../../../components/map/map-filter-bar'
 import {
   getPlayerParcel,
@@ -264,7 +264,11 @@ function BigMapContent(): ReactElement {
         color: COLOR.DARK_OPACITY_2
       }}
       onMouseDrag={(event) => {
-        if (!state.dragging && !store.getState().hud.movingMap) {
+        if (
+          !state.dragging &&
+          !store.getState().hud.movingMap &&
+          !store.getState().hud.mapCameraIsOrbiting
+        ) {
           state.dragging = true
           activateDragMapSystem()
         }
@@ -313,6 +317,7 @@ function BigMapContent(): ReactElement {
     >
       <UiEntity uiTransform={{ positionType: 'absolute', position: 0 }}>
         {!store.getState().hud.movingMap &&
+          !store.getState().hud.mapCameraIsOrbiting &&
           !state.dragging &&
           allRepresentations.map((placeRepresentation) => {
             try {

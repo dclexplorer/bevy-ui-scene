@@ -1,8 +1,5 @@
 import { engine, Transform, Tween } from '@dcl/sdk/ecs'
 import { Quaternion, Vector3 } from '@dcl/sdk/math'
-import { store } from '../state/store'
-import { updateHudStateAction } from '../state/hud/actions'
-import { getBigMapCameraEntity, ISO_OFFSET_3 } from './map-camera'
 
 export function createTween({
   startValue,
@@ -38,7 +35,6 @@ export function createTween({
 
     state.value = lerp(state.startValue, state.endValue, t)
 
-    // notificar actualizaciones
     for (const fn of listeners.update) fn(state.value, t)
 
     if (state.totalDt >= time) {
@@ -54,13 +50,10 @@ export function createTween({
 
   engine.addSystem(TweenSystem)
 
-  // Controlador para consultar/cancelar/suscribirse
   return {
-    /** Valor actual interpolado (solo lectura) */
     get value() {
       return state.value
     },
-    /** Cancela el tween inmediatamente */
     cancel() {
       if (!state.done) {
         state.done = true
@@ -69,12 +62,10 @@ export function createTween({
         listeners.complete.clear()
       }
     },
-    /** Suscribirse a cambios; devuelve una función para desuscribirse */
     onUpdate(cb: (value: number, t: number) => void) {
       listeners.update.add(cb)
       return () => listeners.update.delete(cb)
     },
-    /** Callback al completar */
     onComplete(cb: () => void) {
       listeners.complete.add(cb)
       return () => listeners.complete.delete(cb)

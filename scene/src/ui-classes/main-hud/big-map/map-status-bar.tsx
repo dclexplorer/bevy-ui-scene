@@ -5,7 +5,7 @@ import { ReactEcs, ReactElement, UiEntity } from '@dcl/react-ecs'
 import useState = ReactEcs.useState
 import useEffect = ReactEcs.useEffect
 import { engine, PrimaryPointerInfo, Transform } from '@dcl/sdk/ecs'
-import { getBigMapCameraEntity } from '../../../service/map-camera'
+import { getBigMapCameraEntity } from '../../../service/map/map-camera'
 import { Vector3 } from '@dcl/sdk/math'
 import { screenToGround } from '../../../service/perspective-to-screen'
 import {

@@ -15,12 +15,11 @@ import {
   VirtualCamera
 } from '@dcl/sdk/ecs'
 import { Quaternion, Vector3 } from '@dcl/sdk/math'
-import { updateHudStateAction } from '../state/hud/actions'
-import { store } from '../state/store'
-import { sleep } from '../utils/dcl-utils'
-import { getUiController } from '../controllers/ui.controller'
-import { createMoveTween, createRotateTween } from './tween'
-import { listenSystemAction } from './system-actions-emitter'
+import { updateHudStateAction } from '../../state/hud/actions'
+import { store } from '../../state/store'
+import { sleep } from '../../utils/dcl-utils'
+import { getUiController } from '../../controllers/ui.controller'
+import { listenSystemAction } from '../system-actions-emitter'
 
 type MapCameraState = {
   initialized: boolean
@@ -45,12 +44,11 @@ export const PLAN_OFFSET_3 = Vector3.create(...PLAN_OFFSET)
 export const ISO_OFFSET_3 = Vector3.create(...ISO_OFFSET)
 
 const state: MapCameraState = {
+  transitioning: false, // TODO move to store
+  dragActive: false, // TODO move to store, review different with MovingMap
   initialized: false,
   defaultMainCamera: null,
-
-  dragActive: false,
   targetPosition: Vector3.Zero(),
-  transitioning: false,
   targetCameraDistance: Vector3.length(ISO_OFFSET_3),
   orbitYaw: Math.atan2(ISO_OFFSET_3.z, ISO_OFFSET_3.x),
   orbitPitch: Math.asin(ISO_OFFSET_3.y / Vector3.length(ISO_OFFSET_3))
@@ -68,94 +66,11 @@ export const closeBigMapIfActive = () => {
 }
 
 export const activateMapCamera = () => {
-  engine.addSystem((dt: number) => {
-    const bigMapCameraEntity = getBigMapCameraEntity()
-    const cameraTransform = Transform.get(bigMapCameraEntity)
-    const moveSpeed = dt * 600
-
-    // Calculate movement directions based on camera rotation
-    const forward = Vector3.rotate(Vector3.Forward(), cameraTransform.rotation)
-    const right = Vector3.rotate(Vector3.Right(), cameraTransform.rotation)
-
-    // Project vectors onto XZ plane (ignore Y component for map movement)
-    const forwardXZ = Vector3.normalize(Vector3.create(forward.x, 0, forward.z))
-    const rightXZ = Vector3.normalize(Vector3.create(right.x, 0, right.z))
-
-    let movement = Vector3.Zero()
-    let hasInput = false
-
-    if (inputSystem.isPressed(InputAction.IA_WALK)) {
-      state.dragActive = false
-      // Orbit mode: rotate camera around target using WASD
-      const yawSpeed = dt * 1.8 // radians per second
-      const pitchSpeed = dt * 1.2
-      const MIN_PITCH = 0.05
-      const MAX_PITCH = Math.PI / 2 - 0.1
-
-      if (inputSystem.isPressed(InputAction.IA_RIGHT)) {
-        state.orbitYaw -= yawSpeed
-        hasInput = true
-      }
-      if (inputSystem.isPressed(InputAction.IA_LEFT)) {
-        state.orbitYaw += yawSpeed
-        hasInput = true
-      }
-      if (inputSystem.isPressed(InputAction.IA_FORWARD)) {
-        state.orbitPitch = Math.min(MAX_PITCH, state.orbitPitch + pitchSpeed)
-        hasInput = true
-      }
-      if (inputSystem.isPressed(InputAction.IA_BACKWARD)) {
-        state.orbitPitch = Math.max(MIN_PITCH, state.orbitPitch - pitchSpeed)
-        hasInput = true
-      }
-    } else {
-      // Pan mode: move target point using WASD relative to camera rotation
-      if (inputSystem.isPressed(InputAction.IA_FORWARD)) {
-        movement = Vector3.add(movement, Vector3.scale(forwardXZ, moveSpeed))
-        hasInput = true
-      }
-      if (inputSystem.isPressed(InputAction.IA_BACKWARD)) {
-        movement = Vector3.subtract(
-          movement,
-          Vector3.scale(forwardXZ, moveSpeed)
-        )
-        hasInput = true
-      }
-      if (inputSystem.isPressed(InputAction.IA_RIGHT)) {
-        movement = Vector3.add(movement, Vector3.scale(rightXZ, moveSpeed))
-        hasInput = true
-      }
-      if (inputSystem.isPressed(InputAction.IA_LEFT)) {
-        movement = Vector3.subtract(movement, Vector3.scale(rightXZ, moveSpeed))
-        hasInput = true
-      }
-    }
-
-    // Update movement state and store
-    if (hasInput && !isKeyboardMoving) {
-      isKeyboardMoving = true
-      if (!store.getState().hud.movingMap) {
-        store.dispatch(
-          updateHudStateAction({
-            movingMap: true
-          })
-        )
-      }
-    } else if (!hasInput && isKeyboardMoving) {
-      isKeyboardMoving = false
-      if (store.getState().hud.movingMap) {
-        store.dispatch(
-          updateHudStateAction({
-            movingMap: false
-          })
-        )
-      }
-    }
-
-    if (!Vector3.equals(movement, Vector3.Zero())) {
-      state.targetPosition = Vector3.add(state.targetPosition, movement)
-    }
-  })
+  // TODO REVIEW IF THIS IS REMOVED AND ADDED AGAIN
+  console.log('ADD_SYSTEM_MAP_CAMERA')
+  engine.addSystem(mapInputHandlingSystem)
+  engine.addSystem(cameraPositionSystem, 1_000_001)
+  engine.addSystem(mapCameraMouseSystem, 1_000_001)
 
   if (!state.initialized) {
     listenSystemAction('CameraZoomIn', () => {
@@ -320,6 +235,12 @@ export const displaceCamera = (targetPosition: Vector3) => {
   })
 }
 export const deactivateMapCamera = () => {
+  // TODO REVIEW IF THIS IS REMOVED AND ADDED AGAIN
+  console.log('REMOVE_SYSTEM_MAP_CAMERA')
+  engine.removeSystem(mapInputHandlingSystem)
+  engine.removeSystem(cameraPositionSystem)
+  engine.removeSystem(mapCameraMouseSystem)
+
   store.dispatch(
     updateHudStateAction({
       mapModeActive: false
@@ -341,8 +262,18 @@ export const deactivateDragMapSystem = () => {
   state.dragActive = false
 }
 
-engine.addSystem((dt) => {
+function mapCameraMouseSystem(dt: number) {
+  // TODO move to a different file
   const isOrbiting = inputSystem.isPressed(InputAction.IA_WALK)
+  if (isOrbiting !== store.getState().hud.mapCameraIsOrbiting) {
+    store.dispatch(
+      updateHudStateAction({
+        mapCameraIsOrbiting: isOrbiting
+      })
+    )
+  }
+  if (state.transitioning) return
+
   if (state.dragActive || isOrbiting) {
     const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
     if (!pointerInfo?.screenDelta?.x && !pointerInfo?.screenDelta?.y) return
@@ -350,15 +281,10 @@ engine.addSystem((dt) => {
     const mapCameraTransform = Transform.get(bigMapCameraEntity)
 
     if (isOrbiting) {
-      // Orbit mode (Shift held): rotate camera around target using mouse delta
       const deltaX = pointerInfo!.screenDelta!.x ?? 0
       const deltaY = pointerInfo!.screenDelta!.y ?? 0
-
-      // Sensitivity (radians per pixel)
       const yawSensitivity = 0.005
       const pitchSensitivity = 0.004
-
-      // Update yaw and pitch from mouse deltas
       state.orbitYaw -= deltaX * yawSensitivity
       const MIN_PITCH = 0.05
       const MAX_PITCH = Math.PI / 2 - 0.1
@@ -367,28 +293,18 @@ engine.addSystem((dt) => {
         Math.min(MAX_PITCH, state.orbitPitch + deltaY * pitchSensitivity)
       )
     } else {
-      // Pan mode: move target position using mouse drag relative to camera orientation
-      // Calculate movement directions based on camera rotation
       const forward = Vector3.rotate(
         Vector3.Forward(),
         mapCameraTransform.rotation
       )
       const right = Vector3.rotate(Vector3.Right(), mapCameraTransform.rotation)
-
-      // Project vectors onto XZ plane (ignore Y component for map movement)
       const forwardXZ = Vector3.normalize(
         Vector3.create(forward.x, 0, forward.z)
       )
       const rightXZ = Vector3.normalize(Vector3.create(right.x, 0, right.z))
-
-      // Convert screen delta to movement (inverted for natural drag feel on X; Y maps to forward)
       const deltaX = -(pointerInfo!.screenDelta!.x ?? 0)
       const deltaY = pointerInfo!.screenDelta!.y ?? 0
-
-      // Scale the movement
       const movementScale = 2
-
-      // Apply movement based on camera orientation
       const horizontalMovement = Vector3.scale(rightXZ, deltaX * movementScale)
       const verticalMovement = Vector3.scale(forwardXZ, deltaY * movementScale)
       const totalMovement = Vector3.add(horizontalMovement, verticalMovement)
@@ -396,7 +312,8 @@ engine.addSystem((dt) => {
       state.targetPosition = Vector3.add(state.targetPosition, totalMovement)
     }
   }
-}, 1_000_001)
+}
+
 export const cameraPositionSystem = (dt: number) => {
   if (state.initialized) {
     const bigMapCameraEntity = getBigMapCameraEntity()
@@ -429,4 +346,89 @@ export const cameraPositionSystem = (dt: number) => {
     }
   }
 }
-engine.addSystem(cameraPositionSystem)
+
+function mapInputHandlingSystem(dt: number) {
+  const bigMapCameraEntity = getBigMapCameraEntity()
+  const cameraTransform = Transform.get(bigMapCameraEntity)
+  const moveSpeed = dt * 600
+
+  // Calculate movement directions based on camera rotation
+  const forward = Vector3.rotate(Vector3.Forward(), cameraTransform.rotation)
+  const right = Vector3.rotate(Vector3.Right(), cameraTransform.rotation)
+
+  // Project vectors onto XZ plane (ignore Y component for map movement)
+  const forwardXZ = Vector3.normalize(Vector3.create(forward.x, 0, forward.z))
+  const rightXZ = Vector3.normalize(Vector3.create(right.x, 0, right.z))
+
+  let movement = Vector3.Zero()
+  let hasInput = false
+
+  if (inputSystem.isPressed(InputAction.IA_WALK)) {
+    state.dragActive = false
+    // Orbit mode: rotate camera around target using WASD
+    const yawSpeed = dt * 1.8 // radians per second
+    const pitchSpeed = dt * 1.2
+    const MIN_PITCH = 0.05
+    const MAX_PITCH = Math.PI / 2 - 0.1
+
+    if (inputSystem.isPressed(InputAction.IA_RIGHT)) {
+      state.orbitYaw -= yawSpeed
+      hasInput = true
+    }
+    if (inputSystem.isPressed(InputAction.IA_LEFT)) {
+      state.orbitYaw += yawSpeed
+      hasInput = true
+    }
+    if (inputSystem.isPressed(InputAction.IA_FORWARD)) {
+      state.orbitPitch = Math.min(MAX_PITCH, state.orbitPitch + pitchSpeed)
+      hasInput = true
+    }
+    if (inputSystem.isPressed(InputAction.IA_BACKWARD)) {
+      state.orbitPitch = Math.max(MIN_PITCH, state.orbitPitch - pitchSpeed)
+      hasInput = true
+    }
+  } else {
+    // Pan mode: move target point using WASD relative to camera rotation
+    if (inputSystem.isPressed(InputAction.IA_FORWARD)) {
+      movement = Vector3.add(movement, Vector3.scale(forwardXZ, moveSpeed))
+      hasInput = true
+    }
+    if (inputSystem.isPressed(InputAction.IA_BACKWARD)) {
+      movement = Vector3.subtract(movement, Vector3.scale(forwardXZ, moveSpeed))
+      hasInput = true
+    }
+    if (inputSystem.isPressed(InputAction.IA_RIGHT)) {
+      movement = Vector3.add(movement, Vector3.scale(rightXZ, moveSpeed))
+      hasInput = true
+    }
+    if (inputSystem.isPressed(InputAction.IA_LEFT)) {
+      movement = Vector3.subtract(movement, Vector3.scale(rightXZ, moveSpeed))
+      hasInput = true
+    }
+  }
+
+  // Update movement state and store
+  if (hasInput && !isKeyboardMoving) {
+    isKeyboardMoving = true
+    if (!store.getState().hud.movingMap) {
+      store.dispatch(
+        updateHudStateAction({
+          movingMap: true
+        })
+      )
+    }
+  } else if (!hasInput && isKeyboardMoving) {
+    isKeyboardMoving = false
+    if (store.getState().hud.movingMap) {
+      store.dispatch(
+        updateHudStateAction({
+          movingMap: false
+        })
+      )
+    }
+  }
+
+  if (!Vector3.equals(movement, Vector3.Zero())) {
+    state.targetPosition = Vector3.add(state.targetPosition, movement)
+  }
+}

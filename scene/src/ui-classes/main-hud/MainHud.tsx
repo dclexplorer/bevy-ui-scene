@@ -16,7 +16,7 @@ import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { getPlayer } from '@dcl/sdk/players'
 import { getViewportHeight } from '../../service/canvas-ratio'
-import { activateMapCamera } from '../../service/map-camera'
+import { activateMapCamera } from '../../service/map/map-camera'
 import { listenSystemAction } from '../../service/system-actions-emitter'
 
 const ZERO_SIZE = {

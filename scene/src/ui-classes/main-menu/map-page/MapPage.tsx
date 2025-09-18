@@ -5,7 +5,7 @@ import useEffect = ReactEcs.useEffect
 import {
   activateMapCamera,
   closeBigMapIfActive
-} from '../../../service/map-camera'
+} from '../../../service/map/map-camera'
 import { MapFilterBar } from '../../../components/map/map-filter-bar'
 import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
 

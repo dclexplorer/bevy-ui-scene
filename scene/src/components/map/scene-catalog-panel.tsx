@@ -18,7 +18,7 @@ import {
 } from '../../service/canvas-ratio'
 import Icon from '../icon/Icon'
 import { Vector3 } from '@dcl/sdk/math'
-import { displaceCamera } from '../../service/map-camera'
+import { displaceCamera } from '../../service/map/map-camera'
 import { updateHudStateAction } from '../../state/hud/actions'
 import { Input } from '@dcl/sdk/react-ecs'
 import { useDebouncedValue } from '../../hooks/use-debounce'

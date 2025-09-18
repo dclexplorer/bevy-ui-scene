@@ -62,6 +62,7 @@ export type HUDPopup = {
 }
 export type SceneCatalogOrder = 'most_active' | 'like_score' | 'updated_at'
 export type HudState = {
+  mapCameraIsOrbiting: boolean
   chatOpen: boolean
   shownPopups: HUDPopup[]
   profileData: ViewAvatarData
@@ -109,6 +110,7 @@ export type HudStateUpdateParams = {
   sceneCatalogOrder?: SceneCatalogOrder
   homePlace?: Place
   mapTargetPosition?: Vector3
+  mapCameraIsOrbiting?: boolean
 }
 
 export const hudInitialState: HudState = {
@@ -133,5 +135,6 @@ export const hudInitialState: HudState = {
   movingMap: true,
   sceneCatalogOrder: `most_active`,
   homePlace: null,
-  mapTargetPosition: Vector3.Zero()
+  mapTargetPosition: Vector3.Zero(),
+  mapCameraIsOrbiting: false
 }

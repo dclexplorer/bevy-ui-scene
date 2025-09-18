@@ -36,7 +36,6 @@ import {
   createOrGetAvatarsTracker,
   getPlayerAvatarEntities
 } from '../../service/avatar-tracker'
-import { activateMapCamera } from '../../service/map-camera'
 import { getUiController } from '../../controllers/ui.controller'
 
 export function MiniMapContent(): ReactElement {

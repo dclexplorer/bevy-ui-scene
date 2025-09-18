@@ -4,18 +4,16 @@ import { COLOR } from '../color-palette'
 import Icon from '../icon/Icon'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { Column } from '../layout'
-import { orbitToTop, displaceCamera } from '../../service/map-camera'
+import { orbitToTop, displaceCamera } from '../../service/map/map-camera'
 import { Vector3 } from '@dcl/sdk/math'
 import { screenToGround } from '../../service/perspective-to-screen'
-import {
-  decoratePlaceRepresentation,
-  FOV
-} from '../../ui-classes/main-hud/big-map/big-map-view'
+import { FOV } from '../../ui-classes/main-hud/big-map/big-map-view'
 import { engine, Transform } from '@dcl/sdk/ecs'
 import { getPlayerPosition } from '@dcl-sdk/utils'
 import { getPlayerParcel } from '../../service/player-scenes'
 import { Label } from '@dcl/sdk/react-ecs'
 import { store } from '../../state/store'
+import { decoratePlaceRepresentation } from '../../ui-classes/main-hud/big-map/place-decoration'
 
 export function MapBottomLeftBar(): ReactElement {
   return (
@@ -52,7 +50,7 @@ export function MapBottomLeftBar(): ReactElement {
           uiTransform={{
             flexShrink: 0
           }}
-          icon={{ spriteName: 'HomeSolid2', atlasName: 'map2' }}
+          icon={{ spriteName: 'orbitToTop', atlasName: 'map2' }}
           iconSize={getHudFontSize(getViewportHeight()).BIG * 1.5}
           iconColor={COLOR.TEXT_COLOR}
         />
