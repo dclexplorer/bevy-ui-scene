@@ -128,7 +128,9 @@ export async function fetchWearable(
     if (wearableData.total === 0) {
       return null
     }
+
     console.log({ wearableData })
+
     return wearableData.data[0]
   } catch (error) {
     console.error('Error fetching photos:', error)
