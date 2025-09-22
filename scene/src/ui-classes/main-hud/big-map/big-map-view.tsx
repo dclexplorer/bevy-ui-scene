@@ -265,7 +265,7 @@ function BigMapContent(): ReactElement {
         height: '100%'
       }}
       uiBackground={{}}
-      onMouseDrag={(event) => {
+      onMouseDrag={() => {
         if (
           !state.dragging &&
           !store.getState().hud.movingMap &&
@@ -277,16 +277,12 @@ function BigMapContent(): ReactElement {
       }}
       onMouseDragEnd={() => {
         executeTask(async () => {
-          if (!state.dragging) return
           // TODO REVIEW: why onMouseDrag/onMouseDragLocked is called continuously, then I cannot set dragging to false
-          await sleep(500)
+          await sleep(0)
+
           state.dragging = false
+          deactivateDragMapSystem()
         })
-        deactivateDragMapSystem()
-        state.dragging = false
-      }}
-      onMouseUp={() => {
-        state.dragging = false
       }}
       onMouseDown={() => {
         if (state.dragging || store.getState().hud.movingMap) return
@@ -469,3 +465,11 @@ function mustShowPins() {
     !state.dragging
   )
 }
+export type MapPinParams = {
+  sprite: AtlasIcon
+  size: number
+  position: { top: number; left: number }
+  isActive: boolean
+  onClick: () => void
+}
+function MapPin({ sprite, size, position, isActive, onClick }: MapPinParams) {}
