@@ -151,8 +151,6 @@ export const activateMapCamera = () => {
 
 export const orbitToTop = () => {
   const DISPLACE_TIME = 500 // TODO review to calculate time by displacement
-  // Target plan distance equals the magnitude of the plan offset vector
-  const targetDistance = Vector3.length(PLAN_OFFSET_3)
   // Aim for a top-down pitch (just shy of 90º to avoid singularities)
   const MAX_PITCH = Math.PI / 2 - 0.001
   const MIN_PITCH = 0.05
@@ -161,11 +159,10 @@ export const orbitToTop = () => {
   // Force a heading where world +Z ("north") is at the top of the screen in plan view
   const targetYaw = -Math.PI / 2
 
-  const startDistance = state.targetCameraDistance
   const startPitch = state.orbitPitch
   const startYaw = state.orbitYaw
 
-  // Smoothly interpolate pitch, distance, and yaw over the duration
+  // Smoothly interpolate pitch and yaw over the duration (do not change distance)
   executeTask(async () => {
     const startTime = Date.now()
     const lerp = (a: number, b: number, u: number) => a + (b - a) * u
@@ -179,7 +176,6 @@ export const orbitToTop = () => {
       // ease in-out
       const te = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
 
-      state.targetCameraDistance = lerp(startDistance, targetDistance, te)
       state.orbitPitch = Math.max(
         MIN_PITCH,
         Math.min(MAX_PITCH, lerp(startPitch, targetPitch, te))
