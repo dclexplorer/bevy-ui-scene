@@ -92,13 +92,17 @@ export default class MainMenu {
     playPreviewEmote('')
     disposeOutfitsCatalog()
     this.open = false
-    BevyApi.showUi().catch(console.error)
+    if (this.open) {
+      // TODO REVIEW shouldn't show:false hide the ui always instead of toggling (when hot reload, it's not reset)
+      BevyApi.showUi(undefined, false).catch(console.error)
+    }
   }
 
   show(page: MenuPage): void {
     if (!this.open) {
-      BevyApi.showUi().catch(console.error)
+      BevyApi.showUi(undefined, true).catch(console.error)
     }
+
     this.open = true
     this.uiController.settingsPage.updateButtons()
     this.activePage = page

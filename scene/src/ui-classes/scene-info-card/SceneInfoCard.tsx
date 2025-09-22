@@ -24,7 +24,11 @@ import {
   updateFavoriteStatus,
   updateLikeStatus
 } from 'src/utils/promise-utils'
-import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
+import {
+  changeRealm,
+  openExternalUrl,
+  teleportTo
+} from '~system/RestrictedActions'
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
 import {
@@ -61,6 +65,7 @@ import { getRightPanelWidth } from '../../service/canvas-ratio'
 import { closeBigMapIfActive } from '../../service/map/map-camera'
 import { MAP_FILTER_DEFINITIONS } from '../../components/map/map-definitions'
 import { PlaceRepresentation } from '../main-hud/big-map/big-map-view'
+import { currentRealmProviderIsWorld } from '../../service/realm-change'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -708,9 +713,16 @@ export default class SceneInfoCard {
             const coord = parseCoordinates(this.place.base_position)
             if (coord !== null) {
               executeTask(async () => {
-                // TODO close menu
                 getUiController().menu.hide()
+                // TODO take care of toggling scene ui ( BevyApi.showUI() )
                 closeBigMapIfActive()
+                // TODO check if the place is genesis city or world
+                if (currentRealmProviderIsWorld()) {
+                  // TODO REVIEW if that URL is ok
+                  await changeRealm({
+                    realm: 'https://realm-provider.decentraland.org/main'
+                  })
+                }
                 await teleportTo({
                   worldCoordinates: { x: coord.x, y: coord.y }
                 })

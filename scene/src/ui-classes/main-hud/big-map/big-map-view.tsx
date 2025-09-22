@@ -52,6 +52,7 @@ import {
 } from './place-decoration'
 import { fetchLiveEvents } from '../../../utils/fetch-live-events'
 import { EventFromApi } from '../../scene-info-card/SceneInfoCard.types'
+import { currentRealmProviderIsWorld } from '../../../service/realm-change'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
@@ -462,9 +463,11 @@ function mustShowPins() {
     !store.getState().hud.transitioningToMap &&
     !store.getState().hud.movingMap &&
     !store.getState().hud.mapCameraIsOrbiting &&
-    !state.dragging
+    !state.dragging &&
+    !currentRealmProviderIsWorld()
   )
 }
+
 export type MapPinParams = {
   sprite: AtlasIcon
   size: number

@@ -29,6 +29,7 @@ import { setUiFocus } from '~system/RestrictedActions'
 import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
 import { getMainMenuHeight } from '../../ui-classes/main-menu/MainMenu'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
+import { currentRealmProviderIsWorld } from '../../service/realm-change'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -291,10 +292,15 @@ function SceneCatalogContent(): ReactElement {
                       Vector3.create(coords.x, 0, coords.y)
                     )
                   } else {
-                    const coords = fromStringToCoords(place.base_position)
-                    displaceCamera(
-                      fromParcelCoordsToPosition(coords, { height: 0 })
-                    )
+                    if (!currentRealmProviderIsWorld()) {
+                      displaceCamera(
+                        fromParcelCoordsToPosition(
+                          fromStringToCoords(place.base_position),
+                          { height: 0 }
+                        )
+                      )
+                    }
+
                     store.dispatch(
                       updateHudStateAction({
                         placeListActiveItem: place
