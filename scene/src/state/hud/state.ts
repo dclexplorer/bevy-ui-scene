@@ -86,6 +86,7 @@ export type HudState = {
   sceneCatalogOrder: SceneCatalogOrder
   homePlace: Place | null
   mapTargetPosition: Vector3
+  placeType: 'places' | 'worlds'
 }
 
 export type HudStateUpdateParams = {
@@ -113,6 +114,7 @@ export type HudStateUpdateParams = {
   homePlace?: Place
   mapTargetPosition?: Vector3
   mapCameraIsOrbiting?: boolean
+  placeType?: 'places' | 'worlds'
 }
 
 export const hudInitialState: HudState = {
@@ -139,5 +141,6 @@ export const hudInitialState: HudState = {
   sceneCatalogOrder: `most_active`,
   homePlace: null,
   mapTargetPosition: Vector3.Zero(),
-  mapCameraIsOrbiting: false
+  mapCameraIsOrbiting: false,
+  placeType: 'places'
 }

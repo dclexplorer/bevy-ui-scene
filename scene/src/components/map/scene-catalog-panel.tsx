@@ -30,6 +30,7 @@ import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
 import { getMainMenuHeight } from '../../ui-classes/main-menu/MainMenu'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { currentRealmProviderIsWorld } from '../../service/realm-change'
+import { MenuBar } from '../menu-bar'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -37,7 +38,7 @@ export type FetchParams = {
   categories?: string[]
   currentPage?: number
 }
-
+export const PLACE_TYPES: Array<'places' | 'worlds'> = ['places', 'worlds']
 export const ORDER_OPTIONS: { orderKey: SceneCatalogOrder; label: string }[] = [
   { orderKey: 'most_active', label: `MOST ACTIVE` },
   { orderKey: 'like_score', label: `MOST LIKED` },
@@ -50,7 +51,8 @@ async function fetchList({
 }: FetchParams): Promise<{ total: number; data: Place[] }> {
   const categories = store.getState().hud.mapFilterCategories
   const orderKey = store.getState().hud.sceneCatalogOrder
-
+  const placeType = store.getState().hud.placeType
+  console.log('placeType', placeType)
   const queryParameters =
     categories?.includes('all') || categories?.includes('favorites')
       ? []
@@ -61,13 +63,15 @@ async function fetchList({
           }))
         ]
 
-  let url = `https://places.decentraland.org/api/places?offset=${
+  let url = `https://places.decentraland.org/api/${placeType}?offset=${
     currentPage * LIMIT
   }&limit=${LIMIT}&${queryParameters
     .map((q) => `${q.key}=${q.value}`)
     .join(
       '&'
     )}&search=${searchText}&order_by=${orderKey}&order=desc&with_realms_detail=true`
+
+  console.log('url', url)
 
   if (categories?.includes('favorites')) {
     url += `&only_favorites=true`
@@ -116,7 +120,7 @@ function SceneCatalogContent(): ReactElement {
   const [searchText, setSearchText] = useState<string>('')
   const debouncedSearchText = useDebouncedValue(searchText, 300)
   const [loading, setLoading] = useState<boolean>(true)
-
+  const [placeTypeActiveIndex, setPlaceTypeActiveIndex] = useState<number>(0)
   useEffect(() => {
     if (!getUiController().sceneInfoCardVisible) {
       store.dispatch(
@@ -144,9 +148,10 @@ function SceneCatalogContent(): ReactElement {
   }, [
     debouncedSearchText,
     store.getState().hud.mapFilterCategories,
-    store.getState().hud.sceneCatalogOrder
+    store.getState().hud.sceneCatalogOrder,
+    store.getState().hud.placeType
   ])
-  useEffect(() => {
+  /*  useEffect(() => {
     // TODO select appropriate places server/source
     executeTask(async () => {
       const response = await fetchList({
@@ -161,7 +166,7 @@ function SceneCatalogContent(): ReactElement {
         })
       )
     })
-  }, [store.getState().hud.mapFilterCategories])
+  }, [store.getState().hud.mapFilterCategories])*/
   const fontSize = getViewportHeight() * 0.015
 
   return (
@@ -170,6 +175,18 @@ function SceneCatalogContent(): ReactElement {
         width: '100%'
       }}
     >
+      <MenuBar
+        items={['GENESIS CITY', 'WORLDS']}
+        activeIndex={placeTypeActiveIndex}
+        onClick={(index) => {
+          setPlaceTypeActiveIndex(index)
+          store.dispatch(
+            updateHudStateAction({
+              placeType: PLACE_TYPES[index]
+            })
+          )
+        }}
+      />
       <Row
         uiTransform={{
           width: '100%',
@@ -259,7 +276,7 @@ function SceneCatalogContent(): ReactElement {
           alignItems: 'flex-start',
           scrollVisible: 'vertical',
           overflow: 'scroll',
-          height: '90%'
+          height: '85%'
         }}
       >
         {loading && (
@@ -369,7 +386,7 @@ function SceneCatalogContent(): ReactElement {
                       }}
                       uiText={{
                         textAlign: 'top-left',
-                        value: place.user_visits.toString(),
+                        value: place.user_visits?.toString() ?? '0',
                         color: COLOR.TEXT_COLOR,
                         fontSize
                       }}
