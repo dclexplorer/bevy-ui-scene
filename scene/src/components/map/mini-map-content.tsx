@@ -37,6 +37,7 @@ import {
   getPlayerAvatarEntities
 } from '../../service/avatar-tracker'
 import { getUiController } from '../../controllers/ui.controller'
+import { currentRealmProviderIsWorld } from '../../service/realm-change'
 
 export function MiniMapContent(): ReactElement {
   const mapSize = getMapSize()
@@ -98,7 +99,11 @@ export function MiniMapContent(): ReactElement {
   }, [])
 
   useEffect(() => {
-    renderVisiblePlaces(parcelsAround)
+    if (currentRealmProviderIsWorld()) {
+      renderVisiblePlaces([])
+    } else {
+      renderVisiblePlaces(parcelsAround)
+    }
   }, [parcelsAroundIds])
 
   useEffect(() => {
