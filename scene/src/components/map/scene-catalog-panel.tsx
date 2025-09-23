@@ -309,7 +309,7 @@ function SceneCatalogContent(): ReactElement {
                       Vector3.create(coords.x, 0, coords.y)
                     )
                   } else {
-                    if (!currentRealmProviderIsWorld()) {
+                    if (!place.world) {
                       displaceCamera(
                         fromParcelCoordsToPosition(
                           fromStringToCoords(place.base_position),
