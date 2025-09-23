@@ -14,6 +14,10 @@ import {
 } from '../../../service/canvas-ratio'
 import { getVector3Parcel } from '../../../service/player-scenes'
 import { COLOR } from '../../../components/color-palette'
+import {
+  currentRealmProviderIsWorld,
+  getRealmName
+} from '../../../service/realm-change'
 
 export function MapStatusBar(): ReactElement {
   const [coordsStr, setCoordsStr] = useState<string>('-,-')
@@ -34,7 +38,10 @@ export function MapStatusBar(): ReactElement {
       const { x, y } = getVector3Parcel(targetPosition)
       const place = getPlacesAroundParcel({ x, y }, 0)
       const parcelName = place[0]?.title ?? ''
-      setCoordsStr(`${x},${y} ${parcelName}`)
+      const worldStr = currentRealmProviderIsWorld()
+        ? getRealmName()
+        : 'Genesis City'
+      setCoordsStr(`${x},${y} ${parcelName} ${worldStr}`)
     } catch (error) {}
   })
 

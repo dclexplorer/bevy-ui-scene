@@ -716,23 +716,20 @@ export default class SceneInfoCard {
                 getUiController().menu.hide()
                 // TODO take care of toggling scene ui ( BevyApi.showUI() )
                 closeBigMapIfActive()
-                // TODO check if the place is genesis city or world
-                if (this.place?.world) {
-                  if (!currentRealmProviderIsWorld() && this.place.world_name) {
-                    // TODO REVIEW if that URL is ok
-                    await changeRealm({
-                      realm: this.place.world_name ?? ''
-                    })
-                  }
-                } else {
-                  if (currentRealmProviderIsWorld()) {
-                    // TODO REVIEW if that URL is ok
-                    await changeRealm({
-                      realm: 'https://realm-provider.decentraland.org/main'
-                    })
-                  }
+                console.log(
+                  'currentRealmProviderIsWorld',
+                  currentRealmProviderIsWorld()
+                )
+                if (this.place?.world && this.place?.world_name) {
+                  await changeRealm({
+                    realm: this.place.world_name as string
+                  })
+                } else if (currentRealmProviderIsWorld()) {
+                  // TODO REVIEW if that URL is ok
+                  await changeRealm({
+                    realm: 'https://realm-provider.decentraland.org/main'
+                  })
                 }
-
                 await teleportTo({
                   worldCoordinates: { x: coord.x, y: coord.y }
                 })

@@ -31,6 +31,7 @@ import { getMainMenuHeight } from '../../ui-classes/main-menu/MainMenu'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { currentRealmProviderIsWorld } from '../../service/realm-change'
 import { MenuBar } from '../menu-bar'
+import { PlaceRepresentation } from '../../ui-classes/main-hud/big-map/big-map-view'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -120,7 +121,9 @@ function SceneCatalogContent(): ReactElement {
   const [searchText, setSearchText] = useState<string>('')
   const debouncedSearchText = useDebouncedValue(searchText, 300)
   const [loading, setLoading] = useState<boolean>(true)
-  const [placeTypeActiveIndex, setPlaceTypeActiveIndex] = useState<number>(0)
+  const [placeTypeActiveIndex, setPlaceTypeActiveIndex] = useState<number>(
+    PLACE_TYPES.indexOf(store.getState().hud.placeType)
+  )
   useEffect(() => {
     if (!getUiController().sceneInfoCardVisible) {
       store.dispatch(
@@ -304,12 +307,11 @@ function SceneCatalogContent(): ReactElement {
                   if (
                     store.getState().hud.placeListActiveItem?.id === place.id
                   ) {
-                    const coords = fromStringToCoords(place.base_position)
-                    getUiController().sceneCard.showByCoords(
-                      Vector3.create(coords.x, 0, coords.y)
+                    getUiController().sceneCard.showByData(
+                      place as PlaceRepresentation
                     )
                   } else {
-                    if (!place.world) {
+                    if (!place.world && !currentRealmProviderIsWorld()) {
                       displaceCamera(
                         fromParcelCoordsToPosition(
                           fromStringToCoords(place.base_position),
