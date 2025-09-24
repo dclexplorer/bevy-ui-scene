@@ -10,6 +10,7 @@ import {
 import {
   engine,
   executeTask,
+  PointerLock,
   PrimaryPointerInfo,
   Transform
 } from '@dcl/sdk/ecs'
@@ -67,7 +68,8 @@ export const BigMap = (): ReactElement => {
     <UiEntity
       uiTransform={{
         width: '100%',
-        height: '100%'
+        height: '100%',
+        pointerFilter: 'block'
       }}
     >
       <BigMapContent />
@@ -111,7 +113,16 @@ function BigMapContent(): ReactElement {
   const [allRepresentations, setAllRepresentations] = useState<
     PlaceRepresentation[]
   >([])
+
   // TODO review if it makes sense all the useEffect and their listenings
+  useEffect(() => {
+    // Avoid hiding mouse cursor with right click / camera lock
+    if (PointerLock.get(engine.CameraEntity).isPointerLocked) {
+      executeTask(async () => {
+        PointerLock.getMutable(engine.CameraEntity).isPointerLocked = false
+      })
+    }
+  }, [PointerLock.get(engine.CameraEntity).isPointerLocked])
 
   useEffect(() => {
     store.dispatch(
