@@ -50,7 +50,7 @@ export function MapBottomLeftBar(): ReactElement {
           uiTransform={{
             flexShrink: 0
           }}
-          icon={{ spriteName: 'orbitToTop', atlasName: 'map2' }}
+          icon={{ spriteName: 'top-view', atlasName: 'icons' }}
           iconSize={getHudFontSize(getViewportHeight()).BIG * 1.5}
           iconColor={COLOR.TEXT_COLOR}
         />

@@ -18,8 +18,16 @@ import {
   currentRealmProviderIsWorld,
   getRealmName
 } from '../../../service/realm-change'
+import { truncateWithoutBreakingWords } from '../../../utils/ui-utils'
+import { UiTransformProps } from '@dcl/sdk/react-ecs'
 
-export function MapStatusBar(): ReactElement {
+export function MapStatusBar({
+  fontSize,
+  uiTransform
+}: {
+  fontSize: number
+  uiTransform: UiTransformProps
+}): ReactElement {
   const [coordsStr, setCoordsStr] = useState<string>('-,-')
   useEffect(() => {
     try {
@@ -41,23 +49,28 @@ export function MapStatusBar(): ReactElement {
       const worldStr = currentRealmProviderIsWorld()
         ? getRealmName()
         : 'Genesis City'
-      setCoordsStr(`${x},${y} ${parcelName} ${worldStr}`)
+
+      setCoordsStr(
+        `${x},${y}\n<b>${truncateWithoutBreakingWords(
+          parcelName.trim() || worldStr,
+          24
+        )}</b>`
+      )
     } catch (error) {}
   })
 
   return (
     <UiEntity
       uiTransform={{
-        positionType: 'absolute',
-        position: { bottom: 0, left: 0 }
+        justifyContent: 'flex-start',
+        alignSelf: 'flex-start',
+        ...uiTransform
       }}
       uiText={{
         value: coordsStr,
         color: COLOR.WHITE,
-        fontSize: getViewportHeight() * 0.02
-      }}
-      uiBackground={{
-        color: COLOR.DARK_OPACITY_5
+        fontSize,
+        textAlign: 'middle-left'
       }}
     />
   )
