@@ -49,7 +49,7 @@ export function MapStatusBar(): ReactElement {
     <UiEntity
       uiTransform={{
         positionType: 'absolute',
-        position: { bottom: 0 }
+        position: { bottom: 0, left: 0 }
       }}
       uiText={{
         value: coordsStr,
