@@ -171,7 +171,7 @@ function BigMapContent(): ReactElement {
                   )
               ) as PlaceRepresentation[])
 
-      setPlacesRepresentations(_representations.slice(0, MAX_PINS_TO_SHOW)) // TODO this is not the best, I would like to limit the rendered on screen
+      setPlacesRepresentations(_representations) // TODO this is not the best, I would like to limit the rendered on screen
     }
     console.log(
       'updating place representations big map based on []',

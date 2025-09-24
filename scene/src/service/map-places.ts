@@ -144,10 +144,13 @@ export const loadCompleteMapPlaces = async (): Promise<
     (await fetch(`${PLACES_BASE_URL}/api/categories`).then((res) => res.json()))
       .data ?? DEFAULT_CATEGORIES
   state.categories = categories
-
+  const MAX_PLACES_PER_CATEGORY = 100
   for (let category of categories) {
     let placesPerCategory: Record<string, Place> = {}
-    while (Object.values(placesPerCategory ?? {}).length < category.count) {
+    while (
+      Object.values(placesPerCategory ?? {}).length <
+      Math.min(MAX_PLACES_PER_CATEGORY, category.count)
+    ) {
       const url = `${PLACES_BASE_URL}/api/places?offset=${state.offset}&limit=${LIMIT}&categories=${category.name}&order_by=like_score`
       const response = await fetch(url).then(async (r) => await r.json())
       if (!response?.data?.length) {

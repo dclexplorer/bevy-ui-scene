@@ -154,22 +154,7 @@ function SceneCatalogContent(): ReactElement {
     store.getState().hud.sceneCatalogOrder,
     store.getState().hud.placeType
   ])
-  /*  useEffect(() => {
-    // TODO select appropriate places server/source
-    executeTask(async () => {
-      const response = await fetchList({
-        searchText,
-        categories: store.getState().hud.mapFilterCategories,
-        currentPage
-      })
-      setLoading(false)
-      store.dispatch(
-        updateHudStateAction({
-          sceneList: response
-        })
-      )
-    })
-  }, [store.getState().hud.mapFilterCategories])*/
+
   const fontSize = getViewportHeight() * 0.015
 
   return (
