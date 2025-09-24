@@ -51,7 +51,10 @@ import {
   isHomePlace
 } from './place-decoration'
 import { fetchLiveEvents } from '../../../utils/fetch-live-events'
-import { EventFromApi } from '../../scene-info-card/SceneInfoCard.types'
+import {
+  EventFromApi,
+  PlaceFromApi
+} from '../../scene-info-card/SceneInfoCard.types'
 import { currentRealmProviderIsWorld } from '../../../service/realm-change'
 import { MapFooter } from './map-footer'
 
@@ -90,6 +93,7 @@ export type OrderType =
 
 function BigMapContent(): ReactElement {
   const [liveEvents, setLiveEvents] = useState<EventFromApi[]>([]) // TODO fix any type
+  const [favoritePlaces, setFavoritePlaces] = useState<PlaceFromApi[]>([])
   const [placesRepresentations, setPlacesRepresentations] = useState<
     PlaceRepresentation[]
   >([])
@@ -134,6 +138,17 @@ function BigMapContent(): ReactElement {
       )
 
       try {
+        const _favoritePlaces = await BevyApi.kernelFetch({
+          url: `https://places.decentraland.org/api/places?only_favorites=true`,
+          init: {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+          },
+          meta: JSON.stringify({})
+        })
+          .then((r) => JSON.parse(r.body))
+          .then((r) => r.data)
+        setFavoritePlaces(_favoritePlaces)
         const home = await BevyApi.getHomeScene()
         const homePlace = await fetchPlaceFromCoords(
           Vector3.create(home.parcel.x, 0, home.parcel.y)
@@ -189,6 +204,10 @@ function BigMapContent(): ReactElement {
       const _allRepresentations: PlaceRepresentation[] = dedupeById(
         [
           playerRespresentation,
+          ...favoritePlaces.map((f) => ({
+            ...decoratePlaceRepresentation(f),
+            user_favorite: true
+          })),
           decoratePlaceRepresentation(store.getState().hud.homePlace),
           ...store
             .getState()
@@ -198,7 +217,7 @@ function BigMapContent(): ReactElement {
       )
       setAllRepresentationsWithLiveEvents(_allRepresentations)
     }
-  }, [store.getState().hud.sceneList])
+  }, [store.getState().hud.sceneList, favoritePlaces])
   useEffect(() => {
     const playerParcel = getPlayerParcel()
     let _playerRepresentation: PlaceRepresentation =
@@ -218,6 +237,10 @@ function BigMapContent(): ReactElement {
     const _allRepresentations: PlaceRepresentation[] = dedupeById(
       [
         _playerRepresentation,
+        ...favoritePlaces.map((f) => ({
+          ...decoratePlaceRepresentation(f),
+          user_favorite: true
+        })),
         decoratePlaceRepresentation(store.getState().hud.homePlace),
         ...placesRepresentations.map(decoratePlaceRepresentation),
         decoratePlaceRepresentation(store.getState().hud.placeListActiveItem)
@@ -227,7 +250,8 @@ function BigMapContent(): ReactElement {
   }, [
     getPlayerParcel(),
     placesRepresentations,
-    store.getState().hud.placeListActiveItem
+    store.getState().hud.placeListActiveItem,
+    favoritePlaces
   ])
 
   function setAllRepresentationsWithLiveEvents(
@@ -338,7 +362,8 @@ function BigMapContent(): ReactElement {
               if (!position.onScreen) return null
               const sizeMultiplier = placeRepresentation.isActive
                 ? 2
-                : placeRepresentation.sprite.spriteName === 'PinPOI'
+                : placeRepresentation.sprite.spriteName === 'PinPOI' ||
+                  placeRepresentation.user_favorite
                 ? 1.5
                 : placeRepresentation.sprite.spriteName === 'PinLive'
                 ? 1.5

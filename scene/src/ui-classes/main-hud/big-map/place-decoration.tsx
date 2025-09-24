@@ -36,7 +36,9 @@ export function _decoratePlaceRepresentation(
 function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
   let spriteName = ''
   let atlasName: Atlas = 'map2'
-  if (
+  if (placeRepresentation.user_favorite) {
+    spriteName = `PinFavourite`
+  } else if (
     store.getState().hud.placeListActiveItem &&
     placeRepresentation.id === store.getState().hud.placeListActiveItem?.id
   ) {
