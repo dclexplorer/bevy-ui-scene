@@ -45,6 +45,11 @@ export const ORDER_OPTIONS: { orderKey: SceneCatalogOrder; label: string }[] = [
   { orderKey: 'like_score', label: `MOST LIKED` },
   { orderKey: 'updated_at', label: `MOST FRESH` }
 ]
+export type PlaceListResponse = {
+  total: number
+  data: Place[]
+}
+const cachedRequests = new Map<string, PlaceListResponse>()
 
 async function fetchList({
   searchText,
@@ -72,10 +77,12 @@ async function fetchList({
       '&'
     )}&search=${searchText}&order_by=${orderKey}&order=desc&with_realms_detail=true`
 
-  console.log('url', url)
-
   if (categories?.includes('favorites')) {
     url += `&only_favorites=true`
+  }
+
+  if (cachedRequests.has(url)) {
+    return cachedRequests.get(url) as PlaceListResponse
   }
 
   const response = await BevyApi.kernelFetch({
@@ -86,6 +93,9 @@ async function fetchList({
     },
     meta: JSON.stringify({})
   }).then((r) => JSON.parse(r.body))
+
+  cachedRequests.set(url, response)
+
   return response
 }
 let recreatingInputWorkaround = false
