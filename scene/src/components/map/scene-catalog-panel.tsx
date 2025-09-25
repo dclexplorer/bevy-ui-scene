@@ -20,7 +20,7 @@ import Icon from '../icon/Icon'
 import { Vector3 } from '@dcl/sdk/math'
 import { displaceCamera } from '../../service/map/map-camera'
 import { updateHudStateAction } from '../../state/hud/actions'
-import { Input } from '@dcl/sdk/react-ecs'
+import { Input, UiTransformProps } from '@dcl/sdk/react-ecs'
 import { useDebouncedValue } from '../../hooks/use-debounce'
 import { BevyApi } from '../../bevy-api'
 import { SceneCatalogOrder } from '../../state/hud/state'
@@ -49,12 +49,23 @@ export type PlaceListResponse = {
   total: number
   data: Place[]
 }
-
+const state = {
+  expanded: true
+}
 let recreatingInputWorkaround = false
-export function SceneCatalogPanel(): ReactElement {
+export function SceneCatalogPanel(): ReactElement[] {
   const width = getRightPanelWidth()
-
-  return (
+  if (!state.expanded) {
+    return [
+      <Expander
+        uiTransform={{
+          position: { top: '50%', right: -getViewportHeight() * 0.02 }
+        }}
+      />
+    ]
+  }
+  return [
+    <Expander />,
     <UiEntity
       uiTransform={{
         width,
@@ -72,12 +83,65 @@ export function SceneCatalogPanel(): ReactElement {
     >
       <SceneCatalogContent />
     </UiEntity>
-  )
+  ]
 }
 const PLACE_URL_PARAM_CATEGORY = 'categories'
 
+function Expander({
+  uiTransform
+}: {
+  uiTransform?: UiTransformProps
+}): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        width: getViewportHeight() * 0.04,
+        height: getViewportHeight() * 0.05,
+        positionType: 'absolute',
+        borderColor: COLOR.RED,
+        borderRadius: getViewportHeight() * 0.01,
+        borderWidth: 0,
+        position: {
+          top: '50%',
+          right: getRightPanelWidth() - getViewportHeight() * 0.02
+        },
+        ...uiTransform
+      }}
+      onMouseDown={() => {
+        state.expanded = !state.expanded
+      }}
+      uiBackground={{ color: COLOR.WHITE }}
+    >
+      <Icon
+        uiTransform={{
+          positionType: 'absolute',
+          position: { top: getViewportHeight() * 0.015, left: '-5%' }
+        }}
+        iconSize={getViewportHeight() * 0.02}
+        icon={{
+          spriteName: state.expanded ? 'RightArrow' : 'LeftArrow',
+          atlasName: 'icons'
+        }}
+        iconColor={COLOR.TEXT_COLOR}
+      />
+      <Icon
+        uiTransform={{
+          positionType: 'absolute',
+          position: { top: getViewportHeight() * 0.015, left: '2%' }
+        }}
+        iconSize={getViewportHeight() * 0.02}
+        icon={{
+          spriteName: state.expanded ? 'RightArrow' : 'LeftArrow',
+          atlasName: 'icons'
+        }}
+        iconColor={COLOR.TEXT_COLOR}
+      />
+    </UiEntity>
+  )
+}
 function SceneCatalogContent(): ReactElement {
   const list = store.getState().hud.sceneList.data
+  const [expanded, setExpanded] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [searchText, setSearchText] = useState<string>('')
   const debouncedSearchText = useDebouncedValue(searchText, 300)
@@ -150,6 +214,7 @@ function SceneCatalogContent(): ReactElement {
             uiTransform={{
               elementId: 'sceneSearchInput',
               width: '97.5%',
+              height: fontSize * 2,
               padding: fontSize / 2,
               borderRadius: fontSize / 2,
               borderWidth: 0,
@@ -383,7 +448,6 @@ async function fetchList({
   if (categories?.includes('favorites')) {
     url += `&only_favorites=true`
   }
-  console.log('fetchList url', url)
 
   if (cachedRequests.has(url)) {
     return cachedRequests.get(url) as PlaceListResponse
