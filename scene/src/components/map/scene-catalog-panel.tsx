@@ -49,55 +49,7 @@ export type PlaceListResponse = {
   total: number
   data: Place[]
 }
-const cachedRequests = new Map<string, PlaceListResponse>()
 
-async function fetchList({
-  searchText,
-  currentPage = 0
-}: FetchParams): Promise<{ total: number; data: Place[] }> {
-  const categories = store.getState().hud.mapFilterCategories
-  const orderKey = store.getState().hud.sceneCatalogOrder
-  const placeType = store.getState().hud.placeType
-  console.log('placeType', placeType)
-  const queryParameters =
-    categories?.includes('all') || categories?.includes('favorites')
-      ? []
-      : [
-          ...categories.map((c) => ({
-            key: PLACE_URL_PARAM_CATEGORY,
-            value: c
-          }))
-        ]
-
-  let url = `https://places.decentraland.org/api/${placeType}?offset=${
-    currentPage * LIMIT
-  }&limit=${LIMIT}&${queryParameters
-    .map((q) => `${q.key}=${q.value}`)
-    .join(
-      '&'
-    )}&search=${searchText}&order_by=${orderKey}&order=desc&with_realms_detail=true`
-
-  if (categories?.includes('favorites')) {
-    url += `&only_favorites=true`
-  }
-
-  if (cachedRequests.has(url)) {
-    return cachedRequests.get(url) as PlaceListResponse
-  }
-
-  const response = await BevyApi.kernelFetch({
-    url,
-    init: {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    },
-    meta: JSON.stringify({})
-  }).then((r) => JSON.parse(r.body))
-
-  cachedRequests.set(url, response)
-
-  return response
-}
 let recreatingInputWorkaround = false
 export function SceneCatalogPanel(): ReactElement {
   const width = getRightPanelWidth()
@@ -109,11 +61,10 @@ export function SceneCatalogPanel(): ReactElement {
         height: getViewportHeight() - getMainMenuHeight(),
         positionType: 'absolute',
         position: {
-          right: -10,
+          right: 0,
           top: getMainMenuHeight()
         },
-        pointerFilter: 'block',
-        borderWidth: 5
+        pointerFilter: 'block'
       }}
       uiBackground={{
         color: COLOR.PANEL_BACKGROUND_LIGHT
@@ -400,4 +351,53 @@ function SceneCatalogContent(): ReactElement {
 
 export function getPlaceAuthor(place: Place) {
   return place.owner ?? place.contact_name
+}
+const cachedRequests = new Map<string, PlaceListResponse>()
+
+async function fetchList({
+  searchText,
+  currentPage = 0
+}: FetchParams): Promise<{ total: number; data: Place[] }> {
+  const categories = store.getState().hud.mapFilterCategories
+  const orderKey = store.getState().hud.sceneCatalogOrder
+  const placeType = store.getState().hud.placeType
+  console.log('placeType', placeType)
+  const queryParameters =
+    categories?.includes('all') || categories?.includes('favorites')
+      ? []
+      : [
+          ...categories.map((c) => ({
+            key: PLACE_URL_PARAM_CATEGORY,
+            value: c
+          }))
+        ]
+
+  let url = `https://places.decentraland.org/api/${placeType}?offset=${
+    currentPage * LIMIT
+  }&limit=${LIMIT}&${queryParameters
+    .map((q) => `${q.key}=${q.value}`)
+    .join(
+      '&'
+    )}&search=${searchText}&order_by=${orderKey}&order=desc&with_realms_detail=true`
+
+  if (categories?.includes('favorites')) {
+    url += `&only_favorites=true`
+  }
+
+  if (cachedRequests.has(url)) {
+    return cachedRequests.get(url) as PlaceListResponse
+  }
+
+  const response = await BevyApi.kernelFetch({
+    url,
+    init: {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    },
+    meta: JSON.stringify({})
+  }).then((r) => JSON.parse(r.body))
+
+  cachedRequests.set(url, response)
+
+  return response
 }

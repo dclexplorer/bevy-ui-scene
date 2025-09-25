@@ -20,6 +20,7 @@ import { Quaternion, Vector3 } from '@dcl/sdk/math'
 import Icon from '../../../components/icon/Icon'
 import {
   getCanvasScaleRatio,
+  getRightPanelWidth,
   getViewportHeight,
   getViewportWidth
 } from '../../../service/canvas-ratio'
@@ -45,7 +46,6 @@ import { AtlasIcon } from '../../../utils/definitions'
 import { MapBottomLeftBar } from '../../../components/map/map-bottom-left-bar'
 import { BevyApi } from '../../../bevy-api'
 import { fetchPlaceFromCoords } from '../../../utils/promise-utils'
-import { MapStatusBar } from './map-status-bar'
 import {
   decoratePlaceRepresentation,
   getZIndexForPlaceSymbol,
@@ -58,6 +58,7 @@ import {
 } from '../../scene-info-card/SceneInfoCard.types'
 import { currentRealmProviderIsWorld } from '../../../service/realm-change'
 import { MapFooter } from './map-footer'
+import { getMainMenuHeight } from '../../main-menu/MainMenu'
 
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
@@ -297,8 +298,10 @@ function BigMapContent(): ReactElement {
   return (
     <UiEntity
       uiTransform={{
-        width: '100%',
-        height: '100%'
+        position: { top: getMainMenuHeight(), left: 0 },
+        width: getViewportWidth() * getRightPanelWidth(),
+        height: getViewportHeight() - getMainMenuHeight(),
+        overflow: 'hidden'
       }}
       uiBackground={{}}
       onMouseDrag={() => {
@@ -385,7 +388,7 @@ function BigMapContent(): ReactElement {
                     positionType: 'absolute',
                     position: {
                       left: position.left,
-                      top: position.top
+                      top: position.top - getMainMenuHeight()
                     },
                     flexDirection: 'column',
                     alignItems: 'center',
