@@ -19,7 +19,7 @@ export async function init(retry: boolean): Promise<void> {
   executeTask(async () => {
     await sleep(100)
 
-    store.dispatch(updateHudStateAction({ loggedIn: true }))
+    // store.dispatch(updateHudStateAction({ loggedIn: true }))
     // store.dispatch(updateHudStateAction({ realmURL: (await getRealm({})).realmInfo!.baseUrl}))
     /*    store.dispatch(
       pushPopupAction({
