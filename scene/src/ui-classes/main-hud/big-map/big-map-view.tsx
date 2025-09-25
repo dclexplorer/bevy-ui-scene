@@ -164,7 +164,6 @@ function BigMapContent(): ReactElement {
         const homePlace = await fetchPlaceFromCoords(
           Vector3.create(home.parcel.x, 0, home.parcel.y)
         )
-        console.log('homePlace', homePlace)
         if (homePlace)
           store.dispatch(
             updateHudStateAction({

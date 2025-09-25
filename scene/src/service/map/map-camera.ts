@@ -23,6 +23,7 @@ import {
   listenSystemAction,
   unlistenSystemAction
 } from '../system-actions-emitter'
+import { createMoveTween } from '../tween'
 
 type MapCameraState = {
   initialized: boolean
@@ -198,25 +199,23 @@ export const displaceCamera = (targetPosition: Vector3) => {
       })
     )
   }
-  Tween.createOrReplace(getBigMapCameraEntity(), {
-    mode: Tween.Mode.Move({
-      start: Vector3.clone(mapCameraTransform.position),
-      end: Vector3.add(targetPosition, ISO_OFFSET_3)
-    }),
-    duration: DISPLACE_TIME,
-    easingFunction: EasingFunction.EF_EASECUBIC
-  })
-  executeTask(async () => {
-    await sleep(DISPLACE_TIME)
+  const tween = createMoveTween(
+    Vector3.clone(state.targetPosition),
+    targetPosition,
+    DISPLACE_TIME / 1000,
+    state.targetPosition
+  )
+
+  tween.onComplete(() => {
     store.dispatch(
       updateHudStateAction({
         movingMap: false
       })
     )
     state.targetPosition = Vector3.clone(targetPosition)
-    console.log('targetPosition place coords')
   })
 }
+
 export const deactivateMapCamera = () => {
   // TODO REVIEW IF THIS IS REMOVED AND ADDED AGAIN
   console.log('REMOVE_SYSTEM_MAP_CAMERA')

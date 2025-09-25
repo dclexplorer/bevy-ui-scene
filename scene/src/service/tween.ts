@@ -9,7 +9,12 @@ export function createTween({
   startValue: number
   endValue: number
   time: number
-}) {
+}): {
+  readonly value: number
+  cancel: () => void
+  onUpdate: (cb: (value: number, t: number) => void) => () => boolean
+  onComplete: (cb: () => void) => () => boolean
+} {
   const state = {
     startTime: Date.now(),
     startValue,
@@ -72,20 +77,23 @@ export function createTween({
     }
   }
 }
-
+// TODO createTween has 1 param which is object, try to normalize in all tween functions
 export const createMoveTween = (
   start: Vector3.ReadonlyVector3,
   end: Vector3.ReadonlyVector3,
   time: number,
   mutable: Vector3.MutableVector3
 ) => {
-  createTween({
+  const { onComplete, onUpdate } = createTween({
     startValue: 0,
     endValue: 1,
     time
-  }).onUpdate((t) => {
+  })
+  onUpdate((t) => {
     Object.assign(mutable, Vector3.lerp(start, end, t))
   })
+
+  return { onComplete }
 }
 
 export const createRotateTween = (
