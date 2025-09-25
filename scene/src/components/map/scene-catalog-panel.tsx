@@ -378,11 +378,12 @@ async function fetchList({
     .map((q) => `${q.key}=${q.value}`)
     .join(
       '&'
-    )}&search=${searchText}&order_by=${orderKey}&order=desc&with_realms_detail=true`
+    )}&search=${searchText}&order_by=${getOrderKey()}&order=desc&with_realms_detail=true`
 
   if (categories?.includes('favorites')) {
     url += `&only_favorites=true`
   }
+  console.log('fetchList url', url)
 
   if (cachedRequests.has(url)) {
     return cachedRequests.get(url) as PlaceListResponse
@@ -400,4 +401,14 @@ async function fetchList({
   cachedRequests.set(url, response)
 
   return response
+
+  function getOrderKey() {
+    // TODO until fix in places API
+    if (placeType === 'worlds') {
+      if (orderKey === 'updated_at') {
+        return 'created_at'
+      }
+    }
+    return orderKey
+  }
 }
