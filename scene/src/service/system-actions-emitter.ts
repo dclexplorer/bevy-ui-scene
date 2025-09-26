@@ -11,7 +11,9 @@ export function listenSystemAction(
 ): () => void {
   systemActionsEmitter.subscribe(action, fn)
 
-  return (): void => { unlistenSystemAction(action, fn); }
+  return (): void => {
+    unlistenSystemAction(action, fn)
+  }
 }
 
 export function unlistenSystemAction(action: string, fn: () => void): void {

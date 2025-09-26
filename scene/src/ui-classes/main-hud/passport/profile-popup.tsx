@@ -42,7 +42,7 @@ import { sleep } from '../../../utils/dcl-utils'
 export function setupProfilePopups(): void {
   const avatarTracker = createOrGetAvatarsTracker()
   avatarTracker.onClick((userId) => {
-    if (!(getPlayer({ userId })?.isGuest)) {
+    if (!getPlayer({ userId })?.isGuest) {
       // TODO AvatarModifierType.AMT_DISABLE_PASSPORTS
 
       PointerLock.getMutable(engine.CameraEntity).isPointerLocked = false
