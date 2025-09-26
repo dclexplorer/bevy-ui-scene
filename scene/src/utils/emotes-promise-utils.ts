@@ -71,7 +71,7 @@ export async function fetchEmotesPage(
       searchFilter
     })}`
     if (pageCache.has(emoteCatalogPageURL)) {
-      return pageCache.get(emoteCatalogPageURL)
+      return pageCache.get(emoteCatalogPageURL) as EmotesPageResponse
     }
     const emotesPageResponse: EmotesPageResponse =
       await fetchJsonOrTryFallback(emoteCatalogPageURL)

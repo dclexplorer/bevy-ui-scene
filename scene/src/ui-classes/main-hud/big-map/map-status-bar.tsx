@@ -40,7 +40,7 @@ export function MapStatusBar({
         mapCameraTransform.position,
         mapCameraTransform.rotation,
         FOV
-      )
+      ) as Vector3
 
       const { x, y } = getVector3Parcel(targetPosition)
       const place = getPlacesAroundParcel({ x, y }, 0)

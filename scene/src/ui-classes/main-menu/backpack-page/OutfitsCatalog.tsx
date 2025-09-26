@@ -169,7 +169,7 @@ export const OutfitsCatalog = (): ReactElement => {
 
               {!isEmptySlot(viewSlot) &&
                 FilledOutfitSlot({
-                  viewSlot,
+                  viewSlot: viewSlot as OutfitDefinition,
                   slotIndex: index
                 })}
               {isEmptySlot(viewSlot) && isFirstAvailableSlot(index) && (
@@ -262,9 +262,8 @@ export const OutfitsCatalog = (): ReactElement => {
         skinColor: viewSlot?.skin.color ?? undefined,
         hairColor: viewSlot?.hair.color ?? undefined,
         eyesColor: viewSlot?.eyes.color ?? undefined,
-        bodyShapeUrn: viewSlot?.bodyShape,
-
-        name: (viewSlot?.name) ?? getPlayer()?.name
+        bodyShapeUrn: viewSlot?.bodyShape as URNWithoutTokenId,
+        name: (viewSlot?.name as string) ?? getPlayer()?.name
       })
     )
 
@@ -315,7 +314,7 @@ function isEmptySlot(viewSlot: OutfitDefinition | null): boolean {
 function deleteOutfitSlot(index: number): void {
   const backpackState = store.getState().backpack
   const currentOutfitsMetadata: OutfitsMetadata =
-    backpackState.outfitsMetadata
+    backpackState.outfitsMetadata as OutfitsMetadata
   const newOutfitsMetadata: OutfitsMetadata = cloneDeep(currentOutfitsMetadata)
 
   newOutfitsMetadata.outfits = newOutfitsMetadata.outfits.filter(
@@ -329,13 +328,13 @@ function deleteOutfitSlot(index: number): void {
 async function saveOutfitSlot(index: number): Promise<void> {
   const backpackState = store.getState().backpack
   const currentOutfitsMetadata: OutfitsMetadata =
-    backpackState.outfitsMetadata
+    backpackState.outfitsMetadata as OutfitsMetadata
   const newOutfitsMetadata: OutfitsMetadata = cloneDeep(currentOutfitsMetadata)
   const outfitDefinition: OutfitDefinition = {
     bodyShape: backpackState.outfitSetup.base.bodyShapeUrn,
-    eyes: { color: backpackState.outfitSetup.base.eyesColor },
-    hair: { color: backpackState.outfitSetup.base.hairColor },
-    skin: { color: backpackState.outfitSetup.base.skinColor },
+    eyes: { color: backpackState.outfitSetup.base.eyesColor as RGBColor },
+    hair: { color: backpackState.outfitSetup.base.hairColor as RGBColor },
+    skin: { color: backpackState.outfitSetup.base.skinColor as RGBColor },
     wearables: getItemsWithTokenId(backpackState.equippedWearables),
     forceRender: backpackState.forceRender,
     name: backpackState.outfitSetup.base.name

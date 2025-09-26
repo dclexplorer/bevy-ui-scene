@@ -74,7 +74,8 @@ export function MapBottomLeftBar(): ReactElement {
             const homePlaceRepresentation = decoratePlaceRepresentation(
               store.getState().hud.homePlace
             )
-            displaceCamera(homePlaceRepresentation.centralParcelCoords)
+            if (homePlaceRepresentation)
+              displaceCamera(homePlaceRepresentation.centralParcelCoords)
           }}
         >
           <Icon

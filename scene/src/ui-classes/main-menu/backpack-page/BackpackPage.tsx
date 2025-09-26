@@ -176,7 +176,7 @@ export default class BackpackPage {
     store.dispatch(
       updateAvatarBase({
         ...store.getState().backpack.outfitSetup.base,
-        name: getPlayer()?.name,
+        name: getPlayer()?.name as string,
         eyesColor: player?.avatar?.eyesColor,
         hairColor: player?.avatar?.hairColor,
         skinColor: player?.avatar?.skinColor,
@@ -204,7 +204,7 @@ export default class BackpackPage {
       store.dispatch(updateLoadingPage(true))
       store.dispatch(
         updateLoadedOutfitsMetadataAction(
-          await fetchPlayerOutfitMetadata({ address: player?.userId })
+          await fetchPlayerOutfitMetadata({ address: player?.userId as string })
         )
       )
 

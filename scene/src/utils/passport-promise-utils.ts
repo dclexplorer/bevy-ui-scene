@@ -40,7 +40,7 @@ export async function fetchAllUserNames({
   userId: string
 }): Promise<NameDefinition[]> {
   if (namesCache.has(userId)) {
-    return namesCache.get(userId)
+    return namesCache.get(userId) as NameDefinition[]
   }
   const realm = await getRealm({})
   const catalystBaseURl = realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK

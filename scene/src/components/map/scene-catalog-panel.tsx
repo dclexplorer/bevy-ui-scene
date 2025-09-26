@@ -40,7 +40,10 @@ export type FetchParams = {
   currentPage?: number
 }
 export const PLACE_TYPES: Array<'places' | 'worlds'> = ['places', 'worlds']
-export const ORDER_OPTIONS: Array<{ orderKey: SceneCatalogOrder; label: string }> = [
+export const ORDER_OPTIONS: Array<{
+  orderKey: SceneCatalogOrder
+  label: string
+}> = [
   { orderKey: 'most_active', label: `MOST ACTIVE` },
   { orderKey: 'like_score', label: `MOST LIKED` },
   { orderKey: 'updated_at', label: `MOST FRESH` }
@@ -450,7 +453,7 @@ async function fetchList({
   }
 
   if (cachedRequests.has(url)) {
-    return cachedRequests.get(url)
+    return cachedRequests.get(url) as PlaceListResponse
   }
 
   const response = await BevyApi.kernelFetch({

@@ -20,7 +20,7 @@ export function _decoratePlaceRepresentation(
   if (place === null || place === undefined) return null
   const centralParcelCoords = fromParcelCoordsToPosition(
     fromStringToCoords(
-      getCentralParcel([...place.positions, place.base_position])
+      getCentralParcel([...place.positions, place.base_position]) as string
     ),
     { height: 0 }
   )

@@ -15,7 +15,7 @@ export function getItemsWithTokenId(
   wearables: Array<URNWithoutTokenId | EquippedEmote>
 ): URN[] {
   return wearables.map(
-    (wearableURN) => urnWithTokenIdMemo.get(wearableURN)
+    (wearableURN) => urnWithTokenIdMemo.get(wearableURN) as URN
   )
 }
 
@@ -26,7 +26,7 @@ export function getURNWithoutTokenId(
   if (urn === null) return null
 
   if (!avoidCache && urnWithoutTokenIdMemo.has(urn as URN)) {
-    return urnWithoutTokenIdMemo.get(urn as URN)
+    return urnWithoutTokenIdMemo.get(urn as URN) as URNWithoutTokenId
   }
 
   let urnWithoutTokenId: URNWithoutTokenId

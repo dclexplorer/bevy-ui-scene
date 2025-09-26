@@ -53,7 +53,7 @@ export const updateOutfitAvatar = (
 export const initOutfitsCatalog = async (): Promise<void> => {
   await waitFor(() => store.getState().backpack.outfitsMetadata !== null)
   const backpackState = store.getState().backpack
-  const outfitsMetadata = backpackState.outfitsMetadata
+  const outfitsMetadata = backpackState.outfitsMetadata as OutfitsMetadata
   const viewSlots: Array<OutfitDefinition | null> = [...SLOTS]
   const outfitsCameraEntity = (catalogEntities.camera = engine.addEntity())
   const cameraPosition = Vector3.create(
@@ -71,7 +71,7 @@ export const initOutfitsCatalog = async (): Promise<void> => {
       orthographic: { verticalRange: AVATAR_FRAME_SIZE * 3 }
     }
   })
-  outfitsMetadata.outfits.forEach((outfitMetadata) => {
+  outfitsMetadata?.outfits.forEach((outfitMetadata) => {
     viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
   })
 

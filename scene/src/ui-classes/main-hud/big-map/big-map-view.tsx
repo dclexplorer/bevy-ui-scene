@@ -108,7 +108,7 @@ function BigMapContent(): ReactElement {
         positions: [],
         categories: [PLAYER_PLACE_ID],
         base_position: `${initialPlayerParcel.x},${initialPlayerParcel.y}`
-      })
+      }) as PlaceRepresentation
     )
   const [allRepresentations, setAllRepresentations] = useState<
     PlaceRepresentation[]
@@ -193,7 +193,7 @@ function BigMapContent(): ReactElement {
                       store.getState().hud.mapFilterCategories.includes(c) ||
                       store.getState().hud.mapFilterCategories[0] === 'all'
                   )
-              ))
+              ) as PlaceRepresentation[])
 
       setPlacesRepresentations(_representations) // TODO this is not the best, I would like to limit the rendered on screen
     }
@@ -238,7 +238,7 @@ function BigMapContent(): ReactElement {
         centralParcelCoords: fromParcelCoordsToPosition(playerParcel, {
           height: 0
         })
-      })
+      }) as PlaceRepresentation
 
     setPlayerRespresentation(_playerRepresentation)
 
@@ -281,11 +281,8 @@ function BigMapContent(): ReactElement {
             hasLive: true
           })
         )
-        .filter((i) => i)
-    console.log(
-      'orphanLiveEventPlaceRepresentations',
-      orphanLiveEventPlaceRepresentations.length
-    )
+        .filter((i) => i) as PlaceRepresentation[]
+
     setAllRepresentations([
       ..._allRepresentations,
       ...orphanLiveEventPlaceRepresentations
@@ -337,7 +334,7 @@ function BigMapContent(): ReactElement {
             mapCameraTransform.position,
             mapCameraTransform.rotation,
             FOV
-          )
+          ) as Vector3
 
           displaceCamera(targetPosition)
 
