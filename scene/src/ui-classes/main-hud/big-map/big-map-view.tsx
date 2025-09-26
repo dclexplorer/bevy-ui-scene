@@ -285,30 +285,32 @@ function BigMapContent(): ReactElement {
   }
 
   // TODO optimize, only calculate when camera position or rotation changes, and with throttle or when mustShowPins()
-  const onScreenRepresentations = allRepresentations
-    .map((placeRepresentation) => {
-      return {
-        ...placeRepresentation,
-        screenPosition: worldToScreenPx(
-          placeRepresentation.centralParcelCoords,
-          Transform.getOrNull(getBigMapCameraEntity())?.position ??
-            Vector3.Zero(),
-          Transform.getOrNull(getBigMapCameraEntity())?.rotation ??
-            Quaternion.Zero(),
-          FOV,
-          getViewportWidth(),
-          getViewportHeight(),
-          {
-            fovIsHorizontal: false,
-            forwardIsNegZ: false
+  const onScreenRepresentations = !mustShowPins()
+    ? []
+    : allRepresentations
+        .map((placeRepresentation) => {
+          return {
+            ...placeRepresentation,
+            screenPosition: worldToScreenPx(
+              placeRepresentation.centralParcelCoords,
+              Transform.getOrNull(getBigMapCameraEntity())?.position ??
+                Vector3.Zero(),
+              Transform.getOrNull(getBigMapCameraEntity())?.rotation ??
+                Quaternion.Zero(),
+              FOV,
+              getViewportWidth(),
+              getViewportHeight(),
+              {
+                fovIsHorizontal: false,
+                forwardIsNegZ: false
+              }
+            )
           }
+        })
+        .filter((i) => i)
+        .filter(
+          (placeRepresentation) => placeRepresentation.screenPosition.onScreen
         )
-      }
-    })
-    .filter((i) => i)
-    .filter(
-      (placeRepresentation) => placeRepresentation.screenPosition.onScreen
-    )
 
   // TODO don't show genesis city points when in other realm/world/server
   return (
