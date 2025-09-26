@@ -154,7 +154,8 @@ export function worldToScreenPx(
   const left = Math.floor((ndcX + 1) * 0.5 * viewportWidth)
   const top = Math.floor((1 - (ndcY + 1) * 0.5) * viewportHeight)
 
-  const onScreen = ndcX >= -1 && ndcX <= 1 && ndcY >= -1 && ndcY <= 1
+  const onScreen =
+    left >= 0 && left <= viewportWidth && top >= 0 && top <= viewportHeight
   return { left, top, onScreen }
 }
 
