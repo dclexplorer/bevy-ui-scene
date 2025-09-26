@@ -151,8 +151,8 @@ export function worldToScreenPx(
   const ndcX = cam.x / (depth * tanHalf * aspect)
   const ndcY = cam.y / (depth * tanHalf)
 
-  const left = (ndcX + 1) * 0.5 * viewportWidth
-  const top = (1 - (ndcY + 1) * 0.5) * viewportHeight
+  const left = Math.floor((ndcX + 1) * 0.5 * viewportWidth)
+  const top = Math.floor((1 - (ndcY + 1) * 0.5) * viewportHeight)
 
   const onScreen = ndcX >= -1 && ndcX <= 1 && ndcY >= -1 && ndcY <= 1
   return { left, top, onScreen }

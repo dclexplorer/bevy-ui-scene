@@ -283,6 +283,33 @@ function BigMapContent(): ReactElement {
       ...orphanLiveEventPlaceRepresentations
     ])
   }
+
+  // TODO optimize, only calculate when camera position or rotation changes, and with throttle or when mustShowPins()
+  const onScreenRepresentations = allRepresentations
+    .map((placeRepresentation) => {
+      return {
+        ...placeRepresentation,
+        screenPosition: worldToScreenPx(
+          placeRepresentation.centralParcelCoords,
+          Transform.getOrNull(getBigMapCameraEntity())?.position ??
+            Vector3.Zero(),
+          Transform.getOrNull(getBigMapCameraEntity())?.rotation ??
+            Quaternion.Zero(),
+          FOV,
+          getViewportWidth(),
+          getViewportHeight(),
+          {
+            fovIsHorizontal: false,
+            forwardIsNegZ: false
+          }
+        )
+      }
+    })
+    .filter((i) => i)
+    .filter(
+      (placeRepresentation) => placeRepresentation.screenPosition.onScreen
+    )
+
   // TODO don't show genesis city points when in other realm/world/server
   return (
     <UiEntity
@@ -345,25 +372,12 @@ function BigMapContent(): ReactElement {
     >
       <MapFooter />
       <UiEntity uiTransform={{ positionType: 'absolute', position: 0 }}>
-        {mustShowPins() &&
-          allRepresentations.map((placeRepresentation) => {
+        {onScreenRepresentations.map(
+          (placeRepresentation: PlaceRepresentation) => {
             try {
               // TODO optimize, only calculate when camera position or rotation changes, and with throttle
-              const position = worldToScreenPx(
-                placeRepresentation.centralParcelCoords,
-                Transform.getOrNull(getBigMapCameraEntity())?.position ??
-                  Vector3.Zero(),
-                Transform.getOrNull(getBigMapCameraEntity())?.rotation ??
-                  Quaternion.Zero(),
-                FOV,
-                getViewportWidth(),
-                getViewportHeight(),
-                {
-                  fovIsHorizontal: false,
-                  forwardIsNegZ: false
-                }
-              )
-              if (!position.onScreen) return null
+              const position = placeRepresentation.screenPosition
+
               const sizeMultiplier = placeRepresentation.isActive
                 ? 2
                 : placeRepresentation.sprite.spriteName === 'PinPOI' ||
@@ -469,7 +483,8 @@ function BigMapContent(): ReactElement {
               console.error('ERROR IN MAP', error)
               return null
             }
-          })}
+          }
+        )}
       </UiEntity>
 
       <MapBottomLeftBar />
