@@ -86,12 +86,7 @@ export type PlaceRepresentation = Place & {
   sprite: AtlasIcon
   isActive: boolean
 }
-export type OrderType =
-  | 'most_active'
-  | 'like_score'
-  | 'updated_at'
-  | 'created_at'
-  | null
+export type OrderType = 'most_active' | 'like_score' | 'created_at' | null
 
 function BigMapContent(): ReactElement {
   const [liveEvents, setLiveEvents] = useState<EventFromApi[]>([]) // TODO fix any type

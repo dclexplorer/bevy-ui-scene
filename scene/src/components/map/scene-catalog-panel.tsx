@@ -17,7 +17,6 @@ import {
   getViewportHeight
 } from '../../service/canvas-ratio'
 import Icon from '../icon/Icon'
-import { Vector3 } from '@dcl/sdk/math'
 import { displaceCamera } from '../../service/map/map-camera'
 import { updateHudStateAction } from '../../state/hud/actions'
 import { Input, type UiTransformProps } from '@dcl/sdk/react-ecs'
@@ -28,7 +27,6 @@ import { sleep, waitFor } from '../../utils/dcl-utils'
 import { setUiFocus } from '~system/RestrictedActions'
 import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
 import { getMainMenuHeight } from '../../ui-classes/main-menu/MainMenu'
-import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { currentRealmProviderIsWorld } from '../../service/realm-change'
 import { MenuBar } from '../menu-bar'
 import { type PlaceRepresentation } from '../../ui-classes/main-hud/big-map/big-map-view'
@@ -144,8 +142,7 @@ function Expander({
 }
 function SceneCatalogContent(): ReactElement {
   const list = store.getState().hud.sceneList.data
-  const [expanded, setExpanded] = useState<boolean>(true)
-  const [currentPage, setCurrentPage] = useState<number>(0)
+  const [currentPage] = useState<number>(0) // TODO review why setCurrentPage is not used
   const [searchText, setSearchText] = useState<string>('')
   const debouncedSearchText = useDebouncedValue(searchText, 300)
   const [loading, setLoading] = useState<boolean>(true)
@@ -241,7 +238,9 @@ function SceneCatalogContent(): ReactElement {
               executeTask(async () => {
                 await sleep(0)
                 recreatingInputWorkaround = false
-                setUiFocus({ elementId: 'sceneSearchInput' })
+                setUiFocus({ elementId: 'sceneSearchInput' }).catch(
+                  console.error
+                )
               })
             }}
           />
@@ -321,9 +320,9 @@ function SceneCatalogContent(): ReactElement {
                   if (
                     store.getState().hud.placeListActiveItem?.id === place.id
                   ) {
-                    getUiController().sceneCard.showByData(
-                      place as PlaceRepresentation
-                    )
+                    getUiController()
+                      .sceneCard.showByData(place as PlaceRepresentation)
+                      .catch(console.error)
                   } else {
                     if (!place.world && !currentRealmProviderIsWorld()) {
                       displaceCamera(
@@ -417,9 +416,6 @@ function SceneCatalogContent(): ReactElement {
   )
 }
 
-export function getPlaceAuthor(place: Place) {
-  return place.owner ?? place.contact_name
-}
 const cachedRequests = new Map<string, PlaceListResponse>()
 
 async function fetchList({
@@ -427,7 +423,7 @@ async function fetchList({
   currentPage = 0
 }: FetchParams): Promise<{ total: number; data: Place[] }> {
   const categories = store.getState().hud.mapFilterCategories
-  const orderKey = store.getState().hud.sceneCatalogOrder
+  const orderKey: SceneCatalogOrder = store.getState().hud.sceneCatalogOrder
   const placeType = store.getState().hud.placeType
   console.log('placeType', placeType)
   const queryParameters =
@@ -469,7 +465,7 @@ async function fetchList({
 
   return response
 
-  function getOrderKey() {
+  function getOrderKey(): SceneCatalogOrder {
     // TODO until fix in places API
     if (placeType === 'worlds') {
       if (orderKey === 'updated_at') {

@@ -49,7 +49,7 @@ export function logout(): void {
   loadingAndLogin.setStatus('sign-in-or-guest')
 }
 let uiControllerSingletonInstance: UIController
-export const getUiController = () => uiControllerSingletonInstance
+export const getUiController = (): UIController => uiControllerSingletonInstance
 
 export class UIController {
   public isPhotosVisible: boolean = false

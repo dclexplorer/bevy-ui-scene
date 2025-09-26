@@ -58,7 +58,11 @@ export type HUDPopup = {
   type: HUD_POPUP_TYPE
   data?: unknown
 }
-export type SceneCatalogOrder = 'most_active' | 'like_score' | 'updated_at'
+export type SceneCatalogOrder =
+  | 'most_active'
+  | 'like_score'
+  | 'updated_at'
+  | 'created_at'
 export type HudState = {
   mapCameraIsOrbiting: boolean
   transitioningToMap: boolean

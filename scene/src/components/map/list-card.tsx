@@ -66,7 +66,7 @@ export function ListCard({
           {children}
         </Column>
       </Row>
-      {(active && activeFooter && (
+      {active && !!activeFooter ? (
         <UiEntity
           uiTransform={{
             position: { top: '-1%' }
@@ -80,8 +80,7 @@ export function ListCard({
             fontSize: getHudFontSize(getViewportHeight()).NORMAL
           }}
         />
-      )) ||
-        null}
+      ) : null}
     </Column>
   )
 }

@@ -4,8 +4,6 @@ import ReactEcs, {
   type UiBackgroundProps,
   UiEntity
 } from '@dcl/react-ecs'
-import { noop } from '../utils/function-utils'
-import { PBUiText } from '@dcl/ecs'
 import { type UiLabelProps } from '@dcl/react-ecs/dist/components/Label/types'
 export function Row({
   uiTransform,

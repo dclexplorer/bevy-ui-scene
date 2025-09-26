@@ -1,6 +1,5 @@
 import {
   type DeepReadonlyObject,
-  EasingFunction,
   engine,
   type Entity,
   executeTask,
@@ -11,7 +10,6 @@ import {
   type PBMainCamera,
   PrimaryPointerInfo,
   Transform,
-  Tween,
   VirtualCamera
 } from '@dcl/sdk/ecs'
 import { Quaternion, Vector3 } from '@dcl/sdk/math'
@@ -59,16 +57,16 @@ const state: MapCameraState = {
 let mapCamera: Entity
 let isKeyboardMoving = false
 
-export const getBigMapCameraEntity = () => mapCamera
+export const getBigMapCameraEntity = (): Entity => mapCamera
 
-export const closeBigMapIfActive = () => {
+export const closeBigMapIfActive = (): void => {
   if (store.getState().hud.mapModeActive) {
     deactivateMapCamera()
   }
 }
 const TRANSITION_MS = 2000
 
-function zoomInHandler() {
+function zoomInHandler(): void {
   const zoomFactor = 0.8
   const minDistance = 200
   const newDistance = state.targetCameraDistance * zoomFactor
@@ -77,7 +75,7 @@ function zoomInHandler() {
   }
 }
 
-function zoomOutHandler() {
+function zoomOutHandler(): void {
   const zoomFactor = 1.25
   const maxDistance = 3000
   const newDistance = state.targetCameraDistance * zoomFactor
@@ -86,8 +84,8 @@ function zoomOutHandler() {
   }
 }
 
-export const activateMapCamera = () => {
-  mapCamera = mapCamera || engine.addEntity()
+export const activateMapCamera = (): void => {
+  mapCamera = mapCamera ?? engine.addEntity()
 
   engine.addSystem(mapInputHandlingSystem)
   engine.addSystem(cameraPositionSystem, 1_000_001)

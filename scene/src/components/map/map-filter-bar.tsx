@@ -5,14 +5,14 @@ import {
   getViewportHeight,
   getViewportWidth
 } from '../../service/canvas-ratio'
-import { type FilterDefinition, MAP_FILTER_DEFINITIONS } from './map-definitions'
-import { Color4 } from '@dcl/sdk/math'
+import {
+  type FilterDefinition,
+  MAP_FILTER_DEFINITIONS
+} from './map-definitions'
 import { COLOR } from '../color-palette'
-import { getUiController } from '../../controllers/ui.controller'
 import { store } from '../../state/store'
 import { noop } from '../../utils/function-utils'
 import { updateHudStateAction } from '../../state/hud/actions'
-import { Label } from '@dcl/sdk/react-ecs'
 
 export function MapFilterBar(): ReactElement {
   return (
@@ -57,8 +57,8 @@ export function MapFilterBarButton({
   active?: boolean
   key?: string
   onClick?: () => void
-}) {
-  const { spriteName, label, id } = filterDefinition
+}): ReactElement {
+  const { spriteName, label } = filterDefinition
   return (
     <UiEntity
       uiTransform={{

@@ -97,8 +97,8 @@ export const fromParcelCoordsToPosition = (
 export const cleanMapPlaces = (): void => {
   state.places = {}
 }
-export const isMapPlacesLoaded = () => state.done
-export const getPlaceCategories = () => state.categories
+export const isMapPlacesLoaded = (): boolean => state.done
+export const getPlaceCategories = (): PlaceCategory[] => state.categories
 export const loadCompleteMapPlaces = async (): Promise<
   Record<string, Place>
 > => {
@@ -139,8 +139,11 @@ export const loadCompleteMapPlaces = async (): Promise<
     { name: 'parkour', count: 4, i18n: { en: '🏃 Parkour' } }
   ]
   const categories =
-    (await fetch(`${PLACES_BASE_URL}/api/categories`).then(async (res) => await res.json()))
-      .data ?? DEFAULT_CATEGORIES
+    (
+      await fetch(`${PLACES_BASE_URL}/api/categories`).then(
+        async (res) => await res.json()
+      )
+    ).data ?? DEFAULT_CATEGORIES
   state.categories = categories
   const MAX_PLACES_PER_CATEGORY = 100
   for (const category of categories) {
