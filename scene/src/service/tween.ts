@@ -1,5 +1,6 @@
-import { engine, Transform, Tween } from '@dcl/sdk/ecs'
+import { engine } from '@dcl/sdk/ecs'
 import { Quaternion, Vector3 } from '@dcl/sdk/math'
+import { type Callback } from '@dcl/sdk/react-ecs'
 
 export function createTween({
   startValue,
@@ -29,8 +30,8 @@ export function createTween({
     complete: new Set<() => void>()
   }
 
-  const lerp = (a: number, b: number, t: number) => a + (b - a) * t
-  const clamp01 = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x)
+  const lerp = (a: number, b: number, t: number): number => a + (b - a) * t
+  const clamp01 = (x: number): number => (x < 0 ? 0 : x > 1 ? 1 : x)
 
   function TweenSystem(dt: number): void {
     if (state.done) return
@@ -83,7 +84,7 @@ export const createMoveTween = (
   end: Vector3.ReadonlyVector3,
   time: number,
   mutable: Vector3.MutableVector3
-) => {
+): { onComplete: (fn: Callback) => void; onUpdate: (fn: Callback) => void } => {
   const { onComplete, onUpdate } = createTween({
     startValue: 0,
     endValue: 1,
@@ -93,7 +94,7 @@ export const createMoveTween = (
     Object.assign(mutable, Vector3.lerp(start, end, t))
   })
 
-  return { onComplete }
+  return { onComplete, onUpdate }
 }
 
 export const createRotateTween = (
@@ -101,7 +102,7 @@ export const createRotateTween = (
   endQuat: Quaternion,
   time: number,
   mutableQuat: Quaternion
-) => {
+): void => {
   createTween({
     startValue: 0,
     endValue: 1,

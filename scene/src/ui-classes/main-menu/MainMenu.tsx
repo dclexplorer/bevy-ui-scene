@@ -21,7 +21,6 @@ import {
 import { DeleteOutfitDialog } from './backpack-page/delete-outfit-dialog'
 import { noop } from '../../utils/function-utils'
 import { BevyApi } from '../../bevy-api'
-import { activateMapCamera } from '../../service/map/map-camera'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
@@ -366,6 +365,6 @@ export default class MainMenu {
     )
   }
 }
-export function getMainMenuHeight() {
+export function getMainMenuHeight(): number {
   return getViewportHeight() * 0.06
 }

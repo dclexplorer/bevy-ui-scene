@@ -78,7 +78,7 @@ export const PermissionsForm = ({
           ? playerScene
           : (liveSceneInfo.find(
               (s) => s.hash === selectedScene
-            ) as LiveSceneInfo)
+            ))
 
       if (selectedSceneItem) {
         setSelectedSceneHash(selectedSceneItem.hash)

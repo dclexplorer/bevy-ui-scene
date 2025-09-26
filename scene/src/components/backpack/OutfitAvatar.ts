@@ -53,7 +53,7 @@ export const updateOutfitAvatar = (
 export const initOutfitsCatalog = async (): Promise<void> => {
   await waitFor(() => store.getState().backpack.outfitsMetadata !== null)
   const backpackState = store.getState().backpack
-  const outfitsMetadata = backpackState.outfitsMetadata as OutfitsMetadata
+  const outfitsMetadata = backpackState.outfitsMetadata
   const viewSlots: Array<OutfitDefinition | null> = [...SLOTS]
   const outfitsCameraEntity = (catalogEntities.camera = engine.addEntity())
   const cameraPosition = Vector3.create(

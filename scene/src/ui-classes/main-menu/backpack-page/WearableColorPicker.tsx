@@ -127,7 +127,7 @@ function ColorPickerDialog({
   const backpackState = store.getState().backpack
   const baseColorKey: string = backpackState.activeWearableCategory
     ? (WEARABLE_CATEGORY_DEFINITIONS[backpackState.activeWearableCategory]
-        ?.baseColorKey as string)
+        ?.baseColorKey)
     : ''
   const colorPreset: Color4[] = COLOR_PRESETS[baseColorKey] ?? []
   return (

@@ -102,9 +102,9 @@ function memoize2(
   const cache = new Map<number, Map<number, number[]>>()
 
   return (a: number, b: number): number[] => {
-    if (cache.has(a) && cache.get(a)?.has(b) === true) {
+    if (cache.has(a) && cache.get(a)?.has(b)) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return cache.get(a)!.get(b)!
+      return cache.get(a).get(b)
     }
     const result = fn(a, b)
     if (!cache.has(a)) {

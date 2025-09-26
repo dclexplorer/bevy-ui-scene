@@ -1,14 +1,14 @@
 import {
-  DeepReadonlyObject,
+  type DeepReadonlyObject,
   EasingFunction,
   engine,
-  Entity,
+  type Entity,
   executeTask,
   InputAction,
   InputModifier,
   inputSystem,
   MainCamera,
-  PBMainCamera,
+  type PBMainCamera,
   PrimaryPointerInfo,
   Transform,
   Tween,
@@ -150,7 +150,7 @@ export const activateMapCamera = () => {
   )
 }
 
-export const orbitToTop = () => {
+export const orbitToTop = (): void => {
   const DISPLACE_TIME = 500 // TODO review to calculate time by displacement
   // Aim for a top-down pitch (just shy of 90º to avoid singularities)
   const MAX_PITCH = Math.PI / 2 - 0.001
@@ -166,8 +166,8 @@ export const orbitToTop = () => {
   // Smoothly interpolate pitch and yaw over the duration (do not change distance)
   executeTask(async () => {
     const startTime = Date.now()
-    const lerp = (a: number, b: number, u: number) => a + (b - a) * u
-    const angleLerp = (a: number, b: number, u: number) => {
+    const lerp = (a: number, b: number, u: number): number => a + (b - a) * u
+    const angleLerp = (a: number, b: number, u: number): number => {
       // shortest path interpolation handling wrap-around
       const diff = Math.atan2(Math.sin(b - a), Math.cos(b - a))
       return a + diff * u
@@ -189,9 +189,8 @@ export const orbitToTop = () => {
   })
 }
 
-export const displaceCamera = (targetPosition: Vector3) => {
-  const mapCameraTransform = Transform.get(getBigMapCameraEntity())
-  const DISPLACE_TIME = 500 //TODO review to calculate time by displacement
+export const displaceCamera = (targetPosition: Vector3): void => {
+  const DISPLACE_TIME = 500 // TODO review to calculate time by displacement
   if (!store.getState().hud.movingMap) {
     store.dispatch(
       updateHudStateAction({
@@ -216,7 +215,7 @@ export const displaceCamera = (targetPosition: Vector3) => {
   })
 }
 
-export const deactivateMapCamera = () => {
+export const deactivateMapCamera = (): void => {
   // TODO REVIEW IF THIS IS REMOVED AND ADDED AGAIN
   console.log('REMOVE_SYSTEM_MAP_CAMERA')
   engine.removeSystem(mapInputHandlingSystem)
@@ -240,12 +239,12 @@ export const deactivateMapCamera = () => {
   unlistenSystemAction('CameraZoomOut', zoomOutHandler)
 }
 
-export const activateDragMapSystem = () => (state.dragActive = true)
-export const deactivateDragMapSystem = () => {
+export const activateDragMapSystem = (): boolean => (state.dragActive = true)
+export const deactivateDragMapSystem = (): void => {
   state.dragActive = false
 }
 
-function mapCameraMouseSystem(dt: number) {
+function mapCameraMouseSystem(dt: number): void {
   // TODO move to a different file
   const isOrbiting = inputSystem.isPressed(InputAction.IA_WALK)
   if (isOrbiting !== store.getState().hud.mapCameraIsOrbiting) {
@@ -264,8 +263,8 @@ function mapCameraMouseSystem(dt: number) {
     const mapCameraTransform = Transform.get(bigMapCameraEntity)
 
     if (isOrbiting) {
-      const deltaX = pointerInfo!.screenDelta!.x ?? 0
-      const deltaY = pointerInfo!.screenDelta!.y ?? 0
+      const deltaX = pointerInfo.screenDelta.x ?? 0
+      const deltaY = pointerInfo.screenDelta.y ?? 0
       const yawSensitivity = 0.005
       const pitchSensitivity = 0.004
       state.orbitYaw -= deltaX * yawSensitivity
@@ -285,8 +284,8 @@ function mapCameraMouseSystem(dt: number) {
         Vector3.create(forward.x, 0, forward.z)
       )
       const rightXZ = Vector3.normalize(Vector3.create(right.x, 0, right.z))
-      const deltaX = -(pointerInfo!.screenDelta!.x ?? 0)
-      const deltaY = pointerInfo!.screenDelta!.y ?? 0
+      const deltaX = -(pointerInfo.screenDelta.x ?? 0)
+      const deltaY = pointerInfo.screenDelta.y ?? 0
       const movementScale = 2
       const horizontalMovement = Vector3.scale(rightXZ, deltaX * movementScale)
       const verticalMovement = Vector3.scale(forwardXZ, deltaY * movementScale)
@@ -297,7 +296,7 @@ function mapCameraMouseSystem(dt: number) {
   }
 }
 
-export const cameraPositionSystem = (dt: number) => {
+export const cameraPositionSystem = (dt: number): void => {
   const bigMapCameraEntity = getBigMapCameraEntity()
   const mutableMapCameraTransform = Transform.getMutable(bigMapCameraEntity)
 
@@ -328,7 +327,7 @@ export const cameraPositionSystem = (dt: number) => {
   }
 }
 
-function mapInputHandlingSystem(dt: number) {
+function mapInputHandlingSystem(dt: number): void {
   const bigMapCameraEntity = getBigMapCameraEntity()
   const cameraTransform = Transform.get(bigMapCameraEntity)
   const moveSpeed = dt * 600

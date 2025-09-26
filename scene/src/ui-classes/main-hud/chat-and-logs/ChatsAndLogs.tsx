@@ -292,7 +292,7 @@ export default class ChatAndLogs {
     ) {
       state.addingNewMessages = true
       state.shownMessages.push(
-        state.newMessages.shift() as ChatMessageRepresentation
+        state.newMessages.shift()
       )
       executeTask(async () => {
         await sleep(30)

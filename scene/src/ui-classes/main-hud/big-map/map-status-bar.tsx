@@ -1,12 +1,11 @@
-import { getPlacesAroundParcel, Place } from '../../../service/map-places'
-import { store } from '../../../state/store'
-import { FOV, PlaceRepresentation } from './big-map-view'
-import { ReactEcs, ReactElement, UiEntity } from '@dcl/react-ecs'
+import { getPlacesAroundParcel } from '../../../service/map-places'
+import { FOV } from './big-map-view'
+import { ReactEcs, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import useState = ReactEcs.useState
 import useEffect = ReactEcs.useEffect
 import { engine, PrimaryPointerInfo, Transform } from '@dcl/sdk/ecs'
 import { getBigMapCameraEntity } from '../../../service/map/map-camera'
-import { Vector3 } from '@dcl/sdk/math'
+import { type Vector2, type Vector3 } from '@dcl/sdk/math'
 import { screenToGround } from '../../../service/perspective-to-screen'
 import {
   getViewportHeight,
@@ -19,7 +18,7 @@ import {
   getRealmName
 } from '../../../service/realm-change'
 import { truncateWithoutBreakingWords } from '../../../utils/ui-utils'
-import { UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 
 export function MapStatusBar({
   fontSize,
@@ -34,14 +33,14 @@ export function MapStatusBar({
       const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
       const mapCameraTransform = Transform.get(getBigMapCameraEntity())
       const targetPosition: Vector3 = screenToGround(
-        pointerInfo!.screenCoordinates!.x, // TODO REVIEW + getRightPanelWidth() / 2, to move camera more centered
-        pointerInfo!.screenCoordinates!.y,
+        (pointerInfo.screenCoordinates as Vector2).x, // TODO REVIEW + getRightPanelWidth() / 2, to move camera more centered
+        (pointerInfo.screenCoordinates as Vector2).y,
         getViewportWidth(),
         getViewportHeight(),
         mapCameraTransform.position,
         mapCameraTransform.rotation,
         FOV
-      ) as Vector3
+      )
 
       const { x, y } = getVector3Parcel(targetPosition)
       const place = getPlacesAroundParcel({ x, y }, 0)

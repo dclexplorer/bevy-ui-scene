@@ -1,6 +1,6 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Column, Row } from '../layout'
-import { UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
 import { noop } from '../../utils/function-utils'

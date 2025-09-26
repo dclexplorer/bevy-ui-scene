@@ -7,7 +7,7 @@ import {
   AvatarShape,
   type Entity,
   type Orthographic,
-  Perspective
+  type Perspective
 } from '@dcl/sdk/ecs'
 import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
 import { getPlayer } from '@dcl/sdk/src/players'

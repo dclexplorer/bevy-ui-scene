@@ -1,4 +1,4 @@
-import ReactEcs, { UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
 import useEffect = ReactEcs.useEffect
 
@@ -7,7 +7,6 @@ import {
   closeBigMapIfActive
 } from '../../../service/map/map-camera'
 import { MapFilterBar } from '../../../components/map/map-filter-bar'
-import { SceneCatalogPanel } from '../../../components/map/scene-catalog-panel'
 
 export default class MapPage {
   mainUi(): ReactEcs.JSX.Element | null {
@@ -17,10 +16,12 @@ export default class MapPage {
   }
 }
 
-function MapPageContent() {
+function MapPageContent(): ReactElement {
   useEffect(() => {
     activateMapCamera()
-    return () => closeBigMapIfActive()
+    return () => {
+      closeBigMapIfActive()
+    }
   }, [])
   return (
     <UiEntity

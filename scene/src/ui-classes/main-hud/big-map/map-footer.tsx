@@ -1,6 +1,5 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import {
-  getCanvasScaleRatio,
   getRightPanelWidth,
   getViewportHeight,
   getViewportWidth
@@ -12,7 +11,6 @@ import { getHudFontSize } from '../scene-info/SceneInfo'
 import { Row } from '../../../components/layout'
 
 export function MapFooter(): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
   const fontSize = getHudFontSize(getViewportWidth()).SMALL * 0.9
   return (
     <UiEntity

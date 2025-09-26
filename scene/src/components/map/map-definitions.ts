@@ -24,7 +24,7 @@ export type FilterDefinition = {
   id: PlaceType
 }
 
-export const MAP_FILTER_DEFINITIONS: ReadonlyArray<FilterDefinition> = [
+export const MAP_FILTER_DEFINITIONS: readonly FilterDefinition[] = [
   {
     id: 'all',
     label: 'All',

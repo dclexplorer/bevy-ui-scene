@@ -1,5 +1,5 @@
 // worldToScreen.ts
-import { Entity, Transform } from '@dcl/sdk/ecs'
+import { type Entity, Transform } from '@dcl/sdk/ecs'
 import { Vector3, Quaternion } from '@dcl/sdk/math'
 
 type ScreenPos = {
@@ -54,26 +54,27 @@ export function perspectiveToScreenPosition(
 // ===== helpers =====
 
 function quatConjugate(q: Quaternion): Quaternion {
-  return { x: -q.x, y: -q.y, z: -q.z, w: q.w } as Quaternion
+  return Quaternion.create(-q.x, -q.y, -q.z, q.w)
 }
 
 function rotateVecByQuat(v: Vector3, q: Quaternion): Vector3 {
   // q * v * q^{-1}
-  const qx = q.x,
-    qy = q.y,
-    qz = q.z,
-    qw = q.w
-  const vx = v.x,
-    vy = v.y,
-    vz = v.z
+  const qx = q.x
+  const qy = q.y
+  const qz = q.z
+  const qw = q.w
+  const vx = v.x
+  const vy = v.y
+  const vz = v.z
   const tx = 2 * (qy * vz - qz * vy)
   const ty = 2 * (qz * vx - qx * vz)
   const tz = 2 * (qx * vy - qy * vx)
-  return {
-    x: vx + qw * tx + (qy * tz - qz * ty),
-    y: vy + qw * ty + (qz * tx - qx * tz),
-    z: vz + qw * tz + (qx * ty - qy * tx)
-  } as Vector3
+
+  return Vector3.create(
+    vx + qw * tx + (qy * tz - qz * ty),
+    vy + qw * ty + (qz * tx - qx * tz),
+    vz + qw * tz + (qx * ty - qy * tx)
+  )
 }
 
 export function rotateVec3ByQuat(v: Vector3, q: Quaternion): Vector3 {
@@ -93,7 +94,7 @@ function verticalFovFrom(
   viewportWidth: number,
   viewportHeight: number,
   isHorizontal: boolean
-) {
+): number {
   if (!isHorizontal) return fovRad
   const aspect = viewportWidth / viewportHeight
   return 2 * Math.atan(Math.tan(fovRad / 2) / aspect)

@@ -1,4 +1,4 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { getViewportHeight, getViewportWidth } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
 import Icon from '../icon/Icon'
@@ -74,7 +74,7 @@ export function MapBottomLeftBar(): ReactElement {
             const homePlaceRepresentation = decoratePlaceRepresentation(
               store.getState().hud.homePlace
             )
-            displaceCamera(homePlaceRepresentation!.centralParcelCoords)
+            displaceCamera(homePlaceRepresentation.centralParcelCoords)
           }}
         >
           <Icon

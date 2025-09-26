@@ -1,7 +1,7 @@
 import { Transform, engine, type Coords } from '@dcl/sdk/ecs'
 import { BevyApi } from '../bevy-api'
 import { type LiveSceneInfo } from '../bevy-api/interface'
-import { Vector3 } from '@dcl/sdk/math'
+import { type Vector3 } from '@dcl/sdk/math'
 const state: {
   playerParcel: Coords
 } = {

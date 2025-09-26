@@ -55,7 +55,7 @@ function ButtonText(props: {
         }}
       >
         {/* ICON */}
-        {props.isLoading === true && (
+        {props.isLoading && (
           <UiEntity
             uiTransform={{
               width: props.fontSize,

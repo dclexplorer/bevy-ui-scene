@@ -1,4 +1,4 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { getUiController } from '../../controllers/ui.controller'
 import { COLOR } from '../color-palette'
 import useEffect = ReactEcs.useEffect
@@ -7,7 +7,7 @@ import useState = ReactEcs.useState
 import {
   fromParcelCoordsToPosition,
   fromStringToCoords,
-  Place
+  type Place
 } from '../../service/map-places'
 import { executeTask } from '@dcl/sdk/ecs'
 import { Column, Row } from '../layout'
@@ -20,10 +20,10 @@ import Icon from '../icon/Icon'
 import { Vector3 } from '@dcl/sdk/math'
 import { displaceCamera } from '../../service/map/map-camera'
 import { updateHudStateAction } from '../../state/hud/actions'
-import { Input, UiTransformProps } from '@dcl/sdk/react-ecs'
+import { Input, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { useDebouncedValue } from '../../hooks/use-debounce'
 import { BevyApi } from '../../bevy-api'
-import { SceneCatalogOrder } from '../../state/hud/state'
+import { type SceneCatalogOrder } from '../../state/hud/state'
 import { sleep, waitFor } from '../../utils/dcl-utils'
 import { setUiFocus } from '~system/RestrictedActions'
 import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
@@ -31,7 +31,7 @@ import { getMainMenuHeight } from '../../ui-classes/main-menu/MainMenu'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { currentRealmProviderIsWorld } from '../../service/realm-change'
 import { MenuBar } from '../menu-bar'
-import { PlaceRepresentation } from '../../ui-classes/main-hud/big-map/big-map-view'
+import { type PlaceRepresentation } from '../../ui-classes/main-hud/big-map/big-map-view'
 
 const LIMIT = 20 // TODO maybe calculate how many fits in height? or not?
 export type FetchParams = {
@@ -40,7 +40,7 @@ export type FetchParams = {
   currentPage?: number
 }
 export const PLACE_TYPES: Array<'places' | 'worlds'> = ['places', 'worlds']
-export const ORDER_OPTIONS: { orderKey: SceneCatalogOrder; label: string }[] = [
+export const ORDER_OPTIONS: Array<{ orderKey: SceneCatalogOrder; label: string }> = [
   { orderKey: 'most_active', label: `MOST ACTIVE` },
   { orderKey: 'like_score', label: `MOST LIKED` },
   { orderKey: 'updated_at', label: `MOST FRESH` }
@@ -233,7 +233,7 @@ function SceneCatalogContent(): ReactElement {
               })
             }}
             onSubmit={() => {
-              //workaround to avoid clearing text when pressing ENTER
+              // workaround to avoid clearing text when pressing ENTER
               recreatingInputWorkaround = true
               executeTask(async () => {
                 await sleep(0)
@@ -450,7 +450,7 @@ async function fetchList({
   }
 
   if (cachedRequests.has(url)) {
-    return cachedRequests.get(url) as PlaceListResponse
+    return cachedRequests.get(url)
   }
 
   const response = await BevyApi.kernelFetch({

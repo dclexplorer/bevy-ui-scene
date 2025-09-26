@@ -87,13 +87,13 @@ export async function getCompletePermissionsMatrix(
     (acc: Record<string, PermissionResult>, resultPermission) => {
       const scene = completeScenePermissions.find(
         (p) => p.type === resultPermission.type
-      ) as PermissionItem
+      )
       const realm = completeRealmPermissions.find(
         (p) => p.type === resultPermission.type
-      ) as PermissionItem
+      )
       const global = completeGlobalPermissions.find(
         (p) => p.type === resultPermission.type
-      ) as PermissionItem
+      )
 
       const itemToAdd: PermissionResult = {
         type: resultPermission.type,

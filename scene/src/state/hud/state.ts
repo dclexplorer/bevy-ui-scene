@@ -1,8 +1,6 @@
 import { cloneDeep } from '../../utils/function-utils'
 import { type NameDefinition } from '../../utils/passport-promise-utils'
-import { Place } from '../../service/map-places'
-import { EMPTY_PLACE } from '../../utils/constants'
-import { PlaceRepresentation } from '../../ui-classes/main-hud/big-map/big-map-view'
+import { type Place } from '../../service/map-places'
 import { Vector3 } from '@dcl/sdk/math'
 
 export const HUD_STORE_ID = 'hud'

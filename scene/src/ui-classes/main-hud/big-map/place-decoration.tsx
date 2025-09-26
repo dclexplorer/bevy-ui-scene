@@ -2,12 +2,12 @@ import { memoize } from '../../../utils/function-utils'
 import {
   fromParcelCoordsToPosition,
   fromStringToCoords,
-  Place
+  type Place
 } from '../../../service/map-places'
-import { PlaceRepresentation, PLAYER_PLACE_ID } from './big-map-view'
+import { type PlaceRepresentation, PLAYER_PLACE_ID } from './big-map-view'
 import { getCentralParcel } from '../../../components/map/mini-map-info-entities'
 import { store } from '../../../state/store'
-import { Atlas, AtlasIcon } from '../../../utils/definitions'
+import { type Atlas, type AtlasIcon } from '../../../utils/definitions'
 import { mapSymbolPerPlaceCategory } from '../../../components/map/map-definitions'
 
 export const decoratePlaceRepresentation = memoize(_decoratePlaceRepresentation)
@@ -20,7 +20,7 @@ export function _decoratePlaceRepresentation(
   if (place === null || place === undefined) return null
   const centralParcelCoords = fromParcelCoordsToPosition(
     fromStringToCoords(
-      getCentralParcel([...place.positions, place.base_position]) as string
+      getCentralParcel([...place.positions, place.base_position])
     ),
     { height: 0 }
   )
@@ -35,7 +35,7 @@ export function _decoratePlaceRepresentation(
 
 function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
   let spriteName = ''
-  let atlasName: Atlas = 'map2'
+  const atlasName: Atlas = 'map2'
   if (placeRepresentation.user_favorite) {
     spriteName = `PinFavourite`
   } else if (
@@ -64,7 +64,7 @@ function _getRepresentationSprite(placeRepresentation: Place): AtlasIcon {
 
 export function getZIndexForPlaceSymbol(
   placeRepresentation: PlaceRepresentation
-) {
+): 1 | 999 | 2 {
   if (placeRepresentation.id === PLAYER_PLACE_ID) return 999
   if (placeRepresentation.sprite.spriteName === 'PinPOI') return 2
   return 1

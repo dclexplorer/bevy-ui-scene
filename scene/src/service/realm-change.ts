@@ -24,7 +24,7 @@ export function onChangeRealmProvider(fn: RealmChangeCallback): () => void {
   }
 }
 
-export function initRealmProviderChangeListener() {
+export function initRealmProviderChangeListener(): void {
   executeTask(async () => {
     while (true) {
       try {
@@ -59,9 +59,9 @@ export function initRealmProviderChangeListener() {
   })
 }
 
-export function currentRealmProviderIsWorld() {
+export function currentRealmProviderIsWorld(): boolean {
   return state.isWorld
 }
-export function getRealmName() {
+export function getRealmName(): string {
   return state.realmName
 }

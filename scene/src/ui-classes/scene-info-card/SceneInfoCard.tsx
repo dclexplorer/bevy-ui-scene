@@ -1,7 +1,7 @@
 import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4, Vector2, type Vector3 } from '@dcl/sdk/math'
 import ReactEcs, {
-  Callback,
+  type Callback,
   Label,
   UiEntity,
   type UiTransformProps
@@ -39,7 +39,6 @@ import {
   ALMOST_BLACK,
   BLACK_TEXT,
   DCL_SNOW,
-  EMPTY_PLACE,
   EVENT_BACKGROUND_COLOR,
   GRAY_TEXT,
   LOADING_PLACE,
@@ -64,7 +63,7 @@ import type {
 import { getRightPanelWidth } from '../../service/canvas-ratio'
 import { closeBigMapIfActive } from '../../service/map/map-camera'
 import { MAP_FILTER_DEFINITIONS } from '../../components/map/map-definitions'
-import { PlaceRepresentation } from '../main-hud/big-map/big-map-view'
+import { type PlaceRepresentation } from '../main-hud/big-map/big-map-view'
 import { currentRealmProviderIsWorld } from '../../service/realm-change'
 
 export default class SceneInfoCard {
@@ -114,9 +113,6 @@ export default class SceneInfoCard {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
-
-    const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-    if (canvasInfo === null) return
   }
 
   async update(): Promise<void> {
@@ -220,45 +216,57 @@ export default class SceneInfoCard {
         this.resetBackgrounds()
       })
   }
+
   callbacks: { onHide: Callback[]; onShow: Callback[] } = {
     onHide: [],
     onShow: []
   }
 
-  onHide(fn: Callback) {
+  onHide(fn: Callback): () => Callback[] {
     this.callbacks.onHide.push(fn)
     return () =>
       (this.callbacks.onHide = this.callbacks.onHide.filter((i) => i !== fn))
   }
 
-  onShow(fn: Callback) {
+  onShow(fn: Callback): () => Callback[] {
     this.callbacks.onShow.push(fn)
     return () =>
       (this.callbacks.onShow = this.callbacks.onShow.filter((i) => i !== fn))
   }
+
   async showByCoords(coords: Vector3): Promise<boolean> {
-    console.log('showByCoords', coords)
-    this.uiController.sceneInfoCardVisible = true
-    this.place = LOADING_PLACE
+    try {
+      this.uiController.sceneInfoCardVisible = true
+      this.place = LOADING_PLACE
 
-    const auxPlace = await fetchPlaceFromCoords(coords)
-    console.log('auxPlace', auxPlace)
+      const auxPlace = await fetchPlaceFromCoords(coords)
 
-    await this.setPlace(auxPlace)
-    this.callbacks.onShow.forEach((f) => f())
-    return !!auxPlace
+      await this.setPlace(auxPlace)
+      this.callbacks.onShow.forEach((f) => {
+        f()
+      })
+    } catch (error) {
+      console.error(error)
+      return false
+    }
+
+    return true
   }
 
-  async showByData(auxPlace: PlaceFromApi | PlaceRepresentation) {
+  async showByData(
+    auxPlace: PlaceFromApi | PlaceRepresentation
+  ): Promise<boolean> {
     console.log('showByData', auxPlace)
 
     this.uiController.sceneInfoCardVisible = true
 
     await this.setPlace(auxPlace as PlaceFromApi)
     // store.dispatch(loadSceneInfoPlaceFromApi(auxPlace as PlaceFromApi))
-    this.callbacks.onShow.forEach((f) => f())
+    this.callbacks.onShow.forEach((f) => {
+      f()
+    })
 
-    return !!auxPlace
+    return true
   }
 
   async showByState(): Promise<void> {
@@ -287,7 +295,9 @@ export default class SceneInfoCard {
   hide(): void {
     this.uiController.sceneInfoCardVisible = false
     this.resetBackgrounds()
-    this.callbacks.onHide.forEach((f) => f())
+    this.callbacks.onHide.forEach((f) => {
+      f()
+    })
   }
 
   resetBackgrounds(): void {
@@ -481,7 +491,7 @@ export default class SceneInfoCard {
                   placeListActiveItem: null
                 })
               )
-            })*/
+            }) */
           }}
           backgroundColor={this.closeBackground}
           icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
@@ -722,7 +732,7 @@ export default class SceneInfoCard {
                 )
                 if (this.place?.world && this.place?.world_name) {
                   await changeRealm({
-                    realm: this.place.world_name as string
+                    realm: this.place.world_name
                   })
                 } else if (currentRealmProviderIsWorld()) {
                   // TODO REVIEW if that URL is ok

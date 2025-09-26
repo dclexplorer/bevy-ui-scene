@@ -647,7 +647,7 @@ export default class SceneInfo {
             <ButtonIcon
               uiTransform={{
                 display:
-                  this.liveSceneInfo?.isBroken === true ? 'flex' : 'none',
+                  this.liveSceneInfo?.isBroken ? 'flex' : 'none',
                 width: this.fontSize * 1.2,
                 height: this.fontSize * 1.2,
                 margin: { left: this.fontSize * 0.5 }

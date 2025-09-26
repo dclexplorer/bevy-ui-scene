@@ -1,11 +1,11 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import Icon from '../icon/Icon'
 import {
   getRightPanelWidth,
   getViewportHeight,
   getViewportWidth
 } from '../../service/canvas-ratio'
-import { FilterDefinition, MAP_FILTER_DEFINITIONS } from './map-definitions'
+import { type FilterDefinition, MAP_FILTER_DEFINITIONS } from './map-definitions'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
 import { getUiController } from '../../controllers/ui.controller'

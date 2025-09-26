@@ -72,7 +72,7 @@ export function getWearablesFromOutfit(
       category !== WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
     ) {
       result.push(
-        outfit.wearables[category as WearableCategory] as URNWithoutTokenId
+        outfit.wearables[category as WearableCategory]
       )
     }
   })

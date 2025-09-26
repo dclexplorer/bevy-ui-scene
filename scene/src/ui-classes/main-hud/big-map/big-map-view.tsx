@@ -1,11 +1,11 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../../components/color-palette'
 import useEffect = ReactEcs.useEffect
 import {
   fromParcelCoordsToPosition,
   fromStringToCoords,
   getLoadedMapPlaces,
-  Place
+  type Place
 } from '../../../service/map-places'
 import {
   engine,
@@ -14,7 +14,7 @@ import {
   PrimaryPointerInfo,
   Transform
 } from '@dcl/sdk/ecs'
-import { sleep, waitFor } from '../../../utils/dcl-utils'
+import { sleep } from '../../../utils/dcl-utils'
 import useState = ReactEcs.useState
 import { Quaternion, Vector3 } from '@dcl/sdk/math'
 import Icon from '../../../components/icon/Icon'
@@ -40,9 +40,9 @@ import {
 } from '../../../service/player-scenes'
 import { getUiController } from '../../../controllers/ui.controller'
 import { store } from '../../../state/store'
-import { dedupeById, memoize } from '../../../utils/function-utils'
+import { dedupeById } from '../../../utils/function-utils'
 import { updateHudStateAction } from '../../../state/hud/actions'
-import { AtlasIcon } from '../../../utils/definitions'
+import { type AtlasIcon } from '../../../utils/definitions'
 import { MapBottomLeftBar } from '../../../components/map/map-bottom-left-bar'
 import { BevyApi } from '../../../bevy-api'
 import { fetchPlaceFromCoords } from '../../../utils/promise-utils'
@@ -53,8 +53,8 @@ import {
 } from './place-decoration'
 import { fetchLiveEvents } from '../../../utils/fetch-live-events'
 import {
-  EventFromApi,
-  PlaceFromApi
+  type EventFromApi,
+  type PlaceFromApi
 } from '../../scene-info-card/SceneInfoCard.types'
 import { currentRealmProviderIsWorld } from '../../../service/realm-change'
 import { MapFooter } from './map-footer'
@@ -63,7 +63,6 @@ import { getMainMenuHeight } from '../../main-menu/MainMenu'
 export const FOV = (45 * 1.25 * Math.PI) / 180
 
 export const PLAYER_PLACE_ID = 'player'
-const MAX_PINS_TO_SHOW = 600
 export const BigMap = (): ReactElement => {
   return (
     <UiEntity
@@ -109,7 +108,7 @@ function BigMapContent(): ReactElement {
         positions: [],
         categories: [PLAYER_PLACE_ID],
         base_position: `${initialPlayerParcel.x},${initialPlayerParcel.y}`
-      }) as PlaceRepresentation
+      })
     )
   const [allRepresentations, setAllRepresentations] = useState<
     PlaceRepresentation[]
@@ -165,12 +164,12 @@ function BigMapContent(): ReactElement {
         const homePlace = await fetchPlaceFromCoords(
           Vector3.create(home.parcel.x, 0, home.parcel.y)
         )
-        if (homePlace)
-          store.dispatch(
-            updateHudStateAction({
-              homePlace
-            })
-          )
+
+        store.dispatch(
+          updateHudStateAction({
+            homePlace
+          })
+        )
       } catch (error) {}
     })
 
@@ -181,9 +180,7 @@ function BigMapContent(): ReactElement {
   }, [])
 
   useEffect(() => {
-    const initBigMapFn = async () => {
-      console.log('initBigMapFn')
-
+    const initBigMapFn = async (): Promise<void> => {
       const _representations: PlaceRepresentation[] =
         store.getState().hud.mapFilterCategories[0] === 'favorites'
           ? []
@@ -196,7 +193,7 @@ function BigMapContent(): ReactElement {
                       store.getState().hud.mapFilterCategories.includes(c) ||
                       store.getState().hud.mapFilterCategories[0] === 'all'
                   )
-              ) as PlaceRepresentation[])
+              ))
 
       setPlacesRepresentations(_representations) // TODO this is not the best, I would like to limit the rendered on screen
     }
@@ -231,7 +228,7 @@ function BigMapContent(): ReactElement {
   }, [store.getState().hud.sceneList, favoritePlaces])
   useEffect(() => {
     const playerParcel = getPlayerParcel()
-    let _playerRepresentation: PlaceRepresentation =
+    const _playerRepresentation: PlaceRepresentation =
       decoratePlaceRepresentation({
         id: PLAYER_PLACE_ID,
         title: PLAYER_PLACE_LABEL,
@@ -241,7 +238,7 @@ function BigMapContent(): ReactElement {
         centralParcelCoords: fromParcelCoordsToPosition(playerParcel, {
           height: 0
         })
-      }) as PlaceRepresentation
+      })
 
     setPlayerRespresentation(_playerRepresentation)
 
@@ -267,7 +264,7 @@ function BigMapContent(): ReactElement {
 
   function setAllRepresentationsWithLiveEvents(
     _allRepresentations: PlaceRepresentation[]
-  ) {
+  ): void {
     _allRepresentations.forEach(decorateHasLive)
 
     const liveEventsWithoutPlace = liveEvents.filter((l) => !l.placeID)
@@ -284,7 +281,7 @@ function BigMapContent(): ReactElement {
             hasLive: true
           })
         )
-        .filter((i) => i) as PlaceRepresentation[]
+        .filter((i) => i)
     console.log(
       'orphanLiveEventPlaceRepresentations',
       orphanLiveEventPlaceRepresentations.length
@@ -340,14 +337,16 @@ function BigMapContent(): ReactElement {
             mapCameraTransform.position,
             mapCameraTransform.rotation,
             FOV
-          ) as Vector3
+          )
 
           displaceCamera(targetPosition)
 
           const parcelVector3 = getVector3Parcel(targetPosition)
-          getUiController().sceneCard.showByCoords(
-            Vector3.create(parcelVector3.x, 0, parcelVector3.y)
-          )
+          getUiController()
+            .sceneCard.showByCoords(
+              Vector3.create(parcelVector3.x, 0, parcelVector3.y)
+            )
+            .catch(console.error)
         }
         state.lastClickTime = Date.now()
       }}
@@ -471,7 +470,7 @@ function BigMapContent(): ReactElement {
                   fontSize: getCanvasScaleRatio() * 50,
                   textAlign: 'top-center'
                 }}
-              />*/}
+              /> */}
                 </UiEntity>
               )
             } catch (error) {
@@ -485,7 +484,7 @@ function BigMapContent(): ReactElement {
     </UiEntity>
   )
 
-  function decorateHasLive(_placeRepresentation: PlaceRepresentation) {
+  function decorateHasLive(_placeRepresentation: PlaceRepresentation): void {
     liveEvents.forEach((liveEvent) => {
       if (
         _placeRepresentation.positions.includes(liveEvent.position.join(','))
@@ -498,7 +497,7 @@ function BigMapContent(): ReactElement {
   }
 }
 
-function mustShowPins() {
+function mustShowPins(): boolean {
   return (
     !store.getState().hud.transitioningToMap &&
     !store.getState().hud.movingMap &&
@@ -506,15 +505,4 @@ function mustShowPins() {
     !state.dragging &&
     !currentRealmProviderIsWorld()
   )
-}
-
-export type MapPinParams = {
-  sprite: AtlasIcon
-  size: number
-  position: { top: number; left: number }
-  isActive: boolean
-  onClick: () => void
-}
-function MapPin({ sprite, size, position, isActive, onClick }: MapPinParams) {
-  // TODO
 }

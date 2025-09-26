@@ -14,9 +14,7 @@ export type Place = {
 export type PlaceCategory = {
   name: string
   count: number
-  i18n: {
-    [language: string]: string
-  }
+  i18n: Record<string, string>
 }
 declare const localStorage: any
 const MAP_LOCALSTORAGE_KEY = 'map'
@@ -119,7 +117,7 @@ export const loadCompleteMapPlaces = async (): Promise<
   if (realm.realmInfo?.realmName.endsWith('.eth')) {
     return state.places
   }
-  //TODO REVIEW if we should use realm /about
+  // TODO REVIEW if we should use realm /about
   const PLACES_BASE_URL = `https://places.decentraland.${
     isZone ? 'zone' : 'org'
   }`
@@ -141,11 +139,11 @@ export const loadCompleteMapPlaces = async (): Promise<
     { name: 'parkour', count: 4, i18n: { en: '🏃 Parkour' } }
   ]
   const categories =
-    (await fetch(`${PLACES_BASE_URL}/api/categories`).then((res) => res.json()))
+    (await fetch(`${PLACES_BASE_URL}/api/categories`).then(async (res) => await res.json()))
       .data ?? DEFAULT_CATEGORIES
   state.categories = categories
   const MAX_PLACES_PER_CATEGORY = 100
-  for (let category of categories) {
+  for (const category of categories) {
     let placesPerCategory: Record<string, Place> = {}
     while (
       Object.values(placesPerCategory ?? {}).length <
