@@ -366,5 +366,5 @@ export default class MainMenu {
   }
 }
 export function getMainMenuHeight(): number {
-  return getViewportHeight() * 0.06
+  return Math.floor(getViewportHeight() * 0.06)
 }
