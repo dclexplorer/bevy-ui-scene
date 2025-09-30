@@ -255,6 +255,7 @@ function SceneCatalogContent(): ReactElement {
         {ORDER_OPTIONS.map(({ orderKey, label }) => {
           return (
             <UiEntity
+              key={orderKey}
               uiBackground={{
                 color:
                   store.getState().hud.sceneCatalogOrder === orderKey

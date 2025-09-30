@@ -32,7 +32,8 @@ import {
   activateDragMapSystem,
   deactivateDragMapSystem,
   displaceCamera,
-  getBigMapCameraEntity
+  getBigMapCameraEntity,
+  isMapDoingZoom
 } from '../../../service/map/map-camera'
 import {
   getPlayerParcel,
@@ -89,6 +90,9 @@ export type PlaceRepresentation = Place & {
 export type OrderType = 'most_active' | 'like_score' | 'created_at' | null
 
 function BigMapContent(): ReactElement {
+  const [onScreenRepresentations, setOnScreenRepresentations] = useState<
+    PlaceRepresentation[]
+  >([])
   const [liveEvents, setLiveEvents] = useState<EventFromApi[]>([]) // TODO fix any type
   const [favoritePlaces, setFavoritePlaces] = useState<PlaceFromApi[]>([])
   const [placesRepresentations, setPlacesRepresentations] = useState<
@@ -173,7 +177,40 @@ function BigMapContent(): ReactElement {
       u2()
     }
   }, [])
-
+  useEffect(() => {
+    if (mustShowPins()) {
+      const _onScreenRepresentations = !mustShowPins()
+        ? []
+        : allRepresentations
+            .map((placeRepresentation) => {
+              return {
+                ...placeRepresentation,
+                screenPosition: worldToScreenPx(
+                  placeRepresentation.centralParcelCoords,
+                  Transform.getOrNull(getBigMapCameraEntity())?.position ??
+                    Vector3.Zero(),
+                  Transform.getOrNull(getBigMapCameraEntity())?.rotation ??
+                    Quaternion.Zero(),
+                  FOV,
+                  getViewportWidth(),
+                  getViewportHeight(),
+                  {
+                    fovIsHorizontal: false,
+                    forwardIsNegZ: false
+                  }
+                )
+              }
+            })
+            .filter((i) => i)
+            .filter(
+              (placeRepresentation) =>
+                placeRepresentation.screenPosition.onScreen
+            )
+      setOnScreenRepresentations(_onScreenRepresentations)
+    } else {
+      setOnScreenRepresentations([])
+    }
+  }, [mustShowPins()])
   useEffect(() => {
     const initBigMapFn = async (): Promise<void> => {
       const _representations: PlaceRepresentation[] =
@@ -192,10 +229,6 @@ function BigMapContent(): ReactElement {
 
       setPlacesRepresentations(_representations) // TODO this is not the best, I would like to limit the rendered on screen
     }
-    console.log(
-      'updating place representations big map based on []',
-      Object.values(getLoadedMapPlaces()).length
-    )
     initBigMapFn().catch(console.error)
   }, [
     getLoadedMapPlaces(),
@@ -284,34 +317,6 @@ function BigMapContent(): ReactElement {
     ])
   }
 
-  // TODO optimize, only calculate when camera position or rotation changes, and with throttle or when mustShowPins()
-  const onScreenRepresentations = !mustShowPins()
-    ? []
-    : allRepresentations
-        .map((placeRepresentation) => {
-          return {
-            ...placeRepresentation,
-            screenPosition: worldToScreenPx(
-              placeRepresentation.centralParcelCoords,
-              Transform.getOrNull(getBigMapCameraEntity())?.position ??
-                Vector3.Zero(),
-              Transform.getOrNull(getBigMapCameraEntity())?.rotation ??
-                Quaternion.Zero(),
-              FOV,
-              getViewportWidth(),
-              getViewportHeight(),
-              {
-                fovIsHorizontal: false,
-                forwardIsNegZ: false
-              }
-            )
-          }
-        })
-        .filter((i) => i)
-        .filter(
-          (placeRepresentation) => placeRepresentation.screenPosition.onScreen
-        )
-
   // TODO don't show genesis city points when in other realm/world/server
   return (
     <UiEntity
@@ -375,7 +380,7 @@ function BigMapContent(): ReactElement {
       <MapFooter />
       <UiEntity uiTransform={{ positionType: 'absolute', position: 0 }}>
         {onScreenRepresentations.map(
-          (placeRepresentation: PlaceRepresentation) => {
+          (placeRepresentation: PlaceRepresentation, index: number) => {
             try {
               // TODO optimize, only calculate when camera position or rotation changes, and with throttle
               const position = placeRepresentation.screenPosition
@@ -466,19 +471,6 @@ function BigMapContent(): ReactElement {
                       }}
                     />
                   )}
-
-                  {/* <UiEntity
-                uiTransform={{
-                  alignSelf: 'center',
-                  alignItems: 'center',
-                  alignContent: 'center'
-                }}
-                uiText={{
-                  value: placeRepresentation.title,
-                  fontSize: getCanvasScaleRatio() * 50,
-                  textAlign: 'top-center'
-                }}
-              /> */}
                 </UiEntity>
               )
             } catch (error) {
@@ -488,7 +480,6 @@ function BigMapContent(): ReactElement {
           }
         )}
       </UiEntity>
-
       <MapBottomLeftBar />
     </UiEntity>
   )
@@ -512,6 +503,7 @@ function mustShowPins(): boolean {
     !store.getState().hud.movingMap &&
     !store.getState().hud.mapCameraIsOrbiting &&
     !state.dragging &&
-    !currentRealmProviderIsWorld()
+    !currentRealmProviderIsWorld() &&
+    !isMapDoingZoom()
   )
 }

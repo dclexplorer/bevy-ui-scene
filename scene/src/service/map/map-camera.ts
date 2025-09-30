@@ -31,6 +31,7 @@ type MapCameraState = {
   targetCameraDistance: number
   orbitYaw: number
   orbitPitch: number
+  zoomLastTime: number
 }
 
 const OFFSET_MAP_CAMERA = 300
@@ -51,7 +52,8 @@ const state: MapCameraState = {
   targetPosition: Vector3.Zero(),
   targetCameraDistance: Vector3.length(ISO_OFFSET_3),
   orbitYaw: Math.atan2(ISO_OFFSET_3.z, ISO_OFFSET_3.x),
-  orbitPitch: Math.asin(ISO_OFFSET_3.y / Vector3.length(ISO_OFFSET_3))
+  orbitPitch: Math.asin(ISO_OFFSET_3.y / Vector3.length(ISO_OFFSET_3)),
+  zoomLastTime: 0
 }
 
 let mapCamera: Entity
@@ -65,25 +67,39 @@ export const closeBigMapIfActive = (): void => {
   }
 }
 const TRANSITION_MS = 2000
-
+const ZOOM_DELAY_HANDLER = 200
 function zoomInHandler(): void {
+  state.zoomLastTime = Date.now()
   const zoomFactor = 0.8
   const minDistance = 200
   const newDistance = state.targetCameraDistance * zoomFactor
   if (newDistance > minDistance) {
     state.targetCameraDistance = newDistance
   }
+  executeTask(async () => {
+    await sleep(ZOOM_DELAY_HANDLER + 50)
+    if (Date.now() - state.zoomLastTime > ZOOM_DELAY_HANDLER) {
+      state.zoomLastTime = 0
+    }
+  })
 }
 
 function zoomOutHandler(): void {
+  state.zoomLastTime = Date.now()
   const zoomFactor = 1.25
   const maxDistance = 3000
   const newDistance = state.targetCameraDistance * zoomFactor
   if (newDistance < maxDistance) {
     state.targetCameraDistance = newDistance
   }
+  executeTask(async () => {
+    await sleep(ZOOM_DELAY_HANDLER + 50)
+    if (Date.now() - state.zoomLastTime > ZOOM_DELAY_HANDLER) {
+      state.zoomLastTime = 0
+    }
+  })
 }
-
+export const isMapDoingZoom: () => boolean = () => !!state.zoomLastTime
 export const activateMapCamera = (): void => {
   mapCamera = mapCamera ?? engine.addEntity()
 

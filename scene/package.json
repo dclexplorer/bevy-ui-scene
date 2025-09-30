@@ -15,9 +15,9 @@
   },
   "devDependencies": {
     "@dcl/ecs": "7.8.22-16482785086.commit-b7d3158",
-    "@dcl/js-runtime": "7.8.22-16482785086.commit-b7d3158",
+    "@dcl/js-runtime": "7.9.6-16908909596.commit-3302d67",
     "@dcl/react-ecs": "7.8.22-16482785086.commit-b7d3158",
-    "@dcl/sdk": "7.8.22-16482785086.commit-b7d3158",
+    "@dcl/sdk": "^7.9.6-16908909596.commit-3302d67",
     "@dcl/sdk-commands": "7.8.22-16482785086.commit-b7d3158",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
