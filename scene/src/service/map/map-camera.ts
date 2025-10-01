@@ -165,6 +165,12 @@ export const activateMapCamera = (): void => {
 }
 
 export const orbitToTop = (): void => {
+  store.dispatch(
+    updateHudStateAction({
+      mapCameraIsOrbiting: true,
+      movingMap: true
+    })
+  )
   const DISPLACE_TIME = 500 // TODO review to calculate time by displacement
   // Aim for a top-down pitch (just shy of 90º to avoid singularities)
   const MAX_PITCH = Math.PI / 2 - 0.001
@@ -200,6 +206,13 @@ export const orbitToTop = (): void => {
       if (t >= 1) break
       await sleep(16)
     }
+    await sleep(16)
+    store.dispatch(
+      updateHudStateAction({
+        mapCameraIsOrbiting: false,
+        movingMap: false
+      })
+    )
   })
 }
 
