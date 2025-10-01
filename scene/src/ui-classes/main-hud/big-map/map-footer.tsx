@@ -63,7 +63,7 @@ export function MapFooter(): ReactElement {
           />
           <UiEntity
             uiText={{
-              value: 'Drag to displace map',
+              value: 'Drag to displace map (or WASD)',
               fontSize
             }}
             uiTransform={{

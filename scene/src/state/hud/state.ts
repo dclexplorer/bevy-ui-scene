@@ -133,7 +133,7 @@ export const hudInitialState: HudState = {
   chatInput: '',
   minimapOpen: true,
   mapModeActive: false,
-  mapFilterCategories: ['all'],
+  mapFilterCategories: ['poi'],
   placeListActiveItem: null,
   sceneList: {
     total: 0,
