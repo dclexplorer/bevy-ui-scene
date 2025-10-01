@@ -177,40 +177,9 @@ function BigMapContent(): ReactElement {
       u2()
     }
   }, [])
-  useEffect(() => {
-    if (mustShowPins()) {
-      const _onScreenRepresentations = !mustShowPins()
-        ? []
-        : allRepresentations
-            .map((placeRepresentation) => {
-              return {
-                ...placeRepresentation,
-                screenPosition: worldToScreenPx(
-                  placeRepresentation.centralParcelCoords,
-                  Transform.getOrNull(getBigMapCameraEntity())?.position ??
-                    Vector3.Zero(),
-                  Transform.getOrNull(getBigMapCameraEntity())?.rotation ??
-                    Quaternion.Zero(),
-                  FOV,
-                  getViewportWidth(),
-                  getViewportHeight(),
-                  {
-                    fovIsHorizontal: false,
-                    forwardIsNegZ: false
-                  }
-                )
-              }
-            })
-            .filter((i) => i)
-            .filter(
-              (placeRepresentation) =>
-                placeRepresentation.screenPosition.onScreen
-            )
-      setOnScreenRepresentations(_onScreenRepresentations)
-    } else {
-      setOnScreenRepresentations([])
-    }
-  }, [mustShowPins()])
+
+  useEffect(handlePinsChange, [mustShowPins()])
+
   useEffect(() => {
     const initBigMapFn = async (): Promise<void> => {
       const _representations: PlaceRepresentation[] =
@@ -230,6 +199,7 @@ function BigMapContent(): ReactElement {
       setPlacesRepresentations(_representations) // TODO this is not the best, I would like to limit the rendered on screen
     }
     initBigMapFn().catch(console.error)
+    handlePinsChange()
   }, [
     getLoadedMapPlaces(),
     store.getState().hud.mapFilterCategories,
@@ -253,6 +223,7 @@ function BigMapContent(): ReactElement {
       )
       setAllRepresentationsWithLiveEvents(_allRepresentations)
     }
+    handlePinsChange()
   }, [store.getState().hud.sceneList, favoritePlaces])
   useEffect(() => {
     const playerParcel = getPlayerParcel()
@@ -283,6 +254,7 @@ function BigMapContent(): ReactElement {
       ].filter((p) => p) as PlaceRepresentation[]
     )
     setAllRepresentationsWithLiveEvents(_allRepresentations)
+    handlePinsChange()
   }, [
     getPlayerParcel(),
     placesRepresentations,
@@ -483,7 +455,40 @@ function BigMapContent(): ReactElement {
       <MapBottomLeftBar />
     </UiEntity>
   )
-
+  function handlePinsChange() {
+    if (mustShowPins()) {
+      const _onScreenRepresentations = !mustShowPins()
+        ? []
+        : allRepresentations
+            .map((placeRepresentation) => {
+              return {
+                ...placeRepresentation,
+                screenPosition: worldToScreenPx(
+                  placeRepresentation.centralParcelCoords,
+                  Transform.getOrNull(getBigMapCameraEntity())?.position ??
+                    Vector3.Zero(),
+                  Transform.getOrNull(getBigMapCameraEntity())?.rotation ??
+                    Quaternion.Zero(),
+                  FOV,
+                  getViewportWidth(),
+                  getViewportHeight(),
+                  {
+                    fovIsHorizontal: false,
+                    forwardIsNegZ: false
+                  }
+                )
+              }
+            })
+            .filter((i) => i)
+            .filter(
+              (placeRepresentation) =>
+                placeRepresentation.screenPosition.onScreen
+            )
+      setOnScreenRepresentations(_onScreenRepresentations)
+    } else {
+      setOnScreenRepresentations([])
+    }
+  }
   function decorateHasLive(_placeRepresentation: PlaceRepresentation): void {
     liveEvents.forEach((liveEvent) => {
       if (
