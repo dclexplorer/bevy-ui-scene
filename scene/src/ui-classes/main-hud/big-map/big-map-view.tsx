@@ -455,7 +455,7 @@ function BigMapContent(): ReactElement {
       <MapBottomLeftBar />
     </UiEntity>
   )
-  function handlePinsChange() {
+  function handlePinsChange(): void {
     if (mustShowPins()) {
       const _onScreenRepresentations = !mustShowPins()
         ? []
