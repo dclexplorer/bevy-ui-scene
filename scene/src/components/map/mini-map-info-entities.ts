@@ -169,7 +169,7 @@ export function renderVisiblePlaces(places: Place[]): void {
   })
 }
 
-function getCentralParcel(parcelStrings: string[]): string | null {
+export function getCentralParcel(parcelStrings: string[]): string | null {
   if (parcelStrings.length === 0) return null
 
   // Convertir "x,y" a objetos { x, y }

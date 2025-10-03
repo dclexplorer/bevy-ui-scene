@@ -66,7 +66,7 @@ export function WearableCategoryButton({
   return (
     <UiEntity
       uiTransform={{
-        ...(uiTransform as UiTransformProps),
+        ...uiTransform,
         width: 239 * canvasScaleRatio,
         height: 133 * canvasScaleRatio,
         margin: {
@@ -80,8 +80,7 @@ export function WearableCategoryButton({
       }}
       uiBackground={{
         ...ROUNDED_TEXTURE_BACKGROUND,
-        color:
-          active === true ? COLOR.ACTIVE_BACKGROUND_COLOR : COLOR.DARK_OPACITY_2
+        color: active ? COLOR.ACTIVE_BACKGROUND_COLOR : COLOR.DARK_OPACITY_2
       }}
       onMouseDown={() => {
         onClick()

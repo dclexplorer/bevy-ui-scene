@@ -565,12 +565,11 @@ export default class SceneInfo {
         >
           <Label
             value={truncateWithoutBreakingWords(
-              this.liveSceneInfo?.title ?? '',
+              this.liveSceneInfo?.title ?? `<i>empty scene</i>`,
               20
             )}
             fontSize={this.fontSize}
             uiTransform={{
-              display: this.liveSceneInfo?.title ? 'flex' : 'none',
               height: this.fontSize * 1.1
             }}
             textAlign="middle-left"
@@ -647,8 +646,7 @@ export default class SceneInfo {
             />
             <ButtonIcon
               uiTransform={{
-                display:
-                  this.liveSceneInfo?.isBroken === true ? 'flex' : 'none',
+                display: this.liveSceneInfo?.isBroken ? 'flex' : 'none',
                 width: this.fontSize * 1.2,
                 height: this.fontSize * 1.2,
                 margin: { left: this.fontSize * 0.5 }

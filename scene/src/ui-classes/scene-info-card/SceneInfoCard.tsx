@@ -1,6 +1,7 @@
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4, Vector2, type Vector3 } from '@dcl/sdk/math'
 import ReactEcs, {
+  type Callback,
   Label,
   UiEntity,
   type UiTransformProps
@@ -23,16 +24,24 @@ import {
   updateFavoriteStatus,
   updateLikeStatus
 } from 'src/utils/promise-utils'
-import { openExternalUrl, teleportTo } from '~system/RestrictedActions'
+import {
+  changeRealm,
+  openExternalUrl,
+  teleportTo
+} from '~system/RestrictedActions'
 import { ButtonIcon } from '../../components/button-icon'
 import { ButtonTextIcon } from '../../components/button-text-icon'
-import { type UIController } from '../../controllers/ui.controller'
+import {
+  getUiController,
+  type UIController
+} from '../../controllers/ui.controller'
 import {
   ALMOST_BLACK,
   BLACK_TEXT,
   DCL_SNOW,
   EVENT_BACKGROUND_COLOR,
   GRAY_TEXT,
+  LOADING_PLACE,
   PANEL_BACKGROUND_COLOR,
   ROUNDED_TEXTURE_BACKGROUND,
   RUBY,
@@ -51,6 +60,11 @@ import type {
   EventFromApi,
   PlaceFromApi
 } from './SceneInfoCard.types'
+import { getRightPanelWidth } from '../../service/canvas-ratio'
+import { closeBigMapIfActive } from '../../service/map/map-camera'
+import { MAP_FILTER_DEFINITIONS } from '../../components/map/map-definitions'
+import { type PlaceRepresentation } from '../main-hud/big-map/big-map-view'
+import { currentRealmProviderIsWorld } from '../../service/realm-change'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -203,10 +217,56 @@ export default class SceneInfoCard {
       })
   }
 
-  async showByCoords(coords: Vector3): Promise<void> {
-    const auxPlace = await fetchPlaceFromCoords(coords)
-    await this.setPlace(auxPlace)
+  callbacks: { onHide: Callback[]; onShow: Callback[] } = {
+    onHide: [],
+    onShow: []
+  }
+
+  onHide(fn: Callback): () => Callback[] {
+    this.callbacks.onHide.push(fn)
+    return () =>
+      (this.callbacks.onHide = this.callbacks.onHide.filter((i) => i !== fn))
+  }
+
+  onShow(fn: Callback): () => Callback[] {
+    this.callbacks.onShow.push(fn)
+    return () =>
+      (this.callbacks.onShow = this.callbacks.onShow.filter((i) => i !== fn))
+  }
+
+  async showByCoords(coords: Vector3): Promise<boolean> {
+    try {
+      this.uiController.sceneInfoCardVisible = true
+      this.place = LOADING_PLACE
+
+      const auxPlace = await fetchPlaceFromCoords(coords)
+
+      await this.setPlace(auxPlace)
+      this.callbacks.onShow.forEach((f) => {
+        f()
+      })
+    } catch (error) {
+      console.error(error)
+      return false
+    }
+
+    return true
+  }
+
+  async showByData(
+    auxPlace: PlaceFromApi | PlaceRepresentation
+  ): Promise<boolean> {
+    console.log('showByData', auxPlace)
+
     this.uiController.sceneInfoCardVisible = true
+
+    await this.setPlace(auxPlace as PlaceFromApi)
+    // store.dispatch(loadSceneInfoPlaceFromApi(auxPlace as PlaceFromApi))
+    this.callbacks.onShow.forEach((f) => {
+      f()
+    })
+
+    return true
   }
 
   async showByState(): Promise<void> {
@@ -235,6 +295,9 @@ export default class SceneInfoCard {
   hide(): void {
     this.uiController.sceneInfoCardVisible = false
     this.resetBackgrounds()
+    this.callbacks.onHide.forEach((f) => {
+      f()
+    })
   }
 
   resetBackgrounds(): void {
@@ -307,83 +370,84 @@ export default class SceneInfoCard {
     this.shareBackgroundColor = SELECTED_BUTTON_COLOR
   }
 
+  isVisible(): boolean {
+    return !!this.place
+  }
+
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
 
-    let panelWidth: number
-
-    if (canvasInfo.width / 4 < 360) {
-      panelWidth = 360
-    } else {
-      panelWidth = canvasInfo.width / 4
-    }
-
     if (this.place === undefined) return null
+    const panelWidth = getRightPanelWidth()
+
     return (
       <UiEntity
         uiTransform={{
-          width: '100%',
-          height: '100%',
-          positionType: 'absolute'
+          width: panelWidth,
+          height: getUiController().menu.isOpen() ? '93.6%' : '100%',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          flexDirection: 'column',
+          position: {
+            right: 0,
+            top: getUiController().menu.isOpen() ? '6.4%' : 0
+          },
+          positionType: 'absolute',
+          pointerFilter: 'block',
+          zIndex: 1
+        }}
+        uiBackground={{
+          color: PANEL_BACKGROUND_COLOR
         }}
       >
         <UiEntity
           uiTransform={{
             width: panelWidth,
-            height: '100%',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            flexDirection: 'column',
-            position: {
-              right: 0,
-              top: 0
-            },
-            positionType: 'absolute'
+            minHeight: panelWidth * 0.75
           }}
           uiBackground={{
-            color: PANEL_BACKGROUND_COLOR
+            textureMode: 'stretch',
+            texture: {
+              src: (this.place.image ?? '').replace(
+                'https://camera-reel-service.decentraland.org/api/images/',
+                'https://camera-reel-s3-bucket.decentraland.org/'
+              )
+            }
           }}
+        />
+
+        {this.topBar()}
+        {/* CONTENT */}
+        <UiEntity
+          uiTransform={{
+            width: '100%',
+            overflow: 'scroll',
+            scrollPosition: this.scrollPos,
+            maxHeight: canvasInfo.height - panelWidth * 0.75,
+            flexDirection: 'column'
+          }}
+          // uiBackground={{color:Color4.Red()}}
         >
           <UiEntity
-            uiTransform={{ width: panelWidth, minHeight: panelWidth * 0.75 }}
-            uiBackground={{
-              textureMode: 'stretch',
-              texture: {
-                src: this.place.image.replace(
-                  'https://camera-reel-service.decentraland.org/api/images/',
-                  'https://camera-reel-s3-bucket.decentraland.org/'
-                )
-              }
-            }}
-          />
-
-          {this.topBar()}
-          {/* CONTENT */}
-          <UiEntity
             uiTransform={{
-              width: '100%',
-              overflow: 'scroll',
-              scrollPosition: this.scrollPos,
-              maxHeight: canvasInfo.height - panelWidth * 0.75,
-              flexDirection: 'column'
+              width: '88%',
+              height: 'auto',
+              flexDirection: 'column',
+              margin: { left: '3%' }
             }}
-            // uiBackground={{color:Color4.Red()}}
           >
-            <UiEntity
-              uiTransform={{
-                width: '88%',
-                height: 'auto',
-                flexDirection: 'column',
-                margin: { left: '3%' }
-              }}
-            >
-              {this.sceneInfo()}
-              {this.tabsBar()}
-              {this.selectedTab === 'overview' && this.overviewContent()}
-              {this.selectedTab === 'photos' && this.photosContent(panelWidth)}
-              {this.selectedTab === 'events' && this.eventsContent()}
-            </UiEntity>
+            {this.sceneInfo()}
+            {!this.place?.isFakePlace && this.tabsBar()}
+            {!this.place?.isFakePlace &&
+              this.selectedTab === 'overview' &&
+              this.overviewContent()}
+            {!this.place?.isFakePlace &&
+              this.selectedTab === 'photos' &&
+              this.photosContent(panelWidth)}
+            {!this.place?.isFakePlace &&
+              this.selectedTab === 'events' &&
+              this.eventsContent()}
           </UiEntity>
         </UiEntity>
       </UiEntity>
@@ -391,7 +455,7 @@ export default class SceneInfoCard {
   }
 
   topBar(): ReactEcs.JSX.Element | null {
-    if (this.place === undefined) return null
+    if (!this.place) return null
     return (
       <UiEntity
         uiTransform={{
@@ -420,13 +484,21 @@ export default class SceneInfoCard {
           }}
           onMouseDown={() => {
             this.hide()
+            /* executeTask(async () => {
+              await sleep(10)
+              store.dispatch(
+                updateHudStateAction({
+                  placeListActiveItem: null
+                })
+              )
+            }) */
           }}
           backgroundColor={this.closeBackground}
           icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
           iconSize={this.fontSize}
         />
         <Label
-          value={this.place.title}
+          value={this.place?.title ?? ''}
           fontSize={this.fontSize}
           textAlign="middle-center"
           uiTransform={{ width: '100%' }}
@@ -529,7 +601,8 @@ export default class SceneInfoCard {
             <Label
               value={
                 'EVENTS (' +
-                Object.values(store.getState().scene.explorerEvents).length +
+                Object.values(store.getState().scene?.explorerEvents ?? {})
+                  .length +
                 ')'
               }
               color={BLACK_TEXT}
@@ -559,6 +632,7 @@ export default class SceneInfoCard {
   sceneInfo(): ReactEcs.JSX.Element | null {
     if (this.place === undefined) return null
     const likeRate: number = this.place.like_rate ?? 0
+
     return (
       <UiEntity
         uiTransform={{
@@ -572,7 +646,7 @@ export default class SceneInfoCard {
         // uiBackground={{color:Color4.Blue()}}
       >
         <Label
-          value={this.place.title}
+          value={this.place?.title ?? ''}
           fontSize={this.fontSize * 1.2}
           textAlign="middle-left"
           uiTransform={{
@@ -581,7 +655,7 @@ export default class SceneInfoCard {
           }}
           color={BLACK_TEXT}
         />
-        {this.place.contact_name !== null && (
+        {this.place.contact_name && (
           <Label
             value={'Created by ' + this.place.contact_name}
             fontSize={this.fontSize * 0.8}
@@ -593,16 +667,28 @@ export default class SceneInfoCard {
             color={BLACK_TEXT}
           />
         )}
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            minHeight: this.fontSize * 2
-          }}
-        >
-          {likeRate > 0 &&
-            this.infoDetail(
-              Math.round(likeRate * 100).toString() + '%',
-              { atlasName: 'icons', spriteName: 'Like solid' },
+        {!this.place.isFakePlace && (
+          <UiEntity
+            uiTransform={{
+              width: '100%',
+              minHeight: this.fontSize * 2
+            }}
+          >
+            {likeRate > 0 &&
+              this.infoDetail(
+                Math.round(likeRate * 100).toString() + '%',
+                { atlasName: 'icons', spriteName: 'Like solid' },
+                {
+                  width: 'auto',
+                  height: this.fontSize,
+                  margin: { right: this.fontSize }
+                },
+                BLACK_TEXT
+              )}
+            {/* Need to implement last visitors portrait */}
+            {this.infoDetail(
+              (this.place.user_count ?? 0).toString(),
+              { atlasName: 'icons', spriteName: 'Members' },
               {
                 width: 'auto',
                 height: this.fontSize,
@@ -610,19 +696,8 @@ export default class SceneInfoCard {
               },
               BLACK_TEXT
             )}
-          {/* Need to implement last visitors portrait */}
-          {this.infoDetail(
-            this.place.user_count.toString(),
-            { atlasName: 'icons', spriteName: 'Members' },
-            {
-              width: 'auto',
-              height: this.fontSize,
-              margin: { right: this.fontSize }
-            },
-            BLACK_TEXT
-          )}
 
-          {/* Need to implement number formating
+            {/* Need to implement number formating
           {this.infoDetail(
             this.place.user_visits.toString() + 'k',
             { atlasName: 'icons', spriteName: 'PreviewIcon' },
@@ -633,7 +708,8 @@ export default class SceneInfoCard {
             },
             BLACK_TEXT
           )} */}
-        </UiEntity>
+          </UiEntity>
+        )}
 
         <ButtonTextIcon
           uiTransform={{
@@ -642,10 +718,33 @@ export default class SceneInfoCard {
             flexDirection: 'row-reverse'
           }}
           onMouseDown={() => {
+            if (this.place === LOADING_PLACE) return
             if (this.place === undefined) return
             const coord = parseCoordinates(this.place.base_position)
-            if (coord !== null)
-              void teleportTo({ worldCoordinates: { x: coord.x, y: coord.y } })
+            if (coord !== null) {
+              executeTask(async () => {
+                getUiController().menu.hide()
+                // TODO take care of toggling scene ui ( BevyApi.showUI() )
+                closeBigMapIfActive()
+                console.log(
+                  'currentRealmProviderIsWorld',
+                  currentRealmProviderIsWorld()
+                )
+                if (this.place?.world && this.place?.world_name) {
+                  await changeRealm({
+                    realm: this.place.world_name
+                  })
+                } else if (currentRealmProviderIsWorld()) {
+                  // TODO REVIEW if that URL is ok
+                  await changeRealm({
+                    realm: 'https://realm-provider.decentraland.org/main'
+                  })
+                }
+                await teleportTo({
+                  worldCoordinates: { x: coord.x, y: coord.y }
+                })
+              })
+            }
           }}
           value={'JUMP IN'}
           backgroundColor={RUBY}
@@ -656,189 +755,196 @@ export default class SceneInfoCard {
             spriteName: 'JumpIn'
           }}
         />
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: 'auto',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            margin: { top: this.fontSize * 0.5 }
-          }}
-        >
-          <ButtonIcon
-            uiTransform={{
-              width: '23%',
-              height: this.fontSize * 2
-            }}
-            iconSize={this.fontSize * 1.5}
-            icon={this.likeIcon}
-            backgroundColor={
-              this.updating
-                ? { ...SELECTED_BUTTON_COLOR, a: this.alpha }
-                : this.likeBackgroundColor
-            }
-            iconColor={
-              this.isLiked
-                ? { ...RUBY, a: this.alpha }
-                : { ...BLACK_TEXT, a: this.alpha }
-            }
-            onMouseEnter={() => {
-              this.onLikeEnter()
-            }}
-            onMouseLeave={() => {
-              this.resetBackgrounds()
-            }}
-            onMouseDown={() => {
-              if (this.isLiked) {
-                this.setLikeStatus('null')
-              } else {
-                this.setLikeStatus('like')
-              }
-            }}
-          />
-          <ButtonIcon
-            uiTransform={{
-              width: '23%',
-              height: this.fontSize * 2
-            }}
-            iconSize={this.fontSize * 1.5}
-            icon={this.dislikeIcon}
-            backgroundColor={
-              this.updating
-                ? { ...SELECTED_BUTTON_COLOR, a: this.alpha }
-                : this.dislikeBackgroundColor
-            }
-            iconColor={
-              this.isDisliked
-                ? { ...RUBY, a: this.alpha }
-                : { ...BLACK_TEXT, a: this.alpha }
-            }
-            onMouseEnter={() => {
-              this.onDislikeEnter()
-            }}
-            onMouseLeave={() => {
-              this.resetBackgrounds()
-            }}
-            onMouseDown={() => {
-              if (this.isDisliked) {
-                this.setLikeStatus('null')
-              } else {
-                this.setLikeStatus('dislike')
-              }
-            }}
-          />
-          <ButtonIcon
-            uiTransform={{
-              width: '23%',
-              height: this.fontSize * 2
-            }}
-            iconSize={this.fontSize * 1.5}
-            icon={this.favIcon}
-            backgroundColor={
-              this.updating
-                ? { ...SELECTED_BUTTON_COLOR, a: this.alpha }
-                : this.setFavBackgroundColor
-            }
-            iconColor={
-              this.isFav
-                ? { ...RUBY, a: this.alpha }
-                : { ...BLACK_TEXT, a: this.alpha }
-            }
-            onMouseEnter={() => {
-              this.onFavEnter()
-            }}
-            onMouseLeave={() => {
-              this.resetBackgrounds()
-            }}
-            onMouseDown={() => {
-              this.toggleFav()
-            }}
-          />
+        {!this.place.isFakePlace && (
           <UiEntity
             uiTransform={{
-              width: '23%',
-              height: this.fontSize * 2
+              width: '100%',
+              height: 'auto',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              margin: { top: this.fontSize * 0.5 }
             }}
           >
             <ButtonIcon
               uiTransform={{
-                minHeight: '100%',
-                minWidth: '100%'
+                width: '23%',
+                height: this.fontSize * 2
               }}
               iconSize={this.fontSize * 1.5}
-              icon={{
-                atlasName: 'context',
-                spriteName: 'Share'
-              }}
-              backgroundColor={this.shareBackgroundColor}
-              iconColor={BLACK_TEXT}
+              icon={this.likeIcon}
+              backgroundColor={
+                this.updating
+                  ? { ...SELECTED_BUTTON_COLOR, a: this.alpha }
+                  : this.likeBackgroundColor
+              }
+              iconColor={
+                this.isLiked
+                  ? { ...RUBY, a: this.alpha }
+                  : { ...BLACK_TEXT, a: this.alpha }
+              }
               onMouseEnter={() => {
-                this.onShareEnter()
+                this.onLikeEnter()
               }}
               onMouseLeave={() => {
                 this.resetBackgrounds()
               }}
               onMouseDown={() => {
-                this.isShareMenuOpen = !this.isShareMenuOpen
+                if (this.place === LOADING_PLACE) return
+                if (this.isLiked) {
+                  this.setLikeStatus('null')
+                } else {
+                  this.setLikeStatus('like')
+                }
+              }}
+            />
+            <ButtonIcon
+              uiTransform={{
+                width: '23%',
+                height: this.fontSize * 2
+              }}
+              iconSize={this.fontSize * 1.5}
+              icon={this.dislikeIcon}
+              backgroundColor={
+                this.updating
+                  ? { ...SELECTED_BUTTON_COLOR, a: this.alpha }
+                  : this.dislikeBackgroundColor
+              }
+              iconColor={
+                this.isDisliked
+                  ? { ...RUBY, a: this.alpha }
+                  : { ...BLACK_TEXT, a: this.alpha }
+              }
+              onMouseEnter={() => {
+                this.onDislikeEnter()
+              }}
+              onMouseLeave={() => {
+                this.resetBackgrounds()
+              }}
+              onMouseDown={() => {
+                if (this.place === LOADING_PLACE) return
+                if (this.isDisliked) {
+                  this.setLikeStatus('null')
+                } else {
+                  this.setLikeStatus('dislike')
+                }
+              }}
+            />
+            <ButtonIcon
+              uiTransform={{
+                width: '23%',
+                height: this.fontSize * 2
+              }}
+              iconSize={this.fontSize * 1.5}
+              icon={this.favIcon}
+              backgroundColor={
+                this.updating
+                  ? { ...SELECTED_BUTTON_COLOR, a: this.alpha }
+                  : this.setFavBackgroundColor
+              }
+              iconColor={
+                this.isFav
+                  ? { ...RUBY, a: this.alpha }
+                  : { ...BLACK_TEXT, a: this.alpha }
+              }
+              onMouseEnter={() => {
+                this.onFavEnter()
+              }}
+              onMouseLeave={() => {
+                this.resetBackgrounds()
+              }}
+              onMouseDown={() => {
+                if (this.place === LOADING_PLACE) return
+                this.toggleFav()
               }}
             />
             <UiEntity
               uiTransform={{
-                display: this.isShareMenuOpen ? 'flex' : 'none',
-                padding: { left: this.fontSize, right: this.fontSize },
-                flexDirection: 'column',
-                positionType: 'absolute',
-                position: { right: 0, bottom: '110%' },
-                width: 'auto',
-                minWidth: '100%',
-                height: 'auto'
-              }}
-              uiBackground={{
-                texture: { src: 'assets/images/backgrounds/rounded.png' },
-                color: BLACK_TEXT,
-                textureMode: 'nine-slices',
-                textureSlices: {
-                  top: 0.42,
-                  bottom: 0.42,
-                  left: 0.42,
-                  right: 0.42
-                }
+                width: '23%',
+                height: this.fontSize * 2
               }}
             >
-              <ButtonTextIcon
-                value={'Share on X'}
-                fontSize={(this.fontSize * 2) / 3}
-                icon={{
-                  atlasName: 'social',
-                  spriteName: 'Twitter'
+              <ButtonIcon
+                uiTransform={{
+                  minHeight: '100%',
+                  minWidth: '100%'
                 }}
-                iconSize={this.fontSize}
+                iconSize={this.fontSize * 1.5}
+                icon={{
+                  atlasName: 'context',
+                  spriteName: 'Share'
+                }}
+                backgroundColor={this.shareBackgroundColor}
+                iconColor={BLACK_TEXT}
+                onMouseEnter={() => {
+                  this.onShareEnter()
+                }}
+                onMouseLeave={() => {
+                  this.resetBackgrounds()
+                }}
                 onMouseDown={() => {
-                  void openExternalUrl({
-                    url: `https://twitter.com/intent/tweet?text=Check%20out%20${
-                      this.place?.title ?? ''
-                    },%20a%20cool%20place%20I%20found%20in%20Decentraland!&hashtags=DCLPlace&url=https://play.decentraland.org/?position=${this
-                      .place?.base_position}`
-                  })
+                  if (this.place === LOADING_PLACE) return
+                  this.isShareMenuOpen = !this.isShareMenuOpen
                 }}
               />
-              <ButtonTextIcon
-                onMouseDown={() => {
-                  void openExternalUrl({
-                    url: `https://decentraland.org/play/?position=${this.place?.base_position}`
-                  })
+              <UiEntity
+                uiTransform={{
+                  display: this.isShareMenuOpen ? 'flex' : 'none',
+                  padding: { left: this.fontSize, right: this.fontSize },
+                  flexDirection: 'column',
+                  positionType: 'absolute',
+                  position: { right: 0, bottom: '110%' },
+                  width: 'auto',
+                  minWidth: '100%',
+                  height: 'auto'
                 }}
-                value={'Copy Link'}
-                fontSize={(this.fontSize * 2) / 3}
-                icon={{
-                  atlasName: 'social',
-                  spriteName: 'Link'
+                uiBackground={{
+                  texture: { src: 'assets/images/backgrounds/rounded.png' },
+                  color: BLACK_TEXT,
+                  textureMode: 'nine-slices',
+                  textureSlices: {
+                    top: 0.42,
+                    bottom: 0.42,
+                    left: 0.42,
+                    right: 0.42
+                  }
                 }}
-                iconSize={this.fontSize}
-              />
+              >
+                <ButtonTextIcon
+                  value={'Share on X'}
+                  fontSize={(this.fontSize * 2) / 3}
+                  icon={{
+                    atlasName: 'social',
+                    spriteName: 'Twitter'
+                  }}
+                  iconSize={this.fontSize}
+                  onMouseDown={() => {
+                    void openExternalUrl({
+                      url: `https://twitter.com/intent/tweet?text=Check%20out%20${
+                        this.place?.title ?? ''
+                      },%20a%20cool%20place%20I%20found%20in%20Decentraland!&hashtags=DCLPlace&url=https://play.decentraland.org/?position=${this
+                        .place?.base_position}`
+                    })
+                  }}
+                />
+                <ButtonTextIcon
+                  onMouseDown={() => {
+                    if (this.place === LOADING_PLACE) return
+                    void openExternalUrl({
+                      url: `https://decentraland.org/play/?position=${this.place?.base_position}`
+                    })
+                  }}
+                  value={'Copy Link'}
+                  fontSize={(this.fontSize * 2) / 3}
+                  icon={{
+                    atlasName: 'social',
+                    spriteName: 'Link'
+                  }}
+                  iconSize={this.fontSize}
+                />
+              </UiEntity>
             </UiEntity>
           </UiEntity>
-        </UiEntity>
+        )}
       </UiEntity>
     )
   }
@@ -906,60 +1012,9 @@ export default class SceneInfoCard {
     let title = ''
     let spriteName = ''
 
-    switch (type) {
-      case 'game':
-        title = 'GAME'
-        spriteName = 'GamesIcn'
-        break
-      case 'art':
-        title = 'ART'
-        spriteName = 'ArtIcn'
-        break
-      case 'crypto':
-        title = 'CRYPTO'
-        spriteName = 'CryptoIcn'
-        break
-      case 'social':
-        title = 'SOCIAL'
-        spriteName = 'SocialIcn'
-        break
-      case 'shop':
-        title = 'SHOP'
-        spriteName = 'ShopIcn'
-        break
-      case 'education':
-        title = 'EDUCATION'
-        spriteName = 'EducationIcn'
-        break
-      case 'music':
-        title = 'MUSIC'
-        spriteName = 'MusicIcn'
-        break
-      case 'fashion':
-        title = 'FASHION'
-        spriteName = 'FashionIcn'
-        break
-      case 'casino':
-        title = 'CASINO'
-        spriteName = 'CasinoIcn'
-        break
-      case 'sports':
-        title = 'SPORTS'
-        spriteName = 'SportsIcn'
-        break
-      case 'business':
-        title = 'BUSINESS'
-        spriteName = 'BusinessIcn'
-        break
-      case 'poi':
-        title = 'POINT OF INTEREST'
-        spriteName = 'POIIcn'
-        break
-      default:
-        title = 'UNKNOWN'
-        spriteName = 'UnknownIcon'
-        break
-    }
+    const filterDefinition = MAP_FILTER_DEFINITIONS.find((d) => d.id === type)
+    title = filterDefinition?.label ?? 'Unknown'
+    spriteName = filterDefinition?.spriteName ?? 'MapPins'
 
     return (
       <UiEntity
@@ -988,7 +1043,7 @@ export default class SceneInfoCard {
             margin: { right: this.fontSize / 4, left: this.fontSize / 4 }
           }}
           uiBackground={getBackgroundFromAtlas({
-            atlasName: 'map',
+            atlasName: 'map2',
             spriteName
           })}
         />
@@ -1041,7 +1096,7 @@ export default class SceneInfoCard {
             'LOCATION'
           )}
           {this.infoDetail(
-            this.place.positions.length.toString(),
+            (this.place.positions?.length ?? 0).toString(),
             {
               atlasName: 'map',
               spriteName: 'ParcelsIcn'
@@ -1068,7 +1123,7 @@ export default class SceneInfoCard {
           color={BLACK_TEXT}
         />
 
-        {this.place.categories.length !== 0 && (
+        {this.place.categories?.length !== 0 && (
           <Label
             value={'APPEARS ON'}
             fontSize={this.fontSize}
@@ -1081,7 +1136,7 @@ export default class SceneInfoCard {
             color={GRAY_TEXT}
           />
         )}
-        {this.place.categories.length !== 0 && (
+        {this.place.categories?.length !== 0 && (
           <UiEntity
             uiTransform={{
               width: '100%',
@@ -1188,7 +1243,7 @@ export default class SceneInfoCard {
               }}
             />
             <Label
-              value={event.total_attendees.toString()}
+              value={(event.total_attendees ?? 0).toString()}
               fontSize={SMALL_TEXT}
               color={GRAY_TEXT}
             />
@@ -1363,9 +1418,9 @@ export default class SceneInfoCard {
           flexDirection: 'column'
         }}
       >
-        {eventsArray.length > 0 &&
+        {eventsArray?.length > 0 &&
           eventsArray.map((event, index) => this.eventCard(event, index))}
-        {eventsArray.length === 0 &&
+        {eventsArray?.length === 0 &&
           this.noResults(
             { atlasName: 'icons', spriteName: 'Events' },
             this.fontSize * 3,
@@ -1378,7 +1433,9 @@ export default class SceneInfoCard {
   }
 
   photosContent(width: number): ReactEcs.JSX.Element {
-    const photosArray = Object.values(store.getState().scene.explorerPhotos)
+    const photosArray = Object.values(
+      store.getState().scene?.explorerPhotos ?? {}
+    )
     return (
       <UiEntity
         uiTransform={{
@@ -1389,7 +1446,7 @@ export default class SceneInfoCard {
           flexDirection: 'column'
         }}
       >
-        {photosArray.length > 0 &&
+        {photosArray?.length > 0 &&
           photosArray.map((photo, index) => (
             <UiEntity
               uiTransform={{
@@ -1412,7 +1469,7 @@ export default class SceneInfoCard {
               }}
             />
           ))}
-        {photosArray.length === 0 &&
+        {photosArray?.length === 0 &&
           this.noResults(
             { atlasName: 'icons', spriteName: 'Camera' },
             this.fontSize * 3,

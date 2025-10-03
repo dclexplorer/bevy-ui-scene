@@ -22,7 +22,6 @@ import { PermissionLegend } from './permission-legend'
 import { PermissionRowField } from './permission-row-field'
 import { getRealm } from '~system/Runtime'
 import useEffect = ReactEcs.useEffect
-import { type LiveSceneInfo } from '../../../../bevy-api/interface'
 import { type InputOption } from '../../../../utils/definitions'
 
 const FONT_SMALL_UNIT = 30
@@ -76,9 +75,7 @@ export const PermissionsForm = ({
       const selectedSceneItem =
         selectedScene === null
           ? playerScene
-          : (liveSceneInfo.find(
-              (s) => s.hash === selectedScene
-            ) as LiveSceneInfo)
+          : liveSceneInfo.find((s) => s.hash === selectedScene)
 
       if (selectedSceneItem) {
         setSelectedSceneHash(selectedSceneItem.hash)

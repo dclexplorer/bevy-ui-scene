@@ -3,6 +3,8 @@ import type { AtlasIcon, AtlasData, Sprite, FormattedURN } from './definitions'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
 import backpackJson from '../../assets/images/atlas/backpack.json'
 import iconsJson from '../../assets/images/atlas/icons.json'
+import map2Json from '../../assets/images/atlas/map2.json'
+
 import { navbarJson } from '../json/navbar-data'
 import { contextJson } from '../json/context-data'
 import { toggleJson } from '../json/toggle-data'
@@ -29,6 +31,9 @@ export function getUvs(
       break
     case 'map':
       parsedJson = mapJson
+      break
+    case 'map2':
+      parsedJson = map2Json as AtlasData
       break
     case 'backpack':
       parsedJson = backpackJson as AtlasData
@@ -142,6 +147,7 @@ export function truncateWithoutBreakingWords(
   str: string,
   maxLength: number
 ): string {
+  if (!str) return str
   if (str.length <= maxLength) {
     return str
   }

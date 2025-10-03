@@ -71,7 +71,7 @@ export const initOutfitsCatalog = async (): Promise<void> => {
       orthographic: { verticalRange: AVATAR_FRAME_SIZE * 3 }
     }
   })
-  outfitsMetadata.outfits.forEach((outfitMetadata) => {
+  outfitsMetadata?.outfits.forEach((outfitMetadata) => {
     viewSlots[outfitMetadata.slot] = outfitMetadata.outfit
   })
 

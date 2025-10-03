@@ -74,7 +74,7 @@ export const COLOR = {
   TEXT_COLOR_GREY: Color4.fromHexString('#889AA4FF'),
   TEXT_COLOR_LIGHT_GREY: Color4.fromHexString('#C6C6C6FF'),
   INACTIVE: Color4.fromHexString('#d8d8d8'),
-
+  PANEL_BACKGROUND_LIGHT: Color4.fromHexString('#e4e4e4'),
   WHEEL_BASE_RARITY: Color4.fromHexString('#e1e1e1'),
   BLACK_TRANSPARENT: Color4.create(0, 0, 0, 0),
   MESSAGE_MENTION: Color4.fromHexString('#FD2D58'),
@@ -94,7 +94,8 @@ export const COLOR = {
   NOTIFICATION_FRIEND: Color4.fromHexString('#ED3E82FF'),
   NOTIFICATION_GIFT: Color4.fromHexString('#FF8648FF'),
   NOTIFICATION_EVENT: Color4.fromHexString('#4386EDFF'),
-  NOTIFICATION_BADGE: Color4.fromHexString('#edcb43')
+  NOTIFICATION_BADGE: Color4.fromHexString('#edcb43'),
+  CATALOG_SEARCH_BACKGROUND: Color4.fromHexString('#b6b6b6')
 }
 export const RARITY_HEX_COLORS: Record<RarityName, string> = {
   base: '#a09ba8',

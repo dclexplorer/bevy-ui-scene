@@ -272,6 +272,7 @@ export default class MainHud {
 
   mainUi(): ReactEcs.JSX.Element | null {
     if (this.uiController.menu.isOpen()) return null
+    if (store.getState().hud.mapModeActive) return null
 
     return (
       <UiEntity
@@ -545,7 +546,7 @@ export default class MainHud {
                 hintText={'Experiences'}
                 showHint={this.experiencesHint} />
               */}
-          <ButtonIcon
+          {/*          <ButtonIcon
             uiTransform={buttonTransform}
             onMouseEnter={() => {
               this.friendsEnter()
@@ -565,8 +566,11 @@ export default class MainHud {
               this.uiController.friends.requestsNumber
             }
             iconSize={buttonIconSize}
-          />
-          <ButtonIcon
+          /> */}
+          {/*
+             // TODO we need BevyApi to activate/deactivate voice chat/
+
+             <ButtonIcon
             uiTransform={buttonTransform}
             onMouseEnter={() => {
               this.voiceChatEnter()
@@ -582,7 +586,7 @@ export default class MainHud {
             hintText={'Voice Chat'}
             showHint={this.voiceChatHint}
             iconSize={buttonIconSize}
-          />
+          /> */}
           <ButtonIcon
             uiTransform={buttonTransform}
             onMouseEnter={() => {

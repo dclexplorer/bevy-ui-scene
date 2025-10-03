@@ -53,6 +53,7 @@ export type EventFromApi = {
   attending: boolean
   position: [number, number]
   live: boolean
+  [key: string]: any
 }
 
 export type CategoryFromApi =
@@ -101,6 +102,7 @@ export type PlaceFromApi = {
   user_dislike: boolean
   user_count: number
   user_visits: number
+  [key: string]: any
 }
 
 export type FavPayload = { placeId: string; isFav: boolean } | undefined

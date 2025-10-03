@@ -36,6 +36,8 @@ import {
 import { updateHudStateAction } from '../state/hud/actions'
 import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-popups/permissions-popup-service'
 import { getRealm } from '~system/Runtime'
+import { BigMap } from '../ui-classes/main-hud/big-map/big-map-view'
+import { SceneCatalogPanel } from '../components/map/scene-catalog-panel'
 
 let loadingAndLogin: any = null
 
@@ -46,6 +48,8 @@ export function logout(): void {
   loadingAndLogin.startLoading()
   loadingAndLogin.setStatus('sign-in-or-guest')
 }
+let uiControllerSingletonInstance: UIController
+export const getUiController = (): UIController => uiControllerSingletonInstance
 
 export class UIController {
   public isPhotosVisible: boolean = false
@@ -79,6 +83,7 @@ export class UIController {
   }
 
   constructor(gameController: GameController) {
+    uiControllerSingletonInstance = this
     this.gameController = gameController
     this.loadingAndLogin = loadingAndLogin = new LoadingAndLogin(this)
     this.mainHud = new MainHud(this)
@@ -134,18 +139,25 @@ export class UIController {
     return (
       <Canvas>
         {InteractableArea({ active: false })}
+
         {this.mainHud.mainUi()}
+
         {this.isMainMenuVisible && this.menu.mainUi()}
         {this.isProfileVisible && this.profile.mainUi()}
         {this.isFriendsVisible && this.friends.mainUi()}
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
-        {this.sceneInfoCardVisible && this.sceneCard.mainUi()}
+
         {this.isPhotosVisible && this.photosPanel.mainUi()}
         {/* Loading & Login */}
         {this.loadingAndLogin?.mainUi()}
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
         {this.warningPopUpVisible && this.warningPopUp.mainUi()}
         {!this.isMainMenuVisible && renderEmotesWheel()}
+
+        {store.getState().hud.mapModeActive && BigMap()}
+        {store.getState().hud.mapModeActive && SceneCatalogPanel()}
+
+        {this.sceneInfoCardVisible && this.sceneCard.mainUi()}
         {NotificationToastStack()}
         {PopupStack()}
       </Canvas>

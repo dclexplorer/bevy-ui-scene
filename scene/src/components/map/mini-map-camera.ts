@@ -45,6 +45,13 @@ export function getMapInfoCamera(): Entity {
 
   return infoCameraEntity
 }
+
+export const disposeMiniMapCameraEntities = (): void => {
+  engine.removeEntityWithChildren(infoCameraEntity)
+  engine.removeEntityWithChildren(cameraEntity)
+  infoCameraEntity = cameraEntity = engine.RootEntity
+}
+
 export const CAMERA_X_ANGLE = 89.9
 export function getMinimapCamera(): Entity {
   if (cameraEntity === engine.RootEntity) {

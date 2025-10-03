@@ -1,19 +1,26 @@
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
-import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { noop } from '../utils/function-utils'
-
+import ReactEcs, {
+  type ReactElement,
+  type UiBackgroundProps,
+  UiEntity
+} from '@dcl/react-ecs'
+import { type UiLabelProps } from '@dcl/react-ecs/dist/components/Label/types'
 export function Row({
   uiTransform,
+  uiBackground,
   children,
-  onMouseEnter = noop,
-  onMouseLeave = noop,
-  onMouseDown = noop
+  onMouseEnter,
+  onMouseLeave,
+  onMouseDown,
+  uiText
 }: {
   uiTransform?: UiTransformProps
+  uiBackground?: UiBackgroundProps
   children?: ReactElement
   onMouseEnter?: () => void
   onMouseLeave?: () => void
   onMouseDown?: () => void
+  uiText?: UiLabelProps
 }): ReactElement {
   return (
     <UiEntity
@@ -26,6 +33,8 @@ export function Row({
         width: '100%',
         ...uiTransform
       }}
+      uiBackground={uiBackground}
+      uiText={uiText}
     >
       {children}
     </UiEntity>
@@ -35,22 +44,31 @@ export function Row({
 export function Column({
   uiTransform,
   children,
-  onMouseEnter = noop,
-  onMouseLeave = noop
+  onMouseEnter,
+  onMouseLeave,
+  onMouseDown,
+  uiBackground,
+  uiText
 }: {
   uiTransform?: UiTransformProps
-  children?: ReactElement
+  children?: ReactElement | ReactElement[] | null[]
   onMouseEnter?: () => void
   onMouseLeave?: () => void
+  onMouseDown?: () => void
+  uiBackground?: UiBackgroundProps
+  uiText?: UiLabelProps
 }): ReactElement {
   return (
     <UiEntity
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      uiBackground={uiBackground}
+      onMouseDown={onMouseDown}
       uiTransform={{
         flexDirection: 'column',
         ...uiTransform
       }}
+      uiText={uiText}
     >
       {children}
     </UiEntity>

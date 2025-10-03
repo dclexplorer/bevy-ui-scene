@@ -1,5 +1,7 @@
 import { cloneDeep } from '../../utils/function-utils'
 import { type NameDefinition } from '../../utils/passport-promise-utils'
+import { type Place } from '../../service/map-places'
+import { Vector3 } from '@dcl/sdk/math'
 
 export const HUD_STORE_ID = 'hud'
 
@@ -56,8 +58,14 @@ export type HUDPopup = {
   type: HUD_POPUP_TYPE
   data?: unknown
 }
-
+export type SceneCatalogOrder =
+  | 'most_active'
+  | 'like_score'
+  | 'updated_at'
+  | 'created_at'
 export type HudState = {
+  mapCameraIsOrbiting: boolean
+  transitioningToMap: boolean
   chatOpen: boolean
   shownPopups: HUDPopup[]
   profileData: ViewAvatarData
@@ -69,9 +77,22 @@ export type HudState = {
   chatOptionShowSystemMessages: boolean
   chatInput: string
   minimapOpen: boolean
+  mapModeActive: boolean
+  mapFilterCategories: string[]
+  placeListActiveItem: Place | null
+  sceneList: {
+    total: number
+    data: Place[]
+  }
+  movingMap: boolean
+  sceneCatalogOrder: SceneCatalogOrder
+  homePlace: Place | null
+  mapTargetPosition: Vector3
+  placeType: 'places' | 'worlds'
 }
 
 export type HudStateUpdateParams = {
+  transitioningToMap?: boolean
   chatOpen?: boolean
   shownPopup?: HUDPopup[]
   profileData?: ViewAvatarData
@@ -83,9 +104,23 @@ export type HudStateUpdateParams = {
   chatOptionShowSystemMessages?: boolean
   chatInput?: string
   minimapOpen?: boolean
+  mapModeActive?: boolean
+  mapFilterCategories?: string[]
+  placeListActiveItem?: Place | null
+  sceneList?: {
+    total: number
+    data: Place[]
+  }
+  movingMap?: boolean
+  sceneCatalogOrder?: SceneCatalogOrder
+  homePlace?: Place
+  mapTargetPosition?: Vector3
+  mapCameraIsOrbiting?: boolean
+  placeType?: 'places' | 'worlds'
 }
 
 export const hudInitialState: HudState = {
+  transitioningToMap: false,
   chatOpen: true,
   shownPopups: [],
   profileData: cloneDeep(EMPTY_PROFILE_DATA),
@@ -96,5 +131,18 @@ export const hudInitialState: HudState = {
   chatOptionShowUserMessages: true,
   chatOptionShowSystemMessages: false,
   chatInput: '',
-  minimapOpen: true
+  minimapOpen: true,
+  mapModeActive: false,
+  mapFilterCategories: ['poi'],
+  placeListActiveItem: null,
+  sceneList: {
+    total: 0,
+    data: []
+  },
+  movingMap: true,
+  sceneCatalogOrder: `most_active`,
+  homePlace: null,
+  mapTargetPosition: Vector3.Zero(),
+  mapCameraIsOrbiting: false,
+  placeType: 'places'
 }

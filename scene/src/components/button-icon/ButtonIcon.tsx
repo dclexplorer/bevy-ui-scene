@@ -94,7 +94,7 @@ function ButtonIcon(props: {
           uiTransform={{ width: '100%', height: '100%' }}
         />
       </UiEntity>
-      {props.showHint !== false && props.hintText !== undefined && (
+      {props.showHint && props.hintText !== undefined && (
         <ArrowToast
           uiTransform={{
             width: 'auto',

@@ -15,10 +15,19 @@
         "allowNullableObject": true,
         "allowNullableString": true,
         "allowNullableBoolean": true,
-        "allowAny": true
+        "allowAny": true,
+        "allowNumber": true,
+        "allowNullableNumber": true
       }
     ],
-    "@typescript-eslint/prefer-nullish-coalescing": "off"
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/no-this-alias": [
+      "error",
+      {
+        "allowedNames": ["uiControllerSingletonInstance"],
+        "allowDestructuring": true
+      }
+    ]
   },
   "ignorePatterns": ["node_modules"]
 }

@@ -8,8 +8,12 @@ const systemActionsEmitter = createMediator()
 export function listenSystemAction(
   action: string,
   fn: (...args: any[]) => void
-): void {
+): () => void {
   systemActionsEmitter.subscribe(action, fn)
+
+  return (): void => {
+    unlistenSystemAction(action, fn)
+  }
 }
 
 export function unlistenSystemAction(action: string, fn: () => void): void {
@@ -27,6 +31,7 @@ export function initSystemActionsEmitter(): void {
   async function awaitStream(stream: SystemAction[]): Promise<void> {
     for await (const actionInfo of stream) {
       systemActionsEmitter.publish(actionInfo.action, actionInfo.pressed)
+      console.log('actionInfo', actionInfo)
     }
   }
 }

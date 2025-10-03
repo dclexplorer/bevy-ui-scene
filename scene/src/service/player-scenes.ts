@@ -1,32 +1,40 @@
 import { Transform, engine, type Coords } from '@dcl/sdk/ecs'
 import { BevyApi } from '../bevy-api'
 import { type LiveSceneInfo } from '../bevy-api/interface'
+import { type Vector3 } from '@dcl/sdk/math'
 const state: {
   playerParcel: Coords
 } = {
   playerParcel: { x: 0, y: 0 }
 }
+export function getVector3Parcel(position: Vector3): Coords {
+  const worldX = position.x
+  const worldZ = position.z
 
+  const x = Math.floor(worldX / 16)
+  const y = Math.floor(worldZ / 16)
+  return {
+    x,
+    y
+  }
+}
 export function getPlayerParcel(): { x: number; y: number } {
   const playerEntity = engine.PlayerEntity
   const transform = Transform.get(playerEntity)
 
-  const worldX = transform.position.x
-  const worldZ = transform.position.z
+  const { x, y } = getVector3Parcel(transform.position)
 
-  const parcelX = Math.floor(worldX / 16)
-  const parcelY = Math.floor(worldZ / 16)
-
-  if (state.playerParcel.x === parcelX && state.playerParcel.y === parcelY) {
+  if (state.playerParcel.x === x && state.playerParcel.y === y) {
     return state.playerParcel
   } else {
-    state.playerParcel = { x: parcelX, y: parcelY }
+    state.playerParcel = { x, y }
   }
   return state.playerParcel
 }
 
 export async function getCurrentScene(
-  liveSceneInfo?: LiveSceneInfo[]
+  liveSceneInfo?: LiveSceneInfo[],
+  fallbackToClosest: boolean = true
 ): Promise<LiveSceneInfo | undefined> {
   const _liveSceneInfo =
     liveSceneInfo ??
@@ -35,7 +43,7 @@ export async function getCurrentScene(
   const currentScene = _liveSceneInfo.find((s) =>
     s.parcels.find((p) => p.x === currentParcel.x && p.y === currentParcel.y)
   )
-  if (!currentScene && _liveSceneInfo?.length) {
+  if (!currentScene && _liveSceneInfo?.length && fallbackToClosest) {
     return _liveSceneInfo.reduce((closestScene, scene) => {
       const closestDistance = getClosestParcelDistance(
         currentParcel,
@@ -49,7 +57,7 @@ export async function getCurrentScene(
     })
   }
 
-  return currentScene
+  return currentScene ?? undefined
 
   function getClosestParcelDistance(
     from: { x: number; y: number },

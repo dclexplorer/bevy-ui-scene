@@ -263,7 +263,6 @@ export const OutfitsCatalog = (): ReactElement => {
         hairColor: viewSlot?.hair.color ?? undefined,
         eyesColor: viewSlot?.eyes.color ?? undefined,
         bodyShapeUrn: viewSlot?.bodyShape as URNWithoutTokenId,
-
         name: (viewSlot?.name as string) ?? getPlayer()?.name
       })
     )

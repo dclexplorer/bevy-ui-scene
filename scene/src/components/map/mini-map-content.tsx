@@ -20,6 +20,7 @@ import useState = ReactEcs.useState
 
 import {
   CAMERA_X_ANGLE,
+  disposeMiniMapCameraEntities,
   getMapInfoCamera,
   getMinimapCamera
 } from './mini-map-camera'
@@ -35,6 +36,8 @@ import {
   createOrGetAvatarsTracker,
   getPlayerAvatarEntities
 } from '../../service/avatar-tracker'
+import { getUiController } from '../../controllers/ui.controller'
+import { currentRealmProviderIsWorld } from '../../service/realm-change'
 
 export function MiniMapContent(): ReactElement {
   const mapSize = getMapSize()
@@ -89,15 +92,28 @@ export function MiniMapContent(): ReactElement {
     avatarTracker.onLeaveScene((userId) => {
       renderMinimapPlayers(getPlayerAvatarEntities())
     })
+    return () => {
+      console.log('DISPOSE_MINIMAP')
+      disposeMiniMapCameraEntities()
+    }
   }, [])
 
   useEffect(() => {
-    renderVisiblePlaces(parcelsAround)
+    if (currentRealmProviderIsWorld()) {
+      renderVisiblePlaces([])
+    } else {
+      renderVisiblePlaces(parcelsAround)
+    }
   }, [parcelsAroundIds])
 
   useEffect(() => {
     const playerParcel = getPlayerParcel()
-    const placesAroundPlayerParcel = getPlacesAroundParcel(playerParcel, 10)
+    const placesAroundPlayerParcel = getPlacesAroundParcel(
+      playerParcel,
+      10
+    ).filter((p) =>
+      p.categories.some((c: string) => c === 'poi' || c === 'player')
+    )
     setParcelsAroundIds(
       placesAroundPlayerParcel.map((p) => p.base_position).join(',')
     )
@@ -118,6 +134,9 @@ export function MiniMapContent(): ReactElement {
         videoTexture: {
           videoPlayerEntity: getMinimapCamera()
         }
+      }}
+      onMouseDown={() => {
+        getUiController().menu?.show('map')
       }}
     >
       <UiEntity

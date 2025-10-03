@@ -124,8 +124,8 @@ export type BevyApiInterface = {
 
   reload: (hash: string | undefined) => Promise<void>
   showUi: (
-    hash: string | undefined,
-    show: boolean | undefined
+    hash?: string | undefined,
+    show?: boolean | undefined
   ) => Promise<boolean>
   liveSceneInfo: () => Promise<LiveSceneInfo[]>
   getHomeScene: () => Promise<HomeScene>

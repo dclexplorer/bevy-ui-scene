@@ -9,7 +9,10 @@ import { type AtlasIcon } from '../../utils/definitions'
 import { ProfileButton } from '../profile/profile-button'
 import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import {
+  getCanvasScaleRatio,
+  getViewportHeight
+} from '../../service/canvas-ratio'
 import { playPreviewEmote } from '../../components/backpack/AvatarPreview'
 import {
   initOutfitsCatalog,
@@ -17,6 +20,7 @@ import {
 } from '../../components/backpack/OutfitAvatar'
 import { DeleteOutfitDialog } from './backpack-page/delete-outfit-dialog'
 import { noop } from '../../utils/function-utils'
+import { BevyApi } from '../../bevy-api'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
@@ -87,16 +91,24 @@ export default class MainMenu {
     playPreviewEmote('')
     disposeOutfitsCatalog()
     this.open = false
+    if (this.open) {
+      // TODO REVIEW shouldn't show:false hide the ui always instead of toggling (when hot reload, it's not reset)
+      BevyApi.showUi(undefined, false).catch(console.error)
+    }
   }
 
   show(page: MenuPage): void {
+    if (!this.open) {
+      BevyApi.showUi(undefined, true).catch(console.error)
+    }
+
     this.open = true
     this.uiController.settingsPage.updateButtons()
     this.activePage = page
     this.uiController.isMainMenuVisible = true
     this.updateButtons()
     this.uiController.show(page)
-    initOutfitsCatalog().catch(console.error)
+    initOutfitsCatalog().catch(console.error) // TODO review
   }
 
   updateButtons(): void {
@@ -146,8 +158,8 @@ export default class MainMenu {
       <UiEntity
         uiTransform={{
           width: '100%',
-          height: '100%',
-          positionType: 'absolute'
+          positionType: 'absolute',
+          zIndex: 1
         }}
         onMouseDown={noop}
       >
@@ -155,20 +167,19 @@ export default class MainMenu {
         <UiEntity
           uiTransform={{
             width: '100%',
-            height: '100%',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             alignItems: 'center'
           }}
-          uiBackground={{ color: Color4.create(0, 0, 0, 1) }}
         >
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: '6%',
+              height: getMainMenuHeight(),
               justifyContent: 'center',
               alignItems: 'center',
-              flexDirection: 'row'
+              flexDirection: 'row',
+              zIndex: 1
             }}
             uiBackground={{
               color: COLOR.MAIN_MENU_BACKGROUND
@@ -222,34 +233,6 @@ export default class MainMenu {
                 }
                 fontColor={
                   this.activePage === 'map'
-                    ? undefined
-                    : BUTTON_TEXT_COLOR_INACTIVE
-                }
-              />
-
-              <ButtonTextIcon
-                uiTransform={buttonTransform}
-                onMouseEnter={() => {
-                  this.exploreEnter()
-                }}
-                onMouseLeave={() => {
-                  this.updateButtons()
-                }}
-                onMouseDown={() => {
-                  this.show('explore')
-                }}
-                backgroundColor={this.exploreBackground}
-                icon={this.exploreIcon}
-                value={'<b>EXPLORE</b> [X]'}
-                fontSize={BUTTON_ICON_FONT_SIZE}
-                iconSize={ICON_SIZE}
-                iconColor={
-                  this.activePage === 'explore'
-                    ? undefined
-                    : BUTTON_TEXT_COLOR_INACTIVE
-                }
-                fontColor={
-                  this.activePage === 'explore'
                     ? undefined
                     : BUTTON_TEXT_COLOR_INACTIVE
                 }
@@ -315,7 +298,8 @@ export default class MainMenu {
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: 8 * canvasScaleRatio
+              height: 8 * canvasScaleRatio,
+              zIndex: 2
             }}
             uiBackground={{
               texture: {
@@ -327,10 +311,15 @@ export default class MainMenu {
           <UiEntity
             uiTransform={{
               width: '100%',
-              height: 'auto',
+              height:
+                this.activePage === 'map'
+                  ? 'auto'
+                  : getViewportHeight() - getMainMenuHeight(),
               flexGrow: 1
             }}
-            uiBackground={{ color: { ...Color4.Green(), a: 0.1 } }}
+            uiBackground={{
+              color: COLOR.WHITE_OPACITY_2
+            }}
           >
             {this.activePage === 'map' && this.uiController.mapPage.mainUi()}
             {this.activePage === 'explore' &&
@@ -343,10 +332,13 @@ export default class MainMenu {
           <UiEntity
             uiTransform={{
               width: 'auto',
-              height: '8%',
+              height: getMainMenuHeight(),
               positionType: 'absolute',
-              alignItems: 'center',
-              position: { right: buttonSize, top: 0 }
+              position: {
+                right: getCanvasScaleRatio() * 50,
+                top: getMainMenuHeight() * 0.1
+              },
+              zIndex: 1
             }}
           >
             {this.profileButton.mainUi()}
@@ -372,4 +364,7 @@ export default class MainMenu {
       </UiEntity>
     )
   }
+}
+export function getMainMenuHeight(): number {
+  return Math.floor(getViewportHeight() * 0.06)
 }

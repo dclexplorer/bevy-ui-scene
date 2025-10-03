@@ -100,3 +100,39 @@ export const compose = <T>(
         prevFn(nextFn(value)),
     fn1
   )
+
+type Id = PropertyKey // string | number | symbol
+type WithId<K extends Id = Id> = { id: K }
+
+export function dedupeById<T extends WithId<K>, K extends Id = Id>(
+  arr: readonly T[],
+  mode: 'keep-first' | 'keep-last' | 'only-unique' = 'keep-first'
+): T[] {
+  if (mode === 'keep-first') {
+    const seen = new Set<K>()
+    return arr.filter((item) => {
+      if (seen.has(item.id)) return false
+      seen.add(item.id)
+      return true
+    })
+  }
+
+  if (mode === 'keep-last') {
+    const seen = new Set<K>()
+    const out: T[] = []
+    // Recorremos de derecha a izquierda para mantener la última aparición
+    for (let i = arr.length - 1; i >= 0; i--) {
+      const it = arr[i]
+      if (!seen.has(it.id)) {
+        seen.add(it.id)
+        out.push(it)
+      }
+    }
+    return out.reverse()
+  }
+
+  // mode === 'only-unique'
+  const counts = new Map<K, number>()
+  for (const it of arr) counts.set(it.id, (counts.get(it.id) ?? 0) + 1)
+  return arr.filter((it) => counts.get(it.id) === 1)
+}

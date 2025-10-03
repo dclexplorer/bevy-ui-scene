@@ -65,7 +65,8 @@ export class GameController {
     }
 
     const liveScenesInfo: LiveSceneInfo[] = await BevyApi.liveSceneInfo()
-    const currentScene = await getCurrentScene(liveScenesInfo)
+    const currentScene = await getCurrentScene(liveScenesInfo, false)
+    console.log('currentScene__', currentScene)
     store.dispatch(loadSceneFromBevyApi(currentScene))
     store.dispatch(loadPlaceFromApi(undefined))
     fetchPlaceFromCoords(explorerCoords)

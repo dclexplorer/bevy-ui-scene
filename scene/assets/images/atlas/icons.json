@@ -2642,8 +2642,8 @@
 		},
 		"@.png": {
 			"frame": {
-				"x": 354,
-				"y": 156,
+				"x": 659,
+				"y": 52,
 				"w": 24,
 				"h": 24
 			},
@@ -2659,6 +2659,26 @@
 				"w": 24,
 				"h": 24
 			}
+		},
+		"top-view.png": {
+			"frame": {
+				"x": 610,
+				"y": 507,
+				"w": 64,
+				"h": 64
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 64,
+				"h": 64
+			},
+			"sourceSize": {
+				"w": 64,
+				"h": 64
+			}
 		}
 	},
 	"meta": {
@@ -2667,7 +2687,7 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 661,
+			"w": 684,
 			"h": 621
 		},
 		"scale": "1"
