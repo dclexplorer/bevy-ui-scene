@@ -106,17 +106,19 @@ function SettingsContent(): ReactElement {
               height: getViewportHeight() - getMainMenuHeight() * 5
             }}
           >
-            {settings.map((setting) => (
-              <SettingField
-                setting={setting}
-                onChange={(value) => {
-                  setting.value = value
-                  setSettings([...settings])
-                  // TODO debounce update
-                  BevyApi.setSetting(setting.name, value).catch(console.error)
-                }}
-              />
-            ))}
+            {settings
+              .filter((s) => s.category === currentCategory)
+              .map((setting) => (
+                <SettingField
+                  setting={setting}
+                  onChange={(value) => {
+                    setting.value = value
+                    setSettings([...settings])
+                    // TODO debounce update
+                    BevyApi.setSetting(setting.name, value).catch(console.error)
+                  }}
+                />
+              ))}
           </UiEntity>
         </Column>
       </ResponsiveContent>
