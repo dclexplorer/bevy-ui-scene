@@ -3,7 +3,8 @@ import {
   UiCanvasInformation,
   UiScrollResult,
   UiTransform,
-  engine
+  engine,
+  executeTask
 } from '@dcl/sdk/ecs'
 import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
 import { type UIController } from '../../../controllers/ui.controller'
@@ -25,6 +26,8 @@ import { Slider } from '../../../components/slider'
 import { noop } from '../../../utils/function-utils'
 import { PermissionsForm } from './permissions/permissions-form'
 import { PERMISSION_DEFINITIONS } from '../../../bevy-api/permission-definitions'
+import { Column } from '../../../components/layout'
+import useEffect = ReactEcs.useEffect
 
 type SettingCategory =
   | 'general'
@@ -59,7 +62,7 @@ export default class SettingsPage {
   private permissionsBackgroundColor: Color4 = ALMOST_WHITE
   private performanceBackgroundColor: Color4 = ALMOST_WHITE
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
-  private buttonClicked: SettingCategory = 'permissions' // TODO revert to default category
+  private buttonClicked: SettingCategory = 'graphics' // TODO revert to default category
 
   // private settingsInfoTitle: string = ''
   private settingsInfoDescription: string = ''
@@ -70,7 +73,11 @@ export default class SettingsPage {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
+
     engine.addSystem(this.controllerSystem.bind(this))
+    executeTask(async () => {
+      console.log('store setting', store.getState().settings.explorerSettings)
+    })
   }
 
   setButtonClicked(button: SettingCategory): void {
@@ -195,13 +202,28 @@ export default class SettingsPage {
       )
       if (setting === undefined) continue
 
+      console.log('setting', JSON.stringify(setting))
       const scrollValue = sliderPercentageToValue(
         pos.value.x,
         setting.minValue,
         setting.maxValue
       )
+
       const currentValue =
         store.getState().settings.newValues[setting.name] ?? setting.value
+
+      if (setting.name === 'Shadow Distance') {
+        console.log(' setting.name, pos.value.x,', setting.name, pos.value.x) // Shadow Distance, 0
+        console.log('scrollValue', scrollValue) // 300
+        console.log('pos', JSON.stringify(pos)) // { x:0 y:0 }
+        console.log(
+          'store.getState().settings.newValues[setting.name]',
+          store.getState().settings.newValues[setting.name]
+        ) // undefined
+        console.log('currentValue', currentValue) // 132
+        console.log('------------------------')
+      }
+
       if (currentValue !== scrollValue) {
         store.dispatch(
           setSettingValue({ name: setting.name, value: scrollValue })
@@ -213,7 +235,7 @@ export default class SettingsPage {
           setting.maxValue,
           ' from ',
           currentValue
-        )
+        ) // "Setting Shadow Distance updated to 300" 0 0 300 " from" 132
       }
     }
   }
@@ -596,33 +618,45 @@ export default class SettingsPage {
                       )
                     } else {
                       return (
-                        <Slider
-                          title={setting.name}
-                          fontSize={fontSize}
-                          value={`${
-                            store.getState().settings.newValues[setting.name] ??
-                            setting.value
-                          }`}
-                          uiTransform={{
-                            width: sliderWidth,
-                            height: sliderHeight,
-                            elementId: `setting-${setting.name}-${index}-parent`
-                            // display:
-                            //   setting.category.toLowerCase() === this.buttonClicked
-                            //     ? 'flex'
-                            //     : 'none'
-                          }}
-                          sliderSize={sliderWidth * 2}
-                          id={`setting-${setting.name}`}
-                          position={sliderValueToPercentage(
-                            setting.value,
-                            setting.minValue,
-                            setting.maxValue
-                          )}
-                          onMouseEnter={() => {
-                            this.settingsInfoDescription = setting.description
-                          }}
-                        />
+                        <Column>
+                          <Label
+                            value={(
+                              store.getState().settings.newValues[
+                                setting.name
+                              ] ?? NaN
+                            ).toString()}
+                          />
+
+                          <Label value={(setting ?? NaN).value.toString()} />
+                          <Slider
+                            title={setting.name}
+                            fontSize={fontSize}
+                            value={`${
+                              store.getState().settings.newValues[
+                                setting.name
+                              ] ?? setting.value
+                            }`}
+                            uiTransform={{
+                              width: sliderWidth,
+                              height: sliderHeight,
+                              elementId: `setting-${setting.name}`
+                              // display:
+                              //   setting.category.toLowerCase() === this.buttonClicked
+                              //     ? 'flex'
+                              //     : 'none'
+                            }}
+                            sliderSize={sliderWidth * 2}
+                            id={`setting-${setting.name}`}
+                            position={sliderValueToPercentage(
+                              setting.value,
+                              setting.minValue,
+                              setting.maxValue
+                            )}
+                            onMouseEnter={() => {
+                              this.settingsInfoDescription = setting.description
+                            }}
+                          />
+                        </Column>
                       )
                     }
                   })}

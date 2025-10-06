@@ -18,7 +18,10 @@ import {
   createAvatarPreview,
   updateAvatarPreview
 } from '../../../components/backpack/AvatarPreview'
-import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
+import {
+  MENU_BACKGROUND_TEXTURE,
+  ROUNDED_TEXTURE_BACKGROUND
+} from '../../../utils/constants'
 import {
   BASE_MALE_URN,
   getURNWithoutTokenId,
@@ -232,7 +235,7 @@ export function MainContent({
         pointerFilter: 'block'
       }}
       uiBackground={{
-        texture: { src: 'assets/images/menu/background.png' },
+        texture: MENU_BACKGROUND_TEXTURE,
         textureMode: 'stretch'
       }}
     >

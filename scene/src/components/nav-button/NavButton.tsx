@@ -38,6 +38,7 @@ export function NavButton({
         padding: 16 * canvasScaleRatio,
         height: 80 * canvasScaleRatio,
         alignItems: 'center',
+        margin: { left: 12 },
         ...uiTransform
       }}
       uiBackground={{
@@ -49,6 +50,7 @@ export function NavButton({
             : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND)
       }}
       onMouseDown={() => {
+        console.log('clicked')
         onClick()
       }}
     >

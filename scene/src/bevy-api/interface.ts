@@ -20,6 +20,7 @@ export type ExplorerSetting = {
   maxValue: number
   namedVariants: [{ name: string; description: string }]
   value: number
+  default: number
 }
 
 export type SignedFetchMetaRealm = {

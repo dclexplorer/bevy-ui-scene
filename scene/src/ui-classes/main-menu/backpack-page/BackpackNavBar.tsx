@@ -93,7 +93,6 @@ export function BackpackNavBar({
             }}
             active={backpackState.activeSection === BACKPACK_SECTION.OUTFITS}
             text={'Outfits'}
-            uiTransform={{ margin: { left: 12 } }}
             onClick={() => {
               const backpackState = store.getState().backpack
               if (backpackState.loadingPage) return
@@ -108,7 +107,6 @@ export function BackpackNavBar({
             }}
             active={backpackState.activeSection === BACKPACK_SECTION.EMOTES}
             text={'Emotes'}
-            uiTransform={{ margin: { left: 12 } }}
             onClick={() => {
               const backpackState = store.getState().backpack
               if (backpackState.loadingPage) return
@@ -202,7 +200,11 @@ export function BackpackNavBar({
   )
 }
 
-function NavBar({ children }: { children?: ReactElement }): ReactElement {
+export function NavBar({
+  children
+}: {
+  children?: ReactElement
+}): ReactElement {
   const canvasScaleRatio = getCanvasScaleRatio()
   return (
     <UiEntity
@@ -222,7 +224,11 @@ function NavBar({ children }: { children?: ReactElement }): ReactElement {
   )
 }
 
-function LeftSection({ children }: { children?: ReactElement }): ReactElement {
+export function LeftSection({
+  children
+}: {
+  children?: ReactElement
+}): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -254,7 +260,7 @@ function RightSection({ children }: { children?: ReactElement }): ReactElement {
   )
 }
 
-function NavBarTitle({
+export function NavBarTitle({
   text,
   canvasScaleRatio
 }: {
@@ -325,7 +331,12 @@ function SearchBox(): ReactElement {
     </UiEntity>
   )
 }
-function NavButtonBar({ children }: { children?: ReactElement }): ReactElement {
+
+export function NavButtonBar({
+  children
+}: {
+  children?: ReactElement
+}): ReactElement {
   return (
     <UiEntity
       uiTransform={{
