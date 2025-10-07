@@ -1,7 +1,7 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { ItemsCatalog } from './ItemCatalog'
 import { store } from '../../../state/store'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import {
   categoryHasColor,
   type EmoteCategory,
@@ -45,7 +45,7 @@ import { catalystMetadataMap } from '../../../utils/catalyst-metadata-map'
 
 export function WearablesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity>
       <WearableCategoryList
@@ -130,7 +130,7 @@ async function resetOutfit(): Promise<void> {
 }
 function WearableCatalogNavBar(): ReactElement {
   const backpackState = store.getState().backpack
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const mustShowColor = categoryHasColor(backpackState.activeWearableCategory)
 
   return (

@@ -3,7 +3,7 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import Icon from '../icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { COLOR } from '../color-palette'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { noop } from '../../utils/function-utils'
 import { type Color4 } from '@dcl/sdk/math'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
@@ -31,7 +31,7 @@ export function NavButton({
   backgroundColor = null,
   color = null
 }: NavButtonProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio() * 0.9
+  const canvasScaleRatio = getContentScaleRatio() * 0.9
   return (
     <UiEntity
       uiTransform={{
@@ -107,7 +107,7 @@ export function NavItem({
   backgroundColor,
   onClick = noop
 }: NavItemProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{

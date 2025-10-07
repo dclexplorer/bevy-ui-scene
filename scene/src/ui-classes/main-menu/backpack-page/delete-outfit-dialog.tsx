@@ -4,7 +4,7 @@ import { Color4 } from '@dcl/sdk/math'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import Icon from '../../../components/icon/Icon'
 import { COLOR } from '../../../components/color-palette'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { noop } from '../../../utils/function-utils'
 
 const state: { confirmFn: () => void; shown: boolean } = {
@@ -44,8 +44,8 @@ export function DeleteOutfitDialog(): ReactElement | null {
     >
       <UiEntity
         uiTransform={{
-          width: getCanvasScaleRatio() * 1000,
-          height: getCanvasScaleRatio() * 600,
+          width: getContentScaleRatio() * 1000,
+          height: getContentScaleRatio() * 600,
           borderRadius: BORDER_RADIUS_F,
           borderWidth: 0,
           borderColor: Color4.White(),
@@ -60,7 +60,7 @@ export function DeleteOutfitDialog(): ReactElement | null {
       >
         <Icon
           icon={{ spriteName: 'delete-outfit-icon', atlasName: 'backpack' }}
-          iconSize={getCanvasScaleRatio() * 96}
+          iconSize={getContentScaleRatio() * 96}
         />
 
         <UiEntity
@@ -68,7 +68,7 @@ export function DeleteOutfitDialog(): ReactElement | null {
             value: '<b>Are you sure you want to delete this outfit?</b>',
             color: COLOR.TEXT_COLOR,
             textWrap: 'wrap',
-            fontSize: getCanvasScaleRatio() * 42
+            fontSize: getContentScaleRatio() * 42
           }}
           uiTransform={{
             margin: '5%',
@@ -84,8 +84,8 @@ export function DeleteOutfitDialog(): ReactElement | null {
           <Button
             uiTransform={{
               margin: '5%',
-              width: getCanvasScaleRatio() * 300,
-              height: getCanvasScaleRatio() * 80,
+              width: getContentScaleRatio() * 300,
+              height: getContentScaleRatio() * 80,
               borderRadius: BORDER_RADIUS_F / 2,
               borderWidth: 0,
               borderColor: Color4.White()
@@ -94,7 +94,7 @@ export function DeleteOutfitDialog(): ReactElement | null {
             variant={'secondary'}
             uiBackground={{ color: COLOR.TEXT_COLOR }}
             color={Color4.White()}
-            fontSize={getCanvasScaleRatio() * 28}
+            fontSize={getContentScaleRatio() * 28}
             onMouseDown={() => {
               closeDeleteOutfitDialog()
             }}
@@ -102,15 +102,15 @@ export function DeleteOutfitDialog(): ReactElement | null {
           <Button
             uiTransform={{
               margin: '5%',
-              width: getCanvasScaleRatio() * 300,
-              height: getCanvasScaleRatio() * 80,
+              width: getContentScaleRatio() * 300,
+              height: getContentScaleRatio() * 80,
               borderRadius: BORDER_RADIUS_F / 2,
               borderWidth: 0,
               borderColor: Color4.White()
             }}
             value={'YES'}
             variant={'primary'}
-            fontSize={getCanvasScaleRatio() * 28}
+            fontSize={getContentScaleRatio() * 28}
             onMouseUp={() => {
               state.confirmFn() // TODO REVIEW: isn't this an antipattern? a function in state? other way ? use a callback with the info?
               state.shown = false

@@ -2,7 +2,7 @@ import { Label, UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import type { ItemElement } from '../../utils/item-definitions'
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { noop } from '../../utils/function-utils'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import {
   DOUBLE_CLICK_DELAY,
   ROUNDED_TEXTURE_BACKGROUND
@@ -55,7 +55,7 @@ export function CatalogItem(props: CatalogItemProps): ReactElement {
     onEquipItem = noop,
     uiTransform
   } = props
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const mustShowEquippedBorder = (): boolean =>
     !loading && isEquipped && !isSelected
   const mustShowSelectedOverlay = (): boolean => isSelected && !loading
@@ -160,7 +160,7 @@ function ItemCellThumbnail({
   itemElement,
   uiTransform
 }: ItemCellProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{
@@ -253,7 +253,7 @@ function SelectedItemOverlay({
   onEquipItem,
   onUnequipItem
 }: SelectedItemOverlayProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{

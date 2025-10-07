@@ -1,7 +1,7 @@
 import type { Popup } from '../../../components/popup-stack'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../../../components/color-palette'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import {
   BORDER_RADIUS_F,
   getBackgroundFromAtlas
@@ -94,7 +94,7 @@ function ProfileContent({
   data: { align?: string; player?: GetPlayerDataRes }
 }): ReactElement | null {
   const [coords, setCoords] = useState({ x: 0, y: 0 })
-  const width = getCanvasScaleRatio() * 800
+  const width = getContentScaleRatio() * 800
   const player = data.player
   useEffect(() => {
     console.log('data', data)
@@ -127,7 +127,7 @@ function ProfileContent({
           ? (screenCoordinates?.x ?? 0) - width
           : screenCoordinates?.x ?? 0,
         y: isOnHalfBottomOfScreen
-          ? (screenCoordinates?.y ?? 0) - getCanvasScaleRatio() * 400
+          ? (screenCoordinates?.y ?? 0) - getContentScaleRatio() * 400
           : screenCoordinates?.y ?? 0
       })
     }
@@ -188,8 +188,8 @@ function ProfileHeader({
       userId={player.userId}
       circleColor={getAddressColor(player.userId)}
       uiTransform={{
-        width: getCanvasScaleRatio() * 200,
-        height: getCanvasScaleRatio() * 200,
+        width: getContentScaleRatio() * 200,
+        height: getContentScaleRatio() * 200,
         alignSelf: 'center'
       }}
       isGuest={player.isGuest}
@@ -207,14 +207,14 @@ function ProfileHeader({
         uiText={{
           value: `<b>${player.name}</b>`,
           color: getAddressColor(player.userId),
-          fontSize: getCanvasScaleRatio() * 48
+          fontSize: getContentScaleRatio() * 48
         }}
       />
       {hasClaimedName && (
         <UiEntity
           uiTransform={{
-            width: getCanvasScaleRatio() * 50,
-            height: getCanvasScaleRatio() * 50,
+            width: getContentScaleRatio() * 50,
+            height: getContentScaleRatio() * 50,
             flexShrink: 0,
             alignSelf: 'center'
           }}
@@ -225,7 +225,7 @@ function ProfileHeader({
         />
       )}
       <CopyButton
-        fontSize={getCanvasScaleRatio() * 42}
+        fontSize={getContentScaleRatio() * 42}
         text={player.name}
         elementId={'copy-profile-name-' + player.userId}
         uiTransform={{
@@ -238,18 +238,18 @@ function ProfileHeader({
           <Row
             uiTransform={{
               justifyContent: 'center',
-              height: getCanvasScaleRatio() * 36
+              height: getContentScaleRatio() * 36
             }}
           >
             <UiEntity
               uiText={{
                 value: applyMiddleEllipsis(player.userId),
                 color: COLOR.TEXT_COLOR_LIGHT_GREY,
-                fontSize: getCanvasScaleRatio() * 38
+                fontSize: getContentScaleRatio() * 38
               }}
             />
             <CopyButton
-              fontSize={getCanvasScaleRatio() * 42}
+              fontSize={getContentScaleRatio() * 42}
               text={player.userId}
               elementId={'copy-profile-address-' + player.userId}
               uiTransform={{
@@ -261,14 +261,14 @@ function ProfileHeader({
             uiTransform={{
               width: '80%',
               borderColor: COLOR.WHITE_OPACITY_1,
-              borderWidth: getCanvasScaleRatio() * 6,
-              borderRadius: getCanvasScaleRatio() * 20,
+              borderWidth: getContentScaleRatio() * 6,
+              borderRadius: getContentScaleRatio() * 20,
               alignSelf: 'center',
               margin: { top: '4%' }
             }}
             uiText={{
               value: 'VIEW PASSPORT',
-              fontSize: getCanvasScaleRatio() * 42
+              fontSize: getContentScaleRatio() * 42
             }}
             onMouseDown={() => {
               closeDialog()
@@ -287,7 +287,7 @@ function ProfileHeader({
 
 const PROFILE_BUTTON_TRANSFORM: UiTransformProps = {
   width: '80%',
-  height: getCanvasScaleRatio() * 64,
+  height: getContentScaleRatio() * 64,
   justifyContent: 'flex-start',
   alignSelf: 'center'
 }
@@ -316,7 +316,7 @@ function ProfileButtons({
         atlasName: 'icons',
         spriteName: '@'
       }}
-      fontSize={getCanvasScaleRatio() * 42}
+      fontSize={getContentScaleRatio() * 42}
     />
   ]
 }
@@ -334,7 +334,7 @@ function OwnProfileButtons({
       }}
       uiTransform={PROFILE_BUTTON_TRANSFORM}
       value={'<b>SIGN OUT</b>'}
-      fontSize={getCanvasScaleRatio() * 42}
+      fontSize={getContentScaleRatio() * 42}
       icon={{
         atlasName: 'icons',
         spriteName: 'LogoutIcon'
@@ -347,7 +347,7 @@ function OwnProfileButtons({
       }}
       uiTransform={PROFILE_BUTTON_TRANSFORM}
       value={'<b>EXIT</b>'}
-      fontSize={getCanvasScaleRatio() * 42}
+      fontSize={getContentScaleRatio() * 42}
       icon={{
         atlasName: 'icons',
         spriteName: 'ExitIcn'

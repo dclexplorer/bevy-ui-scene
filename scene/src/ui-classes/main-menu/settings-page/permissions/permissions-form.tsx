@@ -1,6 +1,6 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { type PermissionDefinition } from '../../../../bevy-api/permission-definitions'
-import { getCanvasScaleRatio } from '../../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../../service/canvas-ratio'
 import { Column, Row } from '../../../../components/layout'
 import { COLOR } from '../../../../components/color-palette'
 
@@ -40,9 +40,9 @@ export const PermissionsForm = ({
   const hoveredPermissionDefinition = hoveredPermission
     ? permissionDefinitions.find((p) => p.permissionType === hoveredPermission)
     : null
-  const FONTSIZE_SMALL = getCanvasScaleRatio() * FONT_SMALL_UNIT
-  const FONTSIZE_BIG = getCanvasScaleRatio() * FONT_BIG_UNIT
-  const FONTSIZE_MEDIUM = getCanvasScaleRatio() * FONT_MEDIUM_UNIT
+  const FONTSIZE_SMALL = getContentScaleRatio() * FONT_SMALL_UNIT
+  const FONTSIZE_BIG = getContentScaleRatio() * FONT_BIG_UNIT
+  const FONTSIZE_MEDIUM = getContentScaleRatio() * FONT_MEDIUM_UNIT
   const [sceneOptions, setSceneOptions] = useState<InputOption[]>([
     { label: '', value: null }
   ])
@@ -108,7 +108,7 @@ export const PermissionsForm = ({
           height: '100%',
           pointerFilter: 'block',
           flexDirection: 'row',
-          borderRadius: getCanvasScaleRatio() * 50,
+          borderRadius: getContentScaleRatio() * 50,
           borderWidth: 0,
           borderColor: COLOR.BLACK_TRANSPARENT,
           margin: { top: '1%' }
@@ -140,10 +140,10 @@ export const PermissionsForm = ({
             />
             <DropdownComponent
               uiTransform={{
-                width: getCanvasScaleRatio() * 400,
+                width: getContentScaleRatio() * 400,
                 alignSelf: 'center'
               }}
-              listMaxHeight={getCanvasScaleRatio() * 1000}
+              listMaxHeight={getContentScaleRatio() * 1000}
               scroll={true}
               options={sceneOptions}
               value={selectedScene}
@@ -157,7 +157,7 @@ export const PermissionsForm = ({
           <Column
             uiTransform={{
               width: '100%',
-              height: getCanvasScaleRatio() * 1300,
+              height: getContentScaleRatio() * 1300,
               overflow: 'scroll',
               scrollVisible: 'vertical'
             }}

@@ -1,7 +1,7 @@
 import Icon from './icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../service/canvas-ratio'
+import { getContentScaleRatio } from '../service/canvas-ratio'
 import useState = ReactEcs.useState
 export type CheckboxProps = {
   onChange: (value: boolean) => void
@@ -15,7 +15,7 @@ export const Checkbox = ({
   label,
   uiTransform
 }: CheckboxProps): ReactElement => {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const [currentValue, setCurrentValue] = useState(value)
 
   return (

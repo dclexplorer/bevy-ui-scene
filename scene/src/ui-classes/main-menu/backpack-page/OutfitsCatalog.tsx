@@ -1,5 +1,5 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import {
   BORDER_RADIUS_F,
   getBackgroundFromAtlas
@@ -59,7 +59,7 @@ const state: {
 }
 
 export const OutfitsCatalog = (): ReactElement => {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const backpackState = store.getState().backpack
   const outfitsMetadata = backpackState.outfitsMetadata
   const viewSlots: Array<OutfitDefinition | null> = [...SLOTS]
@@ -69,7 +69,7 @@ export const OutfitsCatalog = (): ReactElement => {
   return (
     <UiEntity
       uiTransform={{
-        width: getCanvasScaleRatio() * 2145,
+        width: getContentScaleRatio() * 2145,
         flexWrap: 'wrap',
         justifyContent: 'flex-start',
         padding: { bottom: '4%' }
@@ -90,7 +90,7 @@ export const OutfitsCatalog = (): ReactElement => {
             {state.selectedIndex === index && [
               <ButtonIcon
                 icon={{ atlasName: 'backpack', spriteName: 'delete-icon' }}
-                iconSize={getCanvasScaleRatio() * 32}
+                iconSize={getContentScaleRatio() * 32}
                 uiTransform={{
                   zIndex: 1,
                   positionType: 'absolute',
@@ -352,7 +352,7 @@ async function saveOutfitSlot(index: number): Promise<void> {
 }
 
 function EmptySlot({ slotIndex }: { slotIndex: number }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{
@@ -404,7 +404,7 @@ function EmptySlot({ slotIndex }: { slotIndex: number }): ReactElement {
 }
 
 function BuyNameSlot(): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{

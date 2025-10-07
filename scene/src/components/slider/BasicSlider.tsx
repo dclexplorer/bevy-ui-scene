@@ -7,7 +7,8 @@ import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { engine, PrimaryPointerInfo } from '@dcl/sdk/ecs'
 import { noop } from '../../utils/function-utils'
 import { Color4 } from '@dcl/sdk/math'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 
 type BasicSliderProps = {
   children?: ReactElement
@@ -60,7 +61,7 @@ export function BasicSlider({
               position: { left: '0%' },
               width: `${percentage}%`,
               height: '100%',
-              borderRadius: getCanvasScaleRatio() * 20
+              borderRadius: getContentScaleRatio() * 20
             }}
             uiBackground={{
               color: backgroundBar
@@ -73,7 +74,7 @@ export function BasicSlider({
               position: { left: `${percentage}%` },
               width: `${100 - percentage}%`,
               height: '100%',
-              borderRadius: getCanvasScaleRatio() * 20
+              borderRadius: getContentScaleRatio() * 20
             }}
             uiBackground={{
               color: Color4.create(0.5, 0.5, 0.5, 0.5) // Light grey with some transparency

@@ -2,7 +2,7 @@ import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { COLOR } from '../../components/color-palette'
 import { closeLastPopupAction } from '../../state/hud/actions'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../utils/ui-utils'
 import { noop } from '../../utils/function-utils'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
@@ -87,8 +87,8 @@ function TeleportContent({
   return (
     <UiEntity
       uiTransform={{
-        width: getCanvasScaleRatio() * 1200,
-        height: getCanvasScaleRatio() * 1400,
+        width: getContentScaleRatio() * 1200,
+        height: getContentScaleRatio() * 1400,
         borderRadius: BORDER_RADIUS_F,
         borderWidth: 0,
         borderColor: COLOR.WHITE,
@@ -107,7 +107,7 @@ function TeleportContent({
           position: { top: '4%' }
         }}
         icon={{ spriteName: 'WarpIn', atlasName: 'icons' }}
-        iconSize={getCanvasScaleRatio() * 96}
+        iconSize={getContentScaleRatio() * 96}
         iconColor={COLOR.WHITE}
       />
 
@@ -116,7 +116,7 @@ function TeleportContent({
           value: `\nAre you sure you want to be teleported to <b>${worldCoordinates.x},${worldCoordinates.y}?</b>\n\n${sceneTitle}`,
           color: COLOR.WHITE,
           textWrap: 'wrap',
-          fontSize: getCanvasScaleRatio() * 42
+          fontSize: getContentScaleRatio() * 42
         }}
         uiTransform={{
           margin: { top: '8%' },
@@ -129,8 +129,8 @@ function TeleportContent({
 
       <UiEntity
         uiTransform={{
-          width: getCanvasScaleRatio() * 1000,
-          height: getCanvasScaleRatio() * 600,
+          width: getContentScaleRatio() * 1000,
+          height: getContentScaleRatio() * 600,
           borderRadius: 0,
           borderColor: COLOR.WHITE_OPACITY_1,
           borderWidth: 1,
@@ -152,18 +152,18 @@ function TeleportContent({
         <Button
           uiTransform={{
             margin: '2%',
-            width: getCanvasScaleRatio() * 400,
+            width: getContentScaleRatio() * 400,
             borderRadius: BORDER_RADIUS_F / 2,
             borderWidth: 0,
             borderColor: Color4.White(),
             flexShrink: 0,
-            height: getCanvasScaleRatio() * 64
+            height: getContentScaleRatio() * 64
           }}
           value={'CANCEL'}
           variant={'secondary'}
           uiBackground={{ color: COLOR.TEXT_COLOR }}
           color={Color4.White()}
-          fontSize={getCanvasScaleRatio() * 28}
+          fontSize={getContentScaleRatio() * 28}
           onMouseDown={() => {
             closeDialog()
           }}
@@ -171,16 +171,16 @@ function TeleportContent({
         <Button
           uiTransform={{
             margin: '2%',
-            width: getCanvasScaleRatio() * 400,
+            width: getContentScaleRatio() * 400,
             borderRadius: BORDER_RADIUS_F / 2,
             borderWidth: 0,
             borderColor: Color4.White(),
             flexShrink: 0,
-            height: getCanvasScaleRatio() * 64
+            height: getContentScaleRatio() * 64
           }}
           value={'CONTINUE'}
           variant={'primary'}
-          fontSize={getCanvasScaleRatio() * 28}
+          fontSize={getContentScaleRatio() * 28}
           onMouseUp={() => {
             state.rememberDomain = false
 

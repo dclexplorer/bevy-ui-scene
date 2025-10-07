@@ -1,7 +1,7 @@
 import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import type { Popup } from '../../../components/popup-stack'
 import { COLOR } from '../../../components/color-palette'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { cloneDeep, noop } from '../../../utils/function-utils'
 import { store } from '../../../state/store'
@@ -13,7 +13,7 @@ import { Input } from '@dcl/sdk/react-ecs'
 import useState = ReactEcs.useState
 
 export const AddProfileLinkPopup: Popup = ({ shownPopup }) => {
-  const fontSize = getCanvasScaleRatio() * 40
+  const fontSize = getContentScaleRatio() * 40
   return (
     <UiEntity
       uiTransform={{
@@ -34,8 +34,8 @@ export const AddProfileLinkPopup: Popup = ({ shownPopup }) => {
     >
       <UiEntity
         uiTransform={{
-          width: getCanvasScaleRatio() * 1200,
-          height: getCanvasScaleRatio() * 800,
+          width: getContentScaleRatio() * 1200,
+          height: getContentScaleRatio() * 800,
 
           borderRadius: BORDER_RADIUS_F,
           borderWidth: 0,
@@ -80,14 +80,14 @@ function AddProfileLinkContent({
       <Input
         fontSize={fontSize}
         uiTransform={{
-          height: getCanvasScaleRatio() * 100,
+          height: getContentScaleRatio() * 100,
           width: '90%',
           borderColor: COLOR.WHITE,
           borderWidth: 0,
-          borderRadius: getCanvasScaleRatio() * 15,
+          borderRadius: getContentScaleRatio() * 15,
           padding: {
-            top: getCanvasScaleRatio() * 24,
-            left: getCanvasScaleRatio() * 24
+            top: getContentScaleRatio() * 24,
+            left: getContentScaleRatio() * 24
           },
           margin: { top: '5%' }
         }}
@@ -103,14 +103,14 @@ function AddProfileLinkContent({
         }}
         fontSize={fontSize}
         uiTransform={{
-          height: getCanvasScaleRatio() * 100,
+          height: getContentScaleRatio() * 100,
           width: '90%',
           borderColor: COLOR.WHITE,
           borderWidth: 0,
-          borderRadius: getCanvasScaleRatio() * 15,
+          borderRadius: getContentScaleRatio() * 15,
           padding: {
-            top: getCanvasScaleRatio() * 24,
-            left: getCanvasScaleRatio() * 24
+            top: getContentScaleRatio() * 24,
+            left: getContentScaleRatio() * 24
           },
           margin: { top: '5%' }
         }}
@@ -130,7 +130,7 @@ function AddProfileLinkContent({
         <Button
           fontSize={fontSize}
           uiTransform={{
-            borderRadius: getCanvasScaleRatio() * 20,
+            borderRadius: getContentScaleRatio() * 20,
             borderColor: COLOR.BLACK_TRANSPARENT,
             borderWidth: 0,
             width: '40%',
@@ -151,7 +151,7 @@ function AddProfileLinkContent({
           fontSize={fontSize}
           uiTransform={{
             width: '40%',
-            borderRadius: getCanvasScaleRatio() * 20,
+            borderRadius: getContentScaleRatio() * 20,
             borderColor: COLOR.BLACK_TRANSPARENT,
             borderWidth: 0,
             height: fontSize * 2.5

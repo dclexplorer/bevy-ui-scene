@@ -2,7 +2,7 @@ import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
 import { noop } from '../../../utils/function-utils'
 import { Color4 } from '@dcl/ecs-math'
 import {
-  getCanvasScaleRatio,
+  getContentScaleRatio,
   getViewportHeight
 } from '../../../service/canvas-ratio'
 import {
@@ -145,7 +145,7 @@ function SettingsContent(): ReactElement {
               uiTransform={{
                 /* workaround: this adds space for drodown lists at bottom not being visible withing overflow:scroll */
                 width: '100%',
-                height: getCanvasScaleRatio() * 500
+                height: getContentScaleRatio() * 500
               }}
             />
           </UiEntity>
@@ -182,7 +182,7 @@ function SettingField({
           uiText={{
             value: `${setting.name}`,
             textAlign: 'top-left',
-            fontSize: getCanvasScaleRatio() * 32
+            fontSize: getContentScaleRatio() * 32
           }}
         />
         {!(setting.namedVariants?.length > 0) && (
@@ -196,7 +196,7 @@ function SettingField({
             uiText={{
               value: `${refValue}`,
               textAlign: 'top-right',
-              fontSize: getCanvasScaleRatio() * 32,
+              fontSize: getContentScaleRatio() * 32,
               textWrap: 'nowrap'
             }}
           />
@@ -226,7 +226,7 @@ function SettingField({
           uiTransform={{
             alignSelf: 'center',
             width: '100%',
-            height: getCanvasScaleRatio() * 100
+            height: getContentScaleRatio() * 100
           }}
           onChange={(value) => {
             // onChange(value)
@@ -255,7 +255,7 @@ export function SettingsCategoryTitle({
       uiTransform={{ width: '100%' }}
       uiText={{
         value: title,
-        fontSize: getCanvasScaleRatio() * 42,
+        fontSize: getContentScaleRatio() * 42,
         textAlign: 'top-left'
       }}
     />
@@ -274,7 +274,7 @@ export function SettingsNavBar({
       <LeftSection>
         <NavBarTitle
           text={'<b>Settings</b>'}
-          canvasScaleRatio={getCanvasScaleRatio()}
+          canvasScaleRatio={getContentScaleRatio()}
         />
         <NavButtonBar>
           <NavButton

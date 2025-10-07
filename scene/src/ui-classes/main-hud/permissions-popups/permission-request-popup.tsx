@@ -3,7 +3,7 @@ import { COLOR } from '../../../components/color-palette'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../../state/store'
 import { closeLastPopupAction, HUD_ACTION } from '../../../state/hud/actions'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { noop } from '../../../utils/function-utils'
 import Icon from '../../../components/icon/Icon'
@@ -89,9 +89,9 @@ function PermissionRequestContent({
   return (
     <UiEntity
       uiTransform={{
-        width: getCanvasScaleRatio() * 1200,
+        width: getContentScaleRatio() * 1200,
         height: 'auto',
-        maxHeight: getCanvasScaleRatio() * 2000,
+        maxHeight: getContentScaleRatio() * 2000,
         borderRadius: BORDER_RADIUS_F,
         borderWidth: 0,
         borderColor: COLOR.WHITE,
@@ -110,7 +110,7 @@ function PermissionRequestContent({
           flexShrink: 0
         }}
         icon={{ spriteName: 'Lock', atlasName: 'icons' }}
-        iconSize={getCanvasScaleRatio() * 96}
+        iconSize={getContentScaleRatio() * 96}
         iconColor={COLOR.WHITE}
       />
       <UiEntity
@@ -121,14 +121,14 @@ function PermissionRequestContent({
           value: `\nThe scene <b>${sceneName}</b> wants permission to ${PERMISSION_DEFINITIONS.find(
             (p) => p.permissionType === data.ty
           )?.passiveDescription}\n${data.additional ?? ''}`,
-          fontSize: getCanvasScaleRatio() * 42,
+          fontSize: getContentScaleRatio() * 42,
           textWrap: 'wrap'
         }}
       />
       <RadioButton
         options={PERMISSION_REQUEST_OPTIONS}
         value={ONCE}
-        fontSize={getCanvasScaleRatio() * 42}
+        fontSize={getContentScaleRatio() * 42}
         onChange={(value) => {
           setLevelOption(value)
         }}
@@ -142,12 +142,12 @@ function PermissionRequestContent({
       >
         <ButtonTextIcon
           icon={{ spriteName: 'Check', atlasName: 'icons' }}
-          iconSize={getCanvasScaleRatio() * 42}
+          iconSize={getContentScaleRatio() * 42}
           uiTransform={{
             width: '30%'
           }}
           backgroundColor={COLOR.BUTTON_PRIMARY}
-          fontSize={getCanvasScaleRatio() * 42}
+          fontSize={getContentScaleRatio() * 42}
           value={'Allow'}
           onMouseDown={() => {
             if (levelOption === ONCE) {
@@ -168,13 +168,13 @@ function PermissionRequestContent({
         />
         <ButtonTextIcon
           icon={{ spriteName: 'CloseIcon', atlasName: 'icons' }}
-          iconSize={getCanvasScaleRatio() * 42}
+          iconSize={getContentScaleRatio() * 42}
           uiTransform={{
             width: '30%',
             margin: { left: '5%', right: '5%' }
           }}
           backgroundColor={COLOR.BUTTON_PRIMARY}
-          fontSize={getCanvasScaleRatio() * 42}
+          fontSize={getContentScaleRatio() * 42}
           value={'Deny'}
           onMouseDown={() => {
             if (levelOption === ONCE) {

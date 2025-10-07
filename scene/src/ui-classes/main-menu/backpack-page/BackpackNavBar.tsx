@@ -26,7 +26,7 @@ import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
 import { Checkbox } from '../../../components/checkbox'
 import { Input } from '@dcl/sdk/react-ecs'
 import { COLOR } from '../../../components/color-palette'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
 import { debounce } from '../../../utils/dcl-utils'
 import { updatePageGeneric } from './backpack-service'
@@ -205,7 +205,7 @@ export function NavBar({
 }: {
   children?: ReactElement
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{
@@ -282,7 +282,7 @@ export function NavBarTitle({
 }
 
 function SearchBox(): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const backpackState = store.getState().backpack
 
   return (
@@ -343,7 +343,7 @@ export function NavButtonBar({
         height: '100%',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        padding: { left: 10 * getCanvasScaleRatio() * 2 }
+        padding: { left: 10 * getContentScaleRatio() * 2 }
       }}
       uiBackground={{
         color: { ...Color4.Blue(), a: 0.0 }

@@ -1,7 +1,7 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { type Color4 } from '@dcl/sdk/math'
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
-import { getCanvasScaleRatio } from '../service/canvas-ratio'
+import { getContentScaleRatio } from '../service/canvas-ratio'
 
 export function BottomBorder({
   color,
@@ -15,7 +15,7 @@ export function BottomBorder({
       uiTransform={{
         positionType: 'absolute',
         position: { bottom: 0 },
-        height: getCanvasScaleRatio() * 5,
+        height: getContentScaleRatio() * 5,
         width: '100%',
         ...uiTransform
       }}
@@ -36,7 +36,7 @@ export function TopBorder({
       uiTransform={{
         positionType: 'absolute',
         position: { top: 0 },
-        height: getCanvasScaleRatio() * 5,
+        height: getContentScaleRatio() * 5,
         width: '100%',
         ...uiTransform
       }}

@@ -4,7 +4,7 @@ import {
 } from '../../../../bevy-api/permission-definitions'
 import type { UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../../service/canvas-ratio'
 import { COLOR } from '../../../../components/color-palette'
 import Icon from '../../../../components/icon/Icon'
 import type { Color4 } from '@dcl/sdk/math'
@@ -58,18 +58,18 @@ export function PermissionBox({
   return (
     <UiEntity
       uiTransform={{
-        padding: getCanvasScaleRatio() * 5,
+        padding: getContentScaleRatio() * 5,
         borderColor: active
           ? COLOR.ACTIVE_BACKGROUND_COLOR
           : COLOR.BLACK_TRANSPARENT,
-        borderRadius: getCanvasScaleRatio() * 18,
+        borderRadius: getContentScaleRatio() * 18,
         borderWidth: 1,
         ...uiTransform
       }}
       onMouseDown={switchValue}
     >
       <Icon
-        iconSize={getCanvasScaleRatio() * 48}
+        iconSize={getContentScaleRatio() * 48}
         icon={{
           spriteName: 'check-off',
           atlasName: 'backpack'
@@ -79,12 +79,12 @@ export function PermissionBox({
         uiTransform={{
           positionType: 'absolute',
           position: {
-            left: getCanvasScaleRatio() * 5,
-            top: getCanvasScaleRatio() * 5
+            left: getContentScaleRatio() * 5,
+            top: getContentScaleRatio() * 5
           },
           zIndex: 2
         }}
-        iconSize={getCanvasScaleRatio() * 48}
+        iconSize={getContentScaleRatio() * 48}
         icon={{
           spriteName: getSpritePerValue(currentValue),
           atlasName: 'icons'

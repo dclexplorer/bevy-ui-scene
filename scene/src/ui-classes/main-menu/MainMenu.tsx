@@ -10,7 +10,7 @@ import { ProfileButton } from '../profile/profile-button'
 import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
 import {
-  getCanvasScaleRatio,
+  getContentScaleRatio,
   getViewportHeight
 } from '../../service/canvas-ratio'
 import { playPreviewEmote } from '../../components/backpack/AvatarPreview'
@@ -140,7 +140,7 @@ export default class MainMenu {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
     // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
-    const canvasScaleRatio = getCanvasScaleRatio()
+    const canvasScaleRatio = getContentScaleRatio()
     const buttonSize: number =
       Math.max(canvasInfo.height * 0.024, 46) * canvasScaleRatio
     const ICON_SIZE = 50 * canvasScaleRatio
@@ -335,7 +335,7 @@ export default class MainMenu {
               height: getMainMenuHeight(),
               positionType: 'absolute',
               position: {
-                right: getCanvasScaleRatio() * 50,
+                right: getContentScaleRatio() * 50,
                 top: getMainMenuHeight() * 0.1
               },
               zIndex: 1

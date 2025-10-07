@@ -1,5 +1,5 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import Icon from '../../../components/icon/Icon'
 import { COLOR } from '../../../components/color-palette'
 import { Input, type UiTransformProps } from '@dcl/sdk/react-ecs'
@@ -102,7 +102,7 @@ export function ProfilePropertyField({
       uiTransform={{
         flexDirection: 'column',
         alignItems: 'flex-start',
-        margin: { top: getCanvasScaleRatio() * 30 },
+        margin: { top: getContentScaleRatio() * 30 },
         ...uiTransform
       }}
     >
@@ -113,15 +113,15 @@ export function ProfilePropertyField({
             flexGrow: 0,
             positionType: 'absolute',
             position: {
-              top: getCanvasScaleRatio() * 16,
-              left: getCanvasScaleRatio() * 5
+              top: getContentScaleRatio() * 16,
+              left: getContentScaleRatio() * 5
             }
           }}
           icon={{
             atlasName: 'profile',
             spriteName: iconsPerProperty[propertyKey]
           }}
-          iconSize={getCanvasScaleRatio() * 32}
+          iconSize={getContentScaleRatio() * 32}
           iconColor={COLOR.INACTIVE}
         />
       )}
@@ -129,12 +129,12 @@ export function ProfilePropertyField({
         <UiEntity
           uiTransform={{
             margin: {
-              left: getCanvasScaleRatio() * 30
+              left: getContentScaleRatio() * 30
             }
           }}
           uiText={{
             value: labelsPerProperty[propertyKey],
-            fontSize: getCanvasScaleRatio() * 30
+            fontSize: getContentScaleRatio() * 30
           }}
         />
       )}
@@ -154,14 +154,14 @@ export function ProfilePropertyField({
         <UiEntity
           uiTransform={{
             margin: {
-              top: getCanvasScaleRatio() * -20,
-              left: getCanvasScaleRatio() * 30
+              top: getContentScaleRatio() * -20,
+              left: getContentScaleRatio() * 30
             },
             width: '100%'
           }}
           uiText={{
             value: formatProfileValue(propertyKey),
-            fontSize: getCanvasScaleRatio() * 30,
+            fontSize: getContentScaleRatio() * 30,
             color: COLOR.TEXT_COLOR_LIGHT_GREY,
             textWrap: 'wrap',
             textAlign: 'top-left'
@@ -192,18 +192,18 @@ export function ProfilePropertyField({
         <Input
           uiTransform={{
             width: '94%',
-            height: getCanvasScaleRatio() * 60,
+            height: getContentScaleRatio() * 60,
             zIndex: 999999,
             borderColor: COLOR.BLACK_TRANSPARENT,
-            borderRadius: getCanvasScaleRatio() * 16,
+            borderRadius: getContentScaleRatio() * 16,
             borderWidth: 0,
-            padding: getCanvasScaleRatio() * 10
+            padding: getContentScaleRatio() * 10
           }}
           disabled={disabled}
           uiBackground={{
             color: COLOR.WHITE
           }}
-          fontSize={getCanvasScaleRatio() * 28}
+          fontSize={getContentScaleRatio() * 28}
           value={profileData[propertyKey]}
           onChange={onChange}
           onSubmit={noop}
@@ -217,10 +217,10 @@ export function ProfilePropertyField({
           uiTransform={{
             width: '97%',
             zIndex: 999999,
-            margin: { top: getCanvasScaleRatio() * -20 },
-            height: getCanvasScaleRatio() * 60,
+            margin: { top: getContentScaleRatio() * -20 },
+            height: getContentScaleRatio() * 60,
             borderColor: COLOR.BLACK_TRANSPARENT,
-            borderRadius: getCanvasScaleRatio() * 16,
+            borderRadius: getContentScaleRatio() * 16,
             borderWidth: 0
           }}
           scroll={true}
@@ -228,7 +228,7 @@ export function ProfilePropertyField({
           value={profileData[propertyKey] ?? ''}
           onChange={onChange}
           disabled={disabled}
-          listMaxHeight={getCanvasScaleRatio() * 800}
+          listMaxHeight={getContentScaleRatio() * 800}
         />
       )
     }
@@ -249,7 +249,7 @@ function DateComponent({
   value,
   onChange,
   uiTransform,
-  fontSize = getCanvasScaleRatio() * 28,
+  fontSize = getContentScaleRatio() * 28,
   disabled = false
 }: {
   value: number
@@ -266,12 +266,12 @@ function DateComponent({
         fontSize={fontSize}
         uiTransform={{
           width: '94%',
-          height: getCanvasScaleRatio() * 60,
+          height: getContentScaleRatio() * 60,
           zIndex: 999999,
           borderColor: COLOR.BLACK_TRANSPARENT,
-          borderRadius: getCanvasScaleRatio() * 16,
+          borderRadius: getContentScaleRatio() * 16,
           borderWidth: 0,
-          padding: getCanvasScaleRatio() * 10
+          padding: getContentScaleRatio() * 10
         }}
         disabled={disabled}
         uiBackground={{

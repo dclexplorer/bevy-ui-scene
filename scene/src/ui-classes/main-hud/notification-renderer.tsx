@@ -13,7 +13,7 @@ import {
   RARITY_COLORS,
   RARITY_HEX_COLORS
 } from '../../components/color-palette'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import Icon from '../../components/icon/Icon'
 import { type Color4 } from '@dcl/sdk/math'
 import { type AtlasIcon } from '../../utils/definitions'
@@ -35,11 +35,11 @@ export function NotificationItem({
   return (
     <UiEntity
       uiTransform={{
-        height: getCanvasScaleRatio() * 200,
-        width: getCanvasScaleRatio() * 740,
+        height: getContentScaleRatio() * 200,
+        width: getContentScaleRatio() * 740,
         borderWidth: 0,
         borderColor: COLOR.WHITE,
-        borderRadius: getCanvasScaleRatio() * 20,
+        borderRadius: getContentScaleRatio() * 20,
         flexShrink: 0,
         margin: { bottom: '2%', left: '2%' },
         flexDirection: 'row',
@@ -71,7 +71,7 @@ export function NotificationItem({
           uiText={{
             value: `<b>${getTitleFromNotification(notification)}</b>`,
             textAlign: 'top-left',
-            fontSize: getCanvasScaleRatio() * 32
+            fontSize: getContentScaleRatio() * 32
           }}
         />
         <UiEntity
@@ -79,12 +79,12 @@ export function NotificationItem({
             alignItems: 'flex-start',
             flexWrap: 'wrap',
             width: '100%',
-            margin: { top: getCanvasScaleRatio() * -30 }
+            margin: { top: getContentScaleRatio() * -30 }
           }}
           uiText={{
             value: getDescriptionFromNotification(notification),
             textAlign: 'top-left',
-            fontSize: getCanvasScaleRatio() * 30
+            fontSize: getContentScaleRatio() * 30
           }}
         />
         <UiEntity
@@ -92,12 +92,12 @@ export function NotificationItem({
             alignItems: 'flex-start',
             flexWrap: 'wrap',
             width: '100%',
-            margin: { top: getCanvasScaleRatio() * -30 }
+            margin: { top: getContentScaleRatio() * -30 }
           }}
           uiText={{
             value: formatTimeAgoFromTimestamp(notification.timestamp),
             textAlign: 'top-left',
-            fontSize: getCanvasScaleRatio() * 30,
+            fontSize: getContentScaleRatio() * 30,
             color: COLOR.TEXT_COLOR_LIGHT_GREY
           }}
         />
@@ -107,8 +107,8 @@ export function NotificationItem({
           uiTransform={{
             positionType: 'absolute',
             position: { right: '2%' },
-            width: getCanvasScaleRatio() * 20,
-            height: getCanvasScaleRatio() * 20,
+            width: getContentScaleRatio() * 20,
+            height: getContentScaleRatio() * 20,
             borderColor: COLOR.BLACK_TRANSPARENT,
             borderWidth: 0,
             borderRadius: 999
@@ -132,11 +132,11 @@ function NotificationIcon({
       uiTransform={{
         positionType: 'absolute',
         position: { right: '-25%', bottom: '-25%' },
-        borderRadius: getCanvasScaleRatio() * 999,
-        borderWidth: getCanvasScaleRatio() * 6,
+        borderRadius: getContentScaleRatio() * 999,
+        borderWidth: getContentScaleRatio() * 6,
         borderColor: COLOR.TEXT_COLOR,
-        width: getCanvasScaleRatio() * 60,
-        height: getCanvasScaleRatio() * 60,
+        width: getContentScaleRatio() * 60,
+        height: getContentScaleRatio() * 60,
         alignItems: 'center',
         justifyContent: 'center'
       }}
@@ -149,7 +149,7 @@ function NotificationIcon({
           flexShrink: 0
         }}
         icon={getIconForNotificationType(notification)}
-        iconSize={getCanvasScaleRatio() * 40}
+        iconSize={getContentScaleRatio() * 40}
       />
     </UiEntity>
   )
@@ -259,11 +259,11 @@ function NotificationThumbnail({
   return (
     <UiEntity
       uiTransform={{
-        height: getCanvasScaleRatio() * 130,
-        width: getCanvasScaleRatio() * 130,
+        height: getContentScaleRatio() * 130,
+        width: getContentScaleRatio() * 130,
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 0,
-        borderRadius: getCanvasScaleRatio() * 30,
+        borderRadius: getContentScaleRatio() * 30,
         flexShrink: 0,
         flexGrow: 0
       }}

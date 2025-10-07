@@ -3,7 +3,7 @@ import { Column, Row } from './layout'
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { COLOR } from './color-palette'
 import { type InputOption } from '../utils/definitions'
-import { getCanvasScaleRatio } from '../service/canvas-ratio'
+import { getContentScaleRatio } from '../service/canvas-ratio'
 import useState = ReactEcs.useState
 import { noop } from '../utils/function-utils'
 
@@ -11,7 +11,7 @@ export function RadioButton({
   uiTransform,
   options,
   value,
-  fontSize = getCanvasScaleRatio() * 48,
+  fontSize = getContentScaleRatio() * 48,
   onChange = noop
 }: {
   uiTransform?: UiTransformProps
@@ -49,7 +49,7 @@ export function RadioButton({
 export function RadioCircle({
   active = false,
   uiTransform,
-  fontSize = getCanvasScaleRatio() * 48
+  fontSize = getContentScaleRatio() * 48
 }: {
   active: boolean
   uiTransform?: UiTransformProps

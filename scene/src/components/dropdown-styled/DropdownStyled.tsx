@@ -10,7 +10,7 @@ import { ALMOST_WHITE, ALMOST_BLACK, ORANGE } from '../../utils/constants'
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { COLOR } from '../color-palette'
 import { isTruthy, noop } from '../../utils/function-utils'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { type InputOption } from '../../utils/definitions'
 
 function DropdownStyled(props: {
@@ -74,7 +74,7 @@ function DropdownStyled(props: {
           padding: { right: props.fontSize * 0.3 },
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderRadius: getCanvasScaleRatio() * 30,
+          borderRadius: getContentScaleRatio() * 30,
           borderWidth: 0,
           borderColor: COLOR.BLACK_TRANSPARENT,
           ...props.uiTransform
@@ -130,7 +130,7 @@ function DropdownStyled(props: {
             zIndex: isTruthy(props.uiTransform?.zIndex)
               ? (props.uiTransform?.zIndex ?? 0) + 2
               : 2,
-            borderRadius: getCanvasScaleRatio() * 30,
+            borderRadius: getContentScaleRatio() * 30,
             borderWidth: 0,
             borderColor: COLOR.BLACK_TRANSPARENT
           }}

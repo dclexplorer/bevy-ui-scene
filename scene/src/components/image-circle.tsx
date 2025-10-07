@@ -1,4 +1,4 @@
-import { getCanvasScaleRatio } from '../service/canvas-ratio'
+import { getContentScaleRatio } from '../service/canvas-ratio'
 import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { type Color4 } from '@dcl/sdk/math'
@@ -20,12 +20,12 @@ export function ImageCircle({
   return (
     <UiEntity
       uiTransform={{
-        width: getCanvasScaleRatio() * 64,
-        height: getCanvasScaleRatio() * 64,
+        width: getContentScaleRatio() * 64,
+        height: getContentScaleRatio() * 64,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 999,
-        borderWidth: getCanvasScaleRatio() * 3,
+        borderWidth: getContentScaleRatio() * 3,
         borderColor: circleColor,
         ...uiTransform
       }}

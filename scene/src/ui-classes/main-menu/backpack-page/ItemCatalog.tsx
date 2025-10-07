@@ -1,5 +1,5 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { store } from '../../../state/store'
 import {
   updateCurrentPage,
@@ -22,7 +22,7 @@ export function ItemsCatalog({
   children,
   fetchItemsPage
 }: ItemsCatalogProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const backpackState = store.getState().backpack
 
   return (

@@ -3,7 +3,7 @@ import useEffect = ReactEcs.useEffect
 import { engine, Transform } from '@dcl/sdk/ecs'
 import { Quaternion } from '@dcl/sdk/math'
 import {
-  getCanvasScaleRatio,
+  getContentScaleRatio,
   getViewportHeight
 } from '../../service/canvas-ratio'
 import { rotateUVs } from '../../utils/ui-utils'
@@ -195,7 +195,7 @@ function CardinalLabels(): ReactElement {
   )
 }
 function PlayerArrow({ mapSize = 1000 }: { mapSize: number }): ReactElement {
-  const ARROW_SIZE = getCanvasScaleRatio() * 50
+  const ARROW_SIZE = getContentScaleRatio() * 50
 
   return (
     <UiEntity

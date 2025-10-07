@@ -25,7 +25,7 @@ import {
   updateAvatarPreview
 } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import {
   applyMiddleEllipsis,
   BASE_FEMALE_URN,
@@ -190,7 +190,7 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
           {state.loadingProfile && (
             <Label
               value={'Loading Avatar Passport ...'}
-              fontSize={getCanvasScaleRatio() * 32}
+              fontSize={getContentScaleRatio() * 32}
               color={COLOR.TEXT_COLOR_GREY}
             />
           )}
@@ -234,12 +234,12 @@ function PassportContent(): ReactElement {
       <Header>
         {NameRow({
           name: profileData.name,
-          fontSize: getCanvasScaleRatio() * 40,
+          fontSize: getContentScaleRatio() * 40,
           hasClaimedName: profileData.hasClaimedName
         })}
         {AddressRow({
           address: profileData.userId,
-          fontSize: getCanvasScaleRatio() * 28
+          fontSize: getContentScaleRatio() * 28
         })}
       </Header>
       <TabComponent
@@ -252,7 +252,7 @@ function PassportContent(): ReactElement {
             active: true
           }
         ]}
-        fontSize={getCanvasScaleRatio() * 32}
+        fontSize={getContentScaleRatio() * 32}
       />
       <Overview />
     </UiEntity>
@@ -266,7 +266,7 @@ function Overview(): ReactElement {
         margin: { top: '1%' },
         padding: '2%',
         width: '96%',
-        borderRadius: getCanvasScaleRatio() * 20,
+        borderRadius: getContentScaleRatio() * 20,
         borderColor: COLOR.TEXT_COLOR_WHITE,
         borderWidth: 0,
         flexDirection: 'column',
@@ -279,12 +279,12 @@ function Overview(): ReactElement {
       {state.editable && !state.editing && (
         <ButtonIcon
           uiTransform={{
-            padding: getCanvasScaleRatio() * 8,
+            padding: getContentScaleRatio() * 8,
             positionType: 'absolute',
             position: { right: '2%' }
           }}
           icon={{ spriteName: 'Edit', atlasName: 'icons' }}
-          iconSize={getCanvasScaleRatio() * 40}
+          iconSize={getContentScaleRatio() * 40}
           backgroundColor={COLOR.WHITE_OPACITY_1}
           onMouseDown={() => {
             state.pristineProfileData = cloneDeep(profileData)
@@ -295,7 +295,7 @@ function Overview(): ReactElement {
       <UiEntity
         uiText={{
           value: '<b>ABOUT ME</b>',
-          fontSize: getCanvasScaleRatio() * 32
+          fontSize: getContentScaleRatio() * 32
         }}
       />
 
@@ -368,7 +368,7 @@ function LinksSection(): ReactElement {
           }}
           uiText={{
             value: '<b>LINKS</b>',
-            fontSize: getCanvasScaleRatio() * 30
+            fontSize: getContentScaleRatio() * 30
           }}
         />
       )}
@@ -378,7 +378,7 @@ function LinksSection(): ReactElement {
           uiText={{
             value:
               'Add a maximum of 5 links to promote your personal website or social networks.',
-            fontSize: getCanvasScaleRatio() * 30
+            fontSize: getContentScaleRatio() * 30
           }}
         />
       )}
@@ -405,10 +405,10 @@ function LinksSection(): ReactElement {
               }}
               disabled={state.savingProfile}
               value={'<b>+</b> ADD'}
-              fontSize={getCanvasScaleRatio() * 32}
+              fontSize={getContentScaleRatio() * 32}
               uiBackground={{ color: COLOR.WHITE_OPACITY_1 }}
               uiTransform={{
-                borderRadius: getCanvasScaleRatio() * 15,
+                borderRadius: getContentScaleRatio() * 15,
                 borderWidth: 0,
                 borderColor: COLOR.BLACK_TRANSPARENT,
                 margin: { left: '2%' },
@@ -440,10 +440,10 @@ function BottomBar(): ReactElement | null {
       />
       <UiEntity
         uiTransform={{
-          borderRadius: getCanvasScaleRatio() * 10,
+          borderRadius: getContentScaleRatio() * 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0,
-          width: getCanvasScaleRatio() * 180,
+          width: getContentScaleRatio() * 180,
           margin: { right: '1%' },
           opacity: state.savingProfile || state.loadingProfile ? 0.5 : 1,
           flexShrink: 0
@@ -462,22 +462,22 @@ function BottomBar(): ReactElement | null {
         }}
         uiText={{
           value: 'CANCEL',
-          fontSize: getCanvasScaleRatio() * 40,
+          fontSize: getContentScaleRatio() * 40,
           textWrap: 'nowrap'
         }}
       />
       <UiEntity
         uiTransform={{
-          borderRadius: getCanvasScaleRatio() * 10,
+          borderRadius: getContentScaleRatio() * 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderWidth: 0,
-          width: getCanvasScaleRatio() * 180,
+          width: getContentScaleRatio() * 180,
           flexShrink: 0,
           opacity: state.savingProfile || state.loadingProfile ? 0.5 : 1
         }}
         uiText={{
           value: 'SAVE',
-          fontSize: getCanvasScaleRatio() * 40,
+          fontSize: getContentScaleRatio() * 40,
           textWrap: 'nowrap'
         }}
         onMouseDown={() => {
@@ -507,9 +507,9 @@ function ProfileLink({
   return (
     <UiEntity
       uiTransform={{
-        padding: getCanvasScaleRatio() * 10,
-        margin: getCanvasScaleRatio() * 10,
-        borderRadius: getCanvasScaleRatio() * 20,
+        padding: getContentScaleRatio() * 10,
+        margin: getContentScaleRatio() * 10,
+        borderRadius: getContentScaleRatio() * 20,
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 0,
         flexShrink: 0
@@ -527,28 +527,28 @@ function ProfileLink({
       <Icon
         uiTransform={{
           position: {
-            top: getCanvasScaleRatio() * 15,
-            left: getCanvasScaleRatio() * 10
+            top: getContentScaleRatio() * 15,
+            left: getContentScaleRatio() * 10
           }
         }}
         icon={{
           atlasName: 'icons',
           spriteName: 'Link'
         }}
-        iconSize={getCanvasScaleRatio() * 40}
+        iconSize={getContentScaleRatio() * 40}
         iconColor={COLOR.LINK_BLUE}
       />
       <UiEntity
         uiText={{
           value: link.title,
           color: COLOR.LINK_BLUE,
-          fontSize: getCanvasScaleRatio() * 32
+          fontSize: getContentScaleRatio() * 32
         }}
       />
       {editing && (
         <ButtonIcon
           icon={{ spriteName: 'CloseIcon', atlasName: 'icons' }}
-          iconSize={getCanvasScaleRatio() * 30}
+          iconSize={getContentScaleRatio() * 30}
           uiBackground={{ color: COLOR.BLACK }}
           onMouseDown={() => {
             const newProfileData = cloneDeep(profileData)
@@ -594,7 +594,7 @@ function AddressRow({
         }}
       />
       {CopyButton({
-        fontSize: getCanvasScaleRatio() * COPY_ICON_SIZE,
+        fontSize: getContentScaleRatio() * COPY_ICON_SIZE,
         text: address,
         elementId: 'copy-address'
       })}
@@ -646,18 +646,18 @@ function NameRow({
         />
       )}
       {CopyButton({
-        fontSize: getCanvasScaleRatio() * COPY_ICON_SIZE,
+        fontSize: getContentScaleRatio() * COPY_ICON_SIZE,
         text: name,
         elementId: 'copy-name'
       })}
       {state.editable && !state.editing && (
         <ButtonIcon
           uiTransform={{
-            padding: getCanvasScaleRatio() * 8,
+            padding: getContentScaleRatio() * 8,
             margin: { left: '8%' }
           }}
           icon={{ spriteName: 'Edit', atlasName: 'icons' }}
-          iconSize={getCanvasScaleRatio() * 40}
+          iconSize={getContentScaleRatio() * 40}
           backgroundColor={COLOR.WHITE_OPACITY_1}
           onMouseDown={() => {
             store.dispatch(
@@ -680,7 +680,7 @@ function StatusIcon({ fontSize }: { fontSize: number }): ReactElement {
         width: fontSize * 0.6,
         height: fontSize * 0.6,
         borderRadius: 9999,
-        borderWidth: 3 * getCanvasScaleRatio(),
+        borderWidth: 3 * getContentScaleRatio(),
         borderColor: COLOR.WHITE,
         flexShrink: 0,
         flexGrow: 0

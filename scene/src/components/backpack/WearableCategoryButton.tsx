@@ -7,7 +7,7 @@ import ReactEcs, {
   type ReactElement,
   type UiBackgroundProps
 } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../color-palette'
 import Icon from '../icon/Icon'
@@ -49,7 +49,7 @@ export function WearableCategoryButton({
   forceRender = false,
   showForceRender = true
 }: WearableCategoryButtonProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const categoryIcon: AtlasIcon = {
     spriteName: `category-${category}`,
     atlasName: 'backpack'
@@ -147,7 +147,7 @@ function UnequipButton({
 }: {
   category: WearableCategory
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{
@@ -193,7 +193,7 @@ function ForceRenderButton({
   category: WearableCategory
   forceRender: boolean
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{
@@ -250,7 +250,7 @@ function HoveredSquare({
 }: {
   selectedURN: URNWithoutTokenId | null
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const transform: UiTransformProps = selectedURN
     ? {
         width: 126 * canvasScaleRatio,

@@ -4,7 +4,7 @@ import {
   type URNWithoutTokenId
 } from '../../../utils/definitions'
 import { getEmoteName } from '../../../service/emotes'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { ZERO_ADDRESS } from '../../../utils/constants'
 import { ItemsCatalog } from './ItemCatalog'
 import { changeCategory } from '../../../service/wearable-category-service'
@@ -33,7 +33,7 @@ import { COLOR } from '../../../components/color-palette'
 
 export function EmotesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
 
   return (
     <UiEntity>
@@ -151,7 +151,7 @@ function resetEmotes(): void {
 }
 
 function EmoteNavBar(): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const backpackState = store.getState().backpack
   const slot = (backpackState.selectedEmoteSlot + 1) % 10
   return (

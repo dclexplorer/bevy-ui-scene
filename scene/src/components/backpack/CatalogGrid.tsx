@@ -5,7 +5,7 @@ import type {
   offchainEmoteURN,
   URNWithoutTokenId
 } from '../../utils/definitions'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import {
   type ItemElement,
   type CatalogEmoteElement,
@@ -49,7 +49,7 @@ export function CatalogGrid({
   onEquipItem = noop,
   onUnequipItem = noop
 }: WearableCatalogGridProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   if (!items.length) {
     return (
       <UiEntity
