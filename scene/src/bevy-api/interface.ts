@@ -21,6 +21,7 @@ export type ExplorerSetting = {
   namedVariants: [{ name: string; description: string }]
   value: number
   default: number
+  stepSize: number
 }
 
 export type SignedFetchMetaRealm = {

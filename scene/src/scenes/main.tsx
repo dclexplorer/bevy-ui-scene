@@ -12,7 +12,7 @@ let gameInstance: GameController
 export async function init(retry: boolean): Promise<void> {
   gameInstance = new GameController()
 
-  // gameInstance.uiController.loadingAndLogin.startLoading()
+  gameInstance.uiController.loadingAndLogin.startLoading()
 
   // BevyApi.loginGuest()
   // gameInstance.uiController.loadingAndLogin.finishLoading()
@@ -20,8 +20,8 @@ export async function init(retry: boolean): Promise<void> {
   executeTask(async () => {
     await sleep(100)
 
-    store.dispatch(updateHudStateAction({ loggedIn: true }))
-    gameInstance.uiController.menu?.show('settings')
+    // store.dispatch(updateHudStateAction({ loggedIn: true }))
+    // gameInstance.uiController.menu?.show('settings')
     // store.dispatch(updateHudStateAction({ realmURL: (await getRealm({})).realmInfo!.baseUrl}))
     /*    store.dispatch(
       pushPopupAction({

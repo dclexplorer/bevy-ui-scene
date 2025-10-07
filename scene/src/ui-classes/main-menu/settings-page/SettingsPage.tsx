@@ -28,6 +28,8 @@ import { PermissionsForm } from './permissions/permissions-form'
 import { PERMISSION_DEFINITIONS } from '../../../bevy-api/permission-definitions'
 import { Column } from '../../../components/layout'
 import useEffect = ReactEcs.useEffect
+import slider from '../../../components/slider/Slider'
+import { BevyApi } from '../../../bevy-api'
 
 type SettingCategory =
   | 'general'
@@ -63,7 +65,7 @@ export default class SettingsPage {
   private performanceBackgroundColor: Color4 = ALMOST_WHITE
   private restoreBackgroundColor: Color4 = ALMOST_WHITE
   private buttonClicked: SettingCategory = 'graphics' // TODO revert to default category
-
+  private initializedAndShown: boolean = false
   // private settingsInfoTitle: string = ''
   private settingsInfoDescription: string = ''
 
@@ -214,6 +216,14 @@ export default class SettingsPage {
 
       if (setting.name === 'Shadow Distance') {
         console.log(' setting.name, pos.value.x,', setting.name, pos.value.x) // Shadow Distance, 0
+        console.log(
+          'position',
+          sliderPercentageToValue(
+            setting.value,
+            setting.minValue,
+            setting.maxValue
+          )
+        )
         console.log('scrollValue', scrollValue) // 300
         console.log('pos', JSON.stringify(pos)) // { x:0 y:0 }
         console.log(
@@ -467,6 +477,9 @@ export default class SettingsPage {
                   this.updateButtons()
                 }}
                 onMouseDown={() => {
+                  executeTask(async () => {
+                    const _settigns = await BevyApi.getSettings()
+                  })
                   // this.uiController.settings
                   //   .filter(
                   //     (setting) =>

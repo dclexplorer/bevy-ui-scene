@@ -196,7 +196,6 @@ function ColorPickerDialog({
         value={hsv.h}
         min={1}
         max={359}
-        floatNumber={false}
         uiTransform={{
           width: '100%',
           height: '8%'

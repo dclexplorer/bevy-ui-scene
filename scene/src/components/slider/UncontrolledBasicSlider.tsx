@@ -7,33 +7,42 @@ import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { engine, PrimaryPointerInfo } from '@dcl/sdk/ecs'
 import { noop } from '../../utils/function-utils'
 import { Color4 } from '@dcl/sdk/math'
+import useState = ReactEcs.useState
 
-type BasicSliderProps = {
+type UncontrolledBasicSliderProps = {
   children?: ReactElement
-  value: number
+  defaultValue?: number
   uiTransform: UiTransformProps
   min?: number
   max?: number
   stepSize?: number
-  onChange?: (percentage: number) => void
+  onChange?: (value: number) => void
   uiBackground?: UiBackgroundProps
   onRelease?: (value: number) => void
 }
+
 const MOUSE_VELOCITY = 0.1
 
-export function BasicSlider({
+export function UncontrolledBasicSlider({
   children,
   min = 0,
   max = 1,
-  value,
+  defaultValue = min,
   uiTransform,
   onChange = noop,
   stepSize = 0.1,
   uiBackground = { color: Color4.Black() },
   onRelease = noop
-}: BasicSliderProps): ReactElement {
+}: UncontrolledBasicSliderProps): ReactElement {
+  const [value, setValue] = useState<number>(defaultValue)
   // Calculate percentage correctly for both positive and negative ranges
   const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100))
+
+  const handleValueChange = (newValue: number): void => {
+    setValue(newValue)
+    onChange(newValue)
+  }
+
   return (
     <UiEntity uiTransform={uiTransform}>
       {children}
@@ -73,7 +82,7 @@ export function BasicSlider({
             }
           }
 
-          onChange(newValue)
+          handleValueChange(newValue)
         }}
         onMouseDragEnd={() => {
           onRelease(value)

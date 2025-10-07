@@ -32,6 +32,7 @@ import { BasicSlider } from 'src/components/slider/BasicSlider'
 import { setSettingValue } from '../../../state/settings/actions'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getMainMenuHeight } from '../MainMenu'
+import { UncontrolledBasicSlider } from '../../../components/slider/UncontrolledBasicSlider'
 type SettingCategory =
   | 'General'
   | 'Audio'
@@ -71,7 +72,14 @@ function SettingsContent(): ReactElement {
   useEffect(() => {
     executeTask(async () => {
       const settings = await BevyApi.getSettings()
-      setSettings(settings)
+      // Round stepSize to maximum 2 decimal places
+      const processedSettings = settings.map(setting => ({
+        ...setting,
+        stepSize: setting.stepSize !== undefined
+          ? Math.round(setting.stepSize * 100) / 100
+          : setting.stepSize
+      }))
+      setSettings(processedSettings)
     })
   }, [])
 
@@ -145,7 +153,7 @@ function SettingField({
       <UiEntity
         uiTransform={{ width: '100%', alignItems: 'flex-start' }}
         uiText={{
-          value: `${setting.name} (${setting.value})`, // TODO value must be in other element aligned to right
+          value: `${setting.name} (${setting.value}) ( ${setting.minValue} - ${setting.maxValue} ) :: defaault:${setting.default} :; stepSize:${setting.stepSize}`, // TODO value must be in other element aligned to right
           textAlign: 'top-left',
           fontSize: getCanvasScaleRatio() * 32
         }}
@@ -163,17 +171,21 @@ function SettingField({
           onChange={() => {}}
         />
       ) : (
-        <BasicSlider
+        <UncontrolledBasicSlider
           min={setting.minValue}
           max={setting.maxValue}
-          value={setting.value}
+          defaultValue={setting.value}
+          stepSize={setting.stepSize}
           uiTransform={{
             alignSelf: 'center',
             width: '90%',
             height: getCanvasScaleRatio() * 100
           }}
-          floatNumber={false}
           onChange={(value) => {
+            // onChange(value)
+          }}
+          onRelease={(value) => {
+            console.log('onRelease', value)
             onChange(value)
           }}
           uiBackground={{
@@ -192,7 +204,7 @@ function SettingField({
               color: COLOR.WHITE_OPACITY_2
             }}
           />
-        </BasicSlider>
+        </UncontrolledBasicSlider>
       )}
     </Column>
   )
