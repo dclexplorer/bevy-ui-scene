@@ -140,7 +140,7 @@ export class UIController {
   ui(): ReactEcs.JSX.Element {
     return (
       <Canvas>
-        {InteractableArea({ active: true })}
+        {InteractableArea({ active: false })}
 
         {this.mainHud.mainUi()}
 

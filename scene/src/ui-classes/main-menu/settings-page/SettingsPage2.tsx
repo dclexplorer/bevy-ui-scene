@@ -33,6 +33,7 @@ import { setSettingValue } from '../../../state/settings/actions'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getMainMenuHeight } from '../MainMenu'
 import { UncontrolledBasicSlider } from '../../../components/slider/UncontrolledBasicSlider'
+import { roundToStep } from '../../../components/slider/slider-utils'
 type SettingCategory =
   | 'General'
   | 'Audio'
@@ -72,14 +73,22 @@ function SettingsContent(): ReactElement {
   useEffect(() => {
     executeTask(async () => {
       const settings = await BevyApi.getSettings()
-      // Round stepSize to maximum 2 decimal places
-      const processedSettings = settings.map((setting) => ({
-        ...setting,
-        stepSize:
+
+      const processedSettings = settings.map((setting) => {
+        // First process the stepSize
+        const processedStepSize =
           setting.stepSize !== undefined
             ? Math.round(setting.stepSize * 100) / 100
             : setting.stepSize
-      }))
+
+        return {
+          ...setting,
+          stepSize: processedStepSize,
+          // Round value to match the processed stepSize precision
+          value: roundToStep(setting.value, processedStepSize)
+        }
+      })
+
       setSettings(processedSettings)
     })
   }, [])
@@ -132,6 +141,13 @@ function SettingsContent(): ReactElement {
                   }}
                 />
               ))}
+            <UiEntity
+              uiTransform={{
+                /* workaround: this adds space for drodown lists at bottom not being visible withing overflow:scroll */
+                width: '100%',
+                height: getCanvasScaleRatio() * 500
+              }}
+            />
           </UiEntity>
         </Column>
       </ResponsiveContent>
@@ -157,9 +173,6 @@ function SettingField({
         width: '48%',
         flexShrink: 0,
         margin: { left: '1%', top: '2%' },
-        borderColor: COLOR.GREEN,
-        borderRadius: 0,
-        borderWidth: 1,
         ...uiTransform
       }}
     >
@@ -167,7 +180,7 @@ function SettingField({
         <UiEntity
           uiTransform={{ width: '100%', alignItems: 'flex-start' }}
           uiText={{
-            value: `${setting.name} (${setting.value}) ( ${setting.minValue} - ${setting.maxValue} ) :: defaault:${setting.default} :; stepSize:${setting.stepSize}`, // TODO value must be in other element aligned to right
+            value: `${setting.name}`,
             textAlign: 'top-left',
             fontSize: getCanvasScaleRatio() * 32
           }}
@@ -176,7 +189,7 @@ function SettingField({
           <UiEntity
             uiTransform={{ width: '100%', alignItems: 'flex-end' }}
             uiText={{
-              value: `${refValue}`, // TODO value must be in other element aligned to right
+              value: `${refValue}`,
               textAlign: 'top-right',
               fontSize: getCanvasScaleRatio() * 32
             }}

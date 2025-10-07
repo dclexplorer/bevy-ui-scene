@@ -10,6 +10,7 @@ import { BasicSlider } from './BasicSlider'
 import ButtonIcon from '../button-icon/ButtonIcon'
 import useState = ReactEcs.useState
 import { COLOR } from '../color-palette'
+import { roundToStep } from './slider-utils'
 
 type UncontrolledBasicSliderProps = {
   children?: ReactElement
@@ -39,28 +40,22 @@ export function UncontrolledBasicSlider({
   const [value, setValue] = useState<number>(defaultValue)
 
   // Helper function to round value based on stepSize precision
-  const roundToStep = (val: number): number => {
-    const decimals = stepSize.toString().split('.')[1]?.length ?? 0
-    const rounded = Math.round(val / stepSize) * stepSize
-    // Fix floating-point precision issues by rounding to the correct decimal places
-    return parseFloat(rounded.toFixed(decimals))
-  }
 
   const handleValueChange = (newValue: number): void => {
-    const roundedValue = roundToStep(newValue)
+    const roundedValue = roundToStep(newValue, stepSize)
     setValue(roundedValue)
     onChange(roundedValue)
   }
 
   const handleDecrement = (): void => {
-    const newValue = roundToStep(Math.max(min, value - stepSize))
+    const newValue = roundToStep(Math.max(min, value - stepSize), stepSize)
     setValue(newValue)
     onChange(newValue)
     onRelease(newValue)
   }
 
   const handleIncrement = (): void => {
-    const newValue = roundToStep(Math.min(max, value + stepSize))
+    const newValue = roundToStep(Math.min(max, value + stepSize), stepSize)
     setValue(newValue)
     onChange(newValue)
     onRelease(newValue)
@@ -95,10 +90,7 @@ export function UncontrolledBasicSlider({
         height: uiTransform?.height ?? '100%',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        borderWidth: 1,
-        borderColor: COLOR.RED,
-        borderRadius: 0
+        justifyContent: 'space-between'
       }}
     >
       <ButtonIcon
