@@ -23,6 +23,7 @@ type UncontrolledBasicSliderProps = {
   uiBackground?: UiBackgroundProps
   onRelease?: (value: number) => void
   showStepButtons?: boolean
+  backgroundBar?: Color4
 }
 
 export function UncontrolledBasicSlider({
@@ -35,7 +36,8 @@ export function UncontrolledBasicSlider({
   stepSize = 0.1,
   uiBackground = { color: Color4.Black() },
   onRelease = noop,
-  showStepButtons = false
+  showStepButtons = false,
+  backgroundBar
 }: UncontrolledBasicSliderProps): ReactElement {
   const [value, setValue] = useState<number>(defaultValue)
 
@@ -73,6 +75,7 @@ export function UncontrolledBasicSlider({
       uiBackground={uiBackground}
       onChange={handleValueChange}
       onRelease={onRelease}
+      backgroundBar={backgroundBar}
     >
       {children}
     </BasicSlider>

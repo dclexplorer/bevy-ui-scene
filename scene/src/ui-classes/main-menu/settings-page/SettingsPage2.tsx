@@ -233,20 +233,8 @@ function SettingField({
           uiBackground={{
             color: COLOR.BLACK_TRANSPARENT
           }}
-        >
-          <UiEntity
-            uiTransform={{
-              width: '100%',
-              height: '10%',
-              positionType: 'absolute',
-              justifyContent: 'center',
-              alignSelf: 'center'
-            }}
-            uiBackground={{
-              color: COLOR.WHITE_OPACITY_2
-            }}
-          />
-        </UncontrolledBasicSlider>
+          backgroundBar={COLOR.RED}
+        ></UncontrolledBasicSlider>
       )}
     </Column>
   )
