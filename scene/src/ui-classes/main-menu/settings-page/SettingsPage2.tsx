@@ -20,7 +20,7 @@ import { NavButton } from '../../../components/nav-button/NavButton'
 import { COLOR } from '../../../components/color-palette'
 import { Column, Row } from '../../../components/layout'
 import useState = ReactEcs.useState
-import { Callback, Label } from '@dcl/sdk/react-ecs'
+import { Callback, Label, UiTransformProps } from '@dcl/sdk/react-ecs'
 import type { UIController } from '../../../controllers/ui.controller'
 import useEffect = ReactEcs.useEffect
 import { Setting } from '../../../utils/definitions'
@@ -73,11 +73,12 @@ function SettingsContent(): ReactElement {
     executeTask(async () => {
       const settings = await BevyApi.getSettings()
       // Round stepSize to maximum 2 decimal places
-      const processedSettings = settings.map(setting => ({
+      const processedSettings = settings.map((setting) => ({
         ...setting,
-        stepSize: setting.stepSize !== undefined
-          ? Math.round(setting.stepSize * 100) / 100
-          : setting.stepSize
+        stepSize:
+          setting.stepSize !== undefined
+            ? Math.round(setting.stepSize * 100) / 100
+            : setting.stepSize
       }))
       setSettings(processedSettings)
     })
@@ -116,8 +117,11 @@ function SettingsContent(): ReactElement {
           >
             {settings
               .filter((s) => s.category === currentCategory)
-              .map((setting) => (
+              .map((setting, index) => (
                 <SettingField
+                  uiTransform={{
+                    zIndex: settings.length - index
+                  }}
                   setting={setting}
                   onChange={(value) => {
                     setting.value = value
@@ -136,9 +140,11 @@ function SettingsContent(): ReactElement {
 
 function SettingField({
   setting,
+  uiTransform,
   onChange = noop
 }: {
   setting: ExplorerSetting
+  uiTransform?: UiTransformProps
   onChange?: (value: number) => void
 }) {
   // TODO SLIDERS SHOULD HAVE ARROWS IN LEFT AND RIGHT ?
@@ -147,7 +153,11 @@ function SettingField({
       uiTransform={{
         width: '48%',
         flexShrink: 0,
-        margin: { left: '1%', top: '2%' }
+        margin: { left: '1%', top: '2%' },
+        borderColor: COLOR.GREEN,
+        borderRadius: 0,
+        borderWidth: 1,
+        ...uiTransform
       }}
     >
       <UiEntity
@@ -160,9 +170,6 @@ function SettingField({
       />
       {setting.namedVariants?.length > 0 ? (
         <DropdownComponent
-          uiTransform={{
-            zIndex: 99
-          }}
           options={setting.namedVariants.map(({ name, description }) => ({
             label: name,
             value: name
@@ -172,6 +179,7 @@ function SettingField({
         />
       ) : (
         <UncontrolledBasicSlider
+          showStepButtons={true}
           min={setting.minValue}
           max={setting.maxValue}
           defaultValue={setting.value}

@@ -8,7 +8,7 @@ import { type InputOption } from '../utils/definitions'
 import useState = ReactEcs.useState
 
 export type DropdownComponentProps = {
-  uiTransform: UiTransformProps
+  uiTransform?: UiTransformProps
   options: InputOption[]
   value: any
   fontSize?: number
