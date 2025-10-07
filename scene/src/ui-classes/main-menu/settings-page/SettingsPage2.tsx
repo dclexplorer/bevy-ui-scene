@@ -189,8 +189,13 @@ function SettingField({
             label: name,
             value: name
           }))}
-          value={1}
-          onChange={() => {}}
+          value={setting.namedVariants[setting.value].name}
+          onChange={(value) => {
+            const indexOfValue = setting.namedVariants.findIndex(
+              (variant) => variant.name === value
+            )
+            onChange(indexOfValue)
+          }}
         />
       ) : (
         <UncontrolledBasicSlider
@@ -206,7 +211,6 @@ function SettingField({
           }}
           onChange={(value) => {
             // onChange(value)
-            console.log('value.toString()', value.toString())
             setRefValue(value.toString())
           }}
           onRelease={(value) => {
