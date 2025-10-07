@@ -208,6 +208,10 @@ function SettingField({
             label: name,
             value: name
           }))}
+          uiTransform={{
+            width: '95%',
+            margin: { left: '1%' }
+          }}
           value={setting.namedVariants[setting.value].name}
           onChange={(value) => {
             const indexOfValue = setting.namedVariants.findIndex(
