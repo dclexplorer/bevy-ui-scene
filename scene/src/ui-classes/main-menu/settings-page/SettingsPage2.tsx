@@ -119,6 +119,7 @@ function SettingsContent(): ReactElement {
               .filter((s) => s.category === currentCategory)
               .map((setting, index) => (
                 <SettingField
+                  key={setting.name}
                   uiTransform={{
                     zIndex: settings.length - index
                   }}
@@ -146,6 +147,7 @@ function SettingField({
   setting: ExplorerSetting
   uiTransform?: UiTransformProps
   onChange?: (value: number) => void
+  key?: any
 }) {
   const [refValue, setRefValue] = useState<string>(setting.value.toString())
   // TODO SLIDERS SHOULD HAVE ARROWS IN LEFT AND RIGHT ?
@@ -181,7 +183,6 @@ function SettingField({
           />
         )}
       </Row>
-
       {setting.namedVariants?.length > 0 ? (
         <DropdownComponent
           options={setting.namedVariants.map(({ name, description }) => ({
@@ -205,6 +206,7 @@ function SettingField({
           }}
           onChange={(value) => {
             // onChange(value)
+            console.log('value.toString()', value.toString())
             setRefValue(value.toString())
           }}
           onRelease={(value) => {

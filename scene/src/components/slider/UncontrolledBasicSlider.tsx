@@ -38,20 +38,31 @@ export function UncontrolledBasicSlider({
 }: UncontrolledBasicSliderProps): ReactElement {
   const [value, setValue] = useState<number>(defaultValue)
 
+  // Helper function to round value based on stepSize precision
+  const roundToStep = (val: number): number => {
+    const decimals = stepSize.toString().split('.')[1]?.length ?? 0
+    const rounded = Math.round(val / stepSize) * stepSize
+    // Fix floating-point precision issues by rounding to the correct decimal places
+    return parseFloat(rounded.toFixed(decimals))
+  }
+
   const handleValueChange = (newValue: number): void => {
-    setValue(newValue)
-    onChange(newValue)
+    const roundedValue = roundToStep(newValue)
+    setValue(roundedValue)
+    onChange(roundedValue)
   }
 
   const handleDecrement = (): void => {
-    const newValue = Math.max(min, value - stepSize)
-    handleValueChange(newValue)
+    const newValue = roundToStep(Math.max(min, value - stepSize))
+    setValue(newValue)
+    onChange(newValue)
     onRelease(newValue)
   }
 
   const handleIncrement = (): void => {
-    const newValue = Math.min(max, value + stepSize)
-    handleValueChange(newValue)
+    const newValue = roundToStep(Math.min(max, value + stepSize))
+    setValue(newValue)
+    onChange(newValue)
     onRelease(newValue)
   }
 
