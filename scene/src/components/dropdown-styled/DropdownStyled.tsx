@@ -12,6 +12,7 @@ import { COLOR } from '../color-palette'
 import { isTruthy, noop } from '../../utils/function-utils'
 import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { type InputOption } from '../../utils/definitions'
+// TODO REVIEW if makes worth: find a way to close list when clicking outside, maybe onMouseEnter/Leave state + onMouseDown
 
 function DropdownStyled(props: {
   isOpen: boolean
