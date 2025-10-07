@@ -70,7 +70,16 @@ export function UncontrolledBasicSlider({
       max={max}
       stepSize={stepSize}
       uiTransform={
-        showStepButtons ? { ...uiTransform, width: '80%' } : uiTransform
+        showStepButtons
+          ? {
+              ...uiTransform,
+              width: '80%',
+              height: '90%',
+              margin: { left: '-5%' },
+              flexShrink: 0,
+              flexGrow: 0
+            }
+          : uiTransform
       }
       uiBackground={uiBackground}
       onChange={handleValueChange}
@@ -93,15 +102,20 @@ export function UncontrolledBasicSlider({
         height: uiTransform?.height ?? '100%',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        positionType: 'relative'
       }}
     >
       <ButtonIcon
         icon={{ atlasName: 'icons', spriteName: 'LeftArrow' }}
         onMouseDown={handleDecrement}
         uiTransform={{
-          width: '8%',
-          height: '80%'
+          width: '6%',
+          height: '80%',
+
+          flexShrink: 0,
+          flexGrow: 0,
+          position: { left: '1%' }
         }}
         iconColor={Color4.White()}
       />
@@ -110,8 +124,11 @@ export function UncontrolledBasicSlider({
         icon={{ atlasName: 'icons', spriteName: 'RightArrow' }}
         onMouseDown={handleIncrement}
         uiTransform={{
-          width: '8%',
-          height: '80%'
+          width: '6%',
+          height: '80%',
+          flexShrink: 0,
+          flexGrow: 0,
+          position: { left: '-6%' }
         }}
         iconColor={Color4.White()}
       />

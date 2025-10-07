@@ -187,11 +187,17 @@ function SettingField({
         />
         {!(setting.namedVariants?.length > 0) && (
           <UiEntity
-            uiTransform={{ width: '100%', alignItems: 'flex-end' }}
+            uiTransform={{
+              alignItems: 'flex-end',
+              flexWrap: 'nowrap',
+              flexShrink: 0,
+              margin: { right: '10%' }
+            }}
             uiText={{
               value: `${refValue}`,
               textAlign: 'top-right',
-              fontSize: getCanvasScaleRatio() * 32
+              fontSize: getCanvasScaleRatio() * 32,
+              textWrap: 'nowrap'
             }}
           />
         )}
