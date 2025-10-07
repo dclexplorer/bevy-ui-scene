@@ -39,6 +39,7 @@ import { getRealm } from '~system/Runtime'
 import { BigMap } from '../ui-classes/main-hud/big-map/big-map-view'
 import { SceneCatalogPanel } from '../components/map/scene-catalog-panel'
 import SettingsPage2 from '../ui-classes/main-menu/settings-page/SettingsPage2'
+import { COLOR } from 'src/components/color-palette'
 
 let loadingAndLogin: any = null
 
@@ -139,7 +140,7 @@ export class UIController {
   ui(): ReactEcs.JSX.Element {
     return (
       <Canvas>
-        {InteractableArea({ active: false })}
+        {InteractableArea({ active: true })}
 
         {this.mainHud.mainUi()}
 
@@ -189,7 +190,10 @@ function InteractableArea({
         width: canvas.width - (interactableArea.right + interactableArea.left),
         height:
           canvas.height - (interactableArea.top + interactableArea.bottom),
-        zIndex: 999999
+        zIndex: 999999,
+        borderWidth: 10,
+        borderRadius: 0,
+        borderColor: COLOR.WHITE_OPACITY_2
       }}
       uiBackground={{
         color: Color4.create(0, 1, 1, opacity)
