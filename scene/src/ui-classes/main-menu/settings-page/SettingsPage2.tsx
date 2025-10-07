@@ -147,6 +147,7 @@ function SettingField({
   uiTransform?: UiTransformProps
   onChange?: (value: number) => void
 }) {
+  const [refValue, setRefValue] = useState<string>(setting.value.toString())
   // TODO SLIDERS SHOULD HAVE ARROWS IN LEFT AND RIGHT ?
   return (
     <Column
@@ -160,14 +161,27 @@ function SettingField({
         ...uiTransform
       }}
     >
-      <UiEntity
-        uiTransform={{ width: '100%', alignItems: 'flex-start' }}
-        uiText={{
-          value: `${setting.name} (${setting.value}) ( ${setting.minValue} - ${setting.maxValue} ) :: defaault:${setting.default} :; stepSize:${setting.stepSize}`, // TODO value must be in other element aligned to right
-          textAlign: 'top-left',
-          fontSize: getCanvasScaleRatio() * 32
-        }}
-      />
+      <Row>
+        <UiEntity
+          uiTransform={{ width: '100%', alignItems: 'flex-start' }}
+          uiText={{
+            value: `${setting.name} (${setting.value}) ( ${setting.minValue} - ${setting.maxValue} ) :: defaault:${setting.default} :; stepSize:${setting.stepSize}`, // TODO value must be in other element aligned to right
+            textAlign: 'top-left',
+            fontSize: getCanvasScaleRatio() * 32
+          }}
+        />
+        {!(setting.namedVariants?.length > 0) && (
+          <UiEntity
+            uiTransform={{ width: '100%', alignItems: 'flex-end' }}
+            uiText={{
+              value: `${refValue}`, // TODO value must be in other element aligned to right
+              textAlign: 'top-right',
+              fontSize: getCanvasScaleRatio() * 32
+            }}
+          />
+        )}
+      </Row>
+
       {setting.namedVariants?.length > 0 ? (
         <DropdownComponent
           options={setting.namedVariants.map(({ name, description }) => ({
@@ -186,11 +200,12 @@ function SettingField({
           stepSize={setting.stepSize}
           uiTransform={{
             alignSelf: 'center',
-            width: '90%',
+            width: '100%',
             height: getCanvasScaleRatio() * 100
           }}
           onChange={(value) => {
             // onChange(value)
+            setRefValue(value.toString())
           }}
           onRelease={(value) => {
             console.log('onRelease', value)
