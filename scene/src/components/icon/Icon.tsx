@@ -46,6 +46,8 @@ function Icon(
         ...getBackgroundFromAtlas(props.icon),
         color: props.iconColor ?? Color4.White()
       }}
+      onMouseEnter={props.onMouseEnter}
+      onMouseLeave={props.onMouseLeave}
       onMouseDown={props.onMouseDown}
     />
   )

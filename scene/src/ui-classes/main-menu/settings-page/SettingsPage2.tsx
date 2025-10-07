@@ -34,6 +34,7 @@ import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getMainMenuHeight } from '../MainMenu'
 import { UncontrolledBasicSlider } from '../../../components/slider/UncontrolledBasicSlider'
 import { roundToStep } from '../../../components/slider/slider-utils'
+import Icon from '../../../components/icon/Icon'
 type SettingCategory =
   | 'General'
   | 'Audio'
@@ -166,6 +167,7 @@ function SettingField({
   key?: any
 }) {
   const [refValue, setRefValue] = useState<string>(setting.value.toString())
+  const [showTooltip, setShowTooltip] = useState(false)
   // TODO SLIDERS SHOULD HAVE ARROWS IN LEFT AND RIGHT ?
   return (
     <Column
@@ -176,22 +178,65 @@ function SettingField({
         ...uiTransform
       }}
     >
+      {showTooltip && (
+        <UiEntity
+          uiTransform={{
+            width: '90%',
+            positionType: 'absolute',
+            position: { left: '10%', top: getContentScaleRatio() * 52 },
+            padding: getContentScaleRatio() * 20,
+            zIndex: 99
+          }}
+          uiBackground={{
+            color: COLOR.BLACK
+          }}
+          uiText={{
+            value: `${setting.description}`,
+            textAlign: 'top-left',
+            fontSize: getContentScaleRatio() * 32,
+            textWrap: 'wrap'
+          }}
+        />
+      )}
       <Row>
         <UiEntity
-          uiTransform={{ width: '100%', alignItems: 'flex-start' }}
+          uiTransform={{ alignItems: 'flex-start' }}
           uiText={{
             value: `${setting.name}`,
             textAlign: 'top-left',
-            fontSize: getContentScaleRatio() * 32
+            fontSize: getContentScaleRatio() * 32,
+            textWrap: 'nowrap'
           }}
         />
+        <Icon
+          uiTransform={{
+            flexShrink: 0,
+            flexGrow: 0,
+            positionType: 'relative',
+            position: { left: 0 }
+          }}
+          icon={{ spriteName: 'InfoButton', atlasName: 'icons' }}
+          onMouseEnter={() => {
+            console.log('enter')
+            setShowTooltip(true)
+          }}
+          onMouseLeave={() => {
+            executeTask(async () => {
+              setShowTooltip(false)
+            })
+          }}
+          iconColor={COLOR.WHITE}
+          iconSize={getContentScaleRatio() * 32 * 1.2}
+        />
+
         {!(setting.namedVariants?.length > 0) && (
           <UiEntity
             uiTransform={{
               alignItems: 'flex-end',
               flexWrap: 'nowrap',
               flexShrink: 0,
-              margin: { right: '10%' }
+              position: { right: '12%' },
+              positionType: 'absolute'
             }}
             uiText={{
               value: `${refValue}`,
