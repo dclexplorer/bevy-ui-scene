@@ -143,16 +143,20 @@ export default class MainMenu {
     const canvasScaleRatio = getContentScaleRatio()
     const buttonSize: number =
       Math.max(canvasInfo.height * 0.024, 46) * canvasScaleRatio
-    const ICON_SIZE = 50 * canvasScaleRatio
-    const BUTTON_ICON_FONT_SIZE = 24 * canvasScaleRatio
+    const ICON_SIZE = getMainMenuHeight() * 0.4
+    const BUTTON_ICON_FONT_SIZE = getMainMenuHeight() * 0.2
     const buttonTransform: UiTransformProps = {
-      height: 100 * canvasScaleRatio,
-      margin: { left: 10 * canvasScaleRatio },
-      padding: { left: 20 * canvasScaleRatio, right: 20 * canvasScaleRatio },
+      // height: getMainMenuHeight() * 0.6,
+      margin: { left: getMainMenuHeight() * 0.1 },
+      padding: {
+        left: getMainMenuHeight() * 0.1,
+        right: getMainMenuHeight() * 0.1
+      },
+
       flexDirection: 'column'
     }
-    const LOGO_WIDTH = 165 * canvasScaleRatio * 2.1
-    const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1
+    // const LOGO_WIDTH = getMainMenuHeight() * 4
+    // const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1
 
     return (
       <UiEntity
@@ -187,8 +191,10 @@ export default class MainMenu {
           >
             <UiEntity
               uiTransform={{
-                width: LOGO_WIDTH,
-                height: LOGO_HEIGHT,
+                height: getMainMenuHeight() * 0.4,
+                width: getMainMenuHeight() * 0.4 * (165 / 24),
+                flexGrow: 1,
+                flexShrink: 0,
                 margin: { left: 20 },
                 justifyContent: 'flex-start',
                 alignItems: 'flex-start'
