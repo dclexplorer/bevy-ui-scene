@@ -6,7 +6,7 @@ import { ButtonTextIcon } from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_BLACK } from '../../utils/constants'
 import { type AtlasIcon } from '../../utils/definitions'
-import { ProfileButton } from '../profile/profile-button'
+import { ProfileButton } from '../profile/profile-button/ProfileButton'
 import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
 import {
@@ -29,7 +29,6 @@ export default class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
   public isOpen = (): boolean => this.open
   private readonly uiController: UIController
-  private readonly profileButton: ProfileButton
   private open: boolean = false
 
   readonly backpackIcon: AtlasIcon = {
@@ -61,7 +60,6 @@ export default class MainMenu {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
-    this.profileButton = new ProfileButton(uiController)
   }
 
   mapEnter(): void {
@@ -141,8 +139,7 @@ export default class MainMenu {
     if (canvasInfo === null) return null
     // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
     const canvasScaleRatio = getContentScaleRatio()
-    const buttonSize: number =
-      Math.max(canvasInfo.height * 0.024, 46) * canvasScaleRatio
+    const buttonSize: number = getMainMenuHeight() * 0.4
     const ICON_SIZE = getMainMenuHeight() * 0.4
     const BUTTON_ICON_FONT_SIZE = getMainMenuHeight() * 0.2
     const buttonTransform: UiTransformProps = {
@@ -347,7 +344,7 @@ export default class MainMenu {
               zIndex: 1
             }}
           >
-            {this.profileButton.mainUi()}
+            <ProfileButton />
             <ButtonIcon
               onMouseEnter={() => {
                 this.closeButtonColor = ALMOST_BLACK
@@ -359,6 +356,7 @@ export default class MainMenu {
                 this.hide()
               }}
               uiTransform={{
+                flexShrink: 0,
                 width: buttonSize,
                 height: buttonSize
               }}

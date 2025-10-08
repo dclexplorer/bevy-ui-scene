@@ -4,7 +4,7 @@ import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR } from './color-palette'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { type Color4 } from '@dcl/sdk/math'
-import { ZERO_ADDRESS } from '../utils/constants'
+import { TRANSPARENT, ZERO_ADDRESS } from '../utils/constants'
 import { type ReactElement } from '@dcl/react-ecs'
 import { noop } from '../utils/function-utils'
 
@@ -48,7 +48,10 @@ export function AvatarCircle({
       <UiEntity
         uiTransform={{
           width: '100%',
-          height: '100%'
+          height: '100%',
+          borderRadius: 999,
+          borderWidth: 0,
+          borderColor: COLOR.BLACK_TRANSPARENT
         }}
         uiBackground={
           ZERO_ADDRESS === userId

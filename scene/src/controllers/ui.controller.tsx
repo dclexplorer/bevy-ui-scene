@@ -1,7 +1,6 @@
 import ReactEcs, { ReactEcsRenderer, UiEntity } from '@dcl/sdk/react-ecs'
 import { type GameController } from './game.controller'
 import { BackpackPage } from '../ui-classes/main-menu/backpack-page'
-import { ProfileButton } from '../ui-classes/profile/profile-button'
 import { Profile } from '../ui-classes/profile'
 import { MainHud } from '../ui-classes/main-hud'
 import { Friends } from '../ui-classes/main-hud/friends'
@@ -66,7 +65,6 @@ export class UIController {
   public mapPage: MapPage
   public explorePage: ExplorePage
 
-  profileButton: ProfileButton
   profile: Profile
   friends: Friends
   loadingAndLogin: LoadingAndLogin
@@ -94,7 +92,6 @@ export class UIController {
     this.backpackPage = new BackpackPage()
     this.mapPage = new MapPage()
     this.explorePage = new ExplorePage()
-    this.profileButton = new ProfileButton(this)
     this.profile = new Profile(this)
     this.friends = new Friends(this)
     this.actionPopUp = new PopUpAction(this)
