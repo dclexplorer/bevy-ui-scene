@@ -35,6 +35,8 @@ import { getMainMenuHeight } from '../MainMenu'
 import { UncontrolledBasicSlider } from '../../../components/slider/UncontrolledBasicSlider'
 import { roundToStep } from '../../../components/slider/slider-utils'
 import Icon from '../../../components/icon/Icon'
+import { PERMISSION_DEFINITIONS } from '../../../bevy-api/permission-definitions'
+import { PermissionsForm } from './permissions/permissions-form'
 type SettingCategory =
   | 'General'
   | 'Audio'
@@ -105,52 +107,61 @@ function SettingsContent(): ReactElement {
       />
       ,
       <ResponsiveContent>
-        <Column
-          uiTransform={{
-            width: '100%',
-            margin: { top: '1%' },
-            padding: '1%',
-            pointerFilter: 'block'
-          }}
-          uiBackground={{ color: COLOR.DARK_OPACITY_7 }}
-        >
-          <SettingsCategoryTitle
-            title={getSettingsCategoryTitle(currentCategory)}
-          />
-          <UiEntity
+        {currentCategory === 'Permissions' ? (
+          <PermissionsForm permissionDefinitions={PERMISSION_DEFINITIONS} />
+        ) : (
+          <Column
             uiTransform={{
-              width: '100%',
-              flexWrap: 'wrap',
-              overflow: 'scroll',
-              height: getViewportHeight() - getMainMenuHeight() * 5
+              width: '80%',
+              margin: { top: '1%' },
+              padding: '1%',
+              pointerFilter: 'block',
+              borderRadius: getContentScaleRatio() * 50,
+              borderWidth: 0,
+              borderColor: COLOR.BLACK_TRANSPARENT
             }}
+            uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
           >
-            {settings
-              .filter((s) => s.category === currentCategory)
-              .map((setting, index) => (
-                <SettingField
-                  key={setting.name}
-                  uiTransform={{
-                    zIndex: settings.length - index
-                  }}
-                  setting={setting}
-                  onChange={(value) => {
-                    setting.value = value
-                    setSettings([...settings])
-                    // TODO debounce update
-                    BevyApi.setSetting(setting.name, value).catch(console.error)
-                  }}
-                />
-              ))}
+            <SettingsCategoryTitle
+              title={getSettingsCategoryTitle(currentCategory)}
+            />
             <UiEntity
               uiTransform={{
-                /* workaround: this adds space for drodown lists at bottom not being visible withing overflow:scroll */
                 width: '100%',
-                height: getContentScaleRatio() * 500
+                flexWrap: 'wrap',
+                overflow: 'scroll',
+                height: getViewportHeight() - getMainMenuHeight() * 5
               }}
-            />
-          </UiEntity>
-        </Column>
+            >
+              {settings
+                .filter((s) => s.category === currentCategory)
+                .map((setting, index) => (
+                  <SettingField
+                    key={setting.name}
+                    uiTransform={{
+                      zIndex: settings.length - index
+                    }}
+                    setting={setting}
+                    onChange={(value) => {
+                      setting.value = value
+                      setSettings([...settings])
+                      // TODO debounce update
+                      BevyApi.setSetting(setting.name, value).catch(
+                        console.error
+                      )
+                    }}
+                  />
+                ))}
+              <UiEntity
+                uiTransform={{
+                  /* workaround: this adds space for drodown lists at bottom not being visible withing overflow:scroll */
+                  width: '100%',
+                  height: getContentScaleRatio() * 500
+                }}
+              />
+            </UiEntity>
+          </Column>
+        )}
       </ResponsiveContent>
     </Column>
   )
