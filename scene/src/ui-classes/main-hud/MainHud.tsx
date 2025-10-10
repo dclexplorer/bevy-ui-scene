@@ -2,7 +2,10 @@ import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { type Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Position, UiEntity } from '@dcl/sdk/react-ecs'
 import ButtonIcon from '../../components/button-icon/ButtonIcon'
-import { type UIController } from '../../controllers/ui.controller'
+import {
+  getUiController,
+  type UIController
+} from '../../controllers/ui.controller'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { type AtlasIcon } from '../../utils/definitions'
 import { ALPHA_BLACK_PANEL, SELECTED_BUTTON_COLOR } from '../../utils/constants'
@@ -447,7 +450,7 @@ export default class MainHud {
               this.updateButtons()
             }}
             onMouseDown={() => {
-              this.uiController.menu?.show('explore')
+              getUiController().menu?.show('map')
             }}
             backgroundColor={this.exploreBackground}
             icon={this.exploreIcon}
