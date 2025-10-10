@@ -91,10 +91,7 @@ function SettingsContent(): ReactElement {
           value: roundToStep(setting.value, processedStepSize)
         }
       })
-      console.log(
-        'processedSettings',
-        processedSettings.find((s) => s.name === 'Run Speed')
-      )
+
       setSettings(processedSettings)
     })
   }, [])
@@ -149,33 +146,9 @@ function SettingsContent(): ReactElement {
                       setting.value = value
                       setSettings([...settings])
                       // TODO debounce update
-                      console.log(
-                        'saving setting ',
-                        setting.name,
-                        ' with value ',
-                        value,
-                        ''
+                      BevyApi.setSetting(setting.name, value).catch(
+                        console.error
                       )
-                      executeTask(async () => {
-                        await BevyApi.setSetting(setting.name, value).catch(
-                          (error) => {
-                            console.log(
-                              'Error saving setting ',
-                              setting.name,
-                              ' with value ',
-                              value,
-                              ' -> ',
-                              error
-                            )
-                          }
-                        )
-                        console.log('SETTING SAVED with value', value)
-                        const newSettings = await BevyApi.getSettings()
-                        console.log(
-                          '>>> newSettings',
-                          newSettings.find((s) => s.name === 'Run Speed')?.value
-                        )
-                      })
                     }}
                   />
                 ))}
