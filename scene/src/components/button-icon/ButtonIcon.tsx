@@ -49,7 +49,7 @@ function ButtonIcon(props: {
       uiTransform={{
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: getContentScaleRatio() * 18,
+        borderRadius: (props.iconSize ?? 30) * 0.5,
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 0,
         ...props.uiTransform

@@ -1,4 +1,4 @@
-import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, { UiEntity, UiTransformProps } from '@dcl/sdk/react-ecs'
 import { ReactElement } from '@dcl/react-ecs'
 import { Row } from '../../../components/layout'
 import { AvatarCircle } from '../../../components/avatar-circle'
@@ -13,7 +13,12 @@ import { store } from '../../../state/store'
 import { pushPopupAction } from '../../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 const LIGHT_TRANSPARENT = Color4.create(1, 1, 1, 0.03)
-export function ProfileButton(): ReactElement | null {
+
+export function ProfileButton({
+  uiTransform
+}: {
+  uiTransform?: UiTransformProps
+}): ReactElement | null {
   const player = getPlayer()
   const avatarSize = getMainMenuHeight() * 0.7
 
@@ -33,7 +38,9 @@ export function ProfileButton(): ReactElement | null {
     <Row
       uiTransform={{
         borderRadius: 999,
-        height: avatarSize * 1.1
+        height: avatarSize * 1.1,
+        flexGrow: 1,
+        ...uiTransform
       }}
       uiBackground={{
         color: LIGHT_TRANSPARENT
@@ -53,9 +60,14 @@ export function ProfileButton(): ReactElement | null {
         onMouseDown={() => showProfilePopup()}
       />
       <UiEntity
+        uiTransform={{
+          margin: { left: '1%' }
+        }}
         uiText={{
-          value: player.name,
-          fontSize: getHudFontSize(getViewportHeight()).NORMAL
+          color: getAddressColor(player.userId),
+          value: `<b> ${player.name}  </b>`,
+          fontSize: getHudFontSize(getViewportHeight()).NORMAL,
+          textWrap: 'nowrap'
         }}
       />
     </Row>

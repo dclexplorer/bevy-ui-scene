@@ -29,6 +29,7 @@ export function AvatarCircle({
       uiTransform={{
         width: getContentScaleRatio() * 64,
         height: getContentScaleRatio() * 64,
+        flexShrink: 0,
         justifyContent: 'center',
         alignItems: 'center',
         /*      margin:

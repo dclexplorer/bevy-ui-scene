@@ -21,6 +21,8 @@ import {
 import { DeleteOutfitDialog } from './backpack-page/delete-outfit-dialog'
 import { noop } from '../../utils/function-utils'
 import { BevyApi } from '../../bevy-api'
+import Icon from '../../components/icon/Icon'
+import { Button } from '@dcl/react-ecs'
 
 const SELECTED_BUTTON_COLOR: Color4 = { ...Color4.Gray(), a: 0.3 }
 const BUTTON_TEXT_COLOR_INACTIVE = Color4.Gray()
@@ -139,7 +141,7 @@ export default class MainMenu {
     if (canvasInfo === null) return null
     // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
     const canvasScaleRatio = getContentScaleRatio()
-    const buttonSize: number = getMainMenuHeight() * 0.4
+    const buttonSize: number = getMainMenuHeight() * 0.7
     const ICON_SIZE = getMainMenuHeight() * 0.4
     const BUTTON_ICON_FONT_SIZE = getMainMenuHeight() * 0.2
     const buttonTransform: UiTransformProps = {
@@ -344,7 +346,14 @@ export default class MainMenu {
               zIndex: 1
             }}
           >
-            <ProfileButton />
+            <ProfileButton
+              uiTransform={{
+                margin: {
+                  top: getMainMenuHeight() * 0.02,
+                  right: getMainMenuHeight() * 0.2
+                }
+              }}
+            />
             <ButtonIcon
               onMouseEnter={() => {
                 this.closeButtonColor = ALMOST_BLACK
@@ -356,11 +365,15 @@ export default class MainMenu {
                 this.hide()
               }}
               uiTransform={{
-                flexShrink: 0,
                 width: buttonSize,
-                height: buttonSize
+                height: buttonSize,
+                flexShrink: 0,
+                margin: {
+                  top: getMainMenuHeight() / 2 - buttonSize * 0.6
+                }
               }}
-              backgroundColor={this.closeButtonColor}
+              iconSize={buttonSize / 2}
+              backgroundColor={COLOR.BLACK}
               icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
             />
           </UiEntity>
