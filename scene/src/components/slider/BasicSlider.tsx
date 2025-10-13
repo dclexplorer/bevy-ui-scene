@@ -8,15 +8,19 @@ import { engine, PrimaryPointerInfo } from '@dcl/sdk/ecs'
 import { noop } from '../../utils/function-utils'
 import { Color4 } from '@dcl/sdk/math'
 
+import { getContentScaleRatio } from '../../service/canvas-ratio'
+
 type BasicSliderProps = {
   children?: ReactElement
   value: number
   uiTransform: UiTransformProps
   min?: number
   max?: number
-  floatNumber?: boolean
+  stepSize?: number
   onChange?: (percentage: number) => void
   uiBackground?: UiBackgroundProps
+  onRelease?: (value: number) => void
+  backgroundBar?: Color4
 }
 const MOUSE_VELOCITY = 0.1
 
@@ -27,13 +31,57 @@ export function BasicSlider({
   value,
   uiTransform,
   onChange = noop,
-  floatNumber = true,
-  uiBackground = { color: Color4.Black() }
+  stepSize = 0.1,
+  uiBackground = { color: Color4.Black() },
+  onRelease = noop,
+  backgroundBar
 }: BasicSliderProps): ReactElement {
-  const percentage = Math.min(100, Math.max(0, (value * 100) / max))
+  // Calculate percentage correctly for both positive and negative ranges
+  const percentage = Math.min(
+    100,
+    Math.max(0, ((value - min) / (max - min)) * 100)
+  )
   return (
     <UiEntity uiTransform={uiTransform}>
       {children}
+      {/* Background bar - only render if backgroundBar prop is provided */}
+      {backgroundBar && (
+        <UiEntity
+          uiTransform={{
+            positionType: 'absolute',
+            width: '100%',
+            height: '70%',
+            alignSelf: 'center'
+          }}
+        >
+          {/* Filled portion (left) */}
+          <UiEntity
+            uiTransform={{
+              positionType: 'absolute',
+              position: { left: '0%' },
+              width: `${percentage}%`,
+              height: '100%',
+              borderRadius: getContentScaleRatio() * 20
+            }}
+            uiBackground={{
+              color: backgroundBar
+            }}
+          />
+          {/* Unfilled portion (right) */}
+          <UiEntity
+            uiTransform={{
+              positionType: 'absolute',
+              position: { left: `${percentage}%` },
+              width: `${100 - percentage}%`,
+              height: '100%',
+              borderRadius: getContentScaleRatio() * 20
+            }}
+            uiBackground={{
+              color: Color4.create(0.5, 0.5, 0.5, 0.5) // Light grey with some transparency
+            }}
+          />
+        </UiEntity>
+      )}
       <UiEntity
         uiTransform={{
           width: '100%',
@@ -50,9 +98,32 @@ export function BasicSlider({
             Math.max(0, percentage + deltaX * MOUSE_VELOCITY)
           )
           const total = max - min
-          const newValue = min + (newPercentage / 100) * total
+          let newValue = min + (newPercentage / 100) * total
 
-          onChange(floatNumber ? newValue : Math.floor(newValue))
+          // Apply step size and round to nearest step
+          if (stepSize > 0) {
+            newValue = Math.round(newValue / stepSize) * stepSize
+
+            // Determine decimal places based on stepSize
+            const stepString = stepSize.toString()
+            const decimalIndex = stepString.indexOf('.')
+
+            if (decimalIndex === -1) {
+              // stepSize is an integer, no decimals
+              newValue = Math.floor(newValue)
+            } else {
+              // Count decimals in stepSize and round to that precision
+              const decimalPlaces = stepString.length - decimalIndex - 1
+              newValue =
+                Math.floor(newValue * Math.pow(10, decimalPlaces)) /
+                Math.pow(10, decimalPlaces)
+            }
+          }
+
+          onChange(newValue)
+        }}
+        onMouseDragEnd={() => {
+          onRelease(value)
         }}
       >
         <UiEntity

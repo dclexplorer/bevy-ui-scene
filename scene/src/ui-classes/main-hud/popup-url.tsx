@@ -2,7 +2,7 @@ import ReactEcs, { Button, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { COLOR } from '../../components/color-palette'
 import { closeLastPopupAction } from '../../state/hud/actions'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../utils/ui-utils'
 import { noop } from '../../utils/function-utils'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
@@ -40,8 +40,8 @@ export const PopupUrl: Popup = ({ shownPopup }) => {
     >
       <UiEntity
         uiTransform={{
-          width: getCanvasScaleRatio() * 1200,
-          height: getCanvasScaleRatio() * 750,
+          width: getContentScaleRatio() * 1200,
+          height: getContentScaleRatio() * 750,
           borderRadius: BORDER_RADIUS_F,
           borderWidth: 0,
           borderColor: COLOR.WHITE,
@@ -60,7 +60,7 @@ export const PopupUrl: Popup = ({ shownPopup }) => {
             position: { top: '4%' }
           }}
           icon={{ spriteName: 'Link', atlasName: 'icons' }}
-          iconSize={getCanvasScaleRatio() * 96}
+          iconSize={getContentScaleRatio() * 96}
           iconColor={COLOR.WHITE}
         />
 
@@ -69,7 +69,7 @@ export const PopupUrl: Popup = ({ shownPopup }) => {
             value: `<b>Are you sure you want to follow this link?</b>\n\nContinuing will open the link in the browser. Make sure it's a website you trust before proceeding.\n\n<b><color=#22B3F6>${URL}</color></b>`,
             color: COLOR.WHITE,
             textWrap: 'wrap',
-            fontSize: getCanvasScaleRatio() * 42
+            fontSize: getContentScaleRatio() * 42
           }}
           uiTransform={{
             margin: { top: '8%' },
@@ -89,7 +89,7 @@ export const PopupUrl: Popup = ({ shownPopup }) => {
           <Button
             uiTransform={{
               margin: '2%',
-              width: getCanvasScaleRatio() * 400,
+              width: getContentScaleRatio() * 400,
               borderRadius: BORDER_RADIUS_F / 2,
               borderWidth: 0,
               borderColor: Color4.White()
@@ -98,7 +98,7 @@ export const PopupUrl: Popup = ({ shownPopup }) => {
             variant={'secondary'}
             uiBackground={{ color: COLOR.TEXT_COLOR }}
             color={Color4.White()}
-            fontSize={getCanvasScaleRatio() * 28}
+            fontSize={getContentScaleRatio() * 28}
             onMouseDown={() => {
               closeDialog()
             }}
@@ -106,14 +106,14 @@ export const PopupUrl: Popup = ({ shownPopup }) => {
           <Button
             uiTransform={{
               margin: '2%',
-              width: getCanvasScaleRatio() * 400,
+              width: getContentScaleRatio() * 400,
               borderRadius: BORDER_RADIUS_F / 2,
               borderWidth: 0,
               borderColor: Color4.White()
             }}
             value={'CONTINUE'}
             variant={'primary'}
-            fontSize={getCanvasScaleRatio() * 28}
+            fontSize={getContentScaleRatio() * 28}
             onMouseUp={() => {
               state.rememberDomain = false
               closeDialog()

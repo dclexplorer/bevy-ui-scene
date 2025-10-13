@@ -3,7 +3,7 @@ import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { Column } from '../../components/layout'
 import { NotificationItem } from './notification-renderer'
 import { executeTask } from '@dcl/sdk/ecs'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { sleep } from '../../utils/dcl-utils'
 import { fetchNotifications } from '../../utils/notifications-promise-utils'
 
@@ -21,7 +21,7 @@ export function NotificationToastStack(): ReactElement | null {
       uiTransform={{
         positionType: 'absolute',
         position: { left: '38%' },
-        width: getCanvasScaleRatio() * 900
+        width: getContentScaleRatio() * 900
       }}
     >
       {state.toasts.map((notification) => {
@@ -29,7 +29,7 @@ export function NotificationToastStack(): ReactElement | null {
           <NotificationItem
             uiTransform={{
               width: '100%',
-              margin: { top: getCanvasScaleRatio() * 10 }
+              margin: { top: getContentScaleRatio() * 10 }
             }}
             notification={notification}
             key={notification.id}

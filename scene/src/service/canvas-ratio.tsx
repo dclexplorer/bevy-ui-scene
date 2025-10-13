@@ -25,19 +25,21 @@ const _getContentHeight = memoize((viewportState: ViewportState): number => {
   )
 })
 
-const _getCanvasScaleRatio = memoize((viewportState: ViewportState): number => {
-  const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-  if (canvasInfo === null) return 1
-  const minSize: number = Math.min(getContentHeight(), getContentWidth())
-  return minSize / 1450
-})
+const _getContentScaleRatio = memoize(
+  (viewportState: ViewportState): number => {
+    const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
+    if (canvasInfo === null) return 1
+    const minSize: number = Math.min(getContentHeight(), getContentWidth())
+    return minSize / 1450
+  }
+)
 
 export const getContentWidth = (): number =>
   _getContentWidth(store.getState().viewport)
 export const getContentHeight = (): number =>
   _getContentHeight(store.getState().viewport)
-export const getCanvasScaleRatio = (): number =>
-  _getCanvasScaleRatio(store.getState().viewport)
+export const getContentScaleRatio = (): number =>
+  _getContentScaleRatio(store.getState().viewport)
 export const getViewportWidth = (): number =>
   store.getState().viewport?.width ?? 0
 export const getViewportHeight = (): number =>

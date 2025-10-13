@@ -2,7 +2,10 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { BottomBorder } from './bottom-border'
 import { COLOR } from './color-palette'
 import { getHudFontSize } from '../ui-classes/main-hud/scene-info/SceneInfo'
-import { getCanvasScaleRatio, getViewportHeight } from '../service/canvas-ratio'
+import {
+  getContentScaleRatio,
+  getViewportHeight
+} from '../service/canvas-ratio'
 import { Row } from './layout'
 
 export const MenuBar = ({
@@ -16,7 +19,7 @@ export const MenuBar = ({
 }): ReactElement => (
   <Row uiTransform={{ justifyContent: 'center' }}>
     <BottomBorder
-      uiTransform={{ height: getCanvasScaleRatio() * 2 }}
+      uiTransform={{ height: getContentScaleRatio() * 2 }}
       color={COLOR.TEXT_COLOR_GREY}
     />
     {items.map((item, index) => (

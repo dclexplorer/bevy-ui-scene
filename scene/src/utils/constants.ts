@@ -630,3 +630,6 @@ export const CATALYST_BASE_URL_FALLBACK = 'https://peer.decentraland.org'
 export const LOCAL_STORAGE_OUTFITS_KEY = 'outfits'
 export const DOUBLE_CLICK_DELAY = 400
 export const LOCAL_PREVIEW_REALM_NAME = 'LocalPreview'
+export const MENU_BACKGROUND_TEXTURE = {
+  src: 'assets/images/menu/background.png'
+}

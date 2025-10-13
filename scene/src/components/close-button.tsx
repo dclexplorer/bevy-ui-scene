@@ -1,7 +1,7 @@
 import { noop } from '../utils/function-utils'
 import type { Callback, UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../service/canvas-ratio'
+import { getContentScaleRatio } from '../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
 import Icon from './icon/Icon'
 
@@ -14,7 +14,7 @@ export function CloseButton({
   onClick: Callback
   size?: number
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{

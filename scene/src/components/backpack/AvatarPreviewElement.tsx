@@ -1,7 +1,7 @@
 import { Color4, Quaternion, Vector2 } from '@dcl/sdk/math'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import {
-  getCanvasScaleRatio,
+  getContentScaleRatio,
   getContentHeight,
   getContentWidth
 } from '../../service/canvas-ratio'
@@ -73,7 +73,7 @@ export function AvatarPreviewElement({
 }: {
   uiTransform?: UiTransformProps
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const loadingState = GltfContainerLoadingState.getOrNull(
     getAvatarPreviewEntity()
   )
@@ -160,7 +160,7 @@ export function AvatarPreviewElement({
 }
 
 function AvatarPreviewInstructions(): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
 
   return (
     <UiEntity

@@ -6,7 +6,7 @@ import type {
 import type { PermissionResult } from '../permissions-map'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Row } from '../../../../components/layout'
-import { getCanvasScaleRatio } from '../../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../../service/canvas-ratio'
 import { PermissionBox } from './permission-box'
 import { BottomBorder } from '../../../../components/bottom-border'
 import { COLOR } from '../../../../components/color-palette'
@@ -69,7 +69,7 @@ export function PermissionRowField({
         uiText={{
           value: permissionDefinition.label,
           textAlign: 'top-left',
-          fontSize: getCanvasScaleRatio() * 40
+          fontSize: getContentScaleRatio() * 40
         }}
         uiTransform={{ width: '100%' }}
       />

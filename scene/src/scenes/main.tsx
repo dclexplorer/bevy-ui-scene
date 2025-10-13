@@ -18,8 +18,8 @@ export async function init(retry: boolean): Promise<void> {
   // gameInstance.uiController.menu?.show('settings')
   executeTask(async () => {
     await sleep(100)
-
     // store.dispatch(updateHudStateAction({ loggedIn: true }))
+    // gameInstance.uiController.menu?.show('backpack')
     // store.dispatch(updateHudStateAction({ realmURL: (await getRealm({})).realmInfo!.baseUrl}))
     /*    store.dispatch(
       pushPopupAction({
@@ -32,6 +32,7 @@ export async function init(retry: boolean): Promise<void> {
         data: 'This is the error description'
       })
     ) */
+
     /*    store.dispatch(
       pushPopupAction({
         type: HUD_POPUP_TYPE.PROFILE_MENU,

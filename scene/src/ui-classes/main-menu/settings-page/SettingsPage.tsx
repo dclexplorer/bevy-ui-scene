@@ -1,697 +1,409 @@
-import { Color4 } from '@dcl/ecs-math'
-import {
-  UiCanvasInformation,
-  UiScrollResult,
-  UiTransform,
-  engine
-} from '@dcl/sdk/ecs'
-import ReactEcs, { Label, UiEntity } from '@dcl/sdk/react-ecs'
-import { type UIController } from '../../../controllers/ui.controller'
-import {
-  discardNewValues,
-  saveSettingsToExplorer,
-  setSettingValue
-} from '../../../state/settings/actions'
-import { store } from '../../../state/store'
-import { ALMOST_BLACK, ALMOST_WHITE, ORANGE } from '../../../utils/constants'
-import { type AtlasIcon } from '../../../utils/definitions'
-import {
-  sliderPercentageToValue,
-  sliderValueToPercentage
-} from '../../../utils/ui-utils'
-import { ButtonTextIcon } from '../../../components/button-text-icon'
-import { DropdownStyled } from '../../../components/dropdown-styled'
-import { Slider } from '../../../components/slider'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { noop } from '../../../utils/function-utils'
-import { PermissionsForm } from './permissions/permissions-form'
+import {
+  getContentScaleRatio,
+  getViewportHeight
+} from '../../../service/canvas-ratio'
+import { MainContent, ResponsiveContent } from '../backpack-page/BackpackPage'
+import {
+  LeftSection,
+  NavBar,
+  NavBarTitle,
+  NavButtonBar,
+  RightSection
+} from '../backpack-page/BackpackNavBar'
+import { NavButton } from '../../../components/nav-button/NavButton'
+import { COLOR } from '../../../components/color-palette'
+import { Column, Row } from '../../../components/layout'
+import useState = ReactEcs.useState
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
+import useEffect = ReactEcs.useEffect
+import { BevyApi } from '../../../bevy-api'
+import { type ExplorerSetting } from '../../../bevy-api/interface'
+import { executeTask } from '@dcl/sdk/ecs'
+import { DropdownComponent } from '../../../components/dropdown-component'
+import { getMainMenuHeight } from '../MainMenu'
+import { UncontrolledBasicSlider } from '../../../components/slider/UncontrolledBasicSlider'
+import { roundToStep } from '../../../components/slider/slider-utils'
+import Icon from '../../../components/icon/Icon'
 import { PERMISSION_DEFINITIONS } from '../../../bevy-api/permission-definitions'
+import { PermissionsForm } from './permissions/permissions-form'
 
 type SettingCategory =
-  | 'general'
-  | 'audio'
-  | 'graphics'
-  | 'gameplay'
-  | 'performance'
-  | 'permissions'
+  | 'General'
+  | 'Audio'
+  | 'Graphics'
+  | 'Gameplay'
+  | 'Performance'
+  | 'Permissions'
+const settingsCategoryTitle: Record<SettingCategory, string> = {
+  General: 'General',
+  Audio: 'Audio',
+  Graphics: 'Graphics',
+  Gameplay: 'Gameplay',
+  Performance: 'Performance',
+  Permissions: 'Permissions'
+}
 
+function getSettingsCategoryTitle(category: SettingCategory): string {
+  return settingsCategoryTitle[category]
+}
 export default class SettingsPage {
-  private readonly uiController: UIController
-
-  private readonly toggleIcon: AtlasIcon = {
-    atlasName: 'toggles',
-    spriteName: 'SwitchOn'
-  }
-
-  private readonly toggleStatus: boolean = false
-
-  private dropdownOpenedSettingName: string = ''
-  private dropdownIndexEntered: number = -1
-  private backgroundIcon: string = 'assets/images/menu/general-img.png.png'
-  private graphicsTextColor: Color4 = ALMOST_BLACK
-  private audioTextColor: Color4 = ALMOST_BLACK
-  private gameplayTextColor: Color4 = ALMOST_BLACK
-  private permissionsTextColor: Color4 = ALMOST_BLACK
-  private performanceTextColor: Color4 = ALMOST_BLACK
-  private restoreTextColor: Color4 = Color4.Red()
-  private graphicsBackgroundColor: Color4 = ALMOST_WHITE
-  private audioBackgroundColor: Color4 = ALMOST_WHITE
-  private gameplayBackgroundColor: Color4 = ALMOST_WHITE
-  private permissionsBackgroundColor: Color4 = ALMOST_WHITE
-  private performanceBackgroundColor: Color4 = ALMOST_WHITE
-  private restoreBackgroundColor: Color4 = ALMOST_WHITE
-  private buttonClicked: SettingCategory = 'permissions' // TODO revert to default category
-
-  // private settingsInfoTitle: string = ''
-  private settingsInfoDescription: string = ''
-
-  // just for debug purpose
-  // private entityStates: Map<Entity, { value: number; elementId: string }> =
-  // new Map()
-
-  constructor(uiController: UIController) {
-    this.uiController = uiController
-    engine.addSystem(this.controllerSystem.bind(this))
-  }
-
-  setButtonClicked(button: SettingCategory): void {
-    if (Object.keys(store.getState().settings.newValues).length > 0) {
-      this.uiController.actionPopUp.show()
-      this.uiController.actionPopUp.tittle = 'You have unsaved settings:'
-      this.uiController.actionPopUp.message =
-        'Do you want to save them?\n' +
-        Object.keys(store.getState().settings.newValues)
-          .map(
-            (key) => `\t- ${key}: ${store.getState().settings.newValues[key]}`
-          )
-          .join('\n')
-      this.uiController.actionPopUp.action = () => {
-        store.dispatch(saveSettingsToExplorer())
-      }
-      this.uiController.actionPopUp.actionText = 'SAVE'
-      this.uiController.actionPopUp.cancel = () => {
-        this.discardChanges(button)
-      }
-      this.uiController.actionPopUp.cancelText = 'DISCARD'
-    } else {
-      // this.dataArray = []
-      this.buttonClicked = button
-      this.settingsInfoDescription = ''
-      this.updateButtons()
-    }
-  }
-
-  // generalEnter(): void {
-  //   this.generalBackgroundColor = ORANGE
-  //   this.generalTextColor = ALMOST_WHITE
-  // }
-
-  audioEnter(): void {
-    this.audioBackgroundColor = ORANGE
-    this.audioTextColor = ALMOST_WHITE
-  }
-
-  graphicsEnter(): void {
-    this.graphicsBackgroundColor = ORANGE
-    this.graphicsTextColor = ALMOST_WHITE
-  }
-
-  gameplayEnter(): void {
-    this.gameplayBackgroundColor = ORANGE
-    this.gameplayTextColor = ALMOST_WHITE
-  }
-
-  permissionsEnter(): void {
-    this.permissionsBackgroundColor = ORANGE
-    this.permissionsTextColor = ALMOST_WHITE
-  }
-
-  performanceEnter(): void {
-    this.performanceBackgroundColor = ORANGE
-    this.performanceTextColor = ALMOST_WHITE
-  }
-
-  restoreEnter(): void {
-    this.restoreBackgroundColor = Color4.Red()
-    this.restoreTextColor = ALMOST_WHITE
-  }
-
-  updateButtons(): void {
-    console.log('updateButtons')
-    // this.generalBackgroundColor = ALMOST_WHITE
-    this.graphicsBackgroundColor = ALMOST_WHITE
-    this.audioBackgroundColor = ALMOST_WHITE
-    this.gameplayBackgroundColor = ALMOST_WHITE
-    this.permissionsBackgroundColor = ALMOST_WHITE
-    this.performanceBackgroundColor = ALMOST_WHITE
-    // this.generalTextColor = ALMOST_BLACK
-    this.graphicsTextColor = ALMOST_BLACK
-    this.audioTextColor = ALMOST_BLACK
-    this.gameplayTextColor = ALMOST_BLACK
-    this.permissionsTextColor = ALMOST_BLACK
-    this.performanceTextColor = ALMOST_BLACK
-    this.restoreTextColor = Color4.Red()
-    this.restoreBackgroundColor = ALMOST_WHITE
-
-    switch (this.buttonClicked) {
-      // case 'general':
-      //   this.generalEnter()
-      //   this.backgroundIcon = 'assets/images/menu/general-img.png.png'
-      //   break
-      case 'audio':
-        this.audioEnter()
-        this.backgroundIcon = 'assets/images/menu/sound-img.png.png'
-        break
-      case 'graphics':
-        this.graphicsEnter()
-        this.backgroundIcon = 'assets/images/menu/graphics-img.png.png'
-        break
-      case 'gameplay':
-        this.gameplayEnter()
-        this.backgroundIcon = 'assets/images/menu/general-img.png.png'
-        break
-      case 'performance':
-        this.performanceEnter()
-        this.backgroundIcon = 'assets/images/menu/general-img.png.png'
-        break
-      case 'permissions':
-        this.permissionsEnter()
-        this.backgroundIcon = 'assets/images/menu/general-img.png.png'
-    }
-  }
-
-  selectOption(index: number, title: string): void {
-    store.dispatch(setSettingValue({ name: title, value: index }))
-  }
-
-  controllerSystem(): void {
-    const settings = Object.values(store.getState().settings.explorerSettings)
-    for (const [, pos, uiTransform] of engine.getEntitiesWith(
-      UiScrollResult,
-      UiTransform
-    )) {
-      if (pos.value === undefined) continue
-      const setting = settings.find(
-        (setting) => uiTransform.elementId === `setting-${setting.name}`
-      )
-      if (setting === undefined) continue
-
-      const scrollValue = sliderPercentageToValue(
-        pos.value.x,
-        setting.minValue,
-        setting.maxValue
-      )
-      const currentValue =
-        store.getState().settings.newValues[setting.name] ?? setting.value
-      if (currentValue !== scrollValue) {
-        store.dispatch(
-          setSettingValue({ name: setting.name, value: scrollValue })
-        )
-        console.log(
-          `Setting ${setting.name} updated to ${scrollValue}`,
-          pos.value.x,
-          setting.minValue,
-          setting.maxValue,
-          ' from ',
-          currentValue
-        )
-      }
-    }
-  }
-
-  discardChanges(button: SettingCategory): void {
-    store.dispatch(discardNewValues())
-    this.setButtonClicked(button)
-  }
-
-  mainUi(): ReactEcs.JSX.Element | null {
-    const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-    if (canvasInfo === null) return null
-    if (Object.keys(store.getState().settings.explorerSettings).length === 0)
-      return null
-
-    const sliderWidth: number = canvasInfo.width * 0.3
-    const sliderHeight: number = canvasInfo.height * 0.1
-    const fontSize: number = canvasInfo.height * 0.02
-
+  mainUi(): ReactElement {
     return (
-      <UiEntity
-        uiTransform={{
-          width: '100%',
-          height: '100%',
-          // positionType: 'absolute',
-          // position:{top: 0, left: 0, right: 0, bottom: 0},
-          flexDirection: 'column',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          pointerFilter: 'block'
+      <MainContent>
+        <SettingsContent />
+      </MainContent>
+    )
+  }
+
+  updateButtons(): void {}
+}
+
+function SettingsContent(): ReactElement {
+  const [currentCategory, setCurrentCategory] =
+    useState<SettingCategory>(`Gameplay`)
+  const [loading, setLoading] = useState(true)
+  const [settings, setSettings] = useState<ExplorerSetting[]>([])
+  useEffect(() => {
+    executeTask(async () => {
+      setLoading(true)
+      setSettings(await getProcessedSettings())
+      setLoading(false)
+    })
+  }, [])
+
+  return (
+    <Column uiTransform={{ width: '100%', alignItems: 'center' }}>
+      <SettingsNavBar
+        currentCategory={currentCategory}
+        onChange={(newCat: SettingCategory) => {
+          console.log('mnewCAt', newCat)
+          setCurrentCategory(newCat)
         }}
-        uiBackground={{
-          textureMode: 'stretch',
-          texture: { src: 'assets/images/menu/Background.png' }
-        }}
-        onMouseDown={noop}
       >
-        {/* Icon Background */}
-        <UiEntity
-          uiTransform={{
-            width: canvasInfo.height * 0.65,
-            height: canvasInfo.height * 0.65,
-            positionType: 'absolute',
-            position: { left: '0', bottom: '0' }
-          }}
-          uiBackground={{
-            color: { ...Color4.White(), a: 0.3 },
-            textureMode: 'stretch',
-            texture: { src: this.backgroundIcon }
+        <NavButton
+          uiTransform={{}}
+          icon={{ spriteName: 'Reset', atlasName: 'icons' }}
+          iconSize={getMainMenuHeight() * 0.3}
+          fontSize={getMainMenuHeight() * 0.3}
+          text={'Reset all defaults'}
+          onClick={() => {
+            // TODO consider adding a confirm dialog
+            executeTask(async () => {
+              setLoading(true)
+
+              const _settings = (await BevyApi.getSettings()).map((s) => ({
+                ...s,
+                value: s.default
+              }))
+
+              for (const setting of _settings) {
+                await BevyApi.setSetting(setting.name, setting.default)
+              }
+              setSettings(await getProcessedSettings())
+              setLoading(false)
+            })
           }}
         />
-
-        {/* NavBar */}
-        <UiEntity
-          uiTransform={{
-            width: '100%',
-            height: '10%',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: { left: '10%' }
-          }}
-          uiBackground={{
-            color: { ...Color4.Black(), a: 0.7 }
-          }}
-          onMouseDown={noop}
-        >
-          <UiEntity
-            uiTransform={{
-              width: 'auto',
-              height: 'auto',
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center'
-            }}
-          >
-            <UiEntity
-              uiTransform={{
-                width: 'auto',
-                height: 16
-              }}
-              uiText={{
-                value: 'Settings',
-                textAlign: 'middle-left',
-                fontSize: 30,
-                textWrap: 'nowrap'
-              }}
-            />
-
-            <ButtonTextIcon
-              uiTransform={{
-                margin: { left: 10, right: 10 },
-                padding: { left: 10, right: 10 },
-                width: 'auto'
-              }}
-              iconColor={this.performanceTextColor}
-              icon={{ atlasName: 'icons', spriteName: 'Filter' }}
-              value={'Performance'}
-              fontSize={fontSize}
-              fontColor={this.performanceTextColor}
-              onMouseEnter={() => {
-                this.performanceEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.setButtonClicked('performance')
-              }}
-              backgroundColor={this.performanceBackgroundColor}
-            />
-
-            <ButtonTextIcon
-              uiTransform={{
-                margin: { left: 10, right: 10 },
-                padding: { left: 10, right: 10 },
-                width: 'auto'
-              }}
-              iconColor={this.graphicsTextColor}
-              icon={{ atlasName: 'icons', spriteName: 'Graphics' }}
-              value={'Graphics'}
-              fontSize={fontSize}
-              fontColor={this.graphicsTextColor}
-              onMouseEnter={() => {
-                this.graphicsEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.setButtonClicked('graphics')
-              }}
-              backgroundColor={this.graphicsBackgroundColor}
-            />
-
-            <ButtonTextIcon
-              uiTransform={{
-                margin: { left: 10, right: 10 },
-                padding: { left: 10, right: 10 },
-                width: 'auto'
-              }}
-              iconColor={this.audioTextColor}
-              icon={{ atlasName: 'context', spriteName: 'SpeakerOn' }}
-              value={'Audio'}
-              fontSize={fontSize}
-              fontColor={this.audioTextColor}
-              onMouseEnter={() => {
-                this.audioEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.setButtonClicked('audio')
-              }}
-              backgroundColor={this.audioBackgroundColor}
-            />
-
-            <ButtonTextIcon
-              uiTransform={{
-                margin: { left: 10, right: 10 },
-                padding: { left: 10, right: 10 },
-                width: 'auto'
-              }}
-              iconColor={this.gameplayTextColor}
-              icon={{ atlasName: 'icons', spriteName: 'ControlsIcn' }}
-              value={'Gameplay'}
-              fontSize={fontSize}
-              fontColor={this.gameplayTextColor}
-              onMouseEnter={() => {
-                this.gameplayEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.setButtonClicked('gameplay')
-              }}
-              backgroundColor={this.gameplayBackgroundColor}
-            />
-
-            <ButtonTextIcon
-              uiTransform={{
-                margin: { left: 10, right: 10 },
-
-                padding: { left: 10, right: 10 },
-                width: 'auto'
-              }}
-              iconColor={this.permissionsTextColor}
-              icon={{ atlasName: 'icons', spriteName: 'Lock' }}
-              value={'Permissions'}
-              fontSize={fontSize}
-              fontColor={this.permissionsTextColor}
-              onMouseEnter={() => {
-                this.permissionsEnter()
-              }}
-              onMouseLeave={() => {
-                this.updateButtons()
-              }}
-              onMouseDown={() => {
-                this.setButtonClicked('permissions')
-              }}
-              backgroundColor={this.permissionsBackgroundColor}
-            />
-          </UiEntity>
-
-          <UiEntity
-            uiTransform={{
-              width: 'auto',
-              height: 'auto'
-            }}
-          >
-            {this.buttonClicked !== 'permissions' && (
-              <ButtonTextIcon
-                uiTransform={{
-                  margin: { left: 10, right: 10 },
-                  padding: { left: 10, right: 10 },
-                  width: 'auto'
-                }}
-                iconColor={this.restoreTextColor}
-                icon={{ atlasName: 'icons', spriteName: 'RotateIcn' }}
-                value={'RESET TO DEFAULT'}
-                fontSize={fontSize}
-                fontColor={this.restoreTextColor}
-                onMouseEnter={() => {
-                  this.restoreEnter()
-                }}
-                onMouseLeave={() => {
-                  this.updateButtons()
-                }}
-                onMouseDown={() => {
-                  // this.uiController.settings
-                  //   .filter(
-                  //     (setting) =>
-                  //       setting.category.toLowerCase() === this.buttonClicked
-                  //   )
-                  //   .forEach((setting) => {
-                  //     console.log(
-                  //       'setting: ',
-                  //       setting.name,
-                  //       'value: ',
-                  //       setting.value
-                  //     )
-                  //   })
-                }}
-                backgroundColor={this.restoreBackgroundColor}
-              />
-            )}
-          </UiEntity>
-        </UiEntity>
-
-        {/* Content */}
-        {this.buttonClicked === 'permissions' && (
+      </SettingsNavBar>
+      ,
+      <ResponsiveContent>
+        {currentCategory === 'Permissions' ? (
           <PermissionsForm permissionDefinitions={PERMISSION_DEFINITIONS} />
-        )}
-        {this.buttonClicked !== 'permissions' && (
-          <UiEntity
+        ) : (
+          <Column
             uiTransform={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
               width: '80%',
-              margin: canvasInfo.height * 0.05,
-              flexGrow: 1
+              margin: { top: '1%' },
+              padding: '1%',
+              pointerFilter: 'block',
+              borderRadius: getContentScaleRatio() * 50,
+              borderWidth: 0,
+              borderColor: COLOR.BLACK_TRANSPARENT
             }}
-            uiBackground={{
-              textureMode: 'nine-slices',
-              texture: {
-                src: 'assets/images/backgrounds/rounded.png'
-              },
-              textureSlices: {
-                top: 0.25,
-                bottom: 0.25,
-                left: 0.25,
-                right: 0.25
-              },
-              color: { ...Color4.Black(), a: 0.7 }
-            }}
-            onMouseDown={noop}
+            uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
           >
-            {
-              <UiEntity
-                uiTransform={{
-                  width: '45%',
-                  height: canvasInfo.height * 0.7,
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  overflow: 'scroll',
-                  scrollVisible: 'vertical',
-                  flexShrink: 0
-                }}
-                uiBackground={
-                  {
-                    // color: { ...Color4.Blue(), a: 0.1 }
-                  }
-                }
-                onMouseDown={noop}
-              >
-                {Object.values(store.getState().settings.explorerSettings)
-                  .filter(
-                    (setting) =>
-                      setting.category.toLowerCase() === this.buttonClicked
-                  )
-                  .map((setting, index) => {
-                    const namedVariants = setting.namedVariants ?? []
-                    if (namedVariants.length > 0) {
-                      return (
-                        <UiEntity
-                          uiTransform={{
-                            // display:
-                            //   setting.category.toLowerCase() === this.buttonClicked
-                            //     ? 'flex'
-
-                            //     : 'none',
-                            width: sliderWidth,
-                            height: sliderHeight,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            elementId: `setting-${setting.name}-${index}-parent`,
-                            zIndex: 999999 - index
-                          }}
-                          onMouseEnter={() => {
-                            this.settingsInfoDescription =
-                              setting.namedVariants[
-                                store.getState().settings.newValues[
-                                  setting.name
-                                ] ?? setting.value
-                              ].description
-                          }}
-                          onMouseLeave={() => {
-                            this.dropdownIndexEntered = -1
-                          }}
-                        >
-                          <DropdownStyled
-                            uiTransform={{ width: '100%' }}
-                            options={setting.namedVariants.map((variant) => ({
-                              label: variant.name,
-                              value: variant.name
-                            }))}
-                            entered={this.dropdownIndexEntered}
-                            fontSize={fontSize}
-                            isOpen={
-                              this.dropdownOpenedSettingName === setting.name
-                            }
-                            onMouseDown={() => {
-                              if (
-                                this.dropdownOpenedSettingName === setting.name
-                              ) {
-                                this.dropdownOpenedSettingName = ''
-                              } else {
-                                this.dropdownOpenedSettingName = setting.name
-                              }
-                            }}
-                            onOptionMouseDown={(
-                              selectedIndex: number,
-                              title: string
-                            ) => {
-                              this.selectOption(selectedIndex, title)
-                              this.dropdownOpenedSettingName = ''
-                            }}
-                            onOptionMouseEnter={(selectedIndex: number) => {
-                              this.dropdownIndexEntered = selectedIndex
-                              this.settingsInfoDescription =
-                                setting.namedVariants[
-                                  this.dropdownIndexEntered
-                                ].description
-                            }}
-                            onOptionMouseLeave={() => {
-                              this.dropdownIndexEntered = -1
-                            }}
-                            title={setting.name}
-                            value={
-                              store.getState().settings.newValues[
-                                setting.name
-                              ] ?? setting.value
-                            }
-                          />
-                        </UiEntity>
-                      )
-                    } else {
-                      return (
-                        <Slider
-                          title={setting.name}
-                          fontSize={fontSize}
-                          value={`${
-                            store.getState().settings.newValues[setting.name] ??
-                            setting.value
-                          }`}
-                          uiTransform={{
-                            width: sliderWidth,
-                            height: sliderHeight,
-                            elementId: `setting-${setting.name}-${index}-parent`
-                            // display:
-                            //   setting.category.toLowerCase() === this.buttonClicked
-                            //     ? 'flex'
-                            //     : 'none'
-                          }}
-                          sliderSize={sliderWidth * 2}
-                          id={`setting-${setting.name}`}
-                          position={sliderValueToPercentage(
-                            setting.value,
-                            setting.minValue,
-                            setting.maxValue
-                          )}
-                          onMouseEnter={() => {
-                            this.settingsInfoDescription = setting.description
-                          }}
-                        />
-                      )
-                    }
-                  })}
-                <UiEntity
-                  uiTransform={{
-                    width: '100%',
-                    height: canvasInfo.height * 0.2
-                  }}
-                />
-              </UiEntity>
-            }
-
-            <UiEntity
-              uiTransform={{
-                width: '40%',
-                height: canvasInfo.height * 0.7,
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                margin: { left: '5%' }
-                // overflow: 'scroll',
-                // scrollVisible: 'hidden',
-              }}
-              uiBackground={
-                {
-                  // color: { ...Color4.Red(), a: 0.1 }
-                }
-              }
-            >
+            <SettingsCategoryTitle
+              title={getSettingsCategoryTitle(currentCategory)}
+            />
+            {!loading && (
               <UiEntity
                 uiTransform={{
                   width: '100%',
-                  height: '100%',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start'
+                  flexWrap: 'wrap',
+                  overflow: 'scroll',
+                  height: getViewportHeight() - getMainMenuHeight() * 5
                 }}
-                // uiBackground={{ color: Color4.Black() }}
               >
-                <Label value={'Settings Info:'} fontSize={fontSize * 1.5} />
+                {settings
+                  .filter((s) => s.category === currentCategory)
+                  .map((setting, index) => (
+                    <SettingField
+                      key={setting.name}
+                      uiTransform={{
+                        zIndex: settings.length - index
+                      }}
+                      setting={setting}
+                      onChange={(value) => {
+                        setting.value = value
+                        setSettings([...settings])
+                        BevyApi.setSetting(setting.name, value).catch(
+                          console.error
+                        )
+                      }}
+                    />
+                  ))}
                 <UiEntity
                   uiTransform={{
+                    /* workaround: this adds space for drodown lists at bottom not being visible withing overflow:scroll */
                     width: '100%',
-                    height: 1,
-                    flexDirection: 'column',
-                    alignItems: 'flex-start'
+                    height: getContentScaleRatio() * 500
                   }}
-                  uiBackground={{ color: ALMOST_WHITE }}
                 />
-                <UiEntity
-                  uiTransform={{
-                    width: '100%',
-                    height: '50%',
-                    // height: 300,
-                    flexDirection: 'column',
-                    alignItems: 'flex-start'
-                  }}
-                >
-                  <Label
-                    uiTransform={{ width: '100%', height: 'auto' }}
-                    value={this.settingsInfoDescription}
-                    fontSize={fontSize}
-                    textWrap="wrap"
-                    textAlign="top-left"
-                  />
-                </UiEntity>
               </UiEntity>
-            </UiEntity>
-          </UiEntity>
+            )}
+          </Column>
         )}
-      </UiEntity>
-    )
-  }
+      </ResponsiveContent>
+    </Column>
+  )
+}
+
+function SettingField({
+  setting,
+  uiTransform,
+  onChange = noop
+}: {
+  setting: ExplorerSetting
+  uiTransform?: UiTransformProps
+  onChange?: (value: number) => void
+  key?: any
+}): ReactElement {
+  const [refValue, setRefValue] = useState<string>(setting.value.toString())
+  const [showTooltip, setShowTooltip] = useState(false)
+  // TODO SLIDERS SHOULD HAVE ARROWS IN LEFT AND RIGHT ?
+  return (
+    <Column
+      uiTransform={{
+        width: '48%',
+        flexShrink: 0,
+        margin: { left: '1%', top: '2%' },
+        ...uiTransform
+      }}
+    >
+      {showTooltip && (
+        <UiEntity
+          uiTransform={{
+            width: '90%',
+            positionType: 'absolute',
+            position: { left: '10%', top: getContentScaleRatio() * 52 },
+            padding: getContentScaleRatio() * 20,
+            zIndex: 99
+          }}
+          uiBackground={{
+            color: COLOR.BLACK
+          }}
+          uiText={{
+            value: `${setting.description}`,
+            textAlign: 'top-left',
+            fontSize: getContentScaleRatio() * 32,
+            textWrap: 'wrap'
+          }}
+        />
+      )}
+      <Row>
+        <UiEntity
+          uiTransform={{ alignItems: 'flex-start' }}
+          uiText={{
+            value: `${setting.name}`,
+            textAlign: 'top-left',
+            fontSize: getContentScaleRatio() * 32,
+            textWrap: 'nowrap'
+          }}
+        />
+        <Icon
+          uiTransform={{
+            flexShrink: 0,
+            flexGrow: 0,
+            positionType: 'relative',
+            position: { left: 0 }
+          }}
+          icon={{ spriteName: 'InfoButton', atlasName: 'icons' }}
+          onMouseEnter={() => {
+            console.log('enter')
+            setShowTooltip(true)
+          }}
+          onMouseLeave={() => {
+            executeTask(async () => {
+              setShowTooltip(false)
+            })
+          }}
+          iconColor={COLOR.WHITE}
+          iconSize={getContentScaleRatio() * 32 * 1.2}
+        />
+
+        {!(setting.namedVariants?.length > 0) && (
+          <UiEntity
+            uiTransform={{
+              alignItems: 'flex-end',
+              flexWrap: 'nowrap',
+              flexShrink: 0,
+              position: { right: '12%' },
+              positionType: 'absolute'
+            }}
+            uiText={{
+              value: `${refValue}`,
+              textAlign: 'top-right',
+              fontSize: getContentScaleRatio() * 32,
+              textWrap: 'nowrap'
+            }}
+          />
+        )}
+      </Row>
+      {setting.namedVariants?.length > 0 ? (
+        <DropdownComponent
+          options={setting.namedVariants.map(({ name, description }) => ({
+            label: name,
+            value: name
+          }))}
+          uiTransform={{
+            width: '95%',
+            margin: { left: '1%' }
+          }}
+          value={setting.namedVariants[setting.value].name}
+          onChange={(value) => {
+            const indexOfValue = setting.namedVariants.findIndex(
+              (variant) => variant.name === value
+            )
+            onChange(indexOfValue)
+          }}
+        />
+      ) : (
+        <UncontrolledBasicSlider
+          showStepButtons={true}
+          min={setting.minValue}
+          max={setting.maxValue}
+          defaultValue={setting.value}
+          stepSize={setting.stepSize}
+          uiTransform={{
+            alignSelf: 'center',
+            width: '100%',
+            height: getContentScaleRatio() * 100
+          }}
+          onChange={(value) => {
+            // onChange(value)
+            setRefValue(value.toString())
+          }}
+          onRelease={(value) => {
+            console.log('onRelease', value)
+            onChange(value)
+          }}
+          uiBackground={{
+            color: COLOR.BLACK_TRANSPARENT
+          }}
+          backgroundBar={COLOR.RED}
+        ></UncontrolledBasicSlider>
+      )}
+    </Column>
+  )
+}
+export function SettingsCategoryTitle({
+  title
+}: {
+  title: string
+}): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{ width: '100%' }}
+      uiText={{
+        value: title,
+        fontSize: getContentScaleRatio() * 42,
+        textAlign: 'top-left'
+      }}
+    />
+  )
+}
+
+export function SettingsNavBar({
+  currentCategory,
+  onChange = noop,
+  children
+}: {
+  currentCategory: SettingCategory
+  onChange?: (category: SettingCategory) => void
+  children?: ReactElement | ReactElement[] | null
+}): ReactElement {
+  return (
+    <NavBar>
+      <LeftSection>
+        <NavBarTitle text={'<b>Settings</b>'} />
+        <NavButtonBar>
+          <NavButton
+            icon={{ spriteName: 'ControlsIcn', atlasName: 'icons' }}
+            active={currentCategory === `Gameplay`}
+            text={settingsCategoryTitle.Gameplay}
+            onClick={() => {
+              onChange(`Gameplay`)
+            }}
+          />
+          <NavButton
+            icon={{ spriteName: 'Graphics', atlasName: 'icons' }}
+            uiTransform={{ margin: { left: 12 } }}
+            active={currentCategory === `Graphics`}
+            text={settingsCategoryTitle.Graphics}
+            onClick={() => {
+              console.log('GRAPHICS')
+              onChange(`Graphics`)
+            }}
+          />
+          <NavButton
+            icon={{ spriteName: 'SpeakerOn', atlasName: 'context' }}
+            active={currentCategory === `Audio`}
+            text={settingsCategoryTitle.Audio}
+            onClick={() => {
+              onChange(`Audio`)
+            }}
+          />
+          <NavButton
+            icon={{ spriteName: 'Filter', atlasName: 'icons' }}
+            active={currentCategory === `Performance`}
+            text={settingsCategoryTitle.Performance}
+            onClick={() => {
+              onChange(`Performance`)
+            }}
+          />
+          <NavButton
+            icon={{ spriteName: 'Lock', atlasName: 'icons' }}
+            active={currentCategory === `Permissions`}
+            text={settingsCategoryTitle.Permissions}
+            onClick={() => {
+              onChange(`Permissions`)
+            }}
+          />
+        </NavButtonBar>
+      </LeftSection>
+      <RightSection>{children}</RightSection>
+    </NavBar>
+  )
+}
+
+async function getProcessedSettings(): Promise<ExplorerSetting[]> {
+  const settings = await BevyApi.getSettings()
+
+  const processedSettings = settings.map((setting) => {
+    // First process the stepSize
+    const processedStepSize =
+      setting.stepSize !== undefined
+        ? Math.round(setting.stepSize * 100) / 100
+        : setting.stepSize
+
+    return {
+      ...setting,
+      stepSize: processedStepSize,
+      // Round value to match the processed stepSize precision
+      value: roundToStep(setting.value, processedStepSize)
+    }
+  })
+  return processedSettings
 }

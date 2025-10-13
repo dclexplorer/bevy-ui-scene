@@ -5,7 +5,7 @@ import {
   closeLastPopupAction,
   updateHudStateAction
 } from '../../state/hud/actions'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { noop } from '../../utils/function-utils'
 import { type Popup } from '../../components/popup-stack'
 import { type Notification, NOTIFICATIONS_BASE_URL } from './notification-types'
@@ -117,9 +117,9 @@ function NotificationsContent(): ReactElement {
   return (
     <UiEntity
       uiTransform={{
-        width: getCanvasScaleRatio() * 370 * 2.23,
-        height: getCanvasScaleRatio() * 540 * 2.2,
-        borderRadius: getCanvasScaleRatio() * 20,
+        width: getContentScaleRatio() * 370 * 2.23,
+        height: getContentScaleRatio() * 540 * 2.2,
+        borderRadius: getContentScaleRatio() * 20,
         borderWidth: 0,
         borderColor: COLOR.BLACK_TRANSPARENT,
         alignItems: 'flex-start',
@@ -139,13 +139,13 @@ function NotificationsContent(): ReactElement {
         }}
         uiText={{
           value: '<b>NOTIFICATIONS</b>',
-          fontSize: getCanvasScaleRatio() * 38
+          fontSize: getContentScaleRatio() * 38
         }}
       />
       <UiEntity
         uiTransform={{
           scrollVisible: 'vertical',
-          height: getCanvasScaleRatio() * 540 * 2,
+          height: getContentScaleRatio() * 540 * 2,
           width: '100%',
           borderWidth: 1,
           borderColor: COLOR.BLACK_TRANSPARENT,
@@ -156,7 +156,7 @@ function NotificationsContent(): ReactElement {
       >
         {loadingNotifications && (
           <Label
-            fontSize={getCanvasScaleRatio() * 32}
+            fontSize={getContentScaleRatio() * 32}
             value={'Loading notifications ...'}
             color={Color4.create(1, 1, 1, loadingAlpha)}
           />

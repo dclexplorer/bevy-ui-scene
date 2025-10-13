@@ -3,10 +3,11 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import Icon from '../icon/Icon'
 import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { COLOR } from '../color-palette'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { noop } from '../../utils/function-utils'
 import { type Color4 } from '@dcl/sdk/math'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
+import { getMainMenuHeight } from '../../ui-classes/main-menu/MainMenu'
 
 export type NavButtonProps = {
   icon?: AtlasIcon
@@ -18,6 +19,8 @@ export type NavButtonProps = {
   onClick?: () => void
   backgroundColor?: Color4 | null
   color?: Color4 | null
+  iconSize?: number
+  fontSize?: number
 }
 
 export function NavButton({
@@ -29,15 +32,17 @@ export function NavButton({
   onDelete = noop,
   onClick = noop,
   backgroundColor = null,
+  iconSize = getMainMenuHeight() * 0.3,
+  fontSize = getMainMenuHeight() * 0.3,
   color = null
 }: NavButtonProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio() * 0.9
   return (
     <UiEntity
       uiTransform={{
-        padding: 16 * canvasScaleRatio,
-        height: 80 * canvasScaleRatio,
+        padding: fontSize * 0.5,
+        height: fontSize * 2.5,
         alignItems: 'center',
+        margin: { left: 12 },
         ...uiTransform
       }}
       uiBackground={{
@@ -49,13 +54,14 @@ export function NavButton({
             : COLOR.NAV_BUTTON_INACTIVE_BACKGROUND)
       }}
       onMouseDown={() => {
+        console.log('clicked')
         onClick()
       }}
     >
       {icon && (
         <Icon
           icon={icon}
-          iconSize={48 * canvasScaleRatio}
+          iconSize={iconSize}
           iconColor={
             color ??
             (active
@@ -65,7 +71,7 @@ export function NavButton({
         />
       )}
       <Label
-        fontSize={32 * canvasScaleRatio}
+        fontSize={fontSize}
         value={`<b>${text}</b>`}
         color={
           color ??
@@ -82,7 +88,7 @@ export function NavButton({
         >
           <Icon
             icon={{ atlasName: 'context', spriteName: 'Unpublish' }}
-            iconSize={40 * canvasScaleRatio}
+            iconSize={iconSize}
           />
         </UiEntity>
       ) : null}
@@ -105,7 +111,7 @@ export function NavItem({
   backgroundColor,
   onClick = noop
 }: NavItemProps): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{

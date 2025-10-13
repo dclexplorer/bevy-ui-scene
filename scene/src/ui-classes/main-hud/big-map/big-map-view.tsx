@@ -19,7 +19,7 @@ import useState = ReactEcs.useState
 import { Quaternion, Vector3 } from '@dcl/sdk/math'
 import Icon from '../../../components/icon/Icon'
 import {
-  getCanvasScaleRatio,
+  getContentScaleRatio,
   getRightPanelWidth,
   getViewportHeight,
   getViewportWidth
@@ -365,7 +365,7 @@ function BigMapContent(): ReactElement {
                 : placeRepresentation.sprite.spriteName === 'PinLive'
                 ? 1.5
                 : 1
-              const symbolSize = getCanvasScaleRatio() * 50 * sizeMultiplier
+              const symbolSize = getContentScaleRatio() * 50 * sizeMultiplier
               return (
                 <UiEntity
                   uiTransform={{
@@ -426,8 +426,8 @@ function BigMapContent(): ReactElement {
                         position: {
                           top: 0,
                           left: isHomePlace(placeRepresentation)
-                            ? -getCanvasScaleRatio() * 50
-                            : -getCanvasScaleRatio() * 100
+                            ? -getContentScaleRatio() * 50
+                            : -getContentScaleRatio() * 100
                         },
 
                         alignSelf: 'center'

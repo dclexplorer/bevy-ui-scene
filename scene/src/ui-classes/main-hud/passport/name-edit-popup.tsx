@@ -6,7 +6,7 @@ import {
   pushPopupAction,
   updateHudStateAction
 } from '../../../state/hud/actions'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { cloneDeep, noop } from '../../../utils/function-utils'
 import { type Popup } from '../../../components/popup-stack'
@@ -129,7 +129,7 @@ const EditNameContent = (): ReactElement => {
       <UiEntity
         uiText={{
           value: '<b>Edit Username</b>',
-          fontSize: getCanvasScaleRatio() * 50
+          fontSize: getContentScaleRatio() * 50
         }}
       />
       <UiEntity
@@ -144,7 +144,7 @@ const EditNameContent = (): ReactElement => {
         {tabs.length && (
           <TabComponent
             tabs={tabs}
-            fontSize={getCanvasScaleRatio() * 32}
+            fontSize={getContentScaleRatio() * 32}
             uiTransform={{ width: '100%', margin: { bottom: '2%' } }}
             onClickTab={(activeTab: number) => {
               const tabs = cloneDeep(NAME_EDIT_TABS).map(
@@ -230,14 +230,14 @@ export const NameForm = ({
           width: '94%',
           flexShrink: 0,
           flexGrow: 0,
-          height: getCanvasScaleRatio() * 88,
-          margin: { top: getCanvasScaleRatio() * 14 },
+          height: getContentScaleRatio() * 88,
+          margin: { top: getContentScaleRatio() * 14 },
           borderColor: COLOR.BLACK_TRANSPARENT,
-          borderRadius: getCanvasScaleRatio() * 30,
+          borderRadius: getContentScaleRatio() * 30,
           borderWidth: 0,
-          padding: getCanvasScaleRatio() * 20
+          padding: getContentScaleRatio() * 20
         }}
-        fontSize={getCanvasScaleRatio() * 40}
+        fontSize={getContentScaleRatio() * 40}
         uiBackground={{
           color: COLOR.WHITE
         }}
@@ -254,13 +254,13 @@ export const NameForm = ({
           width: '100%',
           positionType: 'absolute',
           position: {
-            top: getCanvasScaleRatio() * 90
+            top: getContentScaleRatio() * 90
           }
         }}
         uiText={{
           value: `${textValue.length} / 15`,
           color: COLOR.TEXT_COLOR_LIGHT_GREY,
-          fontSize: getCanvasScaleRatio() * 32,
+          fontSize: getContentScaleRatio() * 32,
           textAlign: 'top-left'
         }}
       />
@@ -269,13 +269,13 @@ export const NameForm = ({
           width: '92%',
           positionType: 'absolute',
           position: {
-            top: getCanvasScaleRatio() * 18
+            top: getContentScaleRatio() * 18
           }
         }}
         uiText={{
           value: `#${(getPlayer()?.userId ?? '').slice(-4)}`,
           color: COLOR.TEXT_COLOR_GREY,
-          fontSize: getCanvasScaleRatio() * 40,
+          fontSize: getContentScaleRatio() * 40,
           textAlign: 'top-right'
         }}
       />
@@ -291,16 +291,16 @@ export const NameForm = ({
       >
         <Button
           uiTransform={{
-            borderRadius: getCanvasScaleRatio() * 20,
+            borderRadius: getContentScaleRatio() * 20,
             borderColor: COLOR.WHITE_OPACITY_1,
             borderWidth: 0,
             width: '40%',
             margin: { right: '5%' },
-            height: getCanvasScaleRatio() * 100,
+            height: getContentScaleRatio() * 100,
             opacity: disabled ? 0.5 : 1,
             flexShrink: 0
           }}
-          fontSize={getCanvasScaleRatio() * 40}
+          fontSize={getContentScaleRatio() * 40}
           uiBackground={{
             color: COLOR.WHITE_OPACITY_1
           }}
@@ -315,14 +315,14 @@ export const NameForm = ({
           variant={'primary'}
           uiTransform={{
             width: '40%',
-            borderRadius: getCanvasScaleRatio() * 20,
+            borderRadius: getContentScaleRatio() * 20,
             borderColor: COLOR.BLACK_TRANSPARENT,
             borderWidth: 0,
-            height: getCanvasScaleRatio() * 100,
+            height: getContentScaleRatio() * 100,
             opacity: disabled ? 0.5 : 1,
             flexShrink: 0
           }}
-          fontSize={getCanvasScaleRatio() * 40}
+          fontSize={getContentScaleRatio() * 40}
           value={'SAVE'}
           disabled={disabled || !textValue?.length || isInvalidName(textValue)}
           onMouseDown={() => {
@@ -362,12 +362,12 @@ export const UniqueNameForm = ({
         uiTransform={{
           width: '97%',
           zIndex: 999999,
-          margin: { top: getCanvasScaleRatio() * -20 },
+          margin: { top: getContentScaleRatio() * -20 },
           borderColor: COLOR.BLACK_TRANSPARENT,
-          borderRadius: getCanvasScaleRatio() * 30,
+          borderRadius: getContentScaleRatio() * 30,
           borderWidth: 0
         }}
-        fontSize={getCanvasScaleRatio() * 40}
+        fontSize={getContentScaleRatio() * 40}
         scroll={true}
         options={selectableNames}
         value={selectedName}
@@ -385,16 +385,16 @@ export const UniqueNameForm = ({
       >
         <Button
           uiTransform={{
-            borderRadius: getCanvasScaleRatio() * 20,
+            borderRadius: getContentScaleRatio() * 20,
             borderColor: COLOR.WHITE_OPACITY_1,
             borderWidth: 0,
             width: '40%',
             margin: { right: '5%' },
-            height: getCanvasScaleRatio() * 100,
+            height: getContentScaleRatio() * 100,
             opacity: disabled ? 0.5 : 1,
             flexShrink: 0
           }}
-          fontSize={getCanvasScaleRatio() * 40}
+          fontSize={getContentScaleRatio() * 40}
           uiBackground={{
             color: COLOR.WHITE_OPACITY_1
           }}
@@ -409,16 +409,16 @@ export const UniqueNameForm = ({
           variant={'primary'}
           uiTransform={{
             width: '40%',
-            borderRadius: getCanvasScaleRatio() * 20,
+            borderRadius: getContentScaleRatio() * 20,
             borderColor: COLOR.BLACK_TRANSPARENT,
             borderWidth: 0,
-            height: getCanvasScaleRatio() * 100,
+            height: getContentScaleRatio() * 100,
             flexShrink: 0,
             justifyContent: 'center',
             alignItems: 'center',
             alignContent: 'center'
           }}
-          fontSize={getCanvasScaleRatio() * 40}
+          fontSize={getContentScaleRatio() * 40}
           value={'SAVE'}
           disabled={
             disabled || selectedName === store.getState().hud.profileData.name
@@ -453,8 +453,8 @@ export const NameEditPopup: Popup = () => {
     >
       <UiEntity
         uiTransform={{
-          width: getCanvasScaleRatio() * 1200,
-          height: getCanvasScaleRatio() * 1049,
+          width: getContentScaleRatio() * 1200,
+          height: getContentScaleRatio() * 1049,
           borderRadius: BORDER_RADIUS_F,
           borderWidth: 0,
           borderColor: COLOR.WHITE,

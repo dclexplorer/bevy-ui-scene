@@ -1,6 +1,6 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { getCanvasScaleRatio } from '../service/canvas-ratio'
+import { getContentScaleRatio } from '../service/canvas-ratio'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR, RARITY_COLORS } from '../components/color-palette'
 import { wheelNumbers, wheelSlotBoxes } from './wheel-boxes'
@@ -88,7 +88,7 @@ export function switchEmotesWheelVisibility(): void {
 }
 
 export function renderEmotesWheel(): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const equippedEmotes: EquippedEmote[] = (getPlayer()?.emotes ?? []).map(
     (e) => getURNWithoutTokenId(e as URN) as EquippedEmote
   )
@@ -252,7 +252,7 @@ function EmoteNumbers(): ReactElement {
     <UiEntity>
       {new Array(10).fill(null).map((_: null, index: number) => {
         const [left, top] = wheelNumbers[index].map(
-          (n) => n * getCanvasScaleRatio() * 2.1
+          (n) => n * getContentScaleRatio() * 2.1
         )
 
         return (
@@ -260,15 +260,15 @@ function EmoteNumbers(): ReactElement {
             uiTransform={{
               positionType: 'absolute',
               position: {
-                top: top - getCanvasScaleRatio() * 30,
-                left: left - getCanvasScaleRatio() * 20
+                top: top - getContentScaleRatio() * 30,
+                left: left - getContentScaleRatio() * 20
               },
               zIndex: 1
             }}
             uiText={{
               value: `<b>${(index + 1).toString().slice(-1, 2)}</b>`,
               color: COLOR.TEXT_COLOR,
-              fontSize: getCanvasScaleRatio() * 35,
+              fontSize: getContentScaleRatio() * 35,
               textAlign: 'middle-center'
             }}
           />
@@ -279,7 +279,7 @@ function EmoteNumbers(): ReactElement {
 }
 
 function getSlotInfo(index: number): any {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const spriteName: string = `wheel-slot-${index}`
 
   const slotBox = wheelSlotBoxes[index]

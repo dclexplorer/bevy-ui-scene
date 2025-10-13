@@ -6,11 +6,11 @@ import { ButtonTextIcon } from '../../components/button-text-icon'
 import { type UIController } from '../../controllers/ui.controller'
 import { ALMOST_BLACK } from '../../utils/constants'
 import { type AtlasIcon } from '../../utils/definitions'
-import { ProfileButton } from '../profile/profile-button'
+import { ProfileButton } from '../profile/profile-button/ProfileButton'
 import { type MenuPage } from './MainMenu.types'
 import { COLOR } from '../../components/color-palette'
 import {
-  getCanvasScaleRatio,
+  getContentScaleRatio,
   getViewportHeight
 } from '../../service/canvas-ratio'
 import { playPreviewEmote } from '../../components/backpack/AvatarPreview'
@@ -29,7 +29,6 @@ export default class MainMenu {
   public activePage: MenuPage | undefined = 'settings'
   public isOpen = (): boolean => this.open
   private readonly uiController: UIController
-  private readonly profileButton: ProfileButton
   private open: boolean = false
 
   readonly backpackIcon: AtlasIcon = {
@@ -61,7 +60,6 @@ export default class MainMenu {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
-    this.profileButton = new ProfileButton(uiController)
   }
 
   mapEnter(): void {
@@ -140,19 +138,22 @@ export default class MainMenu {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
     // const sideBarHeight: number = Math.max(canvasInfo.height * 0.024, 46)
-    const canvasScaleRatio = getCanvasScaleRatio()
-    const buttonSize: number =
-      Math.max(canvasInfo.height * 0.024, 46) * canvasScaleRatio
-    const ICON_SIZE = 50 * canvasScaleRatio
-    const BUTTON_ICON_FONT_SIZE = 24 * canvasScaleRatio
+    const canvasScaleRatio = getContentScaleRatio()
+    const buttonSize: number = getMainMenuHeight() * 0.7
+    const ICON_SIZE = getMainMenuHeight() * 0.4
+    const BUTTON_ICON_FONT_SIZE = getMainMenuHeight() * 0.2
     const buttonTransform: UiTransformProps = {
-      height: 100 * canvasScaleRatio,
-      margin: { left: 10 * canvasScaleRatio },
-      padding: { left: 20 * canvasScaleRatio, right: 20 * canvasScaleRatio },
+      // height: getMainMenuHeight() * 0.6,
+      margin: { left: getMainMenuHeight() * 0.1 },
+      padding: {
+        left: getMainMenuHeight() * 0.1,
+        right: getMainMenuHeight() * 0.1
+      },
+
       flexDirection: 'column'
     }
-    const LOGO_WIDTH = 165 * canvasScaleRatio * 2.1
-    const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1
+    // const LOGO_WIDTH = getMainMenuHeight() * 4
+    // const LOGO_HEIGHT = 24 * canvasScaleRatio * 2.1
 
     return (
       <UiEntity
@@ -187,8 +188,10 @@ export default class MainMenu {
           >
             <UiEntity
               uiTransform={{
-                width: LOGO_WIDTH,
-                height: LOGO_HEIGHT,
+                height: getMainMenuHeight() * 0.4,
+                width: getMainMenuHeight() * 0.4 * (165 / 24),
+                flexGrow: 1,
+                flexShrink: 0,
                 margin: { left: 20 },
                 justifyContent: 'flex-start',
                 alignItems: 'flex-start'
@@ -335,13 +338,20 @@ export default class MainMenu {
               height: getMainMenuHeight(),
               positionType: 'absolute',
               position: {
-                right: getCanvasScaleRatio() * 50,
+                right: getContentScaleRatio() * 50,
                 top: getMainMenuHeight() * 0.1
               },
               zIndex: 1
             }}
           >
-            {this.profileButton.mainUi()}
+            <ProfileButton
+              uiTransform={{
+                margin: {
+                  top: getMainMenuHeight() * 0.02,
+                  right: getMainMenuHeight() * 0.2
+                }
+              }}
+            />
             <ButtonIcon
               onMouseEnter={() => {
                 this.closeButtonColor = ALMOST_BLACK
@@ -354,9 +364,14 @@ export default class MainMenu {
               }}
               uiTransform={{
                 width: buttonSize,
-                height: buttonSize
+                height: buttonSize,
+                flexShrink: 0,
+                margin: {
+                  top: getMainMenuHeight() / 2 - buttonSize * 0.6
+                }
               }}
-              backgroundColor={this.closeButtonColor}
+              iconSize={buttonSize / 2}
+              backgroundColor={COLOR.BLACK}
               icon={{ atlasName: 'icons', spriteName: 'CloseIcon' }}
             />
           </UiEntity>

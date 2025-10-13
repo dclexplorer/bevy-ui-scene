@@ -3,7 +3,7 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR, COLOR_PRESETS } from '../../../components/color-palette'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
 import { NavItem } from '../../../components/nav-button/NavButton'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { store } from '../../../state/store'
 import {
   CATEGORY_COLOR_DEFINITIONS,
@@ -32,7 +32,7 @@ export function closeColorPicker(): void {
 }
 
 export function WearableColorPicker(): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const backpackState = store.getState().backpack
   const categoryDefinition =
     (backpackState.activeWearableCategory &&
@@ -96,7 +96,7 @@ function ColorBox({
   onMouseDown?: () => void
   uiTransform?: UiTransformProps
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{
@@ -121,7 +121,7 @@ function ColorPickerDialog({
   categoryColorKey: string
   color: Color4
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const hsv = rgbToHsv(...rgbToArray(color))
   const rawColor = Color4.create(...rgbToArray(hsvToRgb(hsv.h, 360, 360)))
   const backpackState = store.getState().backpack
@@ -196,7 +196,6 @@ function ColorPickerDialog({
         value={hsv.h}
         min={1}
         max={359}
-        floatNumber={false}
         uiTransform={{
           width: '100%',
           height: '8%'

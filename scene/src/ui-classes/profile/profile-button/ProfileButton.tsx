@@ -1,121 +1,78 @@
-import { UiCanvasInformation, engine } from '@dcl/sdk/ecs'
-import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
-import {
-  ALMOST_WHITE,
-  ROUNDED_TEXTURE_BACKGROUND,
-  RUBY
-} from '../../../utils/constants'
-import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
-import { type UIController } from '../../../controllers/ui.controller'
+import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type ReactElement } from '@dcl/react-ecs'
+import { Row } from '../../../components/layout'
+import { AvatarCircle } from '../../../components/avatar-circle'
+import { getAddressColor } from '../../main-hud/chat-and-logs/ColorByAddress'
+import { getViewportHeight } from '../../../service/canvas-ratio'
+import { getPlayer } from '@dcl/sdk/players'
+import { getMainMenuHeight } from '../../main-menu/MainMenu'
+import { getHudFontSize } from '../../main-hud/scene-info/SceneInfo'
+import { Color4 } from '@dcl/sdk/math'
 import { store } from '../../../state/store'
 import { pushPopupAction } from '../../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
+const LIGHT_TRANSPARENT = Color4.create(1, 1, 1, 0.03)
 
-export default class ProfileButton {
-  private readonly name: string = 'BevyUser'
-  private readonly verified: boolean = true
-  public fontSize: number = 16
-  private readonly uiController: UIController
+export function ProfileButton({
+  uiTransform
+}: {
+  uiTransform?: UiTransformProps
+}): ReactElement | null {
+  const player = getPlayer()
+  const avatarSize = getMainMenuHeight() * 0.7
 
-  constructor(uiController: UIController) {
-    this.uiController = uiController
-  }
+  if (!player) return null
 
-  showProfileCard(): void {
-    this.uiController.isProfileVisible = true
-    this.uiController.profile.showCard()
-  }
-
-  mainUi(): ReactEcs.JSX.Element | null {
-    const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
-    if (canvasInfo === null) return null
-    return (
-      <UiEntity
-        uiTransform={{
-          flexDirection: 'column',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          width: 'auto',
-          height: 'auto',
-          margin: { right: 10 }
-        }}
-      >
-        <UiEntity
-          uiTransform={{
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            padding: { right: 10 }
-          }}
-          onMouseDown={() => {
-            // this.showProfileCard()
-            store.dispatch(
-              pushPopupAction({
-                type: HUD_POPUP_TYPE.PROFILE_MENU,
-                data: {
-                  align: 'right'
-                }
-              })
-            )
-          }}
-          uiBackground={{
-            ...ROUNDED_TEXTURE_BACKGROUND,
-            color: { ...ALMOST_WHITE, a: 0.5 }
-          }}
-          onMouseEnter={() => {}}
-          onMouseLeave={() => {}}
-        >
-          {/* AVATAR HEAD */}
-
-          <UiEntity
-            uiTransform={{
-              width: 2 * this.fontSize,
-              height: 2 * this.fontSize,
-              margin: 5
-            }}
-            uiBackground={{
-              color: RUBY,
-              textureMode: 'nine-slices',
-              texture: {
-                src: 'assets/images/backgrounds/rounded.png'
-              },
-              textureSlices: {
-                top: 0.25,
-                bottom: 0.25,
-                left: 0.25,
-                right: 0.25
-              }
-            }}
-          />
-
-          {/* NAME */}
-          <UiEntity
-            uiTransform={{
-              width: 'auto',
-              height: 'auto'
-            }}
-            uiText={{
-              value: this.name,
-              fontSize: this.fontSize,
-              color: ALMOST_WHITE,
-              textAlign: 'middle-center'
-            }}
-          />
-          {/* VERIFIED ICON */}
-          {this.verified && (
-            <UiEntity
-              uiTransform={{
-                width: this.fontSize,
-                height: this.fontSize
-              }}
-              uiBackground={getBackgroundFromAtlas({
-                atlasName: 'icons',
-                spriteName: 'Verified'
-              })}
-            />
-          )}
-        </UiEntity>
-      </UiEntity>
+  const showProfilePopup = (): void => {
+    store.dispatch(
+      pushPopupAction({
+        type: HUD_POPUP_TYPE.PROFILE_MENU,
+        data: {
+          player
+        }
+      })
     )
   }
+  return (
+    <Row
+      uiTransform={{
+        borderRadius: 999,
+        height: avatarSize * 1.1,
+        flexGrow: 1,
+        ...uiTransform
+      }}
+      uiBackground={{
+        color: LIGHT_TRANSPARENT
+      }}
+      onMouseDown={() => {
+        showProfilePopup()
+      }}
+    >
+      <AvatarCircle
+        userId={player.userId}
+        circleColor={getAddressColor(player.userId)}
+        uiTransform={{
+          width: avatarSize,
+          height: avatarSize,
+          position: { left: avatarSize * 0.1 },
+          borderWidth: avatarSize * 0.05
+        }}
+        isGuest={player.isGuest}
+        onMouseDown={() => {
+          showProfilePopup()
+        }}
+      />
+      <UiEntity
+        uiTransform={{
+          margin: { left: '1%' }
+        }}
+        uiText={{
+          color: getAddressColor(player.userId),
+          value: `<b> ${player.name}  </b>`,
+          fontSize: getHudFontSize(getViewportHeight()).NORMAL,
+          textWrap: 'nowrap'
+        }}
+      />
+    </Row>
+  )
 }

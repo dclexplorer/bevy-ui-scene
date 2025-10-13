@@ -12,6 +12,7 @@ import {
   GENDERS,
   LANGUAGES,
   LINK_CHIP_HOVERED,
+  MENU_BACKGROUND_TEXTURE,
   ORANGE,
   PRONOUNS,
   RELATIONSHIP_STATUS,
@@ -506,7 +507,7 @@ export default class Profile {
               pointerFilter: 'block'
             }}
             uiBackground={{
-              texture: { src: 'assets/images/passport/background.png' },
+              texture: MENU_BACKGROUND_TEXTURE,
               textureMode: 'stretch'
             }}
           >

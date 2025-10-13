@@ -2,7 +2,7 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import {
-  getCanvasScaleRatio,
+  getContentScaleRatio,
   getContentHeight,
   getContentWidth
 } from '../../../service/canvas-ratio'
@@ -18,7 +18,10 @@ import {
   createAvatarPreview,
   updateAvatarPreview
 } from '../../../components/backpack/AvatarPreview'
-import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
+import {
+  MENU_BACKGROUND_TEXTURE,
+  ROUNDED_TEXTURE_BACKGROUND
+} from '../../../utils/constants'
 import {
   BASE_MALE_URN,
   getURNWithoutTokenId,
@@ -59,17 +62,17 @@ import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 let originalAvatarJSON: string
 
 export default class BackpackPage {
-  public fontSize: number = 16 * getCanvasScaleRatio() * 2
+  public fontSize: number = 16 * getContentScaleRatio() * 2
 
   render(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-    const canvasScaleRatio = getCanvasScaleRatio()
+    const canvasScaleRatio = getContentScaleRatio()
     const backpackState = store.getState().backpack
 
     return (
       <MainContent>
-        <BackpackNavBar canvasScaleRatio={canvasScaleRatio} />
+        <BackpackNavBar />
         <ResponsiveContent>
           <AvatarPreviewElement />
           <UiEntity
@@ -232,7 +235,7 @@ export function MainContent({
         pointerFilter: 'block'
       }}
       uiBackground={{
-        texture: { src: 'assets/images/menu/background.png' },
+        texture: MENU_BACKGROUND_TEXTURE,
         textureMode: 'stretch'
       }}
     >

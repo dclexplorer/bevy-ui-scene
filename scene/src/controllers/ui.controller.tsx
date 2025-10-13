@@ -1,14 +1,12 @@
 import ReactEcs, { ReactEcsRenderer, UiEntity } from '@dcl/sdk/react-ecs'
 import { type GameController } from './game.controller'
 import { BackpackPage } from '../ui-classes/main-menu/backpack-page'
-import { ProfileButton } from '../ui-classes/profile/profile-button'
 import { Profile } from '../ui-classes/profile'
 import { MainHud } from '../ui-classes/main-hud'
 import { Friends } from '../ui-classes/main-hud/friends'
 import { MainMenu } from '../ui-classes/main-menu'
 import { ExplorePage } from '../ui-classes/main-menu/explore-page'
 import { MapPage } from '../ui-classes/main-menu/map-page'
-import { SettingsPage } from '../ui-classes/main-menu/settings-page'
 import { LoadingAndLogin } from '../ui-classes/loading-and-login'
 import { PopUpAction } from '../ui-classes/main-hud/pop-up-action'
 import { PopUpWarning } from '../ui-classes/main-hud/pop-up-warning'
@@ -38,6 +36,8 @@ import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-pop
 import { getRealm } from '~system/Runtime'
 import { BigMap } from '../ui-classes/main-hud/big-map/big-map-view'
 import { SceneCatalogPanel } from '../components/map/scene-catalog-panel'
+import SettingsPage from '../ui-classes/main-menu/settings-page/SettingsPage'
+import { COLOR } from 'src/components/color-palette'
 
 let loadingAndLogin: any = null
 
@@ -64,7 +64,6 @@ export class UIController {
   public mapPage: MapPage
   public explorePage: ExplorePage
 
-  profileButton: ProfileButton
   profile: Profile
   friends: Friends
   loadingAndLogin: LoadingAndLogin
@@ -88,11 +87,10 @@ export class UIController {
     this.loadingAndLogin = loadingAndLogin = new LoadingAndLogin(this)
     this.mainHud = new MainHud(this)
     this.menu = new MainMenu(this)
-    this.settingsPage = new SettingsPage(this)
+    this.settingsPage = new SettingsPage()
     this.backpackPage = new BackpackPage()
     this.mapPage = new MapPage()
     this.explorePage = new ExplorePage()
-    this.profileButton = new ProfileButton(this)
     this.profile = new Profile(this)
     this.friends = new Friends(this)
     this.actionPopUp = new PopUpAction(this)
@@ -188,7 +186,10 @@ function InteractableArea({
         width: canvas.width - (interactableArea.right + interactableArea.left),
         height:
           canvas.height - (interactableArea.top + interactableArea.bottom),
-        zIndex: 999999
+        zIndex: 999999,
+        borderWidth: 10,
+        borderRadius: 0,
+        borderColor: COLOR.WHITE_OPACITY_2
       }}
       uiBackground={{
         color: Color4.create(0, 1, 1, opacity)

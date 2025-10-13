@@ -108,7 +108,8 @@ export default class PopUpAction {
         uiTransform={{
           width: '100%',
           height: '100%',
-          positionType: 'absolute'
+          positionType: 'absolute',
+          zIndex: 1
         }}
       >
         <UiEntity

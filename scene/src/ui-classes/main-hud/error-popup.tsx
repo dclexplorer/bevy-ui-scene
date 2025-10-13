@@ -2,7 +2,7 @@ import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../state/store'
 import { COLOR } from '../../components/color-palette'
 import { closeLastPopupAction } from '../../state/hud/actions'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { BORDER_RADIUS_F } from '../../utils/ui-utils'
 import { noop } from '../../utils/function-utils'
 import Icon from '../../components/icon/Icon'
@@ -46,8 +46,8 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
-        width: getCanvasScaleRatio() * 1200,
-        height: getCanvasScaleRatio() * 750,
+        width: getContentScaleRatio() * 1200,
+        height: getContentScaleRatio() * 750,
         borderRadius: BORDER_RADIUS_F,
         borderWidth: 0,
         borderColor: COLOR.WHITE,
@@ -66,7 +66,7 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
           position: { top: '4%' }
         }}
         icon={{ spriteName: 'BugIcon', atlasName: 'icons' }}
-        iconSize={getCanvasScaleRatio() * 96}
+        iconSize={getContentScaleRatio() * 96}
         iconColor={COLOR.RED}
       />
 
@@ -88,7 +88,7 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
             value: `<b>Error Details:</b>\n${errorDetails}`,
             color: COLOR.RED,
             textWrap: 'wrap',
-            fontSize: getCanvasScaleRatio() * 42
+            fontSize: getContentScaleRatio() * 42
           }}
         />
       </UiEntity>
@@ -103,7 +103,7 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
         <Button
           uiTransform={{
             margin: '2%',
-            width: getCanvasScaleRatio() * 400,
+            width: getContentScaleRatio() * 400,
             borderRadius: BORDER_RADIUS_F / 2,
             borderWidth: 0,
             borderColor: Color4.White()
@@ -112,7 +112,7 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
           variant={'secondary'}
           uiBackground={{ color: COLOR.TEXT_COLOR }}
           color={Color4.White()}
-          fontSize={getCanvasScaleRatio() * 28}
+          fontSize={getContentScaleRatio() * 28}
           onMouseDown={() => {
             closeDialog()
           }}

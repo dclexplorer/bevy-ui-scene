@@ -1,12 +1,12 @@
 import type { ReactElement } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../service/canvas-ratio'
+import { getContentScaleRatio } from '../service/canvas-ratio'
 import ReactEcs, { UiEntity } from '@dcl/sdk/react-ecs'
 import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { getMouseCustomCursorState } from '../service/custom-cursor-service'
 import { MAX_ZINDEX } from '../utils/constants'
 
 export function CustomMouseCursorElement(): ReactElement | null {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const mouseCursorSize = canvasScaleRatio * 50
   const customMouseCursorState = getMouseCustomCursorState()
   if (!customMouseCursorState.showCustomCursor) return null

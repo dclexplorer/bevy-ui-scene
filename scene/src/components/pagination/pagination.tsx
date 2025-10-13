@@ -1,7 +1,7 @@
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { ButtonIcon } from '../button-icon'
 import { NavButton } from '../nav-button/NavButton'
 import { getPaginationItems } from './pagination-util'
@@ -25,7 +25,7 @@ export function Pagination({
   disabled = false,
   uiTransform
 }: PaginationProps): ReactElement | null {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const pageElements = getCachedItems(currentPage, pages)
 
   if (pages <= 1) return null

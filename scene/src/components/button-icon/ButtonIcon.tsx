@@ -13,7 +13,7 @@ import Icon from '../icon/Icon'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
 import { type UiBackgroundProps } from '@dcl/react-ecs'
 import { COLOR } from '../color-palette'
-import { getCanvasScaleRatio } from '../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../service/canvas-ratio'
 
 function ButtonIcon(props: {
   // Events
@@ -49,7 +49,7 @@ function ButtonIcon(props: {
       uiTransform={{
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: getCanvasScaleRatio() * 18,
+        borderRadius: (props.iconSize ?? 30) * 0.5,
         borderColor: COLOR.BLACK_TRANSPARENT,
         borderWidth: 0,
         ...props.uiTransform
@@ -90,7 +90,7 @@ function ButtonIcon(props: {
         <Label
           value={props.notifications?.toString() ?? '0'}
           textAlign="middle-center"
-          fontSize={getCanvasScaleRatio() * 20}
+          fontSize={getContentScaleRatio() * 20}
           uiTransform={{ width: '100%', height: '100%' }}
         />
       </UiEntity>

@@ -3,7 +3,7 @@ import type {
   URNWithoutTokenId
 } from '../../../utils/definitions'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { store } from '../../../state/store'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../../utils/constants'
 import { COLOR } from '../../../components/color-palette'
@@ -23,7 +23,7 @@ export function EquippedEmoteList({
 }: {
   equippedEmotes: EquippedEmote[]
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
 
   return (
     <UiEntity uiTransform={{ flexDirection: 'column' }}>
@@ -160,7 +160,7 @@ function UnequipEmoteCross({
   slot: number
   index: number
 }): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{
@@ -193,7 +193,7 @@ function UnequipEmoteCross({
 }
 
 function EmoteHoveredSquare(): ReactElement {
-  const canvasScaleRatio = getCanvasScaleRatio()
+  const canvasScaleRatio = getContentScaleRatio()
   const transform: UiTransformProps = {
     width: 108 * canvasScaleRatio,
     height: 108 * canvasScaleRatio,

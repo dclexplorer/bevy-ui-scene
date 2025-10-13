@@ -1,6 +1,6 @@
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { getCanvasScaleRatio } from '../../../../service/canvas-ratio'
+import { getContentScaleRatio } from '../../../../service/canvas-ratio'
 import { PermissionBox } from './permission-box'
 
 export function PermissionLegend({
@@ -8,7 +8,7 @@ export function PermissionLegend({
 }: {
   uiTransform?: UiTransformProps
 }): ReactElement {
-  const fontSize = getCanvasScaleRatio() * 32
+  const fontSize = getContentScaleRatio() * 32
   return (
     <UiEntity uiTransform={{ ...uiTransform }}>
       <UiEntity>
