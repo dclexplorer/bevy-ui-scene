@@ -107,7 +107,6 @@ function SettingsContent(): ReactElement {
           }}
         />
       </SettingsNavBar>
-      ,
       <ResponsiveContent>
         {currentCategory === 'Permissions' ? (
           <PermissionsForm permissionDefinitions={PERMISSION_DEFINITIONS} />
