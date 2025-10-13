@@ -85,10 +85,11 @@ function SettingsContent(): ReactElement {
         <NavButton
           uiTransform={{}}
           icon={{ spriteName: 'Reset', atlasName: 'icons' }}
-          iconSize={getMainMenuHeight() * 0.2}
-          fontSize={getMainMenuHeight() * 0.2}
-          text={'RESET TO DEFAULT'}
+          iconSize={getMainMenuHeight() * 0.3}
+          fontSize={getMainMenuHeight() * 0.3}
+          text={'Reset all defaults'}
           onClick={() => {
+            // TODO consider adding a confirm dialog
             executeTask(async () => {
               setLoading(true)
 
@@ -337,10 +338,7 @@ export function SettingsNavBar({
   return (
     <NavBar>
       <LeftSection>
-        <NavBarTitle
-          text={'<b>Settings</b>'}
-          canvasScaleRatio={getContentScaleRatio()}
-        />
+        <NavBarTitle text={'<b>Settings</b>'} />
         <NavButtonBar>
           <NavButton
             icon={{ spriteName: 'ControlsIcn', atlasName: 'icons' }}
