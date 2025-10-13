@@ -36,7 +36,6 @@ export function NavButton({
   fontSize = getMainMenuHeight() * 0.3,
   color = null
 }: NavButtonProps): ReactElement {
-  const canvasScaleRatio = getContentScaleRatio() * 0.9
   return (
     <UiEntity
       uiTransform={{

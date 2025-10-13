@@ -31,7 +31,6 @@ import { debounce } from '../../../utils/dcl-utils'
 import { updatePageGeneric } from './backpack-service'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import Icon from '../../../components/icon/Icon'
-import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
 import { getMainMenuHeight } from '../MainMenu'
 
 const debouncedSearch = debounce((name: string) => {

@@ -334,7 +334,6 @@ export function SettingsNavBar({
   onChange?: (category: SettingCategory) => void
   children?: ReactElement | ReactElement[] | null
 }): ReactElement {
-  const NavButtonSize = getMainMenuHeight() * 0.2
   return (
     <NavBar>
       <LeftSection>
