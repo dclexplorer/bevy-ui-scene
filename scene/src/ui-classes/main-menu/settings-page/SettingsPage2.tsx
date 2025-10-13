@@ -1,14 +1,9 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { noop } from '../../../utils/function-utils'
-import { Color4 } from '@dcl/ecs-math'
 import {
   getContentScaleRatio,
   getViewportHeight
 } from '../../../service/canvas-ratio'
-import {
-  MENU_BACKGROUND_TEXTURE,
-  ROUNDED_TEXTURE_BACKGROUND
-} from '../../../utils/constants'
 import { MainContent, ResponsiveContent } from '../backpack-page/BackpackPage'
 import {
   LeftSection,
@@ -20,17 +15,12 @@ import { NavButton } from '../../../components/nav-button/NavButton'
 import { COLOR } from '../../../components/color-palette'
 import { Column, Row } from '../../../components/layout'
 import useState = ReactEcs.useState
-import { Callback, Label, UiTransformProps } from '@dcl/sdk/react-ecs'
-import type { UIController } from '../../../controllers/ui.controller'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import useEffect = ReactEcs.useEffect
-import { Setting } from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
-import { ExplorerSetting } from '../../../bevy-api/interface'
+import { type ExplorerSetting } from '../../../bevy-api/interface'
 import { executeTask } from '@dcl/sdk/ecs'
 import { DropdownComponent } from '../../../components/dropdown-component'
-import { BasicSlider } from 'src/components/slider/BasicSlider'
-import { setSettingValue } from '../../../state/settings/actions'
-import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getMainMenuHeight } from '../MainMenu'
 import { UncontrolledBasicSlider } from '../../../components/slider/UncontrolledBasicSlider'
 import { roundToStep } from '../../../components/slider/slider-utils'
@@ -57,8 +47,6 @@ function getSettingsCategoryTitle(category: SettingCategory): string {
   return settingsCategoryTitle[category]
 }
 export default class SettingsPage2 {
-  constructor(uiController: UIController) {}
-
   mainUi(): ReactElement {
     return (
       <MainContent>
@@ -67,8 +55,9 @@ export default class SettingsPage2 {
     )
   }
 
-  updateButtons() {}
+  updateButtons(): void {}
 }
+
 function SettingsContent(): ReactElement {
   const [currentCategory, setCurrentCategory] =
     useState<SettingCategory>(`Gameplay`)
@@ -176,7 +165,7 @@ function SettingField({
   uiTransform?: UiTransformProps
   onChange?: (value: number) => void
   key?: any
-}) {
+}): ReactElement {
   const [refValue, setRefValue] = useState<string>(setting.value.toString())
   const [showTooltip, setShowTooltip] = useState(false)
   // TODO SLIDERS SHOULD HAVE ARROWS IN LEFT AND RIGHT ?

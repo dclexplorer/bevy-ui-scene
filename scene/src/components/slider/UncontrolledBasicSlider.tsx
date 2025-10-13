@@ -9,7 +9,6 @@ import { Color4 } from '@dcl/sdk/math'
 import { BasicSlider } from './BasicSlider'
 import ButtonIcon from '../button-icon/ButtonIcon'
 import useState = ReactEcs.useState
-import { COLOR } from '../color-palette'
 import { roundToStep } from './slider-utils'
 
 type UncontrolledBasicSliderProps = {

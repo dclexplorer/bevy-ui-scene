@@ -1,5 +1,5 @@
-import ReactEcs, { UiEntity, UiTransformProps } from '@dcl/sdk/react-ecs'
-import { ReactElement } from '@dcl/react-ecs'
+import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type ReactElement } from '@dcl/react-ecs'
 import { Row } from '../../../components/layout'
 import { AvatarCircle } from '../../../components/avatar-circle'
 import { getAddressColor } from '../../main-hud/chat-and-logs/ColorByAddress'
@@ -7,7 +7,6 @@ import { getViewportHeight } from '../../../service/canvas-ratio'
 import { getPlayer } from '@dcl/sdk/players'
 import { getMainMenuHeight } from '../../main-menu/MainMenu'
 import { getHudFontSize } from '../../main-hud/scene-info/SceneInfo'
-import { COLOR } from '../../../components/color-palette'
 import { Color4 } from '@dcl/sdk/math'
 import { store } from '../../../state/store'
 import { pushPopupAction } from '../../../state/hud/actions'
@@ -24,7 +23,7 @@ export function ProfileButton({
 
   if (!player) return null
 
-  const showProfilePopup = () => {
+  const showProfilePopup = (): void => {
     store.dispatch(
       pushPopupAction({
         type: HUD_POPUP_TYPE.PROFILE_MENU,
@@ -45,7 +44,9 @@ export function ProfileButton({
       uiBackground={{
         color: LIGHT_TRANSPARENT
       }}
-      onMouseDown={() => showProfilePopup()}
+      onMouseDown={() => {
+        showProfilePopup()
+      }}
     >
       <AvatarCircle
         userId={player.userId}
@@ -57,7 +58,9 @@ export function ProfileButton({
           borderWidth: avatarSize * 0.05
         }}
         isGuest={player.isGuest}
-        onMouseDown={() => showProfilePopup()}
+        onMouseDown={() => {
+          showProfilePopup()
+        }}
       />
       <UiEntity
         uiTransform={{

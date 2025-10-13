@@ -7,7 +7,6 @@ import { Friends } from '../ui-classes/main-hud/friends'
 import { MainMenu } from '../ui-classes/main-menu'
 import { ExplorePage } from '../ui-classes/main-menu/explore-page'
 import { MapPage } from '../ui-classes/main-menu/map-page'
-import { SettingsPage } from '../ui-classes/main-menu/settings-page'
 import { LoadingAndLogin } from '../ui-classes/loading-and-login'
 import { PopUpAction } from '../ui-classes/main-hud/pop-up-action'
 import { PopUpWarning } from '../ui-classes/main-hud/pop-up-warning'
@@ -88,7 +87,7 @@ export class UIController {
     this.loadingAndLogin = loadingAndLogin = new LoadingAndLogin(this)
     this.mainHud = new MainHud(this)
     this.menu = new MainMenu(this)
-    this.settingsPage = new SettingsPage2(this)
+    this.settingsPage = new SettingsPage2()
     this.backpackPage = new BackpackPage()
     this.mapPage = new MapPage()
     this.explorePage = new ExplorePage()

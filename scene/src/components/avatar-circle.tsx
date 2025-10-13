@@ -4,7 +4,7 @@ import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR } from './color-palette'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { type Color4 } from '@dcl/sdk/math'
-import { TRANSPARENT, ZERO_ADDRESS } from '../utils/constants'
+import { ZERO_ADDRESS } from '../utils/constants'
 import { type ReactElement } from '@dcl/react-ecs'
 import { noop } from '../utils/function-utils'
 
