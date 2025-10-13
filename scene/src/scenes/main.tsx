@@ -20,7 +20,7 @@ export async function init(retry: boolean): Promise<void> {
   executeTask(async () => {
     await sleep(100)
     // store.dispatch(updateHudStateAction({ loggedIn: true }))
-    // gameInstance.uiController.menu?.show('settings')
+    // gameInstance.uiController.menu?.show('backpack')
     // store.dispatch(updateHudStateAction({ realmURL: (await getRealm({})).realmInfo!.baseUrl}))
     /*    store.dispatch(
       pushPopupAction({
