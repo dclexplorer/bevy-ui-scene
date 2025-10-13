@@ -40,6 +40,7 @@ function Icon(
       uiTransform={{
         width: _props.iconSize ?? 30,
         height: _props.iconSize ?? 30,
+        flexShrink: 0,
         ..._props.uiTransform
       }}
       uiBackground={{

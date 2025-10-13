@@ -9,7 +9,8 @@ import {
   LeftSection,
   NavBar,
   NavBarTitle,
-  NavButtonBar
+  NavButtonBar,
+  RightSection
 } from '../backpack-page/BackpackNavBar'
 import { NavButton } from '../../../components/nav-button/NavButton'
 import { COLOR } from '../../../components/color-palette'
@@ -27,6 +28,7 @@ import { roundToStep } from '../../../components/slider/slider-utils'
 import Icon from '../../../components/icon/Icon'
 import { PERMISSION_DEFINITIONS } from '../../../bevy-api/permission-definitions'
 import { PermissionsForm } from './permissions/permissions-form'
+
 type SettingCategory =
   | 'General'
   | 'Audio'
@@ -61,27 +63,13 @@ export default class SettingsPage2 {
 function SettingsContent(): ReactElement {
   const [currentCategory, setCurrentCategory] =
     useState<SettingCategory>(`Gameplay`)
+  const [loading, setLoading] = useState(true)
   const [settings, setSettings] = useState<ExplorerSetting[]>([])
   useEffect(() => {
     executeTask(async () => {
-      const settings = await BevyApi.getSettings()
-
-      const processedSettings = settings.map((setting) => {
-        // First process the stepSize
-        const processedStepSize =
-          setting.stepSize !== undefined
-            ? Math.round(setting.stepSize * 100) / 100
-            : setting.stepSize
-
-        return {
-          ...setting,
-          stepSize: processedStepSize,
-          // Round value to match the processed stepSize precision
-          value: roundToStep(setting.value, processedStepSize)
-        }
-      })
-
-      setSettings(processedSettings)
+      setLoading(true)
+      setSettings(await getProcessedSettings())
+      setLoading(false)
     })
   }, [])
 
@@ -93,7 +81,31 @@ function SettingsContent(): ReactElement {
           console.log('mnewCAt', newCat)
           setCurrentCategory(newCat)
         }}
-      />
+      >
+        <NavButton
+          uiTransform={{}}
+          icon={{ spriteName: 'Reset', atlasName: 'icons' }}
+          iconSize={getMainMenuHeight() * 0.2}
+          fontSize={getMainMenuHeight() * 0.2}
+          text={'RESET TO DEFAULT'}
+          onClick={() => {
+            executeTask(async () => {
+              setLoading(true)
+
+              const _settings = (await BevyApi.getSettings()).map((s) => ({
+                ...s,
+                value: s.default
+              }))
+
+              for (const setting of _settings) {
+                await BevyApi.setSetting(setting.name, setting.default)
+              }
+              setSettings(await getProcessedSettings())
+              setLoading(false)
+            })
+          }}
+        />
+      </SettingsNavBar>
       ,
       <ResponsiveContent>
         {currentCategory === 'Permissions' ? (
@@ -114,41 +126,42 @@ function SettingsContent(): ReactElement {
             <SettingsCategoryTitle
               title={getSettingsCategoryTitle(currentCategory)}
             />
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                flexWrap: 'wrap',
-                overflow: 'scroll',
-                height: getViewportHeight() - getMainMenuHeight() * 5
-              }}
-            >
-              {settings
-                .filter((s) => s.category === currentCategory)
-                .map((setting, index) => (
-                  <SettingField
-                    key={setting.name}
-                    uiTransform={{
-                      zIndex: settings.length - index
-                    }}
-                    setting={setting}
-                    onChange={(value) => {
-                      setting.value = value
-                      setSettings([...settings])
-                      // TODO debounce update
-                      BevyApi.setSetting(setting.name, value).catch(
-                        console.error
-                      )
-                    }}
-                  />
-                ))}
+            {!loading && (
               <UiEntity
                 uiTransform={{
-                  /* workaround: this adds space for drodown lists at bottom not being visible withing overflow:scroll */
                   width: '100%',
-                  height: getContentScaleRatio() * 500
+                  flexWrap: 'wrap',
+                  overflow: 'scroll',
+                  height: getViewportHeight() - getMainMenuHeight() * 5
                 }}
-              />
-            </UiEntity>
+              >
+                {settings
+                  .filter((s) => s.category === currentCategory)
+                  .map((setting, index) => (
+                    <SettingField
+                      key={setting.name}
+                      uiTransform={{
+                        zIndex: settings.length - index
+                      }}
+                      setting={setting}
+                      onChange={(value) => {
+                        setting.value = value
+                        setSettings([...settings])
+                        BevyApi.setSetting(setting.name, value).catch(
+                          console.error
+                        )
+                      }}
+                    />
+                  ))}
+                <UiEntity
+                  uiTransform={{
+                    /* workaround: this adds space for drodown lists at bottom not being visible withing overflow:scroll */
+                    width: '100%',
+                    height: getContentScaleRatio() * 500
+                  }}
+                />
+              </UiEntity>
+            )}
           </Column>
         )}
       </ResponsiveContent>
@@ -313,11 +326,14 @@ export function SettingsCategoryTitle({
 
 export function SettingsNavBar({
   currentCategory,
-  onChange = noop
+  onChange = noop,
+  children
 }: {
   currentCategory: SettingCategory
   onChange?: (category: SettingCategory) => void
+  children?: ReactElement | ReactElement[] | null
 }): ReactElement {
+  const NavButtonSize = getMainMenuHeight() * 0.2
   return (
     <NavBar>
       <LeftSection>
@@ -328,6 +344,8 @@ export function SettingsNavBar({
         <NavButtonBar>
           <NavButton
             icon={{ spriteName: 'ControlsIcn', atlasName: 'icons' }}
+            iconSize={NavButtonSize}
+            fontSize={NavButtonSize}
             active={currentCategory === `Gameplay`}
             text={settingsCategoryTitle.Gameplay}
             onClick={() => {
@@ -336,6 +354,8 @@ export function SettingsNavBar({
           />
           <NavButton
             icon={{ spriteName: 'Graphics', atlasName: 'icons' }}
+            iconSize={NavButtonSize}
+            fontSize={NavButtonSize}
             uiTransform={{ margin: { left: 12 } }}
             active={currentCategory === `Graphics`}
             text={settingsCategoryTitle.Graphics}
@@ -346,6 +366,8 @@ export function SettingsNavBar({
           />
           <NavButton
             icon={{ spriteName: 'SpeakerOn', atlasName: 'context' }}
+            iconSize={NavButtonSize}
+            fontSize={NavButtonSize}
             active={currentCategory === `Audio`}
             text={settingsCategoryTitle.Audio}
             onClick={() => {
@@ -354,6 +376,8 @@ export function SettingsNavBar({
           />
           <NavButton
             icon={{ spriteName: 'Filter', atlasName: 'icons' }}
+            iconSize={NavButtonSize}
+            fontSize={NavButtonSize}
             active={currentCategory === `Performance`}
             text={settingsCategoryTitle.Performance}
             onClick={() => {
@@ -362,6 +386,8 @@ export function SettingsNavBar({
           />
           <NavButton
             icon={{ spriteName: 'Lock', atlasName: 'icons' }}
+            iconSize={NavButtonSize}
+            fontSize={NavButtonSize}
             active={currentCategory === `Permissions`}
             text={settingsCategoryTitle.Permissions}
             onClick={() => {
@@ -370,6 +396,27 @@ export function SettingsNavBar({
           />
         </NavButtonBar>
       </LeftSection>
+      <RightSection>{children}</RightSection>
     </NavBar>
   )
+}
+
+async function getProcessedSettings(): Promise<ExplorerSetting[]> {
+  const settings = await BevyApi.getSettings()
+
+  const processedSettings = settings.map((setting) => {
+    // First process the stepSize
+    const processedStepSize =
+      setting.stepSize !== undefined
+        ? Math.round(setting.stepSize * 100) / 100
+        : setting.stepSize
+
+    return {
+      ...setting,
+      stepSize: processedStepSize,
+      // Round value to match the processed stepSize precision
+      value: roundToStep(setting.value, processedStepSize)
+    }
+  })
+  return processedSettings
 }

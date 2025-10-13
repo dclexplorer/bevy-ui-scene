@@ -18,6 +18,8 @@ export type NavButtonProps = {
   onClick?: () => void
   backgroundColor?: Color4 | null
   color?: Color4 | null
+  iconSize?: number
+  fontSize?: number
 }
 
 export function NavButton({
@@ -29,14 +31,16 @@ export function NavButton({
   onDelete = noop,
   onClick = noop,
   backgroundColor = null,
+  iconSize = 0,
+  fontSize = 0,
   color = null
 }: NavButtonProps): ReactElement {
   const canvasScaleRatio = getContentScaleRatio() * 0.9
   return (
     <UiEntity
       uiTransform={{
-        padding: 16 * canvasScaleRatio,
-        height: 80 * canvasScaleRatio,
+        padding: fontSize * 0.5 || 16 * canvasScaleRatio,
+        height: fontSize * 2.5 || 80 * canvasScaleRatio,
         alignItems: 'center',
         margin: { left: 12 },
         ...uiTransform
@@ -57,7 +61,7 @@ export function NavButton({
       {icon && (
         <Icon
           icon={icon}
-          iconSize={48 * canvasScaleRatio}
+          iconSize={iconSize || 48 * canvasScaleRatio}
           iconColor={
             color ??
             (active
@@ -67,7 +71,7 @@ export function NavButton({
         />
       )}
       <Label
-        fontSize={32 * canvasScaleRatio}
+        fontSize={fontSize || 32 * canvasScaleRatio}
         value={`<b>${text}</b>`}
         color={
           color ??
@@ -84,7 +88,7 @@ export function NavButton({
         >
           <Icon
             icon={{ atlasName: 'context', spriteName: 'Unpublish' }}
-            iconSize={40 * canvasScaleRatio}
+            iconSize={iconSize || 40 * canvasScaleRatio}
           />
         </UiEntity>
       ) : null}

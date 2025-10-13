@@ -244,7 +244,11 @@ export function LeftSection({
   )
 }
 
-function RightSection({ children }: { children?: ReactElement }): ReactElement {
+export function RightSection({
+  children
+}: {
+  children?: ReactElement
+}): ReactElement {
   return (
     <UiEntity
       uiTransform={{
@@ -252,6 +256,7 @@ function RightSection({ children }: { children?: ReactElement }): ReactElement {
         flexDirection: 'row',
         padding: { right: '1%' },
         justifyContent: 'flex-end',
+        alignItems: 'center',
         flexGrow: 1
       }}
     >
