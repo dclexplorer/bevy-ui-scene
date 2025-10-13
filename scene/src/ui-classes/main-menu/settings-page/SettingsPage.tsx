@@ -48,7 +48,7 @@ const settingsCategoryTitle: Record<SettingCategory, string> = {
 function getSettingsCategoryTitle(category: SettingCategory): string {
   return settingsCategoryTitle[category]
 }
-export default class SettingsPage2 {
+export default class SettingsPage {
   mainUi(): ReactElement {
     return (
       <MainContent>
@@ -344,8 +344,6 @@ export function SettingsNavBar({
         <NavButtonBar>
           <NavButton
             icon={{ spriteName: 'ControlsIcn', atlasName: 'icons' }}
-            iconSize={NavButtonSize}
-            fontSize={NavButtonSize}
             active={currentCategory === `Gameplay`}
             text={settingsCategoryTitle.Gameplay}
             onClick={() => {
@@ -354,8 +352,6 @@ export function SettingsNavBar({
           />
           <NavButton
             icon={{ spriteName: 'Graphics', atlasName: 'icons' }}
-            iconSize={NavButtonSize}
-            fontSize={NavButtonSize}
             uiTransform={{ margin: { left: 12 } }}
             active={currentCategory === `Graphics`}
             text={settingsCategoryTitle.Graphics}
@@ -366,8 +362,6 @@ export function SettingsNavBar({
           />
           <NavButton
             icon={{ spriteName: 'SpeakerOn', atlasName: 'context' }}
-            iconSize={NavButtonSize}
-            fontSize={NavButtonSize}
             active={currentCategory === `Audio`}
             text={settingsCategoryTitle.Audio}
             onClick={() => {
@@ -376,8 +370,6 @@ export function SettingsNavBar({
           />
           <NavButton
             icon={{ spriteName: 'Filter', atlasName: 'icons' }}
-            iconSize={NavButtonSize}
-            fontSize={NavButtonSize}
             active={currentCategory === `Performance`}
             text={settingsCategoryTitle.Performance}
             onClick={() => {
@@ -386,8 +378,6 @@ export function SettingsNavBar({
           />
           <NavButton
             icon={{ spriteName: 'Lock', atlasName: 'icons' }}
-            iconSize={NavButtonSize}
-            fontSize={NavButtonSize}
             active={currentCategory === `Permissions`}
             text={settingsCategoryTitle.Permissions}
             onClick={() => {

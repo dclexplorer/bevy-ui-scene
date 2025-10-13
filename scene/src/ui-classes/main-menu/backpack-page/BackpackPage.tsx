@@ -72,7 +72,7 @@ export default class BackpackPage {
 
     return (
       <MainContent>
-        <BackpackNavBar canvasScaleRatio={canvasScaleRatio} />
+        <BackpackNavBar />
         <ResponsiveContent>
           <AvatarPreviewElement />
           <UiEntity

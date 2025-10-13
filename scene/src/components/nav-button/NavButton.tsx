@@ -7,6 +7,7 @@ import { getContentScaleRatio } from '../../service/canvas-ratio'
 import { noop } from '../../utils/function-utils'
 import { type Color4 } from '@dcl/sdk/math'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
+import { getMainMenuHeight } from '../../ui-classes/main-menu/MainMenu'
 
 export type NavButtonProps = {
   icon?: AtlasIcon
@@ -31,16 +32,16 @@ export function NavButton({
   onDelete = noop,
   onClick = noop,
   backgroundColor = null,
-  iconSize = 0,
-  fontSize = 0,
+  iconSize = getMainMenuHeight() * 0.3,
+  fontSize = getMainMenuHeight() * 0.3,
   color = null
 }: NavButtonProps): ReactElement {
   const canvasScaleRatio = getContentScaleRatio() * 0.9
   return (
     <UiEntity
       uiTransform={{
-        padding: fontSize * 0.5 || 16 * canvasScaleRatio,
-        height: fontSize * 2.5 || 80 * canvasScaleRatio,
+        padding: fontSize * 0.5,
+        height: fontSize * 2.5,
         alignItems: 'center',
         margin: { left: 12 },
         ...uiTransform
@@ -61,7 +62,7 @@ export function NavButton({
       {icon && (
         <Icon
           icon={icon}
-          iconSize={iconSize || 48 * canvasScaleRatio}
+          iconSize={iconSize}
           iconColor={
             color ??
             (active
@@ -71,7 +72,7 @@ export function NavButton({
         />
       )}
       <Label
-        fontSize={fontSize || 32 * canvasScaleRatio}
+        fontSize={fontSize}
         value={`<b>${text}</b>`}
         color={
           color ??
@@ -88,7 +89,7 @@ export function NavButton({
         >
           <Icon
             icon={{ atlasName: 'context', spriteName: 'Unpublish' }}
-            iconSize={iconSize || 40 * canvasScaleRatio}
+            iconSize={iconSize}
           />
         </UiEntity>
       ) : null}

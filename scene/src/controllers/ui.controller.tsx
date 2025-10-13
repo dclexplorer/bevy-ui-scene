@@ -36,7 +36,7 @@ import { listenPermissionRequests } from '../ui-classes/main-hud/permissions-pop
 import { getRealm } from '~system/Runtime'
 import { BigMap } from '../ui-classes/main-hud/big-map/big-map-view'
 import { SceneCatalogPanel } from '../components/map/scene-catalog-panel'
-import SettingsPage2 from '../ui-classes/main-menu/settings-page/SettingsPage2'
+import SettingsPage from '../ui-classes/main-menu/settings-page/SettingsPage'
 import { COLOR } from 'src/components/color-palette'
 
 let loadingAndLogin: any = null
@@ -59,7 +59,7 @@ export class UIController {
   public actionPopUpVisible: boolean = false
   public sceneInfoCardVisible: boolean = false
   public warningPopUpVisible: boolean = false
-  public settingsPage: SettingsPage2
+  public settingsPage: SettingsPage
   public backpackPage: BackpackPage
   public mapPage: MapPage
   public explorePage: ExplorePage
@@ -87,7 +87,7 @@ export class UIController {
     this.loadingAndLogin = loadingAndLogin = new LoadingAndLogin(this)
     this.mainHud = new MainHud(this)
     this.menu = new MainMenu(this)
-    this.settingsPage = new SettingsPage2()
+    this.settingsPage = new SettingsPage()
     this.backpackPage = new BackpackPage()
     this.mapPage = new MapPage()
     this.explorePage = new ExplorePage()

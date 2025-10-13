@@ -26,31 +26,25 @@ import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
 import { Checkbox } from '../../../components/checkbox'
 import { Input } from '@dcl/sdk/react-ecs'
 import { COLOR } from '../../../components/color-palette'
-import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { Color4 } from '@dcl/sdk/math'
 import { debounce } from '../../../utils/dcl-utils'
 import { updatePageGeneric } from './backpack-service'
 import { DropdownComponent } from '../../../components/dropdown-component'
 import Icon from '../../../components/icon/Icon'
 import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
+import { getMainMenuHeight } from '../MainMenu'
 
 const debouncedSearch = debounce((name: string) => {
   updatePageGeneric().catch(console.error)
 }, 600)
 
-export function BackpackNavBar({
-  canvasScaleRatio
-}: {
-  canvasScaleRatio: number
-}): ReactElement {
+export function BackpackNavBar(): ReactElement {
   const backpackState = store.getState().backpack
+  const fontSize = getMainMenuHeight() * 0.3
   return (
     <NavBar>
       <LeftSection>
-        <NavBarTitle
-          text={'<b>Backpack</b>'}
-          canvasScaleRatio={canvasScaleRatio}
-        />
+        <NavBarTitle text={'<b>Backpack</b>'} />
         {/* NAV-BUTTON-BAR */}
         <NavButtonBar>
           <NavButton
@@ -131,6 +125,7 @@ export function BackpackNavBar({
       {backpackState.activeSection !== BACKPACK_SECTION.OUTFITS && (
         <RightSection>
           <Checkbox
+            fontSize={fontSize}
             uiTransform={{
               margin: { right: '1%' }
             }}
@@ -161,14 +156,16 @@ export function BackpackNavBar({
               }}
               uiText={{
                 value: 'Sort: ',
-                fontSize: canvasScaleRatio * 32
+                fontSize
               }}
             />
             <DropdownComponent
               uiTransform={{
-                position: { top: '-10%' },
-                width: canvasScaleRatio * 280,
-                alignSelf: 'flex-end'
+                position: { top: '-21%' },
+                width: fontSize * 7,
+                height: '80%',
+                alignSelf: 'flex-end',
+                borderRadius: fontSize / 2
               }}
               options={SORT_OPTIONS_MAP}
               value={
@@ -183,7 +180,7 @@ export function BackpackNavBar({
                   })
                 ]
               }
-              fontSize={canvasScaleRatio * 32}
+              fontSize={fontSize}
               onChange={(value) => {
                 const [orderBy, orderDirection] =
                   SORT_OPTIONS_PARAMS[SORT_OPTIONS.indexOf(value)]
@@ -205,13 +202,12 @@ export function NavBar({
 }: {
   children?: ReactElement
 }): ReactElement {
-  const canvasScaleRatio = getContentScaleRatio()
   return (
     <UiEntity
       uiTransform={{
         flexDirection: 'row',
         width: '100%',
-        height: 120 * canvasScaleRatio,
+        height: getMainMenuHeight(),
         pointerFilter: 'block',
         zIndex: 2
       }}
@@ -265,31 +261,23 @@ export function RightSection({
   )
 }
 
-export function NavBarTitle({
-  text,
-  canvasScaleRatio
-}: {
-  text: string
-  canvasScaleRatio: number
-}): ReactElement {
+export function NavBarTitle({ text }: { text: string }): ReactElement {
   return (
     <UiEntity
       uiTransform={{
-        padding: 0,
-        margin: { top: -8, left: 4 }
+        padding: 0
       }}
       uiText={{
         value: text,
-        fontSize: 64 * canvasScaleRatio
+        fontSize: getMainMenuHeight() * 0.5
       }}
     />
   )
 }
 
 function SearchBox(): ReactElement {
-  const canvasScaleRatio = getContentScaleRatio()
   const backpackState = store.getState().backpack
-
+  const fontSize = getMainMenuHeight() * 0.3
   return (
     <UiEntity
       uiTransform={{
@@ -300,30 +288,30 @@ function SearchBox(): ReactElement {
       <Icon
         uiTransform={{
           alignSelf: 'center',
-          position: { right: canvasScaleRatio * -66 },
+          position: { right: -fontSize * 1.5 },
           zIndex: 1
         }}
         icon={{ atlasName: 'backpack', spriteName: 'search-icon' }}
-        iconSize={canvasScaleRatio * 42}
+        iconSize={fontSize}
         iconColor={COLOR.TEXT_COLOR}
       />
       <Input
         uiTransform={{
-          width: '100%',
-          height: '60%',
+          width: getMainMenuHeight() * 6,
+          height: '70%',
           alignSelf: 'center',
           borderWidth: 0,
-          borderRadius: canvasScaleRatio * BORDER_RADIUS_F,
+          borderRadius: fontSize / 2,
           padding: {
-            top: canvasScaleRatio * 22,
-            left: canvasScaleRatio * 82,
-            right: canvasScaleRatio * 22
+            top: fontSize / 2,
+            left: fontSize * 2,
+            right: fontSize / 4
           }
         }}
         uiBackground={{
           color: Color4.White()
         }}
-        fontSize={canvasScaleRatio * 32}
+        fontSize={fontSize}
         value={backpackState.searchFilter.name}
         placeholder={'Search by name ...'}
         onChange={(name) => {
@@ -347,8 +335,7 @@ export function NavButtonBar({
       uiTransform={{
         height: '100%',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        padding: { left: 10 * getContentScaleRatio() * 2 }
+        justifyContent: 'flex-start'
       }}
       uiBackground={{
         color: { ...Color4.Blue(), a: 0.0 }
