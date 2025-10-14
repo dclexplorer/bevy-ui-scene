@@ -751,6 +751,16 @@ function ChatArea({
 
 function sendChatMessage(value: string): void {
   if (value?.trim()) {
+    if (value.startsWith('/goto')) {
+      const [command, coords] = value.trim().split(' ')
+      const [x, y] = coords.split(',')
+      console.log('>>>', x, y, coords, command)
+      if (!isNaN(Number(x)) && !isNaN(Number(y))) {
+        BevyApi.sendChat(`/teleport ${x} ${y}`)
+        return
+      }
+    }
+
     BevyApi.sendChat(value, 'Nearby')
   }
 
