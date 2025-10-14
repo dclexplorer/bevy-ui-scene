@@ -73,6 +73,7 @@ export function NavButton({
       <Label
         fontSize={fontSize}
         value={`<b>${text}</b>`}
+        textWrap={'nowrap'}
         color={
           color ??
           (active

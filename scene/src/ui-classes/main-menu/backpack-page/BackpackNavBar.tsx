@@ -268,7 +268,8 @@ export function NavBarTitle({ text }: { text: string }): ReactElement {
       }}
       uiText={{
         value: text,
-        fontSize: getMainMenuHeight() * 0.5
+        fontSize: getMainMenuHeight() * 0.5,
+        textWrap: 'nowrap'
       }}
     />
   )
