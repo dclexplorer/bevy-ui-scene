@@ -758,6 +758,9 @@ function sendChatMessage(value: string): void {
       if (!isNaN(Number(x)) && !isNaN(Number(y))) {
         BevyApi.sendChat(`/teleport ${x} ${y}`)
         return
+      } else if (x && !y) {
+        BevyApi.sendChat(`/changerealm ${x}`)
+        return
       }
     }
 
