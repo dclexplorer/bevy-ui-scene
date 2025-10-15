@@ -189,7 +189,7 @@ function ItemCellThumbnail({
             color: COLOR.SMALL_TAG_BACKGROUND
           }}
         >
-          <Label value={`${itemElement.amount}X`} />
+          <Label textWrap={'nowrap'} value={`${itemElement.amount}X`} />
         </UiEntity>
       )}
     </UiEntity>
