@@ -19,6 +19,8 @@ import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { getPlayer } from '@dcl/sdk/players'
 import { getViewportHeight } from '../../service/canvas-ratio'
+import { COLOR } from '../../components/color-palette'
+import { PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
 
 const ZERO_SIZE = {
   width: 0,
@@ -288,7 +290,7 @@ export default class MainHud {
       >
         <UiEntity
           uiTransform={{
-            width: getViewportHeight() * 0.05,
+            width: getHudBarWidth(),
             minWidth: 45,
             height: '100%',
             position: { left: 0, top: 0 },
@@ -302,7 +304,7 @@ export default class MainHud {
 
         <UiEntity
           uiTransform={{
-            width: getViewportHeight() * 0.4,
+            width: getChatWidth(),
             height: '100%',
             flexDirection: 'column'
           }}
@@ -638,4 +640,14 @@ export default class MainHud {
       </UiEntity>
     )
   }
+}
+
+export function getChatWidth(canvasInfo?: PBUiCanvasInformation): number {
+  return (canvasInfo?.height ?? getViewportHeight()) * 0.4
+}
+export function getHudBarWidth(canvasInfo?: PBUiCanvasInformation) {
+  return (canvasInfo?.height ?? getViewportHeight()) * 0.05
+}
+export function getUnsafeAreaWidth(canvasInfo?: PBUiCanvasInformation): number {
+  return getChatWidth(canvasInfo) + getHudBarWidth(canvasInfo)
 }

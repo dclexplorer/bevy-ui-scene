@@ -38,6 +38,7 @@ import { BigMap } from '../ui-classes/main-hud/big-map/big-map-view'
 import { SceneCatalogPanel } from '../components/map/scene-catalog-panel'
 import SettingsPage from '../ui-classes/main-menu/settings-page/SettingsPage'
 import { COLOR } from 'src/components/color-palette'
+import { InteractableArea } from '../components/canvas/Canvas'
 
 let loadingAndLogin: any = null
 
@@ -136,7 +137,7 @@ export class UIController {
   ui(): ReactEcs.JSX.Element {
     return (
       <Canvas>
-        {InteractableArea({ active: false })}
+        {InteractableArea({ active: true })}
 
         {this.mainHud.mainUi()}
 
@@ -161,39 +162,4 @@ export class UIController {
       </Canvas>
     )
   }
-}
-
-function InteractableArea({
-  active = false,
-  opacity = 0.1
-}: {
-  active?: boolean
-  opacity?: number
-}): ReactElement | null {
-  if (!active) return null
-  const canvas = UiCanvasInformation.get(engine.RootEntity)
-  if (!canvas?.interactableArea) return null
-  const viewportState = store.getState().viewport
-  const { interactableArea } = viewportState
-  return (
-    <UiEntity
-      uiTransform={{
-        positionType: 'absolute',
-        position: {
-          left: interactableArea.left,
-          top: interactableArea.top
-        },
-        width: canvas.width - (interactableArea.right + interactableArea.left),
-        height:
-          canvas.height - (interactableArea.top + interactableArea.bottom),
-        zIndex: 999999,
-        borderWidth: 10,
-        borderRadius: 0,
-        borderColor: COLOR.WHITE_OPACITY_2
-      }}
-      uiBackground={{
-        color: Color4.create(0, 1, 1, opacity)
-      }}
-    />
-  )
 }

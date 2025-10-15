@@ -145,6 +145,17 @@ export type BevyApiInterface = {
   ) => Promise<PermanentPermissionItem[]>
   setPermanentPermission: (arg0: SetPermanentPermissionArgs) => void
   getPermissionTypes: any
+  setInteractableArea: ({
+    top,
+    left,
+    bottom,
+    right
+  }: {
+    top: number
+    left: number
+    right: number
+    bottom: number
+  }) => void
 }
 
 // system api module

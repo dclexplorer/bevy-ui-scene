@@ -5,7 +5,6 @@ export const VIEWPORT_STORE_ID: 'viewport' = 'viewport'
 export type ViewportState = {
   width: number
   height: number
-  interactableArea: BorderRect
 }
 export type InteractableArea = {
   top: number
@@ -15,6 +14,5 @@ export type InteractableArea = {
 }
 export const viewportInitialState: ViewportState = {
   width: 0,
-  height: 0,
-  interactableArea: { top: 0, left: 0, bottom: 0, right: 0 }
+  height: 0
 }
