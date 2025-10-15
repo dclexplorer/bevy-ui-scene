@@ -59,6 +59,9 @@ export async function initEmotesWheel({
   new Array(10).fill(null).forEach((_, index) => {
     listenSystemAction(`QuickEmote${(index + 1) % 10}`, () => {
       if (state.visible) {
+        const equippedEmotes: EquippedEmote[] = (getPlayer()?.emotes ?? []).map(
+          (e) => getURNWithoutTokenId(e as URN) as EquippedEmote
+        )
         triggerEmote({ predefinedEmote: equippedEmotes[index] }).catch(
           console.error
         )
