@@ -162,7 +162,6 @@ function ProfileContent({
         }}
       >
         {ProfileHeader({ player })}
-
         <Row uiTransform={{ margin: { top: '5%' } }}>
           <BottomBorder
             color={COLOR.WHITE_OPACITY_1}
@@ -171,7 +170,8 @@ function ProfileContent({
         </Row>
         {player.userId !== getPlayer()?.userId
           ? ProfileButtons({ player })
-          : OwnProfileButtons({ player })}
+          : null}
+        {/*// TODO Exit / Sign out : OwnProfileButtons({player})*/}
       </UiEntity>
     </UiEntity>
   )
