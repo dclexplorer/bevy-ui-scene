@@ -124,10 +124,10 @@ export default class SceneInfo {
   // }
 
   async toggleSceneUi(): Promise<void> {
-    const response = await BevyApi.showUi(
-      this.liveSceneInfo?.hash,
-      !this.hideSceneUi
-    )
+    const response = await BevyApi.showUi({
+      hash: this.liveSceneInfo?.hash,
+      show: !this.hideSceneUi
+    })
     this.hideSceneUi = !response
     this.updateIcons()
   }

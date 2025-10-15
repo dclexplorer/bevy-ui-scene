@@ -104,7 +104,10 @@ export type SystemAction = {
   pressed: boolean
   toString: string
 }
-
+export type ShowUiRequestParams = {
+  hash?: string | undefined
+  show?: boolean | undefined
+}
 export type BevyApiInterface = {
   setAvatar: (avatarData: SetAvatarData) => Promise<number>
   openSceneLogger: () => Promise<void>
@@ -125,10 +128,7 @@ export type BevyApiInterface = {
   kernelFetch: (requestBody: KernelFetch) => Promise<KernelFetchRespose>
 
   reload: (hash: string | undefined) => Promise<void>
-  showUi: (
-    hash?: string | undefined,
-    show?: boolean | undefined
-  ) => Promise<boolean>
+  showUi: (showUiRequestParams: ShowUiRequestParams) => Promise<boolean>
   liveSceneInfo: () => Promise<LiveSceneInfo[]>
   getHomeScene: () => Promise<HomeScene>
   setHomeScene: (home: HomeScene) => void

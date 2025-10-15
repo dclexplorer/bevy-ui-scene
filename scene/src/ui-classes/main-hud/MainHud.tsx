@@ -21,6 +21,7 @@ import { getPlayer } from '@dcl/sdk/players'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import { COLOR } from '../../components/color-palette'
 import { PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
+import { BevyApi } from '../../bevy-api'
 
 const ZERO_SIZE = {
   width: 0,
@@ -144,6 +145,8 @@ export default class MainHud {
   private readonly friends: Friends
 
   constructor(uiController: UIController) {
+    BevyApi.showUi({ hash: undefined, show: true }).catch(console.error)
+
     this.uiController = uiController
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatsAndLogs()
