@@ -777,9 +777,13 @@ function scrollToBottom(): void {
 }
 
 export function focusChatInput(uiFocus: boolean = false): void {
-  if (uiFocus) setUiFocus({ elementId: 'chat-input' }).catch(console.error)
-  store.dispatch(updateHudStateAction({ chatOpen: true }))
-  scrollToBottom()
+  try {
+    if (uiFocus) setUiFocus({ elementId: 'chat-input' }).catch(console.error)
+    store.dispatch(updateHudStateAction({ chatOpen: true }))
+    scrollToBottom()
+  } catch (error) {
+    console.error('focusChatInput error', error)
+  }
 }
 
 function _getScrollVector(positionY: number): Vector2 {
