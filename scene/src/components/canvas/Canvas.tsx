@@ -1,9 +1,5 @@
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import ReactEcs, {
-  Label,
-  UiEntity,
-  type UiTransformProps
-} from '@dcl/sdk/react-ecs'
+import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { store } from '../../state/store'
 import { updateViewportSize } from '../../state/viewport/actions'
 import { CustomMouseCursorElement } from '../custom-cursor-component'

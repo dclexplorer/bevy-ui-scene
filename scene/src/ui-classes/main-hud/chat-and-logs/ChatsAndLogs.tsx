@@ -63,6 +63,7 @@ import { getPlayersInScene } from '~system/Players'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 import { cleanMapPlaces } from '../../../service/map-places'
 import { fetchProfileData } from '../../../utils/passport-promise-utils'
+import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
 
 type Box = {
   position: { x: number; y: number }
@@ -198,11 +199,9 @@ export default class ChatAndLogs {
 
     store.subscribe((action) => {
       if (action.type === VIEWPORT_ACTION.UPDATE_VIEWPORT) {
-        state.chatBox.position.x = store.getState().viewport.width * 0.03
+        state.chatBox.position.x = getHudBarWidth()
         state.chatBox.position.y = 0
-        state.chatBox.size.x =
-          store.getState().viewport.width * 0.26 +
-          (state.headerMenuOpen ? store.getState().viewport.width * 0.12 : 0)
+        state.chatBox.size.x = getUnsafeAreaWidth() - getHudBarWidth()
         state.chatBox.size.y = store.getState().viewport.height
       }
     })

@@ -291,9 +291,7 @@ export default class MainHud {
         <UiEntity
           uiTransform={{
             width: getHudBarWidth(),
-            minWidth: 45,
             height: '100%',
-            position: { left: 0, top: 0 },
             zIndex: 1
           }}
           // onMouseEnter={() => (this.isSideBarVisible = true)}
