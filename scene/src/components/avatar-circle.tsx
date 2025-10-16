@@ -4,9 +4,10 @@ import { getBackgroundFromAtlas } from '../utils/ui-utils'
 import { COLOR } from './color-palette'
 import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { type Color4 } from '@dcl/sdk/math'
-import { ZERO_ADDRESS } from '../utils/constants'
+import { ONE_ADDRESS, ZERO_ADDRESS } from '../utils/constants'
 import { type ReactElement } from '@dcl/react-ecs'
 import { noop } from '../utils/function-utils'
+import { isSystemMessage } from './chat-message/ChatMessage'
 
 export function AvatarCircle({
   userId,
@@ -55,7 +56,7 @@ export function AvatarCircle({
           borderColor: COLOR.BLACK_TRANSPARENT
         }}
         uiBackground={
-          ZERO_ADDRESS === userId
+          userId === ZERO_ADDRESS || userId === ONE_ADDRESS
             ? getBackgroundFromAtlas({
                 atlasName: 'icons',
                 spriteName: 'DdlIconColor'

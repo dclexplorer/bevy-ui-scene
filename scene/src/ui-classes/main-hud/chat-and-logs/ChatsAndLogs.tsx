@@ -18,6 +18,7 @@ import { ChatMessage } from '../../../components/chat-message'
 
 import {
   MAX_ZINDEX,
+  ONE_ADDRESS,
   ROUNDED_TEXTURE_BACKGROUND,
   ZERO_ADDRESS
 } from '../../../utils/constants'
@@ -31,7 +32,12 @@ import {
 import { memoize } from '../../../utils/function-utils'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
-import { copyToClipboard, setUiFocus } from '~system/RestrictedActions'
+import {
+  changeRealm,
+  copyToClipboard,
+  setUiFocus,
+  teleportTo
+} from '~system/RestrictedActions'
 import {
   decorateMessageWithLinks,
   isSystemMessage,
@@ -90,6 +96,7 @@ const state: {
   filterMessages: {
     [MESSAGE_TYPE.USER]: boolean
     [MESSAGE_TYPE.SYSTEM]: boolean
+    [MESSAGE_TYPE.SYSTEM_FEEDBACK]: boolean
   }
 } = {
   mouseX: 0,
@@ -108,11 +115,13 @@ const state: {
   headerMenuOpen: false,
   filterMessages: {
     [MESSAGE_TYPE.USER]: false,
-    [MESSAGE_TYPE.SYSTEM]: true
+    [MESSAGE_TYPE.SYSTEM]: true,
+    [MESSAGE_TYPE.SYSTEM_FEEDBACK]: false
   }
 }
 
 export default class ChatAndLogs {
+  pushMessage = pushMessage
   constructor() {
     this.listenMessages().catch(console.error)
     this.listenMouseHover()
@@ -198,10 +207,12 @@ export default class ChatAndLogs {
     })
 
     store.subscribe((action) => {
+      const SAFE_SUBMENU = 1.01
       if (action.type === VIEWPORT_ACTION.UPDATE_VIEWPORT) {
         state.chatBox.position.x = getHudBarWidth()
         state.chatBox.position.y = 0
-        state.chatBox.size.x = getUnsafeAreaWidth() - getHudBarWidth()
+        state.chatBox.size.x =
+          (getUnsafeAreaWidth() - getHudBarWidth()) * SAFE_SUBMENU
         state.chatBox.size.y = store.getState().viewport.height
       }
     })
@@ -215,72 +226,6 @@ export default class ChatAndLogs {
         !state.cameraPointerLocked &&
         isVectorInBox(screenCoordinates, state.chatBox)
     })
-  }
-
-  pushMessage(message: ChatMessageDefinition): void {
-    if (state.shownMessages.length >= BUFFER_SIZE) {
-      state.shownMessages.shift()
-    }
-
-    const playerData = getPlayer({ userId: message.sender_address })
-
-    const now = Date.now()
-    const timestamp =
-      state.shownMessages[state.shownMessages.length - 1]?.timestamp === now
-        ? state.shownMessages[state.shownMessages.length - 1]?.timestamp + 1
-        : now
-
-    const decoratedChatMessage: ChatMessageRepresentation = {
-      ...message,
-      timestamp,
-      name: isSystemMessage(message) ? `` : playerData?.name || `Unknown*`,
-      side:
-        message.sender_address === getPlayer()?.userId
-          ? CHAT_SIDE.RIGHT
-          : CHAT_SIDE.LEFT,
-      hasMentionToMe: messageHasMentionToMe(message.message),
-      isGuest: playerData ? playerData.isGuest : true,
-      messageType: isSystemMessage(message)
-        ? MESSAGE_TYPE.SYSTEM
-        : MESSAGE_TYPE.USER,
-      player: getPlayer({ userId: message.sender_address }),
-      message: decorateMessageWithLinks(message.message),
-      mentionedPlayers: {}
-    }
-    decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
-
-    if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
-      state.newMessages.push(decoratedChatMessage)
-    } else {
-      state.shownMessages.push(decoratedChatMessage)
-      scrollToBottom()
-    }
-
-    if (CHAT_WORLD_REGEXP.test(message.message)) {
-      cleanMapPlaces()
-    }
-
-    async function decorateAsyncMessageData(
-      message: ChatMessageRepresentation
-    ): Promise<void> {
-      const profileData = await fetchProfileData({
-        userId: message.sender_address
-      })
-      const [avatarData] = profileData?.avatars ?? []
-      if (avatarData !== undefined) {
-        message.hasClaimedName = avatarData.hasClaimedName
-        message.name = avatarData.name ?? message.name ?? `Unknown*`
-      }
-
-      if (!message.hasClaimedName) {
-        message.name = message.name + `#${message.sender_address.slice(-4)}`
-      }
-
-      message.mentionedPlayers = {
-        ...message.mentionedPlayers,
-        ...(await getMentionedPlayersFromMessage(message.message))
-      }
-    }
   }
 
   checkScrollToAppendMessages(): void {
@@ -621,6 +566,17 @@ function HeaderArea(): ReactElement {
             value={!state.filterMessages[MESSAGE_TYPE.SYSTEM]}
             label={'Show system messages'}
           />
+          <Checkbox
+            uiTransform={{
+              alignSelf: 'flex-start'
+            }}
+            onChange={(value) => {
+              state.filterMessages[MESSAGE_TYPE.SYSTEM_FEEDBACK] = !value
+              scrollToBottom()
+            }}
+            value={!state.filterMessages[MESSAGE_TYPE.SYSTEM_FEEDBACK]}
+            label={'Show system feedback messages'}
+          />
         </UiEntity>
       </UiEntity>
       <UiEntity
@@ -732,11 +688,7 @@ function ChatArea({
       }}
     >
       {messages
-        .filter((m) =>
-          isSystemMessage(m)
-            ? !state.filterMessages[MESSAGE_TYPE.SYSTEM]
-            : !state.filterMessages[MESSAGE_TYPE.USER]
-        )
+        .filter((m) => !state.filterMessages[m.messageType])
         .map((message) => (
           <ChatMessage
             message={message}
@@ -749,27 +701,55 @@ function ChatArea({
 }
 
 function sendChatMessage(value: string): void {
-  if (value?.trim()) {
-    if (value.startsWith('/goto')) {
-      const [command, coords] = value.trim().split(' ')
-      const [x, y] = coords.split(',')
-      console.log('>>>', x, y, coords, command)
-      if (!isNaN(Number(x)) && !isNaN(Number(y))) {
-        BevyApi.sendChat(`/teleport ${x} ${y}`)
-        return
-      } else if (x && !y) {
-        BevyApi.sendChat(`/changerealm ${x}`)
-        return
+  try {
+    if (value?.trim()) {
+      if (value.startsWith('/goto')) {
+        executeTask(async () => {
+          const [command, coords] = value.trim().split(' ')
+          const [x, y] = coords.split(',')
+          console.log('>>>', x, y, coords, command)
+          if (!isNaN(Number(x)) && !isNaN(Number(y))) {
+            await teleportTo({
+              worldCoordinates: { x: Number(x), y: Number(y) }
+            })
+            return
+          } else if (x && !y) {
+            console.log('checking world')
+            const { acceptingUsers } = await fetch(
+              `https://worlds-content-server.decentraland.org/world/${x}/about`
+            ).then((res) => res.json())
+            console.log('accepting ', acceptingUsers)
+            if (acceptingUsers) {
+              await changeRealm({
+                realm: x
+              })
+            } else {
+              pushMessage({
+                message: `Invalid world name <b>${x}</b>`,
+                sender_address: ONE_ADDRESS,
+                channel: 'Nearby'
+              })
+            }
+
+            return
+          }
+        })
       }
     }
 
     BevyApi.sendChat(value, 'Nearby')
+    executeTask(async () => {
+      await sleep(0)
+      scrollToBottom()
+    })
+  } catch (error) {
+    pushMessage({
+      sender_address: ONE_ADDRESS,
+      message: `Error: ${error}`,
+      channel: 'Nearby'
+    })
+    console.error('sendChatMessage error', error)
   }
-
-  executeTask(async () => {
-    await sleep(0)
-    scrollToBottom()
-  })
 }
 
 function scrollToBottom(): void {
@@ -860,4 +840,85 @@ async function getMentionedPlayersFromMessage(
       return acc
     }, {}) ?? {}
   )
+}
+
+function pushMessage(message: ChatMessageDefinition): void {
+  if (state.shownMessages.length >= BUFFER_SIZE) {
+    state.shownMessages.shift()
+  }
+
+  const playerData = getPlayer({ userId: message.sender_address })
+
+  const now = Date.now()
+  const timestamp =
+    state.shownMessages[state.shownMessages.length - 1]?.timestamp === now
+      ? state.shownMessages[state.shownMessages.length - 1]?.timestamp + 1
+      : now
+
+  const decoratedChatMessage: ChatMessageRepresentation = {
+    ...message,
+    timestamp,
+    name: isSystemMessage(message)
+      ? getSystemName(message.sender_address)
+      : playerData?.name || `Unknown*`,
+    side:
+      message.sender_address === getPlayer()?.userId
+        ? CHAT_SIDE.RIGHT
+        : CHAT_SIDE.LEFT,
+    hasMentionToMe: messageHasMentionToMe(message.message),
+    isGuest: playerData ? playerData.isGuest : true,
+    messageType: isSystemMessage(message)
+      ? message.sender_address === ZERO_ADDRESS
+        ? MESSAGE_TYPE.SYSTEM
+        : MESSAGE_TYPE.SYSTEM_FEEDBACK
+      : MESSAGE_TYPE.USER,
+    player: getPlayer({ userId: message.sender_address }),
+    message: decorateMessageWithLinks(message.message),
+    mentionedPlayers: {}
+  }
+  decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
+  console.log('decoratedChatMessage', decoratedChatMessage)
+  if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
+    state.newMessages.push(decoratedChatMessage)
+  } else {
+    state.shownMessages.push(decoratedChatMessage)
+    scrollToBottom()
+  }
+
+  if (CHAT_WORLD_REGEXP.test(message.message)) {
+    cleanMapPlaces()
+  }
+
+  async function decorateAsyncMessageData(
+    message: ChatMessageRepresentation
+  ): Promise<void> {
+    const profileData = await fetchProfileData({
+      userId: message.sender_address
+    })
+    const [avatarData] = profileData?.avatars ?? []
+    if (avatarData !== undefined) {
+      message.hasClaimedName = avatarData.hasClaimedName
+      message.name =
+        avatarData.name ??
+        message.name ??
+        (isSystemMessage(message)
+          ? getSystemName(message.sender_address)
+          : playerData?.name || `Unknown*`)
+    }
+
+    if (!message.hasClaimedName) {
+      message.name = message.name + `#${message.sender_address.slice(-4)}`
+    }
+
+    message.mentionedPlayers = {
+      ...message.mentionedPlayers,
+      ...(await getMentionedPlayersFromMessage(message.message))
+    }
+  }
+}
+
+function getSystemName(address: string) {
+  if (address === ONE_ADDRESS) return ''
+  if (address === ZERO_ADDRESS) return ''
+  return ''
 }

@@ -9,7 +9,7 @@ import ReactEcs, {
   type UiTransformProps
 } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
-import { ALMOST_WHITE, ZERO_ADDRESS } from '../../utils/constants'
+import { ALMOST_WHITE, ONE_ADDRESS, ZERO_ADDRESS } from '../../utils/constants'
 
 import {
   CHAT_SIDE,
@@ -119,11 +119,7 @@ function ChatMessage(props: {
       }}
     >
       <AvatarCircle
-        userId={
-          isSystemMessage(props.message)
-            ? ZERO_ADDRESS
-            : props.message.sender_address
-        }
+        userId={props.message.sender_address}
         circleColor={getAddressColor(props.message.sender_address)}
         uiTransform={{
           width: defaultFontSize * 2,
@@ -264,7 +260,10 @@ const formatTimestamp = memoize((timestamp: number): string => {
 export default ChatMessage
 
 export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
-  return messageData.sender_address === ZERO_ADDRESS
+  return (
+    messageData.sender_address === ZERO_ADDRESS ||
+    messageData.sender_address === ONE_ADDRESS
+  )
 }
 
 export const NAME_MENTION_REGEXP = /@\w+(#\w+)?/g

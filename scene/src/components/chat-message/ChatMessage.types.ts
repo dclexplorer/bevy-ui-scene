@@ -11,7 +11,8 @@ export enum CHAT_SIDE {
 }
 export enum MESSAGE_TYPE {
   USER,
-  SYSTEM
+  SYSTEM,
+  SYSTEM_FEEDBACK
 }
 export type ChatMessageRepresentation = ChatMessageDefinition & {
   timestamp: number
