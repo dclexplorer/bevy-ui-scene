@@ -564,7 +564,7 @@ function HeaderArea(): ReactElement {
               scrollToBottom()
             }}
             value={!state.filterMessages[MESSAGE_TYPE.SYSTEM]}
-            label={'Show system messages'}
+            label={'Show engine messages'}
           />
           <Checkbox
             uiTransform={{
@@ -575,7 +575,7 @@ function HeaderArea(): ReactElement {
               scrollToBottom()
             }}
             value={!state.filterMessages[MESSAGE_TYPE.SYSTEM_FEEDBACK]}
-            label={'Show system feedback messages'}
+            label={'Show system messages'}
           />
         </UiEntity>
       </UiEntity>
@@ -692,7 +692,7 @@ function ChatArea({
         .map((message) => (
           <ChatMessage
             message={message}
-            key={message.timestamp}
+            key={message.id ?? message.timestamp}
             onMessageMenu={onMessageMenu}
           />
         ))}
@@ -718,7 +718,7 @@ function sendChatMessage(value: string): void {
             const { acceptingUsers } = await fetch(
               `https://worlds-content-server.decentraland.org/world/${x}/about`
             ).then((res) => res.json())
-            console.log('accepting ', acceptingUsers)
+
             if (acceptingUsers) {
               await changeRealm({
                 realm: x
@@ -857,6 +857,7 @@ function pushMessage(message: ChatMessageDefinition): void {
 
   const decoratedChatMessage: ChatMessageRepresentation = {
     ...message,
+    id: Math.random(),
     timestamp,
     name: isSystemMessage(message)
       ? getSystemName(message.sender_address)

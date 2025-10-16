@@ -15,6 +15,7 @@ export enum MESSAGE_TYPE {
   SYSTEM_FEEDBACK
 }
 export type ChatMessageRepresentation = ChatMessageDefinition & {
+  id: number
   timestamp: number
   name: string
   hasClaimedName?: boolean
