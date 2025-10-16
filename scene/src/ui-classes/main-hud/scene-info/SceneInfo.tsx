@@ -28,6 +28,7 @@ import { type ReactElement } from '@dcl/react-ecs'
 import { COLOR } from '../../../components/color-palette'
 import { updateHudStateAction } from '../../../state/hud/actions'
 import Icon from '../../../components/icon/Icon'
+import { currentRealmProviderIsWorld } from '../../../service/realm-change'
 
 export default class SceneInfo {
   private readonly uiController: UIController
@@ -235,7 +236,11 @@ export default class SceneInfo {
   }
 
   async openSceneInfo(): Promise<void> {
-    await this.uiController.sceneCard.showByState()
+    if (currentRealmProviderIsWorld()) {
+      // TODO
+    } else {
+      await this.uiController.sceneCard.showByState()
+    }
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
@@ -423,41 +428,43 @@ export default class SceneInfo {
               uiTransform={{ width: '100%', height: 1 }}
               uiBackground={{ color: { ...ALMOST_WHITE, a: 0.01 } }}
             />
-            <UiEntity
-              uiTransform={{
-                width: '100%',
-                height: 'auto',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                flexDirection: 'row'
-              }}
-              onMouseDown={() => {
-                this.openSceneInfo().catch(console.error)
-              }}
-              onMouseEnter={() => {
-                this.openInfoLabelColor = ALMOST_WHITE
-              }}
-              onMouseLeave={() => {
-                this.openInfoLabelColor = UNSELECTED_TEXT_WHITE
-              }}
-            >
+            {!currentRealmProviderIsWorld() && (
               <UiEntity
                 uiTransform={{
-                  width: this.fontSize * 0.8,
-                  height: this.fontSize * 0.8,
-                  margin: this.fontSize * 0.5
+                  width: '100%',
+                  height: 'auto',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  flexDirection: 'row'
                 }}
-                uiBackground={{
-                  ...getBackgroundFromAtlas(this.infoIcon),
-                  color: this.openInfoLabelColor
+                onMouseDown={() => {
+                  this.openSceneInfo().catch(console.error)
                 }}
-              />
-              <Label
-                value="Scene Info"
-                fontSize={this.fontSize * 0.8}
-                color={this.openInfoLabelColor}
-              />
-            </UiEntity>
+                onMouseEnter={() => {
+                  this.openInfoLabelColor = ALMOST_WHITE
+                }}
+                onMouseLeave={() => {
+                  this.openInfoLabelColor = UNSELECTED_TEXT_WHITE
+                }}
+              >
+                <UiEntity
+                  uiTransform={{
+                    width: this.fontSize * 0.8,
+                    height: this.fontSize * 0.8,
+                    margin: this.fontSize * 0.5
+                  }}
+                  uiBackground={{
+                    ...getBackgroundFromAtlas(this.infoIcon),
+                    color: this.openInfoLabelColor
+                  }}
+                />
+                <Label
+                  value="Scene Info"
+                  fontSize={this.fontSize * 0.8}
+                  color={this.openInfoLabelColor}
+                />
+              </UiEntity>
+            )}
           </UiEntity>
         </UiEntity>
       </UiEntity>
