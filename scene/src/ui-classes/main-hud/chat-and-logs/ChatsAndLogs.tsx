@@ -207,7 +207,7 @@ export default class ChatAndLogs {
     })
 
     store.subscribe((action) => {
-      const SAFE_SUBMENU = 1.01
+      const SAFE_SUBMENU = 1.05
       if (action.type === VIEWPORT_ACTION.UPDATE_VIEWPORT) {
         state.chatBox.position.x = getHudBarWidth()
         state.chatBox.position.y = 0
@@ -734,10 +734,21 @@ function sendChatMessage(value: string): void {
             return
           }
         })
+      } else if (value.startsWith('/help')) {
+        pushMessage({
+          message: `
+<b>/help</b> - show this help message
+<b>/goto</b> x,y - teleport to world x,y
+<b>/goto</b> world_name.dcl.eth - teleport to realm world_name.dcl.eth
+<b>/reload</b> - reloads the current scene`,
+          sender_address: ONE_ADDRESS,
+          channel: 'Nearby'
+        })
+      } else {
+        BevyApi.sendChat(value, 'Nearby')
       }
     }
 
-    BevyApi.sendChat(value, 'Nearby')
     executeTask(async () => {
       await sleep(0)
       scrollToBottom()

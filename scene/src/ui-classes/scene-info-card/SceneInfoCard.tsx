@@ -728,10 +728,7 @@ export default class SceneInfoCard {
                 getUiController().menu.hide()
                 // TODO take care of toggling scene ui ( BevyApi.showUI() )
                 closeBigMapIfActive()
-                console.log(
-                  'currentRealmProviderIsWorld',
-                  currentRealmProviderIsWorld()
-                )
+
                 if (this.place?.world && this.place?.world_name) {
                   await changeRealm({
                     realm: this.place.world_name
