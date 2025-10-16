@@ -26,6 +26,7 @@ import {
 } from 'src/utils/promise-utils'
 import {
   changeRealm,
+  copyToClipboard,
   openExternalUrl,
   teleportTo
 } from '~system/RestrictedActions'
@@ -65,6 +66,7 @@ import { closeBigMapIfActive } from '../../service/map/map-camera'
 import { MAP_FILTER_DEFINITIONS } from '../../components/map/map-definitions'
 import { type PlaceRepresentation } from '../main-hud/big-map/big-map-view'
 import { currentRealmProviderIsWorld } from '../../service/realm-change'
+import { Row } from '../../components/layout'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -1107,6 +1109,36 @@ export default class SceneInfoCard {
           )}
         </UiEntity>
 
+        {this.place.world &&
+          this.place.world_name && [
+            <Label
+              value={'WORLD ENS'}
+              fontSize={this.fontSize}
+              textAlign="bottom-left"
+              uiTransform={{ width: '100%' }}
+              color={GRAY_TEXT}
+            />,
+            <Row
+              uiTransform={{ width: '100%' }}
+              onMouseDown={() => {
+                if (this.place?.world_name) {
+                  copyToClipboard({ text: this.place.world_name }).catch(
+                    console.error
+                  )
+                }
+              }}
+            >
+              <Label
+                value={this.place.world_name}
+                fontSize={this.fontSize}
+                color={BLACK_TEXT}
+              />
+              <ButtonIcon
+                icon={{ spriteName: 'CopyIcon', atlasName: 'icons' }}
+                iconColor={BLACK_TEXT}
+              />
+            </Row>
+          ]}
         <Label
           value={'DESCRIPTION'}
           fontSize={this.fontSize}
