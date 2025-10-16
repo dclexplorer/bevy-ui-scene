@@ -340,11 +340,13 @@ function BigMapContent(): ReactElement {
           displaceCamera(targetPosition)
 
           const parcelVector3 = getVector3Parcel(targetPosition)
-          getUiController()
-            .sceneCard.showByCoords(
-              Vector3.create(parcelVector3.x, 0, parcelVector3.y)
-            )
-            .catch(console.error)
+          if (!currentRealmProviderIsWorld()) {
+            getUiController()
+              .sceneCard.showByCoords(
+                Vector3.create(parcelVector3.x, 0, parcelVector3.y)
+              )
+              .catch(console.error)
+          }
         }
         state.lastClickTime = Date.now()
       }}
