@@ -268,7 +268,7 @@ export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
 
 export const NAME_MENTION_REGEXP = /@\w+(#\w+)?/g
 const URL_REGEXP = /https:\/\/[^\s"',]+/g
-const LOCATION_REGEXP = /\d+,\s?\d+/g
+const LOCATION_REGEXP = /-?\d+,\s?-?\d+/g
 export const decorateMessageWithLinks = compose(
   replaceNameTags,
   replaceURLTags,
