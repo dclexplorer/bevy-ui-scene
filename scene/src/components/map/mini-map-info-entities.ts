@@ -15,6 +15,7 @@ import {
   type Place
 } from '../../service/map-places'
 import { wrapText } from './mini-map-label-text'
+import { getMapInfoCamera } from './mini-map-camera'
 
 const placeEntities: Entity[] = []
 const avatarSymbolEntities: Array<{
@@ -69,7 +70,7 @@ export function renderMinimapPlayers(playerEntities: Entity[]): void {
     Transform.create(avatarSymbolEntity, {
       position: Vector3.create(
         playerEntityTransform?.position.x,
-        201 + index,
+        Transform.get(getMapInfoCamera()).position.y - 1,
         playerEntityTransform?.position.z
       ),
       scale: Vector3.create(
@@ -82,10 +83,6 @@ export function renderMinimapPlayers(playerEntities: Entity[]): void {
     })
     MeshRenderer.setPlane(avatarSymbolEntity)
     Material.setPbrMaterial(avatarSymbolEntity, {
-      emissiveTexture: Material.Texture.Common({
-        src: MAP_PLAYER_SRC
-      }),
-      emissiveColor: COLOR.BLACK,
       texture: Material.Texture.Common({
         src: MAP_PLAYER_SRC
       }),
@@ -99,7 +96,7 @@ export function renderVisiblePlaces(places: Place[]): void {
     engine.removeEntityWithChildren(placeEntity)
   })
   placeEntities.splice(0, placeEntities.length)
-
+  const symbolHeight = Transform.get(getMapInfoCamera()).position.y - 2
   places.forEach((place) => {
     const placeEntity = engine.addEntity()
     placeEntities.push(placeEntity)
@@ -115,7 +112,12 @@ export function renderVisiblePlaces(places: Place[]): void {
       )
 
     Transform.create(placeEntity, {
-      position: fromParcelCoordsToPosition({ x, y }),
+      position: fromParcelCoordsToPosition(
+        { x, y },
+        {
+          height: symbolHeight
+        }
+      ),
       rotation: Quaternion.fromEulerDegrees(90, 0, 0),
       parent: infoEntity
     })
