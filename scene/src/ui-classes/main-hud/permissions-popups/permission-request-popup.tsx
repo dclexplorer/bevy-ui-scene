@@ -4,7 +4,10 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../../../state/store'
 import { closeLastPopupAction, HUD_ACTION } from '../../../state/hud/actions'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
-import { BORDER_RADIUS_F } from '../../../utils/ui-utils'
+import {
+  BORDER_RADIUS_F,
+  truncateWithoutBreakingWords
+} from '../../../utils/ui-utils'
 import { noop } from '../../../utils/function-utils'
 import Icon from '../../../components/icon/Icon'
 import {
@@ -120,7 +123,10 @@ function PermissionRequestContent({
         uiText={{
           value: `\nThe scene <b>${sceneName}</b> wants permission to ${PERMISSION_DEFINITIONS.find(
             (p) => p.permissionType === data.ty
-          )?.passiveDescription}\n${data.additional ?? ''}`,
+          )?.passiveDescription}\n${truncateWithoutBreakingWords(
+            data.additional ?? '',
+            300
+          )}`,
           fontSize: getContentScaleRatio() * 42,
           textWrap: 'wrap'
         }}
