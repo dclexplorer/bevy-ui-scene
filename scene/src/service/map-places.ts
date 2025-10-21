@@ -17,13 +17,10 @@ export type PlaceCategory = {
   i18n: Record<string, string>
 }
 declare const localStorage: any
+
 const MAP_LOCALSTORAGE_KEY = 'map'
-
 const LOCALSTORAGE_SEPARATOR = '_::_'
-const CACHE_TIME = 1000 * 60 * 60 * 10
-
-localStorage.clear()
-
+const CACHE_TIME = 1000 * 60 * 60 * 100
 const [mapStorageDate, mapStoragePlaces] = (
   localStorage.getItem(MAP_LOCALSTORAGE_KEY)?.split(LOCALSTORAGE_SEPARATOR) ?? [
     '0',
@@ -31,7 +28,6 @@ const [mapStorageDate, mapStoragePlaces] = (
   ]
 ).map((d: string) => JSON.parse(d))
 
-console.log('mapStorageDate', mapStorageDate)
 const state: {
   places: Record<string, Place>
   totalPlaces: number
