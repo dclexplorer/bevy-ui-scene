@@ -44,8 +44,7 @@ export function isFalsy(value: any): boolean {
     value === undefined ||
     value === false ||
     value === 0 ||
-    value === '' ||
-    isNaN(value)
+    value === ''
   )
 }
 export function isTruthy(value: any): boolean {
