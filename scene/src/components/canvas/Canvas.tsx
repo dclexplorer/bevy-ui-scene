@@ -3,6 +3,11 @@ import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { store } from '../../state/store'
 import { updateViewportSize } from '../../state/viewport/actions'
 import { CustomMouseCursorElement } from '../custom-cursor-component'
+import { getUnsafeAreaWidth } from '../../ui-classes/main-hud/MainHud'
+import { BevyApi } from '../../bevy-api'
+import { type ReactElement } from '@dcl/react-ecs'
+import { COLOR } from '../color-palette'
+import { Color4 } from '@dcl/sdk/math'
 
 function Canvas(props: {
   uiTransform?: UiTransformProps
@@ -15,22 +20,21 @@ function Canvas(props: {
     viewportState.width !== canvasInfo.width ||
     viewportState.height !== canvasInfo.height
   ) {
-    const sideMenuWidth = Math.max(canvasInfo.width * 0.04, 45)
-    const chatWidth = canvasInfo.width * 0.25
-    const hudWidth = sideMenuWidth + chatWidth
-
     store.dispatch(
       updateViewportSize({
         width: canvasInfo.width,
-        height: canvasInfo.height,
-        interactableArea: {
-          top: 0,
-          left: hudWidth,
-          right: 0,
-          bottom: 0
-        }
+        height: canvasInfo.height
       })
     )
+
+    const interactableArea = {
+      top: 0,
+      left: getUnsafeAreaWidth(canvasInfo),
+      right: 0,
+      bottom: 0
+    }
+    console.log('interactableArea', JSON.stringify(interactableArea))
+    BevyApi.setInteractableArea(interactableArea)
   }
 
   return (
@@ -50,3 +54,45 @@ function Canvas(props: {
 }
 
 export default Canvas
+
+const COLOR_AREA = Color4.create(0, 1, 1, 0.1)
+
+export function InteractableArea({
+  active = false
+}: {
+  active?: boolean
+}): ReactElement | null {
+  if (!active) return null
+  const canvas = UiCanvasInformation.get(engine.RootEntity)
+  if (!canvas?.interactableArea) return null
+  const { interactableArea } = canvas
+
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        position: {
+          left: interactableArea.left,
+          top: interactableArea.top
+        },
+        width: canvas.width - (interactableArea.right + interactableArea.left),
+        height:
+          canvas.height - (interactableArea.top + interactableArea.bottom),
+        zIndex: 999999,
+        borderWidth: 10,
+        borderRadius: 0,
+        borderColor: COLOR.WHITE_OPACITY_5
+      }}
+      uiBackground={{
+        color: COLOR_AREA
+      }}
+    >
+      <UiEntity
+        uiTransform={{ alignSelf: 'center' }}
+        uiText={{
+          value: `${JSON.stringify(interactableArea)}`
+        }}
+      />
+    </UiEntity>
+  )
+}

@@ -428,7 +428,9 @@ async function fetchList({
   const placeType = store.getState().hud.placeType
   console.log('placeType', placeType)
   const queryParameters =
-    categories?.includes('all') || categories?.includes('favorites')
+    categories?.includes('all') ||
+    categories?.includes('favorites') ||
+    (categories?.length && categories[0] === 'poi' && placeType === 'worlds')
       ? []
       : [
           ...categories.map((c) => ({

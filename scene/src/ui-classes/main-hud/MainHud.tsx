@@ -19,6 +19,8 @@ import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { getPlayer } from '@dcl/sdk/players'
 import { getViewportHeight } from '../../service/canvas-ratio'
+import { type PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
+import { BevyApi } from '../../bevy-api'
 
 const ZERO_SIZE = {
   width: 0,
@@ -142,6 +144,8 @@ export default class MainHud {
   private readonly friends: Friends
 
   constructor(uiController: UIController) {
+    BevyApi.showUi({ hash: undefined, show: true }).catch(console.error)
+
     this.uiController = uiController
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatsAndLogs()
@@ -288,10 +292,8 @@ export default class MainHud {
       >
         <UiEntity
           uiTransform={{
-            width: getViewportHeight() * 0.05,
-            minWidth: 45,
+            width: getHudBarWidth(),
             height: '100%',
-            position: { left: 0, top: 0 },
             zIndex: 1
           }}
           // onMouseEnter={() => (this.isSideBarVisible = true)}
@@ -302,7 +304,7 @@ export default class MainHud {
 
         <UiEntity
           uiTransform={{
-            width: getViewportHeight() * 0.4,
+            width: getChatWidth(),
             height: '100%',
             flexDirection: 'column'
           }}
@@ -638,4 +640,14 @@ export default class MainHud {
       </UiEntity>
     )
   }
+}
+
+export function getChatWidth(canvasInfo?: PBUiCanvasInformation): number {
+  return (canvasInfo?.height ?? getViewportHeight()) * 0.4
+}
+export function getHudBarWidth(canvasInfo?: PBUiCanvasInformation): number {
+  return (canvasInfo?.height ?? getViewportHeight()) * 0.05
+}
+export function getUnsafeAreaWidth(canvasInfo?: PBUiCanvasInformation): number {
+  return getChatWidth(canvasInfo) + getHudBarWidth(canvasInfo)
 }
