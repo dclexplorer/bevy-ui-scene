@@ -7,7 +7,6 @@ import { type Color4 } from '@dcl/sdk/math'
 import { ONE_ADDRESS, ZERO_ADDRESS } from '../utils/constants'
 import { type ReactElement } from '@dcl/react-ecs'
 import { noop } from '../utils/function-utils'
-import { isSystemMessage } from './chat-message/ChatMessage'
 
 export function AvatarCircle({
   userId,

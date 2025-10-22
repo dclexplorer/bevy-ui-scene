@@ -20,11 +20,8 @@ import { Row } from '../../../components/layout'
 import { applyMiddleEllipsis } from '../../../utils/urn-utils'
 import { CopyButton } from '../../../components/copy-button'
 import { ButtonTextIcon } from '../../../components/button-text-icon'
-import { Color4 } from '@dcl/sdk/math'
 import { BottomBorder } from '../../../components/bottom-border'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
-import { logout } from '../../../controllers/ui.controller'
-import { BevyApi } from '../../../bevy-api'
 import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { createOrGetAvatarsTracker } from '../../../service/avatar-tracker'
 import {
@@ -171,7 +168,7 @@ function ProfileContent({
         {player.userId !== getPlayer()?.userId
           ? ProfileButtons({ player })
           : null}
-        {/*// TODO Exit / Sign out : OwnProfileButtons({player})*/}
+        {/* // TODO Exit / Sign out : OwnProfileButtons({player}) */}
       </UiEntity>
     </UiEntity>
   )
@@ -321,42 +318,6 @@ function ProfileButtons({
   ]
 }
 
-function OwnProfileButtons({
-  player
-}: {
-  player: GetPlayerDataRes
-}): ReactElement[] {
-  return [
-    <ButtonTextIcon
-      onMouseDown={() => {
-        closeDialog()
-        logout()
-      }}
-      uiTransform={PROFILE_BUTTON_TRANSFORM}
-      value={'<b>SIGN OUT</b>'}
-      fontSize={getContentScaleRatio() * 42}
-      icon={{
-        atlasName: 'icons',
-        spriteName: 'LogoutIcon'
-      }}
-    />,
-
-    <ButtonTextIcon
-      onMouseDown={() => {
-        BevyApi.quit()
-      }}
-      uiTransform={PROFILE_BUTTON_TRANSFORM}
-      value={'<b>EXIT</b>'}
-      fontSize={getContentScaleRatio() * 42}
-      icon={{
-        atlasName: 'icons',
-        spriteName: 'ExitIcn'
-      }}
-      fontColor={Color4.Red()}
-      iconColor={Color4.Red()}
-    />
-  ]
-}
 function closeDialog(): void {
   store.dispatch(closeLastPopupAction())
 }

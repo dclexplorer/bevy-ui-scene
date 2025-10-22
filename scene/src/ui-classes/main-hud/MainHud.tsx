@@ -19,8 +19,7 @@ import { pushPopupAction, updateHudStateAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { getPlayer } from '@dcl/sdk/players'
 import { getViewportHeight } from '../../service/canvas-ratio'
-import { COLOR } from '../../components/color-palette'
-import { PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
+import { type PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
 import { BevyApi } from '../../bevy-api'
 
 const ZERO_SIZE = {
@@ -646,7 +645,7 @@ export default class MainHud {
 export function getChatWidth(canvasInfo?: PBUiCanvasInformation): number {
   return (canvasInfo?.height ?? getViewportHeight()) * 0.4
 }
-export function getHudBarWidth(canvasInfo?: PBUiCanvasInformation) {
+export function getHudBarWidth(canvasInfo?: PBUiCanvasInformation): number {
   return (canvasInfo?.height ?? getViewportHeight()) * 0.05
 }
 export function getUnsafeAreaWidth(canvasInfo?: PBUiCanvasInformation): number {

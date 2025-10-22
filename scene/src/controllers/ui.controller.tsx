@@ -1,4 +1,4 @@
-import ReactEcs, { ReactEcsRenderer, UiEntity } from '@dcl/sdk/react-ecs'
+import ReactEcs, { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { type GameController } from './game.controller'
 import { BackpackPage } from '../ui-classes/main-menu/backpack-page'
 import { Profile } from '../ui-classes/profile'
@@ -19,12 +19,8 @@ import {
 import { getWaitFor } from '../utils/function-utils'
 import { sleep } from '../utils/dcl-utils'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
-import { Color4 } from '@dcl/sdk/math'
-import { type ReactElement } from '@dcl/react-ecs'
 import { Canvas } from '../components/canvas'
 import { store } from '../state/store'
-import { BevyApi } from '../bevy-api'
 import { PopupStack } from '../components/popup-stack'
 import { setupNotifications } from '../ui-classes/main-hud/notifications-menu'
 import {
@@ -37,8 +33,8 @@ import { getRealm } from '~system/Runtime'
 import { BigMap } from '../ui-classes/main-hud/big-map/big-map-view'
 import { SceneCatalogPanel } from '../components/map/scene-catalog-panel'
 import SettingsPage from '../ui-classes/main-menu/settings-page/SettingsPage'
-import { COLOR } from 'src/components/color-palette'
 import { InteractableArea } from '../components/canvas/Canvas'
+import { BevyApi } from '../bevy-api'
 
 let loadingAndLogin: any = null
 

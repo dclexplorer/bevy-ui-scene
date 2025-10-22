@@ -92,6 +92,7 @@ export default class MainMenu {
     // TODO REVIEW shouldn't show:false hide the ui always instead of toggling (when hot reload, it's not reset)
     BevyApi.showUi({ hash: undefined, show: true }).catch(console.error)
   }
+
   show(page: MenuPage): void {
     BevyApi.showUi({ hash: undefined, show: false }).catch(console.error)
 

@@ -5,7 +5,7 @@ import { updateViewportSize } from '../../state/viewport/actions'
 import { CustomMouseCursorElement } from '../custom-cursor-component'
 import { getUnsafeAreaWidth } from '../../ui-classes/main-hud/MainHud'
 import { BevyApi } from '../../bevy-api'
-import { ReactElement } from '@dcl/react-ecs'
+import { type ReactElement } from '@dcl/react-ecs'
 import { COLOR } from '../color-palette'
 import { Color4 } from '@dcl/sdk/math'
 
@@ -65,7 +65,6 @@ export function InteractableArea({
   if (!active) return null
   const canvas = UiCanvasInformation.get(engine.RootEntity)
   if (!canvas?.interactableArea) return null
-  const viewportState = store.getState().viewport
   const { interactableArea } = canvas
 
   return (

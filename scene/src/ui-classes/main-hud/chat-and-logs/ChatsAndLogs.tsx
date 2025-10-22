@@ -712,12 +712,11 @@ function sendChatMessage(value: string): void {
             await teleportTo({
               worldCoordinates: { x: Number(x), y: Number(y) }
             })
-            return
           } else if (x && !y) {
             console.log('checking world')
             const { acceptingUsers } = await fetch(
               `https://worlds-content-server.decentraland.org/world/${x}/about`
-            ).then((res) => res.json())
+            ).then(async (res) => await res.json())
 
             if (acceptingUsers) {
               await changeRealm({
@@ -730,8 +729,6 @@ function sendChatMessage(value: string): void {
                 channel: 'Nearby'
               })
             }
-
-            return
           }
         })
       } else if (value.startsWith('/help')) {
@@ -753,7 +750,7 @@ function sendChatMessage(value: string): void {
       await sleep(0)
       scrollToBottom()
     })
-  } catch (error) {
+  } catch (error: any) {
     pushMessage({
       sender_address: ONE_ADDRESS,
       message: `Error: ${error}`,
@@ -929,7 +926,7 @@ function pushMessage(message: ChatMessageDefinition): void {
   }
 }
 
-function getSystemName(address: string) {
+function getSystemName(address: string): string {
   if (address === ONE_ADDRESS) return ''
   if (address === ZERO_ADDRESS) return ''
   return ''

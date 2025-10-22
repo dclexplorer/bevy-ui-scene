@@ -1,5 +1,3 @@
-import { type BorderRect } from '@dcl/ecs/dist/components/generated/pb/decentraland/common/border_rect.gen'
-
 export const VIEWPORT_STORE_ID: 'viewport' = 'viewport'
 
 export type ViewportState = {
