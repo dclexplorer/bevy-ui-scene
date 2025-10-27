@@ -744,6 +744,13 @@ function sendChatMessage(value: string): void {
       }
     }
 
+    if (value.startsWith('/')) {
+      executeTask(async () => {
+        await sleep(0)
+        setUiFocus({ elementId: '' }).catch(console.error)
+      })
+    }
+
     executeTask(async () => {
       await sleep(0)
       scrollToBottom()

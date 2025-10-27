@@ -53,10 +53,6 @@ export function ChatInput({
       onSubmit={(value) => {
         onSubmit(value)
         setCurrentValue('')
-        executeTask(async () => {
-          await sleep(0)
-          setUiFocus({ elementId: '' }).catch(console.error)
-        })
       }}
       onChange={(value: string) => {
         setCurrentValue(value)

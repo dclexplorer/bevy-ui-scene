@@ -12,10 +12,6 @@ import { Checkbox } from '../../components/checkbox'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { type Popup } from '../../components/popup-stack'
 
-const state = {
-  rememberDomain: false
-}
-
 export const PopupUrl: Popup = ({ shownPopup }) => {
   const URL: string = shownPopup.data as string
   if (shownPopup?.type !== HUD_POPUP_TYPE.URL) return null
@@ -115,29 +111,9 @@ export const PopupUrl: Popup = ({ shownPopup }) => {
             variant={'primary'}
             fontSize={getContentScaleRatio() * 28}
             onMouseUp={() => {
-              state.rememberDomain = false
               closeDialog()
               openExternalUrl({ url: URL }).catch(console.error)
-              // TODO save domain on localStorage or bevy api ? Review with @rob
             }}
-          />
-        </UiEntity>
-        <UiEntity
-          uiTransform={{
-            position: { left: '0%', top: '15%' },
-            width: '100%',
-            justifyContent: 'center'
-          }}
-        >
-          <Checkbox
-            uiTransform={{
-              margin: { right: '1%' }
-            }}
-            onChange={() => {
-              state.rememberDomain = !state.rememberDomain
-            }}
-            value={state.rememberDomain}
-            label={'Always allow links from this domain'}
           />
         </UiEntity>
       </UiEntity>
