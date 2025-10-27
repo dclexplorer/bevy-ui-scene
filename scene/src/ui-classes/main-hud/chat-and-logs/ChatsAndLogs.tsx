@@ -687,15 +687,13 @@ function ChatArea({
         padding: { left: '3%', right: '8%' }
       }}
     >
-      {messages
-        .filter((m) => !state.filterMessages[m.messageType])
-        .map((message) => (
-          <ChatMessage
-            message={message}
-            key={message.id ?? message.timestamp}
-            onMessageMenu={onMessageMenu}
-          />
-        ))}
+      {messages.map((message) => (
+        <ChatMessage
+          message={message}
+          key={message.id ?? message.timestamp}
+          onMessageMenu={onMessageMenu}
+        />
+      ))}
     </UiEntity>
   )
 }
@@ -851,6 +849,16 @@ async function getMentionedPlayersFromMessage(
 }
 
 function pushMessage(message: ChatMessageDefinition): void {
+  // TODO when pushing messages see filters, if deactivated , wont add in any array
+  const messageType = isSystemMessage(message)
+    ? message.sender_address === ZERO_ADDRESS
+      ? MESSAGE_TYPE.SYSTEM
+      : MESSAGE_TYPE.SYSTEM_FEEDBACK
+    : MESSAGE_TYPE.USER
+  if (state.filterMessages[messageType]) {
+    return
+  }
+
   if (state.shownMessages.length >= BUFFER_SIZE) {
     state.shownMessages.shift()
   }
@@ -876,11 +884,7 @@ function pushMessage(message: ChatMessageDefinition): void {
         : CHAT_SIDE.LEFT,
     hasMentionToMe: messageHasMentionToMe(message.message),
     isGuest: playerData ? playerData.isGuest : true,
-    messageType: isSystemMessage(message)
-      ? message.sender_address === ZERO_ADDRESS
-        ? MESSAGE_TYPE.SYSTEM
-        : MESSAGE_TYPE.SYSTEM_FEEDBACK
-      : MESSAGE_TYPE.USER,
+    messageType,
     player: getPlayer({ userId: message.sender_address }),
     message: decorateMessageWithLinks(message.message),
     mentionedPlayers: {}
