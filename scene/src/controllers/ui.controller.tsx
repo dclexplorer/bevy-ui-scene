@@ -1,9 +1,7 @@
 import ReactEcs, { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { type GameController } from './game.controller'
 import { BackpackPage } from '../ui-classes/main-menu/backpack-page'
-import { Profile } from '../ui-classes/profile'
 import { MainHud } from '../ui-classes/main-hud'
-import { Friends } from '../ui-classes/main-hud/friends'
 import { MainMenu } from '../ui-classes/main-menu'
 import { ExplorePage } from '../ui-classes/main-menu/explore-page'
 import { MapPage } from '../ui-classes/main-menu/map-page'
@@ -51,7 +49,6 @@ export const getUiController = (): UIController => uiControllerSingletonInstance
 export class UIController {
   public isPhotosVisible: boolean = false
   public isMainMenuVisible: boolean = false
-  public isProfileVisible: boolean = false
   public isFriendsVisible: boolean = false
   public actionPopUpVisible: boolean = false
   public sceneInfoCardVisible: boolean = false
@@ -60,9 +57,6 @@ export class UIController {
   public backpackPage: BackpackPage
   public mapPage: MapPage
   public explorePage: ExplorePage
-
-  profile: Profile
-  friends: Friends
   loadingAndLogin: LoadingAndLogin
   gameController: GameController
   mainHud: MainHud
@@ -88,8 +82,6 @@ export class UIController {
     this.backpackPage = new BackpackPage()
     this.mapPage = new MapPage()
     this.explorePage = new ExplorePage()
-    this.profile = new Profile(this)
-    this.friends = new Friends(this)
     this.actionPopUp = new PopUpAction(this)
     this.sceneCard = new SceneInfoCard(this)
     this.warningPopUp = new PopUpWarning(this)
@@ -136,10 +128,7 @@ export class UIController {
         {InteractableArea({ active: false })}
 
         {this.mainHud.mainUi()}
-
         {this.isMainMenuVisible && this.menu.mainUi()}
-        {this.isProfileVisible && this.profile.mainUi()}
-        {this.isFriendsVisible && this.friends.mainUi()}
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
 
         {this.isPhotosVisible && this.photosPanel.mainUi()}
