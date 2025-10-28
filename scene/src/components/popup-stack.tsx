@@ -11,7 +11,7 @@ import { NotificationsMenu } from '../ui-classes/main-hud/notifications-menu'
 import { PermissionRequestPopup } from '../ui-classes/main-hud/permissions-popups/permission-request-popup'
 import { PopupTeleport } from '../ui-classes/main-hud/popup-teleport'
 
-export type PopupParameters = { shownPopup: HUDPopup }
+export type PopupParameters = { shownPopup: HUDPopup; key?: string }
 export type Popup = (
   params: PopupParameters
 ) => ReactElement | null | ReactElement[]
@@ -34,8 +34,11 @@ export function PopupStack(): ReactElement | null {
   return (
     <UiEntity uiTransform={{ zIndex: 99999, width: '100%', height: '100%' }}>
       {shownPopups.map(
-        (shownPopup: HUDPopup) =>
-          popupComponents[shownPopup.type]({ shownPopup }) as ReactElement
+        (shownPopup: HUDPopup, index) =>
+          popupComponents[shownPopup.type]({
+            shownPopup,
+            key: `${shownPopup.type}-${index}`
+          }) as ReactElement
       )}
     </UiEntity>
   )

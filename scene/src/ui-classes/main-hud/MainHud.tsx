@@ -348,13 +348,11 @@ export default class MainHud {
               this.updateButtons()
             }}
             onMouseDown={() => {
+              console.log('showing passport', getPlayer()?.userId)
               store.dispatch(
                 pushPopupAction({
-                  type: HUD_POPUP_TYPE.PROFILE_MENU,
-                  data: {
-                    align: 'left',
-                    player: getPlayer()
-                  }
+                  type: HUD_POPUP_TYPE.PASSPORT,
+                  data: getPlayer()?.userId
                 })
               )
               // this.uiController.profile.showCard()
