@@ -30,7 +30,6 @@ const NAME_EDIT_TABS = [
   { text: 'UNIQUE NAME' },
   { text: 'NON-UNIQUE USERNAME' }
 ]
-
 const BUTTON_TEXT_COLOR = { ...COLOR.WHITE }
 
 const EditNameContent = (): ReactElement => {
@@ -141,7 +140,7 @@ const EditNameContent = (): ReactElement => {
           zIndex: 1
         }}
       >
-        {tabs.length && (
+        {(tabs.length && (
           <TabComponent
             tabs={tabs}
             fontSize={getContentScaleRatio() * 32}
@@ -152,12 +151,12 @@ const EditNameContent = (): ReactElement => {
                   return { ...tabDefinition, active: index === activeTab }
                 }
               )
-
               setActiveTab(activeTab)
               setTabs(tabs)
             }}
           />
-        )}
+        )) ||
+          null}
 
         {!loading && activeTab === 0 && selectableNames.length > 1 && (
           <UniqueNameForm
@@ -311,6 +310,7 @@ export const NameForm = ({
             store.dispatch(closeLastPopupAction())
           }}
         />
+
         <Button
           variant={'primary'}
           uiTransform={{
