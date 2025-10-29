@@ -49,7 +49,9 @@ import Icon from '../../../components/icon/Icon'
 import {
   getChatMembers,
   initChatMembersCount,
-  nameAddressMap
+  nameAddressMapGet,
+  nameAddressMapHas,
+  nameAddressMapSet
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
@@ -829,8 +831,8 @@ async function getMentionedPlayersFromMessage(
 
   playersInScene.forEach((player) => {
     const playerData = getPlayer({ userId: player.userId })
-    if (playerData && !nameAddressMap.has(playerData.name)) {
-      nameAddressMap.set(playerData.name, player.userId)
+    if (playerData && !nameAddressMapHas(playerData.name)) {
+      nameAddressMapSet(playerData.name, player.userId)
     }
   })
 
@@ -839,7 +841,7 @@ async function getMentionedPlayersFromMessage(
   return (
     mentionedNames?.reduce((acc: Record<string, GetPlayerDataRes>, match) => {
       const name = match.replace('@', '')
-      const address = nameAddressMap.get(name)
+      const address = nameAddressMapGet(name)
 
       if (address) {
         const player = getPlayer({

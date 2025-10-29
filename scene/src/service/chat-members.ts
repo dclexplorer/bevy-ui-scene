@@ -19,7 +19,16 @@ export function getChatMembers(): Array<
   return state.players
 }
 
-export const nameAddressMap = new Map<string, string>() // name,address
+const nameAddressMap = new Map<string, string>() // name,address
+export const nameAddressMapHas = (name: string) =>
+  nameAddressMap.has(name.toLowerCase())
+
+export const nameAddressMapGet = (name: string) =>
+  nameAddressMap.get(name.toLowerCase())
+
+export const nameAddressMapSet = (name: string, address: string) => {
+  nameAddressMap.set(name.toLowerCase(), address)
+}
 
 export async function initChatMembersCount(): Promise<void> {
   while (true) {
@@ -32,8 +41,8 @@ export async function initChatMembersCount(): Promise<void> {
       const player = getPlayer({ userId: data.address })
       if (!player) continue
 
-      if (!nameAddressMap.has(player.name)) {
-        nameAddressMap.set(player.name, data.address)
+      if (!nameAddressMapHas(player.name)) {
+        nameAddressMapSet(player.name, data.address)
       }
     }
 

@@ -25,8 +25,8 @@ import { AvatarCircle } from '../avatar-circle'
 import { pushPopupAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { store } from '../../state/store'
-import { nameAddressMap } from '../../service/chat-members'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
+import { nameAddressMapGet } from '../../service/chat-members'
 
 const LINK_TYPE = {
   USER: 'user',
@@ -289,7 +289,7 @@ export function replaceURLTags(message: string): string {
 
 export function replaceNameTags(message: string): string {
   return message.replace(NAME_MENTION_REGEXP, (...[match]) => {
-    const foundNameAddress = nameAddressMap.get(match.replace('@', ''))
+    const foundNameAddress = nameAddressMapGet(match.replace('@', ''))
     return foundNameAddress
       ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${foundNameAddress}>${match}</link></color></b>`
       : `<b>${match}</b>`
