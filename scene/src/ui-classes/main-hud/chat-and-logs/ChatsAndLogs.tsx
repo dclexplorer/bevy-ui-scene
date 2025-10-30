@@ -29,7 +29,7 @@ import {
   type ChatMessageRepresentation,
   MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
-import { memoize } from '../../../utils/function-utils'
+import { memoize, memoizeFirstArg } from '../../../utils/function-utils'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import {
@@ -48,10 +48,7 @@ import { type ReactElement } from '@dcl/react-ecs'
 import Icon from '../../../components/icon/Icon'
 import {
   getChatMembers,
-  initChatMembersCount,
-  nameAddressMapGet,
-  nameAddressMapHas,
-  nameAddressMapSet
+  initChatMembersCount
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
@@ -70,7 +67,10 @@ import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { getPlayersInScene } from '~system/Players'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 import { cleanMapPlaces } from '../../../service/map-places'
-import { fetchProfileData } from '../../../utils/passport-promise-utils'
+import {
+  fetchProfileData,
+  ProfileResponse
+} from '../../../utils/passport-promise-utils'
 import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
 
 type Box = {
@@ -819,45 +819,36 @@ function isVectorInBox(point: Vector2, box: Box): boolean {
     y <= position.y + size.y
   )
 }
+
 export function messageHasMentionToMe(message: string): boolean {
-  return message.includes(`@${getPlayer()?.name}`)
-}
-
-async function getMentionedPlayersFromMessage(
-  message: string
-): Promise<Record<string, GetPlayerDataRes>> {
-  // TODO getPlayersInScene is deprecated, must use entities with component PlayerIdentityData instead
-  const playersInScene = (await getPlayersInScene({})).players
-
-  playersInScene.forEach((player) => {
-    const playerData = getPlayer({ userId: player.userId })
-    if (playerData && !nameAddressMapHas(playerData.name)) {
-      nameAddressMapSet(playerData.name, player.userId)
-    }
-  })
-
-  const mentionedNames = message.match(NAME_MENTION_REGEXP)
-
   return (
-    mentionedNames?.reduce((acc: Record<string, GetPlayerDataRes>, match) => {
-      const name = match.replace('@', '')
-      const address = nameAddressMapGet(name)
-
-      if (address) {
-        const player = getPlayer({
-          userId: address
-        })
-        if (player) {
-          acc[address] = player
-        }
-      }
-
-      return acc
-    }, {}) ?? {}
+    message
+      .toLowerCase()
+      .includes(
+        getNameWithHashPostfix(
+          getPlayer()?.name ?? '',
+          getPlayer()?.userId ?? ''
+        )?.toLowerCase() ?? ''
+      ) || message.toLowerCase().includes(getPlayer()?.name ?? '')
   )
 }
 
-function pushMessage(message: ChatMessageDefinition): void {
+const _getNameWithHashPostfix = (
+  name: string,
+  address: string
+): `${string}#${string}` => {
+  return `${name}#${address
+    .substring(address.length - 4, address.length)
+    .toLowerCase()}`
+}
+
+export const getNameWithHashPostfix: (
+  n: string,
+  address: string
+) => `${string}#${string}` = memoizeFirstArg(_getNameWithHashPostfix)
+
+async function pushMessage(message: ChatMessageDefinition): Promise<void> {
+  console.log('pushMessage', JSON.stringify(message))
   // TODO when pushing messages see filters, if deactivated , wont add in any array
   const messageType = isSystemMessage(message)
     ? message.sender_address === ZERO_ADDRESS
@@ -872,6 +863,8 @@ function pushMessage(message: ChatMessageDefinition): void {
     state.shownMessages.shift()
   }
 
+  // El profileData de todos los usuarios mencionados : PROBLEM ?
+
   const playerData = getPlayer({ userId: message.sender_address })
 
   const now = Date.now()
@@ -882,24 +875,29 @@ function pushMessage(message: ChatMessageDefinition): void {
 
   const decoratedChatMessage: ChatMessageRepresentation = {
     ...message,
+    _originalMessage: message.message,
     id: Math.random(),
     timestamp,
     name: isSystemMessage(message)
       ? getSystemName(message.sender_address)
-      : playerData?.name || `Unknown*`,
+      : getNameWithHashPostfix(
+          playerData?.name || `Unknown*`,
+          message.sender_address
+        ),
     side:
       message.sender_address === getPlayer()?.userId
         ? CHAT_SIDE.RIGHT
         : CHAT_SIDE.LEFT,
-    hasMentionToMe: messageHasMentionToMe(message.message),
+    hasMentionToMe: false,
     isGuest: playerData ? playerData.isGuest : true,
     messageType,
     player: getPlayer({ userId: message.sender_address }),
     message: decorateMessageWithLinks(message.message),
     mentionedPlayers: {}
   }
+
   decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
-  console.log('decoratedChatMessage', decoratedChatMessage)
+
   if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
     state.newMessages.push(decoratedChatMessage)
   } else {
@@ -914,28 +912,7 @@ function pushMessage(message: ChatMessageDefinition): void {
   async function decorateAsyncMessageData(
     message: ChatMessageRepresentation
   ): Promise<void> {
-    const profileData = await fetchProfileData({
-      userId: message.sender_address
-    })
-    const [avatarData] = profileData?.avatars ?? []
-    if (avatarData !== undefined) {
-      message.hasClaimedName = avatarData.hasClaimedName
-      message.name =
-        avatarData.name ??
-        message.name ??
-        (isSystemMessage(message)
-          ? getSystemName(message.sender_address)
-          : playerData?.name || `Unknown*`)
-    }
-
-    if (!message.hasClaimedName) {
-      message.name = message.name + `#${message.sender_address.slice(-4)}`
-    }
-
-    message.mentionedPlayers = {
-      ...message.mentionedPlayers,
-      ...(await getMentionedPlayersFromMessage(message.message))
-    }
+    extendMessageMentionedUsers(message).catch(console.error)
   }
 }
 
@@ -943,4 +920,104 @@ function getSystemName(address: string): string {
   if (address === ONE_ADDRESS) return ''
   if (address === ZERO_ADDRESS) return ''
   return ''
+}
+
+type nameString = `${string}#${string}` | string
+type ComposedPlayerData = {
+  playerData?: GetPlayerDataRes | null
+  profileData?: ProfileResponse
+}
+
+export const namedUsersData = new Map<nameString, ComposedPlayerData>()
+
+async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
+  const mentionMatches = message._originalMessage.match(NAME_MENTION_REGEXP)
+  const mentionMatchesAndSenderName = [
+    ...(mentionMatches ?? []),
+    message.name.split('#')[0]
+  ]
+  console.log('mentionMatchesAndSenderName', mentionMatchesAndSenderName)
+
+  const playersInScene = (await getPlayersInScene({})).players.map(
+    ({ userId }) => getPlayer({ userId })
+  )
+
+  for (const mentionMatchOrSenderName of mentionMatchesAndSenderName ?? []) {
+    const nameKey = mentionMatchOrSenderName.replace('@', '').toLowerCase()
+    setIfNot(namedUsersData).get(nameKey)
+
+    console.log('nameKey', nameKey)
+    console.log(Array.from(namedUsersData.keys()))
+    playersInScene.forEach((player) => {
+      if (
+        player &&
+        nameKey ===
+          getNameWithHashPostfix(player.name, player.userId).toLowerCase()
+      ) {
+        namedUsersData.get(nameKey)!.playerData = getPlayer({
+          userId: player.userId
+        })
+        namedUsersData.set(
+          getNameWithHashPostfix(player.name, player.userId).toLowerCase(),
+          namedUsersData.get(nameKey) as ComposedPlayerData
+        )
+      } else if (player && nameKey === player.name.toLowerCase()) {
+        console.log('>>>', mentionMatchOrSenderName, player.name)
+        const composePlayerData = setIfNot(namedUsersData).get(nameKey)
+        composePlayerData.playerData = getPlayer({ userId: player.userId })
+
+        if (composePlayerData.profileData) {
+          decorateMessageNameAndLinks(message, composePlayerData)
+        }
+
+        // TODO check/set message.hasMentionToMe
+
+        executeTask(async () => {
+          composePlayerData.profileData = await fetchProfileData({
+            userId: player.userId,
+            useCache: true
+          })
+          console.log(
+            'composePlayerData.profileData',
+            composePlayerData.profileData
+          )
+          decorateMessageNameAndLinks(message, composePlayerData)
+          // TODO check/set message.hasMentionToMe
+        })
+
+        function decorateMessageNameAndLinks(
+          message: ChatMessageRepresentation,
+          composeData: ComposedPlayerData
+        ) {
+          const [avatarData] = composeData.profileData?.avatars ?? []
+          if (
+            message.name ===
+              getNameWithHashPostfix(
+                composeData.playerData?.name ?? '',
+                composeData.playerData?.userId ?? ''
+              ) &&
+            avatarData.hasClaimedName
+          ) {
+            console.log('<<< hasClaimedName')
+            message.name = message.name.split('#')[0]
+          }
+          message.message = decorateMessageWithLinks(message._originalMessage)
+        }
+      }
+    })
+  }
+
+  message.message = decorateMessageWithLinks(message._originalMessage)
+}
+
+function setIfNot(map: Map<any, any>) {
+  return {
+    get: (key: any) => {
+      if (!map.has(key)) {
+        console.log('setting', key)
+        map.set(key, {})
+      }
+      return map.get(key)
+    }
+  }
 }

@@ -26,7 +26,7 @@ import { pushPopupAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { store } from '../../state/store'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
-import { nameAddressMapGet } from '../../service/chat-members'
+import { namedUsersData } from '../../ui-classes/main-hud/chat-and-logs/ChatsAndLogs'
 
 const LINK_TYPE = {
   USER: 'user',
@@ -269,6 +269,7 @@ export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
 export const NAME_MENTION_REGEXP = /@\w+(#\w+)?/g
 const URL_REGEXP = /https:\/\/[^\s"',]+/g
 const LOCATION_REGEXP = /-?\d+,\s?-?\d+/g
+
 export const decorateMessageWithLinks = compose(
   replaceNameTags,
   replaceURLTags,
@@ -289,9 +290,34 @@ export function replaceURLTags(message: string): string {
 
 export function replaceNameTags(message: string): string {
   return message.replace(NAME_MENTION_REGEXP, (...[match]) => {
-    const foundNameAddress = nameAddressMapGet(match.replace('@', ''))
-    return foundNameAddress
-      ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${foundNameAddress}>${match}</link></color></b>`
-      : `<b>${match}</b>`
+    const nameKey = match.replace('@', '').toLowerCase()
+    const namedUserData = namedUsersData.get(nameKey)
+    const foundNameAddress = namedUserData?.playerData?.userId
+
+    if (match.includes('#')) {
+      // TODO if name hasClaimedName, remove #hash
+      let nameToRender = match
+      if (
+        namedUsersData.get(nameKey.split('#')[0].toLowerCase())?.profileData
+          ?.avatars[0].hasClaimedName
+      ) {
+        nameToRender = nameToRender.split('#')[0]
+      }
+      console.log(
+        '!!!!!!',
+        foundNameAddress,
+        namedUserData,
+        nameKey,
+        nameToRender
+      )
+      return foundNameAddress
+        ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${foundNameAddress}>${nameToRender}</link></color></b>`
+        : `<b>${match}</b>`
+    } else {
+      return foundNameAddress &&
+        namedUserData.profileData?.avatars[0].hasClaimedName
+        ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${foundNameAddress}>${match}</link></color></b>`
+        : `<b>${match}</b>`
+    }
   })
 }

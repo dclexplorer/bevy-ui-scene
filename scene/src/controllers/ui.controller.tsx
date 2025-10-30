@@ -127,8 +127,9 @@ export class UIController {
       <Canvas>
         {InteractableArea({ active: false })}
 
-        {this.mainHud.mainUi()}
+        {!this.isMainMenuVisible && this.mainHud.mainUi()}
         {this.isMainMenuVisible && this.menu.mainUi()}
+
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
 
         {this.isPhotosVisible && this.photosPanel.mainUi()}

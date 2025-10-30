@@ -16,6 +16,26 @@ export function memoize<T, U>(fn: (arg: T) => U): (arg: T) => U {
   }
 }
 
+export function memoizeFirstArg<T, U>(
+  fn: (...args: any[]) => U
+): (...args: any[]) => U {
+  const cache = new Map<T, U>()
+
+  return function (...args: any[]): U {
+    const key = args[0] as T
+
+    if (cache.has(key)) {
+      return cache.get(key)!
+    }
+
+    const result = fn(...args)
+    cache.clear() // sigues manteniendo solo un valor en cache
+    cache.set(key, result)
+
+    return result
+  }
+}
+
 export function cloneDeep<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
 }

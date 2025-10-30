@@ -5,6 +5,7 @@ import { loadSettingsFromExplorer } from '../state/settings/actions'
 import { store } from '../state/store'
 import { executeTask } from '@dcl/sdk/ecs'
 import { sleep } from '../utils/dcl-utils'
+import { updateHudStateAction } from '../state/hud/actions'
 
 let gameInstance: GameController
 

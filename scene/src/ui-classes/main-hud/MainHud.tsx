@@ -248,9 +248,6 @@ export default class MainHud {
   }
 
   mainUi(): ReactEcs.JSX.Element | null {
-    if (this.uiController.menu.isOpen()) return null
-    if (store.getState().hud.mapModeActive) return null
-
     return (
       <UiEntity
         uiTransform={{
