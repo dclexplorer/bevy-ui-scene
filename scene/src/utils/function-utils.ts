@@ -155,3 +155,14 @@ export function dedupeById<T extends WithId<K>, K extends Id = Id>(
   for (const it of arr) counts.set(it.id, (counts.get(it.id) ?? 0) + 1)
   return arr.filter((it) => counts.get(it.id) === 1)
 }
+
+export function setIfNot(map: Map<any, any>) {
+  return {
+    get: (key: any) => {
+      if (!map.has(key)) {
+        map.set(key, {})
+      }
+      return map.get(key)
+    }
+  }
+}

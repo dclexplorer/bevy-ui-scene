@@ -29,7 +29,11 @@ import {
   type ChatMessageRepresentation,
   MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
-import { memoize, memoizeFirstArg } from '../../../utils/function-utils'
+import {
+  memoize,
+  memoizeFirstArg,
+  setIfNot
+} from '../../../utils/function-utils'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import {
@@ -849,7 +853,6 @@ export const getNameWithHashPostfix: (
 
 async function pushMessage(message: ChatMessageDefinition): Promise<void> {
   console.log('pushMessage', JSON.stringify(message))
-  // TODO when pushing messages see filters, if deactivated , wont add in any array
   const messageType = isSystemMessage(message)
     ? message.sender_address === ZERO_ADDRESS
       ? MESSAGE_TYPE.SYSTEM
@@ -968,7 +971,6 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
         composePlayerData.playerData = getPlayer({ userId: player.userId })
         console.log('composePlayerData', JSON.stringify(composePlayerData))
         checkProfileData()
-        // TODO check/set message.hasMentionToMe
       }
       function checkProfileData() {
         const composePlayerData = setIfNot(namedUsersData).get(nameKey)
@@ -981,7 +983,6 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
               useCache: true
             })
             decorateMessageNameAndLinks(message, composePlayerData)
-            // TODO check/set message.hasMentionToMe
           })
         }
       }
@@ -1007,16 +1008,4 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
   }
 
   message.message = decorateMessageWithLinks(message._originalMessage)
-}
-
-function setIfNot(map: Map<any, any>) {
-  return {
-    get: (key: any) => {
-      if (!map.has(key)) {
-        console.log('setting', key)
-        map.set(key, {})
-      }
-      return map.get(key)
-    }
-  }
 }
