@@ -33,7 +33,10 @@ import {
 import useEffect = ReactEcs.useEffect
 import useState = ReactEcs.useState
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
-import { focusChatInput } from '../chat-and-logs/ChatsAndLogs'
+import {
+  focusChatInput,
+  getNameWithHashPostfix
+} from '../chat-and-logs/ChatsAndLogs'
 import { sleep } from '../../../utils/dcl-utils'
 
 export function setupProfilePopups(): void {
@@ -302,7 +305,9 @@ function ProfileButtons({
           closeDialog()
           store.dispatch(
             updateHudStateAction({
-              chatInput: store.getState().hud.chatInput + ` @${player.name} `
+              chatInput:
+                store.getState().hud.chatInput +
+                ` @${getNameWithHashPostfix(player.name, player.userId)} `
             })
           )
           await sleep(100)

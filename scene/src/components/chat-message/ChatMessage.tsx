@@ -298,17 +298,29 @@ export function replaceNameTags(message: string): string {
       // TODO if name hasClaimedName, remove #hash
       let nameToRender = match
       if (
-        namedUsersData.get(nameKey.split('#')[0].toLowerCase())?.profileData
-          ?.avatars[0].hasClaimedName
+        namedUsersData.get(nameKey.split('#')[0])?.profileData?.avatars[0]
+          .hasClaimedName ||
+        namedUsersData.get(nameKey)?.profileData?.avatars[0].hasClaimedName
       ) {
         nameToRender = nameToRender.split('#')[0]
       }
+
       console.log(
         '!!!!!!',
         foundNameAddress,
-        namedUserData,
+        !!namedUserData?.profileData,
+        namedUserData?.profileData?.avatars[0].hasClaimedName,
         nameKey,
         nameToRender
+      )
+      console.log(
+        Array.from(namedUsersData.keys()).reduce((acc: any, key: string) => {
+          acc[key as string] = {
+            profileData: !!namedUsersData.get(key)?.profileData,
+            playerData: !!namedUsersData.get(key)?.playerData
+          }
+          return acc
+        }, {} as any)
       )
       return foundNameAddress
         ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${foundNameAddress}>${nameToRender}</link></color></b>`

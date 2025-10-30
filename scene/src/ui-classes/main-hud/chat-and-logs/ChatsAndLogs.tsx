@@ -961,48 +961,47 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
           getNameWithHashPostfix(player.name, player.userId).toLowerCase(),
           namedUsersData.get(nameKey) as ComposedPlayerData
         )
+        checkProfileData()
       } else if (player && nameKey === player.name.toLowerCase()) {
         console.log('>>>', mentionMatchOrSenderName, player.name)
         const composePlayerData = setIfNot(namedUsersData).get(nameKey)
         composePlayerData.playerData = getPlayer({ userId: player.userId })
-
-        if (composePlayerData.profileData) {
-          decorateMessageNameAndLinks(message, composePlayerData)
-        }
-
+        console.log('composePlayerData', JSON.stringify(composePlayerData))
+        checkProfileData()
         // TODO check/set message.hasMentionToMe
-
-        executeTask(async () => {
-          composePlayerData.profileData = await fetchProfileData({
-            userId: player.userId,
-            useCache: true
-          })
-          console.log(
-            'composePlayerData.profileData',
-            composePlayerData.profileData
-          )
+      }
+      function checkProfileData() {
+        const composePlayerData = setIfNot(namedUsersData).get(nameKey)
+        if (setIfNot(namedUsersData).get(nameKey).profileData) {
           decorateMessageNameAndLinks(message, composePlayerData)
-          // TODO check/set message.hasMentionToMe
-        })
-
-        function decorateMessageNameAndLinks(
-          message: ChatMessageRepresentation,
-          composeData: ComposedPlayerData
-        ) {
-          const [avatarData] = composeData.profileData?.avatars ?? []
-          if (
-            message.name ===
-              getNameWithHashPostfix(
-                composeData.playerData?.name ?? '',
-                composeData.playerData?.userId ?? ''
-              ) &&
-            avatarData.hasClaimedName
-          ) {
-            console.log('<<< hasClaimedName')
-            message.name = message.name.split('#')[0]
-          }
-          message.message = decorateMessageWithLinks(message._originalMessage)
+        } else {
+          executeTask(async () => {
+            composePlayerData.profileData = await fetchProfileData({
+              userId: player!.userId,
+              useCache: true
+            })
+            decorateMessageNameAndLinks(message, composePlayerData)
+            // TODO check/set message.hasMentionToMe
+          })
         }
+      }
+      function decorateMessageNameAndLinks(
+        message: ChatMessageRepresentation,
+        composeData: ComposedPlayerData
+      ) {
+        const [avatarData] = composeData.profileData?.avatars ?? []
+        if (
+          message.name ===
+            getNameWithHashPostfix(
+              composeData.playerData?.name ?? '',
+              composeData.playerData?.userId ?? ''
+            ) &&
+          avatarData.hasClaimedName
+        ) {
+          console.log('<<< hasClaimedName')
+          message.name = message.name.split('#')[0]
+        }
+        message.message = decorateMessageWithLinks(message._originalMessage)
       }
     })
   }
