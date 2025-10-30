@@ -31,12 +31,20 @@ export const ChatMentionSuggestions = () => {
     const [lastMatch] =
       store.getState().hud.chatInput?.match(SUGGESTION_NAME_MENTION_REGEXP) ??
       []
+    const otherMatches =
+      store
+        .getState()
+        .hud.chatInput?.match(NAME_MENTION_REGEXP)
+        ?.filter((m: string) => m !== lastMatch)
+        .map((m) => m.replace('@', '')) ?? []
 
     if (lastMatch) {
       getSuggestedNames(lastMatch.replace('@', '')).then((suggestedNames) => {
         store.dispatch(
           updateHudStateAction({
-            chatInputMentionSuggestions: suggestedNames
+            chatInputMentionSuggestions: suggestedNames.filter(
+              (s) => !otherMatches.includes(s)
+            )
           })
         )
       })
@@ -87,6 +95,7 @@ export const ChatMentionSuggestions = () => {
 }
 
 async function getSuggestedNames(matchText: string): Promise<string[]> {
+  // TODO filter those names that are already mentioned in the message
   return (await getPlayersInScene({})).players
     .map(({ userId }) => getPlayer({ userId }))
     .filter(
