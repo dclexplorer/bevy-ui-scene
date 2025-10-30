@@ -9,6 +9,7 @@ import { updateHudStateAction } from '../../../state/hud/actions'
 import { executeTask } from '@dcl/sdk/ecs'
 import { sleep } from '../../../utils/dcl-utils'
 import { setUiFocus } from '~system/RestrictedActions'
+import { SUGGESTION_NAME_MENTION_REGEXP } from '../../../components/chat-message/ChatMessage'
 const state = {
   visible: true
 }
@@ -26,9 +27,11 @@ export function ChatInput({
       setCurrentValue(store.getState().hud.chatInput)
 
       executeTask(async () => {
+        // TODO REVIEW workaround
         state.visible = false
         await sleep(0)
         state.visible = true
+        focusChatInput(true)
       })
     }
   }, [store.getState().hud.chatInput])
@@ -51,8 +54,25 @@ export function ChatInput({
       placeholder="Press ENTER to chat"
       placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
       onSubmit={(value) => {
-        onSubmit(value)
-        setCurrentValue('')
+        console.log('onSubmit: ', value)
+        if (store.getState().hud.chatInputMentionSuggestions.length) {
+          const newValue =
+            value.replace(SUGGESTION_NAME_MENTION_REGEXP, '') +
+            `@${store.getState().hud.chatInputMentionSuggestions[0]}`
+          executeTask(async () => {
+            console.log('newValue', newValue)
+            // TODO review workaround, because onSubmit empties the chat input
+            store.dispatch(
+              updateHudStateAction({
+                chatInput: newValue,
+                chatInputMentionSuggestions: []
+              })
+            )
+          })
+        } else {
+          onSubmit(value)
+          setCurrentValue('')
+        }
       }}
       onChange={(value: string) => {
         setCurrentValue(value)

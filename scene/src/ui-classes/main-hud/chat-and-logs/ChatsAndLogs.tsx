@@ -76,6 +76,8 @@ import {
   ProfileResponse
 } from '../../../utils/passport-promise-utils'
 import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
+import { ChatMentionSuggestions } from './chat-mention-suggestions'
+import { ComposedPlayerData, namedUsersData } from './named-users-data-service'
 
 type Box = {
   position: { x: number; y: number }
@@ -290,7 +292,6 @@ export default class ChatAndLogs {
           messages: state.shownMessages,
           onMessageMenu: this.onMessageMenu
         })}
-
         {InputArea()}
         {ShowNewMessages()}
         {MessageSubMenu({ canvasInfo })}
@@ -656,6 +657,7 @@ function InputArea(): ReactElement {
         color: { ...Color4.Black(), a: 0.4 }
       }}
     >
+      <ChatMentionSuggestions />
       {state.inputFontSizeWorkaround && (
         <ChatInput inputFontSize={inputFontSize} onSubmit={sendChatMessage} />
       )}
@@ -924,14 +926,6 @@ function getSystemName(address: string): string {
   if (address === ZERO_ADDRESS) return ''
   return ''
 }
-
-type nameString = `${string}#${string}` | string
-type ComposedPlayerData = {
-  playerData?: GetPlayerDataRes | null
-  profileData?: ProfileResponse
-}
-
-export const namedUsersData = new Map<nameString, ComposedPlayerData>()
 
 async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
   const mentionMatches = message._originalMessage.match(NAME_MENTION_REGEXP)

@@ -21,6 +21,7 @@ export function Row({
   onMouseLeave?: () => void
   onMouseDown?: () => void
   uiText?: UiLabelProps
+  key?: string
 }): ReactElement {
   return (
     <UiEntity

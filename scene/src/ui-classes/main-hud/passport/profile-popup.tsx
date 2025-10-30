@@ -35,11 +35,11 @@ import useState = ReactEcs.useState
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import {
   focusChatInput,
-  getNameWithHashPostfix,
-  namedUsersData
+  getNameWithHashPostfix
 } from '../chat-and-logs/ChatsAndLogs'
 import { sleep } from '../../../utils/dcl-utils'
 import { fetchProfileData } from '../../../utils/passport-promise-utils'
+import { namedUsersData } from '../chat-and-logs/named-users-data-service'
 
 export function setupProfilePopups(): void {
   const avatarTracker = createOrGetAvatarsTracker()
@@ -300,7 +300,7 @@ function MentionButton({ player }: { player: GetPlayerDataRes }): ReactElement {
       userData.playerData = userData.playerData ?? player
       userData.profileData =
         userData.profileData ??
-        (await fetchProfileData({ userId: player.userId }))
+        (await fetchProfileData({ userId: player.userId, useCache: true }))
     })
   }, [])
 
@@ -321,8 +321,6 @@ function MentionButton({ player }: { player: GetPlayerDataRes }): ReactElement {
               chatInput: store.getState().hud.chatInput + ` @${nameToRender} `
             })
           )
-          await sleep(100)
-          focusChatInput(true)
         })
       }}
       icon={{
