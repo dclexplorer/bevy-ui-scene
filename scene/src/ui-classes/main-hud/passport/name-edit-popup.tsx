@@ -140,7 +140,7 @@ const EditNameContent = (): ReactElement => {
           zIndex: 1
         }}
       >
-        {(tabs?.length > 0 && (
+        {(tabs?.length ?? 0) > 0 ? (
           <TabComponent
             tabs={tabs}
             fontSize={getContentScaleRatio() * 32}
@@ -155,8 +155,7 @@ const EditNameContent = (): ReactElement => {
               setTabs(tabs)
             }}
           />
-        )) ||
-          null}
+        ) : null}
 
         {!loading && activeTab === 0 && selectableNames.length > 1 && (
           <UniqueNameForm

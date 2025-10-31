@@ -1,4 +1,4 @@
-import ReactEcs, { UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { Column, Row } from '../../../components/layout'
 import useEffect = ReactEcs.useEffect
 import { store } from '../../../state/store'
@@ -15,7 +15,7 @@ import { getNameWithHashPostfix } from './ChatsAndLogs'
 import { namedUsersData } from './named-users-data-service'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 
-export const ChatMentionSuggestions = () => {
+export const ChatMentionSuggestions = (): ReactElement => {
   const [suggestedNames, setSuggestedNames] = ReactEcs.useState<string[]>([])
   useEffect(() => {
     setSuggestedNames(store.getState().hud.chatInputMentionSuggestions)
@@ -33,15 +33,17 @@ export const ChatMentionSuggestions = () => {
         .map((m) => m.replace('@', '')) ?? []
 
     if (lastMatch) {
-      getSuggestedNames(lastMatch.replace('@', '')).then((suggestedNames) => {
-        store.dispatch(
-          updateHudStateAction({
-            chatInputMentionSuggestions: suggestedNames.filter(
-              (s) => !otherMatches.includes(s)
-            )
-          })
-        )
-      })
+      getSuggestedNames(lastMatch.replace('@', ''))
+        .then((suggestedNames) => {
+          store.dispatch(
+            updateHudStateAction({
+              chatInputMentionSuggestions: suggestedNames.filter(
+                (s) => !otherMatches.includes(s)
+              )
+            })
+          )
+        })
+        .catch(console.error)
     } else if (suggestedNames?.length) {
       store.dispatch(
         updateHudStateAction({
@@ -128,5 +130,5 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
       }
     })
     .filter((i) => i)
-    .sort((a, b) => a!.localeCompare(b!)) as string[]
+    .sort((a, b) => (a as string).localeCompare(b as string)) as string[]
 }

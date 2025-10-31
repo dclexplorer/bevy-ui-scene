@@ -67,14 +67,10 @@ import { type PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
 import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
 import { ChatInput } from './chat-input'
-import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { getPlayersInScene } from '~system/Players'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 import { cleanMapPlaces } from '../../../service/map-places'
-import {
-  fetchProfileData,
-  ProfileResponse
-} from '../../../utils/passport-promise-utils'
+import { fetchProfileData } from '../../../utils/passport-promise-utils'
 import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
 import { ChatMentionSuggestions } from './chat-mention-suggestions'
 import {
@@ -177,7 +173,7 @@ export default class ChatAndLogs {
     ): Promise<void> => {
       for await (const chatMessage of stream) {
         if (chatMessage.message.indexOf('␑') === 0) return
-        this.pushMessage(chatMessage)
+        this.pushMessage(chatMessage).catch(console.error)
         if (!this.isOpen()) {
           state.unreadMessages++
         }
@@ -201,7 +197,7 @@ export default class ChatAndLogs {
             usedPermission.additional ? `(${usedPermission.additional})` : ''
           }`
         }
-        this.pushMessage(usedPermissionMessage)
+        this.pushMessage(usedPermissionMessage).catch(console.error)
       }
     }
 
@@ -716,13 +712,12 @@ function sendChatMessage(value: string): void {
         executeTask(async () => {
           const [command, coords] = value.trim().split(' ')
           const [x, y] = coords.split(',')
-          console.log('>>>', x, y, coords, command)
+
           if (!isNaN(Number(x)) && !isNaN(Number(y))) {
             await teleportTo({
               worldCoordinates: { x: Number(x), y: Number(y) }
             })
           } else if (x && !y) {
-            console.log('checking world')
             const { acceptingUsers } = await fetch(
               `https://worlds-content-server.decentraland.org/world/${x}/about`
             ).then(async (res) => await res.json())
@@ -736,7 +731,7 @@ function sendChatMessage(value: string): void {
                 message: `Invalid world name <b>${x}</b>`,
                 sender_address: ONE_ADDRESS,
                 channel: 'Nearby'
-              })
+              }).catch(console.error)
             }
           }
         })
@@ -749,7 +744,7 @@ function sendChatMessage(value: string): void {
 <b>/reload</b> - reloads the current scene`,
           sender_address: ONE_ADDRESS,
           channel: 'Nearby'
-        })
+        }).catch(console.error)
       } else {
         BevyApi.sendChat(value, 'Nearby')
       }
@@ -771,7 +766,7 @@ function sendChatMessage(value: string): void {
       sender_address: ONE_ADDRESS,
       message: `Error: ${error}`,
       channel: 'Nearby'
-    })
+    }).catch(console.error)
     console.error('sendChatMessage error', error)
   }
 }
@@ -932,13 +927,14 @@ function getSystemName(address: string): string {
   return ''
 }
 
-async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
+async function extendMessageMentionedUsers(
+  message: ChatMessageRepresentation
+): Promise<void> {
   const mentionMatches = message._originalMessage.match(NAME_MENTION_REGEXP)
   const mentionMatchesAndSenderName = [
     ...(mentionMatches ?? []),
     message.name.split('#')[0]
   ]
-  console.log('mentionMatchesAndSenderName', mentionMatchesAndSenderName)
 
   const playersInScene = (await getPlayersInScene({})).players.map(
     ({ userId }) => getPlayer({ userId })
@@ -948,37 +944,39 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
     const nameKey = mentionMatchOrSenderName.replace('@', '').toLowerCase()
     setIfNot(namedUsersData).get(nameKey)
 
-    console.log('nameKey', nameKey)
-    console.log(Array.from(namedUsersData.keys()))
     playersInScene.forEach((player) => {
       if (
-        (player &&
-          nameKey ===
-            getNameWithHashPostfix(
-              player.name,
-              player.userId
-            )?.toLowerCase()) ??
-        ''
-      ) {
-        namedUsersData.get(nameKey)!.playerData = getPlayer({
-          userId: player?.userId ?? ''
-        })
-        namedUsersData.set(
-          getNameWithHashPostfix(
+        player !== undefined &&
+        nameKey ===
+          (getNameWithHashPostfix(
             player?.name ?? '',
             player?.userId ?? ''
-          )?.toLowerCase() ?? '',
-          namedUsersData.get(nameKey) as ComposedPlayerData
-        )
-        checkProfileData()
-      } else if (player && nameKey === player.name.toLowerCase()) {
-        console.log('>>>', mentionMatchOrSenderName, player.name)
+          )?.toLowerCase() ?? '')
+      ) {
+        const namedUserData = namedUsersData.get(nameKey)
+        if (namedUserData !== undefined) {
+          namedUserData.playerData = getPlayer({
+            userId: player?.userId ?? ''
+          })
+          namedUsersData.set(
+            getNameWithHashPostfix(
+              player?.name ?? '',
+              player?.userId ?? ''
+            )?.toLowerCase() ?? '',
+            namedUsersData.get(nameKey) as ComposedPlayerData
+          )
+          checkProfileData()
+        }
+      } else if (
+        player !== undefined &&
+        nameKey === player?.name.toLowerCase()
+      ) {
         const composePlayerData = setIfNot(namedUsersData).get(nameKey)
-        composePlayerData.playerData = getPlayer({ userId: player.userId })
-        console.log('composePlayerData', JSON.stringify(composePlayerData))
+        composePlayerData.playerData = player
+
         checkProfileData()
       }
-      function checkProfileData() {
+      function checkProfileData(): void {
         const composePlayerData = setIfNot(namedUsersData).get(nameKey)
         if (setIfNot(namedUsersData).get(nameKey).profileData) {
           decorateMessageNameAndLinks(message, composePlayerData)
@@ -989,6 +987,7 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
               useCache: true
             })
             decorateMessageNameAndLinks(message, composePlayerData)
+            console.log('decoratedMessageAsync', message)
           })
         }
       }
@@ -1005,7 +1004,6 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
             ) &&
           avatarData.hasClaimedName
         ) {
-          console.log('<<< hasClaimedName')
           message.name = message.name.split('#')[0]
         }
         message.message = decorateMessageWithLinks(message._originalMessage)

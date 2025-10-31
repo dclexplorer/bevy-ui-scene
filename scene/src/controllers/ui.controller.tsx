@@ -33,14 +33,10 @@ import { SceneCatalogPanel } from '../components/map/scene-catalog-panel'
 import SettingsPage from '../ui-classes/main-menu/settings-page/SettingsPage'
 import { InteractableArea } from '../components/canvas/Canvas'
 import { BevyApi } from '../bevy-api'
-import { Image } from '../components/map/list-card'
 import { UiEntity } from '@dcl/react-ecs'
-import { Color4 } from '@dcl/sdk/math'
 import { COLOR } from '../components/color-palette'
 import useEffect = ReactEcs.useEffect
 import {
-  CameraMode,
-  CameraType,
   engine,
   PointerLock,
   Transform
@@ -164,15 +160,13 @@ export class UIController {
   }
 }
 
-function CameraPointer() {
+function CameraPointer(): ReactEcs.JSX.Element | null {
   const [visible, setVisible] = ReactEcs.useState(false)
   useEffect(() => {
     if (!Transform.has(engine.CameraEntity)) return
 
-    let cameraEntity = CameraMode.get(engine.CameraEntity)
-
     if (
-      cameraEntity.mode == CameraType.CT_THIRD_PERSON ||
+      !PointerLock.get(engine.CameraEntity).isPointerLocked ||
       getUiController().isMainMenuVisible
     ) {
       setVisible(false)

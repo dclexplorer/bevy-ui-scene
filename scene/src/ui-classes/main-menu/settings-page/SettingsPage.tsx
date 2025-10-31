@@ -78,7 +78,6 @@ function SettingsContent(): ReactElement {
       <SettingsNavBar
         currentCategory={currentCategory}
         onChange={(newCat: SettingCategory) => {
-          console.log('mnewCAt', newCat)
           setCurrentCategory(newCat)
         }}
       >
@@ -230,7 +229,6 @@ function SettingField({
           }}
           icon={{ spriteName: 'InfoButton', atlasName: 'icons' }}
           onMouseEnter={() => {
-            console.log('enter')
             setShowTooltip(true)
           }}
           onMouseLeave={() => {
@@ -295,7 +293,6 @@ function SettingField({
             setRefValue(value.toString())
           }}
           onRelease={(value) => {
-            console.log('onRelease', value)
             onChange(value)
           }}
           uiBackground={{
@@ -352,7 +349,6 @@ export function SettingsNavBar({
             active={currentCategory === `Graphics`}
             text={settingsCategoryTitle.Graphics}
             onClick={() => {
-              console.log('GRAPHICS')
               onChange(`Graphics`)
             }}
           />
