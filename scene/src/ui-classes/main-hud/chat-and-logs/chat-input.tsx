@@ -8,7 +8,6 @@ import { store } from '../../../state/store'
 import { updateHudStateAction } from '../../../state/hud/actions'
 import { executeTask } from '@dcl/sdk/ecs'
 import { sleep } from '../../../utils/dcl-utils'
-import { setUiFocus } from '~system/RestrictedActions'
 import { SUGGESTION_NAME_MENTION_REGEXP } from '../../../components/chat-message/ChatMessage'
 const state = {
   visible: true

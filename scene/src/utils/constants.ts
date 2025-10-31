@@ -1,5 +1,4 @@
 import { Color4 } from '@dcl/sdk/math'
-import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
 import type { PlaceFromApi } from '../ui-classes/scene-info-card/SceneInfoCard.types'
 import type { PhotoMetadataResponse } from 'src/ui-classes/photos/Photos.types'
 import { type TextureMode } from '@dcl/react-ecs'

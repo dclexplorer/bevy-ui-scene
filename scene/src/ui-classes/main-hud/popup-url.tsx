@@ -8,7 +8,6 @@ import { noop } from '../../utils/function-utils'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import Icon from '../../components/icon/Icon'
 import { Color4 } from '@dcl/sdk/math'
-import { Checkbox } from '../../components/checkbox'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { type Popup } from '../../components/popup-stack'
 

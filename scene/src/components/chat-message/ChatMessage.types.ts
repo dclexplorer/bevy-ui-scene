@@ -1,5 +1,5 @@
 import { type GetPlayerDataRes } from '../../utils/definitions'
-import { ProfileResponse } from '../../utils/passport-promise-utils'
+import { type ProfileResponse } from '../../utils/passport-promise-utils'
 
 export type ChatMessageDefinition = {
   sender_address: string

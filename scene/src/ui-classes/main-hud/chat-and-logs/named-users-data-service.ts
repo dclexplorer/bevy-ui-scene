@@ -1,5 +1,5 @@
 import type { GetPlayerDataRes } from '../../../utils/definitions'
-import { ProfileResponse } from '../../../utils/passport-promise-utils'
+import { type ProfileResponse } from '../../../utils/passport-promise-utils'
 import { getNameWithHashPostfix } from './ChatsAndLogs'
 
 export type nameString = `${string}#${string}` | string
@@ -22,7 +22,7 @@ export const getUserDataWithOrWithoutHash = (
   } else {
     return (
       namedUsersData.get(name.toLowerCase()) ??
-      namedUsersData.get(getNameWithHashPostfix(name, userId))
+      namedUsersData.get(getNameWithHashPostfix(name, userId) ?? '')
     )
   }
 }

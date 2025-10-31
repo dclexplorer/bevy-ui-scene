@@ -140,7 +140,7 @@ const EditNameContent = (): ReactElement => {
           zIndex: 1
         }}
       >
-        {(tabs.length && (
+        {(tabs?.length > 0 && (
           <TabComponent
             tabs={tabs}
             fontSize={getContentScaleRatio() * 32}

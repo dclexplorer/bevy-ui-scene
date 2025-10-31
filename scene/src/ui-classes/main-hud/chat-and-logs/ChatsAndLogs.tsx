@@ -77,7 +77,10 @@ import {
 } from '../../../utils/passport-promise-utils'
 import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
 import { ChatMentionSuggestions } from './chat-mention-suggestions'
-import { ComposedPlayerData, namedUsersData } from './named-users-data-service'
+import {
+  type ComposedPlayerData,
+  namedUsersData
+} from './named-users-data-service'
 
 type Box = {
   position: { x: number; y: number }
@@ -851,7 +854,9 @@ const _getNameWithHashPostfix = (
 export const getNameWithHashPostfix: (
   n: string,
   address: string
-) => `${string}#${string}` = memoizeFirstArg(_getNameWithHashPostfix)
+) => `${string}#${string}` | undefined = memoizeFirstArg(
+  _getNameWithHashPostfix
+)
 
 async function pushMessage(message: ChatMessageDefinition): Promise<void> {
   console.log('pushMessage', JSON.stringify(message))
@@ -888,7 +893,7 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
       : getNameWithHashPostfix(
           playerData?.name || `Unknown*`,
           message.sender_address
-        ),
+        ) ?? '',
     side:
       message.sender_address === getPlayer()?.userId
         ? CHAT_SIDE.RIGHT
@@ -947,15 +952,22 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
     console.log(Array.from(namedUsersData.keys()))
     playersInScene.forEach((player) => {
       if (
-        player &&
-        nameKey ===
-          getNameWithHashPostfix(player.name, player.userId).toLowerCase()
+        (player &&
+          nameKey ===
+            getNameWithHashPostfix(
+              player.name,
+              player.userId
+            )?.toLowerCase()) ??
+        ''
       ) {
         namedUsersData.get(nameKey)!.playerData = getPlayer({
-          userId: player.userId
+          userId: player?.userId ?? ''
         })
         namedUsersData.set(
-          getNameWithHashPostfix(player.name, player.userId).toLowerCase(),
+          getNameWithHashPostfix(
+            player?.name ?? '',
+            player?.userId ?? ''
+          )?.toLowerCase() ?? '',
           namedUsersData.get(nameKey) as ComposedPlayerData
         )
         checkProfileData()
@@ -973,7 +985,7 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
         } else {
           executeTask(async () => {
             composePlayerData.profileData = await fetchProfileData({
-              userId: player!.userId,
+              userId: player?.userId ?? '',
               useCache: true
             })
             decorateMessageNameAndLinks(message, composePlayerData)
@@ -983,7 +995,7 @@ async function extendMessageMentionedUsers(message: ChatMessageRepresentation) {
       function decorateMessageNameAndLinks(
         message: ChatMessageRepresentation,
         composeData: ComposedPlayerData
-      ) {
+      ): void {
         const [avatarData] = composeData.profileData?.avatars ?? []
         if (
           message.name ===

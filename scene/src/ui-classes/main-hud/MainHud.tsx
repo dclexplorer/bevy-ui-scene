@@ -198,6 +198,7 @@ export default class MainHud {
     this.emotesBackground = SELECTED_BUTTON_COLOR
     this.emotesHint = true
   }
+
   voiceChatEnter(): void {
     this.voiceChatBackground = SELECTED_BUTTON_COLOR
     this.voiceChatHint = true

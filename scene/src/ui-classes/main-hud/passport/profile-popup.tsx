@@ -33,11 +33,7 @@ import {
 import useEffect = ReactEcs.useEffect
 import useState = ReactEcs.useState
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
-import {
-  focusChatInput,
-  getNameWithHashPostfix
-} from '../chat-and-logs/ChatsAndLogs'
-import { sleep } from '../../../utils/dcl-utils'
+import { getNameWithHashPostfix } from '../chat-and-logs/ChatsAndLogs'
 import { fetchProfileData } from '../../../utils/passport-promise-utils'
 import { namedUsersData } from '../chat-and-logs/named-users-data-service'
 

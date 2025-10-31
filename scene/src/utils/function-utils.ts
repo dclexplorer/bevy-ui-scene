@@ -18,14 +18,14 @@ export function memoize<T, U>(fn: (arg: T) => U): (arg: T) => U {
 
 export function memoizeFirstArg<T, U>(
   fn: (...args: any[]) => U
-): (...args: any[]) => U {
+): (...args: any[]) => U | undefined {
   const cache = new Map<T, U>()
 
-  return function (...args: any[]): U {
+  return function (...args: any[]): U | undefined {
     const key = args[0] as T
 
     if (cache.has(key)) {
-      return cache.get(key)!
+      return cache.get(key)
     }
 
     const result = fn(...args)
@@ -156,7 +156,7 @@ export function dedupeById<T extends WithId<K>, K extends Id = Id>(
   return arr.filter((it) => counts.get(it.id) === 1)
 }
 
-export function setIfNot(map: Map<any, any>) {
+export function setIfNot(map: Map<any, any>): { get: (key: any) => any } {
   return {
     get: (key: any) => {
       if (!map.has(key)) {

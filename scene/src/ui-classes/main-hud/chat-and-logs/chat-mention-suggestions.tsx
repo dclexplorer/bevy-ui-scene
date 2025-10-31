@@ -2,15 +2,9 @@ import ReactEcs, { UiEntity } from '@dcl/react-ecs'
 import { Column, Row } from '../../../components/layout'
 import useEffect = ReactEcs.useEffect
 import { store } from '../../../state/store'
-import type { AppState } from '../../../state/types'
-import {
-  HUD_ACTION,
-  type UpdateHudAction,
-  updateHudStateAction
-} from '../../../state/hud/actions'
+import { updateHudStateAction } from '../../../state/hud/actions'
 import { getPlayersInScene } from '~system/Players'
 import { getPlayer } from '@dcl/sdk/src/players'
-import { executeTask } from '@dcl/sdk/ecs'
 import {
   NAME_MENTION_REGEXP,
   SUGGESTION_NAME_MENTION_REGEXP
@@ -110,7 +104,7 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
           getNameWithHashPostfix(
             player?.name ?? '',
             player?.userId ?? ''
-          ).toLowerCase()
+          )?.toLowerCase() ?? ''
         )
       ) {
         const hasClaimedName =
@@ -120,7 +114,7 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
             getNameWithHashPostfix(
               player?.name ?? '',
               player?.userId ?? ''
-            ).toLowerCase()
+            )?.toLowerCase() ?? ''
           )?.profileData?.avatars[0].hasClaimedName
 
         return hasClaimedName
@@ -128,7 +122,7 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
           : getNameWithHashPostfix(
               player?.name ?? '',
               player?.userId ?? ''
-            ).toLowerCase()
+            )?.toLowerCase()
       } else {
         return player?.name
       }

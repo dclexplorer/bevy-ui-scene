@@ -38,7 +38,7 @@ export async function initChatMembersCount(): Promise<void> {
           getNameWithHashPostfix(
             playerData?.name ?? '',
             playerData?.userId ?? ''
-          ).toLowerCase()
+          )?.toLowerCase()
         )
 
         const profileData = await fetchProfileData({
