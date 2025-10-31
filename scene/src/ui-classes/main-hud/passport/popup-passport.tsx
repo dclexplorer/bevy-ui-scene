@@ -390,9 +390,11 @@ function LinksSection(): ReactElement {
         }}
       >
         {profileData?.links?.length >= 0 &&
-          profileData.links.map((link: { title: string; url: string }) => (
-            <ProfileLink link={link} editing={state.editing} />
-          ))}
+          profileData.links.map(
+            (link: { title: string; url: string }, index: number) => (
+              <ProfileLink key={link.url} link={link} editing={state.editing} />
+            )
+          )}
         {state.editing &&
           (!profileData.links?.length || profileData.links?.length < 5) && (
             <Button
@@ -502,6 +504,7 @@ function ProfileLink({
 }: {
   link: { url: string; title: string }
   editing?: boolean
+  key?: string
 }): ReactElement {
   const profileData = store.getState().hud.profileData
   return (

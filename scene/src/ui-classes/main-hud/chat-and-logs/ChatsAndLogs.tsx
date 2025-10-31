@@ -29,7 +29,11 @@ import {
   type ChatMessageRepresentation,
   MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
-import { memoize } from '../../../utils/function-utils'
+import {
+  memoize,
+  memoizeFirstArg,
+  setIfNot
+} from '../../../utils/function-utils'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import {
@@ -48,8 +52,7 @@ import { type ReactElement } from '@dcl/react-ecs'
 import Icon from '../../../components/icon/Icon'
 import {
   getChatMembers,
-  initChatMembersCount,
-  nameAddressMap
+  initChatMembersCount
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
@@ -64,12 +67,16 @@ import { type PermissionUsed } from '../../../bevy-api/permission-definitions'
 import { Checkbox } from '../../../components/checkbox'
 import { VIEWPORT_ACTION } from '../../../state/viewport/actions'
 import { ChatInput } from './chat-input'
-import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { getPlayersInScene } from '~system/Players'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 import { cleanMapPlaces } from '../../../service/map-places'
 import { fetchProfileData } from '../../../utils/passport-promise-utils'
 import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
+import { ChatMentionSuggestions } from './chat-mention-suggestions'
+import {
+  type ComposedPlayerData,
+  namedUsersData
+} from './named-users-data-service'
 
 type Box = {
   position: { x: number; y: number }
@@ -166,7 +173,7 @@ export default class ChatAndLogs {
     ): Promise<void> => {
       for await (const chatMessage of stream) {
         if (chatMessage.message.indexOf('␑') === 0) return
-        this.pushMessage(chatMessage)
+        this.pushMessage(chatMessage).catch(console.error)
         if (!this.isOpen()) {
           state.unreadMessages++
         }
@@ -190,7 +197,7 @@ export default class ChatAndLogs {
             usedPermission.additional ? `(${usedPermission.additional})` : ''
           }`
         }
-        this.pushMessage(usedPermissionMessage)
+        this.pushMessage(usedPermissionMessage).catch(console.error)
       }
     }
 
@@ -284,7 +291,6 @@ export default class ChatAndLogs {
           messages: state.shownMessages,
           onMessageMenu: this.onMessageMenu
         })}
-
         {InputArea()}
         {ShowNewMessages()}
         {MessageSubMenu({ canvasInfo })}
@@ -650,6 +656,7 @@ function InputArea(): ReactElement {
         color: { ...Color4.Black(), a: 0.4 }
       }}
     >
+      <ChatMentionSuggestions />
       {state.inputFontSizeWorkaround && (
         <ChatInput inputFontSize={inputFontSize} onSubmit={sendChatMessage} />
       )}
@@ -687,15 +694,13 @@ function ChatArea({
         padding: { left: '3%', right: '8%' }
       }}
     >
-      {messages
-        .filter((m) => !state.filterMessages[m.messageType])
-        .map((message) => (
-          <ChatMessage
-            message={message}
-            key={message.id ?? message.timestamp}
-            onMessageMenu={onMessageMenu}
-          />
-        ))}
+      {messages.map((message) => (
+        <ChatMessage
+          message={message}
+          key={message.id ?? message.timestamp}
+          onMessageMenu={onMessageMenu}
+        />
+      ))}
     </UiEntity>
   )
 }
@@ -705,15 +710,14 @@ function sendChatMessage(value: string): void {
     if (value?.trim()) {
       if (value.startsWith('/goto')) {
         executeTask(async () => {
-          const [command, coords] = value.trim().split(' ')
+          const [, coords] = value.trim().split(' ')
           const [x, y] = coords.split(',')
-          console.log('>>>', x, y, coords, command)
+
           if (!isNaN(Number(x)) && !isNaN(Number(y))) {
             await teleportTo({
               worldCoordinates: { x: Number(x), y: Number(y) }
             })
           } else if (x && !y) {
-            console.log('checking world')
             const { acceptingUsers } = await fetch(
               `https://worlds-content-server.decentraland.org/world/${x}/about`
             ).then(async (res) => await res.json())
@@ -727,7 +731,7 @@ function sendChatMessage(value: string): void {
                 message: `Invalid world name <b>${x}</b>`,
                 sender_address: ONE_ADDRESS,
                 channel: 'Nearby'
-              })
+              }).catch(console.error)
             }
           }
         })
@@ -740,10 +744,17 @@ function sendChatMessage(value: string): void {
 <b>/reload</b> - reloads the current scene`,
           sender_address: ONE_ADDRESS,
           channel: 'Nearby'
-        })
+        }).catch(console.error)
       } else {
         BevyApi.sendChat(value, 'Nearby')
       }
+    }
+
+    if (value.startsWith('/')) {
+      executeTask(async () => {
+        await sleep(0)
+        setUiFocus({ elementId: '' }).catch(console.error)
+      })
     }
 
     executeTask(async () => {
@@ -755,7 +766,7 @@ function sendChatMessage(value: string): void {
       sender_address: ONE_ADDRESS,
       message: `Error: ${error}`,
       channel: 'Nearby'
-    })
+    }).catch(console.error)
     console.error('sendChatMessage error', error)
   }
 }
@@ -812,48 +823,52 @@ function isVectorInBox(point: Vector2, box: Box): boolean {
     y <= position.y + size.y
   )
 }
+
 export function messageHasMentionToMe(message: string): boolean {
-  return message.includes(`@${getPlayer()?.name}`)
-}
-
-async function getMentionedPlayersFromMessage(
-  message: string
-): Promise<Record<string, GetPlayerDataRes>> {
-  // TODO getPlayersInScene is deprecated, must use entities with component PlayerIdentityData instead
-  const playersInScene = (await getPlayersInScene({})).players
-
-  playersInScene.forEach((player) => {
-    const playerData = getPlayer({ userId: player.userId })
-    if (playerData && !nameAddressMap.has(playerData.name)) {
-      nameAddressMap.set(playerData.name, player.userId)
-    }
-  })
-
-  const mentionedNames = message.match(NAME_MENTION_REGEXP)
-
   return (
-    mentionedNames?.reduce((acc: Record<string, GetPlayerDataRes>, match) => {
-      const name = match.replace('@', '')
-      const address = nameAddressMap.get(name)
-
-      if (address) {
-        const player = getPlayer({
-          userId: address
-        })
-        if (player) {
-          acc[address] = player
-        }
-      }
-
-      return acc
-    }, {}) ?? {}
+    message
+      .toLowerCase()
+      .includes(
+        getNameWithHashPostfix(
+          getPlayer()?.name ?? '',
+          getPlayer()?.userId ?? ''
+        )?.toLowerCase() ?? ''
+      ) || message.toLowerCase().includes(getPlayer()?.name ?? '')
   )
 }
 
-function pushMessage(message: ChatMessageDefinition): void {
+const _getNameWithHashPostfix = (
+  name: string,
+  address: string
+): `${string}#${string}` => {
+  return `${name}#${address
+    .substring(address.length - 4, address.length)
+    .toLowerCase()}`
+}
+
+export const getNameWithHashPostfix: (
+  n: string,
+  address: string
+) => `${string}#${string}` | undefined = memoizeFirstArg(
+  _getNameWithHashPostfix
+)
+
+async function pushMessage(message: ChatMessageDefinition): Promise<void> {
+  console.log('pushMessage', JSON.stringify(message))
+  const messageType = isSystemMessage(message)
+    ? message.sender_address === ZERO_ADDRESS
+      ? MESSAGE_TYPE.SYSTEM
+      : MESSAGE_TYPE.SYSTEM_FEEDBACK
+    : MESSAGE_TYPE.USER
+  if (state.filterMessages[messageType]) {
+    return
+  }
+
   if (state.shownMessages.length >= BUFFER_SIZE) {
     state.shownMessages.shift()
   }
+
+  // El profileData de todos los usuarios mencionados : PROBLEM ?
 
   const playerData = getPlayer({ userId: message.sender_address })
 
@@ -865,28 +880,29 @@ function pushMessage(message: ChatMessageDefinition): void {
 
   const decoratedChatMessage: ChatMessageRepresentation = {
     ...message,
+    _originalMessage: message.message,
     id: Math.random(),
     timestamp,
     name: isSystemMessage(message)
       ? getSystemName(message.sender_address)
-      : playerData?.name || `Unknown*`,
+      : getNameWithHashPostfix(
+          playerData?.name || `Unknown*`,
+          message.sender_address
+        ) ?? '',
     side:
       message.sender_address === getPlayer()?.userId
         ? CHAT_SIDE.RIGHT
         : CHAT_SIDE.LEFT,
     hasMentionToMe: messageHasMentionToMe(message.message),
     isGuest: playerData ? playerData.isGuest : true,
-    messageType: isSystemMessage(message)
-      ? message.sender_address === ZERO_ADDRESS
-        ? MESSAGE_TYPE.SYSTEM
-        : MESSAGE_TYPE.SYSTEM_FEEDBACK
-      : MESSAGE_TYPE.USER,
+    messageType,
     player: getPlayer({ userId: message.sender_address }),
     message: decorateMessageWithLinks(message.message),
     mentionedPlayers: {}
   }
+
   decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
-  console.log('decoratedChatMessage', decoratedChatMessage)
+
   if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
     state.newMessages.push(decoratedChatMessage)
   } else {
@@ -901,28 +917,7 @@ function pushMessage(message: ChatMessageDefinition): void {
   async function decorateAsyncMessageData(
     message: ChatMessageRepresentation
   ): Promise<void> {
-    const profileData = await fetchProfileData({
-      userId: message.sender_address
-    })
-    const [avatarData] = profileData?.avatars ?? []
-    if (avatarData !== undefined) {
-      message.hasClaimedName = avatarData.hasClaimedName
-      message.name =
-        avatarData.name ??
-        message.name ??
-        (isSystemMessage(message)
-          ? getSystemName(message.sender_address)
-          : playerData?.name || `Unknown*`)
-    }
-
-    if (!message.hasClaimedName) {
-      message.name = message.name + `#${message.sender_address.slice(-4)}`
-    }
-
-    message.mentionedPlayers = {
-      ...message.mentionedPlayers,
-      ...(await getMentionedPlayersFromMessage(message.message))
-    }
+    extendMessageMentionedUsers(message).catch(console.error)
   }
 }
 
@@ -930,4 +925,91 @@ function getSystemName(address: string): string {
   if (address === ONE_ADDRESS) return ''
   if (address === ZERO_ADDRESS) return ''
   return ''
+}
+
+async function extendMessageMentionedUsers(
+  message: ChatMessageRepresentation
+): Promise<void> {
+  const mentionMatches = message._originalMessage.match(NAME_MENTION_REGEXP)
+  const mentionMatchesAndSenderName = [
+    ...(mentionMatches ?? []),
+    message.name.split('#')[0]
+  ]
+
+  const playersInScene = (await getPlayersInScene({})).players.map(
+    ({ userId }) => getPlayer({ userId })
+  )
+
+  for (const mentionMatchOrSenderName of mentionMatchesAndSenderName ?? []) {
+    const nameKey = mentionMatchOrSenderName.replace('@', '').toLowerCase()
+    setIfNot(namedUsersData).get(nameKey)
+
+    playersInScene.forEach((player) => {
+      if (
+        player !== undefined &&
+        nameKey ===
+          (getNameWithHashPostfix(
+            player?.name ?? '',
+            player?.userId ?? ''
+          )?.toLowerCase() ?? '')
+      ) {
+        const namedUserData = namedUsersData.get(nameKey)
+        if (namedUserData !== undefined) {
+          namedUserData.playerData = getPlayer({
+            userId: player?.userId ?? ''
+          })
+          namedUsersData.set(
+            getNameWithHashPostfix(
+              player?.name ?? '',
+              player?.userId ?? ''
+            )?.toLowerCase() ?? '',
+            namedUsersData.get(nameKey) as ComposedPlayerData
+          )
+          checkProfileData()
+        }
+      } else if (
+        player !== undefined &&
+        nameKey === player?.name.toLowerCase()
+      ) {
+        const composePlayerData = setIfNot(namedUsersData).get(nameKey)
+        composePlayerData.playerData = player
+
+        checkProfileData()
+      }
+      function checkProfileData(): void {
+        const composePlayerData = setIfNot(namedUsersData).get(nameKey)
+        if (setIfNot(namedUsersData).get(nameKey).profileData) {
+          decorateMessageNameAndLinks(message, composePlayerData)
+        } else {
+          executeTask(async () => {
+            composePlayerData.profileData = await fetchProfileData({
+              userId: player?.userId ?? '',
+              useCache: true
+            })
+            decorateMessageNameAndLinks(message, composePlayerData)
+            console.log('decoratedMessageAsync', message)
+          })
+        }
+      }
+      function decorateMessageNameAndLinks(
+        message: ChatMessageRepresentation,
+        composeData: ComposedPlayerData
+      ): void {
+        const [avatarData] = composeData.profileData?.avatars ?? []
+        if (
+          message.name ===
+            getNameWithHashPostfix(
+              composeData.playerData?.name ?? '',
+              composeData.playerData?.userId ?? ''
+            ) &&
+          avatarData.hasClaimedName
+        ) {
+          message.name = message.name.split('#')[0]
+        }
+        message.message = decorateMessageWithLinks(message._originalMessage)
+      }
+    })
+  }
+
+  message.message = decorateMessageWithLinks(message._originalMessage)
 }

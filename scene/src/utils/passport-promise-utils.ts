@@ -12,18 +12,26 @@ export type ProfileResponse = {
   timestamp: number
   avatars: Avatar[]
 }
+export const profileDataMap = new Map<string, ProfileResponse>()
 
 export async function fetchProfileData({
-  userId
+  userId,
+  useCache = false
 }: {
   userId: string
+  useCache?: boolean
 }): Promise<ProfileResponse> {
   const realm = await getRealm({})
   const catalystBaseURl = realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
   const passportDataURL = `${catalystBaseURl}/lambdas/profiles/${userId}`
-  const response = await fetchJsonOrTryFallback(passportDataURL)
 
-  return response
+  if (useCache && profileDataMap.has(userId)) {
+    return profileDataMap.get(userId) as ProfileResponse
+  } else {
+    const result = await fetchJsonOrTryFallback(passportDataURL)
+    profileDataMap.set(userId, result)
+    return result
+  }
 }
 
 export type NameDefinition = {

@@ -1,4 +1,5 @@
 import { type GetPlayerDataRes } from '../../utils/definitions'
+import { type ProfileResponse } from '../../utils/passport-promise-utils'
 
 export type ChatMessageDefinition = {
   sender_address: string
@@ -17,12 +18,15 @@ export enum MESSAGE_TYPE {
 export type ChatMessageRepresentation = ChatMessageDefinition & {
   id: number
   timestamp: number
-  name: string
-  hasClaimedName?: boolean
+  name: `${string}#${string}` | string
   side: CHAT_SIDE
   hasMentionToMe: boolean
   isGuest: boolean
   messageType: MESSAGE_TYPE
   player: GetPlayerDataRes | null
-  mentionedPlayers: Record<string, GetPlayerDataRes>
+  mentionedPlayers: Record<
+    string,
+    { playerData: GetPlayerDataRes; profileData: ProfileResponse }
+  > // address, {}
+  _originalMessage: string
 }

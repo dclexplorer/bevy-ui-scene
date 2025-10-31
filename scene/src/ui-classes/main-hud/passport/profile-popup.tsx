@@ -6,7 +6,7 @@ import {
   BORDER_RADIUS_F,
   getBackgroundFromAtlas
 } from '../../../utils/ui-utils'
-import { noop } from '../../../utils/function-utils'
+import { noop, setIfNot } from '../../../utils/function-utils'
 import { store } from '../../../state/store'
 import {
   closeLastPopupAction,
@@ -33,8 +33,9 @@ import {
 import useEffect = ReactEcs.useEffect
 import useState = ReactEcs.useState
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
-import { focusChatInput } from '../chat-and-logs/ChatsAndLogs'
-import { sleep } from '../../../utils/dcl-utils'
+import { getNameWithHashPostfix } from '../chat-and-logs/ChatsAndLogs'
+import { fetchProfileData } from '../../../utils/passport-promise-utils'
+import { namedUsersData } from '../chat-and-logs/named-users-data-service'
 
 export function setupProfilePopups(): void {
   const avatarTracker = createOrGetAvatarsTracker()
@@ -165,9 +166,9 @@ function ProfileContent({
             uiTransform={{ height: 1 }}
           />
         </Row>
-        {player.userId !== getPlayer()?.userId
-          ? ProfileButtons({ player })
-          : null}
+        {player.userId !== getPlayer()?.userId ? (
+          <MentionButton player={player} />
+        ) : null}
         {/* // TODO Exit / Sign out : OwnProfileButtons({player}) */}
       </UiEntity>
     </UiEntity>
@@ -288,25 +289,34 @@ const PROFILE_BUTTON_TRANSFORM: UiTransformProps = {
   justifyContent: 'flex-start',
   alignSelf: 'center'
 }
-function ProfileButtons({
-  player
-}: {
-  player: GetPlayerDataRes
-}): ReactElement[] {
-  return [
+function MentionButton({ player }: { player: GetPlayerDataRes }): ReactElement {
+  useEffect(() => {
+    executeTask(async () => {
+      const userData = setIfNot(namedUsersData).get(player.name.toLowerCase())
+      userData.playerData = userData.playerData ?? player
+      userData.profileData =
+        userData.profileData ??
+        (await fetchProfileData({ userId: player.userId, useCache: true }))
+    })
+  }, [])
+
+  return (
     <ButtonTextIcon
+      key={'profile-button-message-' + player.userId}
       uiTransform={PROFILE_BUTTON_TRANSFORM}
       value={'<b>Mention</b>'}
       onMouseDown={() => {
         executeTask(async () => {
           closeDialog()
+          const nameToRender = namedUsersData.get(player.name.toLowerCase())
+            ?.profileData?.avatars[0].hasClaimedName
+            ? `${player.name}`
+            : `${getNameWithHashPostfix(player.name, player.userId)}`
           store.dispatch(
             updateHudStateAction({
-              chatInput: store.getState().hud.chatInput + ` @${player.name} `
+              chatInput: store.getState().hud.chatInput + ` @${nameToRender} `
             })
           )
-          await sleep(100)
-          focusChatInput(true)
         })
       }}
       icon={{
@@ -315,7 +325,7 @@ function ProfileButtons({
       }}
       fontSize={getContentScaleRatio() * 42}
     />
-  ]
+  )
 }
 
 function closeDialog(): void {

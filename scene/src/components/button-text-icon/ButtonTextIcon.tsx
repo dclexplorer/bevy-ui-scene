@@ -11,6 +11,7 @@ import { ROUNDED_TEXTURE_BACKGROUND, TRANSPARENT } from '../../utils/constants'
 
 function ButtonTextIcon(props: {
   // Events
+  key?: string
   onMouseEnter?: Callback
   onMouseLeave?: Callback
   onMouseDown: Callback

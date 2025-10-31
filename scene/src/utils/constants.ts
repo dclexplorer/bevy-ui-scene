@@ -1,6 +1,4 @@
 import { Color4 } from '@dcl/sdk/math'
-import { type Friend } from '../ui-classes/main-hud/friends/Friends.types'
-import { type Invitation } from '../components/friend-invitation/FriendInvitation.types'
 import type { PlaceFromApi } from '../ui-classes/scene-info-card/SceneInfoCard.types'
 import type { PhotoMetadataResponse } from 'src/ui-classes/photos/Photos.types'
 import { type TextureMode } from '@dcl/react-ecs'
@@ -444,45 +442,6 @@ export const EMPLOYMENT_STATUS = [
   'Home/Family',
   'Retired',
   'Other'
-]
-
-export const TEST = ['- Select an option -', 'Test', 'Other']
-
-export const TEST_FRIENDS: Friend[] = [
-  { id: '1', status: 'online' },
-  { id: '2', status: 'offline' },
-  { id: '3', status: 'online' },
-  { id: '4', status: 'offline' },
-  { id: '5', status: 'online' },
-  { id: '6', status: 'offline' },
-  { id: '7', status: 'online' },
-  { id: '8', status: 'offline' },
-  { id: '9', status: 'online' },
-  { id: '10', status: 'offline' },
-  { id: '11', status: 'online' },
-  { id: '12', status: 'offline' },
-  { id: '13', status: 'online' }
-]
-
-export const TEST_INVITATIONS: Invitation[] = [
-  { id: '1', status: 'received', message: 'Hey bro...', date: 'DEC 1' },
-  { id: '2', status: 'sent', message: 'Hello', date: 'DEC 2' },
-  { id: '3', status: 'sent', message: 'Whats up?', date: 'DEC 3' },
-  {
-    id: '4',
-    status: 'received',
-    message: 'Want to earn crypto?',
-    date: 'DEC 4'
-  },
-  { id: '5', status: 'sent', message: 'asd', date: 'DEC 5' },
-  { id: '6', status: 'received', message: 'asd2', date: 'DEC 6' },
-  {
-    id: '7',
-    status: 'sent',
-    message:
-      'This is an extense message to try the truncater function - This is an extense message to try the truncater function - This is an extense message to try the truncater function - This is an extense message to try the truncater function - This is an extense message to try the truncater function',
-    date: 'DEC 7'
-  }
 ]
 
 export const LEFT_PANEL_MIN_WIDTH = 280

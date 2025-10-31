@@ -10,7 +10,6 @@ import { openExternalUrl } from '~system/RestrictedActions'
 import { type AtlasIcon } from '../../utils/definitions'
 import { ALPHA_BLACK_PANEL, SELECTED_BUTTON_COLOR } from '../../utils/constants'
 import { ChatsAndLogs } from './chat-and-logs'
-import { Friends } from './friends'
 import { SceneInfo } from './scene-info'
 import { switchEmotesWheelVisibility } from '../../emotes-wheel/emotes-wheel'
 import { type ReactElement } from '@dcl/react-ecs'
@@ -82,11 +81,6 @@ export default class MainHud {
     spriteName: 'Explore off'
   }
 
-  private readonly friendsIcon: AtlasIcon = {
-    atlasName: 'navbar',
-    spriteName: 'Friends off'
-  }
-
   private readonly chatIcon: AtlasIcon = {
     atlasName: 'navbar',
     spriteName: 'Chat off'
@@ -114,7 +108,6 @@ export default class MainHud {
   private walletHint: boolean = false
 
   private voiceChatHint: boolean = false
-  private friendsHint: boolean = false
   // private cameraHint: boolean = false
   // private experiencesHint: boolean = false
 
@@ -128,7 +121,6 @@ export default class MainHud {
   private walletBackground: Color4 | undefined = undefined
   private chatBackground: Color4 | undefined = undefined
   private voiceChatBackground: Color4 | undefined = undefined
-  private friendsBackground: Color4 | undefined = undefined
   // private cameraBackground: Color4 | undefined = undefined
   // private experiencesBackground: Color4 | undefined = undefined
 
@@ -139,9 +131,7 @@ export default class MainHud {
   public sceneInfo: SceneInfo
   private readonly chatAndLogs: ChatsAndLogs
   public chatOpen: boolean = false
-  public friendsOpen: boolean = false
   public voiceChatOn: boolean = false
-  private readonly friends: Friends
 
   constructor(uiController: UIController) {
     BevyApi.showUi({ hash: undefined, show: true }).catch(console.error)
@@ -149,7 +139,6 @@ export default class MainHud {
     this.uiController = uiController
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatsAndLogs()
-    this.friends = new Friends(uiController)
   }
 
   voiceChatDown(): void {
@@ -210,12 +199,6 @@ export default class MainHud {
     this.emotesHint = true
   }
 
-  friendsEnter(): void {
-    this.friendsIcon.spriteName = 'Friends on'
-    this.friendsBackground = SELECTED_BUTTON_COLOR
-    this.friendsHint = true
-  }
-
   voiceChatEnter(): void {
     this.voiceChatBackground = SELECTED_BUTTON_COLOR
     this.voiceChatHint = true
@@ -247,11 +230,6 @@ export default class MainHud {
     this.exploreBackground = undefined
     this.exploreHint = false
 
-    if (!this.friendsOpen) {
-      this.friendsIcon.spriteName = 'Friends off'
-      this.friendsBackground = undefined
-    }
-    this.friendsHint = false
     if (!this.chatAndLogs.isOpen()) {
       // TODO review for a more reactive pattern,to have sync between menu and chat, e.g. when chat is open button icon should be "Chat On"
       this.chatIcon.spriteName = 'Chat off'
@@ -265,22 +243,12 @@ export default class MainHud {
   }
 
   openCloseChat(): void {
-    this.friendsOpen = false
     store.dispatch(
       updateHudStateAction({ chatOpen: !store.getState().hud.chatOpen })
     )
   }
 
-  openCloseFriends(): void {
-    this.friendsEnter()
-    this.friendsOpen = !this.friendsOpen
-    this.updateButtons()
-  }
-
   mainUi(): ReactEcs.JSX.Element | null {
-    if (this.uiController.menu.isOpen()) return null
-    if (store.getState().hud.mapModeActive) return null
-
     return (
       <UiEntity
         uiTransform={{
@@ -323,7 +291,6 @@ export default class MainHud {
             }}
           >
             {this.chatAndLogs.isOpen() && this.chatAndLogs.mainUi()}
-            {this.friendsOpen && this.friends.mainUi()}
           </UiEntity>
         </UiEntity>
       </UiEntity>
@@ -379,13 +346,11 @@ export default class MainHud {
               this.updateButtons()
             }}
             onMouseDown={() => {
+              console.log('showing passport', getPlayer()?.userId)
               store.dispatch(
                 pushPopupAction({
-                  type: HUD_POPUP_TYPE.PROFILE_MENU,
-                  data: {
-                    align: 'left',
-                    player: getPlayer()
-                  }
+                  type: HUD_POPUP_TYPE.PASSPORT,
+                  data: getPlayer()?.userId
                 })
               )
               // this.uiController.profile.showCard()
@@ -533,45 +498,6 @@ export default class MainHud {
             flexDirection: 'column'
           }}
         >
-          {/* <ButtonIcon uiTransform={{height:buttonSize, width:buttonSize}}
-                onMouseEnter={()=>{this.cameraEnter()}}
-                onMouseLeave={()=>{this.cameraLeave()}}
-                onMouseDown={()=>{console.log('Camera clicked')}}
-                backgroundColor={this.cameraBackground}
-                icon={this.cameraIcon}
-                hintText={'Camera'}
-                showHint={this.cameraHint} />
-
-                <ButtonIcon uiTransform={{height:buttonSize, width:buttonSize}}
-                onMouseEnter={()=>{this.experiencesEnter()}}
-                onMouseLeave={()=>{this.updateButtons()}}
-                onMouseDown={()=>{console.log('clicked')}}
-                backgroundColor={this.experiencesBackground}
-                icon={this.experiencesIcon}
-                hintText={'Experiences'}
-                showHint={this.experiencesHint} />
-              */}
-          {/*          <ButtonIcon
-            uiTransform={buttonTransform}
-            onMouseEnter={() => {
-              this.friendsEnter()
-            }}
-            onMouseLeave={() => {
-              this.updateButtons()
-            }}
-            onMouseDown={() => {
-              this.openCloseFriends()
-            }}
-            backgroundColor={this.friendsBackground}
-            icon={this.friendsIcon}
-            hintText={'Friends'}
-            showHint={this.friendsHint}
-            notifications={
-              this.uiController.friends.incomingFriendsMessages +
-              this.uiController.friends.requestsNumber
-            }
-            iconSize={buttonIconSize}
-          /> */}
           {/*
              // TODO we need BevyApi to activate/deactivate voice chat/
 
