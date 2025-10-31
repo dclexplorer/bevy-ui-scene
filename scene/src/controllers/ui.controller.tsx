@@ -33,6 +33,19 @@ import { SceneCatalogPanel } from '../components/map/scene-catalog-panel'
 import SettingsPage from '../ui-classes/main-menu/settings-page/SettingsPage'
 import { InteractableArea } from '../components/canvas/Canvas'
 import { BevyApi } from '../bevy-api'
+import { Image } from '../components/map/list-card'
+import { UiEntity } from '@dcl/react-ecs'
+import { Color4 } from '@dcl/sdk/math'
+import { COLOR } from '../components/color-palette'
+import useEffect = ReactEcs.useEffect
+import {
+  CameraMode,
+  CameraType,
+  engine,
+  PointerLock,
+  Transform
+} from '@dcl/sdk/ecs'
+import { getViewportWidth } from '../service/canvas-ratio'
 
 let loadingAndLogin: any = null
 
@@ -125,6 +138,7 @@ export class UIController {
   ui(): ReactEcs.JSX.Element {
     return (
       <Canvas>
+        <CameraPointer />
         {InteractableArea({ active: false })}
 
         {!this.isMainMenuVisible && this.mainHud.mainUi()}
@@ -148,4 +162,50 @@ export class UIController {
       </Canvas>
     )
   }
+}
+
+function CameraPointer() {
+  const [visible, setVisible] = ReactEcs.useState(false)
+  useEffect(() => {
+    if (!Transform.has(engine.CameraEntity)) return
+
+    let cameraEntity = CameraMode.get(engine.CameraEntity)
+
+    if (
+      cameraEntity.mode == CameraType.CT_THIRD_PERSON ||
+      getUiController().isMainMenuVisible
+    ) {
+      setVisible(false)
+    } else {
+      setVisible(true)
+    }
+  })
+  if (!visible) return null
+  const size = getViewportWidth() * 0.03
+  return (
+    <UiEntity
+      uiTransform={{
+        positionType: 'absolute',
+        position: {
+          top: '50%',
+          left: '50%'
+        },
+        margin: {
+          top: -size / 4,
+          left: -size / 2
+        },
+        height: size,
+        width: size,
+        opacity: 0.3
+      }}
+      uiBackground={{
+        color: COLOR.WHITE,
+        textureMode: 'stretch',
+
+        texture: {
+          src: `assets/images/camera-pointer.png`
+        }
+      }}
+    />
+  )
 }
