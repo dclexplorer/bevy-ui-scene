@@ -36,11 +36,7 @@ import { BevyApi } from '../bevy-api'
 import { UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../components/color-palette'
 import useEffect = ReactEcs.useEffect
-import {
-  engine,
-  PointerLock,
-  Transform
-} from '@dcl/sdk/ecs'
+import { engine, PointerLock, Transform } from '@dcl/sdk/ecs'
 import { getViewportWidth } from '../service/canvas-ratio'
 
 let loadingAndLogin: any = null
