@@ -33,10 +33,7 @@ export const ChatMentionSuggestions = (): ReactElement => {
         ?.filter((m: string) => m !== lastMatch)
         .map((m) => m.replace('@', '')) ?? []
 
-    if (
-      lastMatch &&
-      !suggestedNames.includes(lastMatch.replace('@', ''))
-    ) {
+    if (lastMatch && !suggestedNames.includes(lastMatch.replace('@', ''))) {
       getSuggestedNames(lastMatch.replace('@', ''))
         .then((suggestedNames) => {
           store.dispatch(
