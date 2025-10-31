@@ -710,7 +710,7 @@ function sendChatMessage(value: string): void {
     if (value?.trim()) {
       if (value.startsWith('/goto')) {
         executeTask(async () => {
-          const [command, coords] = value.trim().split(' ')
+          const [, coords] = value.trim().split(' ')
           const [x, y] = coords.split(',')
 
           if (!isNaN(Number(x)) && !isNaN(Number(y))) {
