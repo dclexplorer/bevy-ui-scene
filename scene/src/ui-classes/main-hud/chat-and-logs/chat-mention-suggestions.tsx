@@ -25,6 +25,7 @@ export const ChatMentionSuggestions = (): ReactElement => {
     const [lastMatch] =
       store.getState().hud.chatInput?.match(SUGGESTION_NAME_MENTION_REGEXP) ??
       []
+    console.log('lastMatch', lastMatch)
     const otherMatches =
       store
         .getState()
@@ -32,7 +33,10 @@ export const ChatMentionSuggestions = (): ReactElement => {
         ?.filter((m: string) => m !== lastMatch)
         .map((m) => m.replace('@', '')) ?? []
 
-    if (lastMatch) {
+    if (
+      lastMatch &&
+      suggestedNames.includes(lastMatch.replace('@', '')) === false
+    ) {
       getSuggestedNames(lastMatch.replace('@', ''))
         .then((suggestedNames) => {
           store.dispatch(

@@ -893,7 +893,7 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
       message.sender_address === getPlayer()?.userId
         ? CHAT_SIDE.RIGHT
         : CHAT_SIDE.LEFT,
-    hasMentionToMe: false,
+    hasMentionToMe: messageHasMentionToMe(message.message),
     isGuest: playerData ? playerData.isGuest : true,
     messageType,
     player: getPlayer({ userId: message.sender_address }),
