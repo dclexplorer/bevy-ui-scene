@@ -85,7 +85,7 @@ function NotificationsContent(): ReactElement {
         setNotifications(filteredNotifications)
         setLoadingNotifications(false)
 
-        markAllRead(notifications)
+        markAllRead(filteredNotifications)
       } catch (error) {
         console.error(error)
       }
