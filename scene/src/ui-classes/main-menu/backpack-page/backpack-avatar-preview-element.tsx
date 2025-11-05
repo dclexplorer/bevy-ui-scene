@@ -29,7 +29,7 @@ export function BackpackAvatarPreviewElement(): ReactElement {
       avatarShapeDefinition={avatarShapeDefinition}
       uiTransform={{}}
       userId={getPlayer()?.userId ?? ''}
-      allowZoom={true}
+      allowZoom={false}
       allowRotation={true}
       cameraCategory={activeWearableCategory}
     />

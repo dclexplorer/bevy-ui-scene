@@ -10,14 +10,20 @@ import {
   CameraLayer,
   CameraLayers,
   engine,
+  executeTask,
   PrimaryPointerInfo,
   TextureCamera,
-  Transform
+  Transform,
+  UiScrollResult,
+  UiTransform
 } from '@dcl/sdk/ecs'
 import {
   AVATAR_CAMERA_POSITION,
   CATEGORY_CAMERA,
-  getCameraPositionPerCategory
+  getCameraPositionPerCategory,
+  getCameraZoomPerCategory,
+  OrthographicMode,
+  setAvatarPreviewZoomFactor
 } from './AvatarPreview'
 import { Color4, Quaternion, Vector2 } from '@dcl/sdk/math'
 import { PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
@@ -36,6 +42,8 @@ import {
   WEARABLE_CATEGORY_DEFINITIONS,
   WearableCategory
 } from '../../service/categories'
+import { sleep } from '../../utils/dcl-utils'
+
 // TODO GltfContainerLoadingState
 const CAMERA_SIZE = { WIDTH: 1600, HEIGHT: 1800 }
 const state = {
@@ -70,32 +78,54 @@ export function AvatarPreviewElement2({
   const [elementId] = useState<string>(
     `${AVATAR_PREVIEW_ELEMENT_ID}-${userId}-${getAliveAvatarPreviews()}`
   )
-  const [listeningZoom, setListeningZoom] = useState(false)
-  const [zoomFactor] = useState(0.5)
+  const [listeningZoom, setListeningZoom] = useState(false) // when mouse inside
+  const [zoomFactor, setZoomFactor] = useState(
+    getCameraZoomPerCategory(cameraCategory)
+  )
+
+  const [scrollPosition, setScrollPosition] = useState(
+    allowZoom ? getScrollVector(zoomFactor) : undefined
+  )
+
   useEffect(() => {
-    console.log('goo')
+    if (avatarCamera) {
+      const mode: OrthographicMode = TextureCamera.getMutable(avatarCamera)
+        ?.mode as OrthographicMode
+
+      mode.orthographic.verticalRange =
+        getVerticalRangeFromZoomFactor(zoomFactor)
+    }
+  }, [zoomFactor])
+
+  useEffect(() => {
     const { avatarEntity, cameraEntity } = createAvatarPreview({
       id: userId,
       avatarShapeDefinition,
-      cameraCategory
+      cameraCategory,
+      zoomFactor
     })
     setAvatarCamera(cameraEntity)
     setAvatarEntity(avatarEntity)
     state.alivePreviews++
+
     return () => {
       state.alivePreviews--
       console.log('disposing avatar preview')
       engine.removeEntity(avatarEntity)
       engine.removeEntity(cameraEntity)
-      // TODO dispose and destroy avatar camera preview entities and components
     }
   }, [])
+
   useEffect(() => {
-    console.log('cameraCategory change->', cameraCategory)
-    if (!avatarCamera) return
-    Transform.getMutable(avatarCamera).position =
-      getCameraPositionPerCategory(cameraCategory)
+    executeTask(async () => {
+      console.log('cameraCategory change->', cameraCategory)
+      if (!avatarCamera) return
+      Transform.getMutable(avatarCamera).position =
+        getCameraPositionPerCategory(cameraCategory)
+      setZoomFactor(getCameraZoomPerCategory(cameraCategory))
+    })
   }, [cameraCategory])
+
   useEffect(() => {
     console.log('avatar definition has changed')
     const avatarShapeMutable = AvatarShape.getMutableOrNull(avatarEntity!)
@@ -103,14 +133,25 @@ export function AvatarPreviewElement2({
     Object.assign(avatarShapeMutable, avatarShapeDefinition)
   }, [avatarShapeDefinition])
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    if (!avatarCamera) return
+    if (!allowZoom) return
+
+    for (const [, scroll, transform] of engine.getEntitiesWith(
+      UiScrollResult,
+      UiTransform
+    )) {
+      if (transform.elementId !== elementId) continue
+      if (scroll.value === undefined) continue
+
+      setZoomFactor(scroll.value.y)
+    }
+    return () => {}
+  })
 
   return (
     <UiEntity
       uiTransform={{
-        borderRadius: 0,
-        borderColor: COLOR.RED,
-        borderWidth: 1,
         height: getContentHeight(),
         width: (540 / 1920) * getContentWidth() * 0.85,
         ...uiTransform
@@ -119,9 +160,6 @@ export function AvatarPreviewElement2({
       {avatarCamera && (
         <UiEntity
           uiTransform={{
-            borderRadius: 0,
-            borderColor: COLOR.GREEN,
-            borderWidth: 1,
             positionType: 'absolute',
             position: {
               left: '-75%'
@@ -137,18 +175,16 @@ export function AvatarPreviewElement2({
           <UiEntity
             key="avatar-preview-zoom"
             uiTransform={{
-              borderRadius: 0,
-              borderColor: COLOR.YELLOW,
-              borderWidth: 1,
               height: '100%',
               width: '100%',
               elementId,
-              overflow: 'scroll',
-              scrollPosition:
-                listeningZoom && allowZoom
-                  ? undefined
-                  : getScrollVector(zoomFactor),
-              scrollVisible: 'hidden'
+              ...(allowZoom
+                ? {
+                    overflow: 'scroll',
+                    scrollPosition,
+                    scrollVisible: 'hidden'
+                  }
+                : {})
             }}
             onMouseDown={() => {
               if (!allowRotation) return
@@ -200,11 +236,13 @@ export function AvatarPreviewElement2({
 function createAvatarPreview({
   id = '',
   avatarShapeDefinition,
-  cameraCategory = null
+  cameraCategory = null,
+  zoomFactor = 0.5
 }: {
   id: string
   avatarShapeDefinition: PBAvatarShape
   cameraCategory?: WearableCategory | null
+  zoomFactor?: number
 }) {
   console.log('createAvatarPreview2', id)
   const avatarEntity: Entity = engine.addEntity()
@@ -243,7 +281,9 @@ function createAvatarPreview({
     clearColor: Color4.create(0.4, 0.4, 1.0, 0),
     mode: {
       $case: 'orthographic',
-      orthographic: { verticalRange: 6 }
+      orthographic: {
+        verticalRange: getVerticalRangeFromZoomFactor(zoomFactor)
+      }
     },
     volume: 1
   })
@@ -345,4 +385,7 @@ function AvatarPreviewInstructions({
 }
 function _getScrollVector(positionY: number): Vector2 {
   return Vector2.create(0, positionY)
+}
+function getVerticalRangeFromZoomFactor(zoomFactor: number) {
+  return zoomFactor * 10 + 10 * 0.3
 }
