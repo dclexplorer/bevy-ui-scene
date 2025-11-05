@@ -14,12 +14,7 @@ import {
   TextureCamera,
   Transform
 } from '@dcl/sdk/ecs'
-import {
-  AVATAR_CAMERA_POSITION,
-  getAvatarCamera,
-  getAvatarPreviewQuaternion,
-  setAvatarPreviewRotation
-} from './AvatarPreview'
+import { AVATAR_CAMERA_POSITION } from './AvatarPreview'
 import { Color4, Quaternion, Vector2 } from '@dcl/sdk/math'
 import { PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
 import { Entity } from '@dcl/ecs'
@@ -33,7 +28,7 @@ import {
 } from '../../service/custom-cursor-service'
 import { memoize } from '../../utils/function-utils'
 import { COLOR } from '../color-palette'
-
+// TODO GltfContainerLoadingState
 const CAMERA_SIZE = { WIDTH: 1600, HEIGHT: 1800 }
 const state = {
   alivePreviews: 0
@@ -86,6 +81,9 @@ export function AvatarPreviewElement2({
 
   useEffect(() => {
     console.log('avatar definition has changed')
+    const avatarShapeMutable = AvatarShape.getMutableOrNull(avatarEntity!)
+    if (!avatarShapeMutable) return
+    Object.assign(avatarShapeMutable, avatarShapeDefinition)
   }, [avatarShapeDefinition])
 
   return (
@@ -134,9 +132,11 @@ export function AvatarPreviewElement2({
               scrollVisible: 'hidden'
             }}
             onMouseDown={() => {
+              if (!allowRotation) return
               showMouseCursor(ROTATE_ICON)
             }}
             onMouseDragLocked={() => {
+              if (!allowRotation) return
               showMouseCursor(ROTATE_ICON)
               const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
               const deltaX: number = pointerInfo?.screenDelta?.x ?? 0

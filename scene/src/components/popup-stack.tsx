@@ -10,6 +10,7 @@ import { ErrorPopup } from '../ui-classes/main-hud/error-popup'
 import { NotificationsMenu } from '../ui-classes/main-hud/notifications-menu'
 import { PermissionRequestPopup } from '../ui-classes/main-hud/permissions-popups/permission-request-popup'
 import { PopupTeleport } from '../ui-classes/main-hud/popup-teleport'
+import { MAX_ZINDEX } from '../utils/constants'
 
 export type PopupParameters = { shownPopup: HUDPopup; key?: string }
 export type Popup = (
@@ -32,7 +33,9 @@ export function PopupStack(): ReactElement | null {
   const shownPopups = store.getState().hud.shownPopups
   if (!shownPopups.length) return null
   return (
-    <UiEntity uiTransform={{ zIndex: 99999, width: '100%', height: '100%' }}>
+    <UiEntity
+      uiTransform={{ zIndex: MAX_ZINDEX - 1, width: '100%', height: '100%' }}
+    >
       {shownPopups.map(
         (shownPopup: HUDPopup, index) =>
           popupComponents[shownPopup.type]({

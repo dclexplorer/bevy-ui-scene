@@ -3,8 +3,7 @@ import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
 import { AvatarPreviewElement2 } from './AvatarPreviewElement2'
 import { getPlayer } from '@dcl/sdk/players'
 import useEffect = ReactEcs.useEffect
-import { getContentScaleRatio } from '../../service/canvas-ratio'
-import Icon from '../icon/Icon'
+import { PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
 
 export function UserAvatarPreviewElement({
   uiTransform,
@@ -18,7 +17,9 @@ export function UserAvatarPreviewElement({
   allowRotation?: boolean
 }): ReactElement {
   const [avatarShapeDefinition, setAvatarShapeDefinition] =
-    ReactEcs.useState<any>(getAvatarShaopeDEfinitionFromPlayer({ userId }))
+    ReactEcs.useState<PBAvatarShape>(
+      getAvatarShaopeDEfinitionFromPlayer({ userId })
+    )
   useEffect(() => {
     setAvatarShapeDefinition(getAvatarShaopeDEfinitionFromPlayer({ userId }))
   }, [userId])

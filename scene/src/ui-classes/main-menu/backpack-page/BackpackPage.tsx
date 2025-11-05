@@ -58,6 +58,7 @@ import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
 import { waitFor } from '../../../utils/dcl-utils'
 import { pushPopupAction } from '../../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
+import { BackpackAvatarPreviewElement } from './backpack-avatar-preview-element'
 
 let originalAvatarJSON: string
 
@@ -74,7 +75,7 @@ export default class BackpackPage {
       <MainContent>
         <BackpackNavBar />
         <ResponsiveContent>
-          {/* TODO <AvatarPreviewElement />*/}
+          <BackpackAvatarPreviewElement />
           <UiEntity
             uiTransform={{
               flexDirection: 'row',
