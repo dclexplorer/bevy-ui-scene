@@ -13,7 +13,7 @@ import { ITEMS_CATALOG_PAGE_SIZE } from '../utils/backpack-constants'
 export function changeCategory(category: WearableCategory | null): void {
   store.dispatch(updateActiveWearableCategory(category))
   const backpackState = store.getState().backpack
-  setAvatarPreviewCameraToWearableCategory(category)
+  // setAvatarPreviewCameraToWearableCategory(category)
   updatePage(
     async () =>
       await fetchWearablesPage(

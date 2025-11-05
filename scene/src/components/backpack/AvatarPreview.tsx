@@ -68,14 +68,14 @@ export const playPreviewEmote = (emoteURN: EquippedEmote): void => {
 }
 
 export const AVATAR_CAMERA_POSITION: Record<string, Vector3> = {
-  BODY: Vector3.create(8, 1.6, 8 - 6),
-  TOP: Vector3.create(8, 3.3, 8 - 3),
-  FEET: Vector3.create(8, 1, 8 - 4),
-  UPPER_BODY: Vector3.create(8, 2.6, 8 - 3.5),
-  PANTS: Vector3.create(8, 1.75, 8 - 3.5)
+  BODY: Vector3.create(8, 1.8, 0),
+  TOP: Vector3.create(8, 2.6, 0),
+  FEET: Vector3.create(8, 0.3, 0),
+  UPPER_BODY: Vector3.create(8, 2.6, 0),
+  PANTS: Vector3.create(8, 1.75, 0)
 }
 
-const CATEGORY_CAMERA: Record<string, Vector3> = {
+export const CATEGORY_CAMERA: Record<string, Vector3> = {
   [WEARABLE_CATEGORY_DEFINITIONS.body_shape.id]: AVATAR_CAMERA_POSITION.BODY,
   [WEARABLE_CATEGORY_DEFINITIONS.hair.id]: AVATAR_CAMERA_POSITION.TOP,
   [WEARABLE_CATEGORY_DEFINITIONS.eyebrows.id]: AVATAR_CAMERA_POSITION.TOP,
@@ -177,7 +177,7 @@ export function createAvatarPreview(): boolean {
   return true
 }
 
-function getCameraPositionPerCategory(
+export function getCameraPositionPerCategory(
   category: WearableCategory | null
 ): Vector3 {
   if (category === null) return AVATAR_CAMERA_POSITION.BODY

@@ -14,7 +14,11 @@ import {
   TextureCamera,
   Transform
 } from '@dcl/sdk/ecs'
-import { AVATAR_CAMERA_POSITION } from './AvatarPreview'
+import {
+  AVATAR_CAMERA_POSITION,
+  CATEGORY_CAMERA,
+  getCameraPositionPerCategory
+} from './AvatarPreview'
 import { Color4, Quaternion, Vector2 } from '@dcl/sdk/math'
 import { PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
 import { Entity } from '@dcl/ecs'
@@ -28,6 +32,10 @@ import {
 } from '../../service/custom-cursor-service'
 import { memoize } from '../../utils/function-utils'
 import { COLOR } from '../color-palette'
+import {
+  WEARABLE_CATEGORY_DEFINITIONS,
+  WearableCategory
+} from '../../service/categories'
 // TODO GltfContainerLoadingState
 const CAMERA_SIZE = { WIDTH: 1600, HEIGHT: 1800 }
 const state = {
@@ -46,13 +54,16 @@ export function AvatarPreviewElement2({
   avatarShapeDefinition,
   userId = '',
   allowRotation = false,
-  allowZoom = false
+  allowZoom = false,
+  cameraCategory = WEARABLE_CATEGORY_DEFINITIONS.body_shape
+    .id as WearableCategory
 }: {
   uiTransform?: UiTransformProps
   avatarShapeDefinition: PBAvatarShape
   userId: string
   allowRotation?: boolean
   allowZoom?: boolean
+  cameraCategory?: WearableCategory | null
 }): ReactElement | null {
   const [avatarCamera, setAvatarCamera] = useState<Entity | null>(null)
   const [avatarEntity, setAvatarEntity] = useState<Entity | null>(null)
@@ -65,7 +76,8 @@ export function AvatarPreviewElement2({
     console.log('goo')
     const { avatarEntity, cameraEntity } = createAvatarPreview({
       id: userId,
-      avatarShapeDefinition
+      avatarShapeDefinition,
+      cameraCategory
     })
     setAvatarCamera(cameraEntity)
     setAvatarEntity(avatarEntity)
@@ -78,13 +90,20 @@ export function AvatarPreviewElement2({
       // TODO dispose and destroy avatar camera preview entities and components
     }
   }, [])
-
+  useEffect(() => {
+    console.log('cameraCategory change->', cameraCategory)
+    if (!avatarCamera) return
+    Transform.getMutable(avatarCamera).position =
+      getCameraPositionPerCategory(cameraCategory)
+  }, [cameraCategory])
   useEffect(() => {
     console.log('avatar definition has changed')
     const avatarShapeMutable = AvatarShape.getMutableOrNull(avatarEntity!)
     if (!avatarShapeMutable) return
     Object.assign(avatarShapeMutable, avatarShapeDefinition)
   }, [avatarShapeDefinition])
+
+  useEffect(() => {}, [])
 
   return (
     <UiEntity
@@ -180,15 +199,17 @@ export function AvatarPreviewElement2({
 
 function createAvatarPreview({
   id = '',
-  avatarShapeDefinition
+  avatarShapeDefinition,
+  cameraCategory = null
 }: {
   id: string
   avatarShapeDefinition: PBAvatarShape
+  cameraCategory?: WearableCategory | null
 }) {
   console.log('createAvatarPreview2', id)
   const avatarEntity: Entity = engine.addEntity()
   const cameraEntity: Entity = engine.addEntity()
-  const layer = getAliveAvatarPreviews() + 1
+  const layer = getAliveAvatarPreviews() + 10
   AvatarShape.create(avatarEntity, {
     bodyShape: avatarShapeDefinition.bodyShape,
     emotes: [],
@@ -234,7 +255,7 @@ function createAvatarPreview({
   })
 
   Transform.create(cameraEntity, {
-    position: AVATAR_CAMERA_POSITION.BODY,
+    position: getCameraPositionPerCategory(cameraCategory),
     rotation: Quaternion.fromEulerDegrees(4, 0, 0)
   })
   return { avatarEntity, cameraEntity }

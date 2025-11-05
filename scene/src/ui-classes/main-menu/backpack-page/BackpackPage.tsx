@@ -145,13 +145,6 @@ export default class BackpackPage {
     store.dispatch(updateLoadingPage(true))
     store.dispatch(updateCacheKey())
     closeColorPicker()
-    if (!createAvatarPreview()) {
-      updateAvatarPreview(
-        store.getState().backpack.equippedWearables,
-        store.getState().backpack.outfitSetup.base,
-        store.getState().backpack.forceRender
-      )
-    }
 
     await waitFor(() => getPlayer() !== null)
     const player = getPlayer()

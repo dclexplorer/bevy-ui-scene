@@ -5,6 +5,7 @@ import { store } from '../../../state/store'
 import { PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
 import useEffect = ReactEcs.useEffect
 import useState = ReactEcs.useState
+import { WearableCategory } from '../../../service/categories'
 
 export function BackpackAvatarPreviewElement(): ReactElement {
   const [avatarShapeDefinition, setAvatarShapeDefinition] =
@@ -16,6 +17,13 @@ export function BackpackAvatarPreviewElement(): ReactElement {
     store.getState().backpack.forceRender,
     store.getState().backpack.outfitSetup.base
   ])
+  const [activeWearableCategory, setActiveWearableCategory] =
+    useState<WearableCategory | null>(
+      store.getState().backpack.activeWearableCategory
+    )
+  useEffect(() => {
+    setActiveWearableCategory(store.getState().backpack.activeWearableCategory)
+  }, [store.getState().backpack.activeWearableCategory])
   return (
     <AvatarPreviewElement2
       avatarShapeDefinition={avatarShapeDefinition}
@@ -23,6 +31,7 @@ export function BackpackAvatarPreviewElement(): ReactElement {
       userId={getPlayer()?.userId ?? ''}
       allowZoom={true}
       allowRotation={true}
+      cameraCategory={activeWearableCategory}
     />
   )
 }
