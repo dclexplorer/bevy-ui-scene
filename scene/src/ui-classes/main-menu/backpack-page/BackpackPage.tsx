@@ -74,7 +74,7 @@ export default class BackpackPage {
       <MainContent>
         <BackpackNavBar />
         <ResponsiveContent>
-          <AvatarPreviewElement />
+          {/* TODO <AvatarPreviewElement />*/}
           <UiEntity
             uiTransform={{
               flexDirection: 'row',

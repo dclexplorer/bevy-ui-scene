@@ -13,7 +13,7 @@ import { fetchPlaceFromCoords } from 'src/utils/promise-utils'
 import { type ReadOnlyVector3 } from '~system/EngineApi'
 import { UIController } from './ui.controller'
 import { initSystemActionsEmitter } from '../service/system-actions-emitter'
-import { setupPassportPopup } from '../ui-classes/main-hud/passport/popup-passport'
+import { setupPassportPopup } from '../ui-classes/main-hud/passport/passport-popup'
 import { setupProfilePopups } from '../ui-classes/main-hud/passport/profile-popup'
 import { getCurrentScene } from '../service/player-scenes'
 

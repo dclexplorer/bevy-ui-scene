@@ -30,6 +30,7 @@ import { type AtlasIcon } from '../../utils/definitions'
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { sleep } from '../../utils/dcl-utils'
 import { memoize } from '../../utils/function-utils'
+import useEffect = ReactEcs.useEffect
 
 const ROTATION_FACTOR = -0.5
 const state = {
@@ -44,6 +45,7 @@ const ROTATE_ICON: AtlasIcon = {
   spriteName: 'RotateIcn'
 }
 const getScrollVector = memoize(_getScrollVector)
+
 export function resetAvatarPreviewZoom(): void {
   const _listeZoom = state.listenZoom
   state.listenZoom = false
@@ -73,6 +75,10 @@ export function AvatarPreviewElement({
 }: {
   uiTransform?: UiTransformProps
 }): ReactElement {
+  useEffect(() => {
+    console.log('goo1')
+  }, [])
+  console.log('AvatarPreviewElement')
   const canvasScaleRatio = getContentScaleRatio()
   const loadingState = GltfContainerLoadingState.getOrNull(
     getAvatarPreviewEntity()

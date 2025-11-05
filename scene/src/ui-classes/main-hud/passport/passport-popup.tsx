@@ -17,7 +17,8 @@ import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
 import {
   AvatarPreviewElement,
-  resetAvatarPreviewZoom
+  resetAvatarPreviewZoom,
+  setAvatarPreviewZoom
 } from '../../../components/backpack/AvatarPreviewElement'
 import {
   createAvatarPreview,
@@ -61,6 +62,8 @@ import { CopyButton } from '../../../components/copy-button'
 import { getPlayer } from '@dcl/sdk/players'
 import { CloseButton } from '../../../components/close-button'
 import { Label } from '@dcl/sdk/react-ecs'
+import { AvatarPreviewElement2 } from '../../../components/backpack/AvatarPreviewElement2'
+import { UserAvatarPreviewElement } from '../../../components/backpack/UserAvatarPreviewElement'
 
 const COPY_ICON_SIZE = 40
 
@@ -94,6 +97,11 @@ export function setupPassportPopup(): void {
     ) {
       state.editing = false
       state.loadingProfile = true
+      resetAvatarPreviewZoom()
+      setAvatarPreviewZoom()
+      setAvatarPreviewCameraToWearableCategory(
+        WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
+      )
       executeTask(async () => {
         const shownPopup = action.payload as HUDPopup
         const userId: string = shownPopup.data as string
@@ -124,27 +132,23 @@ export function setupPassportPopup(): void {
             names
           })
         )
-        createAvatarPreview()
+        // createAvatarPreview()
         const wearables: URNWithoutTokenId[] = (
           avatarData.avatar.wearables ?? []
         ).map((urn) => getURNWithoutTokenId(urn as URN)) as URNWithoutTokenId[]
-        updateAvatarPreview(
+        /*updateAvatarPreview(
           wearables,
           convertToPBAvatarBase(avatarData) as PBAvatarBase,
           (avatarData.avatar.forceRender ?? []) as WearableCategory[]
-        )
-        resetAvatarPreviewZoom()
-        setAvatarPreviewCameraToWearableCategory(
-          WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
-        )
-        await sleep(100)
+        )*/
+
         state.loadingProfile = false
       })
     }
   })
 }
 
-export const PopupPassport: Popup = ({ shownPopup }) => {
+export const PassportPopup: Popup = ({ shownPopup }) => {
   return (
     <UiEntity
       uiTransform={{
@@ -177,8 +181,11 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
             textureMode: 'stretch'
           }}
         >
-          {!state.loadingProfile && [
-            <AvatarPreviewElement
+          {(!state.loadingProfile && [
+            <UserAvatarPreviewElement
+              userId={shownPopup.data as string}
+              allowRotation={true}
+              allowZoom={false}
               uiTransform={{
                 position: { top: '-18%' },
                 flexShrink: 0,
@@ -186,7 +193,8 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
               }}
             />,
             <PassportContent />
-          ]}
+          ]) ||
+            null}
           {state.loadingProfile && (
             <Label
               value={'Loading Avatar Passport ...'}
@@ -322,6 +330,7 @@ function Overview(): ReactElement {
           _getVisibleProperties(profileData).map(
             (propertyKey: keyof ViewAvatarData) => (
               <ProfilePropertyField
+                key={propertyKey}
                 uiTransform={{ width: '25%' }}
                 propertyKey={propertyKey ?? ''}
                 profileData={profileData}
@@ -334,6 +343,7 @@ function Overview(): ReactElement {
           editablePropertyKeys.map(
             (propertyKey: keyof ViewAvatarData, index) => (
               <ProfilePropertyField
+                key={propertyKey}
                 propertyKey={propertyKey ?? ''}
                 profileData={profileData}
                 editing={state.editing}

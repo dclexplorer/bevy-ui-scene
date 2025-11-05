@@ -96,6 +96,7 @@ export function ProfilePropertyField({
   editing?: boolean
   uiTransform?: UiTransformProps
   disabled?: boolean
+  key?: string
 }): ReactElement {
   return (
     <UiEntity

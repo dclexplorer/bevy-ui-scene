@@ -2,7 +2,7 @@ import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { store } from '../state/store'
 import { HUD_POPUP_TYPE, type HUDPopup } from '../state/hud/state'
 import { PopupUrl } from '../ui-classes/main-hud/popup-url'
-import { PopupPassport } from '../ui-classes/main-hud/passport/popup-passport'
+import { PassportPopup } from '../ui-classes/main-hud/passport/passport-popup'
 import { NameEditPopup } from '../ui-classes/main-hud/passport/name-edit-popup'
 import { AddProfileLinkPopup } from '../ui-classes/main-hud/passport/add-profile-link-popup'
 import { ProfileMenuPopup } from '../ui-classes/main-hud/passport/profile-popup'
@@ -19,7 +19,7 @@ export type Popup = (
 const popupComponents: Record<number, Popup> = {
   [HUD_POPUP_TYPE.URL as number]: PopupUrl,
   [HUD_POPUP_TYPE.TELEPORT as number]: PopupTeleport, // TODO
-  [HUD_POPUP_TYPE.PASSPORT as number]: PopupPassport,
+  [HUD_POPUP_TYPE.PASSPORT as number]: PassportPopup,
   [HUD_POPUP_TYPE.NAME_EDIT as number]: NameEditPopup,
   [HUD_POPUP_TYPE.ADD_LINK as number]: AddProfileLinkPopup,
   [HUD_POPUP_TYPE.PROFILE_MENU as number]: ProfileMenuPopup,
