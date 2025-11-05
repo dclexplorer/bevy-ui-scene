@@ -86,6 +86,7 @@ export const COLOR = {
   BLUE: Color4.Blue(),
   ORANGE: Color4.fromHexString('#FF8648FF'),
   GREEN: Color4.fromHexString('#34ce76'),
+  YELLOW: Color4.Yellow(),
   URL_POPUP_BACKGROUND: Color4.fromHexString('#51157F'),
   NOTIFICATIONS_MENU: Color4.fromHexString('#212222FF'),
   NOTIFICATION_ITEM: Color4.fromHexString('#313131FF'),

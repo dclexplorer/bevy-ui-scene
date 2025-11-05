@@ -187,7 +187,6 @@ export const PassportPopup: Popup = ({ shownPopup }) => {
               allowRotation={true}
               allowZoom={false}
               uiTransform={{
-                position: { top: '-18%' },
                 flexShrink: 0,
                 flexGrow: 0
               }}

@@ -32,6 +32,7 @@ import {
   showMouseCursor
 } from '../../service/custom-cursor-service'
 import { memoize } from '../../utils/function-utils'
+import { COLOR } from '../color-palette'
 
 const CAMERA_SIZE = { WIDTH: 1600, HEIGHT: 1800 }
 const state = {
@@ -90,6 +91,9 @@ export function AvatarPreviewElement2({
   return (
     <UiEntity
       uiTransform={{
+        borderRadius: 0,
+        borderColor: COLOR.RED,
+        borderWidth: 1,
         height: getContentHeight(),
         width: (540 / 1920) * getContentWidth() * 0.85,
         ...uiTransform
@@ -98,6 +102,9 @@ export function AvatarPreviewElement2({
       {avatarCamera && (
         <UiEntity
           uiTransform={{
+            borderRadius: 0,
+            borderColor: COLOR.GREEN,
+            borderWidth: 1,
             positionType: 'absolute',
             position: {
               left: '-75%'
@@ -113,6 +120,9 @@ export function AvatarPreviewElement2({
           <UiEntity
             key="avatar-preview-zoom"
             uiTransform={{
+              borderRadius: 0,
+              borderColor: COLOR.YELLOW,
+              borderWidth: 1,
               height: '100%',
               width: '100%',
               elementId,
@@ -246,7 +256,7 @@ function AvatarPreviewInstructions({
   return (
     <UiEntity
       uiTransform={{
-        position: { top: '95%', left: '5%' },
+        position: { top: '100%', left: '5%' },
         flexDirection: 'column'
       }}
     >

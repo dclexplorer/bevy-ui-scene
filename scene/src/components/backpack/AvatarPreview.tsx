@@ -68,7 +68,7 @@ export const playPreviewEmote = (emoteURN: EquippedEmote): void => {
 }
 
 export const AVATAR_CAMERA_POSITION: Record<string, Vector3> = {
-  BODY: Vector3.create(8, 2.3, 8 - 6),
+  BODY: Vector3.create(8, 1.6, 8 - 6),
   TOP: Vector3.create(8, 3.3, 8 - 3),
   FEET: Vector3.create(8, 1, 8 - 4),
   UPPER_BODY: Vector3.create(8, 2.6, 8 - 3.5),
