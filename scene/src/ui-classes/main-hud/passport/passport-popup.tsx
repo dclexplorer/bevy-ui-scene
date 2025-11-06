@@ -15,10 +15,6 @@ import {
 } from '../../../state/hud/state'
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
-import {
-  resetAvatarPreviewZoom,
-  setAvatarPreviewZoom
-} from '../../../components/backpack/AvatarPreviewElement'
 import { setAvatarPreviewCameraToWearableCategory } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
@@ -78,8 +74,7 @@ export function setupPassportPopup(): void {
     ) {
       state.editing = false
       state.loadingProfile = true
-      resetAvatarPreviewZoom()
-      setAvatarPreviewZoom()
+
       setAvatarPreviewCameraToWearableCategory(
         WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
       )
