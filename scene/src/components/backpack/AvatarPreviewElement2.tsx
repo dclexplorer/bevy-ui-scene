@@ -18,18 +18,14 @@ import {
   UiTransform
 } from '@dcl/sdk/ecs'
 import {
-  AVATAR_CAMERA_POSITION,
-  CATEGORY_CAMERA,
   getCameraPositionPerCategory,
   getCameraZoomPerCategory,
-  OrthographicMode,
-  setAvatarPreviewZoomFactor
+  OrthographicMode
 } from './AvatarPreview'
 import { Color4, Quaternion, Vector2 } from '@dcl/sdk/math'
 import { PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
 import { Entity } from '@dcl/ecs'
-import useEffect = ReactEcs.useEffect
-import useState = ReactEcs.useState
+
 import Icon from '../icon/Icon'
 import type { AtlasIcon } from '../../utils/definitions'
 import {
@@ -37,12 +33,13 @@ import {
   showMouseCursor
 } from '../../service/custom-cursor-service'
 import { memoize } from '../../utils/function-utils'
-import { COLOR } from '../color-palette'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   WearableCategory
 } from '../../service/categories'
-import { sleep } from '../../utils/dcl-utils'
+import { store } from '../../state/store'
+import useEffect = ReactEcs.useEffect
+import useState = ReactEcs.useState
 
 // TODO GltfContainerLoadingState
 const CAMERA_SIZE = { WIDTH: 1600, HEIGHT: 1800 }
@@ -148,6 +145,13 @@ export function AvatarPreviewElement2({
     }
     return () => {}
   })
+
+  useEffect(() => {
+    if (!avatarEntity) return
+    if (AvatarShape.getMutableOrNull(avatarEntity) === null) return
+    AvatarShape.getMutable(avatarEntity).expressionTriggerId =
+      store.getState().backpack.reproducingEmotePreview
+  }, [store.getState().backpack.reproducingEmotePreview])
 
   return (
     <UiEntity

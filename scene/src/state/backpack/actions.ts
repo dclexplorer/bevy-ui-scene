@@ -1,4 +1,8 @@
-import { type BACKPACK_SECTION, BACKPACK_STORE_ID } from './state'
+import {
+  type BACKPACK_SECTION,
+  BACKPACK_STORE_ID,
+  BackpackStateUpdateParams
+} from './state'
 import {
   type EquippedEmote,
   type URNWithoutTokenId
@@ -36,7 +40,8 @@ export enum BACKPACK_ACTION {
   RESET_DEFAULT_EMOTES,
   UPDATE_SEARCH_FILTER,
   LOADED_OUTFITS_METADATA,
-  UPDATE_FORCE_RENDER
+  UPDATE_FORCE_RENDER,
+  UPDATE_STATE
 }
 
 export type BackpackSelectWearableURNAction = BackpackActionId & {
@@ -148,6 +153,10 @@ export type BackpackUpdateForceRenderAction = BackpackActionId & {
   type: BACKPACK_ACTION.UPDATE_FORCE_RENDER
   payload: WearableCategory[]
 }
+export type BackpackUpdateStateAction = BackpackActionId & {
+  type: BACKPACK_ACTION.UPDATE_STATE
+  payload: BackpackStateUpdateParams
+}
 
 export type BackpackActions =
   | BackpackSelectWearableURNAction
@@ -172,6 +181,7 @@ export type BackpackActions =
   | BackpackUpdateSearchFilter
   | BackpackLoadedOutfitsMetadataAction
   | BackpackUpdateForceRenderAction
+  | BackpackUpdateStateAction
 
 export const updateSelectedCatalogURNAction = (
   payload: URNWithoutTokenId | null
@@ -331,5 +341,12 @@ export const updateForceRenderAction = (
 ): BackpackUpdateForceRenderAction => ({
   __reducer: BACKPACK_STORE_ID,
   type: BACKPACK_ACTION.UPDATE_FORCE_RENDER,
+  payload
+})
+export const updateBackpackStateAction = (
+  payload: BackpackStateUpdateParams
+): BackpackUpdateStateAction => ({
+  __reducer: BACKPACK_STORE_ID,
+  type: BACKPACK_ACTION.UPDATE_STATE,
   payload
 })

@@ -18,6 +18,8 @@ export function reducer(
   action: BackpackActions
 ): BackpackPageState {
   switch (action.type) {
+    case BACKPACK_ACTION.UPDATE_STATE:
+      return { ...backpackPageState, ...action.payload }
     case BACKPACK_ACTION.UPDATE_CURRENT_PAGE:
       return { ...backpackPageState, currentPage: action.payload }
     case BACKPACK_ACTION.SELECT_CATALOG_URN:

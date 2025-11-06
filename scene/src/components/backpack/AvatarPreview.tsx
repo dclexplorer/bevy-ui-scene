@@ -21,6 +21,8 @@ import {
 } from '../../service/categories'
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { getItemsWithTokenId } from '../../utils/urn-utils'
+import { updateBackpackStateAction } from '../../state/backpack/actions'
+import { store } from '../../state/store'
 
 export type AvatarPreview = {
   avatarEntity: Entity
@@ -62,9 +64,11 @@ export const getAvatarPreviewQuaternion = (): Quaternion => {
 }
 
 export const playPreviewEmote = (emoteURN: EquippedEmote): void => {
-  if (AvatarShape.getMutableOrNull(avatarPreview.avatarEntity) === null) return
-  AvatarShape.getMutable(avatarPreview.avatarEntity).expressionTriggerId =
-    emoteURN
+  store.dispatch(
+    updateBackpackStateAction({
+      reproducingEmotePreview: emoteURN
+    })
+  )
 }
 
 export const AVATAR_CAMERA_POSITION: Record<string, Vector3> = {

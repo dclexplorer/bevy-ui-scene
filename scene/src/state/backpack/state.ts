@@ -58,8 +58,37 @@ export type BackpackPageState = {
   selectedURN: URNWithoutTokenId | null
   cacheKey: string
   outfitsMetadata: OutfitsMetadata | null
+  reproducingEmotePreview: EquippedEmote
 }
 
+export type BackpackStateUpdateParams = {
+  activeSection?: BACKPACK_SECTION
+  activeWearableCategory?: WearableCategory | null
+  searchFilter?: SearchFilterState
+  selectedEmoteSlot?: number
+  currentPage?: number
+  loadingPage?: boolean
+  shownWearables?: CatalogWearableElement[]
+  shownEmotes?: CatalogEmoteElement[]
+  totalPages?: number
+  equippedEmotes?: EquippedEmote[]
+  equippedWearables?: URNWithoutTokenId[]
+  outfitSetup?: OutfitSetup
+  forceRender?: WearableCategory[]
+  changedFromResetVersion?: boolean
+  savedResetOutfit?: {
+    base: PBAvatarBase
+    equippedWearables: URNWithoutTokenId[]
+    forceRender: WearableCategory[]
+  }
+  changedEmotesFromResetVersion?: boolean
+  savedResetEmotes?: EquippedEmote[]
+  equippedItems?: Array<URNWithoutTokenId | EquippedEmote> // gather equippedWearables, baseBody.bodyShapeUrn & emotes
+  selectedURN?: URNWithoutTokenId | null
+  cacheKey?: string
+  outfitsMetadata?: OutfitsMetadata | null
+  reproducingEmotePreview?: EquippedEmote
+}
 export const backpackInitialState: BackpackPageState = {
   activeSection: BACKPACK_SECTION.WEARABLES,
   activeWearableCategory: null,
@@ -93,5 +122,6 @@ export const backpackInitialState: BackpackPageState = {
   },
   changedEmotesFromResetVersion: true,
   savedResetEmotes: EMPTY_EMOTES,
-  outfitsMetadata: null
+  outfitsMetadata: null,
+  reproducingEmotePreview: ''
 }
