@@ -74,7 +74,6 @@ export function ChatInput({
         }
       }}
       onChange={(value: string) => {
-        console.log('onChannge', value, value.length)
         setCurrentValue(value)
         store.dispatch(
           updateHudStateAction({
