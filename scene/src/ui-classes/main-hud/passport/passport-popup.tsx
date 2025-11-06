@@ -15,34 +15,13 @@ import {
 } from '../../../state/hud/state'
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
-import {
-  AvatarPreviewElement,
-  resetAvatarPreviewZoom
-} from '../../../components/backpack/AvatarPreviewElement'
-import {
-  createAvatarPreview,
-  setAvatarPreviewCameraToWearableCategory,
-  updateAvatarPreview
-} from '../../../components/backpack/AvatarPreview'
+import { setAvatarPreviewCameraToWearableCategory } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
-import {
-  applyMiddleEllipsis,
-  BASE_FEMALE_URN,
-  getURNWithoutTokenId
-} from '../../../utils/urn-utils'
-import {
-  type GetPlayerDataRes,
-  type URN,
-  type URNWithoutTokenId
-} from '../../../utils/definitions'
-import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
+import { applyMiddleEllipsis, BASE_FEMALE_URN } from '../../../utils/urn-utils'
+import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { executeTask } from '@dcl/sdk/ecs'
-import { type PBAvatarBase } from '../../../bevy-api/interface'
-import {
-  WEARABLE_CATEGORY_DEFINITIONS,
-  type WearableCategory
-} from '../../../service/categories'
+import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
 import { TabComponent } from '../../../components/tab-component'
 import { type Popup } from '../../../components/popup-stack'
 import {
@@ -61,6 +40,7 @@ import { CopyButton } from '../../../components/copy-button'
 import { getPlayer } from '@dcl/sdk/players'
 import { CloseButton } from '../../../components/close-button'
 import { Label } from '@dcl/sdk/react-ecs'
+import { UserAvatarPreviewElement } from '../../../components/backpack/UserAvatarPreviewElement'
 
 const COPY_ICON_SIZE = 40
 
@@ -94,6 +74,10 @@ export function setupPassportPopup(): void {
     ) {
       state.editing = false
       state.loadingProfile = true
+
+      setAvatarPreviewCameraToWearableCategory(
+        WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
+      )
       executeTask(async () => {
         const shownPopup = action.payload as HUDPopup
         const userId: string = shownPopup.data as string
@@ -124,27 +108,14 @@ export function setupPassportPopup(): void {
             names
           })
         )
-        createAvatarPreview()
-        const wearables: URNWithoutTokenId[] = (
-          avatarData.avatar.wearables ?? []
-        ).map((urn) => getURNWithoutTokenId(urn as URN)) as URNWithoutTokenId[]
-        updateAvatarPreview(
-          wearables,
-          convertToPBAvatarBase(avatarData) as PBAvatarBase,
-          (avatarData.avatar.forceRender ?? []) as WearableCategory[]
-        )
-        resetAvatarPreviewZoom()
-        setAvatarPreviewCameraToWearableCategory(
-          WEARABLE_CATEGORY_DEFINITIONS.body_shape.id
-        )
-        await sleep(100)
+
         state.loadingProfile = false
       })
     }
   })
 }
 
-export const PopupPassport: Popup = ({ shownPopup }) => {
+export const PassportPopup: Popup = ({ shownPopup }) => {
   return (
     <UiEntity
       uiTransform={{
@@ -177,16 +148,20 @@ export const PopupPassport: Popup = ({ shownPopup }) => {
             textureMode: 'stretch'
           }}
         >
-          {!state.loadingProfile && [
-            <AvatarPreviewElement
-              uiTransform={{
-                position: { top: '-18%' },
-                flexShrink: 0,
-                flexGrow: 0
-              }}
-            />,
-            <PassportContent />
-          ]}
+          {!state.loadingProfile
+            ? [
+                <UserAvatarPreviewElement
+                  userId={shownPopup.data as string}
+                  allowRotation={true}
+                  allowZoom={false}
+                  uiTransform={{
+                    flexShrink: 0,
+                    flexGrow: 0
+                  }}
+                />,
+                <PassportContent />
+              ]
+            : null}
           {state.loadingProfile && (
             <Label
               value={'Loading Avatar Passport ...'}
@@ -322,6 +297,7 @@ function Overview(): ReactElement {
           _getVisibleProperties(profileData).map(
             (propertyKey: keyof ViewAvatarData) => (
               <ProfilePropertyField
+                key={propertyKey}
                 uiTransform={{ width: '25%' }}
                 propertyKey={propertyKey ?? ''}
                 profileData={profileData}
@@ -334,6 +310,7 @@ function Overview(): ReactElement {
           editablePropertyKeys.map(
             (propertyKey: keyof ViewAvatarData, index) => (
               <ProfilePropertyField
+                key={propertyKey}
                 propertyKey={propertyKey ?? ''}
                 profileData={profileData}
                 editing={state.editing}

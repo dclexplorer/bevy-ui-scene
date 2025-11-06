@@ -15,10 +15,6 @@ import type {
 } from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
 import {
-  createAvatarPreview,
-  updateAvatarPreview
-} from '../../../components/backpack/AvatarPreview'
-import {
   MENU_BACKGROUND_TEXTURE,
   ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
@@ -36,10 +32,7 @@ import {
   updateLoadedOutfitsMetadataAction,
   updateLoadingPage
 } from '../../../state/backpack/actions'
-import {
-  AvatarPreviewElement,
-  setAvatarPreviewZoom
-} from '../../../components/backpack/AvatarPreviewElement'
+
 import { saveResetOutfit } from './ItemCatalog'
 import { closeColorPicker } from './WearableColorPicker'
 import { WearablesCatalog } from './WearablesCatalog'
@@ -58,6 +51,7 @@ import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
 import { waitFor } from '../../../utils/dcl-utils'
 import { pushPopupAction } from '../../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../../state/hud/state'
+import { BackpackAvatarPreviewElement } from './backpack-avatar-preview-element'
 
 let originalAvatarJSON: string
 
@@ -74,7 +68,7 @@ export default class BackpackPage {
       <MainContent>
         <BackpackNavBar />
         <ResponsiveContent>
-          <AvatarPreviewElement />
+          <BackpackAvatarPreviewElement />
           <UiEntity
             uiTransform={{
               flexDirection: 'row',
@@ -144,13 +138,6 @@ export default class BackpackPage {
     store.dispatch(updateLoadingPage(true))
     store.dispatch(updateCacheKey())
     closeColorPicker()
-    if (!createAvatarPreview()) {
-      updateAvatarPreview(
-        store.getState().backpack.equippedWearables,
-        store.getState().backpack.outfitSetup.base,
-        store.getState().backpack.forceRender
-      )
-    }
 
     await waitFor(() => getPlayer() !== null)
     const player = getPlayer()
@@ -213,8 +200,6 @@ export default class BackpackPage {
 
       store.dispatch(updateLoadingPage(false))
     }
-
-    setAvatarPreviewZoom()
   }
 }
 

@@ -353,6 +353,7 @@ export default class MainHud {
                   data: getPlayer()?.userId
                 })
               )
+              this.updateButtons()
               // this.uiController.profile.showCard()
             }}
             backgroundColor={this.walletBackground}
@@ -377,6 +378,7 @@ export default class MainHud {
                 })
               )
               console.log('clicked')
+              this.updateButtons()
             }}
             backgroundColor={this.bellBackground}
             icon={this.bellIcon}
@@ -401,6 +403,7 @@ export default class MainHud {
             }}
             onMouseDown={() => {
               this.uiController.menu?.show('map')
+              this.updateButtons()
             }}
             backgroundColor={this.mapBackground}
             icon={this.mapIcon}
@@ -418,6 +421,7 @@ export default class MainHud {
             }}
             onMouseDown={() => {
               getUiController().menu?.show('map')
+              this.updateButtons()
             }}
             backgroundColor={this.exploreBackground}
             icon={this.exploreIcon}
@@ -436,6 +440,7 @@ export default class MainHud {
             }}
             onMouseDown={() => {
               this.uiController.menu?.show('backpack')
+              this.updateButtons()
             }}
             backgroundColor={this.backpackBackground}
             icon={this.backpackIcon}
@@ -454,6 +459,7 @@ export default class MainHud {
             }}
             onMouseDown={() => {
               this.uiController.menu?.show('settings')
+              this.updateButtons()
             }}
             backgroundColor={this.settingsBackground}
             icon={this.settingsIcon}
@@ -479,6 +485,7 @@ export default class MainHud {
               openExternalUrl({
                 url: 'https://decentraland.org/help/'
               }).catch(console.error)
+              this.updateButtons()
             }}
             backgroundColor={this.helpBackground}
             icon={this.helpIcon}
@@ -530,6 +537,7 @@ export default class MainHud {
             }}
             onMouseDown={() => {
               this.openCloseChat()
+              this.updateButtons()
             }}
             backgroundColor={
               state.hover === MENU_ELEMENT.CHAT
@@ -555,6 +563,7 @@ export default class MainHud {
             }}
             onMouseDown={() => {
               switchEmotesWheelVisibility()
+              this.updateButtons()
             }}
             backgroundColor={this.emotesBackground}
             icon={this.emotesIcon}
