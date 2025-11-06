@@ -15,10 +15,6 @@ import type {
 } from '../../../utils/definitions'
 import { BevyApi } from '../../../bevy-api'
 import {
-  createAvatarPreview,
-  updateAvatarPreview
-} from '../../../components/backpack/AvatarPreview'
-import {
   MENU_BACKGROUND_TEXTURE,
   ROUNDED_TEXTURE_BACKGROUND
 } from '../../../utils/constants'
@@ -36,10 +32,7 @@ import {
   updateLoadedOutfitsMetadataAction,
   updateLoadingPage
 } from '../../../state/backpack/actions'
-import {
-  AvatarPreviewElement,
-  setAvatarPreviewZoom
-} from '../../../components/backpack/AvatarPreviewElement'
+import { setAvatarPreviewZoom } from '../../../components/backpack/AvatarPreviewElement'
 import { saveResetOutfit } from './ItemCatalog'
 import { closeColorPicker } from './WearableColorPicker'
 import { WearablesCatalog } from './WearablesCatalog'

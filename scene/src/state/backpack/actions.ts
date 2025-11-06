@@ -1,7 +1,7 @@
 import {
   type BACKPACK_SECTION,
   BACKPACK_STORE_ID,
-  BackpackStateUpdateParams
+  type BackpackStateUpdateParams
 } from './state'
 import {
   type EquippedEmote,

@@ -1,11 +1,11 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { AvatarPreviewElement2 } from '../../../components/backpack/AvatarPreviewElement2'
 import { getPlayer } from '@dcl/sdk/players'
 import { store } from '../../../state/store'
-import { PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
+import { type PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
 import useEffect = ReactEcs.useEffect
 import useState = ReactEcs.useState
-import { WearableCategory } from '../../../service/categories'
+import { type WearableCategory } from '../../../service/categories'
 
 export function BackpackAvatarPreviewElement(): ReactElement {
   const [avatarShapeDefinition, setAvatarShapeDefinition] =

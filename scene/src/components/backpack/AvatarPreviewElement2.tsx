@@ -1,5 +1,5 @@
 import type { UiTransformProps } from '@dcl/sdk/react-ecs'
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import {
   getContentHeight,
   getContentScaleRatio,
@@ -20,11 +20,11 @@ import {
 import {
   getCameraPositionPerCategory,
   getCameraZoomPerCategory,
-  OrthographicMode
+  type OrthographicMode
 } from './AvatarPreview'
 import { Color4, Quaternion, Vector2 } from '@dcl/sdk/math'
-import { PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
-import { Entity } from '@dcl/ecs'
+import { type PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
+import { type Entity } from '@dcl/ecs'
 
 import Icon from '../icon/Icon'
 import type { AtlasIcon } from '../../utils/definitions'
@@ -35,7 +35,7 @@ import {
 import { memoize } from '../../utils/function-utils'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
-  WearableCategory
+  type WearableCategory
 } from '../../service/categories'
 import { store } from '../../state/store'
 import useEffect = ReactEcs.useEffect
@@ -75,12 +75,12 @@ export function AvatarPreviewElement2({
   const [elementId] = useState<string>(
     `${AVATAR_PREVIEW_ELEMENT_ID}-${userId}-${getAliveAvatarPreviews()}`
   )
-  const [listeningZoom, setListeningZoom] = useState(false) // when mouse inside
+  const [, setListeningZoom] = useState(false) // when mouse inside
   const [zoomFactor, setZoomFactor] = useState(
     getCameraZoomPerCategory(cameraCategory)
   )
 
-  const [scrollPosition, setScrollPosition] = useState(
+  const [scrollPosition] = useState(
     allowZoom ? getScrollVector(zoomFactor) : undefined
   )
 
@@ -107,7 +107,6 @@ export function AvatarPreviewElement2({
 
     return () => {
       state.alivePreviews--
-      console.log('disposing avatar preview')
       engine.removeEntity(avatarEntity)
       engine.removeEntity(cameraEntity)
     }
@@ -115,7 +114,6 @@ export function AvatarPreviewElement2({
 
   useEffect(() => {
     executeTask(async () => {
-      console.log('cameraCategory change->', cameraCategory)
       if (!avatarCamera) return
       Transform.getMutable(avatarCamera).position =
         getCameraPositionPerCategory(cameraCategory)
@@ -124,8 +122,8 @@ export function AvatarPreviewElement2({
   }, [cameraCategory])
 
   useEffect(() => {
-    console.log('avatar definition has changed')
-    const avatarShapeMutable = AvatarShape.getMutableOrNull(avatarEntity!)
+    if (!avatarEntity) return
+    const avatarShapeMutable = AvatarShape.getMutableOrNull(avatarEntity)
     if (!avatarShapeMutable) return
     Object.assign(avatarShapeMutable, avatarShapeDefinition)
   }, [avatarShapeDefinition])
@@ -196,6 +194,7 @@ export function AvatarPreviewElement2({
             }}
             onMouseDragLocked={() => {
               if (!allowRotation) return
+              if (!avatarEntity) return
               showMouseCursor(ROTATE_ICON)
               const pointerInfo = PrimaryPointerInfo.get(engine.RootEntity)
               const deltaX: number = pointerInfo?.screenDelta?.x ?? 0
@@ -204,18 +203,24 @@ export function AvatarPreviewElement2({
                 y: 1,
                 z: 0
               })
-              const avatarRotation = Transform.get(avatarEntity!).rotation
+              const avatarRotation = Transform.get(avatarEntity).rotation
               const initialQuaternionCopy = Quaternion.create(
                 avatarRotation.x,
                 avatarRotation.y,
                 avatarRotation.z,
                 avatarRotation.w
               )
-              Transform.getMutable(avatarEntity!).rotation =
-                Quaternion.multiply(initialQuaternionCopy, qY)
+              Transform.getMutable(avatarEntity).rotation = Quaternion.multiply(
+                initialQuaternionCopy,
+                qY
+              )
             }}
-            onMouseEnter={() => setListeningZoom(true)}
-            onMouseLeave={() => setListeningZoom(false)}
+            onMouseEnter={() => {
+              setListeningZoom(true)
+            }}
+            onMouseLeave={() => {
+              setListeningZoom(false)
+            }}
             onMouseUp={() => {
               hideMouseCursor()
             }}
@@ -247,8 +252,7 @@ function createAvatarPreview({
   avatarShapeDefinition: PBAvatarShape
   cameraCategory?: WearableCategory | null
   zoomFactor?: number
-}) {
-  console.log('createAvatarPreview2', id)
+}): { avatarEntity: Entity; cameraEntity: Entity } {
   const avatarEntity: Entity = engine.addEntity()
   const cameraEntity: Entity = engine.addEntity()
   const layer = getAliveAvatarPreviews() + 10
@@ -305,7 +309,7 @@ function createAvatarPreview({
   return { avatarEntity, cameraEntity }
 }
 
-export function getAliveAvatarPreviews() {
+export function getAliveAvatarPreviews(): number {
   return state.alivePreviews + 1
 }
 
@@ -390,6 +394,6 @@ function AvatarPreviewInstructions({
 function _getScrollVector(positionY: number): Vector2 {
   return Vector2.create(0, positionY)
 }
-function getVerticalRangeFromZoomFactor(zoomFactor: number) {
+function getVerticalRangeFromZoomFactor(zoomFactor: number): number {
   return zoomFactor * 10 + 10 * 0.3
 }

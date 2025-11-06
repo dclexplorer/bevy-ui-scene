@@ -1,9 +1,9 @@
-import { UiTransformProps } from '@dcl/sdk/react-ecs'
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import { type UiTransformProps } from '@dcl/sdk/react-ecs'
+import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
 import { AvatarPreviewElement2 } from './AvatarPreviewElement2'
 import { getPlayer } from '@dcl/sdk/players'
 import useEffect = ReactEcs.useEffect
-import { PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
+import { type PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
 
 export function UserAvatarPreviewElement({
   uiTransform,
@@ -18,10 +18,10 @@ export function UserAvatarPreviewElement({
 }): ReactElement {
   const [avatarShapeDefinition, setAvatarShapeDefinition] =
     ReactEcs.useState<PBAvatarShape>(
-      getAvatarShaopeDEfinitionFromPlayer({ userId })
+      getAvatarShapeDefinitionFromPlayer({ userId })
     )
   useEffect(() => {
-    setAvatarShapeDefinition(getAvatarShaopeDEfinitionFromPlayer({ userId }))
+    setAvatarShapeDefinition(getAvatarShapeDefinitionFromPlayer({ userId }))
   }, [userId])
 
   return (
@@ -37,7 +37,11 @@ export function UserAvatarPreviewElement({
   )
 }
 
-function getAvatarShaopeDEfinitionFromPlayer({ userId }: { userId: string }) {
+function getAvatarShapeDefinitionFromPlayer({
+  userId
+}: {
+  userId: string
+}): PBAvatarShape {
   const player = getPlayer({ userId })
   return {
     id: userId,
@@ -47,6 +51,6 @@ function getAvatarShaopeDEfinitionFromPlayer({ userId }: { userId: string }) {
     eyeColor: player?.avatar?.eyesColor,
     hairColor: player?.avatar?.hairColor,
     skinColor: player?.avatar?.skinColor,
-    wearables: (player?.wearables.filter((i: any) => i) ?? []) as string[]
+    wearables: player?.wearables.filter((i: any) => i) ?? []
   }
 }

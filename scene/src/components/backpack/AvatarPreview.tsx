@@ -135,9 +135,9 @@ export const setAvatarPreviewCameraToWearableCategory = (
   category: WearableCategory | null
 ): void => {
   console.error('REPLACE CODE', category)
-  return
-  /*Transform.getMutable(avatarPreview.cameraEntity).position =
-    getCameraPositionPerCategory(category)*/
+  
+  /* Transform.getMutable(avatarPreview.cameraEntity).position =
+    getCameraPositionPerCategory(category) */
 }
 
 export function updateAvatarPreview(

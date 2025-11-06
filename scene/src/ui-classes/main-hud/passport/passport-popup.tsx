@@ -16,34 +16,16 @@ import {
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
 import {
-  AvatarPreviewElement,
   resetAvatarPreviewZoom,
   setAvatarPreviewZoom
 } from '../../../components/backpack/AvatarPreviewElement'
-import {
-  createAvatarPreview,
-  setAvatarPreviewCameraToWearableCategory,
-  updateAvatarPreview
-} from '../../../components/backpack/AvatarPreview'
+import { setAvatarPreviewCameraToWearableCategory } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
-import {
-  applyMiddleEllipsis,
-  BASE_FEMALE_URN,
-  getURNWithoutTokenId
-} from '../../../utils/urn-utils'
-import {
-  type GetPlayerDataRes,
-  type URN,
-  type URNWithoutTokenId
-} from '../../../utils/definitions'
-import { convertToPBAvatarBase, sleep } from '../../../utils/dcl-utils'
+import { applyMiddleEllipsis, BASE_FEMALE_URN } from '../../../utils/urn-utils'
+import { type GetPlayerDataRes } from '../../../utils/definitions'
 import { executeTask } from '@dcl/sdk/ecs'
-import { type PBAvatarBase } from '../../../bevy-api/interface'
-import {
-  WEARABLE_CATEGORY_DEFINITIONS,
-  type WearableCategory
-} from '../../../service/categories'
+import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
 import { TabComponent } from '../../../components/tab-component'
 import { type Popup } from '../../../components/popup-stack'
 import {
@@ -62,7 +44,6 @@ import { CopyButton } from '../../../components/copy-button'
 import { getPlayer } from '@dcl/sdk/players'
 import { CloseButton } from '../../../components/close-button'
 import { Label } from '@dcl/sdk/react-ecs'
-import { AvatarPreviewElement2 } from '../../../components/backpack/AvatarPreviewElement2'
 import { UserAvatarPreviewElement } from '../../../components/backpack/UserAvatarPreviewElement'
 
 const COPY_ICON_SIZE = 40
@@ -132,15 +113,6 @@ export function setupPassportPopup(): void {
             names
           })
         )
-        // createAvatarPreview()
-        const wearables: URNWithoutTokenId[] = (
-          avatarData.avatar.wearables ?? []
-        ).map((urn) => getURNWithoutTokenId(urn as URN)) as URNWithoutTokenId[]
-        /*updateAvatarPreview(
-          wearables,
-          convertToPBAvatarBase(avatarData) as PBAvatarBase,
-          (avatarData.avatar.forceRender ?? []) as WearableCategory[]
-        )*/
 
         state.loadingProfile = false
       })
@@ -181,19 +153,20 @@ export const PassportPopup: Popup = ({ shownPopup }) => {
             textureMode: 'stretch'
           }}
         >
-          {(!state.loadingProfile && [
-            <UserAvatarPreviewElement
-              userId={shownPopup.data as string}
-              allowRotation={true}
-              allowZoom={false}
-              uiTransform={{
-                flexShrink: 0,
-                flexGrow: 0
-              }}
-            />,
-            <PassportContent />
-          ]) ||
-            null}
+          {!state.loadingProfile
+            ? [
+                <UserAvatarPreviewElement
+                  userId={shownPopup.data as string}
+                  allowRotation={true}
+                  allowZoom={false}
+                  uiTransform={{
+                    flexShrink: 0,
+                    flexGrow: 0
+                  }}
+                />,
+                <PassportContent />
+              ]
+            : null}
           {state.loadingProfile && (
             <Label
               value={'Loading Avatar Passport ...'}
