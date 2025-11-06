@@ -54,7 +54,7 @@ const ROTATION_FACTOR = -0.5
 const AVATAR_PREVIEW_ELEMENT_ID = 'AP'
 const getScrollVector = memoize(_getScrollVector)
 
-export function AvatarPreviewElement2({
+export function AvatarPreviewElement({
   uiTransform,
   avatarShapeDefinition,
   userId = '',

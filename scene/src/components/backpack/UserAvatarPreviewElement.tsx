@@ -1,6 +1,6 @@
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
-import { AvatarPreviewElement2 } from './AvatarPreviewElement2'
+import { AvatarPreviewElement } from '././AvatarPreviewElement'
 import { getPlayer } from '@dcl/sdk/players'
 import useEffect = ReactEcs.useEffect
 import { type PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
@@ -25,7 +25,7 @@ export function UserAvatarPreviewElement({
   }, [userId])
 
   return (
-    <AvatarPreviewElement2
+    <AvatarPreviewElement
       userId={userId}
       avatarShapeDefinition={avatarShapeDefinition}
       allowZoom={allowZoom}

@@ -1,5 +1,5 @@
 import ReactEcs, { type ReactElement } from '@dcl/react-ecs'
-import { AvatarPreviewElement2 } from '../../../components/backpack/AvatarPreviewElement2'
+import { AvatarPreviewElement } from '../../../components/backpack/./AvatarPreviewElement'
 import { getPlayer } from '@dcl/sdk/players'
 import { store } from '../../../state/store'
 import { type PBAvatarShape } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/avatar_shape.gen'
@@ -25,7 +25,7 @@ export function BackpackAvatarPreviewElement(): ReactElement {
     setActiveWearableCategory(store.getState().backpack.activeWearableCategory)
   }, [store.getState().backpack.activeWearableCategory])
   return (
-    <AvatarPreviewElement2
+    <AvatarPreviewElement
       avatarShapeDefinition={avatarShapeDefinition}
       uiTransform={{}}
       userId={getPlayer()?.userId ?? ''}
