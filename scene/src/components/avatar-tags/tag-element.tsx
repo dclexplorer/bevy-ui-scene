@@ -13,24 +13,34 @@ export function getTagElement({
     return (
       <UiEntity
         uiTransform={{
-          width: 200,
-          height: 40,
-          borderRadius: 999,
-          borderWidth: 1,
-          borderColor: COLOR.BLACK_TRANSPARENT,
-          alignSelf: 'center',
-          flexGrow: 1,
-          flexShrink: 1
+          width: '100%',
+          justifyContent: 'center'
         }}
-        uiBackground={{
-          color: COLOR.DARK_OPACITY_5
-        }}
-        uiText={{
-          value: `<b>${player.name}</b>`,
-          fontSize: 20,
-          color: getAddressColor(player.userId)
-        }}
-      />
+      >
+        <UiEntity
+          uiTransform={{
+            borderRadius: 999,
+            borderWidth: 1,
+            borderColor: COLOR.BLACK_TRANSPARENT,
+            alignSelf: 'center',
+            padding: {
+              top: 5,
+              bottom: 5,
+              left: 10,
+              right: 10
+            }
+          }}
+          uiBackground={{
+            color: COLOR.DARK_OPACITY_7
+          }}
+          uiText={{
+            value: `<b>${player.name}</b>`,
+            fontSize: 20,
+            color: getAddressColor(player.userId),
+            textAlign: 'middle-center'
+          }}
+        ></UiEntity>
+      </UiEntity>
     )
   }
 }

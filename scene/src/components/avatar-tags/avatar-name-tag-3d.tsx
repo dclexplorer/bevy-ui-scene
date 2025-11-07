@@ -5,16 +5,15 @@ import {
   Material,
   MeshRenderer,
   PlayerIdentityData,
+  TextureFilterMode,
+  TextureWrapMode,
   Transform,
   UiCanvas
 } from '@dcl/sdk/ecs'
 import { getPlayer } from '@dcl/sdk/players'
-import { Entity, MaterialTransparencyMode } from '@dcl/ecs'
-import { Color4, Quaternion, Vector3 } from '@dcl/sdk/math'
+import { Entity } from '@dcl/ecs'
+import { Color4, Vector3 } from '@dcl/sdk/math'
 import { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
-import { COLOR } from '../color-palette'
-import useEffect = ReactEcs.useEffect
 import { getTagElement } from './tag-element'
 
 const avatarTagMap = new Map<
@@ -52,13 +51,14 @@ function createTags() {
     MeshRenderer.setPlane(tagWrapperEntity)
     Transform.create(tagWrapperEntity, {
       parent: avatarEntity,
-      position: Vector3.create(0, 2.2, -0.1)
+      position: Vector3.create(0, 2.2, -0.1),
+      scale: Vector3.create(2, 1, 1)
     })
 
     UiCanvas.create(tagWrapperEntity, {
-      width: 200,
+      width: 400,
       height: 200,
-      color: COLOR.BLACK_TRANSPARENT
+      color: Color4.Clear()
     })
     // ReactEcsRenderer.setUiRenderer(TagElement)
     const player = getPlayer({ userId: data.address })
@@ -68,7 +68,6 @@ function createTags() {
       getTagElement({ player })
     )
     Material.setBasicMaterial(tagWrapperEntity, {
-      alphaTest: 0.5,
       alphaTexture: {
         tex: {
           $case: 'uiTexture',
