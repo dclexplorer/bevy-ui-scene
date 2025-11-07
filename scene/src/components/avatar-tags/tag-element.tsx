@@ -31,11 +31,13 @@ export function getTagElement({
             }
           }}
           uiBackground={{
-            color: COLOR.DARK_OPACITY_7
+            color: COLOR.DARK_OPACITY_8
           }}
           uiText={{
+            outlineColor: COLOR.WHITE,
+            outlineWidth: 1,
             value: `<b>${player.name}</b>`,
-            fontSize: 20,
+            fontSize: 25,
             color: getAddressColor(player.userId),
             textAlign: 'middle-center'
           }}

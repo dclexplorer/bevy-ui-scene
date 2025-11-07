@@ -65,6 +65,7 @@ export const COLOR = {
   DARK_OPACITY_2: Color4.create(0, 0, 0, 0.2),
   DARK_OPACITY_5: Color4.create(0, 0, 0, 0.5),
   DARK_OPACITY_7: Color4.create(0, 0, 0, 0.7),
+  DARK_OPACITY_8: Color4.create(0, 0, 0, 0.8),
   DARK_OPACITY_9: Color4.create(0, 0, 0, 0.9),
   WHITE_OPACITY_2: Color4.create(1, 1, 1, 0.2),
   WHITE_OPACITY_5: Color4.create(1, 1, 1, 0.5),

@@ -3,10 +3,9 @@ import {
   Billboard,
   engine,
   Material,
+  MaterialTransparencyMode,
   MeshRenderer,
   PlayerIdentityData,
-  TextureFilterMode,
-  TextureWrapMode,
   Transform,
   UiCanvas
 } from '@dcl/sdk/ecs'
@@ -15,6 +14,7 @@ import { Entity } from '@dcl/ecs'
 import { Color4, Vector3 } from '@dcl/sdk/math'
 import { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { getTagElement } from './tag-element'
+import { COLOR } from '../color-palette'
 
 const avatarTagMap = new Map<
   string,
@@ -51,7 +51,7 @@ function createTags() {
     MeshRenderer.setPlane(tagWrapperEntity)
     Transform.create(tagWrapperEntity, {
       parent: avatarEntity,
-      position: Vector3.create(0, 2.2, -0.1),
+      position: Vector3.create(0, 2.5, -0.1),
       scale: Vector3.create(2, 1, 1)
     })
 
@@ -67,15 +67,8 @@ function createTags() {
       tagWrapperEntity,
       getTagElement({ player })
     )
-    Material.setBasicMaterial(tagWrapperEntity, {
-      alphaTexture: {
-        tex: {
-          $case: 'uiTexture',
-          uiTexture: {
-            uiCanvasEntity: tagWrapperEntity
-          }
-        }
-      },
+    Material.setPbrMaterial(tagWrapperEntity, {
+      transparencyMode: MaterialTransparencyMode.MTM_ALPHA_BLEND,
       texture: {
         tex: {
           $case: 'uiTexture',
@@ -83,7 +76,17 @@ function createTags() {
             uiCanvasEntity: tagWrapperEntity
           }
         }
-      }
+      },
+      emissiveTexture: {
+        tex: {
+          $case: 'uiTexture',
+          uiTexture: {
+            uiCanvasEntity: tagWrapperEntity
+          }
+        }
+      },
+      emissiveColor: COLOR.WHITE,
+      emissiveIntensity: 0.2
     })
   }
 }
