@@ -38,7 +38,6 @@ import { COLOR } from '../components/color-palette'
 import useEffect = ReactEcs.useEffect
 import { engine, PointerLock, Transform } from '@dcl/sdk/ecs'
 import { getViewportWidth } from '../service/canvas-ratio'
-import { AvatarNameTagElements } from '../components/avatar-tags/avatar-tag'
 
 let loadingAndLogin: any = null
 
@@ -133,7 +132,7 @@ export class UIController {
       <Canvas>
         <CameraPointer />
         {InteractableArea({ active: false })}
-        <AvatarNameTagElements />
+
         {!this.isMainMenuVisible && this.mainHud.mainUi()}
         {this.isMainMenuVisible && this.menu.mainUi()}
 
