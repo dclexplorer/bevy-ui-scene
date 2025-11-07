@@ -116,6 +116,7 @@ export default class BackpackPage {
         }
       }
       if (avatarHasChanged(avatarPayload)) {
+        console.log('avatarHasChanged -> setAvatar')
         await BevyApi.setAvatar(avatarPayload).catch((error) => {
           store.dispatch(
             pushPopupAction({
@@ -132,6 +133,20 @@ export default class BackpackPage {
     function avatarHasChanged(avatarPayload: SetAvatarData): boolean {
       return originalAvatarJSON !== JSON.stringify(avatarPayload)
     }
+  }
+
+  setOriginalAvatarJSON(): void {
+    const backpackState = store.getState().backpack
+    originalAvatarJSON = JSON.stringify({
+      base: backpackState.outfitSetup.base,
+      equip: {
+        wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
+        emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
+          nullAsEmptyString
+        ) as URN[],
+        forceRender: backpackState.forceRender ?? []
+      }
+    } satisfies SetAvatarData)
   }
 
   async init(): Promise<void> {
@@ -179,16 +194,7 @@ export default class BackpackPage {
 
     const backpackState = store.getState().backpack
 
-    originalAvatarJSON = JSON.stringify({
-      base: backpackState.outfitSetup.base,
-      equip: {
-        wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
-        emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
-          nullAsEmptyString
-        ) as URN[],
-        forceRender: backpackState.forceRender ?? []
-      }
-    } satisfies SetAvatarData)
+    this.setOriginalAvatarJSON()
 
     if (!backpackState.outfitsMetadata) {
       store.dispatch(updateLoadingPage(true))

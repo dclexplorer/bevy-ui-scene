@@ -1,4 +1,4 @@
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { UiEntity, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ButtonIcon from '../../components/button-icon/ButtonIcon'
@@ -60,6 +60,10 @@ export default class MainMenu {
 
   constructor(uiController: UIController) {
     this.uiController = uiController
+
+    executeTask(async () => {
+      this.uiController.backpackPage.setOriginalAvatarJSON()
+    })
   }
 
   mapEnter(): void {
@@ -83,7 +87,9 @@ export default class MainMenu {
   }
 
   hide(): void {
+    // TODO BUG
     void this.uiController.backpackPage.saveAvatar()
+
     this.uiController.isMainMenuVisible = false
     this.closeButtonColor = ALMOST_BLACK
     playPreviewEmote('')
