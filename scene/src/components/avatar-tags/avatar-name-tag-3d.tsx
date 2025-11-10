@@ -2,6 +2,7 @@ import { createOrGetAvatarsTracker } from '../../service/avatar-tracker'
 import {
   Billboard,
   engine,
+  executeTask,
   Material,
   MaterialTransparencyMode,
   MeshRenderer,
@@ -15,6 +16,7 @@ import { Color4, Vector3 } from '@dcl/sdk/math'
 import { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { getTagElement } from './tag-element'
 import { COLOR } from '../color-palette'
+import { waitFor } from '../../utils/dcl-utils'
 
 const avatarTagMap = new Map<
   string,
@@ -32,7 +34,10 @@ export function initAvatarTags() {
   avatarTracker.onLeaveScene((userId) => {
     console.log('onLeaveScene', userId)
   })
-  createTags()
+  executeTask(async () => {
+    await waitFor(() => getPlayer() !== null)
+    createTags()
+  })
 }
 
 function createTags() {
