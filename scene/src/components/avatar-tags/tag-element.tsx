@@ -3,6 +3,11 @@ import { COLOR } from '../color-palette'
 import useEffect = ReactEcs.useEffect
 import { GetPlayerDataRes } from '../../utils/definitions'
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
+import {
+  getContentScaleRatio,
+  getViewportHeight
+} from '../../service/canvas-ratio'
+import { ChatMessage } from '../chat-message'
 
 export function getTagElement({
   player
@@ -37,11 +42,13 @@ export function getTagElement({
             outlineColor: COLOR.WHITE,
             outlineWidth: 1,
             value: `<b>${player.name}</b>`,
-            fontSize: 25,
+            fontSize: getViewportHeight() * 0.03,
             color: getAddressColor(player.userId),
             textAlign: 'middle-center'
           }}
-        ></UiEntity>
+        >
+          {/*    <ChatMessage message={"Hello"} onMessageMenu={()=>void} />*/}
+        </UiEntity>
       </UiEntity>
     )
   }
