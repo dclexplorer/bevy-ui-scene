@@ -5,7 +5,7 @@ import {
   executeTask,
   PlayerIdentityData
 } from '@dcl/sdk/ecs'
-import { sleep } from '../utils/dcl-utils'
+import { sleep, waitFor } from '../utils/dcl-utils'
 import { fetchProfileData } from '../utils/passport-promise-utils'
 import { getPlayer } from '@dcl/sdk/players'
 import {
@@ -41,12 +41,15 @@ export async function initChatMembersCount(): Promise<void> {
     await sleep(5000)
   }
 }
+const loadingUserSet = new Set<string>()
 
 export async function requestAndSetPlayerComposedData({
   userId
 }: {
   userId: string
 }): Promise<ComposedPlayerData> {
+  await waitFor(() => !loadingUserSet.has(userId))
+  loadingUserSet.add(userId)
   const playerData = getPlayer({ userId })
   const foundUserData = setIfNot(namedUsersData).get(
     getNameWithHashPostfix(
@@ -62,5 +65,6 @@ export async function requestAndSetPlayerComposedData({
 
   foundUserData.playerData = playerData
   foundUserData.profileData = profileData
+  loadingUserSet.delete(userId)
   return foundUserData
 }
