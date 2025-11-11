@@ -913,7 +913,7 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
   if (CHAT_WORLD_REGEXP.test(message.message)) {
     cleanMapPlaces()
   }
-
+  callbacks.onNewMessage.forEach((fn) => fn(decoratedChatMessage))
   async function decorateAsyncMessageData(
     message: ChatMessageRepresentation
   ): Promise<void> {
@@ -1012,4 +1012,24 @@ async function extendMessageMentionedUsers(
   }
 
   message.message = decorateMessageWithLinks(message._originalMessage)
+}
+const callbacks: {
+  onNewMessage: ((m: ChatMessageRepresentation) => void)[]
+} = {
+  onNewMessage: []
+}
+
+export function onNewMessage(fn: (message: ChatMessageRepresentation) => void) {
+  callbacks.onNewMessage.push(fn)
+  return () => {
+    callbacks.onNewMessage = callbacks.onNewMessage.filter((f) => f != fn)
+  }
+}
+
+export function getChatMessages() {
+  return {
+    shownMessages: state.shownMessages,
+    newMessages: state.newMessages,
+    messages: [...state.shownMessages, ...state.newMessages]
+  }
 }

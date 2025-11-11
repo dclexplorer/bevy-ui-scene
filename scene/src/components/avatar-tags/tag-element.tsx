@@ -14,7 +14,12 @@ import { executeTask } from '@dcl/sdk/ecs'
 import { getPlayer } from '@dcl/sdk/players'
 import { RGBAColor } from '../../bevy-api/interface'
 import { Color4 } from '@dcl/sdk/math'
-
+import { onNewMessage } from '../../ui-classes/main-hud/chat-and-logs/ChatsAndLogs'
+import { ChatMessageRepresentation } from '../chat-message/ChatMessage.types'
+import { sleep } from '../../utils/dcl-utils'
+import { Column } from '../layout'
+import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
+const TIME_TO_HIDE_MESSAGE = 5000
 export function getTagElement({
   player
 }: {
@@ -46,6 +51,10 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
   const [nameColor, setNameColor] = useState<RGBAColor>(
     COLOR.TEXT_COLOR_LIGHT_GREY
   )
+  const [chatMessage, setChatMessage] =
+    useState<ChatMessageRepresentation | null>(null)
+  const [messageToHide, setMessageToHide] =
+    useState<ChatMessageRepresentation | null>(null)
   useEffect(() => {
     executeTask(async () => {
       const { playerData, profileData } = await requestAndSetPlayerComposedData(
@@ -56,14 +65,31 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
         setNameColor(getAddressColor(player.userId))
       }
     })
+    onNewMessage((message: ChatMessageRepresentation) => {
+      if (message.player?.userId === player.userId) {
+        executeTask(async () => {
+          setChatMessage(message)
+          await sleep(TIME_TO_HIDE_MESSAGE)
+          setMessageToHide(message)
+        })
+      }
+    })
   }, [])
+
+  useEffect(() => {
+    if (messageToHide) {
+      if (messageToHide === chatMessage) {
+        setChatMessage(null)
+      }
+    }
+  }, [messageToHide])
   return (
-    <UiEntity
+    <Column
       uiTransform={{
-        borderRadius: 999,
+        borderRadius: getViewportHeight() * 0.025,
         borderWidth: 1,
         borderColor: COLOR.BLACK_TRANSPARENT,
-        alignSelf: 'center',
+        alignSelf: 'flex-start',
         padding: {
           top: 5,
           bottom: 5,
@@ -74,16 +100,34 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
       uiBackground={{
         color: COLOR.DARK_OPACITY_8
       }}
-      uiText={{
-        outlineColor: COLOR.WHITE,
-        outlineWidth: 1,
-        value: playerName,
-        fontSize: getViewportHeight() * 0.03,
-        color: nameColor,
-        textAlign: 'middle-center'
-      }}
     >
-      {/*    <ChatMessage message={"Hello"} onMessageMenu={()=>void} />*/}
-    </UiEntity>
+      <UiEntity
+        uiTransform={{
+          alignSelf: 'flex-start'
+        }}
+        uiText={{
+          outlineColor: COLOR.WHITE,
+          outlineWidth: 1,
+          value: playerName,
+          fontSize: getViewportHeight() * 0.025,
+          color: nameColor,
+          textAlign: 'top-left'
+        }}
+      />
+      {chatMessage && (
+        <UiEntity
+          uiTransform={{
+            maxWidth: getViewportHeight() * 0.3,
+            margin: { top: -getViewportHeight() * 0.025 }
+          }}
+          uiText={{
+            textAlign: 'top-left',
+            textWrap: 'wrap',
+            value: truncateWithoutBreakingWords(chatMessage.message, 120),
+            fontSize: getViewportHeight() * 0.025
+          }}
+        />
+      )}
+    </Column>
   )
 }

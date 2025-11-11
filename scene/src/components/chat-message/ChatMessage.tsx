@@ -19,7 +19,7 @@ import {
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
-import { compose, memoize } from '../../utils/function-utils'
+import { compose, memoize, noop } from '../../utils/function-utils'
 import { ButtonIcon } from '../button-icon'
 import { AvatarCircle } from '../avatar-circle'
 import { pushPopupAction } from '../../state/hud/actions'
@@ -43,7 +43,7 @@ function ChatMessage(props: {
   uiTransform?: UiTransformProps
   message: ChatMessageRepresentation
   key?: Key
-  onMessageMenu: (id: number) => void
+  onMessageMenu?: (id: number) => void
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -226,7 +226,7 @@ function ChatMessage(props: {
         />
         <ButtonIcon
           onMouseDown={() => {
-            props.onMessageMenu(props.message.timestamp)
+            ;(props.onMessageMenu || noop)(props.message.timestamp)
           }}
           uiTransform={{
             positionType: 'absolute',
