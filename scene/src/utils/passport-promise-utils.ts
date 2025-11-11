@@ -5,8 +5,7 @@ import { type Avatar } from '@dcl/schemas'
 import { cloneDeep } from './function-utils'
 import { HUD_POPUP_TYPE, type ViewAvatarData } from '../state/hud/state'
 import { BevyApi } from '../bevy-api'
-import { store } from '../state/store'
-import { pushPopupAction } from '../state/hud/actions'
+import { showErrorPopup } from '../service/error-popup-service'
 
 export type ProfileResponse = {
   timestamp: number
@@ -86,14 +85,7 @@ export const saveProfileData = async (
 
   await BevyApi.setAvatar({
     profileExtras
-  }).catch((error) => {
-    store.dispatch(
-      pushPopupAction({
-        type: HUD_POPUP_TYPE.ERROR,
-        data: error
-      })
-    )
-  })
+  }).catch(showErrorPopup)
 }
 
 function fromViewAvatarDataToProfileExtra(

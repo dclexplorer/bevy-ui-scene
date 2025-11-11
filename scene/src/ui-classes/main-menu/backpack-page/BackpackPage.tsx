@@ -49,9 +49,8 @@ import { updatePageGeneric } from './backpack-service'
 import { OutfitsCatalog } from './OutfitsCatalog'
 import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
 import { waitFor } from '../../../utils/dcl-utils'
-import { pushPopupAction } from '../../../state/hud/actions'
-import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import { BackpackAvatarPreviewElement } from './backpack-avatar-preview-element'
+import { showErrorPopup } from '../../../service/error-popup-service'
 
 let originalAvatarJSON: string
 
@@ -117,14 +116,7 @@ export default class BackpackPage {
       }
       if (avatarHasChanged(avatarPayload)) {
         console.log('avatarHasChanged -> setAvatar')
-        await BevyApi.setAvatar(avatarPayload).catch((error) => {
-          store.dispatch(
-            pushPopupAction({
-              type: HUD_POPUP_TYPE.ERROR,
-              data: error
-            })
-          )
-        })
+        await BevyApi.setAvatar(avatarPayload).catch(showErrorPopup)
       }
     } catch (error) {
       console.log('setAvatar error', error)

@@ -201,12 +201,7 @@ export default class LoadingAndLogin {
               this.uiController.warningPopUp.icon = 'WarningColor'
               this.uiController.warningPopUp.show() */
 
-              store.dispatch(
-                pushPopupAction({
-                  type: HUD_POPUP_TYPE.ERROR,
-                  data: error
-                })
-              )
+              showErrorPopup(error)
               this.setStatus('sign-in-or-guest')
             })
         }

@@ -23,6 +23,7 @@ import useEffect = ReactEcs.useEffect
 import { type SetAvatarData } from '../../../bevy-api/interface'
 import { type InputOption } from '../../../utils/definitions'
 import { getPlayer } from '@dcl/sdk/players'
+import { showErrorPopup } from '../../../service/error-popup-service'
 
 const { useState } = ReactEcs
 
@@ -91,13 +92,7 @@ const EditNameContent = (): ReactElement => {
 
       await BevyApi.setAvatar(avatarPayload).catch((error) => {
         console.error('onSave error', error)
-
-        store.dispatch(
-          pushPopupAction({
-            type: HUD_POPUP_TYPE.ERROR,
-            data: error
-          })
-        )
+        showErrorPopup(error)
         failed = true
       })
       setLoading(false)
