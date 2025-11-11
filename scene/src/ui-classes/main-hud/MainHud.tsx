@@ -21,6 +21,7 @@ import { getViewportHeight } from '../../service/canvas-ratio'
 import { type PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
 import { BevyApi } from '../../bevy-api'
 import { sleep } from '../../utils/dcl-utils'
+import { listenSystemAction } from '../../service/system-actions-emitter'
 
 const ZERO_SIZE = {
   width: 0,
@@ -140,6 +141,12 @@ export default class MainHud {
     this.uiController = uiController
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatsAndLogs()
+
+    listenSystemAction('Map', () => {
+      if (uiController?.isMainMenuVisible) return
+      this.uiController.menu?.show('map')
+      this.updateButtons()
+    })
 
     executeTask(async () => {
       while (true) {
