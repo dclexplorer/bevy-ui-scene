@@ -3,22 +3,18 @@ import { COLOR } from '../color-palette'
 import useEffect = ReactEcs.useEffect
 import { GetPlayerDataRes } from '../../utils/definitions'
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
-import {
-  getContentScaleRatio,
-  getViewportHeight
-} from '../../service/canvas-ratio'
-import { ChatMessage } from '../chat-message'
+import { getViewportHeight } from '../../service/canvas-ratio'
 import { requestAndSetPlayerComposedData } from '../../service/chat-members'
 import useState = ReactEcs.useState
 import { executeTask } from '@dcl/sdk/ecs'
-import { getPlayer } from '@dcl/sdk/players'
 import { RGBAColor } from '../../bevy-api/interface'
-import { Color4 } from '@dcl/sdk/math'
 import { onNewMessage } from '../../ui-classes/main-hud/chat-and-logs/ChatsAndLogs'
 import { ChatMessageRepresentation } from '../chat-message/ChatMessage.types'
 import { sleep } from '../../utils/dcl-utils'
-import { Column } from '../layout'
+import { Column, Row } from '../layout'
 import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
+import Icon from '../icon/Icon'
+import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 const TIME_TO_HIDE_MESSAGE = 5000
 export function getTagElement({
   player
@@ -52,16 +48,20 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
   const [nameColor, setNameColor] = useState<RGBAColor>(
     COLOR.TEXT_COLOR_LIGHT_GREY
   )
+  const [hasClaimedName, setHasClaimedName] = useState<boolean>(false)
   const [chatMessage, setChatMessage] =
     useState<ChatMessageRepresentation | null>(null)
   const [messageToHide, setMessageToHide] =
     useState<ChatMessageRepresentation | null>(null)
+  const defaultFontSize = getHudFontSize(getViewportHeight()).NORMAL
+  const messageMargin = defaultFontSize / 3
   useEffect(() => {
     executeTask(async () => {
       const { playerData, profileData } = await requestAndSetPlayerComposedData(
         { userId: player.userId }
       )
       if (profileData?.avatars[0].hasClaimedName) {
+        setHasClaimedName(true)
         setPlayerName(`<b>${player.name}</b>`)
         setNameColor(getAddressColor(player.userId))
       }
@@ -84,37 +84,52 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
       }
     }
   }, [messageToHide])
+
   return (
     <Column
       uiTransform={{
         borderRadius: getViewportHeight() * 0.025,
-        borderWidth: 1,
-        borderColor: COLOR.BLACK_TRANSPARENT,
+        borderWidth: messageMargin / 2,
         alignSelf: 'flex-start',
         padding: {
           top: 5,
           bottom: 5,
           left: 10,
           right: 10
-        }
+        },
+        ...(chatMessage?.hasMentionToMe
+          ? {
+              borderColor: COLOR.MESSAGE_MENTION
+            }
+          : {
+              borderColor: COLOR.BLACK_TRANSPARENT
+            })
       }}
       uiBackground={{
         color: COLOR.DARK_OPACITY_8
       }}
     >
-      <UiEntity
-        uiTransform={{
-          alignSelf: 'flex-start'
-        }}
-        uiText={{
-          outlineColor: COLOR.WHITE,
-          outlineWidth: 1,
-          value: playerName,
-          fontSize: getViewportHeight() * 0.025,
-          color: nameColor,
-          textAlign: 'top-left'
-        }}
-      />
+      <Row>
+        <UiEntity
+          uiTransform={{
+            alignSelf: 'flex-start'
+          }}
+          uiText={{
+            outlineColor: COLOR.WHITE,
+            outlineWidth: 1,
+            value: playerName,
+            fontSize: getViewportHeight() * 0.025,
+            color: nameColor,
+            textAlign: 'top-left'
+          }}
+        />
+        {hasClaimedName && (
+          <Icon
+            iconSize={getViewportHeight() * 0.025}
+            icon={{ spriteName: 'Verified', atlasName: 'icons' }}
+          />
+        )}
+      </Row>
       {chatMessage && (
         <UiEntity
           uiTransform={{

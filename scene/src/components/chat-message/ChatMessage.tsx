@@ -51,10 +51,10 @@ function ChatMessage(props: {
     return null
   }
   const defaultFontSize = getHudFontSize(getViewportHeight()).NORMAL
+  const messageMargin = defaultFontSize / 3
   const playerName = props.message.name
 
   const side = props.message.side
-  const messageMargin = defaultFontSize / 3
 
   const chatMessageOnMouseDownCallback: any = (
     event: any,
@@ -151,7 +151,7 @@ function ChatMessage(props: {
           alignItems: 'flex-start',
           padding: messageMargin,
           flexDirection: 'column',
-          borderRadius: 10,
+          borderRadius: 10, // TODO responsive
           ...(props.message.hasMentionToMe
             ? {
                 borderWidth: messageMargin / 2,
