@@ -16,8 +16,6 @@ import {
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { noop } from '../../utils/function-utils'
 import { store } from '../../state/store'
-import { pushPopupAction } from '../../state/hud/actions'
-import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { showErrorPopup } from '../../service/error-popup-service'
 
 type StatusType =

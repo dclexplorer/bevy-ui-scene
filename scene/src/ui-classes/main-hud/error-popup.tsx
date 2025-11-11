@@ -118,15 +118,14 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
             closeDialog()
           }}
         />
-        {(errorDetails?.length && (
+        {errorDetails?.length > 0 ? (
           <CopyButton
             fontSize={getContentScaleRatio() * 80}
             text={errorDetails}
             elementId={'copy-error-details' + errorDetails.length}
             variant={'dark'}
           />
-        )) ||
-          null}
+        ) : null}
       </UiEntity>
     </UiEntity>
   )

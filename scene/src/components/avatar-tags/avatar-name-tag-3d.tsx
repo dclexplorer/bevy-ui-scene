@@ -11,7 +11,7 @@ import {
   UiCanvas
 } from '@dcl/sdk/ecs'
 import { getPlayer } from '@dcl/sdk/players'
-import { Entity } from '@dcl/ecs'
+import { type Entity } from '@dcl/ecs'
 import { Color4, Vector3 } from '@dcl/sdk/math'
 import { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { getTagElement } from './tag-element'
@@ -26,7 +26,7 @@ const avatarTagMap = new Map<
   }
 >()
 
-export function initAvatarTags() {
+export function initAvatarTags(): void {
   const avatarTracker = createOrGetAvatarsTracker()
   avatarTracker.onEnterScene((userId) => {
     createTags()
@@ -40,7 +40,7 @@ export function initAvatarTags() {
   })
 }
 
-function createTags() {
+function createTags(): void {
   for (const [avatarEntity, data] of engine.getEntitiesWith(
     PlayerIdentityData
   )) {

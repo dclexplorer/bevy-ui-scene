@@ -2,14 +2,13 @@ import { type PBPlayerIdentityData } from '@dcl/ecs/dist/components'
 import {
   type DeepReadonlyObject,
   engine,
-  executeTask,
   PlayerIdentityData
 } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../utils/dcl-utils'
 import { fetchProfileData } from '../utils/passport-promise-utils'
 import { getPlayer } from '@dcl/sdk/players'
 import {
-  ComposedPlayerData,
+  type ComposedPlayerData,
   namedUsersData
 } from '../ui-classes/main-hud/chat-and-logs/named-users-data-service'
 import { getNameWithHashPostfix } from '../ui-classes/main-hud/chat-and-logs/ChatsAndLogs'

@@ -3,7 +3,6 @@ import { store } from '../../../state/store'
 import { COLOR } from '../../../components/color-palette'
 import {
   closeLastPopupAction,
-  pushPopupAction,
   updateHudStateAction
 } from '../../../state/hud/actions'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
@@ -18,7 +17,6 @@ import { DropdownComponent } from '../../../components/dropdown-component'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { Input } from '@dcl/sdk/react-ecs'
 import { BevyApi } from '../../../bevy-api'
-import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import useEffect = ReactEcs.useEffect
 import { type SetAvatarData } from '../../../bevy-api/interface'
 import { type InputOption } from '../../../utils/definitions'

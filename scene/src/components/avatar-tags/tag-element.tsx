@@ -1,15 +1,15 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../color-palette'
 import useEffect = ReactEcs.useEffect
-import { GetPlayerDataRes } from '../../utils/definitions'
+import { type GetPlayerDataRes } from '../../utils/definitions'
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import { requestAndSetPlayerComposedData } from '../../service/chat-members'
 import useState = ReactEcs.useState
 import { executeTask } from '@dcl/sdk/ecs'
-import { RGBAColor } from '../../bevy-api/interface'
+import { type RGBAColor } from '../../bevy-api/interface'
 import { onNewMessage } from '../../ui-classes/main-hud/chat-and-logs/ChatsAndLogs'
-import { ChatMessageRepresentation } from '../chat-message/ChatMessage.types'
+import { type ChatMessageRepresentation } from '../chat-message/ChatMessage.types'
 import { sleep } from '../../utils/dcl-utils'
 import { Column, Row } from '../layout'
 import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
@@ -57,9 +57,9 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
   const messageMargin = defaultFontSize / 3
   useEffect(() => {
     executeTask(async () => {
-      const { playerData, profileData } = await requestAndSetPlayerComposedData(
-        { userId: player.userId }
-      )
+      const { profileData } = await requestAndSetPlayerComposedData({
+        userId: player.userId
+      })
       if (profileData?.avatars[0].hasClaimedName) {
         setHasClaimedName(true)
         setPlayerName(`<b>${player.name}</b>`)
