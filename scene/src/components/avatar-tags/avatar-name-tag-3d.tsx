@@ -56,7 +56,7 @@ function createTags() {
     MeshRenderer.setPlane(tagWrapperEntity)
     Transform.create(tagWrapperEntity, {
       parent: avatarEntity,
-      position: Vector3.create(0, 2.5, -0.1),
+      position: Vector3.create(0, 2.6, -0.1),
       scale: Vector3.create(2, 1, 1)
     })
 

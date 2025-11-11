@@ -30,7 +30,8 @@ export function getTagElement({
       <UiEntity
         uiTransform={{
           width: '100%',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          alignSelf: 'flex-end'
         }}
       >
         <TagContent player={player} />
