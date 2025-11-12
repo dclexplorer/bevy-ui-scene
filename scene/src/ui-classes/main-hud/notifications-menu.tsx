@@ -115,7 +115,10 @@ function NotificationsContent(): ReactElement {
   return (
     <UiEntity
       uiTransform={{
-        width: getContentScaleRatio() * 370 * 2.23,
+        width:
+          notifications.length > 5
+            ? getContentScaleRatio() * 370 * 2.23
+            : getContentScaleRatio() * 370 * 2.1,
         height: getContentScaleRatio() * 540 * 2.2,
         borderRadius: getContentScaleRatio() * 20,
         borderWidth: 0,
@@ -142,14 +145,16 @@ function NotificationsContent(): ReactElement {
       />
       <UiEntity
         uiTransform={{
-          scrollVisible: 'vertical',
+          scrollVisible: notifications.length > 5 ? 'vertical' : 'hidden',
           height: getContentScaleRatio() * 540 * 2,
           width: '100%',
           borderWidth: 1,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderRadius: 0,
           flexDirection: 'column',
-          overflow: 'scroll'
+          overflow: 'scroll',
+          flexGrow: 1,
+          flexShrink: 1
         }}
       >
         {loadingNotifications && (

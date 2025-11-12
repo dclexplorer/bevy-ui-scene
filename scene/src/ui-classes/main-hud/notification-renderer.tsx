@@ -48,6 +48,10 @@ export function NotificationItem({
         ...uiTransform
       }}
       uiBackground={{ color: COLOR.NOTIFICATION_ITEM }}
+      onMouseDown={() => {
+        // TODO handle events to offer EventInfoCard or Teleport
+        console.log('notification', notification)
+      }}
     >
       <NotificationThumbnail notification={notification} />
       <UiEntity

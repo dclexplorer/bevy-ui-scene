@@ -315,7 +315,7 @@ export const NOTIFICATIONS_LOCAL_BASE_URL =
 export const RENDER_NOTIFICATION_TYPES: Array<Notification['type']> = [
   'events_started',
   'events_starts_soon',
-  'events_starts_soon',
+  'events_ended',
   'item_sold',
   'reward_assignment',
   'reward_in_progress'
