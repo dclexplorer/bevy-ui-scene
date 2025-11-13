@@ -33,6 +33,7 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
-    "@dcl-sdk/utils": "^1.2.8"
+    "@dcl-sdk/utils": "^1.2.8",
+    "@dcl/schemas": "^19.8.0"
   }
 }

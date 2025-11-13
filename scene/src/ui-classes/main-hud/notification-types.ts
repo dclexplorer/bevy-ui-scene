@@ -1,4 +1,5 @@
 import { type RarityName } from '../../utils/item-definitions'
+import { NotificationType } from '@dcl/schemas'
 
 export type BaseNotification = {
   id: string
@@ -11,7 +12,7 @@ export type BaseNotification = {
 }
 
 export type ItemSoldNotification = {
-  type: 'item_sold'
+  type: NotificationType.ITEM_SOLD
   metadata: {
     category: string
     description: string
@@ -27,7 +28,7 @@ export type ItemSoldNotification = {
 
 // Credits reminder
 export type CreditsReminderNotification = {
-  type: 'credits_reminder_do_not_miss_out'
+  type: NotificationType.CREDITS_REMINDER_USAGE
   metadata: {
     link: string
   }
@@ -35,7 +36,7 @@ export type CreditsReminderNotification = {
 
 // Events
 export type EventStartedNotification = {
-  type: 'events_started'
+  type: NotificationType.EVENTS_STARTED
   metadata: {
     link: string
     name: string
@@ -46,7 +47,7 @@ export type EventStartedNotification = {
 } & BaseNotification
 
 export type EventStartsSoonNotification = {
-  type: 'events_starts_soon'
+  type: NotificationType.EVENTS_STARTS_SOON
   metadata: {
     link: string
     name: string
@@ -57,9 +58,10 @@ export type EventStartsSoonNotification = {
     description: string
   }
 } & BaseNotification
-
+export const EVENTS_ENDED = 'events_ended'
 export type EventEndedNotification = {
-  type: 'events_ended'
+  // TODO this event is not published into notification-worker service
+  type: typeof EVENTS_ENDED
   metadata: {
     link: string
     name: string
@@ -71,7 +73,7 @@ export type EventEndedNotification = {
 
 // Social
 export type FriendshipAcceptedNotification = {
-  type: 'social_service_friendship_accepted'
+  type: NotificationType.SOCIAL_SERVICE_FRIENDSHIP_ACCEPTED
   metadata: {
     sender: UserProfile
     receiver: UserProfile
@@ -80,7 +82,7 @@ export type FriendshipAcceptedNotification = {
 } & BaseNotification
 
 export type FriendshipRequestNotification = {
-  type: 'social_service_friendship_request'
+  type: NotificationType.SOCIAL_SERVICE_FRIENDSHIP_REQUEST
   metadata: {
     sender: UserProfile
     receiver: UserProfile
@@ -89,6 +91,7 @@ export type FriendshipRequestNotification = {
 } & BaseNotification
 
 export type WearablesDropNotification = {
+  //TODO review
   type: 'wearables_drop'
   metadata: {
     itemName: string
@@ -300,9 +303,9 @@ export function isItemNotification(notification: Notification): boolean {
 }
 export function isEventNotification(notification: Notification): boolean {
   return (
-    notification.type === 'events_started' ||
-    notification.type === 'events_ended' ||
-    notification.type === 'events_starts_soon'
+    notification.type === NotificationType.EVENTS_STARTED ||
+    notification.type === EVENTS_ENDED ||
+    notification.type === NotificationType.EVENTS_STARTS_SOON
   )
 }
 export const NOTIFICATIONS_BASE_URL =
@@ -313,10 +316,10 @@ export const NOTIFICATIONS_LOCAL_BASE_URL =
   'http://localhost:5001/notifications'
 
 export const RENDER_NOTIFICATION_TYPES: Array<Notification['type']> = [
-  'events_started',
-  'events_starts_soon',
+  NotificationType.EVENTS_STARTED,
+  NotificationType.EVENTS_STARTS_SOON,
   'events_ended',
-  'item_sold',
+  NotificationType.ITEM_SOLD,
   'reward_assignment',
   'reward_in_progress'
   /* 'social_service_friendship_request',
