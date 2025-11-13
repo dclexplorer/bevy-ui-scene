@@ -710,6 +710,16 @@ function sendChatMessage(value: string): void {
     if (value?.trim()) {
       if (value.startsWith('/goto')) {
         executeTask(async () => {
+          if (value === '/goto genesis' || value === '/goto main') {
+            await changeRealm({
+              realm: 'https://realm-provider.decentraland.org/main'
+            })
+            await sleep(1000)
+            await teleportTo({
+              worldCoordinates: { x: 0, y: 0 }
+            })
+            return
+          }
           const [, coords] = value.trim().split(' ')
           const [x, y] = coords.split(',')
 
@@ -741,6 +751,7 @@ function sendChatMessage(value: string): void {
 <b>/help</b> - show this help message
 <b>/goto</b> x,y - teleport to world x,y
 <b>/goto</b> world_name.dcl.eth - teleport to realm world_name.dcl.eth
+<b>/goto</b> main - teleport to Genesis Plaza
 <b>/reload</b> - reloads the current scene`,
           sender_address: ONE_ADDRESS,
           channel: 'Nearby'
