@@ -164,6 +164,50 @@ export const activateMapCamera = (): void => {
   )
 }
 
+export const orbitToBird = (): void => {
+  store.dispatch(
+    updateHudStateAction({
+      mapCameraIsOrbiting: true,
+      movingMap: true
+    })
+  )
+  const DISPLACE_TIME = 500 // TODO review to calculate time by displacement
+
+  const targetPitch = Math.asin(ISO_OFFSET_3.y / Vector3.length(ISO_OFFSET_3))
+  const targetYaw = Math.atan2(ISO_OFFSET_3.z, ISO_OFFSET_3.x)
+  const targetDistance = Vector3.length(ISO_OFFSET_3)
+  const startPitch = state.orbitPitch
+  const startYaw = state.orbitYaw
+  const startDistance = state.targetCameraDistance
+
+  executeTask(async () => {
+    const startTime = Date.now()
+    const lerp = (a: number, b: number, u: number): number => a + (b - a) * u
+    const angleLerp = (a: number, b: number, u: number): number => {
+      const diff = Math.atan2(Math.sin(b - a), Math.cos(b - a))
+      return a + diff * u
+    }
+    while (true) {
+      const t = Math.min(1, (Date.now() - startTime) / DISPLACE_TIME)
+      const te = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+
+      state.orbitPitch = lerp(startPitch, targetPitch, te)
+      state.orbitYaw = angleLerp(startYaw, targetYaw, te)
+      state.targetCameraDistance = lerp(startDistance, targetDistance, te)
+
+      if (t >= 1) break
+      await sleep(16)
+    }
+    await sleep(16)
+    store.dispatch(
+      updateHudStateAction({
+        mapCameraIsOrbiting: false,
+        movingMap: false
+      })
+    )
+  })
+}
+
 export const orbitToTop = (): void => {
   store.dispatch(
     updateHudStateAction({

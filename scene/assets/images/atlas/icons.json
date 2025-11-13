@@ -2642,8 +2642,8 @@
 		},
 		"@.png": {
 			"frame": {
-				"x": 659,
-				"y": 52,
+				"x": 662,
+				"y": 1,
 				"w": 24,
 				"h": 24
 			},
@@ -2660,10 +2660,50 @@
 				"h": 24
 			}
 		},
-		"top-view.png": {
+		"bird-view.png": {
 			"frame": {
 				"x": 610,
 				"y": 507,
+				"w": 64,
+				"h": 64
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 64,
+				"h": 64
+			},
+			"sourceSize": {
+				"w": 64,
+				"h": 64
+			}
+		},
+		"iso-view.png": {
+			"frame": {
+				"x": 610,
+				"y": 573,
+				"w": 64,
+				"h": 64
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 64,
+				"h": 64
+			},
+			"sourceSize": {
+				"w": 64,
+				"h": 64
+			}
+		},
+		"top-view.png": {
+			"frame": {
+				"x": 688,
+				"y": 1,
 				"w": 64,
 				"h": 64
 			},
@@ -2687,8 +2727,8 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 684,
-			"h": 621
+			"w": 753,
+			"h": 638
 		},
 		"scale": "1"
 	}
