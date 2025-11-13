@@ -54,7 +54,7 @@ export function requestPlayer({
     console.error('!userId')
   }
   const playerData = (setIfNot(composedUsersData).get(userId).playerData =
-    setIfNot(composedUsersData).get(userId).playerData ?? getPlayer({ userId }))
+    setIfNot(composedUsersData).get(userId).playerData || getPlayer({ userId }))
 
   executeTask(async () => {
     requestAndSetPlayerComposedData({ userId }).catch(console.error)
@@ -71,7 +71,7 @@ export async function requestAndSetPlayerComposedData({
   await waitFor(() => !loadingUserSet.has(userId))
   loadingUserSet.add(userId)
   const playerData =
-    setIfNot(composedUsersData).get(userId).playerData ?? getPlayer({ userId })
+    setIfNot(composedUsersData).get(userId).playerData || getPlayer({ userId })
   const foundUserData = setIfNot(namedUsersData).get(
     getNameWithHashPostfix(
       playerData?.name ?? '',

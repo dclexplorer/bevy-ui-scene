@@ -17,14 +17,18 @@ import { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { getTagElement } from './tag-element'
 import { COLOR } from '../color-palette'
 import { GetPlayerDataRes } from '../../utils/definitions'
+import { waitFor } from '../../utils/dcl-utils'
 
-export function initAvatarTags(): void {
+export async function initAvatarTags(): Promise<void> {
   const avatarTracker = createOrGetAvatarsTracker()
   avatarTracker.onEnterScene((player) => {
     // TODO create tag only for the entered player
     createTag(player)
   })
   avatarTracker.onLeaveScene((userId) => {})
+
+  await waitFor(() => getPlayer() !== null)
+  createTag(getPlayer() as GetPlayerDataRes)
 }
 
 function createTag(player: GetPlayerDataRes): void {
@@ -39,7 +43,7 @@ function createTag(player: GetPlayerDataRes): void {
   MeshRenderer.setPlane(tagWrapperEntity)
   Transform.create(tagWrapperEntity, {
     parent: avatarEntity,
-    position: Vector3.create(0, 2.8, -0.1),
+    position: Vector3.create(0, 2.6, -0.1),
     scale: Vector3.create(2, 1, 1)
   })
 

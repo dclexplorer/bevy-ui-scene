@@ -16,7 +16,6 @@ import {
   type ChatMessageDefinition,
   type ChatMessageRepresentation
 } from './ChatMessage.types'
-import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
 import { compose, memoize, noop } from '../../utils/function-utils'
@@ -120,7 +119,7 @@ function ChatMessage(props: {
     >
       <AvatarCircle
         userId={props.message.sender_address}
-        circleColor={getAddressColor(props.message.sender_address)}
+        circleColor={props.message.addressColor}
         uiTransform={{
           width: defaultFontSize * 2,
           height: defaultFontSize * 2,
@@ -182,7 +181,7 @@ function ChatMessage(props: {
             color={
               isSystemMessage(props.message)
                 ? Color4.Gray()
-                : (getAddressColor(props.message.sender_address) as Color4)
+                : (props.message.addressColor as Color4)
             }
             textAlign={`middle-left`}
             onMouseDown={() => {

@@ -78,6 +78,7 @@ import {
   type ComposedPlayerData,
   namedUsersData
 } from './named-users-data-service'
+import { getAddressColor } from './ColorByAddress'
 
 type Box = {
   position: { x: number; y: number }
@@ -882,8 +883,13 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
 
   // El profileData de todos los usuarios mencionados : PROBLEM ?
 
-  const playerData = requestPlayer({ userId: message.sender_address })
-
+  let playerData = requestPlayer({ userId: message.sender_address })
+  let retries = 0
+  while (!playerData && retries < 10) {
+    await sleep(100)
+    playerData = requestPlayer({ userId: message.sender_address })
+    retries++
+  }
   const now = Date.now()
   const timestamp =
     state.shownMessages[state.shownMessages.length - 1]?.timestamp === now
@@ -901,6 +907,7 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
           playerData?.name || `Unknown*`,
           message.sender_address
         ) ?? '',
+    addressColor: COLOR.TEXT_COLOR_LIGHT_GREY,
     side:
       message.sender_address === getPlayer()?.userId
         ? CHAT_SIDE.RIGHT
@@ -1010,6 +1017,7 @@ async function extendMessageMentionedUsers(
         composeData: ComposedPlayerData
       ): void {
         const [avatarData] = composeData.profileData?.avatars ?? []
+
         if (
           message.name ===
             getNameWithHashPostfix(
@@ -1018,6 +1026,7 @@ async function extendMessageMentionedUsers(
             ) &&
           avatarData.hasClaimedName
         ) {
+          message.addressColor = getAddressColor(message.sender_address)
           message.name = message.name.split('#')[0]
         }
         message.message = decorateMessageWithLinks(message._originalMessage)
