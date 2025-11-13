@@ -16,6 +16,8 @@ import { initSystemActionsEmitter } from '../service/system-actions-emitter'
 import { setupPassportPopup } from '../ui-classes/main-hud/passport/passport-popup'
 import { setupProfilePopups } from '../ui-classes/main-hud/passport/profile-popup'
 import { getCurrentScene } from '../service/player-scenes'
+import { sleep } from '../utils/dcl-utils'
+const SCENE_INFO_MAX_RETRIES = 20
 
 export class GameController {
   uiController: UIController
@@ -64,9 +66,16 @@ export class GameController {
       return
     }
 
-    const liveScenesInfo: LiveSceneInfo[] = await BevyApi.liveSceneInfo()
-    const currentScene = await getCurrentScene(liveScenesInfo, false)
-    console.log('currentScene__', currentScene)
+    let currentScene = await getCurrentScene(
+      await BevyApi.liveSceneInfo(),
+      false
+    )
+    let retries = 0
+    while (!currentScene && retries < SCENE_INFO_MAX_RETRIES) {
+      await sleep(100)
+      currentScene = await getCurrentScene(await BevyApi.liveSceneInfo(), false)
+      retries++
+    }
     store.dispatch(loadSceneFromBevyApi(currentScene))
     store.dispatch(loadPlaceFromApi(undefined))
     fetchPlaceFromCoords(explorerCoords)
