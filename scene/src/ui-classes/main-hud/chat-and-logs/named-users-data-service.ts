@@ -6,6 +6,5 @@ export type ComposedPlayerData = {
   playerData?: GetPlayerDataRes | null
   profileData?: ProfileResponse
 }
-export type userIdString = `0x${string}`
 export const namedUsersData = new Map<nameString, ComposedPlayerData>()
-export const composedUsersData = new Map<userIdString, ComposedPlayerData>()
+export const composedUsersData = new Map<string, ComposedPlayerData>()

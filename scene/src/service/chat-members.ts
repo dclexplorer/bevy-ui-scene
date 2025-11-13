@@ -50,8 +50,11 @@ export function requestPlayer({
 }: {
   userId: string
 }): GetPlayerDataRes | null {
+  if (!userId) {
+    console.error('!userId')
+  }
   const playerData = (setIfNot(composedUsersData).get(userId).playerData =
-    getPlayer({ userId }))
+    setIfNot(composedUsersData).get(userId).playerData ?? getPlayer({ userId }))
 
   executeTask(async () => {
     requestAndSetPlayerComposedData({ userId }).catch(console.error)
