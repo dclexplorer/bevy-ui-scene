@@ -43,7 +43,7 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
           player.userId.length - 4,
           player.userId.length
         )}`
-      : ''
+      : '???'
   )
   const [nameColor, setNameColor] = useState<RGBAColor>(
     COLOR.TEXT_COLOR_LIGHT_GREY

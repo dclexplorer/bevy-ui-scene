@@ -17,6 +17,7 @@ import { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { getTagElement } from './tag-element'
 import { COLOR } from '../color-palette'
 import { waitFor } from '../../utils/dcl-utils'
+import { requestPlayer } from '../../service/chat-members'
 
 const avatarTagMap = new Map<
   string,
@@ -66,7 +67,7 @@ function createTags(): void {
       color: Color4.Clear()
     })
     // ReactEcsRenderer.setUiRenderer(TagElement)
-    const player = getPlayer({ userId: data.address })
+    const player = requestPlayer({ userId: data.address })
     if (!player) continue
     ReactEcsRenderer.setTextureRenderer(
       tagWrapperEntity,
