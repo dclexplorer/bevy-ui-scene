@@ -2,6 +2,7 @@ import { type PBPlayerIdentityData } from '@dcl/ecs/dist/components'
 import {
   type DeepReadonlyObject,
   engine,
+  executeTask,
   PlayerIdentityData
 } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../utils/dcl-utils'
@@ -9,10 +10,12 @@ import { fetchProfileData } from '../utils/passport-promise-utils'
 import { getPlayer } from '@dcl/sdk/players'
 import {
   type ComposedPlayerData,
+  composedUsersData,
   namedUsersData
 } from '../ui-classes/main-hud/chat-and-logs/named-users-data-service'
 import { getNameWithHashPostfix } from '../ui-classes/main-hud/chat-and-logs/ChatsAndLogs'
 import { setIfNot } from '../utils/function-utils'
+import { GetPlayerDataRes } from '../utils/definitions'
 
 const state: {
   players: Array<DeepReadonlyObject<PBPlayerIdentityData>>
@@ -42,6 +45,21 @@ export async function initChatMembersCount(): Promise<void> {
 }
 const loadingUserSet = new Set<string>()
 
+export function requestPlayer({
+  userId
+}: {
+  userId: string
+}): GetPlayerDataRes | null {
+  const playerData = (setIfNot(composedUsersData).get(userId).playerData =
+    getPlayer({ userId }))
+
+  executeTask(async () => {
+    requestAndSetPlayerComposedData({ userId }).catch(console.error)
+  })
+
+  return playerData
+}
+
 export async function requestAndSetPlayerComposedData({
   userId
 }: {
@@ -49,7 +67,8 @@ export async function requestAndSetPlayerComposedData({
 }): Promise<ComposedPlayerData> {
   await waitFor(() => !loadingUserSet.has(userId))
   loadingUserSet.add(userId)
-  const playerData = getPlayer({ userId })
+  const playerData =
+    setIfNot(composedUsersData).get(userId).playerData ?? getPlayer({ userId })
   const foundUserData = setIfNot(namedUsersData).get(
     getNameWithHashPostfix(
       playerData?.name ?? '',
@@ -62,6 +81,8 @@ export async function requestAndSetPlayerComposedData({
     useCache: true
   })
 
+  setIfNot(composedUsersData).get(userId).profileData = profileData
+  setIfNot(composedUsersData).get(userId).playerData = playerData
   foundUserData.playerData = playerData
   foundUserData.profileData = profileData
   loadingUserSet.delete(userId)

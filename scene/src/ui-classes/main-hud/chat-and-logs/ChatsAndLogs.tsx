@@ -52,7 +52,8 @@ import { type ReactElement } from '@dcl/react-ecs'
 import Icon from '../../../components/icon/Icon'
 import {
   getChatMembers,
-  initChatMembersCount
+  initChatMembersCount,
+  requestPlayer
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
@@ -881,7 +882,7 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
 
   // El profileData de todos los usuarios mencionados : PROBLEM ?
 
-  const playerData = getPlayer({ userId: message.sender_address })
+  const playerData = requestPlayer({ userId: message.sender_address })
 
   const now = Date.now()
   const timestamp =
