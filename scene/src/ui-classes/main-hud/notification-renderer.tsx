@@ -28,7 +28,6 @@ import { BevyApi } from '../../bevy-api'
 import { showErrorPopup } from '../../service/error-popup-service'
 import { fetchPlaceFromApi } from '../../utils/promise-utils'
 import { getUiController } from '../../controllers/ui.controller'
-import { PlaceFromApi } from '../scene-info-card/SceneInfoCard.types'
 import useState = ReactEcs.useState
 import { closeLastPopupAction, pushPopupAction } from '../../state/hud/actions'
 import { store } from '../../state/store'
@@ -85,17 +84,13 @@ export function NotificationItem({
               )
             } else {
               const { data } = JSON.parse(responseEvent.body)
-              const { place_id, position, coordinates } = data
-              console.log(' {place_id, position, coordinates} ', {
-                place_id,
-                position,
-                coordinates
-              })
-              if (place_id) {
-                const place = await fetchPlaceFromApi(place_id)
+              const placeId = data.place_id
+
+              if (placeId) {
+                const place = await fetchPlaceFromApi(placeId)
 
                 getUiController()
-                  .sceneCard.showByData(place as PlaceFromApi)
+                  .sceneCard.showByData(place)
                   .catch(console.error)
               }
             }

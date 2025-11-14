@@ -111,7 +111,7 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
       avatarProxies.delete(userId)
     }
     callbacks.onLeaveScene.forEach((fn) => {
-      ;(fn as UserIdCallback)(userId as string)
+      ;(fn as UserIdCallback)(userId)
     })
   }
 

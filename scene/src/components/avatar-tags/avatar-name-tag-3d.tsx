@@ -2,7 +2,6 @@ import { createOrGetAvatarsTracker } from '../../service/avatar-tracker'
 import {
   Billboard,
   engine,
-  executeTask,
   Material,
   MaterialTransparencyMode,
   MeshRenderer,
@@ -16,7 +15,7 @@ import { Color4, Vector3 } from '@dcl/sdk/math'
 import { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { getTagElement } from './tag-element'
 import { COLOR } from '../color-palette'
-import { GetPlayerDataRes } from '../../utils/definitions'
+import { type GetPlayerDataRes } from '../../utils/definitions'
 import { waitFor } from '../../utils/dcl-utils'
 
 export async function initAvatarTags(): Promise<void> {

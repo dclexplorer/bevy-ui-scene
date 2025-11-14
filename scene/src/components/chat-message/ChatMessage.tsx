@@ -181,7 +181,7 @@ function ChatMessage(props: {
             color={
               isSystemMessage(props.message)
                 ? Color4.Gray()
-                : (props.message.addressColor as Color4)
+                : props.message.addressColor
             }
             textAlign={`middle-left`}
             onMouseDown={() => {

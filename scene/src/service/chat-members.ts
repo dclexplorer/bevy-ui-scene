@@ -15,7 +15,7 @@ import {
 } from '../ui-classes/main-hud/chat-and-logs/named-users-data-service'
 import { getNameWithHashPostfix } from '../ui-classes/main-hud/chat-and-logs/ChatsAndLogs'
 import { setIfNot } from '../utils/function-utils'
-import { GetPlayerDataRes } from '../utils/definitions'
+import { type GetPlayerDataRes } from '../utils/definitions'
 
 const state: {
   players: Array<DeepReadonlyObject<PBPlayerIdentityData>>

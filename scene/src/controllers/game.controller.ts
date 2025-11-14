@@ -2,7 +2,6 @@ import { getPlayerPosition } from '@dcl-sdk/utils'
 import { engine } from '@dcl/sdk/ecs'
 import type { Vector3 } from '@dcl/sdk/math'
 import { BevyApi } from 'src/bevy-api'
-import type { LiveSceneInfo } from 'src/bevy-api/interface'
 import {
   loadPlaceFromApi,
   loadSceneFromBevyApi,
