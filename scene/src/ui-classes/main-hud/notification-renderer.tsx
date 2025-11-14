@@ -23,6 +23,15 @@ import { rgbToHex } from '../../utils/ui-utils'
 import { type RarityName } from '../../utils/item-definitions'
 import { ImageCircle } from '../../components/image-circle'
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { executeTask } from '@dcl/sdk/ecs'
+import { BevyApi } from '../../bevy-api'
+import { showErrorPopup } from '../../service/error-popup-service'
+import { fetchPlaceFromApi } from '../../utils/promise-utils'
+import { getUiController } from '../../controllers/ui.controller'
+import useState = ReactEcs.useState
+import { closeLastPopupAction, pushPopupAction } from '../../state/hud/actions'
+import { store } from '../../state/store'
+import { HUD_POPUP_TYPE } from '../../state/hud/state'
 
 export function NotificationItem({
   notification,
@@ -32,6 +41,7 @@ export function NotificationItem({
   key?: any
   uiTransform?: UiTransformProps
 }): ReactElement | null {
+  const [loading, setLoading] = useState(false)
   return (
     <UiEntity
       uiTransform={{
@@ -48,6 +58,56 @@ export function NotificationItem({
         ...uiTransform
       }}
       uiBackground={{ color: COLOR.NOTIFICATION_ITEM }}
+      onMouseDown={() => {
+        if (loading) return
+        setLoading(true)
+        if (notification.type.indexOf('events') === 0) {
+          executeTask(async () => {
+            const eventId =
+              notification.metadata.eventId ??
+              notification.metadata.link.replace(
+                'https://decentraland.org/jump/events?id=',
+                ''
+              )
+            store.dispatch(closeLastPopupAction())
+            const responseEvent = await BevyApi.kernelFetch({
+              url: `https://events.decentraland.org/api/events/${eventId}`
+            })
+
+            if (!responseEvent.ok) {
+              showErrorPopup(
+                new Error(
+                  `httpError ${responseEvent.status} ${
+                    responseEvent.statusText || responseEvent.body
+                  }`
+                )
+              )
+            } else {
+              const { data } = JSON.parse(responseEvent.body)
+              const placeId = data.place_id
+
+              if (placeId) {
+                const place = await fetchPlaceFromApi(placeId)
+
+                getUiController()
+                  .sceneCard.showByData(place)
+                  .catch(console.error)
+              }
+            }
+          })
+        } else if (notification.metadata.link) {
+          store.dispatch(closeLastPopupAction())
+          store.dispatch(
+            pushPopupAction({
+              type: HUD_POPUP_TYPE.URL,
+              data: notification.metadata.link
+            })
+          )
+        }
+        setLoading(false)
+        // TODO handle events to offer EventInfoCard or Teleport
+        console.log('notification', notification)
+      }}
     >
       <NotificationThumbnail notification={notification} />
       <UiEntity

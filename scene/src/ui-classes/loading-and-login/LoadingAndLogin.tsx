@@ -16,8 +16,6 @@ import {
 import { getBackgroundFromAtlas } from '../../utils/ui-utils'
 import { noop } from '../../utils/function-utils'
 import { store } from '../../state/store'
-import { pushPopupAction } from '../../state/hud/actions'
-import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { showErrorPopup } from '../../service/error-popup-service'
 
 type StatusType =
@@ -201,12 +199,7 @@ export default class LoadingAndLogin {
               this.uiController.warningPopUp.icon = 'WarningColor'
               this.uiController.warningPopUp.show() */
 
-              store.dispatch(
-                pushPopupAction({
-                  type: HUD_POPUP_TYPE.ERROR,
-                  data: error
-                })
-              )
+              showErrorPopup(error)
               this.setStatus('sign-in-or-guest')
             })
         }

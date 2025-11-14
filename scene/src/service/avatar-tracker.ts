@@ -27,12 +27,13 @@ type GetPlayerDataRes = {
   position: TransformType['position'] | undefined
 }
 export type UserIdCallback = (userId: string) => void
+export type PlayerCallback = (player: GetPlayerDataRes) => void
 export type UnListenFn = () => void
 export type AvatarTracker = {
   onClick: (fn: UserIdCallback) => UnListenFn
   onMouseOver: (fn: UserIdCallback) => UnListenFn
   onMouseLeave: (fn: UserIdCallback) => UnListenFn
-  onEnterScene: (fn: UserIdCallback) => UnListenFn
+  onEnterScene: (fn: PlayerCallback) => UnListenFn
   onLeaveScene: (fn: UserIdCallback) => UnListenFn
   dispose: () => void
 }
@@ -42,7 +43,8 @@ let avatarTracker: AvatarTracker
 export const createOrGetAvatarsTracker = (): AvatarTracker => {
   if (avatarTracker !== undefined) return avatarTracker
 
-  const callbacks: Record<string, Array<(userId: string) => void>> = {
+  const callbacks: Record<string, Array<PlayerCallback | UserIdCallback>> = {
+    // TODO dont use record , specify type for each
     onClick: [],
     onMouseOver: [],
     onMouseLeave: [],
@@ -69,6 +71,7 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
   }
 
   onEnterScene((player) => {
+    console.log('onEnterScene', player.userId, player.name)
     if (player.userId === getPlayer()?.userId) {
       return
     }
@@ -90,13 +93,14 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
       avatarProxies.set(player.userId, proxy)
     }
     callbacks.onEnterScene.forEach((fn) => {
-      fn(player.userId)
+      ;(fn as PlayerCallback)(player)
     })
   })
 
   onLeaveScene(onLeaveSceneCallback)
 
   function onLeaveSceneCallback(userId: string): void {
+    console.log('onLeaveSceneCallback', userId)
     const proxy = avatarProxies.get(userId)
     if (proxy) {
       pointerEventsSystem.removeOnPointerDown(proxy)
@@ -107,7 +111,7 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
       avatarProxies.delete(userId)
     }
     callbacks.onLeaveScene.forEach((fn) => {
-      fn(userId)
+      ;(fn as UserIdCallback)(userId)
     })
   }
 
@@ -130,7 +134,7 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
     onMouseOver,
     onMouseLeave,
     dispose,
-    onEnterScene: (fn: UserIdCallback) => {
+    onEnterScene: (fn: PlayerCallback) => {
       callbacks.onEnterScene.push(fn)
       return () => {
         callbacks.onEnterScene = callbacks.onEnterScene.filter((f) => f !== fn)
@@ -188,7 +192,7 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
       },
       (event: PBPointerEventsResult) => {
         callbacks.onClick.forEach((fn) => {
-          fn(userId)
+          ;(fn as UserIdCallback)(userId)
         })
       }
     )
@@ -199,7 +203,7 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
       },
       (event: PBPointerEventsResult) => {
         callbacks.onMouseOver.forEach((fn) => {
-          fn(userId)
+          ;(fn as UserIdCallback)(userId)
         })
       }
     )
@@ -210,7 +214,7 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
       },
       (event: PBPointerEventsResult) => {
         callbacks.onMouseLeave.forEach((fn) => {
-          fn(userId)
+          ;(fn as UserIdCallback)(userId)
         })
       }
     )

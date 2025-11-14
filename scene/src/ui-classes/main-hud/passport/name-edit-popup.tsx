@@ -3,7 +3,6 @@ import { store } from '../../../state/store'
 import { COLOR } from '../../../components/color-palette'
 import {
   closeLastPopupAction,
-  pushPopupAction,
   updateHudStateAction
 } from '../../../state/hud/actions'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
@@ -18,11 +17,11 @@ import { DropdownComponent } from '../../../components/dropdown-component'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { Input } from '@dcl/sdk/react-ecs'
 import { BevyApi } from '../../../bevy-api'
-import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import useEffect = ReactEcs.useEffect
 import { type SetAvatarData } from '../../../bevy-api/interface'
 import { type InputOption } from '../../../utils/definitions'
 import { getPlayer } from '@dcl/sdk/players'
+import { showErrorPopup } from '../../../service/error-popup-service'
 
 const { useState } = ReactEcs
 
@@ -91,13 +90,7 @@ const EditNameContent = (): ReactElement => {
 
       await BevyApi.setAvatar(avatarPayload).catch((error) => {
         console.error('onSave error', error)
-
-        store.dispatch(
-          pushPopupAction({
-            type: HUD_POPUP_TYPE.ERROR,
-            data: error
-          })
-        )
+        showErrorPopup(error)
         failed = true
       })
       setLoading(false)

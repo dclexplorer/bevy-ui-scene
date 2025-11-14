@@ -16,10 +16,9 @@ import {
   type ChatMessageDefinition,
   type ChatMessageRepresentation
 } from './ChatMessage.types'
-import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import { COLOR } from '../color-palette'
-import { compose, memoize } from '../../utils/function-utils'
+import { compose, memoize, noop } from '../../utils/function-utils'
 import { ButtonIcon } from '../button-icon'
 import { AvatarCircle } from '../avatar-circle'
 import { pushPopupAction } from '../../state/hud/actions'
@@ -43,7 +42,7 @@ function ChatMessage(props: {
   uiTransform?: UiTransformProps
   message: ChatMessageRepresentation
   key?: Key
-  onMessageMenu: (id: number) => void
+  onMessageMenu?: (id: number) => void
 }): ReactEcs.JSX.Element | null {
   const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
   if (canvasInfo === null) return null
@@ -51,10 +50,10 @@ function ChatMessage(props: {
     return null
   }
   const defaultFontSize = getHudFontSize(getViewportHeight()).NORMAL
+  const messageMargin = defaultFontSize / 3
   const playerName = props.message.name
 
   const side = props.message.side
-  const messageMargin = defaultFontSize / 3
 
   const chatMessageOnMouseDownCallback: any = (
     event: any,
@@ -120,7 +119,7 @@ function ChatMessage(props: {
     >
       <AvatarCircle
         userId={props.message.sender_address}
-        circleColor={getAddressColor(props.message.sender_address)}
+        circleColor={props.message.addressColor}
         uiTransform={{
           width: defaultFontSize * 2,
           height: defaultFontSize * 2,
@@ -151,7 +150,7 @@ function ChatMessage(props: {
           alignItems: 'flex-start',
           padding: messageMargin,
           flexDirection: 'column',
-          borderRadius: 10,
+          borderRadius: 10, // TODO responsive
           ...(props.message.hasMentionToMe
             ? {
                 borderWidth: messageMargin / 2,
@@ -182,7 +181,7 @@ function ChatMessage(props: {
             color={
               isSystemMessage(props.message)
                 ? Color4.Gray()
-                : (getAddressColor(props.message.sender_address) as Color4)
+                : props.message.addressColor
             }
             textAlign={`middle-left`}
             onMouseDown={() => {
@@ -226,7 +225,7 @@ function ChatMessage(props: {
         />
         <ButtonIcon
           onMouseDown={() => {
-            props.onMessageMenu(props.message.timestamp)
+            ;(props.onMessageMenu || noop)(props.message.timestamp)
           }}
           uiTransform={{
             positionType: 'absolute',

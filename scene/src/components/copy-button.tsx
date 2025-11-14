@@ -13,12 +13,14 @@ export function CopyButton({
   fontSize,
   text,
   elementId,
-  uiTransform
+  uiTransform,
+  variant = 'white'
 }: {
   fontSize: number
   text: string
   elementId: string
   uiTransform?: UiTransformProps
+  variant?: 'white' | 'dark'
 }): ReactElement {
   return (
     <UiEntity
@@ -36,9 +38,13 @@ export function CopyButton({
           spriteName: 'CopyIcon'
         }),
         color:
-          state.copyingElementId === elementId
-            ? COLOR.WHITE
-            : COLOR.WHITE_OPACITY_2
+          variant === 'white'
+            ? state.copyingElementId === elementId
+              ? COLOR.WHITE
+              : COLOR.WHITE_OPACITY_2
+            : state.copyingElementId === elementId
+            ? COLOR.DARK_OPACITY_2
+            : COLOR.TEXT_COLOR
       }}
       onMouseDown={() => {
         executeTask(async () => {

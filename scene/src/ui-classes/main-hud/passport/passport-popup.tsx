@@ -116,6 +116,7 @@ export function setupPassportPopup(): void {
 }
 
 export const PassportPopup: Popup = ({ shownPopup }) => {
+  const borderRadius = (getContentScaleRatio() * 80) / 4
   return (
     <UiEntity
       uiTransform={{
@@ -140,7 +141,10 @@ export const PassportPopup: Popup = ({ shownPopup }) => {
             width: '80%',
             height: '100%',
             pointerFilter: 'block',
-            flexDirection: 'row'
+            flexDirection: 'row',
+            borderRadius,
+            borderWidth: 0,
+            borderColor: COLOR.BLACK_TRANSPARENT
           }}
           onMouseDown={noop}
           uiBackground={{
@@ -172,10 +176,17 @@ export const PassportPopup: Popup = ({ shownPopup }) => {
           <CloseButton
             uiTransform={{
               position: {
-                top: 0,
-                right: 0
+                top: getContentScaleRatio() * 16,
+                right: getContentScaleRatio() * 16
               },
-              positionType: 'absolute'
+              positionType: 'absolute',
+              borderWidth: 0,
+              borderRadius,
+              borderColor: COLOR.BLACK_TRANSPARENT,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              flexGrow: 0
             }}
             onClick={() => {
               closeDialog()

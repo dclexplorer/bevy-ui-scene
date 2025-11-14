@@ -8,6 +8,7 @@ import { noop } from '../../utils/function-utils'
 import Icon from '../../components/icon/Icon'
 import { Color4 } from '@dcl/sdk/math'
 import { type Popup } from '../../components/popup-stack'
+import { CopyButton } from '../../components/copy-button'
 const { useEffect, useState } = ReactEcs
 
 export const ErrorPopup: Popup = ({ shownPopup }) => {
@@ -117,6 +118,14 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
             closeDialog()
           }}
         />
+        {errorDetails?.length > 0 ? (
+          <CopyButton
+            fontSize={getContentScaleRatio() * 80}
+            text={errorDetails}
+            elementId={'copy-error-details' + errorDetails.length}
+            variant={'dark'}
+          />
+        ) : null}
       </UiEntity>
     </UiEntity>
   )

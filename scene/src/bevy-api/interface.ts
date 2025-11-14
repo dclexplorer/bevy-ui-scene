@@ -156,6 +156,8 @@ export type BevyApiInterface = {
     right: number
     bottom: number
   }) => void
+  setMicEnabled: (enabled: boolean) => void
+  getMicState: () => Promise<{ enabled: boolean; available: boolean }>
 }
 
 // system api module

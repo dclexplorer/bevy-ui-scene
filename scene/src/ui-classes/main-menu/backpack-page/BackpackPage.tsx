@@ -49,9 +49,8 @@ import { updatePageGeneric } from './backpack-service'
 import { OutfitsCatalog } from './OutfitsCatalog'
 import { fetchPlayerOutfitMetadata } from '../../../utils/outfits-promise-utils'
 import { waitFor } from '../../../utils/dcl-utils'
-import { pushPopupAction } from '../../../state/hud/actions'
-import { HUD_POPUP_TYPE } from '../../../state/hud/state'
 import { BackpackAvatarPreviewElement } from './backpack-avatar-preview-element'
+import { showErrorPopup } from '../../../service/error-popup-service'
 
 let originalAvatarJSON: string
 
@@ -116,14 +115,8 @@ export default class BackpackPage {
         }
       }
       if (avatarHasChanged(avatarPayload)) {
-        await BevyApi.setAvatar(avatarPayload).catch((error) => {
-          store.dispatch(
-            pushPopupAction({
-              type: HUD_POPUP_TYPE.ERROR,
-              data: error
-            })
-          )
-        })
+        console.log('avatarHasChanged -> setAvatar')
+        await BevyApi.setAvatar(avatarPayload).catch(showErrorPopup)
       }
     } catch (error) {
       console.log('setAvatar error', error)
@@ -132,6 +125,20 @@ export default class BackpackPage {
     function avatarHasChanged(avatarPayload: SetAvatarData): boolean {
       return originalAvatarJSON !== JSON.stringify(avatarPayload)
     }
+  }
+
+  setOriginalAvatarJSON(): void {
+    const backpackState = store.getState().backpack
+    originalAvatarJSON = JSON.stringify({
+      base: backpackState.outfitSetup.base,
+      equip: {
+        wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
+        emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
+          nullAsEmptyString
+        ) as URN[],
+        forceRender: backpackState.forceRender ?? []
+      }
+    } satisfies SetAvatarData)
   }
 
   async init(): Promise<void> {
@@ -179,16 +186,7 @@ export default class BackpackPage {
 
     const backpackState = store.getState().backpack
 
-    originalAvatarJSON = JSON.stringify({
-      base: backpackState.outfitSetup.base,
-      equip: {
-        wearableUrns: getItemsWithTokenId(backpackState.equippedWearables),
-        emoteUrns: getItemsWithTokenId(backpackState.equippedEmotes).map(
-          nullAsEmptyString
-        ) as URN[],
-        forceRender: backpackState.forceRender ?? []
-      }
-    } satisfies SetAvatarData)
+    this.setOriginalAvatarJSON()
 
     if (!backpackState.outfitsMetadata) {
       store.dispatch(updateLoadingPage(true))

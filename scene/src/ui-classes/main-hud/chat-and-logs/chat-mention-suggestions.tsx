@@ -25,7 +25,7 @@ export const ChatMentionSuggestions = (): ReactElement => {
     const [lastMatch] =
       store.getState().hud.chatInput?.match(SUGGESTION_NAME_MENTION_REGEXP) ??
       []
-    console.log('lastMatch', lastMatch)
+
     const otherMatches =
       store
         .getState()

@@ -52,7 +52,8 @@ import { type ReactElement } from '@dcl/react-ecs'
 import Icon from '../../../components/icon/Icon'
 import {
   getChatMembers,
-  initChatMembersCount
+  initChatMembersCount,
+  requestPlayer
 } from '../../../service/chat-members'
 import { store } from '../../../state/store'
 import { filterEntitiesWith, sleep } from '../../../utils/dcl-utils'
@@ -77,6 +78,7 @@ import {
   type ComposedPlayerData,
   namedUsersData
 } from './named-users-data-service'
+import { getAddressColor } from './ColorByAddress'
 
 type Box = {
   position: { x: number; y: number }
@@ -710,6 +712,16 @@ function sendChatMessage(value: string): void {
     if (value?.trim()) {
       if (value.startsWith('/goto')) {
         executeTask(async () => {
+          if (value === '/goto genesis' || value === '/goto main') {
+            await changeRealm({
+              realm: 'https://realm-provider.decentraland.org/main'
+            })
+            await sleep(1000)
+            await teleportTo({
+              worldCoordinates: { x: 0, y: 0 }
+            })
+            return
+          }
           const [, coords] = value.trim().split(' ')
           const [x, y] = coords.split(',')
 
@@ -741,6 +753,7 @@ function sendChatMessage(value: string): void {
 <b>/help</b> - show this help message
 <b>/goto</b> x,y - teleport to world x,y
 <b>/goto</b> world_name.dcl.eth - teleport to realm world_name.dcl.eth
+<b>/goto</b> main - teleport to Genesis Plaza
 <b>/reload</b> - reloads the current scene`,
           sender_address: ONE_ADDRESS,
           channel: 'Nearby'
@@ -870,8 +883,13 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
 
   // El profileData de todos los usuarios mencionados : PROBLEM ?
 
-  const playerData = getPlayer({ userId: message.sender_address })
-
+  let playerData = requestPlayer({ userId: message.sender_address })
+  let retries = 0
+  while (!playerData && retries < 10) {
+    await sleep(100)
+    playerData = requestPlayer({ userId: message.sender_address })
+    retries++
+  }
   const now = Date.now()
   const timestamp =
     state.shownMessages[state.shownMessages.length - 1]?.timestamp === now
@@ -889,6 +907,7 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
           playerData?.name || `Unknown*`,
           message.sender_address
         ) ?? '',
+    addressColor: COLOR.TEXT_COLOR_LIGHT_GREY,
     side:
       message.sender_address === getPlayer()?.userId
         ? CHAT_SIDE.RIGHT
@@ -913,7 +932,9 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
   if (CHAT_WORLD_REGEXP.test(message.message)) {
     cleanMapPlaces()
   }
-
+  callbacks.onNewMessage.forEach((fn) => {
+    fn(decoratedChatMessage)
+  })
   async function decorateAsyncMessageData(
     message: ChatMessageRepresentation
   ): Promise<void> {
@@ -996,6 +1017,7 @@ async function extendMessageMentionedUsers(
         composeData: ComposedPlayerData
       ): void {
         const [avatarData] = composeData.profileData?.avatars ?? []
+
         if (
           message.name ===
             getNameWithHashPostfix(
@@ -1004,6 +1026,7 @@ async function extendMessageMentionedUsers(
             ) &&
           avatarData.hasClaimedName
         ) {
+          message.addressColor = getAddressColor(message.sender_address)
           message.name = message.name.split('#')[0]
         }
         message.message = decorateMessageWithLinks(message._originalMessage)
@@ -1012,4 +1035,18 @@ async function extendMessageMentionedUsers(
   }
 
   message.message = decorateMessageWithLinks(message._originalMessage)
+}
+const callbacks: {
+  onNewMessage: Array<(m: ChatMessageRepresentation) => void>
+} = {
+  onNewMessage: []
+}
+
+export function onNewMessage(
+  fn: (message: ChatMessageRepresentation) => void
+): () => void {
+  callbacks.onNewMessage.push(fn)
+  return (): void => {
+    callbacks.onNewMessage = callbacks.onNewMessage.filter((f) => f !== fn)
+  }
 }

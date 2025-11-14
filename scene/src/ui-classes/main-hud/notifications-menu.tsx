@@ -17,6 +17,7 @@ import { Label } from '@dcl/sdk/react-ecs'
 import { Color4 } from '@dcl/sdk/math'
 import { fetchNotifications } from '../../utils/notifications-promise-utils'
 import { sleep } from '../../utils/dcl-utils'
+import { getLoadingAlphaValue } from '../../service/loading-alpha-color'
 const { useEffect, useState } = ReactEcs
 const emptyMeta: SignedFetchMeta = {}
 const meta: string = JSON.stringify(emptyMeta)
@@ -72,10 +73,7 @@ function NotificationsContent(): ReactElement {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loadingNotifications, setLoadingNotifications] =
     useState<boolean>(true)
-
-  const t = (Date.now() % 2000) / 1000 // TODO move to a singleton service with getLoadingAlphaWhiteColor() using a system
-
-  const loadingAlpha = t < 1 ? t : 2 - t
+  const loadingAlpha = getLoadingAlphaValue()
 
   useEffect(() => {
     executeTask(async () => {
@@ -117,7 +115,10 @@ function NotificationsContent(): ReactElement {
   return (
     <UiEntity
       uiTransform={{
-        width: getContentScaleRatio() * 370 * 2.23,
+        width:
+          notifications.length > 5
+            ? getContentScaleRatio() * 370 * 2.23
+            : getContentScaleRatio() * 370 * 2.1,
         height: getContentScaleRatio() * 540 * 2.2,
         borderRadius: getContentScaleRatio() * 20,
         borderWidth: 0,
@@ -144,14 +145,16 @@ function NotificationsContent(): ReactElement {
       />
       <UiEntity
         uiTransform={{
-          scrollVisible: 'vertical',
+          scrollVisible: notifications.length > 5 ? 'vertical' : 'hidden',
           height: getContentScaleRatio() * 540 * 2,
           width: '100%',
           borderWidth: 1,
           borderColor: COLOR.BLACK_TRANSPARENT,
           borderRadius: 0,
           flexDirection: 'column',
-          overflow: 'scroll'
+          overflow: 'scroll',
+          flexGrow: 1,
+          flexShrink: 1
         }}
       >
         {loadingNotifications && (

@@ -1,4 +1,4 @@
-import { engine, UiCanvasInformation } from '@dcl/sdk/ecs'
+import { engine, executeTask, UiCanvasInformation } from '@dcl/sdk/ecs'
 import { type Color4 } from '@dcl/sdk/math'
 import ReactEcs, { type Position, UiEntity } from '@dcl/sdk/react-ecs'
 import ButtonIcon from '../../components/button-icon/ButtonIcon'
@@ -20,6 +20,8 @@ import { getPlayer } from '@dcl/sdk/players'
 import { getViewportHeight } from '../../service/canvas-ratio'
 import { type PBUiCanvasInformation } from '@dcl/ecs/dist/components/generated/pb/decentraland/sdk/components/ui_canvas_information.gen'
 import { BevyApi } from '../../bevy-api'
+import { sleep } from '../../utils/dcl-utils'
+import { listenSystemAction } from '../../service/system-actions-emitter'
 
 const ZERO_SIZE = {
   width: 0,
@@ -139,16 +141,29 @@ export default class MainHud {
     this.uiController = uiController
     this.sceneInfo = new SceneInfo(uiController)
     this.chatAndLogs = new ChatsAndLogs()
+
+    listenSystemAction('Map', () => {
+      if (uiController?.isMainMenuVisible) return
+      this.uiController.menu?.show('map')
+      this.updateButtons()
+    })
+
+    executeTask(async () => {
+      while (true) {
+        const micState = await BevyApi.getMicState()
+        this.voiceChatIcon.spriteName = micState.enabled ? 'Mic on' : 'Mic off'
+        await sleep(100)
+      }
+    })
   }
 
   voiceChatDown(): void {
-    if (this.voiceChatOn) {
-      this.voiceChatIcon.spriteName = 'Mic off'
-      this.voiceChatOn = false
-    } else {
-      this.voiceChatIcon.spriteName = 'Mic on'
-      this.voiceChatOn = true
-    }
+    executeTask(async () => {
+      const micState = await BevyApi.getMicState()
+      console.log('micState', micState)
+      const nextState = !micState.enabled
+      BevyApi.setMicEnabled(nextState)
+    })
   }
 
   walletEnter(): void {
@@ -505,10 +520,7 @@ export default class MainHud {
             flexDirection: 'column'
           }}
         >
-          {/*
-             // TODO we need BevyApi to activate/deactivate voice chat/
-
-             <ButtonIcon
+          <ButtonIcon
             uiTransform={buttonTransform}
             onMouseEnter={() => {
               this.voiceChatEnter()
@@ -521,10 +533,10 @@ export default class MainHud {
             }}
             backgroundColor={this.voiceChatBackground}
             icon={this.voiceChatIcon}
-            hintText={'Voice Chat'}
+            hintText={'Voice Chat (Click to toggle or hold <b>V</b> to talk)'}
             showHint={this.voiceChatHint}
             iconSize={buttonIconSize}
-          /> */}
+          />
           <ButtonIcon
             uiTransform={buttonTransform}
             onMouseEnter={() => {

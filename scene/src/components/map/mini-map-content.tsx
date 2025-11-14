@@ -87,6 +87,7 @@ export function MiniMapContent(): ReactElement {
     const avatarTracker = createOrGetAvatarsTracker()
 
     avatarTracker.onEnterScene((userId) => {
+      // TODO review
       renderMinimapPlayers(getPlayerAvatarEntities())
     })
     avatarTracker.onLeaveScene((userId) => {

@@ -5,12 +5,17 @@ import {
   executeTask,
   PlayerIdentityData
 } from '@dcl/sdk/ecs'
-import { sleep } from '../utils/dcl-utils'
+import { sleep, waitFor } from '../utils/dcl-utils'
 import { fetchProfileData } from '../utils/passport-promise-utils'
 import { getPlayer } from '@dcl/sdk/players'
-import { namedUsersData } from '../ui-classes/main-hud/chat-and-logs/named-users-data-service'
+import {
+  type ComposedPlayerData,
+  composedUsersData,
+  namedUsersData
+} from '../ui-classes/main-hud/chat-and-logs/named-users-data-service'
 import { getNameWithHashPostfix } from '../ui-classes/main-hud/chat-and-logs/ChatsAndLogs'
 import { setIfNot } from '../utils/function-utils'
+import { type GetPlayerDataRes } from '../utils/definitions'
 
 const state: {
   players: Array<DeepReadonlyObject<PBPlayerIdentityData>>
@@ -26,31 +31,63 @@ export function getChatMembers(): Array<
 
 export async function initChatMembersCount(): Promise<void> {
   while (true) {
-    state.players = []
+    const players = []
 
     for (const [, data] of engine.getEntitiesWith(PlayerIdentityData)) {
       // TODO review if there is better method... when chat channel is not scene? deprecated getConnectedPlayers ?
-      state.players.push(data)
+      players.push(data)
 
-      executeTask(async () => {
-        const playerData = getPlayer({ userId: data.address })
-        const foundUserData = setIfNot(namedUsersData).get(
-          getNameWithHashPostfix(
-            playerData?.name ?? '',
-            playerData?.userId ?? ''
-          )?.toLowerCase()
-        )
-
-        const profileData = await fetchProfileData({
-          userId: data.address,
-          useCache: true
-        })
-
-        foundUserData.playerData = playerData
-        foundUserData.profileData = profileData
-      })
+      await requestAndSetPlayerComposedData({ userId: data.address })
     }
-
-    await sleep(1000)
+    state.players = players
+    await sleep(5000)
   }
+}
+const loadingUserSet = new Set<string>()
+
+export function requestPlayer({
+  userId
+}: {
+  userId: string
+}): GetPlayerDataRes | null {
+  if (!userId) {
+    console.error('!userId')
+  }
+  const playerData = (setIfNot(composedUsersData).get(userId).playerData =
+    setIfNot(composedUsersData).get(userId).playerData || getPlayer({ userId }))
+
+  executeTask(async () => {
+    requestAndSetPlayerComposedData({ userId }).catch(console.error)
+  })
+
+  return playerData
+}
+
+export async function requestAndSetPlayerComposedData({
+  userId
+}: {
+  userId: string
+}): Promise<ComposedPlayerData> {
+  await waitFor(() => !loadingUserSet.has(userId))
+  loadingUserSet.add(userId)
+  const playerData =
+    setIfNot(composedUsersData).get(userId).playerData || getPlayer({ userId })
+  const foundUserData = setIfNot(namedUsersData).get(
+    getNameWithHashPostfix(
+      playerData?.name ?? '',
+      playerData?.userId ?? ''
+    )?.toLowerCase()
+  )
+
+  const profileData = await fetchProfileData({
+    userId,
+    useCache: true
+  })
+
+  setIfNot(composedUsersData).get(userId).profileData = profileData
+  setIfNot(composedUsersData).get(userId).playerData = playerData
+  foundUserData.playerData = playerData
+  foundUserData.profileData = profileData
+  loadingUserSet.delete(userId)
+  return foundUserData
 }

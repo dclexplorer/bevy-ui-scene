@@ -1,5 +1,6 @@
 import { type GetPlayerDataRes } from '../../utils/definitions'
 import { type ProfileResponse } from '../../utils/passport-promise-utils'
+import { type Color4 } from '@dcl/sdk/math'
 
 export type ChatMessageDefinition = {
   sender_address: string
@@ -29,4 +30,5 @@ export type ChatMessageRepresentation = ChatMessageDefinition & {
     { playerData: GetPlayerDataRes; profileData: ProfileResponse }
   > // address, {}
   _originalMessage: string
+  addressColor: Color4
 }
