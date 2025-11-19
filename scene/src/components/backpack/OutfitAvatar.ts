@@ -98,7 +98,8 @@ export const initOutfitsCatalog = async (): Promise<void> => {
       name: undefined,
       skinColor: slot?.skin.color ?? SKIN_COLOR_PRESETS[0],
       talking: false,
-      wearables: slot?.wearables ?? []
+      wearables: slot?.wearables ?? [],
+      forceRender: slot?.forceRender ?? []
     })
 
     CameraLayers.create(avatarWrapperEntity, {
