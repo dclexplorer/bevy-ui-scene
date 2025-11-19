@@ -52,7 +52,7 @@ function createTag(player: GetPlayerDataRes): void {
     avatarId: player.userId,
     anchorPointId: AvatarAnchorPointType.AAPT_NAME_TAG
   })
-
+  /*
   UiCanvas.create(tagWrapperEntity, {
     width: 400,
     height: 200,
@@ -82,5 +82,5 @@ function createTag(player: GetPlayerDataRes): void {
     },
     emissiveColor: COLOR.WHITE,
     emissiveIntensity: 0.2
-  })
+  })*/
 }
