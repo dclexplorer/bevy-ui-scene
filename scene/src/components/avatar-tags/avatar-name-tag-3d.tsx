@@ -10,7 +10,7 @@ import {
   UiCanvas
 } from '@dcl/sdk/ecs'
 import { getPlayer } from '@dcl/sdk/players'
-import { type Entity } from '@dcl/ecs'
+import { AvatarAnchorPointType, AvatarAttach, type Entity } from '@dcl/ecs'
 import { Color4, Vector3 } from '@dcl/sdk/math'
 import { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { getTagElement } from './tag-element'
@@ -24,8 +24,8 @@ export async function initAvatarTags(): Promise<void> {
     // TODO create tag only for the entered player
     createTag(player)
   })
-  avatarTracker.onLeaveScene((userId) => {})
 
+  avatarTracker.onLeaveScene((userId) => {})
   await waitFor(() => getPlayer() !== null)
   createTag(getPlayer() as GetPlayerDataRes)
 }
@@ -37,13 +37,20 @@ function createTag(player: GetPlayerDataRes): void {
       avatarEntity = entity
     }
   }
+  if (!avatarEntity) {
+    console.log('AvatarEntity not found')
+    return
+  }
   const tagWrapperEntity = engine.addEntity()
   Billboard.create(tagWrapperEntity, {})
   MeshRenderer.setPlane(tagWrapperEntity)
   Transform.create(tagWrapperEntity, {
-    parent: avatarEntity,
     position: Vector3.create(0, 2.6, -0.1),
     scale: Vector3.create(2, 1, 1)
+  })
+  AvatarAttach.create(tagWrapperEntity, {
+    avatarId: player.userId,
+    anchorPointId: AvatarAnchorPointType.AAPT_NAME_TAG
   })
 
   UiCanvas.create(tagWrapperEntity, {
