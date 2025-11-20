@@ -497,7 +497,6 @@ function BigMapContent(): ReactElement {
         _placeRepresentation.positions.includes(liveEvent.position.join(','))
       ) {
         liveEvent.placeID = _placeRepresentation.id
-        console.log('liveEventPlace', _placeRepresentation.title, liveEvent)
         _placeRepresentation.hasLive = true
       }
     })

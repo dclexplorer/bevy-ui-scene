@@ -81,7 +81,6 @@ export const saveProfileData = async (
   profileData: ViewAvatarData
 ): Promise<void> => {
   const profileExtras = fromViewAvatarDataToProfileExtra(profileData)
-  console.log('profileExtras', profileExtras)
 
   await BevyApi.setAvatar({
     profileExtras

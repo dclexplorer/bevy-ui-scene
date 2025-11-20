@@ -115,7 +115,6 @@ export default class BackpackPage {
         }
       }
       if (avatarHasChanged(avatarPayload)) {
-        console.log('avatarHasChanged -> setAvatar')
         await BevyApi.setAvatar(avatarPayload).catch(showErrorPopup)
       }
     } catch (error) {
