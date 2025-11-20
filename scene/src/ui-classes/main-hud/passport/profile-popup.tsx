@@ -95,7 +95,6 @@ function ProfileContent({
   const width = getContentScaleRatio() * 800
   const player = data.player
   useEffect(() => {
-    console.log('data', data)
     if (!player) {
       closeDialog()
       return

@@ -306,26 +306,6 @@ export function replaceNameTags(message: string): string {
         nameToRender = nameToRender.split('#')[0]
       }
 
-      console.log(
-        '!!!!!!',
-        foundNameAddress,
-        !!composedUserData?.profileData,
-        composedUserData?.profileData?.avatars[0].hasClaimedName,
-        nameKey,
-        nameToRender
-      )
-      console.log(
-        Array.from(namedUsersData.keys()).reduce<any>(
-          (acc: any, key: string) => {
-            acc[key] = {
-              profileData: !!namedUsersData.get(key)?.profileData,
-              playerData: !!namedUsersData.get(key)?.playerData
-            }
-            return acc
-          },
-          {}
-        )
-      )
       return foundNameAddress
         ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${foundNameAddress}>${nameToRender}</link></color></b>`
         : `<b>${match}</b>`

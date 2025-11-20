@@ -426,7 +426,6 @@ async function fetchList({
   const categories = store.getState().hud.mapFilterCategories
   const orderKey: SceneCatalogOrder = store.getState().hud.sceneCatalogOrder
   const placeType = store.getState().hud.placeType
-  console.log('placeType', placeType)
   const queryParameters =
     categories?.includes('all') ||
     categories?.includes('favorites') ||
