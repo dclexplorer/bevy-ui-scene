@@ -30,8 +30,9 @@ export function forceRenderHasEffect(
       wearableURN
     ] as WearableEntityMetadata
     return (
-      wearableMetadata.data.hides.includes(category) ||
-      (categoryIsHead && wearableMetadata.data.hides.includes('head'))
+      wearableMetadata?.data &&
+      (wearableMetadata.data.hides.includes(category) ||
+        (categoryIsHead && wearableMetadata.data.hides.includes('head')))
     )
   })
 }
