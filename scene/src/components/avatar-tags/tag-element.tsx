@@ -27,7 +27,7 @@ export function getTagElement({
         uiTransform={{
           width: '100%',
           justifyContent: 'center',
-          alignSelf: 'flex-end'
+          alignSelf: 'center'
         }}
       >
         <TagContent player={player} />
