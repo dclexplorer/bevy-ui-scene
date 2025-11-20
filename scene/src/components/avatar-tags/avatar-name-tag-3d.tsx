@@ -45,7 +45,6 @@ function createTag(player: GetPlayerDataRes): void {
   Billboard.create(tagWrapperEntity, {})
   MeshRenderer.setPlane(tagWrapperEntity)
   Transform.create(tagWrapperEntity, {
-    position: Vector3.create(0, 2.6, -0.1),
     scale: Vector3.create(2, 1, 1)
   })
   AvatarAttach.create(tagWrapperEntity, {
