@@ -39,6 +39,7 @@ import { listenSystemAction } from '../../../service/system-actions-emitter'
 import {
   changeRealm,
   copyToClipboard,
+  getUiFocus,
   setUiFocus,
   teleportTo
 } from '~system/RestrictedActions'
@@ -79,6 +80,8 @@ import {
   namedUsersData
 } from './named-users-data-service'
 import { getAddressColor } from './ColorByAddress'
+import useState = ReactEcs.useState
+import useEffect = ReactEcs.useEffect
 
 type Box = {
   position: { x: number; y: number }
@@ -269,36 +272,104 @@ export default class ChatAndLogs {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
     this.checkScrollToAppendMessages()
-    return (
-      <UiEntity
-        uiTransform={{
-          width: '100%',
-          height: '100%',
-          justifyContent: 'flex-start',
-          alignItems: 'flex-start',
-          flexDirection: 'column',
-          borderRadius: 10,
-          borderColor: COLOR.BLACK_TRANSPARENT,
-          borderWidth: 0
-        }}
-        uiBackground={{
-          color: state.hoveringChat
-            ? COLOR.DARK_OPACITY_5
-            : COLOR.BLACK_TRANSPARENT
-        }}
-      >
-        {state.hoveringChat && HeaderArea()}
-
-        {ChatArea({
-          messages: state.shownMessages,
-          onMessageMenu: this.onMessageMenu
-        })}
-        {InputArea()}
-        {ShowNewMessages()}
-        {MessageSubMenu({ canvasInfo })}
-      </UiEntity>
-    )
+    return <ChatContent state={state} onMessageMenu={this.onMessageMenu} />
   }
+}
+
+function ChatContent({
+  state,
+  onMessageMenu
+}: {
+  state: any
+  onMessageMenu: (timestamp: number) => void
+}): ReactElement | null {
+  const [canvasInfo] = useState<PBUiCanvasInformation | null>(
+    UiCanvasInformation.getOrNull(engine.RootEntity)
+  )
+  const [opacity, setOpacity] = useState(1)
+  const [focused, setFocused] = useState(false)
+
+  useEffect(() => {
+    executeTask(async () => {
+      while (true) {
+        const uiFocusResult = (await getUiFocus({})) ?? { elementId: null }
+        const elementId = // TODO review when result is {elementId:string|null} instead of string|null
+          typeof uiFocusResult === 'object'
+            ? uiFocusResult.elementId
+            : uiFocusResult
+        if (elementId === 'chat-input') {
+          setFocused(true)
+        } else if (elementId !== 'chat-input') {
+          setFocused(false)
+        }
+
+        await sleep(500)
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    if ((focused && opacity !== 1) || state.hoveringChat) {
+      setOpacity(1)
+    } else if (!focused) {
+      const timeSinceLastMessage =
+        Date.now() -
+        [
+          state.newMessages[state.newMessages.length - 1],
+          state.shownMessages[state.shownMessages.length - 1]
+        ].reduce(
+          (
+            acc: number,
+            messageRepresentation: ChatMessageRepresentation | undefined
+          ) => {
+            if (!messageRepresentation) return acc
+            if (messageRepresentation.timestamp > acc)
+              return messageRepresentation.timestamp
+            return acc
+          },
+          0
+        )
+      if (timeSinceLastMessage > 5000) {
+        const fadeProgress = Math.min(1, (timeSinceLastMessage - 5000) / 45000)
+        const _opacity = 1 - 0.8 * fadeProgress * 50
+        setOpacity(Math.max(0.2, _opacity))
+      } else {
+        setOpacity(1)
+      }
+    }
+  })
+
+  if (!canvasInfo) return null
+
+  return (
+    <UiEntity
+      uiTransform={{
+        width: '100%',
+        height: '100%',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        flexDirection: 'column',
+        borderRadius: 10,
+        borderColor: COLOR.BLACK_TRANSPARENT,
+        borderWidth: 0,
+        opacity
+      }}
+      uiBackground={{
+        color: state.hoveringChat
+          ? COLOR.DARK_OPACITY_5
+          : COLOR.BLACK_TRANSPARENT
+      }}
+    >
+      {state.hoveringChat && HeaderArea()}
+      {ChatArea({
+        messages: state.shownMessages,
+        onMessageMenu
+      })}
+      {InputArea()}
+      {ShowNewMessages()}
+      {MessageSubMenu({ canvasInfo })}
+    </UiEntity>
+  )
 }
 
 function MessageSubMenu({
@@ -867,7 +938,6 @@ export const getNameWithHashPostfix: (
 )
 
 async function pushMessage(message: ChatMessageDefinition): Promise<void> {
-  console.log('pushMessage', JSON.stringify(message))
   const messageType = isSystemMessage(message)
     ? message.sender_address === ZERO_ADDRESS
       ? MESSAGE_TYPE.SYSTEM

@@ -21,6 +21,7 @@ declare const localStorage: any
 const MAP_LOCALSTORAGE_KEY = 'map'
 const LOCALSTORAGE_SEPARATOR = '_::_'
 const CACHE_TIME = 1000 * 60 * 60 * 100
+// TODO review if it makes sense to remove map cache in localStorage, maybe leave only runtime cache
 const [mapStorageDate, mapStoragePlaces] = (
   localStorage.getItem(MAP_LOCALSTORAGE_KEY)?.split(LOCALSTORAGE_SEPARATOR) ?? [
     '0',

@@ -33,7 +33,6 @@ function Canvas(props: {
       right: 0,
       bottom: 0
     }
-    console.log('interactableArea', JSON.stringify(interactableArea))
     BevyApi.setInteractableArea(interactableArea)
   }
 

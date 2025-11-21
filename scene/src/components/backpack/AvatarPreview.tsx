@@ -19,6 +19,7 @@ import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
 } from '../../service/categories'
+
 import { type PBAvatarBase } from '../../bevy-api/interface'
 import { getItemsWithTokenId } from '../../utils/urn-utils'
 import { updateBackpackStateAction } from '../../state/backpack/actions'
@@ -171,7 +172,8 @@ export function createAvatarPreview(): boolean {
     name: undefined,
     skinColor: playerData?.avatar?.skinColor,
     talking: false,
-    wearables: playerData?.wearables ?? []
+    wearables: playerData?.wearables ?? [],
+    forceRender: []
   })
 
   CameraLayers.create(avatarEntity, {

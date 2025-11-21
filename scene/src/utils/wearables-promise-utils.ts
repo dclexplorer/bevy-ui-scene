@@ -43,6 +43,7 @@ export type WearableCatalogPageParams = WearableCatalogRequest & {
   includeOnChain: boolean
   catalystBaseUrl: string
   searchFilter: SearchFilterState
+  includeThirdParty: boolean
 }
 
 const pageCache = new Map<string, WearablesPageResponse>()
@@ -69,7 +70,8 @@ export const fetchWearablesPage =
         includeOnChain: true,
         catalystBaseUrl: catalystBaseUrl ?? CATALYST_BASE_URL_FALLBACK,
         cacheKey,
-        searchFilter
+        searchFilter,
+        includeThirdParty: true
       })
       if (pageCache.has(wearableCatalogPageURL)) {
         return pageCache.get(wearableCatalogPageURL) as WearablesPageResponse
@@ -111,16 +113,19 @@ export const fetchWearablesPage =
         includeOnChain,
         catalystBaseUrl,
         cacheKey,
-        searchFilter
+        searchFilter,
+        includeThirdParty
       } = params
       let url: string = `${catalystBaseUrl}/explorer/${address}/wearables?pageNum=${pageNum}&pageSize=${pageSize}&includeEntities=true`
       url += `&orderBy=${searchFilter.orderBy}&direction=${searchFilter.orderDirection}&cacheKey=${cacheKey}`
       if (searchFilter.name) {
         url += `&name=${searchFilter.name}`
       }
+
       if (wearableCategory) url += `&category=${wearableCategory}`
       if (includeBase) url += `&collectionType=base-wearable`
       if (includeOnChain) url += `&collectionType=on-chain`
+      if (includeThirdParty) url += `&collectionType=third-party`
       return url
     }
   }

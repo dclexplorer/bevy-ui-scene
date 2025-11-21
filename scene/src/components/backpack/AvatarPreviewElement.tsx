@@ -267,7 +267,8 @@ function createAvatarPreview({
     name: undefined,
     skinColor: avatarShapeDefinition.skinColor,
     talking: false,
-    wearables: avatarShapeDefinition.wearables ?? []
+    wearables: avatarShapeDefinition.wearables ?? [],
+    forceRender: avatarShapeDefinition.forceRender ?? [] // TODO review
   })
 
   CameraLayers.create(avatarEntity, {

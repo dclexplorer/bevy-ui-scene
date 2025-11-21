@@ -10,40 +10,66 @@ import {
   UiCanvas
 } from '@dcl/sdk/ecs'
 import { getPlayer } from '@dcl/sdk/players'
-import { type Entity } from '@dcl/ecs'
+import { AvatarAnchorPointType, AvatarAttach, type Entity } from '@dcl/ecs'
 import { Color4, Vector3 } from '@dcl/sdk/math'
 import { ReactEcsRenderer } from '@dcl/sdk/react-ecs'
 import { getTagElement } from './tag-element'
 import { COLOR } from '../color-palette'
 import { type GetPlayerDataRes } from '../../utils/definitions'
 import { waitFor } from '../../utils/dcl-utils'
+import { showErrorPopup } from '../../service/error-popup-service'
 
 export async function initAvatarTags(): Promise<void> {
   const avatarTracker = createOrGetAvatarsTracker()
+  const addressTagEntitiesMap = new Map<string, Entity>()
+
   avatarTracker.onEnterScene((player) => {
-    // TODO create tag only for the entered player
-    createTag(player)
+    const tagEntity = createTag(player)
+    if (tagEntity) {
+      addressTagEntitiesMap.set(player.userId, tagEntity)
+    }
   })
-  avatarTracker.onLeaveScene((userId) => {})
+
+  avatarTracker.onLeaveScene((userId) => {
+    if (addressTagEntitiesMap.has(userId)) {
+      const entity: Entity = addressTagEntitiesMap.get(userId) as Entity
+      engine.removeEntityWithChildren(entity)
+      addressTagEntitiesMap.delete(userId)
+    } else {
+      showErrorPopup('WARNING: AvatarTag not found for userId: ' + userId)
+      console.error('WARNING: AvatarTag not found for userId: ', userId)
+    }
+  })
 
   await waitFor(() => getPlayer() !== null)
-  createTag(getPlayer() as GetPlayerDataRes)
+  const player: GetPlayerDataRes = getPlayer() as GetPlayerDataRes
+  const ownTagEntity = createTag(player)
+  if (ownTagEntity) {
+    addressTagEntitiesMap.set(player.userId, ownTagEntity)
+  }
 }
 
-function createTag(player: GetPlayerDataRes): void {
+function createTag(player: GetPlayerDataRes): undefined | Entity {
   let avatarEntity: Entity | undefined
   for (const [entity, data] of engine.getEntitiesWith(PlayerIdentityData)) {
     if (data.address === player.userId) {
       avatarEntity = entity
     }
   }
+  if (!avatarEntity) {
+    console.log('AvatarEntity not found')
+    return
+  }
   const tagWrapperEntity = engine.addEntity()
   Billboard.create(tagWrapperEntity, {})
   MeshRenderer.setPlane(tagWrapperEntity)
   Transform.create(tagWrapperEntity, {
-    parent: avatarEntity,
-    position: Vector3.create(0, 2.6, -0.1),
+    position: Vector3.create(1, 2, 1),
     scale: Vector3.create(2, 1, 1)
+  })
+  AvatarAttach.create(tagWrapperEntity, {
+    avatarId: player.userId,
+    anchorPointId: AvatarAnchorPointType.AAPT_NAME_TAG
   })
 
   UiCanvas.create(tagWrapperEntity, {
@@ -76,4 +102,6 @@ function createTag(player: GetPlayerDataRes): void {
     emissiveColor: COLOR.WHITE,
     emissiveIntensity: 0.2
   })
+
+  return tagWrapperEntity
 }

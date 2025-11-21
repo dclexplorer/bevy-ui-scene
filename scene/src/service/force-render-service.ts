@@ -26,12 +26,13 @@ export function forceRenderHasEffect(
 
   return equippedWearables.some((wearableURN: URNWithoutTokenId) => {
     if (currentWearableURN === wearableURN) return false
-    const wearableMetadata: WearableEntityMetadata = wearablesData[
+    const wearableMetadata: WearableEntityMetadata | undefined = wearablesData[
       wearableURN
-    ] as WearableEntityMetadata
+    ] as WearableEntityMetadata | undefined
     return (
-      wearableMetadata.data.hides.includes(category) ||
-      (categoryIsHead && wearableMetadata.data.hides.includes('head'))
+      wearableMetadata?.data &&
+      (wearableMetadata.data.hides.includes(category) ||
+        (categoryIsHead && wearableMetadata.data.hides.includes('head')))
     )
   })
 }
