@@ -32,7 +32,8 @@ export async function initAvatarTags(): Promise<void> {
 
   avatarTracker.onLeaveScene((userId) => {
     if (addressTagEntitiesMap.has(userId)) {
-      engine.removeEntityWithChildren(addressTagEntitiesMap.get(userId)!)
+      const entity: Entity = addressTagEntitiesMap.get(userId) as Entity
+      engine.removeEntityWithChildren(entity)
       addressTagEntitiesMap.delete(userId)
     } else {
       showErrorPopup('WARNING: AvatarTag not found for userId: ' + userId)
@@ -41,10 +42,10 @@ export async function initAvatarTags(): Promise<void> {
   })
 
   await waitFor(() => getPlayer() !== null)
-
-  const ownTagEntity = createTag(getPlayer() as GetPlayerDataRes)
+  const player: GetPlayerDataRes = getPlayer() as GetPlayerDataRes
+  const ownTagEntity = createTag(player)
   if (ownTagEntity) {
-    addressTagEntitiesMap.set(getPlayer()!.userId, ownTagEntity)
+    addressTagEntitiesMap.set(player.userId, ownTagEntity)
   }
 }
 

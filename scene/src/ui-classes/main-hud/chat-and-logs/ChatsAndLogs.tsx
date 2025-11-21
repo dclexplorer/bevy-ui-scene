@@ -283,7 +283,7 @@ function ChatContent({
   state: any
   onMessageMenu: (timestamp: number) => void
 }): ReactElement | null {
-  const [canvasInfo, setCanvasInfo] = useState<PBUiCanvasInformation | null>(
+  const [canvasInfo] = useState<PBUiCanvasInformation | null>(
     UiCanvasInformation.getOrNull(engine.RootEntity)
   )
   const [opacity, setOpacity] = useState(1)
@@ -318,10 +318,14 @@ function ChatContent({
           state.newMessages[state.newMessages.length - 1],
           state.shownMessages[state.shownMessages.length - 1]
         ].reduce(
-          (acc: number, messageRepresentation: ChatMessageRepresentation) => {
+          (
+            acc: number,
+            messageRepresentation: ChatMessageRepresentation | undefined
+          ) => {
             if (!messageRepresentation) return acc
             if (messageRepresentation.timestamp > acc)
               return messageRepresentation.timestamp
+            return acc
           },
           0
         )
@@ -359,7 +363,7 @@ function ChatContent({
       {state.hoveringChat && HeaderArea()}
       {ChatArea({
         messages: state.shownMessages,
-        onMessageMenu: onMessageMenu
+        onMessageMenu
       })}
       {InputArea()}
       {ShowNewMessages()}
