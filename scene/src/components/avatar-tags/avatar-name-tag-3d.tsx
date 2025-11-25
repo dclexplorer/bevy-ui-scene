@@ -7,7 +7,8 @@ import {
   MeshRenderer,
   PlayerIdentityData,
   Transform,
-  UiCanvas
+  UiCanvas,
+  VisibilityComponent
 } from '@dcl/sdk/ecs'
 import { getPlayer } from '@dcl/sdk/players'
 import { AvatarAnchorPointType, AvatarAttach, type Entity } from '@dcl/ecs'
@@ -73,19 +74,9 @@ export async function initAvatarTags(): Promise<void> {
   listenSystemAction('HideNames', (pressed) => {
     if (!pressed) return
     state.hideNames = !state.hideNames
-    if (state.hideNames) {
-      addressTagEntitiesMap.forEach((entity) => {
-        AvatarAttach.deleteFrom(entity)
-        Transform.getMutable(entity).position.y = -9999
-      })
-    } else {
-      addressTagEntitiesMap.forEach((entity) => {
-        AvatarAttach.create(entity, {
-          avatarId: player.userId,
-          anchorPointId: AvatarAnchorPointType.AAPT_NAME_TAG
-        })
-      })
-    }
+    addressTagEntitiesMap.forEach((entity) => {
+      VisibilityComponent.getMutable(entity).visible = !state.hideNames
+    })
   })
 }
 
@@ -120,6 +111,8 @@ function createTag(player: GetPlayerDataRes): undefined | Entity {
     tagWrapperEntity,
     getTagElement({ player })
   )
+  VisibilityComponent.create(tagWrapperEntity, { visible: true })
+
   Material.setPbrMaterial(tagWrapperEntity, {
     transparencyMode: MaterialTransparencyMode.MTM_ALPHA_BLEND,
     texture: {
