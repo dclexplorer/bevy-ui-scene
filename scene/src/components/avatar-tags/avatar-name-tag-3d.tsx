@@ -18,6 +18,10 @@ import { COLOR } from '../color-palette'
 import { type GetPlayerDataRes } from '../../utils/definitions'
 import { waitFor } from '../../utils/dcl-utils'
 import { showErrorPopup } from '../../service/error-popup-service'
+import { BevyApi } from '../../bevy-api'
+import { store } from 'src/state/store'
+import { updateHudStateAction } from '../../state/hud/actions'
+import { MicActivation } from '../../bevy-api/interface'
 
 export async function initAvatarTags(): Promise<void> {
   const avatarTracker = createOrGetAvatarsTracker()
@@ -47,6 +51,21 @@ export async function initAvatarTags(): Promise<void> {
   if (ownTagEntity) {
     addressTagEntitiesMap.set(player.userId, ownTagEntity)
   }
+
+  const awaitVoiceStream = async (stream: MicActivation[]): Promise<void> => {
+    for await (const voiceState of stream) {
+      store.dispatch(
+        updateHudStateAction({
+          playerVoiceStateMap: {
+            ...store.getState().hud.playerVoiceStateMap,
+            [voiceState.sender_address]: voiceState.active
+          }
+        })
+      )
+    }
+  }
+
+  awaitVoiceStream(await BevyApi.getVoiceStream()).catch(console.error)
 }
 
 function createTag(player: GetPlayerDataRes): undefined | Entity {

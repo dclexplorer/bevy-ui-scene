@@ -90,6 +90,8 @@ export type HudState = {
   mapTargetPosition: Vector3
   placeType: 'places' | 'worlds'
   chatInputMentionSuggestions: string[]
+  playerVoiceStateMap: Record<string, boolean>
+  micEnabled: boolean
 }
 
 export type HudStateUpdateParams = {
@@ -119,6 +121,8 @@ export type HudStateUpdateParams = {
   mapCameraIsOrbiting?: boolean
   placeType?: 'places' | 'worlds'
   chatInputMentionSuggestions?: string[]
+  playerVoiceStateMap?: Record<string, boolean>
+  micEnabled?: boolean
 }
 
 export const hudInitialState: HudState = {
@@ -147,5 +151,7 @@ export const hudInitialState: HudState = {
   mapTargetPosition: Vector3.Zero(),
   mapCameraIsOrbiting: false,
   placeType: 'places',
-  chatInputMentionSuggestions: []
+  chatInputMentionSuggestions: [],
+  playerVoiceStateMap: {},
+  micEnabled: false
 }
