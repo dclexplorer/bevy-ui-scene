@@ -21,12 +21,15 @@ import { showErrorPopup } from '../../service/error-popup-service'
 import { BevyApi } from '../../bevy-api'
 import { store } from 'src/state/store'
 import { updateHudStateAction } from '../../state/hud/actions'
-import { MicActivation } from '../../bevy-api/interface'
+import { type MicActivation } from '../../bevy-api/interface'
+import { listenSystemAction } from '../../service/system-actions-emitter'
 
 export async function initAvatarTags(): Promise<void> {
   const avatarTracker = createOrGetAvatarsTracker()
   const addressTagEntitiesMap = new Map<string, Entity>()
-
+  const state = {
+    hideNames: false
+  }
   avatarTracker.onEnterScene((player) => {
     const tagEntity = createTag(player)
     if (tagEntity) {
@@ -66,6 +69,24 @@ export async function initAvatarTags(): Promise<void> {
   }
 
   awaitVoiceStream(await BevyApi.getVoiceStream()).catch(console.error)
+
+  listenSystemAction('HideNames', (pressed) => {
+    if (!pressed) return
+    state.hideNames = !state.hideNames
+    if (state.hideNames) {
+      addressTagEntitiesMap.forEach((entity) => {
+        AvatarAttach.deleteFrom(entity)
+        Transform.getMutable(entity).position.y = -9999
+      })
+    } else {
+      addressTagEntitiesMap.forEach((entity) => {
+        AvatarAttach.create(entity, {
+          avatarId: player.userId,
+          anchorPointId: AvatarAnchorPointType.AAPT_NAME_TAG
+        })
+      })
+    }
+  })
 }
 
 function createTag(player: GetPlayerDataRes): undefined | Entity {
@@ -83,7 +104,6 @@ function createTag(player: GetPlayerDataRes): undefined | Entity {
   Billboard.create(tagWrapperEntity, {})
   MeshRenderer.setPlane(tagWrapperEntity)
   Transform.create(tagWrapperEntity, {
-    position: Vector3.create(1, 2, 1),
     scale: Vector3.create(2, 1, 1)
   })
   AvatarAttach.create(tagWrapperEntity, {
