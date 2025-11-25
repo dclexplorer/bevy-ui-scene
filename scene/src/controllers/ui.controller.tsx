@@ -38,6 +38,7 @@ import { COLOR } from '../components/color-palette'
 import useEffect = ReactEcs.useEffect
 import { engine, PointerLock, Transform } from '@dcl/sdk/ecs'
 import { getViewportWidth } from '../service/canvas-ratio'
+import { listenSystemAction } from '../service/system-actions-emitter'
 
 let loadingAndLogin: any = null
 
@@ -50,7 +51,9 @@ export function logout(): void {
 }
 let uiControllerSingletonInstance: UIController
 export const getUiController = (): UIController => uiControllerSingletonInstance
-
+const state = {
+  hideUi: false
+}
 export class UIController {
   public isPhotosVisible: boolean = false
   public isMainMenuVisible: boolean = false
@@ -124,10 +127,17 @@ export class UIController {
         initRealTimeNotifications()
       })().catch(console.error)
     })
+
     ReactEcsRenderer.setUiRenderer(this.ui.bind(this))
+
+    listenSystemAction('HideUi', (pressed) => {
+      if (!pressed) return
+      state.hideUi = !state.hideUi
+    })
   }
 
-  ui(): ReactEcs.JSX.Element {
+  ui(): ReactEcs.JSX.Element | null {
+    if (state.hideUi) return null
     return (
       <Canvas>
         <CameraPointer />
