@@ -15,6 +15,8 @@ import { Column, Row } from '../layout'
 import { truncateWithoutBreakingWords } from '../../utils/ui-utils'
 import Icon from '../icon/Icon'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
+import { store } from '../../state/store'
+import { getPlayer } from '@dcl/sdk/players'
 const TIME_TO_HIDE_MESSAGE = 5000
 export function getTagElement({
   player
@@ -48,6 +50,8 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
   const [nameColor, setNameColor] = useState<RGBAColor>(
     COLOR.TEXT_COLOR_LIGHT_GREY
   )
+  const [voiceIconFrame, setVoiceIconFrame] = useState<number>(1)
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false)
   const [hasClaimedName, setHasClaimedName] = useState<boolean>(false)
   const [chatMessage, setChatMessage] =
     useState<ChatMessageRepresentation | null>(null)
@@ -78,13 +82,36 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
   }, [])
 
   useEffect(() => {
+    setIsSpeaking(!!store.getState().hud.playerVoiceStateMap[player.userId])
+  }, [store.getState().hud.playerVoiceStateMap])
+
+  useEffect(() => {
+    if (player.userId === getPlayer()?.userId) {
+      setIsSpeaking(store.getState().hud.micEnabled)
+    }
+  }, [store.getState().hud.micEnabled])
+
+  useEffect(() => {
+    executeTask(async () => {
+      await sleep(100)
+      if (isSpeaking) {
+        if (voiceIconFrame < 3) {
+          setVoiceIconFrame(voiceIconFrame + 1)
+        } else {
+          setVoiceIconFrame(1)
+        }
+      }
+    })
+  }, [isSpeaking, voiceIconFrame])
+
+  useEffect(() => {
     if (messageToHide) {
       if (messageToHide === chatMessage) {
         setChatMessage(null)
       }
     }
   }, [messageToHide])
-
+  const fontSize = getHudFontSize(getViewportHeight()).NORMAL
   return (
     <Column
       uiTransform={{
@@ -110,6 +137,21 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
       }}
     >
       <Row>
+        {isSpeaking && (
+          <Icon
+            icon={{
+              atlasName: 'icons',
+              spriteName: `voice-${voiceIconFrame}`
+            }}
+            uiTransform={{
+              flexGrow: 0,
+              flexShrink: 0,
+              width: fontSize,
+              height: fontSize,
+              margin: { left: fontSize }
+            }}
+          />
+        )}
         <UiEntity
           uiTransform={{
             alignSelf: 'flex-start'
@@ -118,7 +160,7 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
             outlineColor: COLOR.WHITE,
             outlineWidth: 1,
             value: playerName,
-            fontSize: getViewportHeight() * 0.025,
+            fontSize,
             color: nameColor,
             textAlign: 'top-left'
           }}

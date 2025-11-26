@@ -1094,7 +1094,7 @@ async function extendMessageMentionedUsers(
               composeData.playerData?.name ?? '',
               composeData.playerData?.userId ?? ''
             ) &&
-          avatarData.hasClaimedName
+          avatarData?.hasClaimedName
         ) {
           message.addressColor = getAddressColor(message.sender_address)
           message.name = message.name.split('#')[0]

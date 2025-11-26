@@ -2,7 +2,7 @@ import { executeTask } from '@dcl/sdk/ecs'
 import { sleep } from '../utils/dcl-utils'
 import { getRealm } from '~system/Runtime'
 
-const INTERVAL_MS = 2000
+const INTERVAL_TO_TRIGGER_REALM_CHANGE_MS = 2000
 
 type RealmChangeCallback = (provider: string, previous?: string) => void
 
@@ -28,7 +28,7 @@ export function initRealmProviderChangeListener(): void {
   executeTask(async () => {
     while (true) {
       try {
-        await sleep(INTERVAL_MS)
+        await sleep(INTERVAL_TO_TRIGGER_REALM_CHANGE_MS)
         const { realmInfo } = await getRealm({})
         const base = realmInfo?.baseUrl ?? ''
         const name = realmInfo?.realmName ?? ''

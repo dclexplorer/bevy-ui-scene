@@ -34,7 +34,7 @@ import { COLOR } from '../../../components/color-palette'
 export function EmotesCatalog(): ReactElement {
   const backpackState = store.getState().backpack
   const canvasScaleRatio = getContentScaleRatio()
-
+  const bottomButtonFontSize = canvasScaleRatio * 32
   return (
     <UiEntity>
       <EquippedEmoteList equippedEmotes={backpackState.equippedEmotes} />
@@ -91,7 +91,6 @@ export function EmotesCatalog(): ReactElement {
             )
           }}
         />
-
         <UiEntity
           uiTransform={{
             positionType: 'absolute',
@@ -107,27 +106,36 @@ export function EmotesCatalog(): ReactElement {
               color={Color4.White()}
               backgroundColor={COLOR.SMALL_TAG_BACKGROUND}
               uiTransform={{
-                height: '5%',
-                padding: { left: '1%', right: '2%' },
+                height: '4%',
+                padding: {
+                  left: bottomButtonFontSize,
+                  right: bottomButtonFontSize
+                },
                 flexWrap: 'nowrap',
                 margin: { right: '1%' },
-                width: canvasScaleRatio * 300
+                width: 'auto'
               }}
+              fontSize={bottomButtonFontSize}
               onClick={() => {
                 resetEmotes()
               }}
             />
           )}
+
           {!areDefaultEmotes(backpackState.equippedEmotes) && (
             <NavButton
               text={'RESET DEFAULT EMOTES'}
               color={Color4.White()}
               backgroundColor={COLOR.SMALL_TAG_BACKGROUND}
+              fontSize={bottomButtonFontSize}
               uiTransform={{
-                height: '5%',
-                padding: { left: '1%', right: '2%' },
+                height: '4%',
+                padding: {
+                  left: bottomButtonFontSize,
+                  right: bottomButtonFontSize
+                },
                 flexWrap: 'nowrap',
-                width: canvasScaleRatio * 380
+                width: 'auto'
               }}
               onClick={() => {
                 store.dispatch(resetDefaultEmotesAction())
@@ -193,7 +201,7 @@ function EmoteNavBar(): ReactElement {
         )?.toUpperCase()}
         uiTransform={{
           padding: 20 * canvasScaleRatio,
-          height: 80 * canvasScaleRatio,
+
           display: backpackState.equippedEmotes[backpackState.selectedEmoteSlot]
             ? 'flex'
             : 'none'

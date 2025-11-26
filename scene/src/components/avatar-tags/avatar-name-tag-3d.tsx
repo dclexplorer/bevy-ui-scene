@@ -7,7 +7,8 @@ import {
   MeshRenderer,
   PlayerIdentityData,
   Transform,
-  UiCanvas
+  UiCanvas,
+  VisibilityComponent
 } from '@dcl/sdk/ecs'
 import { getPlayer } from '@dcl/sdk/players'
 import { AvatarAnchorPointType, AvatarAttach, type Entity } from '@dcl/ecs'
@@ -18,11 +19,18 @@ import { COLOR } from '../color-palette'
 import { type GetPlayerDataRes } from '../../utils/definitions'
 import { waitFor } from '../../utils/dcl-utils'
 import { showErrorPopup } from '../../service/error-popup-service'
+import { BevyApi } from '../../bevy-api'
+import { store } from 'src/state/store'
+import { updateHudStateAction } from '../../state/hud/actions'
+import { type MicActivation } from '../../bevy-api/interface'
+import { listenSystemAction } from '../../service/system-actions-emitter'
 
 export async function initAvatarTags(): Promise<void> {
   const avatarTracker = createOrGetAvatarsTracker()
   const addressTagEntitiesMap = new Map<string, Entity>()
-
+  const state = {
+    hideNames: false
+  }
   avatarTracker.onEnterScene((player) => {
     const tagEntity = createTag(player)
     if (tagEntity) {
@@ -47,6 +55,29 @@ export async function initAvatarTags(): Promise<void> {
   if (ownTagEntity) {
     addressTagEntitiesMap.set(player.userId, ownTagEntity)
   }
+
+  const awaitVoiceStream = async (stream: MicActivation[]): Promise<void> => {
+    for await (const voiceState of stream) {
+      store.dispatch(
+        updateHudStateAction({
+          playerVoiceStateMap: {
+            ...store.getState().hud.playerVoiceStateMap,
+            [voiceState.sender_address]: voiceState.active
+          }
+        })
+      )
+    }
+  }
+
+  awaitVoiceStream(await BevyApi.getVoiceStream()).catch(console.error)
+
+  listenSystemAction('HideNames', (pressed) => {
+    if (!pressed) return
+    state.hideNames = !state.hideNames
+    addressTagEntitiesMap.forEach((entity) => {
+      VisibilityComponent.getMutable(entity).visible = !state.hideNames
+    })
+  })
 }
 
 function createTag(player: GetPlayerDataRes): undefined | Entity {
@@ -64,7 +95,6 @@ function createTag(player: GetPlayerDataRes): undefined | Entity {
   Billboard.create(tagWrapperEntity, {})
   MeshRenderer.setPlane(tagWrapperEntity)
   Transform.create(tagWrapperEntity, {
-    position: Vector3.create(1, 2, 1),
     scale: Vector3.create(2, 1, 1)
   })
   AvatarAttach.create(tagWrapperEntity, {
@@ -81,6 +111,8 @@ function createTag(player: GetPlayerDataRes): undefined | Entity {
     tagWrapperEntity,
     getTagElement({ player })
   )
+  VisibilityComponent.create(tagWrapperEntity, { visible: true })
+
   Material.setPbrMaterial(tagWrapperEntity, {
     transparencyMode: MaterialTransparencyMode.MTM_ALPHA_BLEND,
     texture: {

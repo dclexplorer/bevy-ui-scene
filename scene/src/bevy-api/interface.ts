@@ -108,6 +108,12 @@ export type ShowUiRequestParams = {
   hash?: string | undefined
   show?: boolean | undefined
 }
+
+export type MicActivation = {
+  sender_address: string
+  active: boolean
+}
+
 export type BevyApiInterface = {
   setAvatar: (avatarData: SetAvatarData) => Promise<number>
   openSceneLogger: () => Promise<void>
@@ -135,6 +141,7 @@ export type BevyApiInterface = {
   getRealmProvider: () => Promise<string>
   getSystemActionStream: () => Promise<SystemAction[]>
   getChatStream: () => Promise<ChatMessageDefinition[]>
+  getVoiceStream: () => Promise<MicActivation[]>
   sendChat: (message: string, channel?: string) => void
   quit: () => void
   getPermissionRequestStream: () => Promise<PermissionRequest[]>

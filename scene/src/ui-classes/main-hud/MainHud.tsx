@@ -152,7 +152,12 @@ export default class MainHud {
       while (true) {
         const micState = await BevyApi.getMicState()
         this.voiceChatIcon.spriteName = micState.enabled ? 'Mic on' : 'Mic off'
-        await sleep(100)
+        store.dispatch(
+          updateHudStateAction({
+            micEnabled: micState.enabled
+          })
+        )
+        await sleep(300)
       }
     })
   }
