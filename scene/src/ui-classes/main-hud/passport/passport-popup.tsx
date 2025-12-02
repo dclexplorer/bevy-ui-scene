@@ -41,6 +41,8 @@ import { getPlayer } from '@dcl/sdk/players'
 import { CloseButton } from '../../../components/close-button'
 import { Label } from '@dcl/sdk/react-ecs'
 import { UserAvatarPreviewElement } from '../../../components/backpack/UserAvatarPreviewElement'
+import { Column, Row } from '../../../components/layout'
+import useState = ReactEcs.useState
 
 const COPY_ICON_SIZE = 40
 
@@ -82,7 +84,9 @@ export function setupPassportPopup(): void {
         const shownPopup = action.payload as HUDPopup
         const userId: string = shownPopup.data as string
         const profileData = await fetchProfileData({ userId })
-        const player: GetPlayerDataRes = getPlayer() as GetPlayerDataRes
+        const player: GetPlayerDataRes = getPlayer({
+          userId
+        }) as GetPlayerDataRes
         const [avatarData] = profileData?.avatars ?? [
           {
             ...EMPTY_PROFILE_DATA,
@@ -102,6 +106,7 @@ export function setupPassportPopup(): void {
         const names = await fetchAllUserNames({ userId })
         state.editable = userId === getPlayer()?.userId
 
+        // TODO REVIEW to refactor, profileData refers to passport profileData state, which can be own or other users, can lead to confussion and to be used as a own profile data always, refactor to useState
         store.dispatch(
           updateHudStateAction({
             profileData: avatarData as ViewAvatarData,
@@ -240,7 +245,21 @@ function PassportContent(): ReactElement {
         ]}
         fontSize={getContentScaleRatio() * 32}
       />
-      <Overview />
+      <Column
+        uiTransform={{
+          borderWidth: 1,
+          borderRadius: 0,
+          borderColor: COLOR.GREEN,
+          height: getContentScaleRatio() * 1250,
+          width: getContentScaleRatio() * 1700,
+          overflow: 'scroll'
+        }}
+      >
+        <Overview />
+        <EquippedItemsContainer
+          player={getPlayer({ userId: profileData.userId })}
+        />
+      </Column>
     </UiEntity>
   )
 }
@@ -334,7 +353,133 @@ function Overview(): ReactElement {
           )}
       </UiEntity>
       <LinksSection />
+
       <BottomBar />
+    </UiEntity>
+  )
+}
+
+function EquippedItemsContainer({
+  player
+}: {
+  player: GetPlayerDataRes | null
+}): ReactElement {
+  return (
+    <UiEntity
+      uiTransform={{
+        margin: { top: '1%' },
+        padding: '2%',
+        width: '96%',
+        maxWidth: '96%',
+        flexWrap: 'wrap',
+        borderRadius: getContentScaleRatio() * 20,
+        borderColor: COLOR.TEXT_COLOR_WHITE,
+        borderWidth: 0,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        opacity: state.savingProfile ? 0.5 : 1
+      }}
+      uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
+    >
+      <Column
+        uiTransform={{
+          width: '100%',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start'
+        }}
+      >
+        <UiEntity
+          uiText={{
+            value: '<b>EQUIPPED WEARABLES</b>',
+            fontSize: getContentScaleRatio() * 32
+          }}
+        />
+
+        <Row
+          uiTransform={{
+            width: '100%',
+
+            flexShrink: 0,
+            flexGrow: 0,
+            flexWrap: 'wrap',
+            borderWidth: 1,
+            borderRadius: 0,
+            borderColor: COLOR.RED
+          }}
+        >
+          {player?.wearables.map((wearable) => {
+            return (
+              <UiEntity
+                uiTransform={{
+                  width: 100,
+                  height: 100,
+                  borderWidth: 1,
+                  borderColor: COLOR.WHITE,
+                  borderRadius: 0
+                }}
+                uiBackground={{
+                  texture: {
+                    src: `https://peer.decentraland.org/lambdas/collections/contents/${
+                      wearable as string
+                    }/thumbnail`
+                  },
+                  textureMode: 'stretch'
+                }}
+              ></UiEntity>
+            )
+          })}
+        </Row>
+      </Column>
+      <Column
+        uiTransform={{
+          width: '100%',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start'
+        }}
+      >
+        <UiEntity
+          uiText={{
+            value: '<b>EQUIPPED EMOTES</b>',
+            fontSize: getContentScaleRatio() * 32
+          }}
+        />
+
+        <Row
+          uiTransform={{
+            width: '100%',
+
+            flexShrink: 0,
+            flexGrow: 0,
+            flexWrap: 'wrap',
+            borderWidth: 1,
+            borderRadius: 0,
+            borderColor: COLOR.RED
+          }}
+        >
+          {player?.wearables.map((wearable) => {
+            return (
+              <UiEntity
+                uiTransform={{
+                  width: 100,
+                  height: 100,
+                  borderWidth: 1,
+                  borderColor: COLOR.WHITE,
+                  borderRadius: 0
+                }}
+                uiBackground={{
+                  texture: {
+                    src: `https://peer.decentraland.org/lambdas/collections/contents/${
+                      wearable as string
+                    }/thumbnail`
+                  },
+                  textureMode: 'stretch'
+                }}
+              ></UiEntity>
+            )
+          })}
+        </Row>
+      </Column>
     </UiEntity>
   )
 }

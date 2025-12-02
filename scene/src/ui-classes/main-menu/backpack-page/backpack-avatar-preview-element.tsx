@@ -44,7 +44,7 @@ function getAvatarShapeFromBackpackStore(): PBAvatarShape {
     skinColor: store.getState().backpack.outfitSetup.base.skinColor,
     bodyShape: store.getState().backpack.outfitSetup.base.bodyShapeUrn,
     forceRender: store.getState().backpack.forceRender,
-    id: store.getState().hud.profileData.userId,
+    id: 'any',
     emotes: store.getState().backpack.equippedEmotes
   }
 }
