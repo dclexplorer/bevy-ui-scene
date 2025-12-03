@@ -18,8 +18,16 @@ import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
 import { setAvatarPreviewCameraToWearableCategory } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
-import { applyMiddleEllipsis, BASE_FEMALE_URN } from '../../../utils/urn-utils'
-import { type GetPlayerDataRes } from '../../../utils/definitions'
+import {
+  applyMiddleEllipsis,
+  BASE_FEMALE_URN,
+  getURNWithoutTokenId
+} from '../../../utils/urn-utils'
+import {
+  type GetPlayerDataRes,
+  URN,
+  type URNWithoutTokenId
+} from '../../../utils/definitions'
 import { executeTask } from '@dcl/sdk/ecs'
 import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
 import { TabComponent } from '../../../components/tab-component'
@@ -43,6 +51,10 @@ import { Label } from '@dcl/sdk/react-ecs'
 import { UserAvatarPreviewElement } from '../../../components/backpack/UserAvatarPreviewElement'
 import { Column, Row } from '../../../components/layout'
 import useState = ReactEcs.useState
+import useEffect = ReactEcs.useEffect
+import { fetchWearablesData } from '../../../utils/wearables-promise-utils'
+import { getRealm } from '~system/Runtime'
+import type { WearableEntityMetadata } from '../../../utils/item-definitions'
 
 const COPY_ICON_SIZE = 40
 
@@ -213,6 +225,10 @@ function getVisibleProperties(profileData: ViewAvatarData): string[] {
 
 function PassportContent(): ReactElement {
   const profileData = store.getState().hud.profileData
+  const [player, setPlayer] = useState<GetPlayerDataRes | null>(getPlayer())
+  useEffect(() => {
+    setPlayer(getPlayer())
+  }, [getPlayer()?.userId])
   return (
     <UiEntity
       uiTransform={{
@@ -247,18 +263,13 @@ function PassportContent(): ReactElement {
       />
       <Column
         uiTransform={{
-          borderWidth: 1,
-          borderRadius: 0,
-          borderColor: COLOR.GREEN,
           height: getContentScaleRatio() * 1250,
           width: getContentScaleRatio() * 1700,
           overflow: 'scroll'
         }}
       >
         <Overview />
-        <EquippedItemsContainer
-          player={getPlayer({ userId: profileData.userId })}
-        />
+        <EquippedItemsContainer player={player} />
       </Column>
     </UiEntity>
   )
@@ -364,6 +375,33 @@ function EquippedItemsContainer({
 }: {
   player: GetPlayerDataRes | null
 }): ReactElement {
+  const [wearablesData, setWearablesData] = useState<WearableEntityMetadata[]>(
+    []
+  )
+  const canvasScaleRatio = getContentScaleRatio()
+  useEffect(() => {
+    if (player) {
+      console.log('fetchWearablesData')
+      executeTask(async () => {
+        const catalystURL =
+          (await getRealm({}))?.realmInfo?.baseUrl ??
+          'https://peer.decentraland.org'
+        const _wearablesData = await fetchWearablesData(catalystURL)(
+          ...player.wearables
+            .filter((i) => i)
+            .map((urn) => getURNWithoutTokenId(urn as URN))
+            .filter(
+              (urn): urn is URNWithoutTokenId => urn !== null && urn !== ''
+            )
+        )
+        setWearablesData(_wearablesData as WearableEntityMetadata[])
+        console.log('_wearablesData: ', _wearablesData)
+      })
+
+      //TODO fetchEmotesData
+    }
+  }, [player])
+  const THUMBNAIL_SIZE = canvasScaleRatio * 228
   return (
     <UiEntity
       uiTransform={{
@@ -402,80 +440,44 @@ function EquippedItemsContainer({
 
             flexShrink: 0,
             flexGrow: 0,
-            flexWrap: 'wrap',
-            borderWidth: 1,
-            borderRadius: 0,
-            borderColor: COLOR.RED
+            flexWrap: 'wrap'
           }}
         >
-          {player?.wearables.map((wearable) => {
+          {wearablesData.map((wearableData: WearableEntityMetadata) => {
             return (
               <UiEntity
                 uiTransform={{
-                  width: 100,
-                  height: 100,
-                  borderWidth: 1,
-                  borderColor: COLOR.WHITE,
-                  borderRadius: 0
+                  margin: canvasScaleRatio * 14,
+                  flexGrow: 0,
+                  flexShrink: 0,
+                  width: THUMBNAIL_SIZE,
+                  height: THUMBNAIL_SIZE,
+                  overflow: 'hidden'
                 }}
-                uiBackground={{
-                  texture: {
-                    src: `https://peer.decentraland.org/lambdas/collections/contents/${
-                      wearable as string
-                    }/thumbnail`
-                  },
-                  textureMode: 'stretch'
-                }}
-              ></UiEntity>
-            )
-          })}
-        </Row>
-      </Column>
-      <Column
-        uiTransform={{
-          width: '100%',
-          justifyContent: 'flex-start',
-          alignItems: 'flex-start'
-        }}
-      >
-        <UiEntity
-          uiText={{
-            value: '<b>EQUIPPED EMOTES</b>',
-            fontSize: getContentScaleRatio() * 32
-          }}
-        />
-
-        <Row
-          uiTransform={{
-            width: '100%',
-
-            flexShrink: 0,
-            flexGrow: 0,
-            flexWrap: 'wrap',
-            borderWidth: 1,
-            borderRadius: 0,
-            borderColor: COLOR.RED
-          }}
-        >
-          {player?.wearables.map((wearable) => {
-            return (
-              <UiEntity
-                uiTransform={{
-                  width: 100,
-                  height: 100,
-                  borderWidth: 1,
-                  borderColor: COLOR.WHITE,
-                  borderRadius: 0
-                }}
-                uiBackground={{
-                  texture: {
-                    src: `https://peer.decentraland.org/lambdas/collections/contents/${
-                      wearable as string
-                    }/thumbnail`
-                  },
-                  textureMode: 'stretch'
-                }}
-              ></UiEntity>
+                uiBackground={getBackgroundFromAtlas({
+                  spriteName: `rarity-background-${
+                    wearableData?.rarity ?? 'base'
+                  }`,
+                  atlasName: 'backpack'
+                })}
+              >
+                <UiEntity
+                  uiTransform={{
+                    flexGrow: 0,
+                    flexShrink: 0,
+                    width: THUMBNAIL_SIZE * 0.95,
+                    height: THUMBNAIL_SIZE * 0.95,
+                    overflow: 'hidden',
+                    positionType: 'absolute'
+                  }}
+                  uiBackground={{
+                    texture: {
+                      src: wearableData.thumbnail
+                    },
+                    textureMode: 'stretch'
+                  }}
+                ></UiEntity>
+              </UiEntity>
             )
           })}
         </Row>
