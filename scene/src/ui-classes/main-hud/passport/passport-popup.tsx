@@ -1,5 +1,5 @@
 import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { COLOR } from '../../../components/color-palette'
+import { COLOR, RARITY_COLORS } from '../../../components/color-palette'
 import { store } from '../../../state/store'
 import {
   closeLastPopupAction,
@@ -16,11 +16,15 @@ import {
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
 import { setAvatarPreviewCameraToWearableCategory } from '../../../components/backpack/AvatarPreview'
-import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
+import {
+  getBackgroundFromAtlas,
+  truncateWithoutBreakingWords
+} from '../../../utils/ui-utils'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import {
   applyMiddleEllipsis,
   BASE_FEMALE_URN,
+  getItemsWithTokenId,
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
 import {
@@ -54,7 +58,13 @@ import useState = ReactEcs.useState
 import useEffect = ReactEcs.useEffect
 import { fetchWearablesData } from '../../../utils/wearables-promise-utils'
 import { getRealm } from '~system/Runtime'
-import type { WearableEntityMetadata } from '../../../utils/item-definitions'
+import type {
+  RarityName,
+  WearableEntityMetadata
+} from '../../../utils/item-definitions'
+import { Tag } from 'src/components/color-tag'
+import { openExternalUrl } from '~system/RestrictedActions'
+import { BevyApi } from '../../../bevy-api'
 
 const COPY_ICON_SIZE = 40
 
@@ -444,39 +454,100 @@ function EquippedItemsContainer({
           }}
         >
           {wearablesData.map((wearableData: WearableEntityMetadata) => {
+            const tokenId = Number(
+              wearableData.id.split(':').reduce((acc, current) => current, '')
+            )
+
+            const rarityColor =
+              RARITY_COLORS[wearableData?.rarity as RarityName]
             return (
               <UiEntity
                 uiTransform={{
-                  margin: canvasScaleRatio * 14,
-                  flexGrow: 0,
-                  flexShrink: 0,
                   width: THUMBNAIL_SIZE,
-                  height: THUMBNAIL_SIZE,
-                  overflow: 'hidden'
+                  height: THUMBNAIL_SIZE * 1.4,
+                  borderRadius: getContentScaleRatio() * 20,
+
+                  borderColor: COLOR.TEXT_COLOR_WHITE,
+                  borderWidth: 0,
+                  margin: canvasScaleRatio * 14,
+                  flexDirection: 'column'
                 }}
-                uiBackground={getBackgroundFromAtlas({
-                  spriteName: `rarity-background-${
-                    wearableData?.rarity ?? 'base'
-                  }`,
-                  atlasName: 'backpack'
-                })}
+                uiBackground={{
+                  color: COLOR.DARK_OPACITY_7
+                }}
+                onMouseDown={() => {
+                  if (!isNaN(tokenId)) {
+                    store.dispatch(
+                      pushPopupAction({
+                        type: HUD_POPUP_TYPE.URL,
+                        data: `https://decentraland.org/marketplace/contracts/${wearableData.collectionAddress}/items/${tokenId}`
+                      })
+                    )
+                  } else {
+                    //TODO
+                  }
+                }}
               >
                 <UiEntity
                   uiTransform={{
                     flexGrow: 0,
                     flexShrink: 0,
-                    width: THUMBNAIL_SIZE * 0.95,
-                    height: THUMBNAIL_SIZE * 0.95,
+                    width: THUMBNAIL_SIZE,
+                    height: THUMBNAIL_SIZE,
+                    overflow: 'hidden'
+                  }}
+                  uiBackground={getBackgroundFromAtlas({
+                    spriteName: `rarity-background-${
+                      wearableData?.rarity ?? 'base'
+                    }`,
+                    atlasName: 'backpack'
+                  })}
+                >
+                  <UiEntity
+                    uiTransform={{
+                      flexGrow: 0,
+                      flexShrink: 0,
+                      width: THUMBNAIL_SIZE * 0.95,
+                      height: THUMBNAIL_SIZE * 0.95,
+                      overflow: 'hidden',
+                      positionType: 'absolute'
+                    }}
+                    uiBackground={{
+                      texture: {
+                        src: wearableData.thumbnail
+                      },
+                      textureMode: 'stretch'
+                    }}
+                  />
+                </UiEntity>
+                <UiEntity
+                  uiTransform={{
+                    alignSelf: 'flex-start',
                     overflow: 'hidden',
-                    positionType: 'absolute'
+                    maxWidth: '100%',
+                    margin: { top: canvasScaleRatio * -20 }
                   }}
-                  uiBackground={{
-                    texture: {
-                      src: wearableData.thumbnail
-                    },
-                    textureMode: 'stretch'
+                  uiText={{
+                    value: truncateWithoutBreakingWords(
+                      wearableData?.name ?? wearableData.i18n[0].text ?? '',
+                      13
+                    ),
+                    fontSize: canvasScaleRatio * 32,
+                    textWrap: 'nowrap'
                   }}
-                ></UiEntity>
+                />
+                <Tag
+                  uiTransform={{
+                    margin: {
+                      left: canvasScaleRatio * 10,
+                      top: canvasScaleRatio * -10
+                    }
+                  }}
+                  text={`<b>${wearableData?.rarity?.toUpperCase() ?? ''}</b>`}
+                  backgroundColor={{ ...rarityColor, a: 0.2 }}
+                  textColor={rarityColor}
+                  canvasScaleRatio={canvasScaleRatio * 0.8}
+                />
               </UiEntity>
             )
           })}
@@ -839,3 +910,5 @@ function Header({ children }: { children?: ReactElement }): ReactElement {
     </UiEntity>
   )
 }
+
+// TODO refactor this file in several files
