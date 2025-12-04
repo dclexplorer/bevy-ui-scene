@@ -65,6 +65,7 @@ import type {
 import { Tag } from 'src/components/color-tag'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../../bevy-api'
+import { PassportEquippedItem } from './passport-equipped-item'
 
 const COPY_ICON_SIZE = 40
 
@@ -454,101 +455,11 @@ function EquippedItemsContainer({
           }}
         >
           {wearablesData.map((wearableData: WearableEntityMetadata) => {
-            const tokenId = Number(
-              wearableData.id.split(':').reduce((acc, current) => current, '')
-            )
-
-            const rarityColor =
-              RARITY_COLORS[wearableData?.rarity as RarityName]
             return (
-              <UiEntity
-                uiTransform={{
-                  width: THUMBNAIL_SIZE,
-                  height: THUMBNAIL_SIZE * 1.4,
-                  borderRadius: getContentScaleRatio() * 20,
-
-                  borderColor: COLOR.TEXT_COLOR_WHITE,
-                  borderWidth: 0,
-                  margin: canvasScaleRatio * 14,
-                  flexDirection: 'column'
-                }}
-                uiBackground={{
-                  color: COLOR.DARK_OPACITY_7
-                }}
-                onMouseDown={() => {
-                  if (!isNaN(tokenId)) {
-                    store.dispatch(
-                      pushPopupAction({
-                        type: HUD_POPUP_TYPE.URL,
-                        data: `https://decentraland.org/marketplace/contracts/${wearableData.collectionAddress}/items/${tokenId}`
-                      })
-                    )
-                  } else {
-                    //TODO
-                  }
-                }}
-              >
-                <UiEntity
-                  uiTransform={{
-                    flexGrow: 0,
-                    flexShrink: 0,
-                    width: THUMBNAIL_SIZE,
-                    height: THUMBNAIL_SIZE,
-                    overflow: 'hidden'
-                  }}
-                  uiBackground={getBackgroundFromAtlas({
-                    spriteName: `rarity-background-${
-                      wearableData?.rarity ?? 'base'
-                    }`,
-                    atlasName: 'backpack'
-                  })}
-                >
-                  <UiEntity
-                    uiTransform={{
-                      flexGrow: 0,
-                      flexShrink: 0,
-                      width: THUMBNAIL_SIZE * 0.95,
-                      height: THUMBNAIL_SIZE * 0.95,
-                      overflow: 'hidden',
-                      positionType: 'absolute'
-                    }}
-                    uiBackground={{
-                      texture: {
-                        src: wearableData.thumbnail
-                      },
-                      textureMode: 'stretch'
-                    }}
-                  />
-                </UiEntity>
-                <UiEntity
-                  uiTransform={{
-                    alignSelf: 'flex-start',
-                    overflow: 'hidden',
-                    maxWidth: '100%',
-                    margin: { top: canvasScaleRatio * -20 }
-                  }}
-                  uiText={{
-                    value: truncateWithoutBreakingWords(
-                      wearableData?.name ?? wearableData.i18n[0].text ?? '',
-                      13
-                    ),
-                    fontSize: canvasScaleRatio * 32,
-                    textWrap: 'nowrap'
-                  }}
-                />
-                <Tag
-                  uiTransform={{
-                    margin: {
-                      left: canvasScaleRatio * 10,
-                      top: canvasScaleRatio * -10
-                    }
-                  }}
-                  text={`<b>${wearableData?.rarity?.toUpperCase() ?? ''}</b>`}
-                  backgroundColor={{ ...rarityColor, a: 0.2 }}
-                  textColor={rarityColor}
-                  canvasScaleRatio={canvasScaleRatio * 0.8}
-                />
-              </UiEntity>
+              <PassportEquippedItem
+                itemData={wearableData}
+                thumbnailSize={THUMBNAIL_SIZE}
+              />
             )
           })}
         </Row>
