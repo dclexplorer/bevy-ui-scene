@@ -11,6 +11,7 @@ import { NotificationsMenu } from '../ui-classes/main-hud/notifications-menu'
 import { PermissionRequestPopup } from '../ui-classes/main-hud/permissions-popups/permission-request-popup'
 import { PopupTeleport } from '../ui-classes/main-hud/popup-teleport'
 import { MAX_ZINDEX } from '../utils/constants'
+import { PopupMarketplace } from '../ui-classes/main-hud/popup-marketplace'
 
 export type PopupParameters = { shownPopup: HUDPopup; key?: string }
 export type Popup = (
@@ -19,6 +20,7 @@ export type Popup = (
 
 const popupComponents: Record<number, Popup> = {
   [HUD_POPUP_TYPE.URL as number]: PopupUrl,
+  [HUD_POPUP_TYPE.MARKETPLACE as number]: PopupMarketplace,
   [HUD_POPUP_TYPE.TELEPORT as number]: PopupTeleport, // TODO
   [HUD_POPUP_TYPE.PASSPORT as number]: PassportPopup,
   [HUD_POPUP_TYPE.NAME_EDIT as number]: NameEditPopup,

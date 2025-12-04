@@ -28,6 +28,7 @@ import {
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
 import {
+  EquippedEmote,
   type GetPlayerDataRes,
   URN,
   type URNWithoutTokenId
@@ -59,6 +60,7 @@ import useEffect = ReactEcs.useEffect
 import { fetchWearablesData } from '../../../utils/wearables-promise-utils'
 import { getRealm } from '~system/Runtime'
 import type {
+  EmoteEntityMetadata,
   RarityName,
   WearableEntityMetadata
 } from '../../../utils/item-definitions'
@@ -66,6 +68,7 @@ import { Tag } from 'src/components/color-tag'
 import { openExternalUrl } from '~system/RestrictedActions'
 import { BevyApi } from '../../../bevy-api'
 import { PassportEquippedItem } from './passport-equipped-item'
+import { fetchEmotesData } from '../../../utils/emotes-promise-utils'
 
 const COPY_ICON_SIZE = 40
 
@@ -389,6 +392,8 @@ function EquippedItemsContainer({
   const [wearablesData, setWearablesData] = useState<WearableEntityMetadata[]>(
     []
   )
+  const [emotesData, setEmotesData] = useState<EmoteEntityMetadata[]>([])
+
   const canvasScaleRatio = getContentScaleRatio()
   useEffect(() => {
     if (player) {
@@ -396,7 +401,7 @@ function EquippedItemsContainer({
       executeTask(async () => {
         const catalystURL =
           (await getRealm({}))?.realmInfo?.baseUrl ??
-          'https://peer.decentraland.org'
+          'https://peer.decentraland.org' // TODO move catalystURL logic to fetchWearablesdata like with fetchEmotesData
         const _wearablesData = await fetchWearablesData(catalystURL)(
           ...player.wearables
             .filter((i) => i)
@@ -407,6 +412,13 @@ function EquippedItemsContainer({
         )
         setWearablesData(_wearablesData as WearableEntityMetadata[])
         console.log('_wearablesData: ', _wearablesData)
+
+        const _emotesData = await fetchEmotesData(
+          ...((player.emotes.map((emote) =>
+            getURNWithoutTokenId(emote as URN)
+          ) as EquippedEmote[]) ?? [])
+        )
+        setEmotesData(_emotesData as EmoteEntityMetadata[])
       })
 
       //TODO fetchEmotesData
@@ -458,6 +470,39 @@ function EquippedItemsContainer({
             return (
               <PassportEquippedItem
                 itemData={wearableData}
+                thumbnailSize={THUMBNAIL_SIZE}
+              />
+            )
+          })}
+        </Row>
+      </Column>
+      <Column
+        uiTransform={{
+          width: '100%',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start'
+        }}
+      >
+        <UiEntity
+          uiText={{
+            value: '<b>EQUIPPED EMOTES</b>',
+            fontSize: getContentScaleRatio() * 32
+          }}
+        />
+
+        <Row
+          uiTransform={{
+            width: '100%',
+
+            flexShrink: 0,
+            flexGrow: 0,
+            flexWrap: 'wrap'
+          }}
+        >
+          {emotesData.map((emoteData: EmoteEntityMetadata) => {
+            return (
+              <PassportEquippedItem
+                itemData={emoteData}
                 thumbnailSize={THUMBNAIL_SIZE}
               />
             )

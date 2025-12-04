@@ -44,14 +44,16 @@ export function PassportEquippedItem({
         color: COLOR.DARK_OPACITY_7
       }}
       onMouseDown={() => {
+        console.log('onMouseDown', tokenId)
         if (!isNaN(tokenId)) {
           store.dispatch(
             pushPopupAction({
-              type: HUD_POPUP_TYPE.URL,
+              type: HUD_POPUP_TYPE.MARKETPLACE,
               data: `https://decentraland.org/marketplace/contracts/${itemData.collectionAddress}/items/${tokenId}`
             })
           )
         } else {
+          console.log('ELSE')
           //TODO
         }
       }}
