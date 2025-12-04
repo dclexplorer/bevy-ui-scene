@@ -1,4 +1,4 @@
-import ReactEcs, { UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import { COLOR, RARITY_COLORS } from '../../../components/color-palette'
 import { store } from '../../../state/store'
@@ -10,9 +10,9 @@ import {
 } from '../../../utils/ui-utils'
 import { Tag } from '../../../components/color-tag'
 import {
-  EmoteEntityMetadata,
+  type EmoteEntityMetadata,
   type RarityName,
-  WearableEntityMetadata
+  type WearableEntityMetadata
 } from '../../../utils/item-definitions'
 
 export function PassportEquippedItem({
@@ -21,7 +21,7 @@ export function PassportEquippedItem({
 }: {
   thumbnailSize: number
   itemData: WearableEntityMetadata | EmoteEntityMetadata
-}) {
+}): ReactElement {
   const canvasScaleRatio = getContentScaleRatio()
   const tokenId = Number(
     itemData.id.split(':').reduce((acc, current) => current, '')
@@ -54,7 +54,7 @@ export function PassportEquippedItem({
           )
         } else {
           console.log('ELSE')
-          //TODO
+          // TODO
         }
       }}
     >

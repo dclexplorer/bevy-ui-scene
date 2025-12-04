@@ -1,5 +1,5 @@
 import ReactEcs, { Button, type ReactElement, UiEntity } from '@dcl/react-ecs'
-import { COLOR, RARITY_COLORS } from '../../../components/color-palette'
+import { COLOR } from '../../../components/color-palette'
 import { store } from '../../../state/store'
 import {
   closeLastPopupAction,
@@ -16,21 +16,17 @@ import {
 import { cloneDeep, memoize, noop } from '../../../utils/function-utils'
 import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
 import { setAvatarPreviewCameraToWearableCategory } from '../../../components/backpack/AvatarPreview'
-import {
-  getBackgroundFromAtlas,
-  truncateWithoutBreakingWords
-} from '../../../utils/ui-utils'
+import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
 import {
   applyMiddleEllipsis,
   BASE_FEMALE_URN,
-  getItemsWithTokenId,
   getURNWithoutTokenId
 } from '../../../utils/urn-utils'
 import {
-  EquippedEmote,
+  type EquippedEmote,
   type GetPlayerDataRes,
-  URN,
+  type URN,
   type URNWithoutTokenId
 } from '../../../utils/definitions'
 import { executeTask } from '@dcl/sdk/ecs'
@@ -61,12 +57,9 @@ import { fetchWearablesData } from '../../../utils/wearables-promise-utils'
 import { getRealm } from '~system/Runtime'
 import type {
   EmoteEntityMetadata,
-  RarityName,
   WearableEntityMetadata
 } from '../../../utils/item-definitions'
-import { Tag } from 'src/components/color-tag'
-import { openExternalUrl } from '~system/RestrictedActions'
-import { BevyApi } from '../../../bevy-api'
+
 import { PassportEquippedItem } from './passport-equipped-item'
 import { fetchEmotesData } from '../../../utils/emotes-promise-utils'
 
@@ -421,7 +414,7 @@ function EquippedItemsContainer({
         setEmotesData(_emotesData as EmoteEntityMetadata[])
       })
 
-      //TODO fetchEmotesData
+      // TODO fetchEmotesData
     }
   }, [player])
   const THUMBNAIL_SIZE = canvasScaleRatio * 228

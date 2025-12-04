@@ -10,7 +10,6 @@ import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 
 import { COLOR, RARITY_COLORS } from '../color-palette'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
-import { type Color4 } from '@dcl/sdk/math'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory

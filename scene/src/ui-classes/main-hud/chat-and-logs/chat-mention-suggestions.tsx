@@ -99,7 +99,7 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
       (player) =>
         player?.name.toLowerCase().startsWith(matchText.toLowerCase()) &&
         player?.userId !== getPlayer()?.userId &&
-        player?.isGuest !== true
+        !player?.isGuest
     )
     .map((player) => {
       if (
@@ -125,7 +125,7 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
           (avatarsData?.length && avatarsData[0].hasClaimedName) ??
           (namedAvatarsData?.length && namedAvatarsData[0].hasClaimedName)
 
-        return hasClaimedName
+        return hasClaimedName === true
           ? player?.name
           : getNameWithHashPostfix(
               player?.name ?? '',

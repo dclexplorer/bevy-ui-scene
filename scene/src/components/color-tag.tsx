@@ -1,7 +1,7 @@
 import type { Color4 } from '@dcl/sdk/math'
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../utils/constants'
-import { Label, UiTransformProps } from '@dcl/sdk/react-ecs'
+import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { COLOR } from './color-palette'
 
 export function Tag({
