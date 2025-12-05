@@ -138,6 +138,7 @@ export type Atlas =
   | 'social'
   | 'info-panel'
   | 'emotes'
+  | 'emojis'
 
 export type FormattedURN = {
   version: string

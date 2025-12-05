@@ -4,7 +4,7 @@ import { type UiBackgroundProps } from '@dcl/react-ecs'
 import backpackJson from '../../assets/images/atlas/backpack.json'
 import iconsJson from '../../assets/images/atlas/icons.json'
 import map2Json from '../../assets/images/atlas/map2.json'
-
+import emojisJson from '../../assets/images/atlas/emojis.json'
 import { navbarJson } from '../json/navbar-data'
 import { contextJson } from '../json/context-data'
 import { toggleJson } from '../json/toggle-data'
@@ -61,6 +61,9 @@ export function getUvs(
       break
     case 'emotes':
       parsedJson = emotesJson as AtlasData
+      break
+    case 'emojis':
+      parsedJson = emojisJson as AtlasData
       break
     default:
       parsedJson = undefined
