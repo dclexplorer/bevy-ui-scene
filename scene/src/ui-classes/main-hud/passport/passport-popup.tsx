@@ -18,8 +18,17 @@ import { ResponsiveContent } from '../../main-menu/backpack-page/BackpackPage'
 import { setAvatarPreviewCameraToWearableCategory } from '../../../components/backpack/AvatarPreview'
 import { getBackgroundFromAtlas } from '../../../utils/ui-utils'
 import { getContentScaleRatio } from '../../../service/canvas-ratio'
-import { applyMiddleEllipsis, BASE_FEMALE_URN } from '../../../utils/urn-utils'
-import { type GetPlayerDataRes } from '../../../utils/definitions'
+import {
+  applyMiddleEllipsis,
+  BASE_FEMALE_URN,
+  getURNWithoutTokenId
+} from '../../../utils/urn-utils'
+import {
+  type EquippedEmote,
+  type GetPlayerDataRes,
+  type URN,
+  type URNWithoutTokenId
+} from '../../../utils/definitions'
 import { executeTask } from '@dcl/sdk/ecs'
 import { WEARABLE_CATEGORY_DEFINITIONS } from '../../../service/categories'
 import { TabComponent } from '../../../components/tab-component'
@@ -41,6 +50,18 @@ import { getPlayer } from '@dcl/sdk/players'
 import { CloseButton } from '../../../components/close-button'
 import { Label } from '@dcl/sdk/react-ecs'
 import { UserAvatarPreviewElement } from '../../../components/backpack/UserAvatarPreviewElement'
+import { Column, Row } from '../../../components/layout'
+import useState = ReactEcs.useState
+import useEffect = ReactEcs.useEffect
+import { fetchWearablesData } from '../../../utils/wearables-promise-utils'
+import { getRealm } from '~system/Runtime'
+import type {
+  EmoteEntityMetadata,
+  WearableEntityMetadata
+} from '../../../utils/item-definitions'
+
+import { PassportEquippedItem } from './passport-equipped-item'
+import { fetchEmotesData } from '../../../utils/emotes-promise-utils'
 
 const COPY_ICON_SIZE = 40
 
@@ -82,7 +103,9 @@ export function setupPassportPopup(): void {
         const shownPopup = action.payload as HUDPopup
         const userId: string = shownPopup.data as string
         const profileData = await fetchProfileData({ userId })
-        const player: GetPlayerDataRes = getPlayer() as GetPlayerDataRes
+        const player: GetPlayerDataRes = getPlayer({
+          userId
+        }) as GetPlayerDataRes
         const [avatarData] = profileData?.avatars ?? [
           {
             ...EMPTY_PROFILE_DATA,
@@ -102,6 +125,7 @@ export function setupPassportPopup(): void {
         const names = await fetchAllUserNames({ userId })
         state.editable = userId === getPlayer()?.userId
 
+        // TODO REVIEW to refactor, profileData refers to passport profileData state, which can be own or other users, can lead to confussion and to be used as a own profile data always, refactor to useState
         store.dispatch(
           updateHudStateAction({
             profileData: avatarData as ViewAvatarData,
@@ -208,6 +232,10 @@ function getVisibleProperties(profileData: ViewAvatarData): string[] {
 
 function PassportContent(): ReactElement {
   const profileData = store.getState().hud.profileData
+  const [player, setPlayer] = useState<GetPlayerDataRes | null>(getPlayer())
+  useEffect(() => {
+    setPlayer(getPlayer())
+  }, [getPlayer()?.userId])
   return (
     <UiEntity
       uiTransform={{
@@ -240,7 +268,16 @@ function PassportContent(): ReactElement {
         ]}
         fontSize={getContentScaleRatio() * 32}
       />
-      <Overview />
+      <Column
+        uiTransform={{
+          height: getContentScaleRatio() * 1250,
+          width: getContentScaleRatio() * 1700,
+          overflow: 'scroll'
+        }}
+      >
+        <Overview />
+        <EquippedItemsContainer player={player} />
+      </Column>
     </UiEntity>
   )
 }
@@ -334,7 +371,137 @@ function Overview(): ReactElement {
           )}
       </UiEntity>
       <LinksSection />
+
       <BottomBar />
+    </UiEntity>
+  )
+}
+
+function EquippedItemsContainer({
+  player
+}: {
+  player: GetPlayerDataRes | null
+}): ReactElement {
+  const [wearablesData, setWearablesData] = useState<WearableEntityMetadata[]>(
+    []
+  )
+  const [emotesData, setEmotesData] = useState<EmoteEntityMetadata[]>([])
+
+  const canvasScaleRatio = getContentScaleRatio()
+  useEffect(() => {
+    if (player) {
+      console.log('fetchWearablesData')
+      executeTask(async () => {
+        const catalystURL =
+          (await getRealm({}))?.realmInfo?.baseUrl ??
+          'https://peer.decentraland.org' // TODO move catalystURL logic to fetchWearablesdata like with fetchEmotesData
+        const _wearablesData = await fetchWearablesData(catalystURL)(
+          ...player.wearables
+            .filter((i) => i)
+            .map((urn) => getURNWithoutTokenId(urn as URN))
+            .filter(
+              (urn): urn is URNWithoutTokenId => urn !== null && urn !== ''
+            )
+        )
+        setWearablesData(_wearablesData as WearableEntityMetadata[])
+        console.log('_wearablesData: ', _wearablesData)
+
+        const _emotesData = await fetchEmotesData(
+          ...((player.emotes.map((emote) =>
+            getURNWithoutTokenId(emote as URN)
+          ) as EquippedEmote[]) ?? [])
+        )
+        setEmotesData(_emotesData as EmoteEntityMetadata[])
+      })
+
+      // TODO fetchEmotesData
+    }
+  }, [player])
+  const THUMBNAIL_SIZE = canvasScaleRatio * 228
+  return (
+    <UiEntity
+      uiTransform={{
+        margin: { top: '1%' },
+        padding: '2%',
+        width: '96%',
+        maxWidth: '96%',
+        flexWrap: 'wrap',
+        borderRadius: getContentScaleRatio() * 20,
+        borderColor: COLOR.TEXT_COLOR_WHITE,
+        borderWidth: 0,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        opacity: state.savingProfile ? 0.5 : 1
+      }}
+      uiBackground={{ color: COLOR.DARK_OPACITY_5 }}
+    >
+      <Column
+        uiTransform={{
+          width: '100%',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start'
+        }}
+      >
+        <UiEntity
+          uiText={{
+            value: '<b>EQUIPPED WEARABLES</b>',
+            fontSize: getContentScaleRatio() * 32
+          }}
+        />
+
+        <Row
+          uiTransform={{
+            width: '100%',
+
+            flexShrink: 0,
+            flexGrow: 0,
+            flexWrap: 'wrap'
+          }}
+        >
+          {wearablesData.map((wearableData: WearableEntityMetadata) => {
+            return (
+              <PassportEquippedItem
+                itemData={wearableData}
+                thumbnailSize={THUMBNAIL_SIZE}
+              />
+            )
+          })}
+        </Row>
+      </Column>
+      <Column
+        uiTransform={{
+          width: '100%',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start'
+        }}
+      >
+        <UiEntity
+          uiText={{
+            value: '<b>EQUIPPED EMOTES</b>',
+            fontSize: getContentScaleRatio() * 32
+          }}
+        />
+
+        <Row
+          uiTransform={{
+            width: '100%',
+
+            flexShrink: 0,
+            flexGrow: 0,
+            flexWrap: 'wrap'
+          }}
+        >
+          {emotesData.map((emoteData: EmoteEntityMetadata) => {
+            return (
+              <PassportEquippedItem
+                itemData={emoteData}
+                thumbnailSize={THUMBNAIL_SIZE}
+              />
+            )
+          })}
+        </Row>
+      </Column>
     </UiEntity>
   )
 }
@@ -692,3 +859,5 @@ function Header({ children }: { children?: ReactElement }): ReactElement {
     </UiEntity>
   )
 }
+
+// TODO refactor this file in several files

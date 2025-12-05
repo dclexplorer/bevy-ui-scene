@@ -10,7 +10,6 @@ import { Label, type UiTransformProps } from '@dcl/sdk/react-ecs'
 
 import { COLOR, RARITY_COLORS } from '../color-palette'
 import { ROUNDED_TEXTURE_BACKGROUND } from '../../utils/constants'
-import { type Color4 } from '@dcl/sdk/math'
 import {
   WEARABLE_CATEGORY_DEFINITIONS,
   type WearableCategory
@@ -18,6 +17,7 @@ import {
 import { BACKPACK_SECTION } from '../../state/backpack/state'
 import { store } from '../../state/store'
 import { getEmoteThumbnail } from '../../service/emotes'
+import { Tag } from '../color-tag'
 
 export type InfoPanelProps = {
   canvasScaleRatio: number
@@ -245,42 +245,6 @@ export function InfoPanel({
           }}
         />
       )}
-    </UiEntity>
-  )
-}
-
-function Tag({
-  text,
-  canvasScaleRatio,
-  backgroundColor
-}: {
-  text: string
-  canvasScaleRatio: number
-  backgroundColor: Color4
-}): ReactElement {
-  return (
-    <UiEntity
-      uiTransform={{
-        flexDirection: 'row',
-        flexShrink: 0,
-        flexGrow: 0,
-        flexBasis: 0
-      }}
-    >
-      <UiEntity
-        uiTransform={{
-          padding: {
-            left: 6 * canvasScaleRatio,
-            right: 6 * canvasScaleRatio
-          }
-        }}
-        uiBackground={{
-          ...ROUNDED_TEXTURE_BACKGROUND,
-          color: backgroundColor
-        }}
-      >
-        <Label value={text} fontSize={26 * canvasScaleRatio} />
-      </UiEntity>
     </UiEntity>
   )
 }

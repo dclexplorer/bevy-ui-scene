@@ -44,6 +44,7 @@ export const EMPTY_PROFILE_DATA = {
 
 export enum HUD_POPUP_TYPE {
   URL,
+  MARKETPLACE,
   TELEPORT,
   PASSPORT,
   NAME_EDIT,

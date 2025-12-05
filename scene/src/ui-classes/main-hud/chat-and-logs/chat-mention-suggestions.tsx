@@ -98,11 +98,12 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
     .filter(
       (player) =>
         player?.name.toLowerCase().startsWith(matchText.toLowerCase()) &&
-        player?.userId !== getPlayer()?.userId
+        player?.userId !== getPlayer()?.userId &&
+        !player?.isGuest
     )
     .map((player) => {
       if (
-        namedUsersData.has(player?.name.toLowerCase() ?? '') ||
+        namedUsersData.has(player?.name?.toLowerCase() ?? '') ||
         namedUsersData.has(
           getNameWithHashPostfix(
             player?.name ?? '',
@@ -110,17 +111,21 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
           )?.toLowerCase() ?? ''
         )
       ) {
-        const hasClaimedName =
+        const avatarsData =
           namedUsersData.get(player?.name?.toLowerCase() ?? '')?.profileData
-            ?.avatars[0].hasClaimedName ??
+            ?.avatars ?? []
+        const namedAvatarsData =
           namedUsersData.get(
             getNameWithHashPostfix(
               player?.name ?? '',
               player?.userId ?? ''
             )?.toLowerCase() ?? ''
-          )?.profileData?.avatars[0].hasClaimedName
+          )?.profileData?.avatars ?? []
+        const hasClaimedName =
+          (avatarsData?.length && avatarsData[0].hasClaimedName) ??
+          (namedAvatarsData?.length && namedAvatarsData[0].hasClaimedName)
 
-        return hasClaimedName
+        return hasClaimedName === true
           ? player?.name
           : getNameWithHashPostfix(
               player?.name ?? '',
