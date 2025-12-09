@@ -68,6 +68,7 @@ export function ChatInput({
               })
             )
           })
+        } else if (store.getState().hud.chatInputMentionSuggestions.length) {
         } else {
           onSubmit(value)
           setCurrentValue('')

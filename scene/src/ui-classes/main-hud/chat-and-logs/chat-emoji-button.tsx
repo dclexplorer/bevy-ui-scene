@@ -6,6 +6,8 @@ import { getChatWidth } from '../MainHud'
 import { COLOR } from '../../../components/color-palette'
 import emojisCollection from './emojis_complete.json'
 import { EmojiCategory, EmojiCategoryName } from './emoji-types'
+import { store } from '../../../state/store'
+import { updateHudStateAction } from '../../../state/hud/actions'
 
 const EMOJI_CATEGORIES: EmojiCategory[] =
   emojisCollection.categories as EmojiCategory[]
@@ -97,7 +99,17 @@ export function ChatEmojiButton({
                       value: `${emojiDef.emoji}`,
                       fontSize: fontSize * 2
                     }}
-                    onMouseDown={() => {}}
+                    onMouseDown={() => {
+                      const newValue =
+                        store.getState().hud.chatInput + emojiDef.emoji
+                      store.dispatch(
+                        updateHudStateAction({
+                          chatInput: newValue,
+                          chatInputMentionSuggestions: []
+                        })
+                      )
+                      setOpen(false)
+                    }}
                   />
                 )
               })}
