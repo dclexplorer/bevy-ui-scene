@@ -12,6 +12,7 @@ import {
   SUGGESTION_EMOJI_REGEXP,
   SUGGESTION_NAME_MENTION_REGEXP
 } from '../../../components/chat-message/ChatMessage'
+import { getEmojiFromExpression } from './chat-emoji-suggestions'
 const state = {
   visible: true
 }
@@ -72,9 +73,17 @@ export function ChatInput({
             )
           })
         } else if (store.getState().hud.chatInputEmojiSuggestions.length) {
+          const [emojiExpressionToInsert] =
+            SUGGESTION_EMOJI_REGEXP[Symbol.match](
+              store.getState().hud.chatInputEmojiSuggestions[0]
+            ) ?? []
+
+          const emojiToInsert = getEmojiFromExpression(
+            emojiExpressionToInsert ?? ''
+          )
+          console.log('emojiToInsert', emojiExpressionToInsert, emojiToInsert)
           const newValue =
-            value.replace(SUGGESTION_EMOJI_REGEXP, '') +
-            `${store.getState().hud.chatInputEmojiSuggestions[0]}`
+            value.replace(SUGGESTION_EMOJI_REGEXP, '') + emojiToInsert
           executeTask(async () => {
             console.log(
               'newValue',

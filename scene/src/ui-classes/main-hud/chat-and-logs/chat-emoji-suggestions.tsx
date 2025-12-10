@@ -19,7 +19,7 @@ const EMOJI_EXPRESSIONS = emojiCompleteList.emojis.reduce(
 )
 const MAX_LIST = 10
 
-const getEmojiFromExpression = memoize(_getEmojiFromExpression)
+export const getEmojiFromExpression = memoize(_getEmojiFromExpression)
 export const ChatEmojiSuggestions = (): ReactElement => {
   const [suggestedEmojis, setSuggestedEmojis] = ReactEcs.useState<string[]>([])
   useEffect(() => {
@@ -29,26 +29,25 @@ export const ChatEmojiSuggestions = (): ReactElement => {
   useEffect(() => {
     const [lastMatch] =
       store.getState().hud.chatInput?.match(SUGGESTION_EMOJI_REGEXP) ?? []
-
+    const lastChar =
+      store
+        .getState()
+        .hud.chatInput?.charAt(store.getState().hud.chatInput.length - 1) ?? ''
     const otherMatches =
       store
         .getState()
         .hud.chatInput?.match(EMOJI_MENTION_REGEXP)
         ?.filter((m: string) => m !== lastMatch)
-        .map((m) => m.replace(':', '').replace(':', '')) ?? []
-
-    if (
-      lastMatch &&
-      countCharInString(lastMatch, ':') === 1 &&
-      !suggestedEmojis.includes(lastMatch.replace(':', '').replace(':', '')) &&
-      !/:\w*:/.test(lastMatch)
-    ) {
-      getSuggestedEmojis(lastMatch.replace(':', '').replace(':', ''))
+        .map((m) => m) ?? []
+    console.log('lastMatch', lastMatch)
+    console.log('otherMatches', otherMatches)
+    if (lastMatch && !suggestedEmojis.includes(lastMatch)) {
+      getSuggestedEmojis(lastMatch)
         .then((_suggestedEmojis) => {
           store.dispatch(
             updateHudStateAction({
               chatInputEmojiSuggestions: _suggestedEmojis
-                .filter((s) => !otherMatches.includes(s))
+                //    .filter((s) => !otherMatches.includes(s))
                 .map((i) => `${getEmojiFromExpression(i)} ${i}`)
                 .slice(0, MAX_LIST)
             })
@@ -112,7 +111,7 @@ async function getSuggestedEmojis(matchText: string): Promise<string[]> {
     )
   ).filter(
     (expression) =>
-      expression.toLowerCase().startsWith(`:${matchText}`.toLowerCase()) // TODO REVIEW to improve not only startsWith
+      expression.toLowerCase().startsWith(`${matchText}`.toLowerCase()) // TODO REVIEW to improve not only startsWith
   )
 }
 

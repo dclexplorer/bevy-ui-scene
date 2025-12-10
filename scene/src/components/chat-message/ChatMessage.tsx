@@ -267,7 +267,7 @@ export function isSystemMessage(messageData: ChatMessageDefinition): boolean {
 
 export const NAME_MENTION_REGEXP = /@\w+(#\w+)?/g
 export const SUGGESTION_NAME_MENTION_REGEXP = /@\w*(#\w+)?$/g
-export const SUGGESTION_EMOJI_REGEXP = /:\w*(#\w+)?$/g
+export const SUGGESTION_EMOJI_REGEXP = /:\w*(#\w+)?:?$/g
 export const EMOJI_MENTION_REGEXP = /:\w+(#\w+)?/g
 const URL_REGEXP = /https:\/\/[^\s"',]+/g
 const LOCATION_REGEXP = /-?\d+,\s?-?\d+/g
