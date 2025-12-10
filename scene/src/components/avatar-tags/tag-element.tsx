@@ -17,6 +17,7 @@ import Icon from '../icon/Icon'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { store } from '../../state/store'
 import { getPlayer } from '@dcl/sdk/players'
+import { isSingleEmoji } from '../chat-message/ChatMessage'
 const TIME_TO_HIDE_MESSAGE = 5000
 export function getTagElement({
   player
@@ -182,7 +183,9 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
             textAlign: 'top-left',
             textWrap: 'wrap',
             value: truncateWithoutBreakingWords(chatMessage.message, 120),
-            fontSize: getViewportHeight() * 0.025
+            fontSize: isSingleEmoji(chatMessage?.message ?? '')
+              ? getViewportHeight() * 0.05
+              : getViewportHeight() * 0.02
           }}
         />
       )}

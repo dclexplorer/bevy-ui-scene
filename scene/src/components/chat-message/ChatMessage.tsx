@@ -26,12 +26,17 @@ import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { store } from '../../state/store'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { namedUsersData } from '../../ui-classes/main-hud/chat-and-logs/named-users-data-service'
+import emojiCompleteList from '../../ui-classes/main-hud/chat-and-logs/emojis_complete.json'
 
 const LINK_TYPE = {
   USER: 'user',
   URL: 'url',
   LOCATION: 'location'
 }
+
+const EMOJI_SET = new Set(emojiCompleteList.emojis.map((e) => e.emoji))
+
+export const isSingleEmoji = (str: string): boolean => EMOJI_SET.has(str)
 
 const state: { hoveringMessageID: number; openMessageMenu: boolean } = {
   hoveringMessageID: 0,
@@ -206,7 +211,11 @@ function ChatMessage(props: {
               ? `<i>${props.message.message}</i>`
               : props.message.message
           }
-          fontSize={defaultFontSize}
+          fontSize={
+            isSingleEmoji(props.message.message ?? '')
+              ? defaultFontSize * 2
+              : defaultFontSize
+          }
           color={ALMOST_WHITE}
           textWrap="wrap"
           textAlign={`middle-left`}
