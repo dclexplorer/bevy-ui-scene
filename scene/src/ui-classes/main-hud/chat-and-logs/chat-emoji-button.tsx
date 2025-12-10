@@ -21,7 +21,7 @@ export function ChatEmojiButton({
   fontSize: number
   onEmoji: Callback
 }): ReactElement {
-  const [open, setOpen] = ReactEcs.useState(true)
+  const [open, setOpen] = ReactEcs.useState(false)
   const [category, setCategory] = ReactEcs.useState<EmojiCategoryName>(
     EMOJI_CATEGORIES[0].name
   )

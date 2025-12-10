@@ -83,6 +83,7 @@ import { getAddressColor } from './ColorByAddress'
 import useState = ReactEcs.useState
 import useEffect = ReactEcs.useEffect
 import { ChatEmojiButton } from './chat-emoji-button'
+import { ChatEmojiSuggestions } from './chat-emoji-suggestions'
 
 type Box = {
   position: { x: number; y: number }
@@ -731,6 +732,7 @@ function InputArea(): ReactElement {
       }}
     >
       <ChatMentionSuggestions />
+      <ChatEmojiSuggestions />
       {state.inputFontSizeWorkaround && (
         <ChatInput inputFontSize={inputFontSize} onSubmit={sendChatMessage} />
       )}
