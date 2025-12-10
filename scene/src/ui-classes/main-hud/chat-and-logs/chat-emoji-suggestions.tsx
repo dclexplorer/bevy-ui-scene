@@ -42,18 +42,14 @@ export const ChatEmojiSuggestions = (): ReactElement => {
     console.log('lastMatch', lastMatch)
     console.log('otherMatches', otherMatches)
     if (lastMatch && !suggestedEmojis.includes(lastMatch)) {
-      getSuggestedEmojis(lastMatch)
-        .then((_suggestedEmojis) => {
-          store.dispatch(
-            updateHudStateAction({
-              chatInputEmojiSuggestions: _suggestedEmojis
-                //    .filter((s) => !otherMatches.includes(s))
-                .map((i) => `${getEmojiFromExpression(i)} ${i}`)
-                .slice(0, MAX_LIST)
-            })
-          )
+      store.dispatch(
+        updateHudStateAction({
+          chatInputEmojiSuggestions: getSuggestedEmojis(lastMatch)
+            //    .filter((s) => !otherMatches.includes(s))
+            .map((i) => `${getEmojiFromExpression(i)} ${i}`)
+            .slice(0, MAX_LIST)
         })
-        .catch(console.error)
+      )
     } else if (suggestedEmojis?.length) {
       store.dispatch(
         updateHudStateAction({
@@ -99,20 +95,36 @@ export const ChatEmojiSuggestions = (): ReactElement => {
     </Column>
   )
 }
-
-async function getSuggestedEmojis(matchText: string): Promise<string[]> {
-  // TODO filter those names that are already mentioned in the message
-  console.log('matchText', matchText)
+const getSuggestedEmojis = memoize(_getSuggestedEmojis)
+function _getSuggestedEmojis(matchText: string): string[] {
   return Array.from(
     new Set(
       EMOJI_EXPRESSIONS.sort((a, b) =>
         (a as string).localeCompare(b as string)
       ) as string[]
     )
-  ).filter(
-    (expression) =>
-      expression.toLowerCase().startsWith(`${matchText}`.toLowerCase()) // TODO REVIEW to improve not only startsWith
   )
+    .filter((expression) =>
+      expression
+        .toLowerCase()
+        .includes(
+          `${matchText.replace(':', '').replace(':', '')}`.toLowerCase()
+        )
+    )
+    .sort((aExpression: string, bExpression: string) => {
+      if (
+        aExpression.startsWith(matchText) &&
+        !bExpression.startsWith(matchText)
+      ) {
+        return -1
+      } else if (
+        bExpression.startsWith(matchText) &&
+        !aExpression.startsWith(matchText)
+      ) {
+        return +1
+      }
+      return 0
+    })
 }
 
 function _getEmojiFromExpression(expression: string) {
