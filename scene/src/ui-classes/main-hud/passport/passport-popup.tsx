@@ -232,10 +232,12 @@ function getVisibleProperties(profileData: ViewAvatarData): string[] {
 
 function PassportContent(): ReactElement {
   const profileData = store.getState().hud.profileData
-  const [player, setPlayer] = useState<GetPlayerDataRes | null>(getPlayer())
+  const [player, setPlayer] = useState<GetPlayerDataRes | null>(
+    getPlayer({ userId: profileData.userId })
+  )
   useEffect(() => {
-    setPlayer(getPlayer())
-  }, [getPlayer()?.userId])
+    setPlayer(getPlayer({ userId: store.getState().hud.profileData.userId }))
+  }, [store.getState().hud.profileData])
   return (
     <UiEntity
       uiTransform={{
