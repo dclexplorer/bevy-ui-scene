@@ -17,6 +17,7 @@ import { getContentScaleRatio } from '../../service/canvas-ratio'
 
 function ButtonIcon(props: {
   // Events
+  key?: any
   onMouseEnter?: Callback
   onMouseLeave?: Callback
   onMouseDown?: Callback

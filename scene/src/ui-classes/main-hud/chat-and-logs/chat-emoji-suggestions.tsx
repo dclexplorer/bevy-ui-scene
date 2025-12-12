@@ -13,9 +13,9 @@ import { getViewportHeight } from '../../../service/canvas-ratio'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 import emojiCompleteList from './emojis_complete.json'
 import { memoize } from '../../../utils/function-utils'
-const EMOJI_EXPRESSIONS = emojiCompleteList.emojis.reduce(
+const EMOJI_EXPRESSIONS = emojiCompleteList.emojis.reduce<string[]>(
   (acc, current) => [...acc, current.expression] as string[],
-  [] as string[]
+  []
 )
 const MAX_LIST = 10
 
@@ -29,10 +29,6 @@ export const ChatEmojiSuggestions = (): ReactElement => {
   useEffect(() => {
     const [lastMatch] =
       store.getState().hud.chatInput?.match(SUGGESTION_EMOJI_REGEXP) ?? []
-    const lastChar =
-      store
-        .getState()
-        .hud.chatInput?.charAt(store.getState().hud.chatInput.length - 1) ?? ''
     const otherMatches =
       store
         .getState()
@@ -98,11 +94,7 @@ export const ChatEmojiSuggestions = (): ReactElement => {
 const getSuggestedEmojis = memoize(_getSuggestedEmojis)
 function _getSuggestedEmojis(matchText: string): string[] {
   return Array.from(
-    new Set(
-      EMOJI_EXPRESSIONS.sort((a, b) =>
-        (a as string).localeCompare(b as string)
-      ) as string[]
-    )
+    new Set(EMOJI_EXPRESSIONS.sort((a, b) => a.localeCompare(b)))
   )
     .filter((expression) =>
       expression
@@ -127,13 +119,9 @@ function _getSuggestedEmojis(matchText: string): string[] {
     })
 }
 
-function _getEmojiFromExpression(expression: string) {
+function _getEmojiFromExpression(expression: string): string {
   return (
     emojiCompleteList.emojis.find((emoji) => emoji.expression === expression)
       ?.emoji ?? ''
   )
-}
-
-function countCharInString(str: string, char: string) {
-  return str.split(char).length - 1
 }

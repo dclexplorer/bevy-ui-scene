@@ -1,11 +1,11 @@
-import ReactEcs, { ReactElement, UiEntity } from '@dcl/react-ecs'
-import { Callback, UiTransformProps } from '@dcl/sdk/react-ecs'
+import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
+import { type Callback, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { ButtonIcon } from '../../../components/button-icon'
 import { Column, Row } from '../../../components/layout'
 import { getChatWidth } from '../MainHud'
 import { COLOR } from '../../../components/color-palette'
 import emojisCollection from './emojis_complete.json'
-import { EmojiCategory, EmojiCategoryName } from './emoji-types'
+import { type EmojiCategory, type EmojiCategoryName } from './emoji-types'
 import { store } from '../../../state/store'
 import { updateHudStateAction } from '../../../state/hud/actions'
 
@@ -25,7 +25,7 @@ export function ChatEmojiButton({
   const [category, setCategory] = ReactEcs.useState<EmojiCategoryName>(
     EMOJI_CATEGORIES[0].name
   )
-  //TODO ReVIEW for emojis menu, if instead of UiElement here, use POPUP system
+  // TODO ReVIEW for emojis menu, if instead of UiElement here, use POPUP system
   return (
     <UiEntity uiTransform={{ ...uiTransform }}>
       {open && (
@@ -54,6 +54,7 @@ export function ChatEmojiButton({
           >
             {EMOJI_CATEGORIES.map((emojiCategory) => (
               <ButtonIcon
+                key={emojiCategory.name}
                 uiTransform={{
                   margin: {
                     left: '2%',
