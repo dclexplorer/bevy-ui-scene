@@ -8,7 +8,11 @@ import { store } from '../../../state/store'
 import { updateHudStateAction } from '../../../state/hud/actions'
 import { executeTask } from '@dcl/sdk/ecs'
 import { sleep } from '../../../utils/dcl-utils'
-import { SUGGESTION_NAME_MENTION_REGEXP } from '../../../components/chat-message/ChatMessage'
+import {
+  SUGGESTION_EMOJI_REGEXP,
+  SUGGESTION_NAME_MENTION_REGEXP
+} from '../../../components/chat-message/ChatMessage'
+import { getEmojiFromExpression } from './chat-emoji-suggestions'
 const state = {
   visible: true
 }
@@ -65,6 +69,32 @@ export function ChatInput({
               updateHudStateAction({
                 chatInput: newValue,
                 chatInputMentionSuggestions: []
+              })
+            )
+          })
+        } else if (store.getState().hud.chatInputEmojiSuggestions.length) {
+          const [emojiExpressionToInsert] =
+            SUGGESTION_EMOJI_REGEXP[Symbol.match](
+              store.getState().hud.chatInputEmojiSuggestions[0]
+            ) ?? []
+
+          const emojiToInsert = getEmojiFromExpression(
+            emojiExpressionToInsert ?? ''
+          )
+          console.log('emojiToInsert', emojiExpressionToInsert, emojiToInsert)
+          const newValue =
+            value.replace(SUGGESTION_EMOJI_REGEXP, '') + emojiToInsert
+          executeTask(async () => {
+            console.log(
+              'newValue',
+              value.replace(SUGGESTION_EMOJI_REGEXP, ''),
+              newValue
+            )
+            // TODO review workaround, because onSubmit empties the chat input
+            store.dispatch(
+              updateHudStateAction({
+                chatInput: newValue,
+                chatInputEmojiSuggestions: []
               })
             )
           })
