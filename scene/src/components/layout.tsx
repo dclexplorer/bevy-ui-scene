@@ -1,4 +1,4 @@
-import { type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { Key, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, {
   type ReactElement,
   type UiBackgroundProps,
@@ -21,7 +21,7 @@ export function Row({
   onMouseLeave?: () => void
   onMouseDown?: () => void
   uiText?: UiLabelProps
-  key?: string
+  key?: Key
 }): ReactElement {
   return (
     <UiEntity

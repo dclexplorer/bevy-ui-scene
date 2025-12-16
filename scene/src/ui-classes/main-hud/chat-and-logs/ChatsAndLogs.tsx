@@ -1002,7 +1002,7 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
     message: decorateMessageWithLinks(message.message),
     mentionedPlayers: {}
   }
-
+  console.log('decoratedChatMessage', decoratedChatMessage)
   decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
 
   if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
@@ -1035,15 +1035,12 @@ async function extendMessageMentionedUsers(
   message: ChatMessageRepresentation
 ): Promise<void> {
   const mentionMatches = message._originalMessage.match(NAME_MENTION_REGEXP)
-  const mentionMatchesAndSenderName = [
-    ...(mentionMatches ?? []),
-    message.name.split('#')[0]
-  ]
+  const mentionMatchesAndSenderName = [...(mentionMatches ?? []), message.name]
 
   const playersInScene = (await getPlayersInScene({})).players.map(
     ({ userId }) => getPlayer({ userId })
   )
-
+  console.log('mentionMatchesAndSenderName', mentionMatchesAndSenderName)
   for (const mentionMatchOrSenderName of mentionMatchesAndSenderName ?? []) {
     const nameKey = mentionMatchOrSenderName.replace('@', '').toLowerCase()
     setIfNot(namedUsersData).get(nameKey)
@@ -1081,13 +1078,15 @@ async function extendMessageMentionedUsers(
         checkProfileData()
       }
       function checkProfileData(): void {
+        console.log('checkProfileData', nameKey)
         const composePlayerData = setIfNot(namedUsersData).get(nameKey)
         if (setIfNot(namedUsersData).get(nameKey).profileData) {
           decorateMessageNameAndLinks(message, composePlayerData)
         } else {
           executeTask(async () => {
+            if (!player?.userId) return
             composePlayerData.profileData = await fetchProfileData({
-              userId: player?.userId ?? '',
+              userId: player?.userId,
               useCache: true
             })
             decorateMessageNameAndLinks(message, composePlayerData)
@@ -1100,14 +1099,15 @@ async function extendMessageMentionedUsers(
         composeData: ComposedPlayerData
       ): void {
         const [avatarData] = composeData.profileData?.avatars ?? []
-
+        console.log('avatarData', avatarData)
         if (
           message.name ===
             getNameWithHashPostfix(
               composeData.playerData?.name ?? '',
               composeData.playerData?.userId ?? ''
             ) &&
-          avatarData?.hasClaimedName
+          avatarData?.hasClaimedName &&
+          message.sender_address === composeData.playerData?.userId
         ) {
           message.addressColor = getAddressColor(message.sender_address)
           message.name = message.name.split('#')[0]

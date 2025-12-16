@@ -233,6 +233,7 @@ function ProfileHeader({
     ...(!player.isGuest
       ? [
           <Row
+            key={1}
             uiTransform={{
               justifyContent: 'center',
               height: getContentScaleRatio() * 36
@@ -255,6 +256,7 @@ function ProfileHeader({
             />
           </Row>,
           <UiEntity
+            key={2}
             uiTransform={{
               width: '80%',
               borderColor: COLOR.WHITE_OPACITY_1,
