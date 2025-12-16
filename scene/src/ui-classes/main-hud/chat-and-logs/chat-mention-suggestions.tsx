@@ -12,7 +12,7 @@ import {
 import { COLOR } from '../../../components/color-palette'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { getNameWithHashPostfix } from './ChatsAndLogs'
-import { namedUsersData } from './named-users-data-service'
+import { composedUsersData } from './named-users-data-service'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 
 export const ChatMentionSuggestions = (): ReactElement => {
@@ -101,29 +101,19 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
         player?.userId !== getPlayer()?.userId &&
         !player?.isGuest
     )
-    .map((player) => {
-      if (
-        namedUsersData.has(player?.name?.toLowerCase() ?? '') ||
-        namedUsersData.has(
-          getNameWithHashPostfix(
-            player?.name ?? '',
-            player?.userId ?? ''
-          )?.toLowerCase() ?? ''
-        )
-      ) {
+    .map((player, index) => {
+      console.log(
+        index,
+        player?.name,
+        player?.userId,
+        composedUsersData.get(player?.userId ?? '')?.playerData?.userId
+      )
+      if (player?.userId && composedUsersData.has(player.userId)) {
         const avatarsData =
-          namedUsersData.get(player?.name?.toLowerCase() ?? '')?.profileData
-            ?.avatars ?? []
-        const namedAvatarsData =
-          namedUsersData.get(
-            getNameWithHashPostfix(
-              player?.name ?? '',
-              player?.userId ?? ''
-            )?.toLowerCase() ?? ''
-          )?.profileData?.avatars ?? []
+          composedUsersData.get(player.userId)?.profileData?.avatars ?? []
+
         const hasClaimedName =
-          (avatarsData?.length && avatarsData[0].hasClaimedName) ??
-          (namedAvatarsData?.length && namedAvatarsData[0].hasClaimedName)
+          avatarsData?.length && avatarsData[0].hasClaimedName
 
         return hasClaimedName === true
           ? player?.name
@@ -132,7 +122,10 @@ async function getSuggestedNames(matchText: string): Promise<string[]> {
               player?.userId ?? ''
             )?.toLowerCase()
       } else {
-        return player?.name
+        return getNameWithHashPostfix(
+          player?.name ?? '',
+          player?.userId ?? ''
+        )?.toLowerCase()
       }
     })
     .filter((i) => i)

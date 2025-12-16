@@ -77,6 +77,7 @@ import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
 import { ChatMentionSuggestions } from './chat-mention-suggestions'
 import {
   type ComposedPlayerData,
+  composedUsersData,
   namedUsersData
 } from './named-users-data-service'
 import { getAddressColor } from './ColorByAddress'
@@ -934,7 +935,7 @@ export function messageHasMentionToMe(message: string): boolean {
   )
 }
 
-const _getNameWithHashPostfix = (
+export const getNameWithHashPostfix = (
   name: string,
   address: string
 ): `${string}#${string}` => {
@@ -942,13 +943,6 @@ const _getNameWithHashPostfix = (
     .substring(address.length - 4, address.length)
     .toLowerCase()}`
 }
-
-export const getNameWithHashPostfix: (
-  n: string,
-  address: string
-) => `${string}#${string}` | undefined = memoizeFirstArg(
-  _getNameWithHashPostfix
-)
 
 async function pushMessage(message: ChatMessageDefinition): Promise<void> {
   const messageType = isSystemMessage(message)
@@ -1064,7 +1058,7 @@ async function extendMessageMentionedUsers(
               player?.name ?? '',
               player?.userId ?? ''
             )?.toLowerCase() ?? '',
-            namedUsersData.get(nameKey) as ComposedPlayerData
+            setIfNot(composedUsersData).get(player?.userId)
           )
           checkProfileData()
         }
