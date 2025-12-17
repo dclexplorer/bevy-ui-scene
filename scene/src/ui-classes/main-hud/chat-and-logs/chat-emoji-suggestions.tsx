@@ -35,8 +35,7 @@ export const ChatEmojiSuggestions = (): ReactElement => {
         .hud.chatInput?.match(EMOJI_MENTION_REGEXP)
         ?.filter((m: string) => m !== lastMatch)
         .map((m) => m) ?? []
-    console.log('lastMatch', lastMatch)
-    console.log('otherMatches', otherMatches)
+
     if (lastMatch && !suggestedEmojis.includes(lastMatch)) {
       store.dispatch(
         updateHudStateAction({

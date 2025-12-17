@@ -37,7 +37,6 @@ export async function fetchProfileData({
     )
     const player = getPlayer({ userId })
     if (hasClaimedName && player) {
-      console.log('NAME hasClaimedName', player.name, userId)
       namedUsersData.set(player.name.toLowerCase(), userId as Address)
     }
     profileDataMap.set(userId, result)
