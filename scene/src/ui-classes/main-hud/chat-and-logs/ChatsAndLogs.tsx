@@ -923,15 +923,22 @@ function isVectorInBox(point: Vector2, box: Box): boolean {
 }
 
 export function messageHasMentionToMe(message: string): boolean {
-  return (
+  return !!(
     message
       .toLowerCase()
       .includes(
         getNameWithHashPostfix(
-          getPlayer()?.name ?? '',
-          getPlayer()?.userId ?? ''
-        )?.toLowerCase() ?? ''
-      ) || message.toLowerCase().includes(getPlayer()?.name ?? '')
+          getPlayer()?.name ?? '___nothing___',
+          getPlayer()?.userId ?? '___nothing___'
+        )?.toLowerCase() ?? '___nothing___'
+      ) ||
+    (composedUsersData.get(getPlayer()?.userId ?? '')?.profileData?.avatars[0]
+      .hasClaimedName &&
+      message.toLowerCase().includes(getPlayer()?.name.toLowerCase() ?? '') &&
+      message.toLowerCase()[
+        message.toLowerCase().indexOf(getPlayer()?.name.toLowerCase() ?? '') +
+        (getPlayer()?.name.length ?? 0)
+      ] !== '#')
   )
 }
 

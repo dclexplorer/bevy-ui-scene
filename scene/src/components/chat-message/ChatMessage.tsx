@@ -302,6 +302,7 @@ export function replaceURLTags(message: string): string {
 export function replaceNameTags(message: string): string {
   return message.replace(NAME_MENTION_REGEXP, (...[match]) => {
     const nameKey = match.replace('@', '').toLowerCase()
+    //TODO FIX
     const composedUserData = namedUsersData.get(nameKey)
     const foundNameAddress = composedUserData?.playerData?.userId
 
