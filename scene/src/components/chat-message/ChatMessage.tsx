@@ -25,7 +25,11 @@ import { pushPopupAction } from '../../state/hud/actions'
 import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { store } from '../../state/store'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
-import { namedUsersData } from '../../ui-classes/main-hud/chat-and-logs/named-users-data-service'
+import {
+  Address,
+  hasClaimedName,
+  namedUsersData
+} from '../../ui-classes/main-hud/chat-and-logs/named-users-data-service'
 import emojiCompleteList from '../../ui-classes/main-hud/chat-and-logs/emojis_complete.json'
 
 const LINK_TYPE = {
@@ -219,7 +223,9 @@ function ChatMessage(props: {
           color={ALMOST_WHITE}
           textWrap="wrap"
           textAlign={`middle-left`}
-          onMouseDown={chatMessageOnMouseDownCallback}
+          onMouseDown={(event) =>
+            chatMessageOnMouseDownCallback(event, props.message)
+          }
         />
         <Label
           uiTransform={{
@@ -303,28 +309,14 @@ export function replaceNameTags(message: string): string {
   return message.replace(NAME_MENTION_REGEXP, (...[match]) => {
     const nameKey = match.replace('@', '').toLowerCase()
     //TODO FIX
-    const composedUserData = namedUsersData.get(nameKey)
-    const foundNameAddress = composedUserData?.playerData?.userId
+    const nameAddress: Address | undefined = namedUsersData.get(nameKey)
+    const nameToRender =
+      match.includes('#') && nameAddress && hasClaimedName(nameAddress)
+        ? match.split('#')[0]
+        : match
 
-    if (match.includes('#')) {
-      // TODO if name hasClaimedName, remove #hash
-      let nameToRender = match
-      if (
-        namedUsersData.get(nameKey.split('#')[0])?.profileData?.avatars[0]
-          .hasClaimedName ||
-        namedUsersData.get(nameKey)?.profileData?.avatars[0].hasClaimedName
-      ) {
-        nameToRender = nameToRender.split('#')[0]
-      }
-
-      return foundNameAddress
-        ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${foundNameAddress}>${nameToRender}</link></color></b>`
-        : `<b>${match}</b>`
-    } else {
-      return foundNameAddress &&
-        composedUserData.profileData?.avatars[0].hasClaimedName
-        ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${foundNameAddress}>${match}</link></color></b>`
-        : `<b>${match}</b>`
-    }
+    return nameAddress
+      ? `<b><color=#00B1FE><link=${LINK_TYPE.USER}::${nameAddress}>${nameToRender}</link></color></b>`
+      : `<b>${match}</b>`
   })
 }

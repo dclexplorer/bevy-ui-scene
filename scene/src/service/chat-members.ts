@@ -70,23 +70,16 @@ export async function requestAndSetPlayerComposedData({
   userId: string
 }): Promise<ComposedPlayerData> {
   await waitFor(() => !loadingUserSet.has(userId))
+
   loadingUserSet.add(userId)
   const playerData = getPlayer({ userId })
-  const foundUserData = setIfNot(namedUsersData).get(
-    getNameWithHashPostfix(
-      playerData?.name ?? '',
-      playerData?.userId ?? ''
-    )?.toLowerCase()
-  )
-
+  const foundUserData = setIfNot(composedUsersData).get(userId)
+  foundUserData.playerData = playerData
   const profileData = await fetchProfileData({
     userId,
     useCache: true
   })
 
-  setIfNot(composedUsersData).get(userId).profileData = profileData
-  setIfNot(composedUsersData).get(userId).playerData = playerData
-  foundUserData.playerData = playerData
   foundUserData.profileData = profileData
   loadingUserSet.delete(userId)
   return foundUserData

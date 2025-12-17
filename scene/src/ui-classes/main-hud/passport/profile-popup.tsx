@@ -35,7 +35,7 @@ import useState = ReactEcs.useState
 import { type UiTransformProps } from '@dcl/sdk/react-ecs'
 import { getNameWithHashPostfix } from '../chat-and-logs/ChatsAndLogs'
 import { fetchProfileData } from '../../../utils/passport-promise-utils'
-import { namedUsersData } from '../chat-and-logs/named-users-data-service'
+import { composedUsersData } from '../chat-and-logs/named-users-data-service'
 
 export function setupProfilePopups(): void {
   const avatarTracker = createOrGetAvatarsTracker()
@@ -293,7 +293,7 @@ const PROFILE_BUTTON_TRANSFORM: UiTransformProps = {
 function MentionButton({ player }: { player: GetPlayerDataRes }): ReactElement {
   useEffect(() => {
     executeTask(async () => {
-      const userData = setIfNot(namedUsersData).get(player.name.toLowerCase())
+      const userData = setIfNot(composedUsersData).get(player.userId)
       userData.playerData = userData.playerData ?? player
       userData.profileData =
         userData.profileData ??
@@ -309,8 +309,8 @@ function MentionButton({ player }: { player: GetPlayerDataRes }): ReactElement {
       onMouseDown={() => {
         executeTask(async () => {
           closeDialog()
-          const nameToRender = namedUsersData.get(player.name.toLowerCase())
-            ?.profileData?.avatars[0].hasClaimedName
+          const nameToRender = composedUsersData.get(player.userId)?.profileData
+            ?.avatars[0].hasClaimedName
             ? `${player.name}`
             : `${getNameWithHashPostfix(player.name, player.userId)}`
           store.dispatch(

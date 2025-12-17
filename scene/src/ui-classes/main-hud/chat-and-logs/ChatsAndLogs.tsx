@@ -76,15 +76,18 @@ import { fetchProfileData } from '../../../utils/passport-promise-utils'
 import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
 import { ChatMentionSuggestions } from './chat-mention-suggestions'
 import {
+  Address,
   type ComposedPlayerData,
   composedUsersData,
-  namedUsersData
+  namedUsersData,
+  nameString
 } from './named-users-data-service'
 import { getAddressColor } from './ColorByAddress'
 import useState = ReactEcs.useState
 import useEffect = ReactEcs.useEffect
 import { ChatEmojiButton } from './chat-emoji-button'
 import { ChatEmojiSuggestions } from './chat-emoji-suggestions'
+import { GetPlayerDataRes } from '../../../utils/definitions'
 
 type Box = {
   position: { x: number; y: number }
@@ -937,7 +940,7 @@ export function messageHasMentionToMe(message: string): boolean {
       message.toLowerCase().includes(getPlayer()?.name.toLowerCase() ?? '') &&
       message.toLowerCase()[
         message.toLowerCase().indexOf(getPlayer()?.name.toLowerCase() ?? '') +
-        (getPlayer()?.name.length ?? 0)
+          (getPlayer()?.name.length ?? 0)
       ] !== '#')
   )
 }
@@ -1003,7 +1006,7 @@ async function pushMessage(message: ChatMessageDefinition): Promise<void> {
     message: decorateMessageWithLinks(message.message),
     mentionedPlayers: {}
   }
-  console.log('decoratedChatMessage', decoratedChatMessage)
+
   decorateAsyncMessageData(decoratedChatMessage).catch(console.error)
 
   if (getChatScroll() !== null && (getChatScroll()?.y ?? 0) < 1) {
@@ -1041,12 +1044,15 @@ async function extendMessageMentionedUsers(
   const playersInScene = (await getPlayersInScene({})).players.map(
     ({ userId }) => getPlayer({ userId })
   )
-  console.log('mentionMatchesAndSenderName', mentionMatchesAndSenderName)
+
   for (const mentionMatchOrSenderName of mentionMatchesAndSenderName ?? []) {
     const nameKey = mentionMatchOrSenderName.replace('@', '').toLowerCase()
-    setIfNot(namedUsersData).get(nameKey)
+    const nameAddress = namedUsersData.get(nameKey)
+    const composedUserData = setIfNot(composedUsersData).get(
+      nameAddress ?? '__NOTHING__'
+    )
 
-    playersInScene.forEach((player) => {
+    for (let player of playersInScene) {
       if (
         player !== undefined &&
         nameKey ===
@@ -1055,67 +1061,45 @@ async function extendMessageMentionedUsers(
             player?.userId ?? ''
           )?.toLowerCase() ?? '')
       ) {
-        const namedUserData = namedUsersData.get(nameKey)
-        if (namedUserData !== undefined) {
-          namedUserData.playerData = getPlayer({
-            userId: player?.userId ?? ''
-          })
+        composedUserData.playerData = getPlayer({
+          userId: player?.userId ?? ''
+        })
+        if (player?.userId) {
           namedUsersData.set(
             getNameWithHashPostfix(
               player?.name ?? '',
               player?.userId ?? ''
             )?.toLowerCase() ?? '',
-            setIfNot(composedUsersData).get(player?.userId)
+            player.userId as Address
           )
-          checkProfileData()
         }
+        await checkProfileData(nameKey, player)
       } else if (
         player !== undefined &&
         nameKey === player?.name.toLowerCase()
       ) {
-        const composePlayerData = setIfNot(namedUsersData).get(nameKey)
-        composePlayerData.playerData = player
+        composedUserData.playerData = player
+        await checkProfileData(nameKey, player)
+      }
 
-        checkProfileData()
-      }
-      function checkProfileData(): void {
-        console.log('checkProfileData', nameKey)
-        const composePlayerData = setIfNot(namedUsersData).get(nameKey)
-        if (setIfNot(namedUsersData).get(nameKey).profileData) {
-          decorateMessageNameAndLinks(message, composePlayerData)
+      async function checkProfileData(
+        nameKey: nameString,
+        player: GetPlayerDataRes | null
+      ): Promise<void> {
+        const nameAddress = namedUsersData.get(nameKey)
+        const composedPlayerData = setIfNot(composedUsersData).get(nameAddress)
+        if (composedPlayerData.profileData) {
+          decorateMessageNameAndLinks(message)
         } else {
-          executeTask(async () => {
-            if (!player?.userId) return
-            composePlayerData.profileData = await fetchProfileData({
-              userId: player?.userId,
-              useCache: true
-            })
-            decorateMessageNameAndLinks(message, composePlayerData)
-            console.log('decoratedMessageAsync', message)
+          if (!player?.userId) return
+          composedPlayerData.profileData = await fetchProfileData({
+            userId: player?.userId,
+            useCache: true
           })
+          decorateMessageNameAndLinks(message)
         }
       }
-      function decorateMessageNameAndLinks(
-        message: ChatMessageRepresentation,
-        composeData: ComposedPlayerData
-      ): void {
-        const [avatarData] = composeData.profileData?.avatars ?? []
-        console.log('avatarData', avatarData)
-        if (
-          message.name ===
-            getNameWithHashPostfix(
-              composeData.playerData?.name ?? '',
-              composeData.playerData?.userId ?? ''
-            ) &&
-          avatarData?.hasClaimedName &&
-          message.sender_address === composeData.playerData?.userId
-        ) {
-          message.addressColor = getAddressColor(message.sender_address)
-          message.name = message.name.split('#')[0]
-        }
-        message.message = decorateMessageWithLinks(message._originalMessage)
-      }
-    })
+    }
   }
 
   message.message = decorateMessageWithLinks(message._originalMessage)
@@ -1133,4 +1117,12 @@ export function onNewMessage(
   return (): void => {
     callbacks.onNewMessage = callbacks.onNewMessage.filter((f) => f !== fn)
   }
+}
+
+function decorateMessageNameAndLinks(message: ChatMessageRepresentation): void {
+  if (namedUsersData.has(message.name.toLowerCase())) {
+    message.addressColor = getAddressColor(message.sender_address)
+    message.name = message.name.split('#')[0]
+  }
+  message.message = decorateMessageWithLinks(message._originalMessage)
 }

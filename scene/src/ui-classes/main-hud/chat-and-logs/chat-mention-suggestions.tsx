@@ -12,7 +12,11 @@ import {
 import { COLOR } from '../../../components/color-palette'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { getNameWithHashPostfix } from './ChatsAndLogs'
-import { composedUsersData } from './named-users-data-service'
+import {
+  Address,
+  asyncHasClaimedName,
+  composedUsersData
+} from './named-users-data-service'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 
 export const ChatMentionSuggestions = (): ReactElement => {
@@ -92,42 +96,32 @@ export const ChatMentionSuggestions = (): ReactElement => {
 }
 
 async function getSuggestedNames(matchText: string): Promise<string[]> {
-  // TODO filter those names that are already mentioned in the message
-  return (await getPlayersInScene({})).players
-    .map(({ userId }) => getPlayer({ userId }))
-    .filter(
-      (player) =>
-        player?.name.toLowerCase().startsWith(matchText.toLowerCase()) &&
-        player?.userId !== getPlayer()?.userId &&
-        !player?.isGuest
+  return (
+    await Promise.all(
+      (await getPlayersInScene({})).players
+        .map(({ userId }) => getPlayer({ userId }))
+        .filter(
+          (player) =>
+            player?.userId &&
+            player?.name.toLowerCase().startsWith(matchText.toLowerCase()) &&
+            player?.userId !== getPlayer()?.userId &&
+            !player?.isGuest
+        )
+        .map(async (player, index) => {
+          if (!player) return
+          const hasClaimedName = await asyncHasClaimedName(
+            player.userId as Address
+          )
+
+          return hasClaimedName
+            ? player?.name ?? '?'
+            : getNameWithHashPostfix(
+                player?.name ?? '',
+                player?.userId ?? ''
+              )?.toLowerCase()
+        })
     )
-    .map((player, index) => {
-      console.log(
-        index,
-        player?.name,
-        player?.userId,
-        composedUsersData.get(player?.userId ?? '')?.playerData?.userId
-      )
-      if (player?.userId && composedUsersData.has(player.userId)) {
-        const avatarsData =
-          composedUsersData.get(player.userId)?.profileData?.avatars ?? []
-
-        const hasClaimedName =
-          avatarsData?.length && avatarsData[0].hasClaimedName
-
-        return hasClaimedName === true
-          ? player?.name
-          : getNameWithHashPostfix(
-              player?.name ?? '',
-              player?.userId ?? ''
-            )?.toLowerCase()
-      } else {
-        return getNameWithHashPostfix(
-          player?.name ?? '',
-          player?.userId ?? ''
-        )?.toLowerCase()
-      }
-    })
+  )
     .filter((i) => i)
     .sort((a, b) => (a as string).localeCompare(b as string)) as string[]
 }
