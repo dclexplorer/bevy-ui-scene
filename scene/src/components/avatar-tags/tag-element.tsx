@@ -177,7 +177,7 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
         <UiEntity
           uiTransform={{
             maxWidth: getViewportHeight() * 0.3,
-            margin: { top: -getViewportHeight() * 0.025 }
+            margin: { top: -getViewportHeight() * 0.01 }
           }}
           uiText={{
             textAlign: 'top-left',
