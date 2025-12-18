@@ -6,7 +6,10 @@ import {
   PlayerIdentityData
 } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../utils/dcl-utils'
-import { fetchProfileData } from '../utils/passport-promise-utils'
+import {
+  fetchAllUserNames,
+  fetchProfileData
+} from '../utils/passport-promise-utils'
 import { getPlayer } from '@dcl/sdk/players'
 import {
   type ComposedPlayerData,
@@ -64,11 +67,14 @@ export function requestPlayer({
   return playerData
 }
 
-export async function requestAndSetPlayerComposedData({
-  userId
-}: {
-  userId: string
-}): Promise<ComposedPlayerData> {
+export async function requestAndSetPlayerComposedData(
+  {
+    userId
+  }: {
+    userId: string
+  },
+  useCache = true
+): Promise<ComposedPlayerData> {
   await waitFor(() => !loadingUserSet.has(userId))
 
   loadingUserSet.add(userId)
@@ -77,8 +83,19 @@ export async function requestAndSetPlayerComposedData({
   foundUserData.playerData = playerData
   const profileData = await fetchProfileData({
     userId,
-    useCache: true
+    useCache
   })
+  console.log(
+    'composedUsersData.get(userId)?.nftNames',
+    composedUsersData.get(userId)?.nftNames
+  )
+  if (!composedUsersData.get(userId)?.nftNames) {
+    setIfNot(composedUsersData).get(userId).nftNames = (
+      await fetchAllUserNames({
+        userId
+      })
+    ).map((i) => i.name)
+  }
 
   foundUserData.profileData = profileData
   loadingUserSet.delete(userId)
