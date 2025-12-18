@@ -79,6 +79,7 @@ import {
   Address,
   type ComposedPlayerData,
   composedUsersData,
+  hasClaimedName,
   namedUsersData,
   nameString
 } from './named-users-data-service'
@@ -1120,7 +1121,7 @@ export function onNewMessage(
 }
 
 function decorateMessageNameAndLinks(message: ChatMessageRepresentation): void {
-  if (namedUsersData.has(message.name.toLowerCase())) {
+  if (hasClaimedName(message.sender_address as Address)) {
     message.addressColor = getAddressColor(message.sender_address)
     message.name = message.name.split('#')[0]
   }
