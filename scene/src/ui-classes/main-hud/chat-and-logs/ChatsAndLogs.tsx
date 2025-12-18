@@ -77,6 +77,7 @@ import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
 import { ChatMentionSuggestions } from './chat-mention-suggestions'
 import {
   Address,
+  asyncHasClaimedName,
   type ComposedPlayerData,
   composedUsersData,
   hasClaimedName,
@@ -1090,14 +1091,14 @@ async function extendMessageMentionedUsers(
         const nameAddress = namedUsersData.get(nameKey)
         const composedPlayerData = setIfNot(composedUsersData).get(nameAddress)
         if (composedPlayerData.profileData) {
-          decorateMessageNameAndLinks(message)
+          await decorateMessageNameAndLinks(message)
         } else {
           if (!player?.userId) return
           composedPlayerData.profileData = await fetchProfileData({
             userId: player?.userId,
             useCache: true
           })
-          decorateMessageNameAndLinks(message)
+          await decorateMessageNameAndLinks(message)
         }
       }
     }
@@ -1120,8 +1121,10 @@ export function onNewMessage(
   }
 }
 
-function decorateMessageNameAndLinks(message: ChatMessageRepresentation): void {
-  if (hasClaimedName(message.sender_address as Address)) {
+async function decorateMessageNameAndLinks(
+  message: ChatMessageRepresentation
+): Promise<void> {
+  if (await asyncHasClaimedName(message.sender_address as Address)) {
     message.addressColor = getAddressColor(message.sender_address)
     message.name = message.name.split('#')[0]
   }
