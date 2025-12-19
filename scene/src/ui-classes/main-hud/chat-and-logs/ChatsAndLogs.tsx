@@ -675,7 +675,7 @@ function HeaderArea(): ReactElement {
           zIndex: 2,
           width: fontSize * 2,
           height: fontSize * 2,
-          position: { top: '50%', right: '1%' },
+          position: { top: '100%', right: '1%' },
           padding: '3%',
           borderRadius: 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
