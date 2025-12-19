@@ -142,16 +142,16 @@ export async function fetchPlaceFromCoords(
   coords: Vector3
 ): Promise<PlaceFromApi> {
   try {
-    const response: Response = await fetch(
-      `https://places.decentraland.org/api/places/?positions=${
+    const response: KernelFetchRespose = await BevyApi.kernelFetch({
+      url: `https://places.decentraland.org/api/places/?positions=${
         coords.x + ',' + coords.z
       }`
-    )
+    })
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
     }
 
-    const place: PlacesResponse = (await response.json()) as PlacesResponse
+    const place: PlacesResponse = JSON.parse(response.body) as PlacesResponse
     return place.data[0]
   } catch (error) {
     console.error('Error fetching place:', error)
