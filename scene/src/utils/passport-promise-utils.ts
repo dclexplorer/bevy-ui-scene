@@ -32,7 +32,7 @@ export async function fetchProfileData({
     return profileDataMap.get(userId) as ProfileResponse
   } else {
     const result = await fetchJsonOrTryFallback(passportDataURL)
-    const hasClaimedName = result?.avatars.some(
+    const hasClaimedName = (result?.avatars ?? []).some(
       (avatar: Avatar) => avatar.hasClaimedName
     )
     const player = getPlayer({ userId })
