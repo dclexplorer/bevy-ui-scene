@@ -61,12 +61,17 @@ import type {
   EventFromApi,
   PlaceFromApi
 } from './SceneInfoCard.types'
-import { getRightPanelWidth } from '../../service/canvas-ratio'
+import {
+  getRightPanelWidth,
+  getViewportHeight
+} from '../../service/canvas-ratio'
 import { closeBigMapIfActive } from '../../service/map/map-camera'
 import { MAP_FILTER_DEFINITIONS } from '../../components/map/map-definitions'
 import { type PlaceRepresentation } from '../main-hud/big-map/big-map-view'
 import { currentRealmProviderIsWorld } from '../../service/realm-change'
 import { Row } from '../../components/layout'
+import { getHudFontSize } from '../main-hud/scene-info/SceneInfo'
+import { COLOR } from '../../components/color-palette'
 
 export default class SceneInfoCard {
   public place: PlaceFromApi | undefined =
@@ -80,7 +85,7 @@ export default class SceneInfoCard {
   private photosQuantityInPlace: number = 0
   private readonly uiController: UIController
   private scrollPos: Vector2 = Vector2.create(0, 0)
-  public fontSize: number = 16
+  public fontSize: number = 10
   public isFav: boolean = false
   public isLiked: boolean = false
   public isDisliked: boolean = false
@@ -377,8 +382,8 @@ export default class SceneInfoCard {
   mainUi(): ReactEcs.JSX.Element | null {
     const canvasInfo = UiCanvasInformation.getOrNull(engine.RootEntity)
     if (canvasInfo === null) return null
-
     if (this.place === undefined) return null
+    this.fontSize = getHudFontSize(getViewportHeight()).NORMAL
     const panelWidth = getRightPanelWidth()
 
     return (
@@ -401,6 +406,7 @@ export default class SceneInfoCard {
           color: PANEL_BACKGROUND_COLOR
         }}
       >
+        {this.topBar()}
         <UiEntity
           uiTransform={{
             width: panelWidth,
@@ -417,7 +423,6 @@ export default class SceneInfoCard {
           }}
         />
 
-        {this.topBar()}
         {/* CONTENT */}
         <UiEntity
           uiTransform={{
@@ -465,9 +470,10 @@ export default class SceneInfoCard {
           padding: this.fontSize / 4,
           position: { top: 0, left: 0 },
           justifyContent: 'flex-end',
-          alignItems: 'center'
+          alignItems: 'center',
+          zIndex: 1
         }}
-        uiBackground={{ color: { ...Color4.Black(), a: 1 } }}
+        uiBackground={{ color: COLOR.BLACK }}
       >
         <ButtonIcon
           uiTransform={{
@@ -637,28 +643,26 @@ export default class SceneInfoCard {
       <UiEntity
         uiTransform={{
           width: '100%',
-          minHeight: this.fontSize * 9.5,
-          // maxHeight: this.fontSize * 9.5,
           justifyContent: 'flex-start',
-          alignItems: 'center',
           flexDirection: 'column'
         }}
         // uiBackground={{color:Color4.Blue()}}
       >
-        <Label
-          value={this.place?.title ?? ''}
-          fontSize={this.fontSize * 1.2}
-          textAlign="middle-left"
-          uiTransform={{
-            width: '100%',
-            height: 'auto'
+        <UiEntity
+          uiText={{
+            value: `<b>${this.place?.title ?? ''}</b>`,
+            fontSize: this.fontSize * 1.5,
+            textAlign: 'middle-left',
+            color: COLOR.TEXT_COLOR
           }}
-          color={BLACK_TEXT}
+          uiTransform={{
+            width: '100%'
+          }}
         />
         {this.place.contact_name && (
           <Label
             value={'Created by ' + this.place.contact_name}
-            fontSize={this.fontSize * 0.8}
+            fontSize={this.fontSize}
             textAlign="middle-left"
             uiTransform={{
               width: '100%',
