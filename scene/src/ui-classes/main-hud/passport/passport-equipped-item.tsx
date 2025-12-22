@@ -45,7 +45,6 @@ export function PassportEquippedItem({
         color: COLOR.DARK_OPACITY_7
       }}
       onMouseDown={() => {
-        console.log('onMouseDown', tokenId)
         if (!isNaN(tokenId)) {
           store.dispatch(
             pushPopupAction({
@@ -54,7 +53,6 @@ export function PassportEquippedItem({
             })
           )
         } else {
-          console.log('ELSE')
           // TODO
         }
       }}

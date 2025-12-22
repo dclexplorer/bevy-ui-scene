@@ -71,7 +71,6 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
   }
 
   onEnterScene((player) => {
-    console.log('onEnterScene', player.userId, player.name)
     if (player.userId === getPlayer()?.userId) {
       return
     }
@@ -100,7 +99,6 @@ export const createOrGetAvatarsTracker = (): AvatarTracker => {
   onLeaveScene(onLeaveSceneCallback)
 
   function onLeaveSceneCallback(userId: string): void {
-    console.log('onLeaveSceneCallback', userId)
     const proxy = avatarProxies.get(userId)
     if (proxy) {
       pointerEventsSystem.removeOnPointerDown(proxy)

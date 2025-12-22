@@ -85,10 +85,7 @@ export async function requestAndSetPlayerComposedData(
     userId,
     useCache
   })
-  console.log(
-    'composedUsersData.get(userId)?.nftNames',
-    composedUsersData.get(userId)?.nftNames
-  )
+
   if (!composedUsersData.get(userId)?.nftNames) {
     setIfNot(composedUsersData).get(userId).nftNames = (
       await fetchAllUserNames({

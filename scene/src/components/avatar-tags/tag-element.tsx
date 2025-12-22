@@ -77,9 +77,7 @@ function TagContent({ userId }: { userId: Address }): ReactElement {
   }, [])
   useEffect(() => {
     executeTask(async () => {
-      console.log('tag-element name change', getPlayer({ userId })?.name)
       const _hasClaimedName = await asyncHasClaimedName(userId)
-      console.log('_hasClaimedName', _hasClaimedName)
       setHasClaimedName(_hasClaimedName)
 
       if (_hasClaimedName) {

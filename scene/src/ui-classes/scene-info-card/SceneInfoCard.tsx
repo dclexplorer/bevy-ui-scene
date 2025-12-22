@@ -258,8 +258,6 @@ export default class SceneInfoCard {
   async showByData(
     auxPlace: PlaceFromApi | PlaceRepresentation
   ): Promise<boolean> {
-    console.log('showByData', auxPlace)
-
     this.uiController.sceneInfoCardVisible = true
 
     await this.setPlace(auxPlace as PlaceFromApi)
