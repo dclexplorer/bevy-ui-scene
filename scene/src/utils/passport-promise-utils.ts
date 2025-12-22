@@ -7,7 +7,7 @@ import { type ViewAvatarData } from '../state/hud/state'
 import { BevyApi } from '../bevy-api'
 import { showErrorPopup } from '../service/error-popup-service'
 import {
-  Address,
+  type Address,
   namedUsersData
 } from '../ui-classes/main-hud/chat-and-logs/named-users-data-service'
 import { getPlayer } from '@dcl/sdk/players'

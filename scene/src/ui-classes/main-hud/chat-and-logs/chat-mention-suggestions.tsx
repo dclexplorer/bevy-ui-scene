@@ -12,11 +12,7 @@ import {
 import { COLOR } from '../../../components/color-palette'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { getNameWithHashPostfix } from './ChatsAndLogs'
-import {
-  Address,
-  asyncHasClaimedName,
-  composedUsersData
-} from './named-users-data-service'
+import { type Address, asyncHasClaimedName } from './named-users-data-service'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 
 export const ChatMentionSuggestions = (): ReactElement => {

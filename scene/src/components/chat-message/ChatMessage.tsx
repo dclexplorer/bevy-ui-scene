@@ -26,7 +26,7 @@ import { HUD_POPUP_TYPE } from '../../state/hud/state'
 import { store } from '../../state/store'
 import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import {
-  Address,
+  type Address,
   hasClaimedName,
   namedUsersData
 } from '../../ui-classes/main-hud/chat-and-logs/named-users-data-service'
@@ -308,7 +308,7 @@ export function replaceURLTags(message: string): string {
 export function replaceNameTags(message: string): string {
   return message.replace(NAME_MENTION_REGEXP, (...[match]) => {
     const nameKey = match.replace('@', '').toLowerCase()
-    //TODO FIX
+    // TODO FIX
     const nameAddress: Address | undefined = namedUsersData.get(nameKey)
     const nameToRender =
       match.includes('#') && nameAddress && hasClaimedName(nameAddress)

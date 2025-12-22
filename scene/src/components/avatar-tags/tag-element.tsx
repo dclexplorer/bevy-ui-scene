@@ -1,10 +1,8 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../color-palette'
 import useEffect = ReactEcs.useEffect
-import { type GetPlayerDataRes } from '../../utils/definitions'
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 import { getViewportHeight } from '../../service/canvas-ratio'
-import { requestAndSetPlayerComposedData } from '../../service/chat-members'
 import useState = ReactEcs.useState
 import { executeTask } from '@dcl/sdk/ecs'
 import { type RGBAColor } from '../../bevy-api/interface'
@@ -19,7 +17,7 @@ import { store } from '../../state/store'
 import { getPlayer } from '@dcl/sdk/players'
 import { isSingleEmoji } from '../chat-message/ChatMessage'
 import {
-  Address,
+  type Address,
   asyncHasClaimedName
 } from '../../ui-classes/main-hud/chat-and-logs/named-users-data-service'
 

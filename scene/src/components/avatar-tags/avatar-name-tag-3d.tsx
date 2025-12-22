@@ -24,7 +24,7 @@ import { store } from 'src/state/store'
 import { updateHudStateAction } from '../../state/hud/actions'
 import { type MicActivation } from '../../bevy-api/interface'
 import { listenSystemAction } from '../../service/system-actions-emitter'
-import { Address } from '../../ui-classes/main-hud/chat-and-logs/named-users-data-service'
+import { type Address } from '../../ui-classes/main-hud/chat-and-logs/named-users-data-service'
 
 export async function initAvatarTags(): Promise<void> {
   const avatarTracker = createOrGetAvatarsTracker()

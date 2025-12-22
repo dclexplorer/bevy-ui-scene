@@ -29,11 +29,7 @@ import {
   type ChatMessageRepresentation,
   MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
-import {
-  memoize,
-  memoizeFirstArg,
-  setIfNot
-} from '../../../utils/function-utils'
+import { memoize, setIfNot } from '../../../utils/function-utils'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import {
@@ -76,20 +72,18 @@ import { fetchProfileData } from '../../../utils/passport-promise-utils'
 import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
 import { ChatMentionSuggestions } from './chat-mention-suggestions'
 import {
-  Address,
+  type Address,
   asyncHasClaimedName,
-  type ComposedPlayerData,
   composedUsersData,
-  hasClaimedName,
   namedUsersData,
-  nameString
+  type nameString
 } from './named-users-data-service'
 import { getAddressColor } from './ColorByAddress'
 import useState = ReactEcs.useState
 import useEffect = ReactEcs.useEffect
 import { ChatEmojiButton } from './chat-emoji-button'
 import { ChatEmojiSuggestions } from './chat-emoji-suggestions'
-import { GetPlayerDataRes } from '../../../utils/definitions'
+import { type GetPlayerDataRes } from '../../../utils/definitions'
 
 type Box = {
   position: { x: number; y: number }
@@ -1054,7 +1048,7 @@ async function extendMessageMentionedUsers(
       nameAddress ?? '__NOTHING__'
     )
 
-    for (let player of playersInScene) {
+    for (const player of playersInScene) {
       if (
         player !== undefined &&
         nameKey ===

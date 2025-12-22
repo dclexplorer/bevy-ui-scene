@@ -1,4 +1,4 @@
-import { Key, type UiTransformProps } from '@dcl/sdk/react-ecs'
+import { type Key, type UiTransformProps } from '@dcl/sdk/react-ecs'
 import ReactEcs, {
   type ReactElement,
   type UiBackgroundProps,
