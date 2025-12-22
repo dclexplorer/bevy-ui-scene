@@ -23,11 +23,12 @@ export type ViewAvatarData = Record<string, any> & {
   links: Array<{ url: string; title: string }>
   userId: string
 }
+
 export const EMPTY_PROFILE_DATA = {
   userId: '',
   hasClaimedName: false,
   hasConnectedWeb3: false,
-  name: '',
+  name: 'Bevy_User',
   description: '',
   country: '',
   language: '',
