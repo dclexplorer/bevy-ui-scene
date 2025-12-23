@@ -57,13 +57,11 @@ export function ChatInput({
       placeholder="Press ENTER to chat"
       placeholderColor={{ ...ALMOST_WHITE, a: 0.6 }}
       onSubmit={(value) => {
-        console.log('onSubmit: ', value)
         if (store.getState().hud.chatInputMentionSuggestions.length) {
           const newValue =
             value.replace(SUGGESTION_NAME_MENTION_REGEXP, '') +
             `@${store.getState().hud.chatInputMentionSuggestions[0]}`
           executeTask(async () => {
-            console.log('newValue', newValue)
             // TODO review workaround, because onSubmit empties the chat input
             store.dispatch(
               updateHudStateAction({
@@ -81,15 +79,9 @@ export function ChatInput({
           const emojiToInsert = getEmojiFromExpression(
             emojiExpressionToInsert ?? ''
           )
-          console.log('emojiToInsert', emojiExpressionToInsert, emojiToInsert)
           const newValue =
             value.replace(SUGGESTION_EMOJI_REGEXP, '') + emojiToInsert
           executeTask(async () => {
-            console.log(
-              'newValue',
-              value.replace(SUGGESTION_EMOJI_REGEXP, ''),
-              newValue
-            )
             // TODO review workaround, because onSubmit empties the chat input
             store.dispatch(
               updateHudStateAction({

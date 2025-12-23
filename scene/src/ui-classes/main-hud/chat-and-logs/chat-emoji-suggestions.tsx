@@ -4,10 +4,7 @@ import useEffect = ReactEcs.useEffect
 import { store } from '../../../state/store'
 import { updateHudStateAction } from '../../../state/hud/actions'
 
-import {
-  EMOJI_MENTION_REGEXP,
-  SUGGESTION_EMOJI_REGEXP
-} from '../../../components/chat-message/ChatMessage'
+import { SUGGESTION_EMOJI_REGEXP } from '../../../components/chat-message/ChatMessage'
 import { COLOR } from '../../../components/color-palette'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { getHudFontSize } from '../scene-info/SceneInfo'
@@ -29,14 +26,7 @@ export const ChatEmojiSuggestions = (): ReactElement => {
   useEffect(() => {
     const [lastMatch] =
       store.getState().hud.chatInput?.match(SUGGESTION_EMOJI_REGEXP) ?? []
-    const otherMatches =
-      store
-        .getState()
-        .hud.chatInput?.match(EMOJI_MENTION_REGEXP)
-        ?.filter((m: string) => m !== lastMatch)
-        .map((m) => m) ?? []
-    console.log('lastMatch', lastMatch)
-    console.log('otherMatches', otherMatches)
+
     if (lastMatch && !suggestedEmojis.includes(lastMatch)) {
       store.dispatch(
         updateHudStateAction({

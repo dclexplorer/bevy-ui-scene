@@ -12,7 +12,7 @@ import {
 import { COLOR } from '../../../components/color-palette'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { getNameWithHashPostfix } from './ChatsAndLogs'
-import { namedUsersData } from './named-users-data-service'
+import { type Address, asyncHasClaimedName } from './named-users-data-service'
 import { getHudFontSize } from '../scene-info/SceneInfo'
 
 export const ChatMentionSuggestions = (): ReactElement => {
@@ -92,49 +92,32 @@ export const ChatMentionSuggestions = (): ReactElement => {
 }
 
 async function getSuggestedNames(matchText: string): Promise<string[]> {
-  // TODO filter those names that are already mentioned in the message
-  return (await getPlayersInScene({})).players
-    .map(({ userId }) => getPlayer({ userId }))
-    .filter(
-      (player) =>
-        player?.name.toLowerCase().startsWith(matchText.toLowerCase()) &&
-        player?.userId !== getPlayer()?.userId &&
-        !player?.isGuest
-    )
-    .map((player) => {
-      if (
-        namedUsersData.has(player?.name?.toLowerCase() ?? '') ||
-        namedUsersData.has(
-          getNameWithHashPostfix(
-            player?.name ?? '',
-            player?.userId ?? ''
-          )?.toLowerCase() ?? ''
+  return (
+    await Promise.all(
+      (await getPlayersInScene({})).players
+        .map(({ userId }) => getPlayer({ userId }))
+        .filter(
+          (player) =>
+            player?.userId &&
+            player?.name.toLowerCase().startsWith(matchText.toLowerCase()) &&
+            player?.userId !== getPlayer()?.userId &&
+            !player?.isGuest
         )
-      ) {
-        const avatarsData =
-          namedUsersData.get(player?.name?.toLowerCase() ?? '')?.profileData
-            ?.avatars ?? []
-        const namedAvatarsData =
-          namedUsersData.get(
-            getNameWithHashPostfix(
-              player?.name ?? '',
-              player?.userId ?? ''
-            )?.toLowerCase() ?? ''
-          )?.profileData?.avatars ?? []
-        const hasClaimedName =
-          (avatarsData?.length && avatarsData[0].hasClaimedName) ??
-          (namedAvatarsData?.length && namedAvatarsData[0].hasClaimedName)
+        .map(async (player, index) => {
+          if (!player) return
+          const hasClaimedName = await asyncHasClaimedName(
+            player.userId as Address
+          )
 
-        return hasClaimedName === true
-          ? player?.name
-          : getNameWithHashPostfix(
-              player?.name ?? '',
-              player?.userId ?? ''
-            )?.toLowerCase()
-      } else {
-        return player?.name
-      }
-    })
+          return hasClaimedName
+            ? player?.name ?? '?'
+            : getNameWithHashPostfix(
+                player?.name ?? '',
+                player?.userId ?? ''
+              )?.toLowerCase()
+        })
+    )
+  )
     .filter((i) => i)
     .sort((a, b) => (a as string).localeCompare(b as string)) as string[]
 }

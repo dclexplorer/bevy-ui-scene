@@ -29,11 +29,7 @@ import {
   type ChatMessageRepresentation,
   MESSAGE_TYPE
 } from '../../../components/chat-message/ChatMessage.types'
-import {
-  memoize,
-  memoizeFirstArg,
-  setIfNot
-} from '../../../utils/function-utils'
+import { memoize, setIfNot } from '../../../utils/function-utils'
 import { getViewportHeight } from '../../../service/canvas-ratio'
 import { listenSystemAction } from '../../../service/system-actions-emitter'
 import {
@@ -76,14 +72,18 @@ import { fetchProfileData } from '../../../utils/passport-promise-utils'
 import { getHudBarWidth, getUnsafeAreaWidth } from '../MainHud'
 import { ChatMentionSuggestions } from './chat-mention-suggestions'
 import {
-  type ComposedPlayerData,
-  namedUsersData
+  type Address,
+  asyncHasClaimedName,
+  composedUsersData,
+  namedUsersData,
+  type nameString
 } from './named-users-data-service'
 import { getAddressColor } from './ColorByAddress'
 import useState = ReactEcs.useState
 import useEffect = ReactEcs.useEffect
 import { ChatEmojiButton } from './chat-emoji-button'
 import { ChatEmojiSuggestions } from './chat-emoji-suggestions'
+import { type GetPlayerDataRes } from '../../../utils/definitions'
 
 type Box = {
   position: { x: number; y: number }
@@ -669,7 +669,7 @@ function HeaderArea(): ReactElement {
           zIndex: 2,
           width: fontSize * 2,
           height: fontSize * 2,
-          position: { top: '50%', right: '1%' },
+          position: { top: '100%', right: '1%' },
           padding: '3%',
           borderRadius: 10,
           borderColor: COLOR.BLACK_TRANSPARENT,
@@ -796,7 +796,10 @@ function sendChatMessage(value: string): void {
     if (value?.trim()) {
       if (value.startsWith('/goto')) {
         executeTask(async () => {
-          if (value === '/goto genesis' || value === '/goto main') {
+          if (
+            value.trim() === '/goto genesis' ||
+            value.trim() === '/goto main'
+          ) {
             await changeRealm({
               realm: 'https://realm-provider.decentraland.org/main'
             })
@@ -835,13 +838,45 @@ function sendChatMessage(value: string): void {
         pushMessage({
           message: `
 <b>/help</b> - show this help message
-<b>/goto</b> x,y - teleport to world x,y
+<b>/goto x,y</b> - teleport to world x,y
 <b>/goto</b> world_name.dcl.eth - teleport to realm world_name.dcl.eth
+<b>/world</b> world_name.dcl.eth - teleport to realm world_name.dcl.eth
 <b>/goto</b> main - teleport to Genesis Plaza
+<b>/world</b> main - teleport to Genesis Plaza
+<b>/goto</b> genesis - teleport to Genesis Plaza
+<b>/world</b> genesis - teleport to Genesis Plaza
 <b>/reload</b> - reloads the current scene`,
           sender_address: ONE_ADDRESS,
           channel: 'Nearby'
         }).catch(console.error)
+      } else if (value.startsWith('/world')) {
+        executeTask(async () => {
+          const [, world] = value.trim().split(' ')
+          if (world === 'genesis' || world === 'main') {
+            await changeRealm({
+              realm: 'https://realm-provider.decentraland.org/main'
+            })
+            await sleep(1000)
+            await teleportTo({
+              worldCoordinates: { x: 0, y: 0 }
+            })
+            return
+          }
+          const { acceptingUsers } = await fetch(
+            `https://worlds-content-server.decentraland.org/world/${world}/about`
+          ).then(async (res) => await res.json())
+          if (acceptingUsers) {
+            await changeRealm({
+              realm: world
+            })
+          } else {
+            pushMessage({
+              message: `Invalid world name <b>${world}</b>`,
+              sender_address: ONE_ADDRESS,
+              channel: 'Nearby'
+            }).catch(console.error)
+          }
+        })
       } else {
         BevyApi.sendChat(value, 'Nearby')
       }
@@ -922,19 +957,26 @@ function isVectorInBox(point: Vector2, box: Box): boolean {
 }
 
 export function messageHasMentionToMe(message: string): boolean {
-  return (
+  return !!(
     message
       .toLowerCase()
       .includes(
         getNameWithHashPostfix(
-          getPlayer()?.name ?? '',
-          getPlayer()?.userId ?? ''
-        )?.toLowerCase() ?? ''
-      ) || message.toLowerCase().includes(getPlayer()?.name ?? '')
+          getPlayer()?.name ?? '___nothing___',
+          getPlayer()?.userId ?? '___nothing___'
+        )?.toLowerCase() ?? '___nothing___'
+      ) ||
+    (composedUsersData.get(getPlayer()?.userId ?? '')?.profileData?.avatars[0]
+      .hasClaimedName &&
+      message.toLowerCase().includes(getPlayer()?.name.toLowerCase() ?? '') &&
+      message.toLowerCase()[
+        message.toLowerCase().indexOf(getPlayer()?.name.toLowerCase() ?? '') +
+          (getPlayer()?.name.length ?? 0)
+      ] !== '#')
   )
 }
 
-const _getNameWithHashPostfix = (
+export const getNameWithHashPostfix = (
   name: string,
   address: string
 ): `${string}#${string}` => {
@@ -942,13 +984,6 @@ const _getNameWithHashPostfix = (
     .substring(address.length - 4, address.length)
     .toLowerCase()}`
 }
-
-export const getNameWithHashPostfix: (
-  n: string,
-  address: string
-) => `${string}#${string}` | undefined = memoizeFirstArg(
-  _getNameWithHashPostfix
-)
 
 async function pushMessage(message: ChatMessageDefinition): Promise<void> {
   const messageType = isSystemMessage(message)
@@ -1035,10 +1070,7 @@ async function extendMessageMentionedUsers(
   message: ChatMessageRepresentation
 ): Promise<void> {
   const mentionMatches = message._originalMessage.match(NAME_MENTION_REGEXP)
-  const mentionMatchesAndSenderName = [
-    ...(mentionMatches ?? []),
-    message.name.split('#')[0]
-  ]
+  const mentionMatchesAndSenderName = [...(mentionMatches ?? []), message.name]
 
   const playersInScene = (await getPlayersInScene({})).players.map(
     ({ userId }) => getPlayer({ userId })
@@ -1046,9 +1078,12 @@ async function extendMessageMentionedUsers(
 
   for (const mentionMatchOrSenderName of mentionMatchesAndSenderName ?? []) {
     const nameKey = mentionMatchOrSenderName.replace('@', '').toLowerCase()
-    setIfNot(namedUsersData).get(nameKey)
+    const nameAddress = namedUsersData.get(nameKey)
+    const composedUserData = setIfNot(composedUsersData).get(
+      nameAddress ?? '__NOTHING__'
+    )
 
-    playersInScene.forEach((player) => {
+    for (const player of playersInScene) {
       if (
         player !== undefined &&
         nameKey ===
@@ -1057,64 +1092,45 @@ async function extendMessageMentionedUsers(
             player?.userId ?? ''
           )?.toLowerCase() ?? '')
       ) {
-        const namedUserData = namedUsersData.get(nameKey)
-        if (namedUserData !== undefined) {
-          namedUserData.playerData = getPlayer({
-            userId: player?.userId ?? ''
-          })
+        composedUserData.playerData = getPlayer({
+          userId: player?.userId ?? ''
+        })
+        if (player?.userId) {
           namedUsersData.set(
             getNameWithHashPostfix(
               player?.name ?? '',
               player?.userId ?? ''
             )?.toLowerCase() ?? '',
-            namedUsersData.get(nameKey) as ComposedPlayerData
+            player.userId as Address
           )
-          checkProfileData()
         }
+        await checkProfileData(nameKey, player)
       } else if (
         player !== undefined &&
         nameKey === player?.name.toLowerCase()
       ) {
-        const composePlayerData = setIfNot(namedUsersData).get(nameKey)
-        composePlayerData.playerData = player
-
-        checkProfileData()
+        composedUserData.playerData = player
+        await checkProfileData(nameKey, player)
       }
-      function checkProfileData(): void {
-        const composePlayerData = setIfNot(namedUsersData).get(nameKey)
-        if (setIfNot(namedUsersData).get(nameKey).profileData) {
-          decorateMessageNameAndLinks(message, composePlayerData)
+
+      async function checkProfileData(
+        nameKey: nameString,
+        player: GetPlayerDataRes | null
+      ): Promise<void> {
+        const nameAddress = namedUsersData.get(nameKey)
+        const composedPlayerData = setIfNot(composedUsersData).get(nameAddress)
+        if (composedPlayerData.profileData) {
+          await decorateMessageNameAndLinks(message)
         } else {
-          executeTask(async () => {
-            composePlayerData.profileData = await fetchProfileData({
-              userId: player?.userId ?? '',
-              useCache: true
-            })
-            decorateMessageNameAndLinks(message, composePlayerData)
-            console.log('decoratedMessageAsync', message)
+          if (!player?.userId) return
+          composedPlayerData.profileData = await fetchProfileData({
+            userId: player?.userId,
+            useCache: true
           })
+          await decorateMessageNameAndLinks(message)
         }
       }
-      function decorateMessageNameAndLinks(
-        message: ChatMessageRepresentation,
-        composeData: ComposedPlayerData
-      ): void {
-        const [avatarData] = composeData.profileData?.avatars ?? []
-
-        if (
-          message.name ===
-            getNameWithHashPostfix(
-              composeData.playerData?.name ?? '',
-              composeData.playerData?.userId ?? ''
-            ) &&
-          avatarData?.hasClaimedName
-        ) {
-          message.addressColor = getAddressColor(message.sender_address)
-          message.name = message.name.split('#')[0]
-        }
-        message.message = decorateMessageWithLinks(message._originalMessage)
-      }
-    })
+    }
   }
 
   message.message = decorateMessageWithLinks(message._originalMessage)
@@ -1132,4 +1148,14 @@ export function onNewMessage(
   return (): void => {
     callbacks.onNewMessage = callbacks.onNewMessage.filter((f) => f !== fn)
   }
+}
+
+async function decorateMessageNameAndLinks(
+  message: ChatMessageRepresentation
+): Promise<void> {
+  if (await asyncHasClaimedName(message.sender_address as Address)) {
+    message.addressColor = getAddressColor(message.sender_address)
+    message.name = message.name.split('#')[0]
+  }
+  message.message = decorateMessageWithLinks(message._originalMessage)
 }

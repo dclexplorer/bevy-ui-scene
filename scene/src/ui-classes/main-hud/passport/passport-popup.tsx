@@ -392,7 +392,6 @@ function EquippedItemsContainer({
   const canvasScaleRatio = getContentScaleRatio()
   useEffect(() => {
     if (player) {
-      console.log('fetchWearablesData')
       executeTask(async () => {
         const catalystURL =
           (await getRealm({}))?.realmInfo?.baseUrl ??
@@ -406,7 +405,6 @@ function EquippedItemsContainer({
             )
         )
         setWearablesData(_wearablesData as WearableEntityMetadata[])
-        console.log('_wearablesData: ', _wearablesData)
 
         const _emotesData = await fetchEmotesData(
           ...((player.emotes.map((emote) =>

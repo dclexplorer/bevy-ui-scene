@@ -26,7 +26,8 @@ export function PassportEquippedItem({
   const tokenId = Number(
     itemData.id.split(':').reduce((acc, current) => current, '')
   )
-  const rarityColor = RARITY_COLORS[itemData?.rarity as RarityName]
+  const rarityColor =
+    RARITY_COLORS[itemData?.rarity as RarityName] ?? RARITY_COLORS.base
 
   return (
     <UiEntity
@@ -44,7 +45,6 @@ export function PassportEquippedItem({
         color: COLOR.DARK_OPACITY_7
       }}
       onMouseDown={() => {
-        console.log('onMouseDown', tokenId)
         if (!isNaN(tokenId)) {
           store.dispatch(
             pushPopupAction({
@@ -53,7 +53,6 @@ export function PassportEquippedItem({
             })
           )
         } else {
-          console.log('ELSE')
           // TODO
         }
       }}
@@ -111,7 +110,7 @@ export function PassportEquippedItem({
             top: canvasScaleRatio * -10
           }
         }}
-        text={`<b>${itemData?.rarity?.toUpperCase() ?? ''}</b>`}
+        text={`<b>${itemData?.rarity?.toUpperCase() ?? 'BASE'}</b>`}
         backgroundColor={{ ...rarityColor, a: 0.2 }}
         textColor={rarityColor}
         canvasScaleRatio={canvasScaleRatio * 0.8}

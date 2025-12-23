@@ -6,14 +6,15 @@ import {
   PlayerIdentityData
 } from '@dcl/sdk/ecs'
 import { sleep, waitFor } from '../utils/dcl-utils'
-import { fetchProfileData } from '../utils/passport-promise-utils'
+import {
+  fetchAllUserNames,
+  fetchProfileData
+} from '../utils/passport-promise-utils'
 import { getPlayer } from '@dcl/sdk/players'
 import {
   type ComposedPlayerData,
-  composedUsersData,
-  namedUsersData
+  composedUsersData
 } from '../ui-classes/main-hud/chat-and-logs/named-users-data-service'
-import { getNameWithHashPostfix } from '../ui-classes/main-hud/chat-and-logs/ChatsAndLogs'
 import { setIfNot } from '../utils/function-utils'
 import { type GetPlayerDataRes } from '../utils/definitions'
 
@@ -53,8 +54,9 @@ export function requestPlayer({
   if (!userId) {
     console.error('!userId')
   }
+
   const playerData = (setIfNot(composedUsersData).get(userId).playerData =
-    setIfNot(composedUsersData).get(userId).playerData || getPlayer({ userId }))
+    getPlayer({ userId }))
 
   executeTask(async () => {
     requestAndSetPlayerComposedData({ userId }).catch(console.error)
@@ -63,30 +65,33 @@ export function requestPlayer({
   return playerData
 }
 
-export async function requestAndSetPlayerComposedData({
-  userId
-}: {
-  userId: string
-}): Promise<ComposedPlayerData> {
+export async function requestAndSetPlayerComposedData(
+  {
+    userId
+  }: {
+    userId: string
+  },
+  useCache = true
+): Promise<ComposedPlayerData> {
   await waitFor(() => !loadingUserSet.has(userId))
-  loadingUserSet.add(userId)
-  const playerData =
-    setIfNot(composedUsersData).get(userId).playerData || getPlayer({ userId })
-  const foundUserData = setIfNot(namedUsersData).get(
-    getNameWithHashPostfix(
-      playerData?.name ?? '',
-      playerData?.userId ?? ''
-    )?.toLowerCase()
-  )
 
+  loadingUserSet.add(userId)
+  const playerData = getPlayer({ userId })
+  const foundUserData = setIfNot(composedUsersData).get(userId)
+  foundUserData.playerData = playerData
   const profileData = await fetchProfileData({
     userId,
-    useCache: true
+    useCache
   })
 
-  setIfNot(composedUsersData).get(userId).profileData = profileData
-  setIfNot(composedUsersData).get(userId).playerData = playerData
-  foundUserData.playerData = playerData
+  if (!composedUsersData.get(userId)?.nftNames) {
+    setIfNot(composedUsersData).get(userId).nftNames = (
+      await fetchAllUserNames({
+        userId
+      })
+    ).map((i) => i.name)
+  }
+
   foundUserData.profileData = profileData
   loadingUserSet.delete(userId)
   return foundUserData

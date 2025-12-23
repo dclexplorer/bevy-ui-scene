@@ -6,6 +6,11 @@ import { cloneDeep } from './function-utils'
 import { type ViewAvatarData } from '../state/hud/state'
 import { BevyApi } from '../bevy-api'
 import { showErrorPopup } from '../service/error-popup-service'
+import {
+  type Address,
+  namedUsersData
+} from '../ui-classes/main-hud/chat-and-logs/named-users-data-service'
+import { getPlayer } from '@dcl/sdk/players'
 
 export type ProfileResponse = {
   timestamp: number
@@ -23,11 +28,17 @@ export async function fetchProfileData({
   const realm = await getRealm({})
   const catalystBaseURl = realm.realmInfo?.baseUrl ?? CATALYST_BASE_URL_FALLBACK
   const passportDataURL = `${catalystBaseURl}/lambdas/profiles/${userId}`
-
   if (useCache && profileDataMap.has(userId)) {
     return profileDataMap.get(userId) as ProfileResponse
   } else {
     const result = await fetchJsonOrTryFallback(passportDataURL)
+    const hasClaimedName = (result?.avatars ?? []).some(
+      (avatar: Avatar) => avatar.hasClaimedName
+    )
+    const player = getPlayer({ userId })
+    if (hasClaimedName && player) {
+      namedUsersData.set(player.name.toLowerCase(), userId as Address)
+    }
     profileDataMap.set(userId, result)
     return result
   }

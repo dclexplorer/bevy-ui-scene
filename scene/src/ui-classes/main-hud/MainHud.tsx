@@ -165,7 +165,6 @@ export default class MainHud {
   voiceChatDown(): void {
     executeTask(async () => {
       const micState = await BevyApi.getMicState()
-      console.log('micState', micState)
       const nextState = !micState.enabled
       BevyApi.setMicEnabled(nextState)
     })
@@ -366,7 +365,6 @@ export default class MainHud {
               this.updateButtons()
             }}
             onMouseDown={() => {
-              console.log('showing passport', getPlayer()?.userId)
               store.dispatch(
                 pushPopupAction({
                   type: HUD_POPUP_TYPE.PASSPORT,

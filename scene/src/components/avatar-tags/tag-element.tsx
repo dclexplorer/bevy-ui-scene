@@ -1,10 +1,8 @@
 import ReactEcs, { type ReactElement, UiEntity } from '@dcl/react-ecs'
 import { COLOR } from '../color-palette'
 import useEffect = ReactEcs.useEffect
-import { type GetPlayerDataRes } from '../../utils/definitions'
 import { getAddressColor } from '../../ui-classes/main-hud/chat-and-logs/ColorByAddress'
 import { getViewportHeight } from '../../service/canvas-ratio'
-import { requestAndSetPlayerComposedData } from '../../service/chat-members'
 import useState = ReactEcs.useState
 import { executeTask } from '@dcl/sdk/ecs'
 import { type RGBAColor } from '../../bevy-api/interface'
@@ -18,11 +16,16 @@ import { getHudFontSize } from '../../ui-classes/main-hud/scene-info/SceneInfo'
 import { store } from '../../state/store'
 import { getPlayer } from '@dcl/sdk/players'
 import { isSingleEmoji } from '../chat-message/ChatMessage'
+import {
+  type Address,
+  asyncHasClaimedName
+} from '../../ui-classes/main-hud/chat-and-logs/named-users-data-service'
+
 const TIME_TO_HIDE_MESSAGE = 5000
 export function getTagElement({
-  player
+  userId
 }: {
-  player: GetPlayerDataRes
+  userId: Address
 }): () => ReactElement {
   return function TagElement(): ReactElement {
     return (
@@ -33,19 +36,18 @@ export function getTagElement({
           alignSelf: 'center'
         }}
       >
-        <TagContent player={player} />
+        <TagContent userId={userId} />
       </UiEntity>
     )
   }
 }
 
-function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
+function TagContent({ userId }: { userId: Address }): ReactElement {
   const [playerName, setPlayerName] = useState<string>(
-    player.name
-      ? `<b>${player.name}</b>#${player.userId.substring(
-          player.userId.length - 4,
-          player.userId.length
-        )}`
+    getPlayer({ userId })?.name
+      ? `<b>${getPlayer({ userId })?.name}</b>#${getPlayer({
+          userId
+        })?.userId.substring(userId.length - 4, userId.length)}`
       : '???'
   )
   const [nameColor, setNameColor] = useState<RGBAColor>(
@@ -61,18 +63,8 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
   const defaultFontSize = getHudFontSize(getViewportHeight()).NORMAL
   const messageMargin = defaultFontSize / 3
   useEffect(() => {
-    executeTask(async () => {
-      const { profileData } = await requestAndSetPlayerComposedData({
-        userId: player.userId
-      })
-      if (profileData?.avatars[0].hasClaimedName) {
-        setHasClaimedName(true)
-        setPlayerName(`<b>${player.name}</b>`)
-        setNameColor(getAddressColor(player.userId))
-      }
-    })
     onNewMessage((message: ChatMessageRepresentation) => {
-      if (message.player?.userId === player.userId) {
+      if (message.player?.userId === userId) {
         executeTask(async () => {
           setChatMessage(message)
           await sleep(TIME_TO_HIDE_MESSAGE)
@@ -81,13 +73,31 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
       }
     })
   }, [])
+  useEffect(() => {
+    executeTask(async () => {
+      const _hasClaimedName = await asyncHasClaimedName(userId)
+      setHasClaimedName(_hasClaimedName)
+
+      if (_hasClaimedName) {
+        setPlayerName(`<b>${getPlayer({ userId })?.name}</b>`)
+        setNameColor(getAddressColor(userId))
+      } else {
+        setPlayerName(
+          `<b>${getPlayer({ userId })?.name}</b>#${getPlayer({
+            userId
+          })?.userId.substring(userId.length - 4, userId.length)}`
+        )
+        setNameColor(COLOR.TEXT_COLOR_LIGHT_GREY)
+      }
+    })
+  }, [getPlayer({ userId })?.name])
 
   useEffect(() => {
-    setIsSpeaking(!!store.getState().hud.playerVoiceStateMap[player.userId])
+    setIsSpeaking(!!store.getState().hud.playerVoiceStateMap[userId])
   }, [store.getState().hud.playerVoiceStateMap])
 
   useEffect(() => {
-    if (player.userId === getPlayer()?.userId) {
+    if (userId === getPlayer()?.userId) {
       setIsSpeaking(store.getState().hud.micEnabled)
     }
   }, [store.getState().hud.micEnabled])
@@ -177,7 +187,7 @@ function TagContent({ player }: { player: GetPlayerDataRes }): ReactElement {
         <UiEntity
           uiTransform={{
             maxWidth: getViewportHeight() * 0.3,
-            margin: { top: -getViewportHeight() * 0.025 }
+            margin: { top: -getViewportHeight() * 0.01 }
           }}
           uiText={{
             textAlign: 'top-left',
