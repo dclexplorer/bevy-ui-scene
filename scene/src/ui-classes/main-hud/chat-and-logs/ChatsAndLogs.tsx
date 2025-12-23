@@ -796,7 +796,10 @@ function sendChatMessage(value: string): void {
     if (value?.trim()) {
       if (value.startsWith('/goto')) {
         executeTask(async () => {
-          if (value === '/goto genesis' || value === '/goto main') {
+          if (
+            value.trim() === '/goto genesis' ||
+            value.trim() === '/goto main'
+          ) {
             await changeRealm({
               realm: 'https://realm-provider.decentraland.org/main'
             })
@@ -835,13 +838,45 @@ function sendChatMessage(value: string): void {
         pushMessage({
           message: `
 <b>/help</b> - show this help message
-<b>/goto</b> x,y - teleport to world x,y
+<b>/goto x,y</b> - teleport to world x,y
 <b>/goto</b> world_name.dcl.eth - teleport to realm world_name.dcl.eth
+<b>/world</b> world_name.dcl.eth - teleport to realm world_name.dcl.eth
 <b>/goto</b> main - teleport to Genesis Plaza
+<b>/world</b> main - teleport to Genesis Plaza
+<b>/goto</b> genesis - teleport to Genesis Plaza
+<b>/world</b> genesis - teleport to Genesis Plaza
 <b>/reload</b> - reloads the current scene`,
           sender_address: ONE_ADDRESS,
           channel: 'Nearby'
         }).catch(console.error)
+      } else if (value.startsWith('/world')) {
+        executeTask(async () => {
+          const [, world] = value.trim().split(' ')
+          if (world === 'genesis' || world === 'main') {
+            await changeRealm({
+              realm: 'https://realm-provider.decentraland.org/main'
+            })
+            await sleep(1000)
+            await teleportTo({
+              worldCoordinates: { x: 0, y: 0 }
+            })
+            return
+          }
+          const { acceptingUsers } = await fetch(
+            `https://worlds-content-server.decentraland.org/world/${world}/about`
+          ).then(async (res) => await res.json())
+          if (acceptingUsers) {
+            await changeRealm({
+              realm: world
+            })
+          } else {
+            pushMessage({
+              message: `Invalid world name <b>${world}</b>`,
+              sender_address: ONE_ADDRESS,
+              channel: 'Nearby'
+            }).catch(console.error)
+          }
+        })
       } else {
         BevyApi.sendChat(value, 'Nearby')
       }
@@ -866,6 +901,8 @@ function sendChatMessage(value: string): void {
     }).catch(console.error)
     console.error('sendChatMessage error', error)
   }
+
+  function checkGotoMain() {}
 }
 
 function scrollToBottom(): void {
