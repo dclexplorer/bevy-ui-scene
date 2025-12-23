@@ -901,8 +901,6 @@ function sendChatMessage(value: string): void {
     }).catch(console.error)
     console.error('sendChatMessage error', error)
   }
-
-  function checkGotoMain() {}
 }
 
 function scrollToBottom(): void {
