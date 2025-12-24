@@ -425,7 +425,6 @@ function EquippedItemsContainer({
         padding: '2%',
         width: '96%',
         maxWidth: '96%',
-        flexWrap: 'wrap',
         borderRadius: getContentScaleRatio() * 20,
         borderColor: COLOR.TEXT_COLOR_WHITE,
         borderWidth: 0,
