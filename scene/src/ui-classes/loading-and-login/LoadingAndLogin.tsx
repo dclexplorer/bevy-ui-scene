@@ -199,7 +199,7 @@ export default class LoadingAndLogin {
               this.uiController.warningPopUp.icon = 'WarningColor'
               this.uiController.warningPopUp.show() */
 
-              showErrorPopup(error)
+              showErrorPopup(error, 'BevyApi.loginPrevious')
               this.setStatus('sign-in-or-guest')
             })
         }

@@ -12,7 +12,7 @@ import { CopyButton } from '../../components/copy-button'
 const { useEffect, useState } = ReactEcs
 
 export const ErrorPopup: Popup = ({ shownPopup }) => {
-  const error = shownPopup.data
+  const error: any = (shownPopup.data as any).error
 
   return (
     <UiEntity
@@ -32,23 +32,34 @@ export const ErrorPopup: Popup = ({ shownPopup }) => {
         closeDialog()
       }}
     >
-      <ErrorContent error={error} />
+      <ErrorContent
+        error={error}
+        source={(shownPopup.data as any)?.source ?? ''}
+      />
     </UiEntity>
   )
 }
 
-function ErrorContent({ error }: { error: unknown }): ReactElement {
-  const [errorDetails, setErrorDetails] = useState<string>('')
-
-  useEffect(() => {
-    extractErrorDetails(error).catch(console.error)
-  }, [error])
+function ErrorContent({
+  error,
+  source
+}: {
+  error: unknown
+  source: string
+}): ReactElement {
+  const [errorContent] = useState<string>(
+    `<b>Error Details:</b>\n${extractErrorDetails(error)}${
+      source.length > 0
+        ? `\n\n<b>Source:</b> ${source}\n ${new Error().stack}\n\n`
+        : ''
+    }`
+  )
 
   return (
     <UiEntity
       uiTransform={{
-        width: getContentScaleRatio() * 1200,
-        height: getContentScaleRatio() * 750,
+        width: getContentScaleRatio() * 2400,
+        height: getContentScaleRatio() * 1500,
         borderRadius: BORDER_RADIUS_F,
         borderWidth: 0,
         borderColor: COLOR.WHITE,
@@ -77,7 +88,7 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
           borderRadius: BORDER_RADIUS_F,
           borderWidth: 0,
           borderColor: COLOR.RED,
-          width: '90%',
+          width: '100%',
           height: '60%',
           overflow: 'scroll',
           scrollVisible: 'both'
@@ -86,7 +97,7 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
         <UiEntity
           uiTransform={{ width: '100%', height: '100%' }}
           uiText={{
-            value: `<b>Error Details:</b>\n${errorDetails}`,
+            value: errorContent,
             color: COLOR.RED,
             textWrap: 'wrap',
             fontSize: getContentScaleRatio() * 42
@@ -109,7 +120,7 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
             borderWidth: 0,
             borderColor: Color4.White()
           }}
-          value={'OK'}
+          value={'CLOSE'}
           variant={'secondary'}
           uiBackground={{ color: COLOR.TEXT_COLOR }}
           color={Color4.White()}
@@ -118,53 +129,53 @@ function ErrorContent({ error }: { error: unknown }): ReactElement {
             closeDialog()
           }}
         />
-        {errorDetails?.length > 0 ? (
-          <CopyButton
-            fontSize={getContentScaleRatio() * 80}
-            text={errorDetails}
-            elementId={'copy-error-details' + errorDetails.length}
-            variant={'dark'}
-          />
-        ) : null}
+
+        <CopyButton
+          fontSize={getContentScaleRatio() * 80}
+          text={errorContent}
+          elementId={'copy-error-details' + errorContent.length}
+          variant={'dark'}
+        />
       </UiEntity>
     </UiEntity>
   )
 
-  async function extractErrorDetails(err: any): Promise<void> {
+  function extractErrorDetails(error: any): string {
     let message = ''
 
-    if (typeof err === 'string') {
-      message = err
-    } else if (err instanceof Error || err instanceof Object) {
-      message = err.message || err.toString()
+    if (typeof error === 'string') {
+      message = error
+    } else if (error instanceof Error || error instanceof Object) {
+      message = error.message || error.toString()
 
-      if (err.data) {
-        message += `\n\nData:\n${JSON.stringify(err.data, null, 2)}`
+      if (error.data) {
+        message += `\n\nData:\n${JSON.stringify(error.data, null, 2)}`
       }
 
-      if (err.body) {
-        message += `\n\nBody:\n${JSON.stringify(err.body, null, 2)}`
+      if (error.body) {
+        message += `\n\nBody:\n${JSON.stringify(error.body, null, 2)}`
       }
 
-      if (err.response?.data) {
+      if (error.response?.data) {
         message += `\n\nResponse data:\n${JSON.stringify(
-          err.response.data,
+          error.response.data,
           null,
           2
         )}`
       }
 
-      if (err.stack) {
-        message += `\n\nStack:\n${err.stack}`
+      if (error.stack) {
+        message += `\n\nStack:\n${error.stack}`
       }
 
-      setErrorDetails(message)
-    } else if (err && typeof err === 'object') {
+      return message
+    } else if (error && typeof error === 'object') {
       // fallback: dump whole object
-      setErrorDetails(JSON.stringify(err, null, 2))
+      return JSON.stringify(error, null, 2)
     } else {
-      setErrorDetails(String(err))
+      return String(error)
     }
+    return message
   }
 }
 

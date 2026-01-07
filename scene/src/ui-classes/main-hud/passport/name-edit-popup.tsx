@@ -90,7 +90,10 @@ const EditNameContent = (): ReactElement => {
 
       await BevyApi.setAvatar(avatarPayload).catch((error) => {
         console.error('onSave error', error)
-        showErrorPopup(error)
+        showErrorPopup(
+          error,
+          `BevyApi.setAvatar ${JSON.stringify(avatarPayload)}`
+        )
         failed = true
       })
       setLoading(false)
