@@ -23,7 +23,9 @@ type StatusType =
   | 'sign-in-or-guest'
   | 'reuse-login-or-new'
   | 'secure-step'
-
+const state = {
+  loading: false
+}
 export default class LoadingAndLogin {
   private status: StatusType = 'loading'
 
@@ -118,8 +120,10 @@ export default class LoadingAndLogin {
         this.codeText = ''
         this.firstButtonText = 'START WITH ACCOUNT'
         this.firstButtonAction = () => {
+          if (state.loading) return
           executeTask(async () => {
             try {
+              state.loading = true
               const loginNewREsponse = BevyApi.loginNew()
               const { code: getCode, success: getSuccess } = loginNewREsponse
               getCode.catch(showErrorPopup)
@@ -130,9 +134,10 @@ export default class LoadingAndLogin {
               this.codeText = code.toString()
               this.setStatus('secure-step')
               await getSuccess
-
               this.finishLoading()
+              state.loading = false
             } catch (error) {
+              state.loading = false
               console.error(error)
             }
           })
@@ -182,11 +187,15 @@ export default class LoadingAndLogin {
         this.codeText = ''
         this.firstButtonText = 'JUMP INTO DECENTRALAND'
         this.firstButtonAction = () => {
+          if (state.loading) return
+          state.loading = true
           BevyApi.loginPrevious()
             .then(() => {
+              state.loading = false
               this.finishLoading()
             })
             .catch((error) => {
+              state.loading = false
               console.error(error)
               // TODO consider removing commented code along with related code
 
