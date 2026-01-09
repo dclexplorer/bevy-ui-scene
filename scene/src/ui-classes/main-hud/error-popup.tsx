@@ -9,7 +9,7 @@ import Icon from '../../components/icon/Icon'
 import { Color4 } from '@dcl/sdk/math'
 import { type Popup } from '../../components/popup-stack'
 import { CopyButton } from '../../components/copy-button'
-const { useEffect, useState } = ReactEcs
+const { useState } = ReactEcs
 
 export const ErrorPopup: Popup = ({ shownPopup }) => {
   const error: any = (shownPopup.data as any).error
