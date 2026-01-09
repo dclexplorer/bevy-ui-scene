@@ -80,7 +80,8 @@ export function NotificationItem({
                   `httpError ${responseEvent.status} ${
                     responseEvent.statusText || responseEvent.body
                   }`
-                )
+                ),
+                `BevyApi.kernelFetch notification event ${eventId}`
               )
             } else {
               const { data } = JSON.parse(responseEvent.body)
