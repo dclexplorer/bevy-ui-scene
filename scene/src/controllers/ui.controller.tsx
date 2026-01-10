@@ -39,6 +39,7 @@ import useEffect = ReactEcs.useEffect
 import { engine, PointerLock, Transform } from '@dcl/sdk/ecs'
 import { getViewportWidth } from '../service/canvas-ratio'
 import { listenSystemAction } from '../service/system-actions-emitter'
+import { HoverActionComponent } from '../components/hover-actions/hover-action-component'
 
 let loadingAndLogin: any = null
 
@@ -145,9 +146,7 @@ export class UIController {
 
         {!this.isMainMenuVisible && this.mainHud.mainUi()}
         {this.isMainMenuVisible && this.menu.mainUi()}
-
         {this.actionPopUpVisible && this.actionPopUp.mainUi()}
-
         {this.isPhotosVisible && this.photosPanel.mainUi()}
         {/* Loading & Login */}
         {this.loadingAndLogin?.mainUi()}
@@ -161,6 +160,7 @@ export class UIController {
         {this.sceneInfoCardVisible && this.sceneCard.mainUi()}
         {NotificationToastStack()}
         {PopupStack()}
+        {HoverActionComponent()}
       </Canvas>
     )
   }

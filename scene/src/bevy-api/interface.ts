@@ -104,6 +104,19 @@ export type SystemAction = {
   pressed: boolean
   toString: string
 }
+
+export type SystemHoverAction = {
+  action: string
+  inputBinding: string
+  hoverText: string
+}
+
+export type SystemHoverEvent = {
+  entered: boolean
+  meshName: string
+  distance: number
+  actions: SystemHoverAction[]
+}
 export type ShowUiRequestParams = {
   hash?: string | undefined
   show?: boolean | undefined
@@ -140,6 +153,7 @@ export type BevyApiInterface = {
   setHomeScene: (home: HomeScene) => void
   getRealmProvider: () => Promise<string>
   getSystemActionStream: () => Promise<SystemAction[]>
+  getHoverStream: () => Promise<SystemHoverEvent[]>
   getChatStream: () => Promise<ChatMessageDefinition[]>
   getVoiceStream: () => Promise<MicActivation[]>
   sendChat: (message: string, channel?: string) => void
